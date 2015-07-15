@@ -13,7 +13,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
-import org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.swt.widgets.Display;
 
 import CF.LoggingOperations;
@@ -22,7 +22,9 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.logging.ui.handlers.SetLoggingLevel;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 
-@SuppressWarnings("restriction")
+/**
+ * This feature gives access to the UI that lets the user view/change the logging level of the resource.
+ */
 public class LogLevelFeature extends NonUndoableCustomFeature {
 
 	public LogLevelFeature(IFeatureProvider fp) {
@@ -48,21 +50,16 @@ public class LogLevelFeature extends NonUndoableCustomFeature {
 				return true;
 			}
 		}
-		return super.canExecute(context);
+		return false;
 	}
 
 	@Override
 	public void execute(ICustomContext context) {
-		Object[] selection = DUtil.getSelectedEditParts();
-		for (Object obj : selection) {
-			if (obj instanceof ContainerShapeEditPart) {
-				ContainerShapeEditPart csep = (ContainerShapeEditPart) obj;
-				LoggingOperations loggingOperations = Platform.getAdapterManager().getAdapter(csep, LoggingOperations.class);
-				if (loggingOperations != null) {
-					SetLoggingLevel setLoggingLevelHandler = new SetLoggingLevel();
-					setLoggingLevelHandler.handleSetLoggingLevel(loggingOperations, Display.getCurrent().getActiveShell());
-				}
-			}
+		PictogramElement pe = context.getPictogramElements()[0];
+		LoggingOperations loggingOperations = Platform.getAdapterManager().getAdapter(pe, LoggingOperations.class);
+		if (loggingOperations != null) {
+			SetLoggingLevel setLoggingLevelHandler = new SetLoggingLevel();
+			setLoggingLevelHandler.handleSetLoggingLevel(loggingOperations, Display.getCurrent().getActiveShell());
 		}
 	}
 }
