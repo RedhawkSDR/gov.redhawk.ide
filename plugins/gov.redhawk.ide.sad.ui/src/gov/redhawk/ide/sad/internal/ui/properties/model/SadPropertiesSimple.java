@@ -59,15 +59,8 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 	}
 
 	@Override
-	public void setSadValue(Object value) {
-		String stringValue = (String) value;
-		if (stringValue != null) {
-			stringValue = stringValue.trim();
-			if (stringValue.isEmpty()) {
-				stringValue = null;
-			}
-		}
-		super.setSadValue(stringValue);
+	protected boolean isEmpty(Object value) {
+		return ((String) value).isEmpty();
 	}
 
 	@Override

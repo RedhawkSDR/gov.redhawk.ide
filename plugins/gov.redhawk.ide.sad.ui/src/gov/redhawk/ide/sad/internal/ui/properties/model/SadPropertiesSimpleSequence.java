@@ -52,14 +52,8 @@ public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence>
 	}
 
 	@Override
-	public void setSadValue(Object value) {
-		if (value != null) {
-			Collection< ? > values = (Collection< ? >) value;
-			if (values.isEmpty()) {
-				value = null;
-			}
-		}
-		super.setSadValue(value);
+	protected boolean isEmpty(Object value) {
+		return ((Collection< ? >) value).isEmpty();
 	}
 
 	@Override

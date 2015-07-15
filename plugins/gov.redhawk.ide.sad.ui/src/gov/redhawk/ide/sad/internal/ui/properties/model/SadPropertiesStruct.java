@@ -144,4 +144,10 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 			field.referenceRemoved(childRef);
 		}
 	}
+
+	@Override
+	protected boolean isEmpty(Object value) {
+		// Struct values are not modified directly, so this is never called
+		return false;
+	}
 }

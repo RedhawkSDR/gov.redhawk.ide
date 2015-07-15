@@ -159,8 +159,13 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 		}
 	}
 
+	protected abstract boolean isEmpty(Object value);
+
 	@Override
 	public void setSadValue(Object value) {
+		if (value != null && isEmpty(value)) {
+			value = null;
+		}
 		setFeatureValue(SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE, value);
 	}
 

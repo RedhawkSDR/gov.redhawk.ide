@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Layout;
 
 public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 
-	private Label label;
+	protected Label label;
 	private Button button;
 	protected Object value;
 	private FocusListener focusListener;
