@@ -33,6 +33,7 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.UnexecutableCommand;
@@ -85,7 +86,7 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 					return properties.getProperties();
 				}
 			}
-			return null;
+			return Collections.EMPTY_LIST;
 		}
 		return super.getValue(eObject, eStructuralFeature);
 	}
