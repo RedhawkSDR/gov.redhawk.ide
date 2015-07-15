@@ -129,9 +129,9 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 	protected void notifyChanged(Notification msg) {
 		if (msg.getFeature() == PrfPackage.Literals.STRUCT_REF__REFS) {
 			if (msg.getEventType() == Notification.ADD) {
-				fieldChanged(msg, msg.getNewValue());
+				fieldChanged(msg, unwrapReference(msg.getNewValue()));
 			} else if (msg.getEventType() == Notification.REMOVE) {
-				fieldChanged(msg, msg.getOldValue());
+				fieldChanged(msg, unwrapReference(msg.getOldValue()));
 			}
 			return;
 		}
@@ -160,16 +160,18 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 		}
 	}
 
-	private void fieldChanged(Notification msg, Object object) {
-		FeatureMap.Entry entry = (FeatureMap.Entry) object;
-		AbstractPropertyRef< ? > childRef = (AbstractPropertyRef< ? >) entry.getValue();
+	private AbstractPropertyRef< ? > unwrapReference(Object object) {
+		if (object != null) {
+			FeatureMap.Entry entry = (FeatureMap.Entry) object;
+			return (AbstractPropertyRef< ? >) entry.getValue();
+		}
+		return null;
+	}
+
+	private void fieldChanged(Notification msg, AbstractPropertyRef< ? > childRef) {
 		SadPropertyImpl< ? > field = getField(childRef.getRefID());
 		if (field != null) {
-			if (msg.getEventType() == Notification.ADD) {
-				field.referenceAdded(childRef);
-			} else if (msg.getEventType() == Notification.REMOVE) {
-				field.referenceRemoved(childRef);
-			}
+			field.setReference(unwrapReference(msg.getNewValue()));
 			fireNotifyChanged(new ViewerNotification(msg, field, false, true));
 		}
 	}

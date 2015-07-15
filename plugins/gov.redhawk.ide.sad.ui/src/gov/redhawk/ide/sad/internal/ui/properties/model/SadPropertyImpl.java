@@ -279,6 +279,16 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 		}
 	}
 
+	public void setReference(AbstractPropertyRef< ? > reference) {
+		if (ref == reference) {
+			return;
+		}
+
+		unregisterAdapter(ref);
+		registerAdapter(reference);
+		ref = reference;
+	}
+
 	public void setExternalProperty(ExternalProperty externalProperty) {
 		if (this.externalProperty == externalProperty) {
 			return;
