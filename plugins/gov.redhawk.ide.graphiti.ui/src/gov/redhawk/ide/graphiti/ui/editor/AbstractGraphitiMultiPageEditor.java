@@ -296,9 +296,9 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 	public String getDiagramContext(Resource sadResource) {
 		if (sadResource.getURI().toString().matches(".*" + System.getenv("SDRROOT") + ".*")) {
 			return DUtil.DIAGRAM_CONTEXT_TARGET_SDR;
+		} else {
+			return DUtil.DIAGRAM_CONTEXT_DESIGN;
 		}
-
-		return DUtil.DIAGRAM_CONTEXT_DESIGN;
 	}
 	
 	abstract protected DiagramEditor createDiagramEditor();

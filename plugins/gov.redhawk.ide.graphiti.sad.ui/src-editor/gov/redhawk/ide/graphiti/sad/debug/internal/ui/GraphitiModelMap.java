@@ -979,59 +979,63 @@ public class GraphitiModelMap implements IPortStatListener {
 			}
 		}
 
-		if (container instanceof ScaComponent) {
-			ScaComponent component = (ScaComponent) container;
-			final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
-			TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-
-			// Since the same key(instantiationId) can be used in multiple editors, do an object comparison
-			if (nodeMapEntry == null || container != nodeMapEntry.getLocalScaComponent()) {
-				return;
-			}
-
-			SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
-			if (this.editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramBehavior() == null) {
-				return;
-			}
-			final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-			final Diagram diagram = provider.getDiagram();
-			ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
-
-			// If something else has already locked updates to the port style, then disregard and return out.
-			// Otherwise, make sure we haven't locked updates ourselves.
-			if (!StyleUtil.getCanUpdatePorts() && !this.equals(StyleUtil.getLockingObject())) {
-				return;
-			} else {
-				StyleUtil.toggleUpdatePort(true, null);
-			}
-
-			for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
-				ProvidesPortStub portStub = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
-				if (portStub.getName().equals(port.getName())) {
-					Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, portStub, Anchor.class);
-					Rectangle anchorGa = (Rectangle) anchor.getGraphicsAlgorithm();
-					// CHECKSTYLE:OFF
-					if (lastFlush < lastFlushResetTime || (lastFlush != Double.MAX_VALUE && lastFlushResetTime < 0)) {
-						// If last flush reset time is set to -1, never reset the color if a flush has occurred
-						StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_4, editingDomain);
-					} else if (queueDepth < queueDepthWarningLevel) {
-						StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_OK, editingDomain);
-					} else if (queueDepth < (queueDepthWarningLevel += queueDepthIncrement)) {
-						StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_1, editingDomain);
-					} else if (queueDepth < (queueDepthWarningLevel += queueDepthIncrement)) {
-						StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_2, editingDomain);
-					} else if (queueDepth < (queueDepthWarningLevel += queueDepthIncrement)) {
-						StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_3, editingDomain);
-					} else {
-						StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_4, editingDomain);
-					}
-					// CHECKSTYLE:ON
-				}
-			}
-
-			// Lock other things from changing the port style
-			StyleUtil.toggleUpdatePort(false, this);
+		if (!(container instanceof ScaComponent)) {
+			StatusManager.getManager().handle(new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Received statistics for a port not belonging to a component"),
+				StatusManager.LOG | StatusManager.SHOW);
+			return;
 		}
+
+		ScaComponent component = (ScaComponent) container;
+		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
+		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
+
+		// Since the same key(instantiationId) can be used in multiple editors, do an object comparison
+		if (nodeMapEntry == null || container != nodeMapEntry.getLocalScaComponent()) {
+			return;
+		}
+
+		SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
+		if (this.editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramBehavior() == null) {
+			return;
+		}
+		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+		final Diagram diagram = provider.getDiagram();
+		ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
+
+		// If something else has already locked updates to the port style, then disregard and return out.
+		// Otherwise, make sure we haven't locked updates ourselves.
+		if (!StyleUtil.getCanUpdatePorts() && !this.equals(StyleUtil.getLockingObject())) {
+			return;
+		} else {
+			StyleUtil.toggleUpdatePort(true, null);
+		}
+
+		for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
+			ProvidesPortStub portStub = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
+			if (portStub.getName().equals(port.getName())) {
+				Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, portStub, Anchor.class);
+				Rectangle anchorGa = (Rectangle) anchor.getGraphicsAlgorithm();
+				// CHECKSTYLE:OFF
+				if (lastFlush < lastFlushResetTime || (lastFlush != Double.MAX_VALUE && lastFlushResetTime < 0)) {
+					// If last flush reset time is set to -1, never reset the color if a flush has occurred
+					StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_4, editingDomain);
+				} else if (queueDepth < queueDepthWarningLevel) {
+					StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_OK, editingDomain);
+				} else if (queueDepth < (queueDepthWarningLevel += queueDepthIncrement)) {
+					StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_1, editingDomain);
+				} else if (queueDepth < (queueDepthWarningLevel += queueDepthIncrement)) {
+					StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_2, editingDomain);
+				} else if (queueDepth < (queueDepthWarningLevel += queueDepthIncrement)) {
+					StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_3, editingDomain);
+				} else {
+					StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_4, editingDomain);
+				}
+				// CHECKSTYLE:ON
+			}
+		}
+
+		// Lock other things from changing the port style
+		StyleUtil.toggleUpdatePort(false, this);
 	}
 
 	/* (non-Javadoc)
