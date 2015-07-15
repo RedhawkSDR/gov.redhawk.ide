@@ -70,7 +70,7 @@
    <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
-            adaptableType="org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart"
+            adaptableType="org.eclipse.gef.editparts.AbstractGraphicalEditPart"
             class="gov.redhawk.ide.graphiti.ui.adapters.ContainerShapeAdapterFactory">
          <adapter
                type="gov.redhawk.model.sca.ScaDevice">

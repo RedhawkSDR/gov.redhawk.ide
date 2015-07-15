@@ -23,18 +23,19 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 /**
  * Can adapt either:
  * <ul>
- * <li>{@link AbstractGraphicalEditPart} (specifically a ContainerShapeEditPart)</li>
- * <li>{@link RHContainerShape}</li>
+ * <li>{@link AbstractGraphicalEditPart} (Graphiti UI part)</li>
+ * <li>{@link RHContainerShape} (our Graphiti model object)</li>
  * </ul>
- * from any of the diagrams to the following types (and a few of their super types):
+ * from the diagrams to the following types (and a few of their super types):
  * <ul>
  * <li>{@link ScaComponent}</li>
  * <li>{@link ScaDevice}</li>
+ * <li>{@link LocalLaunch}</li>
  * </ul>
  */
 public class ContainerShapeAdapterFactory implements IAdapterFactory {
 
-	private static final Class< ? >[] ADAPTER_TYPES = new Class< ? >[] { ScaComponent.class, ScaDevice.class };
+	private static final Class< ? >[] ADAPTER_TYPES = new Class< ? >[] { ScaComponent.class, ScaDevice.class, LocalLaunch.class };
 
 	@Override
 	@SuppressWarnings("unchecked")
