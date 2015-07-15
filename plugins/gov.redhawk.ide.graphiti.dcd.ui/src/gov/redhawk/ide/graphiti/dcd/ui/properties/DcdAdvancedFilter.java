@@ -13,14 +13,8 @@ package gov.redhawk.ide.graphiti.dcd.ui.properties;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import gov.redhawk.ide.graphiti.ui.properties.AdvancedFilter;
 
-/**
- * 
- */
 public class DcdAdvancedFilter extends AdvancedFilter {
 
-	/**
-	 * 
-	 */
 	public DcdAdvancedFilter() {
 		super(DcdComponentInstantiation.class);
 	}

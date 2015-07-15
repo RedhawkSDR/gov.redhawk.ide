@@ -15,18 +15,12 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IFilter;
 
-/**
- * 
- */
 public class CompoundFilter implements IFilter {
 
 	public enum BooleanOperator {FILTER_AND, FILTER_OR};
 	private List<IFilter> subFilters;
 	private BooleanOperator myOperator;
 	
-	/**
-	 * 
-	 */
 	public CompoundFilter() {
 		this(BooleanOperator.FILTER_OR);
 	}
@@ -36,9 +30,6 @@ public class CompoundFilter implements IFilter {
 		this.myOperator = op;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IFilter#select(java.lang.Object)
-	 */
 	@Override
 	public boolean select(Object toTest) {
 		switch (this.myOperator) {
