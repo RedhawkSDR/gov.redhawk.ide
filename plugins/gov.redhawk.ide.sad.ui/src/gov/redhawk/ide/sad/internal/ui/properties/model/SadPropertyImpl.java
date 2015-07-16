@@ -1,23 +1,14 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
-
-import mil.jpeojtrs.sca.prf.AbstractProperty;
-import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
-import mil.jpeojtrs.sca.sad.ExternalProperties;
-import mil.jpeojtrs.sca.sad.ExternalProperty;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadFactory;
-import mil.jpeojtrs.sca.sad.SadPackage;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import java.util.Collection;
 
@@ -40,9 +31,17 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.widgets.Composite;
 
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
+import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
+import mil.jpeojtrs.sca.sad.ExternalProperties;
+import mil.jpeojtrs.sca.sad.ExternalProperty;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadFactory;
+import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 /**
- * 
+ *
  */
 public abstract class SadPropertyImpl< T extends AbstractProperty > extends ItemProvider implements SadProperty {
 
@@ -54,7 +53,7 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 	private ILabelProvider labelProvider = null;
 
 	/**
-	 * 
+	 *
 	 */
 	public SadPropertyImpl(AdapterFactory adapterFactory, T def, Object parent) {
 		super(adapterFactory);
@@ -76,10 +75,12 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 		children.clear();
 	}
 
+	@Override
 	public Object getParent() {
 		return parent;
 	}
 
+	@Override
 	public Object getParent(Object object) {
 		// Workaround for reverse tree traversal via an AdapterFactoryContentProvider, which will always call the
 		// 1-argument getParent. If we return the ViewerComponent object, getParent(Object) on it will fail because
@@ -238,7 +239,7 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 			SoftwareAssembly sad = getComponent().getSoftwareAssembly();
 			ExternalProperties properties = sad.getExternalProperties();
 			if (properties != null) {
-				return AddCommand.create(domain, properties, SadPackage.Literals.EXTERNAL_PROPERTIES__PROPERTIES, (ExternalProperty) value);
+				return AddCommand.create(domain, properties, SadPackage.Literals.EXTERNAL_PROPERTIES__PROPERTIES, value);
 			} else {
 				properties = SadFactory.eINSTANCE.createExternalProperties();
 				properties.getProperties().add((ExternalProperty) value);

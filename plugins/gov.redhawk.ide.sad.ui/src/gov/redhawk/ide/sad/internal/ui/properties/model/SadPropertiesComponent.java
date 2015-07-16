@@ -1,35 +1,14 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
-
-import mil.jpeojtrs.sca.partitioning.ComponentFile;
-import mil.jpeojtrs.sca.partitioning.ComponentProperties;
-import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.prf.AbstractProperty;
-import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
-import mil.jpeojtrs.sca.prf.PrfPackage;
-import mil.jpeojtrs.sca.prf.Properties;
-import mil.jpeojtrs.sca.prf.Simple;
-import mil.jpeojtrs.sca.prf.SimpleSequence;
-import mil.jpeojtrs.sca.prf.Struct;
-import mil.jpeojtrs.sca.prf.StructSequence;
-import mil.jpeojtrs.sca.sad.AssemblyController;
-import mil.jpeojtrs.sca.sad.ExternalProperties;
-import mil.jpeojtrs.sca.sad.ExternalProperty;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.SpdPackage;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,12 +31,32 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 
 import gov.redhawk.sca.util.PluginUtil;
+import mil.jpeojtrs.sca.partitioning.ComponentFile;
+import mil.jpeojtrs.sca.partitioning.ComponentProperties;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
+import mil.jpeojtrs.sca.prf.PrfPackage;
+import mil.jpeojtrs.sca.prf.Properties;
+import mil.jpeojtrs.sca.prf.Simple;
+import mil.jpeojtrs.sca.prf.SimpleSequence;
+import mil.jpeojtrs.sca.prf.Struct;
+import mil.jpeojtrs.sca.prf.StructSequence;
+import mil.jpeojtrs.sca.sad.AssemblyController;
+import mil.jpeojtrs.sca.sad.ExternalProperties;
+import mil.jpeojtrs.sca.sad.ExternalProperty;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public class SadPropertiesComponent extends ItemProviderAdapter implements ITreeItemContentProvider, NestedItemProvider {
-	
-	private static final EStructuralFeature [] PATH = new EStructuralFeature [] {
+
+	private static final EStructuralFeature[] PATH = new EStructuralFeature[] {
 		SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
-		SpdPackage.Literals.PROPERTY_FILE__PROPERTIES,
+		SpdPackage.Literals.PROPERTY_FILE__PROPERTIES
 	};
 
 	private SadComponentInstantiation compInst;
@@ -78,10 +77,11 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 		if (eStructuralFeature == PrfPackage.Literals.PROPERTIES__PROPERTIES) {
 			ComponentFile theCompFile = ((SadComponentInstantiation) eObject).getPlacement().getComponentFileRef().getFile();
 
-			// The component file can be null if the component file reference does not map back to any SPD (likely due to a copy paste error on the users part)
+			// The component file can be null if the component file reference does not map back to any SPD (likely due
+			// to a copy paste error on the users part)
 			if (theCompFile != null && theCompFile.getSoftPkg() != null) {
 				SoftPkg spd = theCompFile.getSoftPkg();
-				Properties properties = ScaEcoreUtils.getFeature(spd, PATH);
+				Properties properties = ScaEcoreUtils.getFeature(spd, SadPropertiesComponent.PATH);
 				if (properties != null) {
 					return properties.getProperties();
 				}
@@ -165,6 +165,7 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 		return TransactionUtil.getEditingDomain(getSoftwareAssembly());
 	}
 
+	@Override
 	protected EStructuralFeature getChildFeature(Object object, Object child) {
 		switch (((EObject) child).eClass().getClassifierID()) {
 		case PrfPackage.SIMPLE_REF:
@@ -183,11 +184,12 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 	@Override
 	public Command createAddChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
-			ComponentProperties properties = getComponentInstantiation().getComponentProperties();
+			SadComponentInstantiation instantiation = getComponentInstantiation();
+			ComponentProperties properties = instantiation.getComponentProperties();
 			if (properties == null) {
 				properties = PartitioningFactory.eINSTANCE.createComponentProperties();
 				properties.getProperties().add(getChildFeature(properties, child), child);
-				return SetCommand.create(domain, getComponentInstantiation(), PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
+				return SetCommand.create(domain, instantiation, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
 			} else {
 				return AddCommand.create(domain, properties, getChildFeature(properties, child), child);
 			}

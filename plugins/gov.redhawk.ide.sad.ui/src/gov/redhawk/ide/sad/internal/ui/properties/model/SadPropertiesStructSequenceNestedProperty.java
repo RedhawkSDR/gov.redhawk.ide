@@ -1,11 +1,11 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
@@ -25,12 +25,12 @@ import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
-public abstract class SadPropertiesStructSequenceNestedProperty<E extends AbstractProperty> extends ItemProvider implements SadProperty {
+public abstract class SadPropertiesStructSequenceNestedProperty extends ItemProvider implements SadProperty {
 
-	protected final E definition;
+	protected final AbstractProperty definition;
 	private ILabelProvider labelProvider;
 
-	public SadPropertiesStructSequenceNestedProperty(AdapterFactory adapterFactory, E def, Object parent) {
+	public SadPropertiesStructSequenceNestedProperty(AdapterFactory adapterFactory, AbstractProperty def, Object parent) {
 		super(adapterFactory);
 		this.parent = parent;
 		this.definition = def;
