@@ -10,18 +10,17 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.editor;
 
-import gov.redhawk.ide.sad.internal.ui.properties.PropertiesContentProvider;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewer;
-import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerControlFactory;
-import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerConverter;
+import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerEditingSupport;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerLabelProvider;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerModelConverter;
+import gov.redhawk.ide.sad.internal.ui.properties.model.SadPropertiesAdapterFactory;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
@@ -30,8 +29,6 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.nebula.widgets.xviewer.edit.XViewerControlFactory;
-import org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerEditAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -50,7 +47,6 @@ public class SadPropertiesPage extends ScaFormPage {
 
 	private static final String TOOLBAR_ID = "gov.redhawk.ide.sad.internal.ui.editor.properties.toolbar";
 	private PropertiesViewer viewer;
-	private final ViewerModelConverter model = new ViewerModelConverter();
 	private IAction expandAllAction = new Action() {
 		{
 			setToolTipText("Expand All");
@@ -77,7 +73,8 @@ public class SadPropertiesPage extends ScaFormPage {
 			viewer.collapseAll();
 		}
 	};
-	private IAction configureAction;
+
+	private SadPropertiesAdapterFactory adapterFactory = null;
 
 	/**
 	 * @param editor
@@ -99,6 +96,19 @@ public class SadPropertiesPage extends ScaFormPage {
 	}
 
 	@Override
+	public void dispose() {
+		super.dispose();
+		if (viewer != null) {
+			viewer.dispose();
+			viewer = null;
+		}
+		if (adapterFactory != null) {
+			adapterFactory.dispose();
+			adapterFactory = null;
+		}
+	}
+
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		form.setText("Properties");
@@ -117,7 +127,8 @@ public class SadPropertiesPage extends ScaFormPage {
 		toolBarManager.add(new Separator("Action"));
 		toolBarManager.add(expandAllAction);
 		toolBarManager.add(collapseAllAction);
-		if (configureAction != null) {
+		if (viewer != null) {
+			IAction configureAction = viewer.getCustomizeAction();
 			toolBarManager.add(configureAction);
 		}
 	}
@@ -126,19 +137,19 @@ public class SadPropertiesPage extends ScaFormPage {
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(1).create());
 		viewer = new PropertiesViewer(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		viewer.getTree().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
-		viewer.setContentProvider(new PropertiesContentProvider());
+		adapterFactory = new SadPropertiesAdapterFactory();
+		viewer.setContentProvider(new AdapterFactoryContentProvider(adapterFactory));
 		PropertiesViewerLabelProvider labelProvider = new PropertiesViewerLabelProvider(viewer);
 		viewer.setLabelProvider(labelProvider);
 
-		XViewerControlFactory cFactory = new PropertiesViewerControlFactory();
-		XViewerConverter converter = new PropertiesViewerConverter(labelProvider);
-		viewer.setXViewerEditAdapter(new XViewerEditAdapter(cFactory, converter));
+		Resource resource = getInput();
+		if (resource != null) {
+			SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(getInput());
+			viewer.setInput(sad);
+		}
 
-		configureAction = viewer.getCustomizeAction();
-
-		model.setViewer(viewer);
-		viewer.setInput(model);
-		viewer.expandToLevel(2);
+		PropertiesViewerEditingSupport editingSupport = new PropertiesViewerEditingSupport();
+		viewer.setXViewerEditAdapter(new XViewerEditAdapter(editingSupport, editingSupport));
 	}
 
 	/* (non-Javadoc)
@@ -147,8 +158,8 @@ public class SadPropertiesPage extends ScaFormPage {
 	@Override
 	protected void refresh(Resource resource) {
 		SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
-		if (model != null) {
-			model.setSoftwareAssembly(sad);
+		if (viewer != null) {
+			viewer.setInput(sad);
 		}
 	}
 

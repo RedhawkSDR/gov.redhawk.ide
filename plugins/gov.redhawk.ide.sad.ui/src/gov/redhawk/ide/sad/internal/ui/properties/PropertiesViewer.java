@@ -26,7 +26,7 @@ public class PropertiesViewer extends XViewer {
 	 */
 	public PropertiesViewer(Composite parent, int style) {
 		super(parent, style, new PropertiesViewerFactory());
-		setAutoExpandLevel(1);
+		setAutoExpandLevel(2);
 	}
 	
 	@Override

@@ -10,15 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties;
 
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSequenceProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSimpleProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceSequenceProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceSimpleProperty;
+import gov.redhawk.ide.sad.internal.ui.properties.model.SadProperty;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import mil.jpeojtrs.sca.prf.AbstractProperty;
@@ -26,17 +22,11 @@ import mil.jpeojtrs.sca.prf.ConfigurationKind;
 import mil.jpeojtrs.sca.prf.Enumeration;
 import mil.jpeojtrs.sca.prf.Kind;
 import mil.jpeojtrs.sca.prf.Simple;
-import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
-import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
-import mil.jpeojtrs.sca.prf.Struct;
-import mil.jpeojtrs.sca.prf.StructSequence;
-import mil.jpeojtrs.sca.prf.StructValue;
-import mil.jpeojtrs.sca.prf.Values;
 import mil.jpeojtrs.sca.prf.provider.PrfItemProviderAdapterFactory;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -96,12 +86,11 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	@Override
 	public Image getColumnImage(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
 		if (columnIndex == 0) {
-			if (element instanceof ViewerComponent) {
-				ViewerComponent component = ((ViewerComponent) element);
-				return labelProvider.getImage(component.getComponentInstantiation());
-			} else if (element instanceof ViewerProperty< ? >) {
-				ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+			if (element instanceof SadProperty) {
+				SadProperty prop = (SadProperty) element;
 				return labelProvider.getImage(prop.getDefinition());
+			} else {
+				return labelProvider.getImage(element);
 			}
 		}
 		return null;
@@ -151,8 +140,8 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	private String getAction(Object element) {
-		if (element instanceof ViewerProperty< ? >) {
-			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+		if (element instanceof SadProperty) {
+			SadProperty prop = (SadProperty) element;
 			return getAction(prop.getDefinition());
 		} else if (element instanceof Simple) {
 			Simple simple = (Simple) element;
@@ -169,8 +158,8 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	public String getEnumerations(Object element) {
-		if (element instanceof ViewerProperty< ? >) {
-			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+		if (element instanceof SadProperty) {
+			SadProperty prop = (SadProperty) element;
 			return getEnumerations(prop.getDefinition());
 		} else if (element instanceof Simple) {
 			Simple simple = (Simple) element;
@@ -188,8 +177,8 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	public String getRange(Object element) {
-		if (element instanceof ViewerProperty< ? >) {
-			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+		if (element instanceof SadProperty) {
+			SadProperty prop = (SadProperty) element;
 			return getRange(prop.getDefinition());
 		} else if (element instanceof Simple) {
 			Simple simple = (Simple) element;
@@ -210,8 +199,8 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	public String getUnits(Object element) {
-		if (element instanceof ViewerProperty< ? >) {
-			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+		if (element instanceof SadProperty) {
+			SadProperty prop = (SadProperty) element;
 			return getUnits(prop.getDefinition());
 		} else if (element instanceof Simple) {
 			Simple simple = (Simple) element;
@@ -224,8 +213,8 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	public String getExternalValue(Object element) {
-		if (element instanceof ViewerProperty< ? >) {
-			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+		if (element instanceof SadProperty) {
+			SadProperty prop = (SadProperty) element;
 			if (prop.isAssemblyControllerProperty()) {
 				String value = prop.getExternalID();
 				if (value != null) {
@@ -241,8 +230,8 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	@Override
 	public Color getForeground(Object element, XViewerColumn xCol, int columnIndex) {
 		if (xCol.equals(PropertiesViewerFactory.EXTERNAL)) {
-			if (element instanceof ViewerProperty< ? >) {
-				ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+			if (element instanceof SadProperty) {
+				SadProperty prop = (SadProperty) element;
 				if (prop.isAssemblyControllerProperty() && prop.getExternalID() == null) {
 					return PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_GRAY);
 				}
@@ -252,16 +241,16 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	public String getDescription(Object element) {
-		if (element instanceof ViewerProperty< ? >) {
-			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+		if (element instanceof SadProperty) {
+			SadProperty prop = (SadProperty) element;
 			return prop.getDefinition().getDescription();
 		}
 		return "";
 	}
 
 	public String getType(Object element) {
-		if (element instanceof ViewerProperty< ? >) {
-			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+		if (element instanceof SadProperty) {
+			SadProperty prop = (SadProperty) element;
 			AbstractProperty def = prop.getDefinition();
 			if (def instanceof Simple) {
 				Simple simple = (Simple) def;
@@ -283,124 +272,65 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	public String getMode(Object element) {
-		if (element instanceof ViewerProperty< ? >) {
-			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+		if (element instanceof SadProperty) {
+			SadProperty prop = (SadProperty) element;
 			return prop.getDefinition().getMode().getLiteral();
 		}
 		return null;
 	}
 
 	public String getKind(Object element) {
-		if (element instanceof ViewerProperty< ? >) {
-			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
-			AbstractProperty def = prop.getDefinition();
-			return getKind(def);
-		} else if (element instanceof Simple) {
-			Simple simple = (Simple) element;
-			if (simple.eContainer() instanceof Struct) {
-				return getKind(simple.eContainer());
-			}
-			return toKindString(simple.getKind());
-		} else if (element instanceof SimpleSequence) {
-			SimpleSequence seq = (SimpleSequence) element;
-			return toKindString(seq.getKind());
-		} else if (element instanceof Struct) {
-			Struct struct = (Struct) element;
-			if (struct.eContainer() instanceof StructSequence) {
-				return getKind(struct.eContainer());
-			}
-			return toConfigurationKindString(struct.getConfigurationKind());
-		} else if (element instanceof StructSequence) {
-			StructSequence seq = (StructSequence) element;
-			return toConfigurationKindString(seq.getConfigurationKind());
+		if (element instanceof SadProperty) {
+			final Collection< ? > kinds = ((SadProperty) element).getKinds();
+			return toKindString(kinds);
 		}
-		return "";
+		return null;
 	}
 
-	private String toConfigurationKindString(EList<ConfigurationKind> configurationKind) {
-		List<String> retVal = new ArrayList<String>(configurationKind.size());
-		for (ConfigurationKind k : configurationKind) {
-			retVal.add(k.getType().getLiteral());
-		}
-		return Arrays.toString(retVal.toArray());
-	}
-
-	private String toKindString(EList<Kind> kind) {
-		List<String> retVal = new ArrayList<String>(kind.size());
-		for (Kind k : kind) {
-			retVal.add(k.getType().getLiteral());
+	private String toKindString(Collection< ? > kinds) {
+		List<String> retVal = new ArrayList<String>(kinds.size());
+		for (Object kind : kinds) {
+			if (kind instanceof Kind) {
+				retVal.add(((Kind) kind).getType().getLiteral());
+			} else if (kind instanceof ConfigurationKind) {
+				retVal.add(((ConfigurationKind) kind).getType().getLiteral());
+			}
 		}
 		return Arrays.toString(retVal.toArray());
 	}
 
 	public String getID(Object element) {
-		if (element instanceof ViewerComponent) {
-			return ((ViewerComponent) element).getComponentInstantiation().getId();
-		} else if (element instanceof ViewerProperty< ? >) {
-			return ((ViewerProperty< ? >) element).getDefinition().getId();
+		if (element instanceof SadComponentInstantiation) {
+			return ((SadComponentInstantiation) element).getId();
+		} else if (element instanceof SadProperty) {
+			return ((SadProperty) element).getDefinition().getId();
 		}
 		return "";
 	}
 
 	public String getName(Object element) {
-		if (element instanceof ViewerComponent) {
-			return ((ViewerComponent) element).getComponentInstantiation().getUsageName();
-		} else if (element instanceof ViewerProperty< ? >) {
-			return ((ViewerProperty< ? >) element).getDefinition().getName();
+		if (element instanceof SadComponentInstantiation) {
+			return ((SadComponentInstantiation) element).getUsageName();
+		} else if (element instanceof SadProperty) {
+			return ((SadProperty) element).getDefinition().getName();
 		}
 		return "";
 	}
 
 	public String getPrfValue(Object element) {
-		if (element instanceof ViewerSimpleProperty) {
-			return ((ViewerSimpleProperty) element).getDefinition().getValue();
-		} else if (element instanceof ViewerSequenceProperty) {
-			Values values = ((ViewerSequenceProperty) element).getDefinition().getValues();
-			if (values != null) {
-				return Arrays.toString(values.getValue().toArray());
-			}
-		} else if (element instanceof ViewerStructSequenceSimpleProperty) {
-			ViewerStructSequenceSimpleProperty prop = (ViewerStructSequenceSimpleProperty) element;
-			StructSequence seq = prop.getParent().getDefinition();
-			EList<StructValue> value = seq.getStructValue();
-			List<String> retVal = new ArrayList<String>(value.size());
-			for (StructValue v : value) {
-				SimpleRef ref = (SimpleRef) v.getRef(prop.getDefinition().getId());
-				retVal.add(ref.getValue());
-			}
-			return Arrays.toString(retVal.toArray());
-		} else if (element instanceof ViewerStructSequenceSequenceProperty) {
-			ViewerStructSequenceSequenceProperty prop = (ViewerStructSequenceSequenceProperty) element;
-			StructSequence seq = prop.getParent().getDefinition();
-			EList<StructValue> value = seq.getStructValue();
-			List<List<String>> retVal = new ArrayList<List<String>>(value.size());
-			for (StructValue v : value) {
-				SimpleSequenceRef ref = (SimpleSequenceRef) v.getRef(prop.getDefinition().getId());
-				retVal.add(ref.getValues().getValue());
-			}
-			return Arrays.toString(retVal.toArray());
+		if (element instanceof SadProperty) {
+			return ((SadProperty) element).getPrfValue();
 		}
 		return "";
 	}
 
 	public String getSadValue(Object element) {
-		if (element instanceof ViewerSimpleProperty) {
-			ViewerSimpleProperty prop = ((ViewerSimpleProperty) element);
-			return prop.getValue();
-		} else if (element instanceof ViewerSequenceProperty) {
-			ViewerSequenceProperty prop = (ViewerSequenceProperty) element;
-			if (prop.getValues() == null) {
+		if (element instanceof SadProperty) {
+			Object value = ((SadProperty) element).getSadValue();
+			if (value == null) {
 				return null;
-			} else {
-				return prop.getValues().toString();
 			}
-		} else if (element instanceof ViewerStructSequenceSimpleProperty) {
-			ViewerStructSequenceSimpleProperty prop = (ViewerStructSequenceSimpleProperty) element;
-			if (prop.getValues() == null) {
-				return null;
-			} else {
-				return prop.getValues().toString();
-			}
+			return value.toString();
 		}
 		return "";
 	}
