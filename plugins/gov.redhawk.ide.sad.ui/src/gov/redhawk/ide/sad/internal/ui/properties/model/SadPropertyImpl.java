@@ -265,20 +265,6 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 		return UnexecutableCommand.INSTANCE;
 	}
 
-	public void referenceAdded(AbstractPropertyRef< ? > reference) {
-		ref = reference;
-		if (reference != null) {
-			reference.eAdapters().add(adapter);
-		}
-	}
-
-	public void referenceRemoved(AbstractPropertyRef< ? > reference) {
-		ref = null;
-		if (reference != null) {
-			reference.eAdapters().remove(adapter);
-		}
-	}
-
 	public void setReference(AbstractPropertyRef< ? > reference) {
 		if (ref == reference) {
 			return;

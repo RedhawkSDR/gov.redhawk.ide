@@ -11,6 +11,8 @@
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.UnexecutableCommand;
@@ -139,24 +141,22 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 	}
 
 	@Override
-	public void referenceAdded(AbstractPropertyRef< ? > reference) {
-		super.referenceAdded(reference);
-		StructRef structRef = (StructRef) reference;
-		for (FeatureMap.Entry ref : structRef.getRefs()) {
-			AbstractPropertyRef< ? > childRef = (AbstractPropertyRef< ? >)ref.getValue();
-			SadPropertyImpl< ? > field = getField(childRef.getRefID());
-			field.referenceAdded(childRef);
-		}
-	}
+	public void setReference(AbstractPropertyRef< ? > reference) {
+		super.setReference(reference);
 
-	@Override
-	public void referenceRemoved(AbstractPropertyRef< ? > reference) {
-		super.referenceRemoved(reference);
-		StructRef structRef = (StructRef) reference;
-		for (FeatureMap.Entry ref : structRef.getRefs()) {
-			AbstractPropertyRef< ? > childRef = (AbstractPropertyRef< ? >)ref.getValue();
-			SadPropertyImpl< ? > field = getField(childRef.getRefID());
-			field.referenceRemoved(childRef);
+		Map<String,AbstractPropertyRef< ? >> fieldRefs = new HashMap<String, AbstractPropertyRef< ? >>();
+		if (reference != null) {
+			StructRef structRef = (StructRef) reference;
+			for (FeatureMap.Entry ref : structRef.getRefs()) {
+				AbstractPropertyRef< ? > childRef = (AbstractPropertyRef< ? >) ref.getValue();
+				fieldRefs.put(childRef.getRefID(), childRef);
+			}
+		}
+
+		for (Object child : children) {
+			SadPropertyImpl< ? > field = (SadPropertyImpl< ? >) child;
+			AbstractPropertyRef< ? > fieldRef = fieldRefs.get(field.getID());
+			field.setReference(fieldRef);
 		}
 	}
 

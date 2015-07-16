@@ -221,16 +221,19 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 			}
 		} else if (feature == PartitioningPackage.Literals.COMPONENT_PROPERTIES__PROPERTIES) {
 			if (msg.getEventType() == Notification.ADD) {
-				propertyChanged(msg, msg.getNewValue());
+				propertyChanged(unwrapProperty(msg.getNewValue()), msg);
 			} else if (msg.getEventType() == Notification.REMOVE) {
-				propertyChanged(msg, msg.getOldValue());
+				propertyChanged(unwrapProperty(msg.getOldValue()), msg);
 			}
 		}
 	}
 
 	private AbstractPropertyRef< ? > unwrapProperty(Object value) {
-		FeatureMap.Entry entry = (FeatureMap.Entry) value;
-		return (AbstractPropertyRef< ? >) entry.getValue();
+		if (value != null) {
+			FeatureMap.Entry entry = (FeatureMap.Entry) value;
+			return (AbstractPropertyRef< ? >) entry.getValue();
+		}
+		return null;
 	}
 
 	@Override
@@ -258,7 +261,7 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
 				SadPropertyImpl< ? > property = getProperty(ref.getRefID());
 				if (property != null) {
-					property.referenceAdded(ref);
+					property.setReference(ref);
 				}
 			}
 		}
@@ -271,24 +274,18 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
 				SadPropertyImpl< ? > property = getProperty(ref.getRefID());
 				if (property != null) {
-					property.referenceRemoved(ref);
+					property.setReference(null);
 				}
 			}
 		}
 	}
 
-	private void propertyChanged(Notification msg, Object value) {
-		AbstractPropertyRef< ? > ref = unwrapProperty(value);
+	private void propertyChanged(AbstractPropertyRef< ? > ref, Notification msg) {
 		SadPropertyImpl< ? > property = getProperty(ref.getRefID());
-		switch (msg.getEventType()) {
-		case Notification.ADD:
-			property.referenceAdded(ref);
-			break;
-		case Notification.REMOVE:
-			property.referenceRemoved(ref);
-			break;
+		if (property != null) {
+			property.setReference(unwrapProperty(msg.getNewValue()));
+			boolean contentRefresh = property.hasChildren();
+			fireNotifyChanged(new ViewerNotification(msg, property, contentRefresh, true));
 		}
-		boolean contentRefresh = property.hasChildren();
-		fireNotifyChanged(new ViewerNotification(msg, property, contentRefresh, true));		
 	}
 }
