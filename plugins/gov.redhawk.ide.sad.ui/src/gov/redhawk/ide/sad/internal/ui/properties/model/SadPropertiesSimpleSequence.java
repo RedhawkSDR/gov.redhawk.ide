@@ -16,10 +16,14 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
@@ -93,6 +97,29 @@ public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence>
 			return SetCommand.create(domain, ((SimpleSequenceRef)owner).getValues(), PrfPackage.Literals.VALUES__VALUE, value);
 		}
 		return super.createSetCommand(domain, owner, feature, value);
+	}
+
+	@Override
+	protected Adapter createAdapter() {
+		return new EContentAdapter() {
+
+			@Override
+			public void notifyChanged(Notification notification) {
+				super.notifyChanged(notification);
+				SadPropertiesSimpleSequence.this.notifyChanged(notification);
+			}
+
+		};
+	}
+
+	@Override
+	protected void notifyChanged(Notification msg) {
+		final Object feature = msg.getFeature();
+		if (feature == PrfPackage.Literals.SIMPLE_SEQUENCE_REF__VALUES || feature == PrfPackage.Literals.VALUES__VALUE) {
+			fireNotifyChanged(new ViewerNotification(msg, this, false, true));
+			return;
+		}
+		super.notifyChanged(msg);
 	}
 
 	@Override

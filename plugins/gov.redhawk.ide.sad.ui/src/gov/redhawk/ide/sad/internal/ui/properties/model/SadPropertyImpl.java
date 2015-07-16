@@ -49,14 +49,7 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 	protected AbstractPropertyRef< ? > ref;
 	protected ExternalProperty externalProperty;
 
-	private Adapter adapter = new AdapterImpl() {
-
-		@Override
-		public void notifyChanged(Notification msg) {
-			SadPropertyImpl.this.notifyChanged(msg);
-		}
-
-	};
+	private Adapter adapter = null;
 
 	/**
 	 * 
@@ -285,6 +278,24 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 		this.externalProperty = externalProperty;
 	}
 
+	protected Adapter getAdapter() {
+		if (adapter == null) {
+			adapter = createAdapter();
+		}
+		return adapter;
+	}
+
+	protected Adapter createAdapter() {
+		return new AdapterImpl() {
+
+			@Override
+			public void notifyChanged(Notification msg) {
+				SadPropertyImpl.this.notifyChanged(msg);
+			}
+
+		};
+	}
+
 	protected void notifyChanged(Notification msg) {
 		if (msg.getFeature() == SadPackage.Literals.EXTERNAL_PROPERTY__EXTERNAL_PROP_ID) {
 			fireNotifyChanged(new ViewerNotification(msg, this, false, true));
@@ -293,13 +304,13 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 
 	private void registerAdapter(EObject eObject) {
 		if (eObject != null) {
-			eObject.eAdapters().add(adapter);
+			eObject.eAdapters().add(getAdapter());
 		}
 	}
 
 	private void unregisterAdapter(EObject eObject) {
 		if (eObject != null) {
-			eObject.eAdapters().remove(adapter);
+			eObject.eAdapters().remove(getAdapter());
 		}
 	}
 }
