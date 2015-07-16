@@ -10,10 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.editor;
 
-import gov.redhawk.sca.sad.diagram.part.SadDiagramEditor;
-import gov.redhawk.ui.editor.SCAFormEditor;
-import mil.jpeojtrs.sca.sad.diagram.part.SadDiagramActionBarContributor;
-
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.Viewport;
 import org.eclipse.gef.EditPartViewer;
@@ -48,6 +44,10 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+
+import gov.redhawk.sca.sad.diagram.part.SadDiagramEditor;
+import gov.redhawk.ui.editor.SCAFormEditor;
+import mil.jpeojtrs.sca.sad.diagram.part.SadDiagramActionBarContributor;
 
 /**
  * 

@@ -226,14 +226,14 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 			SoftwareAssembly sad = getComponent().getSoftwareAssembly();
 			ExternalProperties properties = sad.getExternalProperties();
 			if (properties != null) {
-				return AddCommand.create(domain, properties, SadPackage.Literals.EXTERNAL_PROPERTIES__PROPERTIES, (ExternalProperty)value);
+				return AddCommand.create(domain, properties, SadPackage.Literals.EXTERNAL_PROPERTIES__PROPERTIES, (ExternalProperty) value);
 			} else {
 				properties = SadFactory.eINSTANCE.createExternalProperties();
 				properties.getProperties().add((ExternalProperty) value);
 				return SetCommand.create(domain, sad, SadPackage.Literals.SOFTWARE_ASSEMBLY__EXTERNAL_PROPERTIES, properties);
 			}
 		}
-		return ((NestedItemProvider)getParent()).createAddChildCommand(domain, value, feature);
+		return ((NestedItemProvider) getParent()).createAddChildCommand(domain, value, feature);
 	}
 
 	protected Command createSetCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {

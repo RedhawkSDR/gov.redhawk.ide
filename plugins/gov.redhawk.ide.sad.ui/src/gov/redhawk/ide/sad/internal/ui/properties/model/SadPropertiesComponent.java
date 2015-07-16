@@ -102,7 +102,7 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 
 	@Override
 	protected Object createWrapper(EObject object, EStructuralFeature feature, Object value, int index) {
-		if (feature == PrfPackage.Literals.PROPERTIES__PROPERTIES){
+		if (feature == PrfPackage.Literals.PROPERTIES__PROPERTIES) {
 			FeatureMap.Entry entry = (FeatureMap.Entry) value;
 			SadPropertyImpl< ? > property = createViewerProperty((AbstractProperty) entry.getValue());
 			ExternalProperty externalProperty = getExternalProperty(property.getID());
@@ -143,8 +143,9 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 			return new SadPropertiesStruct(adapterFactory, (Struct) def, this);
 		case PrfPackage.STRUCT_SEQUENCE:
 			return new SadPropertiesStructSequence(adapterFactory, (StructSequence) def, this);
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	private ExternalProperty getExternalProperty(final String refId) {
@@ -165,7 +166,7 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 	}
 
 	protected EStructuralFeature getChildFeature(Object object, Object child) {
-		switch (((EObject)child).eClass().getClassifierID()) {
+		switch (((EObject) child).eClass().getClassifierID()) {
 		case PrfPackage.SIMPLE_REF:
 			return PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF;
 		case PrfPackage.SIMPLE_SEQUENCE_REF:
@@ -174,8 +175,9 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 			return PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_REF;
 		case PrfPackage.STRUCT_SEQUENCE_REF:
 			return PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_SEQUENCE_REF;
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	@Override

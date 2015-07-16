@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 
 public interface SadPropertiesPackage {
-	public static SadPropertiesPackage eINSTANCE = SadPropertiesPackageImpl.init();
+	public static SadPropertiesPackage eINSTANCE = SadPropertiesPackageImpl.init(); // SUPPRESS CHECKSTYLE for now
 
 	public EClass getSadProperty();
 
@@ -23,12 +23,12 @@ public interface SadPropertiesPackage {
 	public EAttribute getSadProperty_ExternalId();
 
 	public static int SAD_PROPERTY = 0;
-	public static int SAD_PROPERTY__EXTERNAL_ID = 0;
-	public static int SAD_PROPERTY__VALUE = 1;
+	public static int SAD_PROPERTY__EXTERNAL_ID = 0; // SUPPRESS CHECKSTYLE for now
+	public static int SAD_PROPERTY__VALUE = 1; // SUPPRESS CHECKSTYLE for now
 
-	public interface Literals {
+	public interface Literals { // SUPPRESS CHECKSTYLE for now
 		public static EClass SAD_PROPERTY = SadPropertiesPackage.eINSTANCE.getSadProperty();
-		public static EAttribute SAD_PROPERTY__VALUE = SadPropertiesPackage.eINSTANCE.getSadProperty_Value();
-		public static EAttribute SAD_PROPERTY__EXTERNAL_ID = SadPropertiesPackage.eINSTANCE.getSadProperty_ExternalId();
+		public static EAttribute SAD_PROPERTY__VALUE = SadPropertiesPackage.eINSTANCE.getSadProperty_Value(); // SUPPRESS CHECKSTYLE for now
+		public static EAttribute SAD_PROPERTY__EXTERNAL_ID = SadPropertiesPackage.eINSTANCE.getSadProperty_ExternalId(); // SUPPRESS CHECKSTYLE for now
 	}
 }

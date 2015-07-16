@@ -98,7 +98,7 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 
 	@Override
 	protected void notifyChanged(Notification msg) {
-		if (msg.getFeature() == PrfPackage.Literals.SIMPLE_REF__VALUE){
+		if (msg.getFeature() == PrfPackage.Literals.SIMPLE_REF__VALUE) {
 			fireNotifyChanged(new ViewerNotification(msg, this, false, true));
 			return;
 		}

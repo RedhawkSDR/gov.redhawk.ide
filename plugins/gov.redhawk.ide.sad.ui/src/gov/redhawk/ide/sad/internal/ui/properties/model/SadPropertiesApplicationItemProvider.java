@@ -38,7 +38,7 @@ public class SadPropertiesApplicationItemProvider extends ItemProviderAdapter im
 	@Override
 	protected Object getValue(EObject eObject, EStructuralFeature eStructuralFeature) {
 		if (eStructuralFeature == PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_INSTANTIATION) {
-			return ((SoftwareAssembly)eObject).getAllComponentInstantiations();
+			return ((SoftwareAssembly) eObject).getAllComponentInstantiations();
 		}
 		return super.getValue(eObject, eStructuralFeature);
 	}
@@ -79,7 +79,7 @@ public class SadPropertiesApplicationItemProvider extends ItemProviderAdapter im
 		} else if (feature == SadPackage.Literals.EXTERNAL_PROPERTIES__PROPERTIES) {
 			if (msg.getEventType() == Notification.ADD) {
 				externalPropertyChanged(msg, (ExternalProperty) msg.getNewValue());
-			} else if (msg.getEventType() == Notification.REMOVE){
+			} else if (msg.getEventType() == Notification.REMOVE) {
 				externalPropertyChanged(msg, (ExternalProperty) msg.getOldValue());
 			}
 		}

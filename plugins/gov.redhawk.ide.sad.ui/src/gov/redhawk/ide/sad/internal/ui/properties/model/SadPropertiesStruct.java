@@ -76,8 +76,9 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 			return PrfPackage.Literals.STRUCT_REF__SIMPLE_REF;
 		case PrfPackage.SIMPLE_SEQUENCE_REF:
 			return PrfPackage.Literals.STRUCT_REF__SIMPLE_SEQUENCE_REF;
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -109,7 +110,7 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			StructRef ref = getValueRef();
 			if (ref.getRefs().size() == 1) {
-				return ((NestedItemProvider)getParent()).createRemoveChildCommand(domain, ref, feature);
+				return ((NestedItemProvider) getParent()).createRemoveChildCommand(domain, ref, feature);
 			} else {
 				return RemoveCommand.create(domain, ref, getChildFeature(ref, child), child);
 			}
@@ -144,7 +145,7 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 	public void setReference(AbstractPropertyRef< ? > reference) {
 		super.setReference(reference);
 
-		Map<String,AbstractPropertyRef< ? >> fieldRefs = new HashMap<String, AbstractPropertyRef< ? >>();
+		Map<String, AbstractPropertyRef< ? >> fieldRefs = new HashMap<String, AbstractPropertyRef< ? >>();
 		if (reference != null) {
 			StructRef structRef = (StructRef) reference;
 			for (FeatureMap.Entry ref : structRef.getRefs()) {

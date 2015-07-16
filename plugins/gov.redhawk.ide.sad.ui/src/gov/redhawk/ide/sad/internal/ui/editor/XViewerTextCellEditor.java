@@ -73,7 +73,7 @@ public class XViewerTextCellEditor extends XViewerCellEditor {
 	protected void editOccurred(ModifyEvent e) {
 		String value = text.getText();
 		if (value == null) {
-			value = "";//$NON-NLS-1$
+			value = ""; //$NON-NLS-1$
 		}
 		if (!isCorrect(value)) {
 			showControlDecoration(getErrorMessage());

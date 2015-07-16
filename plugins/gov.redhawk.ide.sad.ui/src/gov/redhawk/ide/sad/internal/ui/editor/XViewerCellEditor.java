@@ -23,7 +23,7 @@ public abstract class XViewerCellEditor extends Composite {
 
 	private ICellEditorValidator validator = null;
 	private String errorMessage = null;
-	boolean valid = false;
+	private boolean valid = false;
 	private ControlDecoration decoration = null;
 
 	public XViewerCellEditor(Composite parent) {
