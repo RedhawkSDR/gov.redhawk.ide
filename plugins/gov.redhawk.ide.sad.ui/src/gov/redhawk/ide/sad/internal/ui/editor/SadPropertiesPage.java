@@ -29,8 +29,6 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.nebula.widgets.xviewer.edit.XViewerControlFactory;
-import org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerEditAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
