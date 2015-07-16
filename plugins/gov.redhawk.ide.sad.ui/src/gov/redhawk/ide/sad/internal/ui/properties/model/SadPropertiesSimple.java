@@ -69,6 +69,13 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 			@Override
 			public String getText(Object element) {
 				if (element != null) {
+					if (def.getEnumerations() != null) {
+						for (Enumeration enumeration : def.getEnumerations().getEnumeration()) {
+							if (enumeration.getValue().equals(element)) {
+								return enumeration.getLabel();
+							}
+						}
+					}
 					return (String) element;
 				}
 				return "";
@@ -128,13 +135,27 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 			String[] items = new String[] { "", "true", "false" };
 			return new XViewerComboCellEditor(parent, items, SWT.BORDER | SWT.READ_ONLY);
 		} else if (def.getEnumerations() != null) {
-			List<String> values = new ArrayList<String>(def.getEnumerations().getEnumeration().size());
+			final List<Enumeration> enumerations = def.getEnumerations().getEnumeration();
+			List<String> values = new ArrayList<String>(enumerations.size());
 			values.add("");
-			for (Enumeration v : def.getEnumerations().getEnumeration()) {
-				values.add(v.getLabel());
+			for (Enumeration enumeration : enumerations) {
+				values.add(enumeration.getLabel());
 			}
 			String[] items = values.toArray(new String[values.size()]);
-			return new XViewerComboCellEditor(parent, items, SWT.BORDER | SWT.READ_ONLY);
+			return new XViewerComboCellEditor(parent, items, SWT.BORDER | SWT.READ_ONLY) {
+
+				@Override
+				protected Object doGetValue() {
+					String text = (String) super.doGetValue();
+					for (Enumeration enumeration : enumerations) {
+						if (enumeration.getLabel().equals(text)) {
+							return enumeration.getValue();
+						}
+					}
+					return text;
+				}
+
+			};
 		} else {
 			XViewerTextCellEditor editor = new XViewerTextCellEditor(parent, SWT.BORDER);
 			editor.setValidator(new ICellEditorValidator() {
