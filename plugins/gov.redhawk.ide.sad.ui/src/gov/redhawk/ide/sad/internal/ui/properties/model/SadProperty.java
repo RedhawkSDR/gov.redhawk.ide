@@ -33,7 +33,7 @@ public interface SadProperty {
 
 	void setSadValue(Object value);
 
-	String getPrfValue();
+	Object getPrfValue();
 
 	String getID();
 

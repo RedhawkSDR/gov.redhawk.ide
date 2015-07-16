@@ -319,7 +319,9 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 
 	public String getPrfValue(Object element) {
 		if (element instanceof SadProperty) {
-			return ((SadProperty) element).getPrfValue();
+			SadProperty property = (SadProperty) element;
+			Object value = property.getPrfValue();
+			return property.getLabelProvider().getText(value);
 		}
 		return "";
 	}

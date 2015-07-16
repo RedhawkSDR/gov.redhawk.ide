@@ -84,8 +84,8 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 	}
 
 	@Override
-	public String getPrfValue() {
-		return formatListSize(def.getStructValue());
+	public Object getPrfValue() {
+		return def.getStructValue();
 	}
 
 	@Override
@@ -95,20 +95,13 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 			@Override
 			public String getText(Object element) {
 				if (element != null) {
-					return formatListSize((List< ? >) element);
+					int items = ((List< ? >) element).size();
+					return "[" + items + "]";
 				}
 				return "";
 			}
 
 		};
-	}
-
-	private String formatListSize(List< ? > value) {
-		if (value != null) {
-			int items = value.size();
-			return "[" + items + "]";
-		}
-		return "";
 	}
 
 	@Override

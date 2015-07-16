@@ -63,7 +63,7 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 	}
 
 	@Override
-	public String getPrfValue() {
+	public Object getPrfValue() {
 		return null;
 	}
 

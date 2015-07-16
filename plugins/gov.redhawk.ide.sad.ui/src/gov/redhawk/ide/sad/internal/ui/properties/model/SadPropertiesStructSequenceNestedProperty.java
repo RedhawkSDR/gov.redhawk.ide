@@ -44,10 +44,9 @@ public abstract class SadPropertiesStructSequenceNestedProperty<E extends Abstra
 	protected abstract List< ? > getRefValues(List<StructValue> values);
 
 	@Override
-	public String getPrfValue() {
+	public Object getPrfValue() {
 		StructSequence seq = getParent().getDefinition();
-		List<?> retVal = getRefValues(seq.getStructValue());
-		return Arrays.toString(retVal.toArray());
+		return getRefValues(seq.getStructValue());
 	}
 
 	@Override

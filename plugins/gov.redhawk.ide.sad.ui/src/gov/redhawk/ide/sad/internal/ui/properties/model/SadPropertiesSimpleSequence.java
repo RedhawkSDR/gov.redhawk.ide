@@ -68,12 +68,12 @@ public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence>
 	}
 
 	@Override
-	public String getPrfValue() {
+	public Object getPrfValue() {
 		Values values = getDefinition().getValues();
 		if (values != null) {
-			return Arrays.toString(values.getValue().toArray());
+			return values.getValue();
 		}
-		return "";
+		return null;
 	}
 
 	@Override
