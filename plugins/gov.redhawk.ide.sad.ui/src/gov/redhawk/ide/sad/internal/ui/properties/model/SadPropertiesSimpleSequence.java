@@ -24,6 +24,8 @@ import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ViewerNotification;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
@@ -72,6 +74,21 @@ public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence>
 			return Arrays.toString(values.getValue().toArray());
 		}
 		return "";
+	}
+
+	@Override
+	protected ILabelProvider createLabelProvider() {
+		return new LabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				if (element != null) {
+					return Arrays.toString(((List< ? >) element).toArray());
+				}
+				return "";
+			}
+
+		};
 	}
 
 	@Override

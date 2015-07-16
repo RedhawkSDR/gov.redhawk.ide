@@ -12,6 +12,8 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import java.util.Collection;
 
+import org.eclipse.jface.viewers.ILabelProvider;
+
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
@@ -39,4 +41,5 @@ public interface SadProperty {
 
 	SadComponentInstantiation getComponentInstantiation();
 
+	ILabelProvider getLabelProvider();
 }

@@ -36,6 +36,7 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.IDisposable;
 import org.eclipse.emf.edit.provider.ItemProvider;
 import org.eclipse.emf.edit.provider.ViewerNotification;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.widgets.Composite;
 
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
@@ -50,6 +51,7 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 	protected ExternalProperty externalProperty;
 
 	private Adapter adapter = null;
+	private ILabelProvider labelProvider = null;
 
 	/**
 	 * 
@@ -153,6 +155,16 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 	}
 
 	protected abstract boolean isEmpty(Object value);
+
+	@Override
+	public ILabelProvider getLabelProvider() {
+		if (labelProvider == null) {
+			labelProvider = createLabelProvider();
+		}
+		return labelProvider;
+	}
+
+	protected abstract ILabelProvider createLabelProvider();
 
 	@Override
 	public void setSadValue(Object value) {

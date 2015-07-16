@@ -22,6 +22,8 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.eclipse.jface.viewers.ICellEditorValidator;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
@@ -58,6 +60,21 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 	@Override
 	public String getPrfValue() {
 		return getDefinition().getValue();
+	}
+
+	@Override
+	protected ILabelProvider createLabelProvider() {
+		return new LabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				if (element != null) {
+					return (String) element;
+				}
+				return "";
+			}
+
+		};
 	}
 
 	@Override

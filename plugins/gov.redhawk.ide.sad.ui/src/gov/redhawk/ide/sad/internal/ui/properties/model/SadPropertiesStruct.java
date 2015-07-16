@@ -25,6 +25,8 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ViewerNotification;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.PrfFactory;
@@ -63,6 +65,18 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 	@Override
 	public String getPrfValue() {
 		return null;
+	}
+
+	@Override
+	protected ILabelProvider createLabelProvider() {
+		return new LabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				return "";
+			}
+
+		};
 	}
 
 	@Override

@@ -22,6 +22,8 @@ import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ViewerNotification;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
@@ -71,9 +73,9 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 	@Override
 	public Object getSadValue() {
 		if (ref != null) {
-			return formatListSize(((StructSequenceRef) ref).getStructValue());
+			return ((StructSequenceRef) ref).getStructValue();
 		}
-		return "";
+		return null;
 	}
 
 	@Override
@@ -84,6 +86,21 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 	@Override
 	public String getPrfValue() {
 		return formatListSize(def.getStructValue());
+	}
+
+	@Override
+	protected ILabelProvider createLabelProvider() {
+		return new LabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				if (element != null) {
+					return formatListSize((List< ? >) element);
+				}
+				return "";
+			}
+
+		};
 	}
 
 	private String formatListSize(List< ? > value) {

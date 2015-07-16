@@ -16,6 +16,8 @@ import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.edit.provider.ItemProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.StructSequence;
@@ -26,6 +28,7 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 public abstract class SadPropertiesStructSequenceNestedProperty<E extends AbstractProperty> extends ItemProvider implements SadProperty {
 
 	protected final E definition;
+	private ILabelProvider labelProvider;
 
 	public SadPropertiesStructSequenceNestedProperty(AdapterFactory adapterFactory, E def, Object parent) {
 		super(adapterFactory);
@@ -51,10 +54,27 @@ public abstract class SadPropertiesStructSequenceNestedProperty<E extends Abstra
 	public Object getSadValue() {
 		StructSequenceRef structSequenceRef = getParent().getValueRef();
 		if (structSequenceRef != null) {
-			List< ? > values = getRefValues(structSequenceRef.getStructValue());
-			return Arrays.toString(values.toArray());
+			return getRefValues(structSequenceRef.getStructValue());
 		}
 		return null;
+	}
+
+	@Override
+	public ILabelProvider getLabelProvider() {
+		if (labelProvider == null) {
+			labelProvider = new LabelProvider() {
+
+				@Override
+				public String getText(Object element) {
+					if (element != null) {
+						return Arrays.toString(((List< ? >) element).toArray());
+					}
+					return "";
+				}
+
+			};
+		}
+		return labelProvider;
 	}
 
 	@Override
