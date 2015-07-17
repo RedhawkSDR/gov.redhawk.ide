@@ -60,8 +60,11 @@ public class XViewerListCellEditor extends XViewerCellEditor {
 		// Determine the bounds of the list--since it is going to pop over the cell, we can use whatever size we want.
 		// Use the width of the cell, but for height try to determine how large it should be to show a reasonable
 		// number of items (logic borrowed from SWT's CCombo).
-		int itemCount = Math.min(list.getItemCount(), 5);
-		Point listSize = list.computeSize(SWT.DEFAULT, itemCount * list.getItemHeight(), false);
+		int itemHeight = list.getItemHeight();
+		int maxHeight = getMonitor().getClientArea().height / 3;
+		int visibleItemCount = Math.max(5, maxHeight / itemHeight);
+		int itemCount = Math.min(list.getItemCount(), visibleItemCount);
+		Point listSize = list.computeSize(SWT.DEFAULT, itemCount * itemHeight, false);
 		int width = getSize().x;
 		int height = listSize.y;
 		// Also borrowed from CCombo: if the horizontal scroll bar isn't shown, offset the size so as not to waste
