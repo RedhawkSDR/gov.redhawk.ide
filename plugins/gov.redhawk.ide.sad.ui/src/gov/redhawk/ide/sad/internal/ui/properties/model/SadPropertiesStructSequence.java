@@ -147,12 +147,7 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 
 			@Override
 			protected Object openDialogBox() {
-				ScaStructSequenceProperty property = ScaFactory.eINSTANCE.createScaStructSequenceProperty();
-				StructSequenceRef ref = getValueRef();
-				property.setDefinition(getDefinition());
-				if (ref != null) {
-					property.fromAny(ref.toAny());
-				}
+				ScaStructSequenceProperty property = toScaStructSequenceProperty();
 				SequencePropertyValueWizard wizard = new SequencePropertyValueWizard(property);
 				WizardDialog dialog = new WizardDialog(getShell(), wizard);
 				if (dialog.open() == Window.OK) {
@@ -166,6 +161,16 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 		// Use the same label provider to ensure that the value is displayed as "[N]" instead of the using toString()
 		editor.setLabelProvider(getLabelProvider());
 		return editor;
+	}
+
+	private ScaStructSequenceProperty toScaStructSequenceProperty() {
+		ScaStructSequenceProperty property = ScaFactory.eINSTANCE.createScaStructSequenceProperty();
+		StructSequenceRef ref = getValueRef();
+		property.setDefinition(getDefinition());
+		if (ref != null) {
+			property.fromAny(ref.toAny());
+		}
+		return property;
 	}
 
 	private Collection< ? > toStructValues(ScaStructSequenceProperty property) {
