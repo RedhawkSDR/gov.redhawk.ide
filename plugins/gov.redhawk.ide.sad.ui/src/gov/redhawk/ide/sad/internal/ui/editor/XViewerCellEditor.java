@@ -68,7 +68,9 @@ public abstract class XViewerCellEditor extends Composite {
 	}
 
 	protected void hideControlDecoration() {
-		getControlDecoration().hide();
+		if (decoration != null) {
+			decoration.hide();
+		}
 	}
 
 	protected abstract void doSetValue(Object value);
