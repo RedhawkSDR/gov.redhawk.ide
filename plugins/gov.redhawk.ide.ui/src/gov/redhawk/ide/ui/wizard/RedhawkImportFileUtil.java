@@ -11,21 +11,6 @@
 
 package gov.redhawk.ide.ui.wizard;
 
-import gov.redhawk.ide.codegen.CodegenFactory;
-import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
-import gov.redhawk.ide.codegen.IPropertyDescriptor;
-import gov.redhawk.ide.codegen.IScaComponentCodegen;
-import gov.redhawk.ide.codegen.ITemplateDesc;
-import gov.redhawk.ide.codegen.ImplementationSettings;
-import gov.redhawk.ide.codegen.Property;
-import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
-import gov.redhawk.ide.codegen.WaveDevSettings;
-import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
-import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
-import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
-import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
-import gov.redhawk.ide.ui.wizard.RedhawkImportWizardPage1.ProjectRecord;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,10 +27,6 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -59,6 +40,14 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+
+import gov.redhawk.ide.codegen.WaveDevSettings;
+import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
+import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
+import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
+import gov.redhawk.ide.ui.wizard.RedhawkImportWizardPage1.ProjectRecord;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
  * @since 9.1
@@ -166,18 +155,14 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 	}
 
 	protected int findMissingFiles() {
-		boolean hasSource = false;
+		boolean hasSource = true;
 
 		File[] contents = record.projectSystemFile.getParentFile().listFiles();
 		if (contents != null) {
 			for (File file : contents) {
 				String name = file.getName();
 
-				for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
-					if (assistant.handlesNature(name)) {
-						hasSource = true;
-					}
-				}
+				// TODO: Evaluate if source is present and set hasSource
 
 				// Check for .project and .wavedev files
 				if (name.matches(".+\\.project")) {
@@ -242,8 +227,6 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 				}
 			}
 
-			setupNatures(project, importSource);
-
 			// If selected, copy files to workspace
 			if (copyFiles) {
 				List< ? > filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
@@ -275,98 +258,10 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 		return null;
 	}
 
-	private void setupNatures(IProject project, File importSource) throws CoreException {
-		for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
-			assistant.setupNatures(importSource, project, monitor);
-		}
-	}
-
 	@Override
 	protected WaveDevSettings createWaveDevFile() throws CoreException {
 		SoftPkg softPkg = getSoftPkg(record.projectSystemFile.getAbsolutePath());
-
-		WaveDevSettings waveDev = CodegenFactory.eINSTANCE.createWaveDevSettings();
-
-		// Recreate the basic settings for each implementation
-		// This makes assumptions that the defaults are selected for everything
-		for (final Implementation impl : softPkg.getImplementation()) {
-			final ImplementationSettings settings = CodegenFactory.eINSTANCE.createImplementationSettings();
-			final String lang = impl.getProgrammingLanguage().getName();
-			// Find the code generator if specified, otherwise pick the first one returned by the registry
-			ICodeGeneratorDescriptor codeGenDesc = null;
-			final ICodeGeneratorDescriptor[] codeGens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(lang);
-			if (codeGens.length > 0) {
-				codeGenDesc = codeGens[0];
-			}
-
-			if (codeGenDesc != null) {
-				final IScaComponentCodegen generator = codeGenDesc.getGenerator();
-
-				// Assume that there is <name>[/].+<other> format for the entrypoint
-				// Pick out <name> for both the output dir and settings name
-				final String lf = impl.getCode().getEntryPoint();
-
-				// Set the generator, settings name and output directory
-				settings.setGeneratorId(generator.getClass().getCanonicalName());
-				settings.setOutputDir(lf.substring(0, lf.lastIndexOf('/')));
-
-				// pick the first selectable and defaultable template returned by the registry
-				ITemplateDesc templateDesc = null;
-				final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(settings.getGeneratorId());
-				for (final ITemplateDesc itd : templates) {
-					if (itd.isSelectable() && !itd.notDefaultableGenerator()) {
-						templateDesc = itd;
-						break;
-					}
-				}
-				// If we found the template, use it
-				if (templateDesc != null) {
-					// Set the properties to their default values
-					for (final IPropertyDescriptor prop : templateDesc.getPropertyDescriptors()) {
-						final Property p = CodegenFactory.eINSTANCE.createProperty();
-						p.setId(prop.getKey());
-						p.setValue(prop.getDefaultValue());
-						settings.getProperties().add(p);
-					}
-					// Set the template
-					settings.setTemplate(templateDesc.getId());
-					if (record.getTemplate() != null && !record.getTemplate().isEmpty()) {
-						settings.setTemplate(record.getTemplate().get(impl.getId()));
-					} else {
-						for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
-							if (assistant.handlesLanguage(lang)) {
-								settings.setTemplate(assistant.getDefaultTemplate());
-								break;
-							}
-						}
-					}
-				}
-			}
-
-			for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
-				if (assistant.handlesLanguage(lang)) {
-					assistant.setupWaveDev(projectName, settings);
-					break;
-				}
-			}
-			waveDev.getImplSettings().put(impl.getId(), settings);
-		}
-
-		// Create the URI to the .wavedev file
-		final org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createPlatformResourceURI(softPkg.getName() + "/." + softPkg.getName()
-			+ ".wavedev", false);
-		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
-		final Resource res = set.createResource(uri);
-
-		// Add the WaveDevSettings to the resource and save to disk to persist the newly created WaveDevSettings
-		res.getContents().add(waveDev);
-		try {
-			res.save(null);
-		} catch (final IOException e) {
-			IDEWorkbenchPlugin.log(e.getMessage(), e);
-		}
-
-		return waveDev;
+		return createWaveDevFile(record, projectName, softPkg);
 	}
 
 	public SoftPkg getSoftPkg(String path) {

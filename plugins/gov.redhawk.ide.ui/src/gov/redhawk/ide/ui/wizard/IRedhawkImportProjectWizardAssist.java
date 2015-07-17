@@ -10,12 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.wizard;
 
-import java.io.File;
-import java.util.List;
-
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import gov.redhawk.ide.codegen.ITemplateDesc;
 import gov.redhawk.ide.codegen.ImplementationSettings;
@@ -27,22 +22,16 @@ import gov.redhawk.ide.ui.wizard.RedhawkImportWizardPage1.ProjectRecord;
 public interface IRedhawkImportProjectWizardAssist {
 	/**
 	 * 
-	 * @param settings 
+	 * @param settings
 	 * @param lang
 	 * @param templateDesc
 	 * @return True if handled template
 	 */
 	boolean setTemplate(ProjectRecord record, final ImplementationSettings settings, final String lang, ITemplateDesc templateDesc) throws CoreException;
-	
-	void setupNatures(List<String> natures, IProject dotProject, IProgressMonitor monitor) throws CoreException;
-
-	void setupNatures(File importSource, IProject project, IProgressMonitor monitor) throws CoreException;
 
 	boolean handlesImplId(String id);
-	
+
 	boolean handlesLanguage(String lang);
-	
-	boolean handlesNature(String nature);
 
 	String getDefaultTemplate();
 
