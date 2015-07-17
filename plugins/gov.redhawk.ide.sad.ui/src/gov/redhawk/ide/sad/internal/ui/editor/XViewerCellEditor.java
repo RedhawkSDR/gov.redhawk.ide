@@ -123,7 +123,11 @@ public abstract class XViewerCellEditor extends Composite {
 		return (errorMessage == null || errorMessage.isEmpty());
 	}
 
-	protected void forwardEvents(int eventType, Control control) {
-		control.addListener(eventType, forwardingListener);
+	protected void forwardEvents(int eventType, Control control, boolean enable) {
+		if (enable) {
+			control.addListener(eventType, forwardingListener);
+		} else {
+			control.removeListener(eventType, forwardingListener);
+		}
 	}
 }

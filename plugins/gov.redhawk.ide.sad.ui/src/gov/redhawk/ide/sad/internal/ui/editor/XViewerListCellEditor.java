@@ -141,8 +141,8 @@ public class XViewerListCellEditor extends XViewerCellEditor {
 
 		});
 
-		forwardEvents(SWT.FocusOut, list);
-		forwardEvents(SWT.Traverse, list);
+		forwardEvents(SWT.FocusOut, list, true);
+		forwardEvents(SWT.Traverse, list, true);
 	}
 
 	protected String[] getListItems() {

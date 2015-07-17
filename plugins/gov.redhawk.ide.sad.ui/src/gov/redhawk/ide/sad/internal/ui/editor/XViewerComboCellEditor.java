@@ -42,9 +42,9 @@ public class XViewerComboCellEditor extends XViewerCellEditor {
 
 		combo.addModifyListener(modifyListener);
 
-		forwardEvents(SWT.FocusOut, combo);
-		forwardEvents(SWT.Traverse, combo);
-		forwardEvents(SWT.Verify, combo);
+		forwardEvents(SWT.FocusOut, combo, true);
+		forwardEvents(SWT.Traverse, combo, true);
+		forwardEvents(SWT.Verify, combo, true);
 
 		setLayout(new FillLayout());
 	}

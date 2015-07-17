@@ -37,9 +37,9 @@ public class XViewerTextCellEditor extends XViewerCellEditor {
 
 		text.addModifyListener(modifyListener);
 
-		forwardEvents(SWT.FocusOut, text);
-		forwardEvents(SWT.Traverse, text);
-		forwardEvents(SWT.Verify, text);
+		forwardEvents(SWT.FocusOut, text, true);
+		forwardEvents(SWT.Traverse, text, true);
+		forwardEvents(SWT.Verify, text, true);
 
 		setLayout(new FillLayout());
 	}

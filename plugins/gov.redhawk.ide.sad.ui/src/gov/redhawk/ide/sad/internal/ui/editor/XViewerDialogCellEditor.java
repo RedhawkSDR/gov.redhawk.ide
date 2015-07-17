@@ -12,7 +12,6 @@ package gov.redhawk.ide.sad.internal.ui.editor;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -28,7 +27,6 @@ public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 	protected Label label;
 	private Button button;
 	protected Object value;
-	private FocusListener focusListener;
 	private ILabelProvider labelProvider;
 
 	/**
@@ -80,13 +78,13 @@ public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 		button = new Button(this, SWT.DOWN);
 		button.setText("...");
 
-		forwardEvents(SWT.FocusOut, button);
-		forwardEvents(SWT.Traverse, button);
+		forwardEvents(SWT.FocusOut, button, true);
+		forwardEvents(SWT.Traverse, button, true);
 
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				button.removeFocusListener(focusListener);
+				forwardEvents(SWT.FocusOut, button, false);
 				Object newValue = openDialogBox();
 				if (newValue != null) {
 					setValueValid(true);
