@@ -10,8 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.editor;
 
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -38,13 +37,9 @@ public class XViewerTextCellEditor extends XViewerCellEditor {
 
 		text.addModifyListener(modifyListener);
 
-		text.addFocusListener(new FocusAdapter() {
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				XViewerTextCellEditor.this.focusLost();
-			}
-		});
+		forwardEvents(SWT.FocusOut, text);
+		forwardEvents(SWT.Traverse, text);
+		forwardEvents(SWT.Verify, text);
 
 		setLayout(new FillLayout());
 	}

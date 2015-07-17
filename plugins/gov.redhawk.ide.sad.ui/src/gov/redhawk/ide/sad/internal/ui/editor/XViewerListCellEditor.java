@@ -15,14 +15,10 @@ import java.util.Collection;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -43,6 +39,7 @@ public class XViewerListCellEditor extends XViewerCellEditor {
 	public XViewerListCellEditor(Composite parent, Collection< ? > items) {
 		super(parent);
 		this.items = new ArrayList<Object>(items);
+		setValueValid(true);
 	}
 
 	@Override
@@ -130,7 +127,7 @@ public class XViewerListCellEditor extends XViewerCellEditor {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				acceptEditor();
+				deactivate();
 			}
 		};
 		list.addSelectionListener(selectionListener);
@@ -139,42 +136,13 @@ public class XViewerListCellEditor extends XViewerCellEditor {
 
 			@Override
 			public void mouseUp(MouseEvent e) {
-				acceptEditor();
+				deactivate();
 			}
 
 		});
 
-		list.addFocusListener(new FocusListener() {
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				cancelEditor();
-			}
-
-			@Override
-			public void focusGained(FocusEvent e) {
-			}
-		});
-
-		list.addTraverseListener(new TraverseListener() {
-
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.character == SWT.ESC) {
-					cancelEditor();
-				}
-			}
-		});
-	}
-
-	protected void cancelEditor() {
-		setValueValid(false);
-		focusLost();
-	}
-
-	protected void acceptEditor() {
-		setValueValid(true);
-		focusLost();
+		forwardEvents(SWT.FocusOut, list);
+		forwardEvents(SWT.Traverse, list);
 	}
 
 	protected String[] getListItems() {

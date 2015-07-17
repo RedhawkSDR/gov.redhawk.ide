@@ -12,12 +12,8 @@ package gov.redhawk.ide.sad.internal.ui.editor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -46,24 +42,9 @@ public class XViewerComboCellEditor extends XViewerCellEditor {
 
 		combo.addModifyListener(modifyListener);
 
-		combo.addFocusListener(new FocusAdapter() {
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				XViewerComboCellEditor.this.focusLost();
-			}
-		});
-
-		combo.addTraverseListener(new TraverseListener() {
-
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.character == SWT.ESC) {
-					setValueValid(false);
-					focusLost();
-				}
-			}
-		});
+		forwardEvents(SWT.FocusOut, combo);
+		forwardEvents(SWT.Traverse, combo);
+		forwardEvents(SWT.Verify, combo);
 
 		setLayout(new FillLayout());
 	}

@@ -12,8 +12,6 @@ package gov.redhawk.ide.sad.internal.ui.editor;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -82,14 +80,8 @@ public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 		button = new Button(this, SWT.DOWN);
 		button.setText("...");
 
-		focusListener = new FocusAdapter() {
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				XViewerDialogCellEditor.this.focusLost();
-			}
-		};
-		button.addFocusListener(focusListener);
+		forwardEvents(SWT.FocusOut, button);
+		forwardEvents(SWT.Traverse, button);
 
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -100,7 +92,7 @@ public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 					setValueValid(true);
 					doSetValue(newValue);
 				}
-				XViewerDialogCellEditor.this.focusLost();
+				XViewerDialogCellEditor.this.deactivate();
 			}
 
 		});

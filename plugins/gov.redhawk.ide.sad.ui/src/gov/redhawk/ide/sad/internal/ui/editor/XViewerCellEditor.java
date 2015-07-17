@@ -14,6 +14,7 @@ import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.ISharedImages;
@@ -25,6 +26,15 @@ public abstract class XViewerCellEditor extends Composite {
 	private String errorMessage = null;
 	private boolean valid = false;
 	private ControlDecoration decoration = null;
+
+	private Listener forwardingListener = new Listener() {
+
+		@Override
+		public void handleEvent(Event event) {
+			notifyListeners(event.type, event);
+		}
+
+	};
 
 	public XViewerCellEditor(Composite parent) {
 		super(parent, SWT.NONE);
@@ -73,14 +83,12 @@ public abstract class XViewerCellEditor extends Composite {
 
 	protected abstract Object doGetValue();
 
-	protected void focusLost() {
+	protected void deactivate() {
 		Event event = new Event();
 		event.type = SWT.FocusOut;
 		event.widget = this;
 		event.display = getDisplay();
-		for (Listener listener : getListeners(SWT.FocusOut)) {
-			listener.handleEvent(event);
-		}
+		notifyListeners(SWT.FocusOut, event);
 	}
 
 	public void setValidator(ICellEditorValidator validator) {
@@ -111,5 +119,9 @@ public abstract class XViewerCellEditor extends Composite {
 
 		errorMessage = validator.isValid(value);
 		return (errorMessage == null || errorMessage.isEmpty());
+	}
+
+	protected void forwardEvents(int eventType, Control control) {
+		control.addListener(eventType, forwardingListener);
 	}
 }
