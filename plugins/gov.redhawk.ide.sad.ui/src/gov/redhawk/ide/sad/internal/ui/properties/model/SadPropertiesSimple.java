@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerComboCellEditor;
+import gov.redhawk.ide.sad.internal.ui.editor.XViewerListCellEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerTextCellEditor;
 import mil.jpeojtrs.sca.prf.Enumeration;
 import mil.jpeojtrs.sca.prf.PrfFactory;
@@ -133,7 +134,7 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 	public XViewerCellEditor createCellEditor(Composite parent) {
 		if (def.getType() == PropertyValueType.BOOLEAN) {
 			String[] items = new String[] { "", "true", "false" };
-			return new XViewerComboCellEditor(parent, items, SWT.BORDER | SWT.READ_ONLY);
+			return new XViewerListCellEditor(parent, items);
 		} else if (def.getEnumerations() != null) {
 			final List<Enumeration> enumerations = def.getEnumerations().getEnumeration();
 			List<String> values = new ArrayList<String>(enumerations.size());
