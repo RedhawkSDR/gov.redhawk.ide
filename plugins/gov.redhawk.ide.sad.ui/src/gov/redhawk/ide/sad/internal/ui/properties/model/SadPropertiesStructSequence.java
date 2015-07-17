@@ -143,7 +143,7 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 
 	@Override
 	public XViewerCellEditor createCellEditor(Composite parent) {
-		return new XViewerDialogCellEditor(parent) {
+		XViewerDialogCellEditor editor = new XViewerDialogCellEditor(parent) {
 
 			@Override
 			protected Object openDialogBox() {
@@ -162,6 +162,10 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 				return null;
 			}
 		};
+
+		// Use the same label provider to ensure that the value is displayed as "[N]" instead of the using toString()
+		editor.setLabelProvider(getLabelProvider());
+		return editor;
 	}
 
 	private Collection< ? > toStructValues(ScaStructSequenceProperty property) {

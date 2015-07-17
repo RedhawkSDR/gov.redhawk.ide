@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.editor;
 
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -30,6 +31,7 @@ public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 	private Button button;
 	protected Object value;
 	private FocusListener focusListener;
+	private ILabelProvider labelProvider;
 
 	/**
 	 * Internal class for laying out the dialog.
@@ -64,6 +66,10 @@ public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 		super(parent);
 		value = null;
 		createControl(parent);
+	}
+
+	public void setLabelProvider(ILabelProvider labelProvider) {
+		this.labelProvider = labelProvider;
 	}
 
 	protected void createControl(Control parent) {
@@ -120,7 +126,9 @@ public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 
 	protected void updateContents(Object value) {
 		String text = "";
-		if (value != null) {
+		if (labelProvider != null) {
+			text = labelProvider.getText(value);
+		} else if (value != null) {
 			text = value.toString();
 		}
 		label.setText(text);
