@@ -87,6 +87,7 @@ import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.SystemException;
@@ -955,29 +956,29 @@ public class GraphitiModelMap implements IPortStatListener {
 	 * @see gov.redhawk.monitor.IPortStatListener#newStatistics(gov.redhawk.model.sca.ScaPort, BULKIO.PortStatistics)
 	 */
 	@Override
-	public void newStatistics(ScaPort< ? , ? > port, PortStatistics stats) {
+	public void newStatistics(final ScaPort< ? , ? > port, final PortStatistics stats) {
 		ScaPortContainer container = port.getPortContainer();
 		IPreferenceStore store = SADUIGraphitiPlugin.getDefault().getPreferenceStore();
-		float queueDepth = stats.averageQueueDepth;
-		double queueDepthWarningLevel = store.getDouble(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_QUEUE_LEVEL) / 100;
-		double queueDepthIncrement = (1.0 - queueDepthWarningLevel) / 4;
+		final float queueDepth = stats.averageQueueDepth;
+		final double queueDepthWarningLevel = store.getDouble(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_QUEUE_LEVEL) / 100;
+		final double queueDepthIncrement = (1.0 - queueDepthWarningLevel) / 4;
+		final double lastFlushResetTime = store.getDouble(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_QUEUE_FLUSH_DISPLAY);
 
-		double lastFlush = Double.MAX_VALUE;
-		double lastFlushResetTime = store.getDouble(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_QUEUE_FLUSH_DISPLAY);
-
+		Double lastFlushKeyword = null;
 		DataType[] keywords = stats.keywords;
 		if (keywords != null) {
 			for (DataType keyword : keywords) {
 				if ("timeSinceLastFlush".equals(keyword.id)) {
 					try {
-						lastFlush = keyword.value.extract_double();
+						lastFlushKeyword = keyword.value.extract_double();
 					} catch (BAD_OPERATION e) {
 						StatusManager.getManager().handle(
-							new Status(Status.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Expected double value for last flush: " + keyword.value, e));
+							new Status(Status.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Expected double value for timeSinceLastFlush keyword (TCKind was " + keyword.value.type().kind() + ")", e));
 					}
 				}
 			}
 		}
+		final double lastFlush = (lastFlushKeyword != null) ? lastFlushKeyword.doubleValue() : Double.MAX_VALUE; 
 
 		if (!(container instanceof ScaComponent)) {
 			StatusManager.getManager().handle(new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Received statistics for a port not belonging to a component"),
@@ -987,62 +988,67 @@ public class GraphitiModelMap implements IPortStatListener {
 
 		ScaComponent component = (ScaComponent) container;
 		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
-		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
+		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
 
 		// Since the same key(instantiationId) can be used in multiple editors, do an object comparison
 		if (nodeMapEntry == null || container != nodeMapEntry.getLocalScaComponent()) {
 			return;
 		}
 
-		SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
-		if (this.editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramBehavior() == null) {
-			return;
-		}
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final Diagram diagram = provider.getDiagram();
-		ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
-
-		// If something else has already locked updates to the port style, then disregard and return out.
-		// Otherwise, make sure we haven't locked updates ourselves.
-		if (!StyleUtil.getCanUpdatePorts() && !this.equals(StyleUtil.getLockingObject())) {
-			return;
-		} else {
-			StyleUtil.toggleUpdatePort(true, null);
-		}
-
-		for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
-			ProvidesPortStub portStub = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
-			if (portStub.getName().equals(port.getName())) {
-				Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, portStub, Anchor.class);
-				Rectangle anchorGa = (Rectangle) anchor.getGraphicsAlgorithm();
-				// CHECKSTYLE:OFF
-				if (lastFlush < lastFlushResetTime || (lastFlush != Double.MAX_VALUE && lastFlushResetTime < 0)) {
-					// If last flush reset time is set to -1, never reset the color if a flush has occurred
-					StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_4, editingDomain);
-				} else if (queueDepth < queueDepthWarningLevel) {
-					StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_OK, editingDomain);
-				} else if (queueDepth < (queueDepthWarningLevel += queueDepthIncrement)) {
-					StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_1, editingDomain);
-				} else if (queueDepth < (queueDepthWarningLevel += queueDepthIncrement)) {
-					StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_2, editingDomain);
-				} else if (queueDepth < (queueDepthWarningLevel += queueDepthIncrement)) {
-					StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_3, editingDomain);
-				} else {
-					StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_4, editingDomain);
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
+				if (GraphitiModelMap.this.editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramBehavior() == null) {
+					return;
 				}
-				// CHECKSTYLE:ON
-			}
-		}
+				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+				final Diagram diagram = provider.getDiagram();
+				ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
+			
+				// If something else has already locked updates to the port style, then disregard and return out.
+				// Otherwise, make sure we haven't locked updates ourselves.
+				if (!StyleUtil.getCanUpdatePorts() && !this.equals(StyleUtil.getLockingObject())) {
+					return;
+				} else {
+					StyleUtil.toggleUpdatePort(true, null);
+				}
+			
+				for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
+					ProvidesPortStub portStub = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
+					if (portStub.getName().equals(port.getName())) {
+						Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, portStub, Anchor.class);
+						Rectangle anchorGa = (Rectangle) anchor.getGraphicsAlgorithm();
 
-		// Lock other things from changing the port style
-		StyleUtil.toggleUpdatePort(false, this);
+						if (lastFlush < lastFlushResetTime || (lastFlush != Double.MAX_VALUE && lastFlushResetTime < 0)) {
+							// If last flush reset time is set to -1, never reset the color if a flush has occurred
+							StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_4, editingDomain);
+						} else if (queueDepth < queueDepthWarningLevel) {
+							StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_OK, editingDomain);
+						} else if (queueDepth < (queueDepthWarningLevel + queueDepthIncrement)) {
+							StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_1, editingDomain);
+						} else if (queueDepth < (queueDepthWarningLevel + 2 * queueDepthIncrement)) {
+							StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_2, editingDomain);
+						} else if (queueDepth < (queueDepthWarningLevel + 3 * queueDepthIncrement)) {
+							StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_3, editingDomain);
+						} else {
+							StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_4, editingDomain);
+						}
+					}
+				}
+			
+				// Lock other things from changing the port style
+				StyleUtil.toggleUpdatePort(false, this);
+			}
+		});
+
 	}
 
 	/* (non-Javadoc)
 	 * @see gov.redhawk.monitor.IPortStatListener#newStatistics(gov.redhawk.model.sca.ScaPort, java.lang.String, BULKIO.PortStatistics)
 	 */
 	@Override
-	public void newStatistics(ScaPort< ? , ? > port, String connectionId, PortStatistics stats) {
+	public void newStatistics(ScaPort< ? , ? > port, final String connectionId, PortStatistics stats) {
 		IPreferenceStore store = SADUIGraphitiPlugin.getDefault().getPreferenceStore();
 
 		if (editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramBehavior() == null) {
@@ -1063,28 +1069,32 @@ public class GraphitiModelMap implements IPortStatListener {
 		if (nodeMapEntry == null || container != nodeMapEntry.getLocalScaComponent()) {
 			return;
 		}
-		SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
-		ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
 
 		// Get the connection interface
-		ConnectionMapEntry connectionMap = connections.get(connectionId);
+		final ConnectionMapEntry connectionMap = connections.get(connectionId);
 		if (connectionMap == null) {
 			return;
 		}
 
-		float timeSinceLastCall = stats.timeSinceLastCall;
-		double lastCallWarningLevel = store.getDouble(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS);
-
-		SadConnectInterface connInterface = connectionMap.getProfile();
-
-		Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
-
-		Polyline line = (Polyline) connection.getGraphicsAlgorithm();
-		if (timeSinceLastCall < lastCallWarningLevel) {
-			updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.GREEN);
-		} else {
-			updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.YELLOW);
-		}
+		final float timeSinceLastCall = stats.timeSinceLastCall;
+		final double lastCallWarningLevel = store.getDouble(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS);
+		
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
+				ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
+				SadConnectInterface connInterface = connectionMap.getProfile();
+				Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
+		
+				Polyline line = (Polyline) connection.getGraphicsAlgorithm();
+				if (timeSinceLastCall < lastCallWarningLevel) {
+					updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.GREEN);
+				} else {
+					updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.YELLOW);
+				}
+			}
+		});
 	}
 
 	private void updateConnectionStyle(final ComponentShapeImpl componentShape, final Connection connection, final SadConnectInterface connInterface,
@@ -1111,7 +1121,7 @@ public class GraphitiModelMap implements IPortStatListener {
 	 * @see gov.redhawk.monitor.IPortStatListener#noStatistics(gov.redhawk.model.sca.ScaPort)
 	 */
 	@Override
-	public void noStatistics(ScaPort< ? , ? > port) {
+	public void noStatistics(final ScaPort< ? , ? > port) {
 		ScaPortContainer container = port.getPortContainer();
 		ScaComponent component = (ScaComponent) container;
 		if (component == null) {
@@ -1120,23 +1130,28 @@ public class GraphitiModelMap implements IPortStatListener {
 
 		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
 		if (nodeMapEntry != null) {
-			SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
-			final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-			final Diagram diagram = provider.getDiagram();
-			TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-
-			ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
-			StyleUtil.toggleUpdatePort(true, null);
-			if (port instanceof ScaProvidesPort) {
-				EList<ProvidesPortStub> providesStubs = componentShape.getProvidesPortStubs();
-				for (ProvidesPortStub portStub : providesStubs) {
-					if (portStub.getName().equals(port.getName())) {
-						Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, portStub, Anchor.class);
-						Rectangle anchorGa = (Rectangle) anchor.getGraphicsAlgorithm();
-						StyleUtil.updatePortStyle(anchorGa, diagram, null, editingDomain);
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
+					final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+					final Diagram diagram = provider.getDiagram();
+					TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
+		
+					ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
+					StyleUtil.toggleUpdatePort(true, null);
+					if (port instanceof ScaProvidesPort) {
+						EList<ProvidesPortStub> providesStubs = componentShape.getProvidesPortStubs();
+						for (ProvidesPortStub portStub : providesStubs) {
+							if (portStub.getName().equals(port.getName())) {
+								Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, portStub, Anchor.class);
+								Rectangle anchorGa = (Rectangle) anchor.getGraphicsAlgorithm();
+								StyleUtil.updatePortStyle(anchorGa, diagram, null, editingDomain);
+							}
+						}
 					}
 				}
-			}
+			});
 		}
 	}
 
@@ -1144,7 +1159,7 @@ public class GraphitiModelMap implements IPortStatListener {
 	 * @see gov.redhawk.monitor.IPortStatListener#noStatistics(gov.redhawk.model.sca.ScaPort, java.lang.String)
 	 */
 	@Override
-	public void noStatistics(ScaPort< ? , ? > port, String connectionId) {
+	public void noStatistics(ScaPort< ? , ? > port, final String connectionId) {
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final Diagram diagram = provider.getDiagram();
 
@@ -1158,17 +1173,23 @@ public class GraphitiModelMap implements IPortStatListener {
 		if (nodeMapEntry == null) {
 			return;
 		}
-		SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
-		ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
-
-		// Get the connection interface
-		ConnectionMapEntry connectionMap = connections.get(connectionId);
-		if (connectionMap == null) {
-			return;
-		}
-		SadConnectInterface connInterface = connectionMap.getProfile();
-		Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
-		Polyline line = (Polyline) connection.getGraphicsAlgorithm();
-		updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, null);
+		
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
+				ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
+		
+				// Get the connection interface
+				ConnectionMapEntry connectionMap = connections.get(connectionId);
+				if (connectionMap == null) {
+					return;
+				}
+				SadConnectInterface connInterface = connectionMap.getProfile();
+				Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
+				Polyline line = (Polyline) connection.getGraphicsAlgorithm();
+				updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, null);
+			}
+		});
 	}
 }
