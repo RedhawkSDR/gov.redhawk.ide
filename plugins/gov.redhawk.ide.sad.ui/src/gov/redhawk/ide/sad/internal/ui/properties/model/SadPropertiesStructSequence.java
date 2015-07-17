@@ -96,7 +96,9 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 			public String getText(Object element) {
 				if (element != null) {
 					int items = ((List< ? >) element).size();
-					return "[" + items + "]";
+					if (items > 0) {
+						return "[" + items + "]";
+					}
 				}
 				return "";
 			}
