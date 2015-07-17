@@ -70,7 +70,9 @@ public class TerminateFeature extends NonUndoableCustomFeature {
 
 	@Override
 	public String getImageId() {
-		return gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider.IMG_TERMINATE;
+		// Don't include in hover pad
+		// return gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider.IMG_TERMINATE;
+		return null;
 	}
 
 }
