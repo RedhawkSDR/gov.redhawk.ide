@@ -11,6 +11,7 @@
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,7 +29,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
-import gov.redhawk.ide.sad.internal.ui.editor.XViewerComboCellEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerListCellEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerTextCellEditor;
 import mil.jpeojtrs.sca.prf.Enumeration;
@@ -133,30 +133,17 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 	@Override
 	public XViewerCellEditor createCellEditor(Composite parent) {
 		if (def.getType() == PropertyValueType.BOOLEAN) {
-			String[] items = new String[] { "", "true", "false" };
-			return new XViewerListCellEditor(parent, items);
+			return new XViewerListCellEditor(parent, Arrays.asList("", "true", "false"));
 		} else if (def.getEnumerations() != null) {
 			final List<Enumeration> enumerations = def.getEnumerations().getEnumeration();
 			List<String> values = new ArrayList<String>(enumerations.size());
 			values.add("");
 			for (Enumeration enumeration : enumerations) {
-				values.add(enumeration.getLabel());
+				values.add(enumeration.getValue());
 			}
-			String[] items = values.toArray(new String[values.size()]);
-			return new XViewerComboCellEditor(parent, items, SWT.BORDER | SWT.READ_ONLY) {
-
-				@Override
-				protected Object doGetValue() {
-					String text = (String) super.doGetValue();
-					for (Enumeration enumeration : enumerations) {
-						if (enumeration.getLabel().equals(text)) {
-							return enumeration.getValue();
-						}
-					}
-					return text;
-				}
-
-			};
+			XViewerListCellEditor editor = new XViewerListCellEditor(parent, values);
+			editor.setLabelProvider(getLabelProvider());
+			return editor;
 		} else {
 			XViewerTextCellEditor editor = new XViewerTextCellEditor(parent, SWT.BORDER);
 			editor.setValidator(new ICellEditorValidator() {

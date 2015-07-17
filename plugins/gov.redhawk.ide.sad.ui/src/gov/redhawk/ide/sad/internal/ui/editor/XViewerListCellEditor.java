@@ -10,6 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.editor;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -31,14 +35,14 @@ public class XViewerListCellEditor extends XViewerCellEditor {
 
 	private Shell popup = null;
 	private List list = null;
-	private String[] items;
+	private java.util.List<Object> items;
 	private SelectionListener selectionListener;
+	private Object value = null;
+	private ILabelProvider labelProvider = null;
 
-	public XViewerListCellEditor(Composite parent, String[] items) {
+	public XViewerListCellEditor(Composite parent, Collection< ? > items) {
 		super(parent);
-		this.items = items;
-
-		createPopup(parent);
+		this.items = new ArrayList<Object>(items);
 	}
 
 	@Override
@@ -49,6 +53,10 @@ public class XViewerListCellEditor extends XViewerCellEditor {
 
 	@Override
 	public boolean setFocus() {
+		if (popup == null) {
+			createPopup(getParent());
+		}
+
 		// Determine the bounds of the list--since it is going to pop over the cell, we can use whatever size we want.
 		// Use the width of the cell, but for height try to determine how large it should be to show a reasonable
 		// number of items (logic borrowed from SWT's CCombo).
@@ -72,23 +80,29 @@ public class XViewerListCellEditor extends XViewerCellEditor {
 		return list.setFocus();
 	}
 
+	public void setLabelProvider(ILabelProvider labelProvider) {
+		this.labelProvider = labelProvider;
+	}
+
 	@Override
 	protected void doSetValue(Object value) {
-		list.removeSelectionListener(selectionListener);
-		if (value != null) {
-			list.setSelection(new String[] { (String) value });
-		} else {
-			list.setSelection(0);
+		this.value = value;
+		if (list != null) {
+			list.removeSelectionListener(selectionListener);
+			if (value != null) {
+				list.setSelection(new String[] { (String) value });
+			} else {
+				list.setSelection(0);
+			}
+			list.addSelectionListener(selectionListener);
 		}
-		list.addSelectionListener(selectionListener);
-		setValueValid(true);
 	}
 
 	@Override
 	protected Object doGetValue() {
 		int index = list.getSelectionIndex();
 		if (index >= 0) {
-			return items[index];
+			return items.get(index);
 		} else {
 			return null;
 		}
@@ -100,7 +114,10 @@ public class XViewerListCellEditor extends XViewerCellEditor {
 		list.setBackground(parent.getBackground());
 		list.setForeground(parent.getForeground());
 		list.setFont(parent.getFont());
-		list.setItems(items);
+
+		list.setItems(getListItems());
+		int index = Math.max(0, items.indexOf(value));
+		list.setSelection(index);
 
 		selectionListener = new SelectionListener() {
 
@@ -155,5 +172,24 @@ public class XViewerListCellEditor extends XViewerCellEditor {
 	protected void acceptEditor() {
 		setValueValid(true);
 		focusLost();
+	}
+
+	protected String[] getListItems() {
+		ArrayList<String> stringItems = new ArrayList<String>(items.size());
+		for (Object item : items) {
+			String label = getText(item);
+			stringItems.add(label);
+		}
+		return stringItems.toArray(new String[stringItems.size()]);
+	}
+
+	protected String getText(Object object) {
+		if (labelProvider != null) {
+			return labelProvider.getText(object);
+		} else if (object != null) {
+			return object.toString();
+		} else {
+			return "";
+		}
 	}
 }
