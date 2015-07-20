@@ -43,30 +43,40 @@ public class ConsoleUtils {
 	}
 
 	/**
-	 * Terminate process in console
+	 * Shows the console for a particular process.
+	 * @param bot
+	 * @param processName
+	 * @return The SWTBot console view
+	 */
+	public static SWTBotView showConsole(SWTWorkbenchBot bot, final String processName) {
+		SWTBotView view = ViewUtils.getConsoleView(bot);
+		view.show();
+
+		// We could already be on the correct console
+		String text = view.bot().label().getText();
+		if (text.contains(processName)) {
+			return view;
+		}
+
+		// Switch consoles until we hit the right one
+		SWTBotToolbarDropDownButton consoleButton = (SWTBotToolbarDropDownButton) view.toolbarButton("Display Selected Console");
+		int consoles = consoleButton.menuItems(new AnyMenuItemMatcher<MenuItem>()).size();
+		for (int i = 0; i < consoles; i++) {
+			if (view.bot().label(0).getText().contains(processName)) {
+				return view;
+			}
+			consoleButton.click();
+		}
+		throw new WidgetNotFoundException(String.format("Can't find console for %s", processName));
+	}
+
+	/**
+	 * Terminate a process via the console's terminate button
 	 * @param bot
 	 * @param processName
 	 */
 	public static void terminateProcess(SWTWorkbenchBot bot, final String processName) {
-		SWTBotView view = ViewUtils.getConsoleView(bot);
-		view.show();
-
-		final Matcher<MenuItem> matcher = new AnyMenuItemMatcher<MenuItem>();
-
-		// Switch consoles until we hit the right one
-		SWTBotToolbarDropDownButton consoleButton = (SWTBotToolbarDropDownButton) view.toolbarButton("Display Selected Console");
-		int consoles = consoleButton.menuItems(matcher).size();
-		boolean found = false;
-		for (int i = 0; i < consoles; i++) {
-			if (view.bot().label(0).getText().contains(processName)) {
-				found = true;
-				break;
-			}
-			consoleButton.click();
-		}
-		if (!found) {
-			throw new WidgetNotFoundException(String.format("Can't find console for %s", processName));
-		}
+		SWTBotView view = showConsole(bot, processName);
 
 		// Click terminate, wait for it to disable (indicating process ended)
 		final SWTBotToolbarButton terminateButton = view.toolbarButton("Terminate");

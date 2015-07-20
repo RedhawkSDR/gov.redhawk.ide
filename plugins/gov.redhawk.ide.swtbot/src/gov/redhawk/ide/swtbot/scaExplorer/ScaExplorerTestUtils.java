@@ -745,9 +745,7 @@ public class ScaExplorerTestUtils {
 		scaExplorerView.setFocus();
 		SWTBotTreeItem componentEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Components").expandNode(componentName.split("\\."));
 		componentEntry.select();
-		SWTBotMenu launchInSandbox = componentEntry.contextMenu("Launch in Sandbox");
-		SWTBotMenu impl = launchInSandbox.menu(implementationId);
-		impl.click();
+		componentEntry.contextMenu("Launch in Sandbox").menu(implementationId).click();
 	}
 	
 	/**
