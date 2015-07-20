@@ -13,7 +13,6 @@ package gov.redhawk.ide.graphiti.ui.properties;
 import gov.redhawk.diagram.sheet.properties.ComponentInstantiationPropertyViewerAdapter;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.IDisposable;
-import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.sca.ui.ScaComponentFactory;
 import gov.redhawk.sca.ui.properties.ScaPropertiesAdapterFactory;
