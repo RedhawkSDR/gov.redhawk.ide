@@ -109,7 +109,7 @@ public class WaveformUtils {
 		SWTBot viewBot = explorerView.bot();
 
 		SWTBotTreeItem waveformNode = viewBot.tree().expandNode("Target SDR", "Waveforms", waveformName);
-		waveformNode.contextMenu("Launch in Sandbox").menu("Default").click();
+		waveformNode.contextMenu("Default").click();
 
 		// Wait for the launched waveform to appear in the sandbox
 		final SWTBotTreeItem sandbox = viewBot.tree().getTreeItem("Sandbox");
