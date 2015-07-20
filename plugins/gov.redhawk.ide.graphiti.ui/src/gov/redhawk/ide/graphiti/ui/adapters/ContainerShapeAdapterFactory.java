@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.transaction.RunnableWithResult;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
 import gov.redhawk.ide.debug.LocalLaunch;
@@ -24,6 +25,7 @@ import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaDeviceManager;
 import gov.redhawk.model.sca.ScaModelPlugin;
 import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -91,15 +93,20 @@ public class ContainerShapeAdapterFactory implements IAdapterFactory {
 		} else if (ci instanceof DcdComponentInstantiation) {
 			final ScaDeviceManager devMgr = ScaModelPlugin.getDefault().findEObject(ScaDeviceManager.class, ref);
 			if (devMgr != null) {
-				for (final ScaDevice< ? > dev : GraphitiAdapterUtil.safeFetchComponents(devMgr)) {
-					final String scaComponentId = dev.getIdentifier();
-					if (scaComponentId.startsWith(myId)) {
-						if (adapterType.isAssignableFrom(ScaDevice.class) || (adapterType.isAssignableFrom(LocalLaunch.class) && dev instanceof LocalLaunch)) {
-							return (T) dev;
-						} else {
-							return null;
+				try {
+					ScaDevice<?> device = ScaModelCommand.runExclusive(devMgr, new RunnableWithResult.Impl<ScaDevice<?>>() {
+						@Override
+						public void run() {
+							setResult(devMgr.getDevice(myId));
 						}
+					});
+					if (adapterType.isAssignableFrom(ScaDevice.class) || (adapterType.isAssignableFrom(LocalLaunch.class) && device instanceof LocalLaunch)) {
+						return (T) device;
+					} else {
+						return null;
 					}
+				} catch (InterruptedException e) {
+					return null;
 				}
 			}
 		}
