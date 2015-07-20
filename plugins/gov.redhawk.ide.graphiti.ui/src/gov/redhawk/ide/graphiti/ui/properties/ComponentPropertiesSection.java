@@ -110,8 +110,8 @@ public class ComponentPropertiesSection extends RHDiagramElementPropertySection 
 			Object element = ss.getFirstElement();
 			if (element instanceof EditPart) {
 				EditPart ep = (EditPart) element;
-				final ScaComponent component = Platform.getAdapterManager().getAdapter(ep, ScaComponent.class);
-				return component;
+				final ScaPropertyContainer< ? , ? > container = Platform.getAdapterManager().getAdapter(ep, ScaPropertyContainer.class);
+				return container;
 			}
 		}
 		return null;
