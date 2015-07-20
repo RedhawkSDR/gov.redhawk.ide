@@ -13,6 +13,7 @@ package gov.redhawk.ide.swtbot.scaExplorer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
@@ -89,8 +90,13 @@ public class ScaExplorerTestUtils {
 		}
 		path.add(treeItemName);
 
-		SWTBotTreeItem rootItem = scaExplorerView.bot().tree().getTreeItem(parentPath[0]);
-		return internalGetTreeItem(rootItem, path);
+		// Find the root item in the tree. Allow for suffixing from the started decorator.
+		for (SWTBotTreeItem rootItem : scaExplorerView.bot().tree().getAllItems()) {
+			if (rootItem.getText().matches(parentPath[0] + "( CONNECTED)?")) {
+				return internalGetTreeItem(rootItem, path);
+			}
+		}
+		throw new WidgetNotFoundException("Cannot find root of tree: " + parentPath[0]);
 	}
 
 	/**
@@ -108,34 +114,29 @@ public class ScaExplorerTestUtils {
 			parentItem.expand();
 		}
 
-		if (path.size() == 1) {
-			// If there is one path element left then we must check each child of the current item to see if it matches
-			// This lets us handle cases where things like " STARTED" get appended to running components, etc.
-			String text = path.get(0);
-			for (SWTBotTreeItem childItem : parentItem.getItems()) {
-				if (childItem.getText().startsWith(text)) {
-					childItem.expand();
-					return childItem;
+		// Recursively expand child items
+		try {
+			Pattern pattern = Pattern.compile(path.get(0) + "(_\\d+_\\d+)?( STARTED)?");
+			List<String> nodes = parentItem.getNodes();
+			for (String node : nodes) {
+				if (pattern.matcher(node).matches()) {
+					if (path.size() == 1) {
+						SWTBotTreeItem result = parentItem.getNode(node);
+						result.expand();
+						return result;
+					} else {
+						return internalGetTreeItem(parentItem.getNode(node), path.subList(1, path.size()));
+					}
 				}
 			}
-		} else {
-			// Recursively expand child items
-			try {
-				SWTBotTreeItem childItem = parentItem.getNode(path.get(0));
-				SWTBotTreeItem result = internalGetTreeItem(childItem, path.subList(1, path.size()));
-				if (result != null) {
-					return result;
-				}
-			} catch (WidgetNotFoundException ex) {
-				// PASS
+			throw new WidgetNotFoundException("Unable to find node " + path.get(0));
+		} catch (WidgetNotFoundException ex) {
+			// If we failed to find the item collapse the current tree item if it was initially collapsed
+			if (!isExpanded) {
+				parentItem.collapse();
 			}
+			throw ex;
 		}
-
-		// We failed to find the item; collapse the current tree item if it was initially collapsed
-		if (!isExpanded) {
-			parentItem.collapse();
-		}
-		return null;
 	}
 
 	/**
