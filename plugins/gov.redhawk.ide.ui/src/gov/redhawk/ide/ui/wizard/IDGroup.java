@@ -54,8 +54,8 @@ public class IDGroup {
 		this.generateIdButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
+				IDGroup.this.providedIdText.setEnabled(!IDGroup.this.generateIdButton.getSelection());
 				page.validate();
-				IDGroup.this.providedIdText.setEnabled(IDGroup.this.useProvidedIdButton.getSelection());
 			}
 		});
 
@@ -77,7 +77,7 @@ public class IDGroup {
 	}
 
 	public IStatus validateGroup() {
-		if (!this.useProvidedIdButton.getSelection()) {
+		if (!IDGroup.this.providedIdText.isEnabled()) {
 			return Status.OK_STATUS;
 		}
 
