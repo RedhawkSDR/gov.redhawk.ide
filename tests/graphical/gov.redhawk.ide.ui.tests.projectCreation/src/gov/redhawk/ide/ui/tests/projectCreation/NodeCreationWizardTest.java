@@ -26,9 +26,7 @@ import org.junit.Test;
 public class NodeCreationWizardTest extends AbstractCreationWizardTest {
 
 	private static final String DOMAIN_COMBO_LABEL = "Domain Manager:";
-	/* (non-Javadoc)
-	 * @see gov.redhawk.ide.ui.tests.projectCreation.AbstractCreationWizardTest#getProjectType()
-	 */
+
 	@Override
 	protected String getProjectType() {
 		return "SCA Node Project";
@@ -44,8 +42,8 @@ public class NodeCreationWizardTest extends AbstractCreationWizardTest {
 
 		checkFiles(nodeName);
 	}
-	
-	void setDomainName(String domainName) {
+
+	private void setDomainName(String domainName) {
 		SWTBotCombo combo = bot.comboBoxWithLabel(DOMAIN_COMBO_LABEL);
 		if (domainName != null && domainName.length() > 0) {
 			combo.setSelection(domainName);
@@ -56,14 +54,8 @@ public class NodeCreationWizardTest extends AbstractCreationWizardTest {
 			}
 		}
 	}
-	
-	protected void createBasicNode(String projectName, String domainName) {
-		bot.textWithLabel("&Project name:").setText(projectName);
-		setDomainName(domainName);
-		bot.button("Finish").click();
-	}
-	
-	protected void checkFiles(String projectName) {
+
+	private void checkFiles(String projectName) {
 		// Ensure DCD file was created
 		SWTBotView view = bot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
 		view.show();
@@ -79,8 +71,8 @@ public class NodeCreationWizardTest extends AbstractCreationWizardTest {
 		// IDE-1219 TODO: skip below check, until moved to redhawk-ide-uitests repo to test against IDE product
 		// Assert.assertEquals(projectName, editorBot.bot().textWithLabel("Name:").getText());
 	}
-	
-	protected void createNodeWithDevice(String projectName, String domainName, String deviceName) {
+
+	private void createNodeWithDevice(String projectName, String domainName, String deviceName) {
 		bot.textWithLabel("&Project name:").setText(projectName);
 		setDomainName(domainName);
 		bot.button("Next >").click();
@@ -97,13 +89,13 @@ public class NodeCreationWizardTest extends AbstractCreationWizardTest {
 		}
 		bot.button("Finish").click();
 	}
-	
+
 	@Override
 	public void testNonDefaultLocation() throws IOException {
 		setDomainName(null);
 		super.testNonDefaultLocation();
 	}
-	
+
 	@Override
 	public void testUUID() {
 		setDomainName(null);
