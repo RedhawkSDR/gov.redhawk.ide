@@ -51,24 +51,31 @@ public abstract class AbstractCreationWizardTest extends UITest {
 
 		wizardBot.radio("Provide an ID").click();
 		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
+		wizardBot.text(" Enter a DCE UUID");
 
 		wizardBot.textWithLabel("DCE UUID:").setText("187ca38e-ef38-487f-8f9b-935dca8595da");
 		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
+		wizardBot.text(" DCE UUID must start with 'DCE:'");
 
 		wizardBot.textWithLabel("DCE UUID:").setText("DCE");
 		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
+		wizardBot.text(" DCE UUID must start with 'DCE:'");
 
 		wizardBot.textWithLabel("DCE UUID:").setText("DCE:187ca38e-ef38-487f-8f9b-935dca8595dz");
 		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
+		wizardBot.text(" Enter a valid UUID");
 
 		wizardBot.textWithLabel("DCE UUID:").setText("DCE");
 		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
+		wizardBot.text(" DCE UUID must start with 'DCE:'");
 
 		wizardBot.radio("Generate an ID").click();
 		Assert.assertTrue(wizardBot.button("Next >").isEnabled());
 
 		wizardBot.radio("Provide an ID").click();
 		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
+		wizardBot.text(" DCE UUID must start with 'DCE:'");
+
 		wizardBot.textWithLabel("DCE UUID:").setText("DCE:187ca38e-ef38-487f-8f9b-935dca8595da");
 		Assert.assertTrue(wizardBot.button("Next >").isEnabled());
 		
