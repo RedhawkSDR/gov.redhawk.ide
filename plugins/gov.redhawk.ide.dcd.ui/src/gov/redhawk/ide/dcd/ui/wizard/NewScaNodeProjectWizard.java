@@ -32,6 +32,7 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
@@ -42,8 +43,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -207,25 +206,22 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 		this.nodePropertiesPage.setDescription("Choose to create a new Node or import an existing one.");
 		addPage(this.nodePropertiesPage);
 
-		final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
-
-		final IRunnableWithProgress waitForLoad = new IRunnableWithProgress() {
-			@Override
-			public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				sdrRoot.load(monitor);
-			}
-		};
-		try {
-			new ProgressMonitorDialog(getShell()).run(true, false, waitForLoad);
-		} catch (final InvocationTargetException e) {
-			return;
-		} catch (final InterruptedException e) {
-			return;
-		}
-
-		this.nodeDevicesPage = new ScaNodeProjectDevicesWizardPage("", sdrRoot.getDevicesContainer().getComponents().toArray(new SoftPkg[0]));
+		this.nodeDevicesPage = new ScaNodeProjectDevicesWizardPage("");
 		this.nodeDevicesPage.setDescription("Add existing Device(s) to your node.");
 		addPage(this.nodeDevicesPage);
+
+		final WorkspaceJob job = new WorkspaceJob("Load SdrRoot") {
+			@Override
+			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+				final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
+				sdrRoot.load(monitor);
+				NewScaNodeProjectWizard.this.nodeDevicesPage.setDevices(sdrRoot.getDevicesContainer().getComponents());
+				return Status.OK_STATUS;
+			}
+		};
+
+		job.setUser(true);
+		job.schedule();
 	}
 
 	/**

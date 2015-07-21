@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.ui.wizard;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -40,7 +41,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 
-	private final SoftPkg[] devices;
+	private SoftPkg[] devices;
 	private CheckboxTableViewer tableViewer;
 
 	public ScaNodeProjectDevicesWizardPage(final String pageName, final SoftPkg[] devices) {
@@ -48,6 +49,13 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 		setTitle("Select Devices for Node");
 		this.devices = devices;
 		this.setPageComplete(true);
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public ScaNodeProjectDevicesWizardPage(final String pageName) {
+		this(pageName, new SoftPkg[0]);
 	}
 
 	/**
@@ -114,4 +122,21 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 		return retVal;
 	}
 
+	/**
+	 * @since 1.2
+	 */
+	public void setDevices(Collection<SoftPkg> devices) {
+		this.devices = devices.toArray(new SoftPkg[devices.size()]);
+
+		if (this.tableViewer != null) {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (!tableViewer.getControl().isDisposed()) {
+						tableViewer.setInput(ScaNodeProjectDevicesWizardPage.this.devices);
+					}
+				}
+			});
+		}
+	}
 }
