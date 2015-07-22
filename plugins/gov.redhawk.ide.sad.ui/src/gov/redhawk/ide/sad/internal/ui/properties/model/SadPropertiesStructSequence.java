@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,21 +30,15 @@ import org.eclipse.swt.widgets.Composite;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerDialogCellEditor;
 import gov.redhawk.model.sca.ScaFactory;
-import gov.redhawk.model.sca.ScaSimpleProperty;
-import gov.redhawk.model.sca.ScaSimpleSequenceProperty;
-import gov.redhawk.model.sca.ScaStructProperty;
 import gov.redhawk.model.sca.ScaStructSequenceProperty;
 import gov.redhawk.sca.internal.ui.properties.SequencePropertyValueWizard;
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Simple;
-import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
-import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
-import mil.jpeojtrs.sca.prf.Values;
 
 /**
  *
@@ -154,7 +147,7 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 				WizardDialog dialog = new WizardDialog(getShell(), wizard);
 				if (dialog.open() == Window.OK) {
 					property = (ScaStructSequenceProperty) wizard.getProperty();
-					return toStructValues(property);
+					return property.createPropertyRef().getStructValue();
 				}
 				return null;
 			}
@@ -174,30 +167,4 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 		}
 		return property;
 	}
-
-	private Collection< ? > toStructValues(ScaStructSequenceProperty property) {
-		List<StructValue> result = new ArrayList<StructValue>();
-		for (ScaStructProperty structProperty : property.getStructs()) {
-			StructValue structValue = PrfFactory.eINSTANCE.createStructValue();
-			for (ScaSimpleProperty simple : structProperty.getSimples()) {
-				SimpleRef simpleRef = PrfFactory.eINSTANCE.createSimpleRef();
-				simpleRef.setRefID(simple.getId());
-				simpleRef.setValue(simple.getValue().toString());
-				structValue.getSimpleRef().add(simpleRef);
-			}
-			for (ScaSimpleSequenceProperty simpleSequence : structProperty.getSequences()) {
-				SimpleSequenceRef simpleSequenceRef = PrfFactory.eINSTANCE.createSimpleSequenceRef();
-				simpleSequenceRef.setRefID(simpleSequence.getId());
-				Values values = PrfFactory.eINSTANCE.createValues();
-				for (Object value : simpleSequence.getValues()) {
-					values.getValue().add(value.toString());
-				}
-				simpleSequenceRef.setValues(values);
-				structValue.getSimpleSequenceRef().add(simpleSequenceRef);
-			}
-			result.add(structValue);
-		}
-		return result;
-	}
-
 }
