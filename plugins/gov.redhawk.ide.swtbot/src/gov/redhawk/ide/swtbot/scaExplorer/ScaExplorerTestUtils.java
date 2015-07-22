@@ -483,12 +483,43 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
+	 * Waits for the specified node to be present and decorated as started in the explorer view.
+	 * @param bot
+	 * @param nodeParentPath The parent elements in the tree above the node
+	 * @param nodeName The node name itself
+	 */
+	public static void waitUntilNodeStartedInScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public boolean test() throws Exception {
+				SWTBotTreeItem treeItem = getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
+				return treeItem.getText().endsWith(" STARTED");
+			}
+
+			@Override
+			public String getFailureMessage() {
+				StringBuilder sb = new StringBuilder("Tree item");
+				for (String pathElement : nodeParentPath) {
+					sb.append(' ');
+					sb.append(pathElement);
+				}
+				sb.append(' ');
+				sb.append(nodeName);
+				sb.append(" does not exist or is not started");
+				return sb.toString();
+			}
+		});
+	}
+
+	/**
 	 * Waits until node appears stopped in ScaExplorer
 	 * @param bot
 	 * @param parentPath - The domain or local path (e.g {"REDHAWK_DEV", "Device Managers"} or {"Sandbox"}
 	 * @param parent - The direct parent of the node (e.g. the waveform or device manager name) 
 	 * @param nodeName - The full name of the node to be checked
+	 * @deprecated Use {@link #waitUntilNodeStartedInScaExplorer(SWTWorkbenchBot, String[], String)}
 	 */
+	@Deprecated
 	public static void waitUntilNodeStartedInScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String parent,
 		final String nodeName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
