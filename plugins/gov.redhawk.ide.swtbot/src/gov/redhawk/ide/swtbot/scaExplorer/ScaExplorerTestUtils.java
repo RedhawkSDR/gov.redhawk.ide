@@ -256,31 +256,38 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
+	 * @param bot
+	 * @param nodeParentPath The parent elements in the tree above the item
+	 * @param nodeName The item name itself
+	 */
+	public static void terminateLocalResourceInExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
+		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Terminate");
+	}
+
+	/**
 	 * Terminates component via ScaExplorer
 	 * @param componentName
+	 * @deprecated Use {@link #terminateLocalResourceInExplorer(SWTWorkbenchBot, String[], String)}
 	 */
+	@Deprecated
 	public static void terminateComponentInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, String componentName) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-		SWTBotTreeItem componentEntry = waveformTreeItem.expandNode(componentName.split("\\."));
-		componentEntry.select();
-		SWTBotMenu terminate = componentEntry.contextMenu("Terminate");
-		terminate.click();
+		List<String> path = new ArrayList<String>();
+		Collections.addAll(path, waveformParentPath);
+		path.add(waveform);
+		terminateLocalResourceInExplorer(bot, path.toArray(new String[path.size()]), componentName);
 	}
 	
 	/**
 	 * Terminates component via ScaExplorer
 	 * @param componentName
+	 * @deprecated Use {@link #terminateLocalResourceInExplorer(SWTWorkbenchBot, String[], String)}
 	 */
+	@Deprecated
 	public static void terminateDeviceInScaExplorer(SWTWorkbenchBot bot, String[] deviceManagerParentPath, String deviceManager, String deviceName) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, deviceManagerParentPath, deviceManager);
-		SWTBotTreeItem componentEntry = waveformTreeItem.expandNode(deviceName);
-		componentEntry.select();
-		SWTBotMenu terminate = componentEntry.contextMenu("Terminate");
-		terminate.click();
+		List<String> path = new ArrayList<String>();
+		Collections.addAll(path, deviceManagerParentPath);
+		path.add(deviceManager);
+		terminateLocalResourceInExplorer(bot, path.toArray(new String[path.size()]), deviceName);
 	}
 
 	/**
@@ -386,7 +393,7 @@ public class ScaExplorerTestUtils {
 	 * @param nodeName The item name itself
 	 * @param menuText The text of the menu
 	 */
-	public static void contextMenuForItemInExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName, final String menuText) {
+	private static void contextMenuForItemInExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName, final String menuText) {
 		SWTBotView view = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		view.setFocus();
 		SWTBotTreeItem componentEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, nodeName);
@@ -489,12 +496,12 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits for the specified node to be present and <b>not</b> decorated as started in the explorer view.
+	 * Waits for the specified resource to be present and <b>not</b> decorated as started in the explorer view.
 	 * @param bot
 	 * @param nodeParentPath The parent elements in the tree above the node
 	 * @param nodeName The node name itself
 	 */
-	public static void waitUntilNodeStoppedInScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
+	public static void waitUntilResourceStoppedInExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
 		waitUntilNodeStartedInScaExplorer(bot, nodeParentPath, nodeName, false);
 	}
 
@@ -533,12 +540,12 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits for the specified node to be present and decorated as started in the explorer view.
+	 * Waits for the specified resource to be present and decorated as started in the explorer view.
 	 * @param bot
 	 * @param nodeParentPath The parent elements in the tree above the node
 	 * @param nodeName The node name itself
 	 */
-	public static void waitUntilNodeStartedInScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
+	public static void waitUntilResourceStartedInExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
 		waitUntilNodeStartedInScaExplorer(bot, nodeParentPath, nodeName, true);
 	}
 
@@ -552,27 +559,36 @@ public class ScaExplorerTestUtils {
 	 */
 	private static void waitUntilNodeStartedInScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName, final boolean started) {
 		bot.waitUntil(new DefaultCondition() {
+			private boolean found = false;
+
 			@Override
 			public boolean test() throws Exception {
+				// Check presence
 				SWTBotTreeItem treeItem = getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
+				found = true;
+
+				// Check started / stopped
 				boolean nodeStarted = treeItem.getText().endsWith(" STARTED");
 				return started == nodeStarted;
 			}
 
 			@Override
 			public String getFailureMessage() {
-				StringBuilder sb = new StringBuilder("Tree item");
+				StringBuilder sb = new StringBuilder("Tree item {");
 				for (String pathElement : nodeParentPath) {
 					sb.append(' ');
 					sb.append(pathElement);
 				}
 				sb.append(' ');
 				sb.append(nodeName);
-				sb.append(" does not exist or is not ");
-				if (started) {
-					sb.append("started");
+				if (!found) {
+					sb.append("} does not exist");
 				} else {
-					sb.append("stopped");
+					if (started) {
+						sb.append("} is not started");
+					} else {
+						sb.append("} is not stopped");
+					}
 				}
 				return sb.toString();
 			}
@@ -844,7 +860,15 @@ public class ScaExplorerTestUtils {
 		scaExplorerView.setFocus();
 		SWTBotTreeItem componentEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Components").expandNode(componentName.split("\\."));
 		componentEntry.select();
-		componentEntry.contextMenu("Launch in Sandbox").menu(implementationId).click();
+		try {
+			componentEntry.contextMenu("Launch in Sandbox").menu(implementationId).click();
+		} catch (SWTException ex) {
+			// Unclear why, but it seems like every other invocation of the context menu doesn't show Launch in Sandbox
+			// This doesn't appear to happen in normal (user) UI usage
+			if (ex.getCause() instanceof WidgetNotFoundException) {
+				componentEntry.contextMenu("Launch in Sandbox").menu(implementationId).click();
+			}
+		}
 	}
 	
 	/**

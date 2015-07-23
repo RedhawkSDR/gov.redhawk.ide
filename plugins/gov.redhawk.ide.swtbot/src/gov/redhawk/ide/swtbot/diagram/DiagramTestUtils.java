@@ -868,7 +868,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	}
 
 	/**
-	 * Change the component log level from the Chalkboard Diagram
+	 * Verify the component's current log level from the Chalkboard Diagram
 	 * @param componentName
 	 * @param logLevel
 	 */
@@ -883,7 +883,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 		SWTBotShell shell = editorBot.shell("Set Debug Level");
 		shell.setFocus();
 
-		SWTBot dialogBot = editorBot.shell("Set Debug Level").bot();
+		SWTBot dialogBot = shell.bot();
 		SWTBotLabel currentLogLevelLabel = dialogBot.label(2);
 		Assert.assertTrue("Current Log Level is not the expected value: " + logLevel.getLabel(), logLevel.getLabel().equals(currentLogLevelLabel.getText()));
 		dialogBot.button("Cancel").click();
