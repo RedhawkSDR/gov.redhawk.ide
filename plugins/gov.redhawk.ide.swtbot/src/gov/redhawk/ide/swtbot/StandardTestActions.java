@@ -10,16 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
-import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
-import gov.redhawk.ide.swtbot.internal.ProjectRecord;
-import gov.redhawk.model.sca.ScaDomainManagerRegistry;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
-import gov.redhawk.sca.ScaPlugin;
-import gov.redhawk.sca.util.OrbSession;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -56,6 +46,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.emf.transaction.RunnableWithResult;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -88,6 +79,16 @@ import org.junit.Assert;
 import org.osgi.framework.Bundle;
 import org.python.pydev.ui.pythonpathconf.AutoConfigMaker;
 import org.python.pydev.ui.pythonpathconf.IInterpreterProviderFactory.InterpreterType;
+
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
+import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+import gov.redhawk.ide.swtbot.internal.ProjectRecord;
+import gov.redhawk.model.sca.ScaDomainManagerRegistry;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.sca.ScaPlugin;
+import gov.redhawk.sca.util.OrbSession;
 
 public final class StandardTestActions {
 
@@ -405,11 +406,36 @@ public final class StandardTestActions {
 			});
 		}
 
-		bot.closeAllShells();
+		closeAllShells(bot);
 
 		bot.closeAllEditors();
 
 		StandardTestActions.clearWorkspace();
+	}
+
+	/**
+	 * This method provides similar results to {@link SWTWorkbenchBot#closeAllShells()}, except that it avoids closing
+	 * the "limbo" shell which is used to by Eclipse to re-parent controls that are hidden. Closing the limbo shell
+	 * appears to be a bug in the SWTBot code, and definitely causes Eclipse to spew lots of errors when the visibility
+	 * state of things is changed.
+	 * @param bot
+	 */
+	private static void closeAllShells(SWTWorkbenchBot bot) {
+		RunnableWithResult<Shell> getShellRunnable = new RunnableWithResult.Impl<Shell>() {
+			@Override
+			public void run() {
+				setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+			}
+		};
+		bot.getDisplay().syncExec(getShellRunnable);
+		Shell activeWorkbenchWindowShell = getShellRunnable.getResult();
+
+		SWTBotShell[] shells = bot.shells();
+		for (SWTBotShell shell : shells) {
+			if (activeWorkbenchWindowShell != shell.widget && !shell.toString().contains("PartRenderingEngine's limbo")) {
+				shell.close();
+			}
+		}
 	}
 
 	public static void writeToCell(SWTBot bot, SWTBotTable table, final int row, final int column, final String text) {
