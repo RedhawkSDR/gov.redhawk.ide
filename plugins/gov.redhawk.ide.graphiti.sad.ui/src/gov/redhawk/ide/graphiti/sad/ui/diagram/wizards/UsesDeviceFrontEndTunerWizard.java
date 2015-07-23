@@ -142,8 +142,8 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 								break;
 					}
 					tunerAllocationStruct.getSimples().add(simple);
-					allocationPage = new TunerAllocationWizardPage(tunerAllocationStruct);
 				}
+				allocationPage = new TunerAllocationWizardPage(tunerAllocationStruct);
 			} else if (ListenerAllocationProperty.INSTANCE.getId().equals(structRefId)) { 
 				
 				// populate StructRef with listener_allocation properties
@@ -159,8 +159,8 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 					simple.setId(allocProp.getId());
 					simple.setValue(UsesDeviceFrontEndTunerPattern.getFEUsesDeviceTunerAllocationProp(existingUsesDeviceStub.getUsesDevice(), allocProp.getId()));
 					listenerAllocationStruct.getSimples().add(simple);
-					allocationPage = new TunerAllocationWizardPage(listenerAllocationStruct);
 				}
+				allocationPage = new TunerAllocationWizardPage(listenerAllocationStruct);
 			}
 		}
 		
