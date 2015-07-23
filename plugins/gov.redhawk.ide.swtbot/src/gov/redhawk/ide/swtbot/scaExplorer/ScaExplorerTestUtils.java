@@ -12,6 +12,7 @@ package gov.redhawk.ide.swtbot.scaExplorer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -362,7 +363,9 @@ public class ScaExplorerTestUtils {
 	/**
 	 * Start component from ScaExplorer
 	 * @param componentName
+	 * @deprecated Use {@link #startResourceInExplorer(SWTWorkbenchBot, String[], String)}
 	 */
+	@Deprecated
 	public static void startComponentFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
@@ -377,15 +380,47 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Stop components in Diagram via ScaExplorer
+	 * Clicks a context menu for a tree item in the explorer.
+	 * @param bot
+	 * @param nodeParentPath The parent elements in the tree above the item
+	 * @param nodeName The item name itself
+	 * @param menuText The text of the menu
 	 */
+	public static void contextMenuForItemInExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName, final String menuText) {
+		SWTBotView view = bot.viewById(SCA_EXPLORER_VIEW_ID);
+		view.setFocus();
+		SWTBotTreeItem componentEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, nodeName);
+		componentEntry.select();
+		componentEntry.contextMenu(menuText).click();
+	}
+
+	/**
+	 * Clicks the "Start" context menu for a tree item in the explorer view.
+	 * @param bot
+	 * @param nodeParentPath The parent elements in the tree above the item
+	 * @param nodeName The item name itself
+	 */
+	public static void startResourceInExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
+		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Start");
+	}
+
+	/**
+	 * Clicks the "Stop" context menu for a tree item in the explorer view.
+	 * @param bot
+	 * @param parentPath The parent elements in the tree above the item
+	 * @param itemName The item name itself
+	 */
+	public static void stopResourceInExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
+		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Stop");
+	}
+
+	/**
+	 * Stop components in Diagram via ScaExplorer
+	 * @deprecated Use {@link #stopResourceInExplorer(SWTWorkbenchBot, String[], String)}
+	 */
+	@Deprecated
 	public static void stopWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		SWTBotTreeItem waveformEntry = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-		waveformEntry.select();
-		SWTBotMenu stop = waveformEntry.contextMenu("Stop");
-		stop.click();
+		stopResourceInExplorer(bot, waveformParentPath, waveform);
 	}
 
 	/**
@@ -425,7 +460,9 @@ public class ScaExplorerTestUtils {
 
 	/**
 	 * Start container/component in Diagram via ScaExplorer
+	 * @deprecated Use {@link #startResourceInExplorer(SWTWorkbenchBot, String[], String)}
 	 */
+	@Deprecated
 	public static void startWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
@@ -437,16 +474,18 @@ public class ScaExplorerTestUtils {
 
 	/**
 	 * Stop component from ScaExplorer
+	 * @param bot
+	 * @param waveformParentPath
+	 * @param waveform
 	 * @param componentName
+	 * @deprecated Use {@link #stopResourceInExplorer(SWTWorkbenchBot, String[], String)}
 	 */
+	@Deprecated
 	public static void stopComponentFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, String componentName) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-		SWTBotTreeItem componentEntry = waveformTreeItem.getNode(componentName + " STARTED");
-		componentEntry.select();
-		SWTBotMenu stop = componentEntry.contextMenu("Stop");
-		stop.click();
+		List<String> path = new ArrayList<String>();
+		Collections.addAll(path, waveformParentPath);
+		path.add(waveform);
+		stopResourceInExplorer(bot, path.toArray(new String[path.size()]), componentName);
 	}
 
 	/**
