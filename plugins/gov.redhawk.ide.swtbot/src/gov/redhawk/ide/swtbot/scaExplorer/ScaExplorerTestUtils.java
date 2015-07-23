@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.eclipse.swt.SWTException;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
@@ -803,9 +804,16 @@ public class ScaExplorerTestUtils {
 	public static void launchWaveformFromTargetSDR(SWTWorkbenchBot bot, String waveformName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem waveformEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Waveforms", waveformName);
-		waveformEntry.select();
-		waveformEntry.contextMenu("Launch in Sandbox").menu("Default").click();
+		SWTBotTreeItem waveformEntry = getTreeItemFromScaExplorer(bot, new String[] { "Target SDR", "Waveforms" }, waveformName);
+		try {
+			waveformEntry.contextMenu("Launch in Sandbox").menu("Default").click();
+		} catch (SWTException ex) {
+			// Unclear why, but it seems like every other invocation of the context menu doesn't show Launch in Sandbox
+			// This doesn't appear to happen in normal (user) UI usage
+			if (ex.getCause() instanceof WidgetNotFoundException) {
+				waveformEntry.contextMenu("Launch in Sandbox").menu("Default").click();
+			}
+		}
 	}
 	
 	/** 
