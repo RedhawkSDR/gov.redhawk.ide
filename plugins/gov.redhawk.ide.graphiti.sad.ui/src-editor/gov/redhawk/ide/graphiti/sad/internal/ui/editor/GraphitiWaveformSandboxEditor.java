@@ -323,7 +323,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 						@Override
 						public Object call() throws Exception {
 							int totalProgress = 0;
-							while (totalProgress < numOfLoadingItems) {
+							while (totalProgress < numOfLoadingItems && !monitor.isCanceled()) {
 								int newProgress = 0;
 
 								for (ScaComponent component : waveform.getComponents()) {
