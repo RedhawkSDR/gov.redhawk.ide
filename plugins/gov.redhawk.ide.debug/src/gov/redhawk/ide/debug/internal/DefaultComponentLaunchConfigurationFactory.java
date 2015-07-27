@@ -12,7 +12,6 @@ package gov.redhawk.ide.debug.internal;
 
 import gov.redhawk.ide.debug.AbstractLaunchConfigurationFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 
 import java.io.File;
 
@@ -50,7 +49,6 @@ public class DefaultComponentLaunchConfigurationFactory extends AbstractLaunchCo
 		if (file == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Could not resolve local file to launch for " + spdUri, null));
 		}
-		ScaLaunchConfigurationUtil.setProfileURI(retVal, EcoreUtil.getURI(spd));
 
 		final Implementation impl = spd.getImplementation(implId);
 		if (impl == null) {

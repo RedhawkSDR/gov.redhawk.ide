@@ -28,6 +28,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
  * @since 4.0
@@ -55,7 +56,7 @@ public abstract class AbstractLaunchConfigurationFactory implements ILaunchConfi
 		final ILaunchConfigurationWorkingCopy retVal = configType.newInstance(null, launchConfigName);
 
 		retVal.setAttribute(ScaDebugLaunchConstants.ATT_IMPL_ID, implId);
-		ScaLaunchConfigurationUtil.setProfileURI(retVal, spd.eResource().getURI());
+		ScaLaunchConfigurationUtil.setProfileURI(retVal, EcoreUtil.getURI(spd));
 
 		// Setup Environment variables for override locations of OSSIEHOME and SDRROOT
 		final Map<String, String> envVar = ScaEnvironmentUtil.getLauncherEnvMap(spd.getImplementation(implId));
