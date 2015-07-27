@@ -10,23 +10,17 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
-import gov.redhawk.frontend.ui.FrontEndUIActivator.AllocationMode;
-import gov.redhawk.frontend.util.TunerProperties;
-import gov.redhawk.frontend.util.TunerProperties.ListenerAllocationProperties;
-import gov.redhawk.frontend.util.TunerProperties.TunerAllocationProperties;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.UsesDeviceFrontEndTunerWizard;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaStructProperty;
 
-import java.util.Iterator;
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.sad.SadFactory;
@@ -107,9 +101,8 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 		//extract values from wizard
 		final String usesDeviceId = wizard.getNamePage().getModel().getUsesDeviceId();
 		final String deviceModel = wizard.getNamePage().getModel().getDeviceModel();
-		final AllocationMode allocationMode = wizard.getAllocationPage().getAllocationMode();
-		final ScaStructProperty tunerAllocationStruct = wizard.getAllocationPage().getTunerAllocationStruct();
-		final ScaStructProperty listenerAllocationStruct = wizard.getAllocationPage().getListenerAllocationStruct();
+		ScaStructProperty allocationStruct = wizard.getAllocationPage().getAllocationStruct();
+		final StructRef allocationStructRef = allocationStruct.createPropertyRef();
 		final List<String> usesPortNames = wizard.getPortsWizardPage().getModel().getUsesPortNames();
 		final List<String> providesPortNames = wizard.getPortsWizardPage().getModel().getProvidesPortNames();
 
@@ -152,22 +145,8 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 					usesDevice.getPropertyRef().add(deviceModelPropertyRef);
 				}
 				
-				StructRef allocationStructRef = PrfFactory.eINSTANCE.createStructRef();
-				allocationStructRef.setProperty(TunerProperties.TunerAllocationProperty.INSTANCE.createStruct());
-				usesDevice.getStructRef().add(allocationStructRef);
-				
 				//set tuner allocation struct in device from tuner allocation struct in wizard
-				if (allocationMode == AllocationMode.TUNER) {
-					allocationStructRef.setProperty(TunerProperties.TunerAllocationProperty.INSTANCE.createStruct());
-					for (TunerAllocationProperties prop : TunerAllocationProperties.values()) {
-						setFEUsesDeviceTunerAllocationProp(usesDevice, prop.getId(), String.valueOf(tunerAllocationStruct.getSimple(prop.getId()).getValue()));
-					}
-				} else if (allocationMode == AllocationMode.LISTENER) {
-					allocationStructRef.setProperty(TunerProperties.ListenerAllocationProperty.INSTANCE.createStruct());
-					for (ListenerAllocationProperties prop : ListenerAllocationProperties.values()) {
-						setFEUsesDeviceTunerAllocationProp(usesDevice, prop.getId(), String.valueOf(listenerAllocationStruct.getSimple(prop.getId()).getValue()));
-					}
-				}
+				usesDevice.getStructRef().add(allocationStructRef);
 				
 				//UsesDeviceStub
 				usesDeviceStubs[0] = createUsesDeviceStub(usesDevice);
@@ -201,50 +180,12 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 		return new Object[] { usesDeviceStubs[0] };
 	}
 
-	
-
-	
-	
 	public static Wizard openWizard(Wizard wizard) {
 		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 		if (dialog.open() == WizardDialog.CANCEL) {
 			return null;
 		}
 		return wizard;
-	}
-	
-	/**
-	 * Sets FrontEnd Uses Device Tuner Allocation Property
-	 * if propValue null, remove property
-	 * @param usesDevice
-	 * @param propRefId
-	 * @param propValue
-	 */
-	public static void setFEUsesDeviceTunerAllocationProp(UsesDevice usesDevice, String propRefId, String propValue) {
-		
-		EList<SimpleRef> props = usesDevice.getStructRef().get(0).getSimpleRef();
-		
-		boolean found = false;
-		for (Iterator<SimpleRef> iter = props.iterator(); iter.hasNext();) {
-			SimpleRef p = (SimpleRef) iter.next();
-			if (propRefId.equals(p.getRefID())) {
-				found = true;
-				if (propValue != null) {
-					p.setValue(propValue);
-				} else {
-					iter.remove();
-				}
-				break;
-			}
-		}
-		
-		//if property wasn't there, add it
-		if (!found) {
-			SimpleRef newProp = PrfFactory.eINSTANCE.createSimpleRef();
-			newProp.setRefID(propRefId);
-			newProp.setValue(propValue);
-			props.add(newProp);
-		}
 	}
 	
 	/**

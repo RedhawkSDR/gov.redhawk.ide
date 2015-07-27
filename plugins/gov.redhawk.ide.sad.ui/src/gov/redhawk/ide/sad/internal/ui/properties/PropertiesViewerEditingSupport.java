@@ -14,15 +14,8 @@ import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerComboCellEditor;
 import gov.redhawk.ide.sad.internal.ui.properties.model.SadProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.SadPropertyImpl;
-import gov.redhawk.model.sca.ScaSimpleProperty;
-import gov.redhawk.model.sca.ScaStructProperty;
-import gov.redhawk.model.sca.ScaStructSequenceProperty;
 import gov.redhawk.sca.sad.validation.DuplicateAssemblyExternalPropertyIDConstraint;
 import gov.redhawk.sca.sad.validation.DuplicateExternalPropertyIDConstraint;
-import mil.jpeojtrs.sca.prf.PrfFactory;
-import mil.jpeojtrs.sca.prf.SimpleRef;
-import mil.jpeojtrs.sca.prf.StructSequenceRef;
-import mil.jpeojtrs.sca.prf.StructValue;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -110,25 +103,6 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 			prop.setPropID(viewerProp.getID() + "_" + i);
 		}
 		return prop.getPropID();
-	}
-
-	protected StructSequenceRef createRef(ScaStructSequenceProperty property) {
-		if (property.isDefaultValue()) {
-			return null;
-		}
-		StructSequenceRef retVal = PrfFactory.eINSTANCE.createStructSequenceRef();
-		retVal.setRefID(property.getId());
-		for (ScaStructProperty struct : property.getStructs()) {
-			StructValue structRef = PrfFactory.eINSTANCE.createStructValue();
-			for (ScaSimpleProperty simple : struct.getSimples()) {
-				SimpleRef simpleRef = PrfFactory.eINSTANCE.createSimpleRef();
-				simpleRef.setRefID(simple.getId());
-				simpleRef.setValue(simple.getValue().toString());
-				structRef.getSimpleRef().add(simpleRef);
-			}
-			retVal.getStructValue().add(structRef);
-		}
-		return retVal;
 	}
 
 	/* (non-Javadoc)

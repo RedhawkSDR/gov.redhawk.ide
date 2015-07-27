@@ -137,13 +137,15 @@ public class SadPropertiesApplicationItemProvider extends ItemProviderAdapter im
 	private SadPropertyImpl< ? > getComponentProperty(SoftwareAssembly softwareAssembly, ExternalProperty externalProperty) {
 		final String componentId = externalProperty.getCompRefID();
 		SadComponentInstantiation instantiation = getComponentInstantiation(softwareAssembly, componentId);
-		SadPropertiesComponent component = (SadPropertiesComponent) adapterFactory.adapt(instantiation, SadPropertiesComponent.class);
-		if (component != null) {
-			final String propertyId = externalProperty.getPropID();
-			for (Object child : component.getChildren(instantiation)) {
-				SadPropertyImpl< ? > viewerProperty = (SadPropertyImpl< ? >) child;
-				if (viewerProperty.getID().equals(propertyId)) {
-					return viewerProperty;
+		if (instantiation != null) {
+			SadPropertiesComponent component = (SadPropertiesComponent) adapterFactory.adapt(instantiation, SadPropertiesComponent.class);
+			if (component != null) {
+				final String propertyId = externalProperty.getPropID();
+				for (Object child : component.getChildren(instantiation)) {
+					SadPropertyImpl< ? > viewerProperty = (SadPropertyImpl< ? >) child;
+					if (viewerProperty.getID().equals(propertyId)) {
+						return viewerProperty;
+					}
 				}
 			}
 		}

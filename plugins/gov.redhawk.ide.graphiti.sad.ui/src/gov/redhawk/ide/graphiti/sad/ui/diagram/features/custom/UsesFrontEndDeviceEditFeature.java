@@ -10,10 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom;
 
-import gov.redhawk.frontend.ui.FrontEndUIActivator.AllocationMode;
-import gov.redhawk.frontend.util.TunerProperties;
-import gov.redhawk.frontend.util.TunerProperties.ListenerAllocationProperties;
-import gov.redhawk.frontend.util.TunerProperties.TunerAllocationProperties;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
@@ -24,7 +20,6 @@ import gov.redhawk.model.sca.ScaStructProperty;
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
-import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.PropertyRef;
@@ -127,9 +122,8 @@ public class UsesFrontEndDeviceEditFeature extends AbstractCustomFeature {
 		//extract values from wizard
 		final String usesDeviceId = wizard.getNamePage().getModel().getUsesDeviceId();
 		final String deviceModel = wizard.getNamePage().getModel().getDeviceModel();
-		final AllocationMode allocationMode = wizard.getAllocationPage().getAllocationMode();
-		final ScaStructProperty tunerAllocationStruct = wizard.getAllocationPage().getTunerAllocationStruct();
-		final ScaStructProperty listenerAllocationStruct = wizard.getAllocationPage().getListenerAllocationStruct();
+		ScaStructProperty allocationStruct = wizard.getAllocationPage().getAllocationStruct();
+		final StructRef allocationStructRef = allocationStruct.createPropertyRef();
 		final List<String> usesPortNames = wizard.getPortsWizardPage().getModel().getUsesPortNames();
 		final List<String> providesPortNames = wizard.getPortsWizardPage().getModel().getProvidesPortNames();
 		
@@ -167,29 +161,9 @@ public class UsesFrontEndDeviceEditFeature extends AbstractCustomFeature {
 					deviceModelPropertyRef.setValue(deviceModel);
 				}
 				
-				//clear existing structs
+				//replace existing structs
 				usesDevice.getStructRef().clear();
-				//create new struct
-				StructRef allocationStructRef = PrfFactory.eINSTANCE.createStructRef();
 				usesDevice.getStructRef().add(allocationStructRef);
-				//populate usesDevice from wizard values
-				if (allocationMode == AllocationMode.TUNER) {
-					//set tuner allocation struct
-					
-					allocationStructRef.setProperty(TunerProperties.TunerAllocationProperty.INSTANCE.createStruct());
-					for (TunerAllocationProperties prop : TunerAllocationProperties.values()) {
-						String propertyValue = String.valueOf(tunerAllocationStruct.getSimple(prop.getId()).getValue());
-						UsesDeviceFrontEndTunerPattern.setFEUsesDeviceTunerAllocationProp(usesDevice, prop.getId(), propertyValue); 
-					}
-				} else if (allocationMode == AllocationMode.LISTENER) {
-					//set listener allocation struct
-					
-					allocationStructRef.setProperty(TunerProperties.ListenerAllocationProperty.INSTANCE.createStruct());
-					for (ListenerAllocationProperties prop : ListenerAllocationProperties.values()) {
-						String propertyValue = String.valueOf(listenerAllocationStruct.getSimple(prop.getId()).getValue());
-						UsesDeviceFrontEndTunerPattern.setFEUsesDeviceTunerAllocationProp(usesDevice, prop.getId(), propertyValue); 
-					}
-				}
 				
 				//update ports
 				AbstractUsesDevicePattern.updatePorts(featureProvider, usesDeviceStub, usesDeviceShape, usesPortNames, providesPortNames);

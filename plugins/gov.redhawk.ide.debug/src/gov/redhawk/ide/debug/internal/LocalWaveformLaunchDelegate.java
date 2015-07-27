@@ -17,6 +17,7 @@ import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaFactory;
+import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaSimpleProperty;
 import gov.redhawk.model.sca.ScaSimpleSequenceProperty;
 import gov.redhawk.model.sca.ScaStructProperty;
@@ -139,17 +140,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 					AbstractProperty prop = (AbstractProperty) extProps.get(key);
 					ScaAbstractProperty< ? > newProp = makeScaProperty(propFactory, prop);
 					final Object value = propMap.get(key);
-					if (prop instanceof Simple) {
-						((ScaSimpleProperty) newProp).setValue(value);
-					} else if (prop instanceof SimpleSequence) {
-						((ScaSimpleSequenceProperty) newProp).setValue((Object[]) value);
-					} else if (prop instanceof Struct) {
-						setStructValue((ScaStructProperty) newProp, (Map< ? , ? >) value);
-					} else if (prop instanceof StructSequence) {
-						for (Object obj : (List< ? >) value) {
-							setStructValue(((ScaStructSequenceProperty) prop).createScaStructProperty(), (Map< ? , ? >) obj);
-						}
-					}
+					setValue(newProp, value);
 					if (!newProp.isDefaultValue() && newProp.getDefinition() != null
 						&& newProp.getDefinition().isKind(PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
 						newProp.setId((String) key);
@@ -195,16 +186,30 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 	}
 
 	private void setStructValue(ScaStructProperty struct, Map< ? , ? > valMap) {
-		for (ScaSimpleProperty simple : struct.getSimples()) {
-			if (valMap.containsKey(simple.getId())) {
-				simple.setValue(valMap.get(simple.getId()));
-			}
-		}
-		for (ScaSimpleSequenceProperty simpleSequence : struct.getSequences()) {
-			if (valMap.containsKey(simpleSequence.getId())) {
-				simpleSequence.setValue((Object[]) valMap.get(simpleSequence.getId()));
+		for (ScaAbstractProperty< ? > field : struct.getFields()) {
+			if (valMap.containsKey(field.getId())) {
+				Object value = valMap.get(field.getId());
+				setValue(field, value);
 			}
 		}
 	}
 
+	private void setValue(ScaAbstractProperty< ? > property, Object value) {
+		switch (property.eClass().getClassifierID()) {
+		case ScaPackage.SCA_SIMPLE_PROPERTY:
+			((ScaSimpleProperty) property).setValue(value);
+			break;
+		case ScaPackage.SCA_SIMPLE_SEQUENCE_PROPERTY:
+			((ScaSimpleSequenceProperty) property).setValue((Object[]) value);
+			break;
+		case ScaPackage.SCA_STRUCT_PROPERTY:
+			setStructValue((ScaStructProperty) property, (Map< ? , ? >) value);
+			break;
+		case ScaPackage.SCA_STRUCT_SEQUENCE_PROPERTY:
+			for (Object obj : (List< ? >) value) {
+				setStructValue(((ScaStructSequenceProperty) property).createScaStructProperty(), (Map< ? , ? >) obj);
+			}
+			break;
+		}
+	}
 }
