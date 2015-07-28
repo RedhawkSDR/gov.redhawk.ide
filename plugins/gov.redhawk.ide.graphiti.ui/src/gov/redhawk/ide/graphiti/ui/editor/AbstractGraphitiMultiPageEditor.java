@@ -223,7 +223,7 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 		}
 		
 		//text editor dirty state
-		if (textEditor.isDirty()) {
+		if (textEditor != null && textEditor.isDirty()) {
 			return true;
 		}
 		
