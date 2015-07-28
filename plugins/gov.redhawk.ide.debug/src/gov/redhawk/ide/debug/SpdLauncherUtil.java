@@ -44,6 +44,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.AccessType;
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.scd.ComponentType;
@@ -354,11 +355,11 @@ public final class SpdLauncherUtil {
 		// Collect non-null properties of type 'property'
 		List<DataType> initializeProps = new ArrayList<DataType>();
 		for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
-			Object propDef = prop.getDefinition();
-			if (propDef instanceof AbstractProperty && ((AbstractProperty) propDef).isKind(PropertyConfigurationType.PROPERTY)) {
+			AbstractProperty propDef = prop.getDefinition();
+			if (propDef.isKind(PropertyConfigurationType.PROPERTY) && !propDef.getMode().equals(AccessType.READONLY)) {
 				DataType dt = prop.getProperty();
 				if (dt.value != null && dt.value.type().kind() != TCKind.tk_null) {
-					initializeProps.add(new DataType(prop.getId(), prop.toAny()));
+					initializeProps.add(dt);
 				}
 			}
 		}
