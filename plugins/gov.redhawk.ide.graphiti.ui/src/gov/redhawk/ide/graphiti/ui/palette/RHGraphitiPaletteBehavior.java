@@ -16,7 +16,6 @@ import org.eclipse.gef.ui.palette.PaletteViewer;
 import org.eclipse.gef.ui.palette.PaletteViewerProvider;
 import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
-import org.eclipse.swt.widgets.Composite;
 
 /**
  * Class implemented to enable filtering of components in the palette.
@@ -48,16 +47,7 @@ public class RHGraphitiPaletteBehavior extends DefaultPaletteBehavior {
 			protected void configurePaletteViewer(PaletteViewer viewer) {
 				super.configurePaletteViewer(viewer);
 				viewer.addDragSourceListener(new TemplateTransferDragSourceListener(viewer));
-			}
-
-			public PaletteViewer createPaletteViewer(Composite parent) {
-				final PaletteViewer viewer = new PaletteViewer();
 				viewer.setEditPartFactory(new RHGraphitiPaletteEditPartFactory(RHGraphitiPaletteBehavior.this, diagramBehavior, viewer)); 
-
-				viewer.createControl(parent);
-				configurePaletteViewer(viewer);
-				hookPaletteViewer(viewer);
-				return viewer;
 			}
 		};
 	}

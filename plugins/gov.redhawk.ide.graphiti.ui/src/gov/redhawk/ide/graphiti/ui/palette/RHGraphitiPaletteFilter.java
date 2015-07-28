@@ -31,11 +31,9 @@ public class RHGraphitiPaletteFilter {
 	private String filter = "";
 	private PaletteViewer viewer;
 	private Pattern pattern;
-	private GraphicalEditPart editPart;
 
 	public RHGraphitiPaletteFilter(PaletteViewer viewer, GraphicalEditPart logicLabelEditPart) {
 		this.viewer = viewer;
-		this.setEditPart(logicLabelEditPart);
 	}
 
 	/**
@@ -113,21 +111,9 @@ public class RHGraphitiPaletteFilter {
 		} else {
 			this.pattern = Pattern.compile(".*" + Pattern.quote(this.filter) + ".*", Pattern.CASE_INSENSITIVE);
 		}
-//		refresh();
-//		viewer.flush();
 		if (paletteBehavior != null) {
 			paletteBehavior.refreshPalette();
 		}
-//		viewer.getRootEditPart().refresh();
-//		editPart.refresh();
 	}
 
-	public GraphicalEditPart getEditPart() {
-		return editPart;
-	}
-
-	public void setEditPart(GraphicalEditPart editPart) {
-		this.editPart = editPart;
-	}
-	
 }
