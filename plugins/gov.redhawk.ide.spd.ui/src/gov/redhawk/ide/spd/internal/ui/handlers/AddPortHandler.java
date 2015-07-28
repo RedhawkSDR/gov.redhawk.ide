@@ -15,9 +15,9 @@ import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
 import gov.redhawk.model.sca.util.ModelUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.InheritsInterface;
@@ -112,17 +112,17 @@ public class AddPortHandler extends AbstractHandler {
 
 	private String getDefaultName(Ports ports) {
 		String defaultName = DEFAULT_PORT_NAME;
-		
-		List<String> portNameList = new ArrayList<String>();
+
+		Set<String> portNameList = new HashSet<String>();
 		for (AbstractPort port : ports.getAllPorts()) {
 			portNameList.add(port.getName());
 		}
-		
+
 		int nameIncrement = 1;
 		while (portNameList.contains(defaultName)) {
 			defaultName = DEFAULT_PORT_NAME + "_" + nameIncrement++;
 		}
-		
+
 		return (defaultName.toString());
 	}
 
