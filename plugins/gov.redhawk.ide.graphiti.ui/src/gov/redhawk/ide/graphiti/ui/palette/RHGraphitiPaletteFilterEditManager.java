@@ -17,8 +17,6 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
@@ -73,12 +71,6 @@ public class RHGraphitiPaletteFilterEditManager extends DirectEditManager {
 				String text = textControl.getText().trim();
 				filter.setFilter(text);
 				((RHGraphitiPaletteFilterFigure) ((RHGraphitiPaletteFilterEditPart) getEditPart()).getFigure()).setText(text);
-			}
-		});
-		textControl.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				commit();
 			}
 		});
 		return retVal;

@@ -13,7 +13,6 @@ package gov.redhawk.ide.graphiti.ui.palette;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartListener;
-import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
 import org.eclipse.gef.ui.palette.PaletteViewer;
@@ -30,30 +29,7 @@ public class RHGraphitiPaletteFilterEditPart extends org.eclipse.gef.editparts.A
 	}
 
 	protected void createEditPolicies() {
-		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, null);
-		installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new RHGraphitiPaletteFilterDirectEditPolicy());
-		installEditPolicy(EditPolicy.COMPONENT_ROLE, null);
-		addEditPartListener(new EditPartListener() {
-
-			@Override
-			public void childAdded(EditPart child, int index) {
-				
-			}
-
-			@Override
-			public void partActivated(EditPart editpart) {
-
-			}
-
-			@Override
-			public void partDeactivated(EditPart editpart) {
-				
-			}
-
-			@Override
-			public void removingChild(EditPart child, int index) {
-				
-			}
+		addEditPartListener(new EditPartListener.Stub() {
 
 			@Override
 			public void selectedStateChanged(EditPart editpart) {
