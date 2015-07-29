@@ -185,15 +185,12 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 	/**
 	 * This is how the framework determines which interfaces we implement.
 	 */
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") final Class key) {
+	public <T> T getAdapter(final Class<T> key) {
 		if (key.equals(IGotoMarker.class)) {
-			return this;
-		} else if (key.equals(ScaWaveform.class)) {
-			return PluginUtil.adapt(ScaWaveform.class, getSoftwareAssembly());
-		} else if (key.isAssignableFrom(Application.class)) {
-			return PluginUtil.adapt(ScaWaveform.class, getSoftwareAssembly());
+			return key.cast(this);
+		} else if (key.equals(ScaWaveform.class) || key.isAssignableFrom(Application.class)) {
+			return key.cast(PluginUtil.adapt(ScaWaveform.class, getSoftwareAssembly()));
 		} else {
 			return super.getAdapter(key);
 		}
