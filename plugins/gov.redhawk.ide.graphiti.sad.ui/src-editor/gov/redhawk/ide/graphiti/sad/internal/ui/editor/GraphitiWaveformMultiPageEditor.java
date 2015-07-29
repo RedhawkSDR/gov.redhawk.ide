@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -60,14 +59,13 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
 import CF.Application;
 
 /**
  * This is an example of a Sad model editor.
  */
-public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
+public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEditor {
 
 	public static final String ID = "gov.redhawk.ide.graphiti.sad.ui.editor.presentation.SadEditorID";
 
@@ -191,9 +189,8 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 			return key.cast(this);
 		} else if (key.equals(ScaWaveform.class) || key.isAssignableFrom(Application.class)) {
 			return key.cast(PluginUtil.adapt(ScaWaveform.class, getSoftwareAssembly()));
-		} else {
-			return super.getAdapter(key);
 		}
+		return super.getAdapter(key);
 	}
 
 	@Override

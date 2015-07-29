@@ -66,7 +66,9 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageSelectionProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
 
@@ -115,6 +117,14 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 	
 	public abstract void setSelectionToViewer(final Collection< ? > collection);
 	
+	@Override
+	public < T > T getAdapter(Class<T> adapter) {
+		if (adapter == IPropertySheetPage.class) {
+			return adapter.cast(new TabbedPropertySheetPage(this));
+		}
+		return super.getAdapter(adapter);
+	}
+
 	/**
 	 * This makes sure that one content viewer, either for the current page or
 	 * the outline view, if it has focus, is the current one.

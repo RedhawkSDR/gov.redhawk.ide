@@ -39,7 +39,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -62,9 +61,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
-public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
+public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor {
 
 	public static final String ID = "gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor";
 
@@ -180,14 +178,12 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 	/**
 	 * This is how the framework determines which interfaces we implement.
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(final Class key) {
+	public <T> T getAdapter(final Class<T> key) {
 		if (key.equals(IGotoMarker.class)) {
-			return this;
-		} else {
-			return super.getAdapter(key);
+			return key.cast(this);
 		}
+		return super.getAdapter(key);
 	}
 
 
