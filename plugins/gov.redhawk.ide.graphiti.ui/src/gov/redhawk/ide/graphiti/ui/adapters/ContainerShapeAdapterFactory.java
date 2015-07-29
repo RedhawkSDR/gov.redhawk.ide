@@ -64,8 +64,13 @@ public class ContainerShapeAdapterFactory implements IAdapterFactory {
 		}
 
 		// Go from the Graphiti model object to the Redhawk model object
-		ComponentInstantiation ci = (ComponentInstantiation) DUtil.getBusinessObject((RHContainerShape) model);
-		if (ci == null || ci.eResource() == null) {
+		// The object must be a ComponentInstantiation (super-type of instantiations in both SAD & DCD)
+		Object redhawkModelObj = DUtil.getBusinessObject((RHContainerShape) model);
+		if (!(redhawkModelObj instanceof ComponentInstantiation)) {
+			return null;
+		}
+		ComponentInstantiation ci = (ComponentInstantiation) redhawkModelObj;
+		if (ci.eResource() == null) {
 			return null;
 		}
 

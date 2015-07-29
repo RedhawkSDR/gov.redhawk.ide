@@ -31,7 +31,7 @@ public class ServiceWizardTest extends ComponentWizardTest {
 	}
 
 	public void setServiceInWizard() {
-		wizardBot.textWithLabel("Service Interface").setText("IDL:SAMPLE/SampleInterface:1.0");
+		wizardBot.textWithLabel("Service Interface").setText("IDL:IDETEST/SampleInterface:1.0");
 	}
 	
 	@Test
