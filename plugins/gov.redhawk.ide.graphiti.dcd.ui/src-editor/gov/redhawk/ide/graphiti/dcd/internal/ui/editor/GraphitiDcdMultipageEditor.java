@@ -17,12 +17,10 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDcdDiagramEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
-import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
 import gov.redhawk.model.sca.util.ModelUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import mil.jpeojtrs.sca.dcd.DcdPackage;
@@ -33,13 +31,13 @@ import mil.jpeojtrs.sca.scd.provider.ScdItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
@@ -54,12 +52,10 @@ import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.DiagramEditorInput;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor {
@@ -146,49 +142,6 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 	}
 
 	/**
-	 * This sets the selection into whichever viewer is active.
-	 */
-	@Override
-	public void setSelectionToViewer(final Collection< ? > collection) {
-		final Collection< ? > theSelection = collection;
-		// Make sure it's okay.
-		//
-		if (theSelection != null && !theSelection.isEmpty()) {
-			// I don't know if this should be run this deferred
-			// because we might have to give the editor a chance to process the
-			// viewer update events
-			// and hence to update the views first.
-			//
-			//
-			final Runnable runnable = new Runnable() {
-				@Override
-				public void run() {
-					// Try to select the items in the current content viewer of
-					// the editor.
-					//
-					if (getViewer() != null) {
-						getViewer().setSelection(new StructuredSelection(theSelection.toArray()), true);
-					}
-				}
-			};
-			runnable.run();
-		}
-	}
-
-	/**
-	 * This is how the framework determines which interfaces we implement.
-	 */
-	@Override
-	public <T> T getAdapter(final Class<T> key) {
-		if (key.equals(IGotoMarker.class)) {
-			return key.cast(this);
-		}
-		return super.getAdapter(key);
-	}
-
-
-
-	/**
 	 * This implements {@link org.eclipse.jface.action.IMenuListener} to help
 	 * fill the context menus with contributions from the Edit menu.
 	 */
@@ -226,6 +179,11 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 
 	private DeviceConfiguration getDeviceConfiguration() {
 		return ModelUtil.getDeviceConfiguration(getMainResource());
+	}
+
+	@Override
+	protected EObject getMainObject() {
+		return getDeviceConfiguration();
 	}
 
 	@Override
@@ -369,14 +327,5 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 			return false;
 		}
 		return resource.getURI().equals(getDeviceConfiguration().eResource().getURI()) && super.isPersisted(resource);
-	}
-
-	@Override
-	public void doSave(final IProgressMonitor monitor) {
-		final CleanUpComponentFilesAction cleanAction = new CleanUpComponentFilesAction();
-		cleanAction.setRoot(getDeviceConfiguration());
-		cleanAction.run();
-
-		super.doSave(monitor);
 	}
 }

@@ -16,7 +16,6 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.SadDiagramUtilHelper;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
-import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.model.sca.util.ModelUtil;
@@ -24,7 +23,6 @@ import gov.redhawk.sca.util.PluginUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import mil.jpeojtrs.sca.prf.provider.PrfItemProviderAdapterFactory;
@@ -35,13 +33,13 @@ import mil.jpeojtrs.sca.scd.provider.ScdItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
@@ -52,12 +50,10 @@ import org.eclipse.graphiti.mm.pictograms.PictogramsFactory;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.DiagramEditorInput;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import CF.Application;
@@ -151,43 +147,11 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 	}
 
 	/**
-	 * This sets the selection into whichever viewer is active.
-	 */
-	@Override
-	public void setSelectionToViewer(final Collection< ? > collection) {
-		final Collection< ? > theSelection = collection;
-		// Make sure it's okay.
-		//
-		if (theSelection != null && !theSelection.isEmpty()) {
-			// I don't know if this should be run this deferred
-			// because we might have to give the editor a chance to process the
-			// viewer update events
-			// and hence to update the views first.
-			//
-			//
-			final Runnable runnable = new Runnable() {
-				@Override
-				public void run() {
-					// Try to select the items in the current content viewer of
-					// the editor.
-					//
-					if (getViewer() != null) {
-						getViewer().setSelection(new StructuredSelection(theSelection.toArray()), true);
-					}
-				}
-			};
-			runnable.run();
-		}
-	}
-
-	/**
 	 * This is how the framework determines which interfaces we implement.
 	 */
 	@Override
 	public <T> T getAdapter(final Class<T> key) {
-		if (key.equals(IGotoMarker.class)) {
-			return key.cast(this);
-		} else if (key.equals(ScaWaveform.class) || key.isAssignableFrom(Application.class)) {
+		if (key.equals(ScaWaveform.class) || key.isAssignableFrom(Application.class)) {
 			return key.cast(PluginUtil.adapt(ScaWaveform.class, getSoftwareAssembly()));
 		}
 		return super.getAdapter(key);
@@ -229,6 +193,11 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 	 */
 	private SoftwareAssembly getSoftwareAssembly() {
 		return ModelUtil.getSoftwareAssembly(getMainResource());
+	}
+
+	@Override
+	protected EObject getMainObject() {
+		return getSoftwareAssembly();
 	}
 
 	/**
@@ -386,18 +355,5 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 	@Override
 	public boolean isPersisted(final Resource resource) {
 		return resource.getURI().equals(getSoftwareAssembly().eResource().getURI()) && super.isPersisted(resource);
-	}
-
-	/**
-	 * The Text editor always stays in sync with other editor changes therefore always save it.
-	 * Calling emfDoSave handles saving the graphiti diagram resource
-	 */
-	@Override
-	public void doSave(final IProgressMonitor monitor) {
-		final CleanUpComponentFilesAction cleanAction = new CleanUpComponentFilesAction();
-		cleanAction.setRoot(getSoftwareAssembly());
-		cleanAction.run();
-
-		super.doSave(monitor);
 	}
 }
