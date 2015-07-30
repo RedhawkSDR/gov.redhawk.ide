@@ -18,7 +18,6 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteBehavior;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.common.util.Diagnostic;
@@ -39,20 +38,12 @@ import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.IDiagramEditorInput;
 import org.eclipse.jface.util.TransferDropTargetListener;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.contexts.IContextActivation;
-import org.eclipse.ui.contexts.IContextService;
 
 public class GraphitiWaveformDiagramEditor extends GraphitiDiagramEditor {
 
-	private EditingDomain editingDomain;
-	private List<String> contexts = new ArrayList<String>();
-	private List<IContextActivation> contextActivations = new ArrayList<IContextActivation>();
-
 	public GraphitiWaveformDiagramEditor(EditingDomain editingDomain) {
-		this.editingDomain = editingDomain;
+		super(editingDomain);
+		addContext("gov.redhawk.ide.graphiti.sad.ui.contexts.diagram");
 	}
 
 	@Override
@@ -182,47 +173,6 @@ public class GraphitiWaveformDiagramEditor extends GraphitiDiagramEditor {
 		});
 
 		((SADDiagramTypeProvider) getDiagramTypeProvider()).setAutoUpdateAtRuntime(false);
-	}
-
-	@Override
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		super.init(site, input);
-		activateContext("gov.redhawk.ide.graphiti.sad.ui.contexts.diagram");
-		// Activate contexts specified pre-init()
-		for (String context : contexts) {
-			activateContext(context);
-		}
-	}
-
-	@Override
-	public void dispose() {
-		deactivateAllContexts();
-		super.dispose();
-	}
-
-	private void deactivateAllContexts() {
-		if (!contextActivations.isEmpty()) {
-			IContextService contextService = (IContextService) getSite().getService(IContextService.class);
-			for (IContextActivation activation : contextActivations) {
-				contextService.deactivateContext(activation);
-			}
-		}
-	}
-
-	/*
-	 * For use before init()
-	 */
-	public void addContext(String context) {
-		contexts.add(context);
-	}
-
-	public void activateContext(String context) {
-		IContextService contextService = (IContextService) getSite().getService(IContextService.class);
-		if (contextService != null) {
-			IContextActivation activation = contextService.activateContext(context);
-			contextActivations.add(activation);
-		}
-
 	}
 
 }

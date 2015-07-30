@@ -11,7 +11,11 @@
  */
 package gov.redhawk.ide.graphiti.ui.diagram;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -19,13 +23,39 @@ import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 
 public class GraphitiDiagramEditor extends DiagramEditor {
 
+	private List<String> contexts = new ArrayList<String>();
+	private List<IContextActivation> contextActivations = new ArrayList<IContextActivation>();
 	private MouseListener mouseListener = null;
 
-	public GraphitiDiagramEditor() {
+	protected EditingDomain editingDomain;
+
+	public GraphitiDiagramEditor(EditingDomain editingDomain) {
 		super();
+		this.editingDomain = editingDomain;
+	}
+
+	@Override
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		super.init(site, input);
+
+		// Activate contexts specified pre-init()
+		for (String context : contexts) {
+			activateContext(context);
+		}
+	}
+
+	@Override
+	public void dispose() {
+		deactivateAllContexts();
+		super.dispose();
 	}
 
 	@Override
@@ -52,6 +82,28 @@ public class GraphitiDiagramEditor extends DiagramEditor {
 						viewer.select(part);
 					}
 				}
+			}
+		}
+	}
+
+	public void addContext(String context) {
+		contexts.add(context);
+	}
+
+	protected void activateContext(String context) {
+		IContextService contextService = (IContextService) getSite().getService(IContextService.class);
+		if (contextService != null) {
+			IContextActivation activation = contextService.activateContext(context);
+			contextActivations.add(activation);
+		}
+
+	}
+
+	private void deactivateAllContexts() {
+		if (!contextActivations.isEmpty()) {
+			IContextService contextService = (IContextService) getSite().getService(IContextService.class);
+			for (IContextActivation activation : contextActivations) {
+				contextService.deactivateContext(activation);
 			}
 		}
 	}
