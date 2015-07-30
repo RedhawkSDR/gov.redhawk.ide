@@ -25,6 +25,7 @@ import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class ScaExplorerTestUtils {
@@ -117,6 +118,7 @@ public class ScaExplorerTestUtils {
 
 		// Recursively expand child items
 		try {
+			// This pattern accounts for suffixes on waveform names, as well as decorations on objects that are started
 			Pattern pattern = Pattern.compile(path.get(0) + "(_\\d+_\\d+)?( STARTED)?");
 			List<String> nodes = parentItem.getNodes();
 			for (String node : nodes) {
@@ -291,28 +293,27 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Connect component ports via SCA Explorer Chalkboard
+	 * Connect component ports via SCA Explorer
 	 * @param componentName
 	 */
 	public static void connectComponentPortsInScaExplorer(SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveform,
 		final String connectionName, final String sourceComponentName, final String sourceComponentPortName, final String targetComponentName,
 		final String targetComponentPortName) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		final SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-		SWTBotTreeItem sourceComponentPortEntry = waveformTreeItem.expandNode(sourceComponentName, sourceComponentPortName);
+		List<String> path = new ArrayList<String>();
+		Collections.addAll(path, waveformParentPath);
+		path.add(waveform);
+		path.add(sourceComponentName);
+
+		final SWTBotTreeItem sourceComponentPortEntry = getTreeItemFromScaExplorer(bot, path.toArray(new String[path.size()]), sourceComponentPortName);
 		sourceComponentPortEntry.select();
-		SWTBotMenu connect = sourceComponentPortEntry.contextMenu("Connect");
-		connect.click(); // opens connect wizard
+		sourceComponentPortEntry.contextMenu("Connect").click();
 
 		// Connect wizard
 		SWTBotShell wizardShell = bot.shell("Connect");
 		final SWTBot wizardBot = wizardShell.bot();
 		wizardShell.activate();
 
-		wizardBot.treeInGroup("Target").expandNode(waveformParentPath).select();
-
-		// wait until waveform fully displays
+		// Wait until the waveform fully displays and we can select the port
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
@@ -321,18 +322,16 @@ public class ScaExplorerTestUtils {
 
 			@Override
 			public boolean test() throws Exception {
+				// We collapse/expand everything at each test. SWTBot's quick expansion can cause issues with the
+				// tree view's display.
+				SWTBotTree targetTree = wizardBot.treeInGroup("Target");
+				targetTree.collapseNode(waveformParentPath[0]);
 				SWTBotTreeItem targetWaveformParentTreeItem = wizardBot.treeInGroup("Target").expandNode(waveformParentPath);
 				SWTBotTreeItem targetComponentPortTreeItem = targetWaveformParentTreeItem.expandNode(waveform, targetComponentName, targetComponentPortName);
-				if (targetComponentPortTreeItem != null) {
-					return true;
-				}
-				return false;
+				targetComponentPortTreeItem.select();
+				return true;
 			}
 		});
-
-		// select targetComponentPort
-		SWTBotTreeItem targetWaveformParentTreeItem = wizardBot.treeInGroup("Target").expandNode(waveformParentPath);
-		targetWaveformParentTreeItem.expandNode(waveform, targetComponentName, targetComponentPortName).select();
 
 		// Enter the name for connection
 		wizardBot.textWithLabel("Connection ID:").setText(connectionName);
