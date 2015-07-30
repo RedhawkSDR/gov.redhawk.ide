@@ -13,6 +13,7 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram;
 
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ui.diagram.GraphitiDiagramEditor;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ChalkboardContextMenuProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteBehavior;
@@ -37,7 +38,6 @@ import org.eclipse.graphiti.ui.editor.DefaultMarkerBehavior;
 import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
 import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
-import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.IDiagramEditorInput;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.ui.IEditorInput;
@@ -46,7 +46,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 
-public class GraphitiDcdDiagramEditor extends DiagramEditor {
+public class GraphitiDcdDiagramEditor extends GraphitiDiagramEditor {
 
 	private EditingDomain editingDomain;
 	private List<String> contexts = new ArrayList<String>();
