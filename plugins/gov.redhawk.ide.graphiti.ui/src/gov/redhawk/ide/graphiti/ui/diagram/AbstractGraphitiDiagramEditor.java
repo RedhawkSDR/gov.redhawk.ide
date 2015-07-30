@@ -15,7 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.workspace.util.WorkspaceSynchronizer.Delegate;
+import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -25,7 +30,13 @@ import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.ui.editor.DefaultMarkerBehavior;
+import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
+import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
+import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
+import org.eclipse.graphiti.ui.editor.IDiagramEditorInput;
+import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -36,9 +47,12 @@ import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.ChalkboardContextMenuProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteBehavior;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 
-public class GraphitiDiagramEditor extends DiagramEditor {
+public abstract class AbstractGraphitiDiagramEditor extends DiagramEditor {
 
 	private List<String> contexts = new ArrayList<String>();
 	private List<IContextActivation> contextActivations = new ArrayList<IContextActivation>();
@@ -46,7 +60,7 @@ public class GraphitiDiagramEditor extends DiagramEditor {
 
 	protected EditingDomain editingDomain;
 
-	public GraphitiDiagramEditor(EditingDomain editingDomain) {
+	public AbstractGraphitiDiagramEditor(EditingDomain editingDomain) {
 		super();
 		this.editingDomain = editingDomain;
 	}
@@ -158,11 +172,92 @@ public class GraphitiDiagramEditor extends DiagramEditor {
 
 				@Override
 				public void mouseDown(MouseEvent e) {
-					GraphitiDiagramEditor.this.handleMouseDown(e);
+					AbstractGraphitiDiagramEditor.this.handleMouseDown(e);
 				}
 			};
 		}
 		return mouseListener;
 	}
 
+	@Override
+	protected DiagramBehavior createDiagramBehavior() {
+		return new DiagramBehavior(this) {
+
+			// Override Marker behavior because it modifies the underlying sad resource
+			// and the user will be prompted if they would like to replace their file with what's on disk
+			@Override
+			public DefaultMarkerBehavior createMarkerBehavior() {
+				return new DefaultMarkerBehavior(this) {
+
+					public Diagnostic analyzeResourceProblems(Resource resource, Exception exception) {
+						return Diagnostic.OK_INSTANCE;
+					}
+				};
+
+			};
+
+			@Override
+			protected DefaultUpdateBehavior createUpdateBehavior() {
+				return new DefaultUpdateBehavior(this) {
+
+					// We need to provide our own editing domain so that all editors are working on the same resource.
+					// In order to work with a Graphiti diagram, our form creates an editing domain with the Graphiti
+					// supplied Command stack.
+					@Override
+					protected void createEditingDomain(IDiagramEditorInput input) {
+						initializeEditingDomain((TransactionalEditingDomain) editingDomain);
+					}
+
+					@Override
+					protected boolean handleDirtyConflict() {
+						return true;
+					}
+
+					@Override
+					protected Delegate createWorkspaceSynchronizerDelegate() {
+						return null;
+					}
+
+					@Override
+					protected void closeContainer() {
+					}
+
+					@Override
+					protected void disposeEditingDomain() {
+					}
+
+				};
+			}
+
+			@Override
+			protected DefaultPaletteBehavior createPaletteBehaviour() {
+				final DefaultPaletteBehavior paletteBehavior = new RHGraphitiPaletteBehavior(this);
+				return paletteBehavior;
+			}
+
+			@Override
+			protected List<TransferDropTargetListener> createBusinessObjectDropTargetListeners() {
+				List<TransferDropTargetListener> retVal = super.createBusinessObjectDropTargetListeners();
+				Diagram diagram = getDiagramBehavior().getDiagramTypeProvider().getDiagram();
+
+				// This check stops users from adding from the Target SDR to Graphiti Waveform Explorer
+				if (!DUtil.isDiagramExplorer(diagram)) {
+					retVal.add(0, createDropTargetListener(getDiagramContainer().getGraphicalViewer(), this));
+				}
+
+				return retVal;
+			}
+
+			@Override
+			protected ContextMenuProvider createContextMenuProvider() {
+				if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
+					return new ChalkboardContextMenuProvider(getDiagramContainer().getGraphicalViewer(), getDiagramContainer().getActionRegistry(),
+						getConfigurationProvider());
+				}
+				return super.createContextMenuProvider();
+			}
+		};
+	}
+
+	protected abstract TransferDropTargetListener createDropTargetListener(GraphicalViewer viewer, DiagramBehavior behavior);
 }
