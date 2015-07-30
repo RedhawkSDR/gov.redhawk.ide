@@ -16,6 +16,7 @@ import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaDeviceManager;
 import gov.redhawk.model.sca.ScaPort;
+import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 
@@ -45,6 +46,15 @@ public final class GraphitiAdapterUtil {
 
 	private GraphitiAdapterUtil() {
 
+	}
+
+	public static ScaComponent safeFetchComponent(final ScaWaveform waveform, final String instantiationId) {
+		for (final ScaComponent component : GraphitiAdapterUtil.safeFetchComponents(waveform)) {
+			if (component.getInstantiationIdentifier().equals(instantiationId)) {
+				return component;
+			}
+		}
+		return null;
 	}
 
 	public static List<ScaComponent> safeFetchComponents(final ScaWaveform waveform) {
@@ -122,6 +132,15 @@ public final class GraphitiAdapterUtil {
 		return retVal;
 	}
 
+	public static ScaDevice< ? > safeFetchDevice(final ScaDeviceManager devMgr, final String deviceId) {
+		for (final ScaDevice< ? > device : GraphitiAdapterUtil.safeFetchComponents(devMgr)) {
+			if (device.getIdentifier().equals(deviceId)) {
+				return device;
+			}
+		}
+		return null;
+	}
+
 	public static List<ScaDevice< ? >> safeFetchComponents(final ScaDeviceManager devMgr) {
 		List<ScaDevice< ? >> retVal = Collections.emptyList();
 		if (devMgr == null) {
@@ -197,11 +216,17 @@ public final class GraphitiAdapterUtil {
 		return retVal;
 	}
 
-	public static List<ScaPort< ? , ? >> safeFetchPorts(final ScaComponent component) {
-		List<ScaPort< ? , ? >> retVal = Collections.emptyList();
-		if (component.isSetPorts()) {
-			retVal = component.getPorts();
-		} else {
+	public static List<ScaPort< ? , ? >> safeFetchPorts(final ScaPortContainer container) {
+		if (!container.isSetPorts()) {
+			final String label;
+			if (container instanceof ScaComponent) {
+				label = ((ScaComponent) container).getName();
+			} else if (container instanceof ScaDevice) {
+				label = ((ScaDevice< ? >) container).getLabel();
+			} else {
+				label = "<unknown>";
+			}
+
 			if (Display.getCurrent() != null) {
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 				try {
@@ -209,12 +234,12 @@ public final class GraphitiAdapterUtil {
 
 						@Override
 						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							monitor.beginTask("Fetching ports for " + component.getName(), IProgressMonitor.UNKNOWN);
+							monitor.beginTask("Fetching ports for " + label, IProgressMonitor.UNKNOWN);
 							try {
 								CorbaUtils.invoke(new Callable<List<ScaPort< ? , ? >>>() {
 
 									public List<ScaPort< ? , ? >> call() throws Exception {
-										return component.fetchPorts(monitor);
+										return container.fetchPorts(monitor);
 									}
 
 								}, monitor);
@@ -225,18 +250,17 @@ public final class GraphitiAdapterUtil {
 					});
 				} catch (InvocationTargetException e) {
 					StatusManager.getManager().handle(
-						new Status(Status.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Failed to fetch ports for " + component.getName(), e),
+						new Status(Status.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Failed to fetch ports for " + label, e),
 						StatusManager.SHOW | StatusManager.LOG);
 				} catch (InterruptedException e) {
 					// PASS
 				}
-				retVal = component.getPorts();
 			} else {
 				try {
-					retVal = ProtectedThreadExecutor.submit(new Callable<List<ScaPort< ? , ? >>>() {
+					ProtectedThreadExecutor.submit(new Callable<List<ScaPort< ? , ? >>>() {
 
 						public List<ScaPort< ? , ? >> call() throws Exception {
-							return component.fetchPorts(null);
+							return container.fetchPorts(null);
 						}
 
 					});
@@ -244,102 +268,39 @@ public final class GraphitiAdapterUtil {
 					// PASS
 				} catch (final ExecutionException e) {
 					StatusManager.getManager().handle(
-						new Status(Status.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Failed to fetch ports for " + component.getName(), e),
+						new Status(Status.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Failed to fetch ports for " + label, e),
 						StatusManager.SHOW | StatusManager.LOG);
 				} catch (final TimeoutException e) {
 					StatusManager.getManager().handle(
-						new Status(Status.WARNING, GraphitiUIPlugin.PLUGIN_ID, "Timed out trying to fetch ports for " + component.getName(), e),
+						new Status(Status.WARNING, GraphitiUIPlugin.PLUGIN_ID, "Timed out trying to fetch ports for " + label, e),
 						StatusManager.SHOW | StatusManager.LOG);
 				}
 			}
 
 			// Ensure the component's port are "set" to avoid future zombie threads
-			if (!component.isSetPorts()) {
-				ScaModelCommand.execute(component, new ScaModelCommand() {
+			if (!container.isSetPorts()) {
+				ScaModelCommand.execute(container, new ScaModelCommand() {
 
 					@Override
 					public void execute() {
-						if (!component.isSetPorts()) {
-							component.getPorts().clear();
+						if (!container.isSetPorts()) {
+							container.getPorts().clear();
 						}
 					}
 				});
 			}
 		}
 
-		return retVal;
+		return container.getPorts();
 	}
 
-	public static List<ScaPort< ? , ? >> safeFetchPorts(final ScaDevice< ? > device) {
-		List<ScaPort< ? , ? >> retVal = Collections.emptyList();
-		if (device.isSetPorts()) {
-			retVal = device.getPorts();
-		} else {
-			if (Display.getCurrent() != null) {
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
-				try {
-					dialog.run(true, true, new IRunnableWithProgress() {
-
-						@Override
-						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							monitor.beginTask("Fetching ports for " + device.getLabel(), IProgressMonitor.UNKNOWN);
-							try {
-								CorbaUtils.invoke(new Callable<List<ScaPort< ? , ? >>>() {
-
-									public List<ScaPort< ? , ? >> call() throws Exception {
-										return device.fetchPorts(monitor);
-									}
-
-								}, monitor);
-							} catch (CoreException e) {
-								throw new InvocationTargetException(e);
-							}
-						}
-					});
-				} catch (InvocationTargetException e) {
-					StatusManager.getManager().handle(
-						new Status(Status.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Failed to fetch ports for " + device.getLabel(), e),
-						StatusManager.SHOW | StatusManager.LOG);
-				} catch (InterruptedException e) {
-					// PASS
-				}
-				retVal = device.getPorts();
-			} else {
-				try {
-					retVal = ProtectedThreadExecutor.submit(new Callable<List<ScaPort< ? , ? >>>() {
-
-						public List<ScaPort< ? , ? >> call() throws Exception {
-							return device.fetchPorts(null);
-						}
-
-					});
-				} catch (final InterruptedException e) {
-					// PASS
-				} catch (final ExecutionException e) {
-					StatusManager.getManager().handle(
-						new Status(Status.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Failed to fetch ports for " + device.getLabel(), e),
-						StatusManager.SHOW | StatusManager.LOG);
-				} catch (final TimeoutException e) {
-					StatusManager.getManager().handle(
-						new Status(Status.WARNING, GraphitiUIPlugin.PLUGIN_ID, "Timed out trying to fetch ports for " + device.getLabel(), e),
-						StatusManager.SHOW | StatusManager.LOG);
-				}
-			}
-
-			// Ensure the component's port are "set" to avoid future zombie threads
-			if (!device.isSetPorts()) {
-				ScaModelCommand.execute(device, new ScaModelCommand() {
-
-					@Override
-					public void execute() {
-						if (!device.isSetPorts()) {
-							device.getPorts().clear();
-						}
-					}
-				});
+	public static ScaPort< ? , ? > safeFetchPort(ScaPortContainer container, String name) {
+		for (ScaPort< ? , ? > port : GraphitiAdapterUtil.safeFetchPorts(container)) {
+			if (port.getName().equals(name)) {
+				return port;
 			}
 		}
-
-		return retVal;
+		return null;
 	}
+
 }
