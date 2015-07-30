@@ -18,7 +18,13 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.IReason;
+import org.eclipse.graphiti.features.IUpdateFeature;
+import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -28,6 +34,9 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 
 public class GraphitiDiagramEditor extends DiagramEditor {
 
@@ -56,6 +65,41 @@ public class GraphitiDiagramEditor extends DiagramEditor {
 	public void dispose() {
 		deactivateAllContexts();
 		super.dispose();
+	}
+
+	/**
+	 * Update the diagram's components and connections
+	 */
+	protected void updateDiagram() {
+		final Diagram diagram = getDiagramTypeProvider().getDiagram();
+		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
+			public void execute() {
+
+				Diagram diagram = getDiagramTypeProvider().getDiagram();
+				IFeatureProvider featureProvider = getDiagramTypeProvider().getFeatureProvider();
+
+				// update all components if necessary
+				for (Shape s : getDiagramTypeProvider().getDiagram().getChildren()) {
+					if (s instanceof RHContainerShape) {
+						if (s != null && featureProvider != null) {
+							final UpdateContext updateContext = new UpdateContext(s);
+							final IUpdateFeature updateFeature = featureProvider.getUpdateFeature(updateContext);
+							final IReason updateNeeded = updateFeature.updateNeeded(updateContext);
+							if (updateNeeded.toBoolean()) {
+								updateFeature.update(updateContext);
+							}
+						}
+					}
+				}
+
+				// update diagram, don't ask if it should update because we want to redraw all connections each time
+				if (diagram != null && featureProvider != null) {
+					final UpdateContext updateContext = new UpdateContext(diagram);
+					final IUpdateFeature updateFeature = featureProvider.getUpdateFeature(updateContext);
+					updateFeature.update(updateContext);
+				}
+			}
+		});
 	}
 
 	@Override
