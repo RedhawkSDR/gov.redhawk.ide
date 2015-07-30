@@ -33,9 +33,6 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
  */
 public class NameBindingResolver extends AbstractLauncherResolver {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl)
 		throws CoreException {
@@ -54,8 +51,8 @@ public class NameBindingResolver extends AbstractLauncherResolver {
 				tmpName = tmpName.substring(lastDot + 1);
 			}
 			final String name = tmpName;
-			String retVal = name;
-			for (int i = 1; true; i++) {
+			String retVal = name + "_1";
+			for (int i = 2; true; i++) {
 				org.omg.CORBA.Object ref = null;
 				try {
 					ref = namingContext.resolve_str(retVal);
