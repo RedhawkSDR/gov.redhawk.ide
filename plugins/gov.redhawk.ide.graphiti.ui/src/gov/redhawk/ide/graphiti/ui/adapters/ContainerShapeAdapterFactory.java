@@ -20,6 +20,7 @@ import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.model.sca.ScaAbstractComponent;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaDeviceManager;
@@ -50,7 +51,6 @@ public class ContainerShapeAdapterFactory implements IAdapterFactory {
 	private static final Class< ? >[] ADAPTER_TYPES = new Class< ? >[] { ScaComponent.class, ScaDevice.class, LocalLaunch.class };
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public < T > T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		// We convert the Graphiti UI part -> Graphiti model object, if not already done for us
 		Object model;
@@ -74,48 +74,38 @@ public class ContainerShapeAdapterFactory implements IAdapterFactory {
 			return null;
 		}
 
-		final String myId = ci.getId();
-		final URI uri = ci.eResource().getURI();
+		ScaAbstractComponent< ? > component = getComponent(ci);
+		if (adapterType.isInstance(component)) {
+			return adapterType.cast(component);
+		} else {
+			return null;
+		}
+	}
+
+	private ScaAbstractComponent< ? > getComponent(ComponentInstantiation componentInstantiation) {
+		final String instantiationId = componentInstantiation.getId();
+		final URI uri = componentInstantiation.eResource().getURI();
 		final Map<String, String> query = QueryParser.parseQuery(uri.query());
 		final String ref = query.get(ScaFileSystemConstants.QUERY_PARAM_WF);
 
-		// Check the type of the instantiation as well as the adapter type to determine the conversion
-		if (ci instanceof SadComponentInstantiation) {
+		if (componentInstantiation instanceof SadComponentInstantiation) {
 			final ScaWaveform waveform = ScaModelPlugin.getDefault().findEObject(ScaWaveform.class, ref);
-			if (waveform != null) {
-				for (final ScaComponent component : GraphitiAdapterUtil.safeFetchComponents(waveform)) {
-					final String scaComponentId = component.identifier();
-					if (scaComponentId.startsWith(myId)) {
-						if (adapterType.isAssignableFrom(ScaComponent.class)
-							|| (adapterType.isAssignableFrom(LocalLaunch.class) && component instanceof LocalLaunch)) {
-							return (T) component;
-						} else {
-							return null;
-						}
-					}
-				}
-			}
-		} else if (ci instanceof DcdComponentInstantiation) {
+			return GraphitiAdapterUtil.safeFetchComponent(waveform, instantiationId);
+		} else if (componentInstantiation instanceof DcdComponentInstantiation) {
 			final ScaDeviceManager devMgr = ScaModelPlugin.getDefault().findEObject(ScaDeviceManager.class, ref);
 			if (devMgr != null) {
 				try {
-					ScaDevice<?> device = ScaModelCommand.runExclusive(devMgr, new RunnableWithResult.Impl<ScaDevice<?>>() {
+					return ScaModelCommand.runExclusive(devMgr, new RunnableWithResult.Impl<ScaDevice<?>>() {
 						@Override
 						public void run() {
-							setResult(devMgr.getDevice(myId));
+							setResult(devMgr.getDevice(instantiationId));
 						}
 					});
-					if (adapterType.isAssignableFrom(ScaDevice.class) || (adapterType.isAssignableFrom(LocalLaunch.class) && device instanceof LocalLaunch)) {
-						return (T) device;
-					} else {
-						return null;
-					}
 				} catch (InterruptedException e) {
 					return null;
 				}
 			}
 		}
-
 		return null;
 	}
 
