@@ -22,26 +22,20 @@ import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import mil.jpeojtrs.sca.util.CorbaUtils;
-import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.3
@@ -56,54 +50,34 @@ public final class GraphitiAdapterUtil {
 		public E call(IProgressMonitor monitor) throws Exception;
 	};
 
-	private static void safeFetch(final String label, final String featureName, final MonitorableCommand< ? > command) {
-		if (Display.getCurrent() != null) {
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
-			try {
-				dialog.run(true, true, new IRunnableWithProgress() {
-					@Override
-					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						monitor.beginTask("Fetching " + featureName + " for " + label, IProgressMonitor.UNKNOWN);
-						try {
-							CorbaUtils.invoke(new Callable<Object>() {
+	private static void safeFetch(final String name, final String child, final MonitorableCommand< ? > command) {
+		Job job = new Job("Fetching " + child + " for " + name) {
 
-								@Override
-								public Object call() throws Exception {
-									return command.call(monitor);
-								}
-							}, monitor);
-						} catch (CoreException e) {
-							throw new InvocationTargetException(e);
+			@Override
+			protected IStatus run(final IProgressMonitor monitor) {
+				try {
+					CorbaUtils.invoke(new Callable<Object>() {
+
+						@Override
+						public Object call() throws Exception {
+							return command.call(monitor);
 						}
-					}
-				});
-			} catch (InvocationTargetException e) {
-				StatusManager.getManager().handle(
-					new Status(Status.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Failed to fetch " + featureName + " for " + label, e),
-					StatusManager.SHOW | StatusManager.LOG);
-			} catch (InterruptedException e) {
-				// PASS
+					}, monitor);
+				} catch (CoreException e) {
+					return new Status(Status.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Failed to fetch " + child + " for " + name, e);
+				} catch (InterruptedException e) {
+					// PASS
+				}
+				return Status.OK_STATUS;
 			}
-		} else {
-			try {
-				ProtectedThreadExecutor.submit(new Callable<Object>() {
+		};
 
-					@Override
-					public Object call() throws Exception {
-						return command.call(null);
-					}
-				});
-			} catch (final InterruptedException e) {
-				// PASS
-			} catch (final ExecutionException e) {
-				StatusManager.getManager().handle(
-					new Status(Status.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Failed to fetch " + featureName + " for " + label, e),
-					StatusManager.SHOW | StatusManager.LOG);
-			} catch (final TimeoutException e) {
-				StatusManager.getManager().handle(
-					new Status(Status.WARNING, GraphitiUIPlugin.PLUGIN_ID, "Timed out trying to fetch " + featureName + " for " + label, e),
-					StatusManager.SHOW | StatusManager.LOG);
-			}
+		job.setUser(true);
+		job.schedule();
+		try {
+			job.join();
+		} catch (InterruptedException e) {
+			// PASS
 		}
 	}
 
@@ -148,7 +122,7 @@ public final class GraphitiAdapterUtil {
 
 				@Override
 				public List<ScaComponent> call(IProgressMonitor monitor) throws Exception {
-					return waveform.fetchComponents(monitor, RefreshDepth.CHILDREN);
+					return waveform.fetchComponents(monitor, RefreshDepth.SELF);
 				}
 			});
 
@@ -176,7 +150,7 @@ public final class GraphitiAdapterUtil {
 
 				@Override
 				public List<ScaDevice< ? >> call(IProgressMonitor monitor) throws Exception {
-					return deviceManager.fetchDevices(monitor, RefreshDepth.CHILDREN);
+					return deviceManager.fetchDevices(monitor, RefreshDepth.SELF);
 				}
 			});
 
