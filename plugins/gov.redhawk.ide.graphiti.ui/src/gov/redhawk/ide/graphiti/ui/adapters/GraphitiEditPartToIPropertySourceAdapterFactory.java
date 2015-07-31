@@ -28,7 +28,7 @@ public class GraphitiEditPartToIPropertySourceAdapterFactory implements IAdapter
 		super();
 	}
 
-	public Object getAdapter(Object adaptableObject, @SuppressWarnings("rawtypes") Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (IPropertySource.class.equals(adapterType)) {
 			if (adaptableObject instanceof GraphitiShapeEditPart) {
 				GraphitiShapeEditPart editPart = (GraphitiShapeEditPart) adaptableObject;
@@ -41,15 +41,14 @@ public class GraphitiEditPartToIPropertySourceAdapterFactory implements IAdapter
 					// get sca property source
 					final ProfileItemProviderAdapterFactory factory = new ProfileItemProviderAdapterFactory();
 					IItemPropertySource obj2 = (IItemPropertySource) factory.adapt(obj, IItemPropertySource.class);
-					return new gov.redhawk.sca.ui.RedhawkUiAdapterFactory.ScaPropertySource(obj, obj2);
+					return adapterType.cast(new gov.redhawk.sca.ui.RedhawkUiAdapterFactory.ScaPropertySource(obj, obj2));
 				}
 			}
 		}
 		return null;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { IPropertySource.class };
 	}
 }
