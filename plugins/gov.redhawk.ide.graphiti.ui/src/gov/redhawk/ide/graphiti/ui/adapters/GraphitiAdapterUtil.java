@@ -12,6 +12,7 @@
 package gov.redhawk.ide.graphiti.ui.adapters;
 
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
+import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaDeviceManager;
@@ -77,7 +78,7 @@ public final class GraphitiAdapterUtil {
 
 									@Override
 									public List<ScaComponent> call() throws Exception {
-										return waveform.fetchComponents(monitor);
+										return waveform.fetchComponents(monitor, RefreshDepth.CHILDREN);
 									}
 
 								}, monitor);
@@ -99,7 +100,7 @@ public final class GraphitiAdapterUtil {
 					retVal = ProtectedThreadExecutor.submit(new Callable<List<ScaComponent>>() {
 
 						public List<ScaComponent> call() throws Exception {
-							return waveform.fetchComponents(null);
+							return waveform.fetchComponents(null, RefreshDepth.CHILDREN);
 						}
 
 					});
@@ -161,7 +162,7 @@ public final class GraphitiAdapterUtil {
 
 									@Override
 									public EList<ScaDevice< ? >> call() throws Exception {
-										return devMgr.fetchDevices(monitor);
+										return devMgr.fetchDevices(monitor, RefreshDepth.CHILDREN);
 									}
 
 								}, monitor);
@@ -183,7 +184,7 @@ public final class GraphitiAdapterUtil {
 					retVal = ProtectedThreadExecutor.submit(new Callable<List<ScaDevice< ? >>>() {
 
 						public List<ScaDevice< ? >> call() throws Exception {
-							return devMgr.fetchDevices(null);
+							return devMgr.fetchDevices(null, RefreshDepth.CHILDREN);
 						}
 
 					});
