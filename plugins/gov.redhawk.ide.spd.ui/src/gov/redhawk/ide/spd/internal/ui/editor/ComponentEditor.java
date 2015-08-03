@@ -368,10 +368,6 @@ public class ComponentEditor extends SCAFormEditor {
 			this.addPage(this.overviewPage);
 			this.overviewPage.setInput(this.getMainResource());
 			
-			this.portsPage = new PortsPage(this);
-			this.addPage(this.portsPage);
-			this.portsPage.setInput(this.getMainResource());
-
 			this.implementationPage = new ImplementationPage(this);
 			this.addPage(this.implementationPage);
 			this.implementationPage.setInput(getMainResource());
@@ -381,7 +377,7 @@ public class ComponentEditor extends SCAFormEditor {
 			this.setPageText(pageIndex, this.getEditorInput().getName());
 
 			addPrfPages();
-			addScdPage();
+			addScdPages();
 		} catch (final PartInitException e) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, ComponentUiPlugin.getPluginId(), "Failed to add pages.", e));
 		}
@@ -459,7 +455,7 @@ public class ComponentEditor extends SCAFormEditor {
 			this.scdEditor.setInput(this.scdInput);
 			this.setPageText(this.getScdPageIndex(), this.scdInput.getName());
 		} else {
-			addScdPage();
+			addScdPages();
 		}
 	}
 
@@ -508,10 +504,18 @@ public class ComponentEditor extends SCAFormEditor {
 	/**
 	 */
 	private void removeScdPage() {
-		if (getScdPageIndex() >= 0) {
+		if (this.portsPage != null || getScdPageIndex() >= 0) {
 			Display.getDefault().asyncExec(new Runnable() {
 				@Override
 				public void run() {
+					if (ComponentEditor.this.portsPage != null && !ComponentEditor.this.portsPage.isDisposed()) {
+						if (ComponentEditor.this.portsPage.getManagedForm() != null) {
+							removeControlMessages(ComponentEditor.this.portsPage.getManagedForm().getForm().getBody());
+						}
+						removePage(ComponentEditor.this.portsPage.getIndex());
+						ComponentEditor.this.portsPage.dispose();
+						ComponentEditor.this.portsPage = null;
+					}
 					if (ComponentEditor.this.scdEditor != null && getScdPageIndex() >= 0) {
 						removePage(getScdPageIndex());
 						ComponentEditor.this.scdEditor.dispose();
@@ -522,28 +526,28 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
-	private int getPrfPageIndex() {
-		if (this.prfEditor == null || isDisposed() || getPages() == null) {
+	private int getPageIndex(Object page) {
+		if (page == null || isDisposed() || getPages() == null) {
 			return -1;
 		}
 
-		return this.getPages().indexOf(this.prfEditor);
+		return this.getPages().indexOf(page);
+	}
+
+	private int getPropertiesPageIndex() {
+		return this.getPageIndex(this.propertiesPage);
+	}
+
+	private int getPrfPageIndex() {
+		return this.getPageIndex(this.prfEditor);
 	}
 
 	private int getScdPageIndex() {
-		if (this.scdEditor == null || isDisposed() || getPages() == null) {
-			return -1;
-
-		}
-		return this.getPages().indexOf(this.scdEditor);
+		return this.getPageIndex(this.scdEditor);
 	}
 
 	private int getSpdPageIndex() {
-		if (this.spdEditor == null || isDisposed() || getPages() == null) {
-			return -1;
-		}
-
-		return this.getPages().indexOf(this.spdEditor);
+		return this.getPageIndex(this.spdEditor);
 	}
 
 	/**
@@ -578,16 +582,27 @@ public class ComponentEditor extends SCAFormEditor {
 
 	/**
 	 */
-	private void addScdPage() {
+	private void addScdPages() {
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(this.getMainResource());
 
 		if (this.scdInput != null) {
 			try {
+				// Add the ports page after the properties page, if available, otherwise after the overview page
+				this.portsPage = new PortsPage(this);
+				int index;
+				if (this.getPropertiesPageIndex() == -1) {
+					index = this.overviewPage.getIndex() + 1;
+				} else {
+					index = this.getPropertiesPageIndex() + 1;
+				}
+				this.addPage(index, this.portsPage);
+
 				final Descriptor descriptorFile = spd.getDescriptor();
 				if (descriptorFile != null && descriptorFile.getComponent() != null) {
 					final SoftwareComponent component = descriptorFile.getComponent();
+					this.portsPage.setInput(this.getMainResource());
+
 					this.scdEditor = this.createTextEditor(this.scdInput);
-					int index = -1;
 					if (this.getPrfPageIndex() == -1) {
 						index = this.getSpdPageIndex() + 1;
 					} else {
