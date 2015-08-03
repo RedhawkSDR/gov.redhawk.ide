@@ -38,11 +38,15 @@ import mil.jpeojtrs.sca.scd.SupportsInterface;
 import mil.jpeojtrs.sca.scd.Uses;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.command.CommandStack;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -170,10 +174,10 @@ public class PortsPageModel {
 			return;
 		}
 
-		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) AdapterFactoryEditingDomain.getEditingDomainFor(port);
+		EditingDomain editingDomain = AdapterFactoryEditingDomain.getEditingDomainFor(port);
 
 		if (editingDomain != null) {
-			TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+			CommandStack stack = editingDomain.getCommandStack();
 
 			// Remove all port interfaces from the scd, we are starting fresh
 			final CompoundCommand removeCommand = new CompoundCommand("Remove Port Interfaces Command");
@@ -186,13 +190,7 @@ public class PortsPageModel {
 			}
 
 			// Update the repId of the affected port
-			RecordingCommand updateCommand = new RecordingCommand(editingDomain) {
-
-				@Override
-				protected void doExecute() {
-					port.setRepID(newRepId);
-				}
-			};
+			Command updateCommand = SetCommand.create(editingDomain, port, ScdPackage.ABSTRACT_PORT__REP_ID, newRepId);
 
 			// Add in all expected port interfaces
 			final CompoundCommand addCommand = new CompoundCommand("Add Port Interfaces Command");
@@ -237,7 +235,7 @@ public class PortsPageModel {
 		return componentInterfaces;
 	}
 
-	private Command createRemoveInterfaceCommand(TransactionalEditingDomain editingDomain, Interface portInterface, final Set<String> removeInterfaces) {
+	private Command createRemoveInterfaceCommand(EditingDomain editingDomain, Interface portInterface, final Set<String> removeInterfaces) {
 		final CompoundCommand command = new CompoundCommand("Remove Interfaces");
 
 		// Remove all inherited interfaces
@@ -260,7 +258,7 @@ public class PortsPageModel {
 		return command;
 	}
 
-	private Command createAddInterfaceCommand(TransactionalEditingDomain editingDomain, final IdlLibrary library, String repId, final Set<String> addInterfaces) {
+	private Command createAddInterfaceCommand(EditingDomain editingDomain, final IdlLibrary library, String repId, final Set<String> addInterfaces) {
 
 		final Interface newInterface = ScdFactory.eINSTANCE.createInterface();
 		final IdlInterfaceDcl idlInter = (IdlInterfaceDcl) library.find(repId);
@@ -321,34 +319,37 @@ public class PortsPageModel {
 		}
 	}
 
+	private void copyPort(AbstractPort source, AbstractPort dest) {
+		dest.setName(source.getName());
+		dest.setInterface(source.getInterface());
+		dest.setRepID(source.getRepID());
+		dest.getPortType().addAll(EcoreUtil.copyAll(source.getPortType()));
+	}
+
 	public void updateModelPortDirection(PortDirection newValue) {
-		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) AdapterFactoryEditingDomain.getEditingDomainFor(softwareComponent);
+		EditingDomain editingDomain = AdapterFactoryEditingDomain.getEditingDomainFor(softwareComponent);
 		if (editingDomain != null) {
-			TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+			CommandStack stack = editingDomain.getCommandStack();
 
 			final CompoundCommand updateTypeCommand = new CompoundCommand("Change Port Type");
 
-			Ports ports = this.softwareComponent.getComponentFeatures().getPorts();
+			Ports ports = this.getPorts();
 			if (PortDirection.USES.equals(newValue)) {
 
 				if (port.isBiDirectional()) {
 					// If bi-directional, delete the provides, leaving only the uses copy
+					Object provides;
 					if (port instanceof Provides) {
-						updateTypeCommand.append(RemoveCommand.create(editingDomain, ports,	ScdPackage.Literals.PORTS__PROVIDES, port));
+						provides = port;
 					} else {
-						updateTypeCommand.append(RemoveCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__PROVIDES, port.getSibling()));
+						provides = port.getSibling();
 					}
+					updateTypeCommand.append(RemoveCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__PROVIDES, provides));
 				} else if (port instanceof Provides) {
 					// Make a new uses port, and delete the old provides port
 					Uses newUses = ScdFactory.eINSTANCE.createUses();
 					Provides oldProvides = (Provides) port;
-					newUses.setName(oldProvides.getName());
-					newUses.setInterface(oldProvides.getInterface());
-					newUses.setRepID(oldProvides.getRepID());
-					for (PortTypeContainer ptc : oldProvides.getPortType()) {
-						PortType pt = ptc.getType();
-						newUses.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(pt));
-					}
+					copyPort(oldProvides, newUses);
 
 					updateTypeCommand.append(RemoveCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__PROVIDES, oldProvides));
 					updateTypeCommand.append(AddCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__USES, newUses));
@@ -358,24 +359,20 @@ public class PortsPageModel {
 
 				if (port.isBiDirectional()) {
 					// If bi-directional, delete the provides, leaving only the uses copy
+					Object uses;
 					if (port instanceof Uses) {
-						updateTypeCommand.append(RemoveCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__USES, port));
+						uses = port;
 					} else {
-						updateTypeCommand.append(RemoveCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__USES, port.getSibling()));
+						uses = port.getSibling();
 					}
+					updateTypeCommand.append(RemoveCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__USES, uses));
 				} else if (port instanceof Uses) {
 
 					// User changed port to provides. Make a new provides port, and delete the old uses port
 					Provides newProvides = ScdFactory.eINSTANCE.createProvides();
 					Uses oldUses = (Uses) port;
-					newProvides.setName(oldUses.getName());
-					newProvides.setInterface(oldUses.getInterface());
-					newProvides.setRepID(oldUses.getRepID());
-					for (PortTypeContainer ptc : oldUses.getPortType()) {
-						PortType pt = ptc.getType();
-						newProvides.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(pt));
+					copyPort(oldUses, newProvides);
 
-					}
 					updateTypeCommand.append(RemoveCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__USES, oldUses));
 					updateTypeCommand.append(AddCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__PROVIDES, newProvides));
 				}
@@ -387,27 +384,13 @@ public class PortsPageModel {
 				if (port instanceof Provides) {
 					// We already have the provides port, so make a new uses
 					Uses newUses = ScdFactory.eINSTANCE.createUses();
-					Provides originalPort = (Provides) port;
-					newUses.setName(originalPort.getName());
-					newUses.setInterface(originalPort.getInterface());
-					newUses.setRepID(originalPort.getRepID());
-					for (PortTypeContainer ptc : originalPort.getPortType()) {
-						PortType pt = ptc.getType();
-						newUses.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(pt));
-					}
+					copyPort(port, newUses);
 
 					updateTypeCommand.append(AddCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__USES, newUses));
 				} else {
 					// We already have the uses port, so make a new provides
 					Provides newProvides = ScdFactory.eINSTANCE.createProvides();
-					Uses originalPort = (Uses) port;
-					newProvides.setName(originalPort.getName());
-					newProvides.setInterface(originalPort.getInterface());
-					newProvides.setRepID(originalPort.getRepID());
-					for (PortTypeContainer ptc : originalPort.getPortType()) {
-						PortType pt = ptc.getType();
-						newProvides.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(pt));
-					}
+					copyPort(port, newProvides);
 
 					updateTypeCommand.append(AddCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__PROVIDES, newProvides));
 				}
