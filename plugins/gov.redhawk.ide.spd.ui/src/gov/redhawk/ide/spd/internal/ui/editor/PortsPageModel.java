@@ -13,7 +13,6 @@ package gov.redhawk.ide.spd.internal.ui.editor;
 
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
-import gov.redhawk.ide.spd.internal.ui.handlers.PortsHandlerUtil;
 import gov.redhawk.sca.util.PropertyChangeSupport;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
@@ -37,7 +36,6 @@ import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.scd.SupportsInterface;
 import mil.jpeojtrs.sca.scd.Uses;
-import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
@@ -56,9 +54,8 @@ public class PortsPageModel {
 	public static final String PROP_PORT_TYPES = "portTypes";
 	public static final String PROP_PORT_DIRECTION = "portDirection";
 
-	private SoftPkg softPkg;
+	private SoftwareComponent softwareComponent;
 	private AbstractPort port = null;
-	private Ports ports;
 	private final Set<PortType> portTypes = new HashSet<PortType>();
 
 	private PortDirection portDirection = PortDirection.PROVIDES;
@@ -119,11 +116,7 @@ public class PortsPageModel {
 	}
 
 	public Ports getPorts() {
-		return this.ports;
-	}
-
-	public void setPorts(final Ports ports) {
-		this.ports = ports;
+		return this.softwareComponent.getComponentFeatures().getPorts();
 	}
 
 	public String getRepId() {
@@ -163,12 +156,12 @@ public class PortsPageModel {
 		this.pcs.firePropertyChange(new PropertyChangeEvent(this, PortsPageModel.PROP_PORT_DIRECTION, oldValue, portDirection));
 	}
 
-	public void setSoftPkg(SoftPkg softPkg) {
-		this.softPkg = softPkg;
+	public void setSoftwareComponent(SoftwareComponent softwareComponent) {
+		this.softwareComponent = softwareComponent;
 	}
 
-	public SoftPkg getSoftPkg() {
-		return this.softPkg;
+	public SoftwareComponent getSoftwareComponent() {
+		return this.softwareComponent;
 	}
 
 	private void updateModelRepId(final String newRepId) {
@@ -186,7 +179,7 @@ public class PortsPageModel {
 			final CompoundCommand removeCommand = new CompoundCommand("Remove Port Interfaces Command");
 			Set<String> removeInterfaces = new HashSet<String>();
 			removeInterfaces.addAll(getComponentInterfaces());
-			for (AbstractPort p : ports.getAllPorts()) {
+			for (AbstractPort p : getPorts().getAllPorts()) {
 				if (!removeInterfaces.contains(p.getRepID())) {
 					removeCommand.append(createRemoveInterfaceCommand(editingDomain, p.getInterface(), removeInterfaces));
 				}
@@ -209,7 +202,7 @@ public class PortsPageModel {
 			// Create an add command for the new port
 			addCommand.append(createAddInterfaceCommand(editingDomain, editor.getIdlLibrary(), newRepId, addInterfaces));
 
-			for (AbstractPort p : ports.getAllPorts()) {
+			for (AbstractPort p : getPorts().getAllPorts()) {
 				// Ignore the existing port, since it was added above (and it hasn't actually been updated yet, so
 				// you'll get stale information)
 				if (p.equals(port)) {
@@ -260,7 +253,7 @@ public class PortsPageModel {
 
 		// If the interface isn't already scheduled for removal, create a command to remove it
 		if (removeInterfaces.add(portInterface.getRepid())) {
-			command.append(RemoveCommand.create(editingDomain, PortsHandlerUtil.getInterfaces(this.softPkg), ScdPackage.Literals.INTERFACES__INTERFACE,
+			command.append(RemoveCommand.create(editingDomain, this.softwareComponent.getInterfaces(), ScdPackage.Literals.INTERFACES__INTERFACE,
 				portInterface));
 		}
 
@@ -292,7 +285,7 @@ public class PortsPageModel {
 
 			// If the interface isn't already present, create a command to add it
 			if (addInterfaces.add(newInterface.getRepid())) {
-				command.append(AddCommand.create(editingDomain, PortsHandlerUtil.getInterfaces(this.softPkg), ScdPackage.Literals.INTERFACES__INTERFACE,
+				command.append(AddCommand.create(editingDomain, this.softwareComponent.getInterfaces(), ScdPackage.Literals.INTERFACES__INTERFACE,
 					newInterface));
 			}
 			return command;
@@ -307,7 +300,7 @@ public class PortsPageModel {
 			portsToUpdate.add(port.getSibling());
 		}
 
-		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) AdapterFactoryEditingDomain.getEditingDomainFor(ports);
+		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) AdapterFactoryEditingDomain.getEditingDomainFor(softwareComponent);
 		if (editingDomain != null) {
 			TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 			stack.execute(new RecordingCommand(editingDomain) {
@@ -329,22 +322,21 @@ public class PortsPageModel {
 	}
 
 	public void updateModelPortDirection(PortDirection newValue) {
-		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) AdapterFactoryEditingDomain.getEditingDomainFor(ports);
+		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) AdapterFactoryEditingDomain.getEditingDomainFor(softwareComponent);
 		if (editingDomain != null) {
 			TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 
 			final CompoundCommand updateTypeCommand = new CompoundCommand("Change Port Type");
 
+			Ports ports = this.softwareComponent.getComponentFeatures().getPorts();
 			if (PortDirection.USES.equals(newValue)) {
 
 				if (port.isBiDirectional()) {
 					// If bi-directional, delete the provides, leaving only the uses copy
 					if (port instanceof Provides) {
-						updateTypeCommand.append(RemoveCommand.create(editingDomain, PortsHandlerUtil.getPorts(this.softPkg),
-							ScdPackage.Literals.PORTS__PROVIDES, port));
+						updateTypeCommand.append(RemoveCommand.create(editingDomain, ports,	ScdPackage.Literals.PORTS__PROVIDES, port));
 					} else {
-						updateTypeCommand.append(RemoveCommand.create(editingDomain, PortsHandlerUtil.getPorts(this.softPkg),
-							ScdPackage.Literals.PORTS__PROVIDES, port.getSibling()));
+						updateTypeCommand.append(RemoveCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__PROVIDES, port.getSibling()));
 					}
 				} else if (port instanceof Provides) {
 					// Make a new uses port, and delete the old provides port
@@ -358,9 +350,8 @@ public class PortsPageModel {
 						newUses.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(pt));
 					}
 
-					updateTypeCommand.append(RemoveCommand.create(editingDomain, PortsHandlerUtil.getPorts(this.softPkg), ScdPackage.Literals.PORTS__PROVIDES,
-						oldProvides));
-					updateTypeCommand.append(AddCommand.create(editingDomain, PortsHandlerUtil.getPorts(this.softPkg), ScdPackage.Literals.PORTS__USES, newUses));
+					updateTypeCommand.append(RemoveCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__PROVIDES, oldProvides));
+					updateTypeCommand.append(AddCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__USES, newUses));
 				}
 
 			} else if (PortDirection.PROVIDES.equals(newValue)) {
@@ -368,11 +359,9 @@ public class PortsPageModel {
 				if (port.isBiDirectional()) {
 					// If bi-directional, delete the provides, leaving only the uses copy
 					if (port instanceof Uses) {
-						updateTypeCommand.append(RemoveCommand.create(editingDomain, PortsHandlerUtil.getPorts(this.softPkg), ScdPackage.Literals.PORTS__USES,
-							port));
+						updateTypeCommand.append(RemoveCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__USES, port));
 					} else {
-						updateTypeCommand.append(RemoveCommand.create(editingDomain, PortsHandlerUtil.getPorts(this.softPkg), ScdPackage.Literals.PORTS__USES,
-							port.getSibling()));
+						updateTypeCommand.append(RemoveCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__USES, port.getSibling()));
 					}
 				} else if (port instanceof Uses) {
 
@@ -387,10 +376,8 @@ public class PortsPageModel {
 						newProvides.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(pt));
 
 					}
-					updateTypeCommand.append(RemoveCommand.create(editingDomain, PortsHandlerUtil.getPorts(this.softPkg), ScdPackage.Literals.PORTS__USES,
-						oldUses));
-					updateTypeCommand.append(AddCommand.create(editingDomain, PortsHandlerUtil.getPorts(this.softPkg), ScdPackage.Literals.PORTS__PROVIDES,
-						newProvides));
+					updateTypeCommand.append(RemoveCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__USES, oldUses));
+					updateTypeCommand.append(AddCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__PROVIDES, newProvides));
 				}
 			} else if (PortDirection.BIDIR.equals(newValue)) {
 				if (port.getSibling() != null) {
@@ -409,7 +396,7 @@ public class PortsPageModel {
 						newUses.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(pt));
 					}
 
-					updateTypeCommand.append(AddCommand.create(editingDomain, PortsHandlerUtil.getPorts(this.softPkg), ScdPackage.Literals.PORTS__USES, newUses));
+					updateTypeCommand.append(AddCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__USES, newUses));
 				} else {
 					// We already have the uses port, so make a new provides
 					Provides newProvides = ScdFactory.eINSTANCE.createProvides();
@@ -422,8 +409,7 @@ public class PortsPageModel {
 						newProvides.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(pt));
 					}
 
-					updateTypeCommand.append(AddCommand.create(editingDomain, PortsHandlerUtil.getPorts(this.softPkg), ScdPackage.Literals.PORTS__PROVIDES,
-						newProvides));
+					updateTypeCommand.append(AddCommand.create(editingDomain, ports, ScdPackage.Literals.PORTS__PROVIDES, newProvides));
 				}
 			}
 			stack.execute(updateTypeCommand);

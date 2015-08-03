@@ -600,7 +600,7 @@ public class ComponentEditor extends SCAFormEditor {
 				final Descriptor descriptorFile = spd.getDescriptor();
 				if (descriptorFile != null && descriptorFile.getComponent() != null) {
 					final SoftwareComponent component = descriptorFile.getComponent();
-					this.portsPage.setInput(this.getMainResource());
+					this.portsPage.setInput(component.eResource());
 
 					this.scdEditor = this.createTextEditor(this.scdInput);
 					if (this.getPrfPageIndex() == -1) {

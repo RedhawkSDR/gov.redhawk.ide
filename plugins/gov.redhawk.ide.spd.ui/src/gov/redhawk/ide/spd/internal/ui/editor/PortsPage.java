@@ -12,13 +12,11 @@
 package gov.redhawk.ide.spd.internal.ui.editor;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.ide.spd.internal.ui.handlers.PortsHandlerUtil;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
 
 import mil.jpeojtrs.sca.scd.AbstractPort;
-import mil.jpeojtrs.sca.scd.Ports;
-import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.scd.SoftwareComponent;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -58,7 +56,7 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 	private ISelectionChangedListener portViewerListener;
 	private SelectionListener directionComboListener;
 	private IContextActivation contextActivation = null;
-	private SoftPkg spd;
+	private SoftwareComponent scd;
 
 	private PortsSection fPortsSection;
 	private PortDetailsSection fPortDetailsSection;
@@ -163,11 +161,6 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 					return;
 				}
 				
-				Ports ports = PortsHandlerUtil.getPorts(PortsPage.this.spd);
-				if (ports != null && model.getPorts() != ports) {
-					model.setPorts(ports);
-				}
-
 				StructuredSelection ss = (StructuredSelection) event.getSelection();
 				AbstractPort port = (AbstractPort) ss.getFirstElement();
 				if (port == null) {
@@ -221,10 +214,10 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 	@Override
 	public void setInput(Resource input) {
 		super.setInput(input);
-		spd = SoftPkg.Util.getSoftPkg(input);
-		if (spd != null && spd.getDescriptor() != null && spd.getDescriptor().getComponent() != null) {
-			this.model.setSoftPkg(spd);
-			this.scdResource = spd.getDescriptor().getComponent().eResource();
+		scd = SoftwareComponent.Util.getSoftwareComponent(input);
+		if (scd != null) {
+			this.model.setSoftwareComponent(scd);
+			this.scdResource = scd.eResource();
 			addResourceListener(this.scdResource);
 			addResourceChangedListener(this.scdResource);
 			refresh(this.scdResource);
