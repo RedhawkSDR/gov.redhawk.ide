@@ -29,16 +29,13 @@ import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.scd.Uses;
 import mil.jpeojtrs.sca.scd.provider.ScdItemProviderAdapterFactory;
 
-import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.WrapperItemProvider;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -175,7 +172,7 @@ public class PortsSection extends ScaSection {
 		this.removeButton.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).create());
 		this.controlBindings.add(ControlCommandBinder.bindButton(this.removeButton, PortsHandlerUtil.REMOVE_COMMAND));
 
-		this.portsViewer.setContentProvider(new ObservableListContentProvider());
+		this.portsViewer.setContentProvider(new AdapterFactoryContentProvider(getAdapterFactory()));
 		this.portsViewer.setLabelProvider(new AdapterFactoryLabelProvider(getAdapterFactory()));
 		this.portsViewer.addFilter(new PropertyChannelFilter());
 		this.portsViewer.addFilter(new ViewerFilter() {
@@ -222,8 +219,7 @@ public class PortsSection extends ScaSection {
 	public void refresh(final Resource resource) {
 		this.resource = resource;
 		try {
-			IObservableList input = Properties.selfList(AbstractPort.class).observe(getPorts().getAllPorts());
-			this.portsViewer.setInput(input);
+			this.portsViewer.setInput(getPorts());
 			if (this.viewerSelector == null) {
 				this.viewerSelector = new EMFTableViewerElementSelector(this.portsViewer);
 			}
@@ -239,7 +235,6 @@ public class PortsSection extends ScaSection {
 			// Some problem occurred while trying to set the viewer input,
 			// therefore set to empty
 			// TODO: This catch block is terrible. Throw an error message instead
-			this.portsViewer.setInput(new WritableList());
 		}
 	}
 

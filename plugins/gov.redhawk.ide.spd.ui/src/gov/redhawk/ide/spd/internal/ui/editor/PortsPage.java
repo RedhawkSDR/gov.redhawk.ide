@@ -18,11 +18,9 @@ import gov.redhawk.ui.editor.ScaFormPage;
 import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -62,25 +60,6 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 	private PortDetailsSection fPortDetailsSection;
 	private final PortsPageModel model;
 
-	// This adapter makes sure things that affect the model (like adding/removing ports) are
-	// immediately updated in the ports viewer
-	private final Adapter resourceChangedListener = new AdapterImpl() {
-
-		@Override
-		public void notifyChanged(final Notification msg) {
-			switch (msg.getFeatureID(Resource.class)) {
-			case Resource.RESOURCE__IS_MODIFIED:
-				Object selectedPage = getEditor().getSelectedPage();
-				if (selectedPage != null && selectedPage instanceof PortsPage) {
-					fPortsSection.refresh(PortsPage.this.scdResource);
-				}
-				break;
-			default:
-				break;
-			}
-		}
-	};
-
 	public PortsPage(SCAFormEditor editor) {
 		super(editor, PAGE_ID, "Ports");
 		this.model = new PortsPageModel(editor);
@@ -109,7 +88,6 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 	public void dispose() {
 		deactivateContext();
 		this.removeResourceListener(this.scdResource);
-		this.removeResourceChangedListener(this.scdResource);
 		if (this.fPortsSection != null) {
 			this.fPortsSection.getViewer().removeSelectionChangedListener(portViewerListener);
 		}
@@ -162,7 +140,7 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 				}
 				
 				StructuredSelection ss = (StructuredSelection) event.getSelection();
-				AbstractPort port = (AbstractPort) ss.getFirstElement();
+				AbstractPort port = (AbstractPort) AdapterFactoryEditingDomain.unwrap(ss.getFirstElement());
 				if (port == null) {
 					PortsPage.this.fPortDetailsSection.getSection().setVisible(false);
 				} else if (port != null && model.getPort() != port) {
@@ -219,20 +197,7 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 			this.model.setSoftwareComponent(scd);
 			this.scdResource = scd.eResource();
 			addResourceListener(this.scdResource);
-			addResourceChangedListener(this.scdResource);
 			refresh(this.scdResource);
-		}
-	}
-
-	private void addResourceChangedListener(final Resource resource) {
-		if (resource != null) {
-			resource.eAdapters().add(this.resourceChangedListener);
-		}
-	}
-
-	private void removeResourceChangedListener(final Resource resource) {
-		if (resource != null) {
-			resource.eAdapters().remove(this.resourceChangedListener);
 		}
 	}
 
