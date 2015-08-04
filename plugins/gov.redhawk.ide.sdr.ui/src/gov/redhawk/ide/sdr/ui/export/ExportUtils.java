@@ -10,35 +10,14 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.export;
 
-import gov.redhawk.ide.RedhawkIdeActivator;
-import gov.redhawk.ide.codegen.CodegenUtil;
-import gov.redhawk.ide.codegen.ImplementationSettings;
-import gov.redhawk.ide.natures.ScaComponentProjectNature;
-import gov.redhawk.ide.natures.ScaNodeProjectNature;
-import gov.redhawk.ide.natures.ScaWaveformProjectNature;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.model.sca.util.ModelUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import mil.jpeojtrs.sca.dcd.DcdPackage;
-import mil.jpeojtrs.sca.sad.SadPackage;
-import mil.jpeojtrs.sca.scd.ComponentType;
-import mil.jpeojtrs.sca.scd.SoftwareComponent;
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.SpdPackage;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.resources.IContainer;
@@ -72,61 +51,35 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.prefs.BackingStoreException;
 
+import gov.redhawk.ide.RedhawkIdeActivator;
+import gov.redhawk.ide.codegen.CodegenUtil;
+import gov.redhawk.ide.codegen.ImplementationSettings;
+import gov.redhawk.ide.natures.ScaComponentProjectNature;
+import gov.redhawk.ide.natures.ScaNodeProjectNature;
+import gov.redhawk.ide.natures.ScaWaveformProjectNature;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.model.sca.util.ModelUtil;
+import mil.jpeojtrs.sca.dcd.DcdPackage;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.scd.ComponentType;
+import mil.jpeojtrs.sca.scd.SoftwareComponent;
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
+
 /**
  * @since 3.1
  */
 public class ExportUtils {
 
-	/**
-	 * @since 3.1
-	 */
-	public static final int PREFIX_SEGMENT_LENGTH = 2;
-
-	/**
-	 * @since 3.2
-	 */
-	public static final Set<String> WAVEFORM_EXPORT_EXTENSIONS = ExportUtils.getWaveformExtensions();
-	/**
-	 * @since 3.2
-	 */
-	public static final Set<String> NODE_EXPORT_EXTENSIONS = ExportUtils.getNodeExtensions();
-
 	private ExportUtils() {
-	}
-
-	private static Set<String> getWaveformExtensions() {
-		final Set<String> retVal = new HashSet<String>();
-		retVal.add(".sad_diagramV2");
-		retVal.add(SadPackage.FILE_EXTENSION);
-		return retVal;
-	}
-
-	private static Set<String> getNodeExtensions() {
-		final Set<String> retVal = new HashSet<String>();
-		retVal.add(".dcd_diagramV2");
-		retVal.add(DcdPackage.FILE_EXTENSION);
-		return retVal;
-	}
-
-	private static void exportFiles(IProject proj, IPath outputFolder, IScaExporter exporter, SubMonitor progress, Collection<String> validExtensions)
-		throws CoreException, IOException {
-		int loopWorkRemaining = proj.members().length;
-		for (final IResource child : proj.members()) {
-			String fileName = child.getName();
-			for (String validExtension : validExtensions) {
-				if (fileName.endsWith(validExtension)) {
-					final IPath outputFile = outputFolder.append(fileName);
-					exporter.write(child, outputFile, progress.newChild(1));
-					break;
-				}
-			}
-			progress.setWorkRemaining(--loopWorkRemaining);
-		}
 	}
 
 	/**
 	 * Exports waveforms from the specified project using the provided exporter.
-	 * 
 	 * @param proj The project to search for waveforms
 	 * @param exporter The IScaExporter to use
 	 * @param monitor The progress monitor to use for reporting progress to the user. It is the caller's responsibility
@@ -143,11 +96,28 @@ public class ExportUtils {
 			return;
 		}
 
-		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting waveforms", 1 + proj.members().length);
+		// Find .sad.xml files
+		final List<IResource> sadFiles = new ArrayList<IResource>();
+		for (final IResource child : proj.members()) {
+			if (child.getName().endsWith(SadPackage.FILE_EXTENSION)) {
+				sadFiles.add(child);
+			}
+		}
 
-		final IPath outputFolder = new Path("dom/waveforms").append(proj.getName().replace('.', File.separatorChar));
-		exporter.mkdir(outputFolder, progress.newChild(1));
-		ExportUtils.exportFiles(proj, outputFolder, exporter, progress, ExportUtils.WAVEFORM_EXPORT_EXTENSIONS);
+		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting waveforms", sadFiles.size() * 2);
+		for (final IResource sadFile : sadFiles) {
+			// Load the SAD file
+			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+			final Resource resource = resourceSet.getResource(URI.createURI(sadFile.getLocationURI().toString()), true);
+			final SoftwareAssembly sad = ModelUtil.getSoftwareAssembly(resource);
+
+			// Make directory & copy SAD file
+			final IPath outputFolder = new Path("dom/waveforms").append(sad.getName().replace('.', File.separatorChar));
+			exporter.mkdir(outputFolder, progress.newChild(1));
+			exporter.write(sadFile, outputFolder.append(sadFile.getName()), progress.newChild(1));
+		}
+
+		progress.done();
 	}
 
 	/**
@@ -178,7 +148,6 @@ public class ExportUtils {
 
 	/**
 	 * Exports nodes from the specified project using the provided exporter.
-	 * 
 	 * @param proj The project to search for nodes
 	 * @param exporter The IScaExporter to use
 	 * @param monitor The progress monitor to use for reporting progress to the user. It is the caller's responsibility
@@ -195,14 +164,28 @@ public class ExportUtils {
 			return;
 		}
 
-		final int EXPORT_NODE_WORK = 10;
-		final int EXPORT_COMPONENT_WORK = 90;
-		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting nodes", EXPORT_NODE_WORK + EXPORT_COMPONENT_WORK);
-		final SubMonitor nodeProgress = progress.newChild(EXPORT_NODE_WORK).setWorkRemaining(1 + proj.members().length);
+		// Find node files
+		final List<IResource> dcdFiles = new ArrayList<IResource>();
+		for (final IResource child : proj.members()) {
+			if (child.getName().endsWith(DcdPackage.FILE_EXTENSION)) {
+				dcdFiles.add(child);
+			}
+		}
 
-		final IPath outputFolder = new Path("dev/nodes").append(proj.getName().replace('.', File.separatorChar));
-		exporter.mkdir(outputFolder, nodeProgress.newChild(1));
-		ExportUtils.exportFiles(proj, outputFolder, exporter, nodeProgress, ExportUtils.NODE_EXPORT_EXTENSIONS);
+		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting nodes", dcdFiles.size() * 2);
+		for (final IResource dcdFile : dcdFiles) {
+			// Load the DCD file
+			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+			final Resource resource = resourceSet.getResource(URI.createURI(dcdFile.getLocationURI().toString()), true);
+			final DeviceConfiguration dcd = ModelUtil.getDeviceConfiguration(resource);
+
+			// Make directory & copy DCD file
+			final IPath outputFolder = new Path("dev/nodes").append(dcd.getName().replace('.', File.separatorChar));
+			exporter.mkdir(outputFolder, progress.newChild(1));
+			exporter.write(dcdFile, outputFolder.append(dcdFile.getName()), progress.newChild(1));
+		}
+
+		progress.done();
 	}
 
 	/**

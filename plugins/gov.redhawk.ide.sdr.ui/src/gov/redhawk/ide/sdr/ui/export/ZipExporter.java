@@ -28,6 +28,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 3.1
  */
 public class ZipExporter implements IScaExporter {
+
+	private static final int PREFIX_SEGMENT_LENGTH = 2;
 	private static final int DEFAULT_UNIX_READONLY_MODE = 0444;
 	private static final int DEFAULT_UNIX_EXECUTABLE_MODE = 0755;
 	private static final int BUFFER_SIZE = 4096;
@@ -84,7 +86,7 @@ public class ZipExporter implements IScaExporter {
 			if (f.isDirectory()) {
 				addDirectory(ResourcesPlugin.getWorkspace().getRoot().getFolder(newPath), newPath, monitor);
 			} else {
-				addFile(ResourcesPlugin.getWorkspace().getRoot().getFile(newPath.removeFirstSegments(ExportUtils.PREFIX_SEGMENT_LENGTH)), newPath, monitor);
+				addFile(ResourcesPlugin.getWorkspace().getRoot().getFile(newPath.removeFirstSegments(PREFIX_SEGMENT_LENGTH)), newPath, monitor);
 			}
 		}
 	}
