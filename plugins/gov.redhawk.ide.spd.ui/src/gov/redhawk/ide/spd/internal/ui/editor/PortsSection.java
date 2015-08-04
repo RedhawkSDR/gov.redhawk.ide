@@ -23,7 +23,6 @@ import gov.redhawk.ui.util.ResizeTableColumnControlAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.Ports;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.scd.Uses;
@@ -217,24 +216,22 @@ public class PortsSection extends ScaSection {
 
 	@Override
 	public void refresh(final Resource resource) {
-		this.resource = resource;
-		try {
+		if (this.resource != resource) {
+			if (this.resource != null) {
+				getPorts().eAdapters().remove(this.viewerSelector);
+			}
+
+			this.resource = resource;
 			this.portsViewer.setInput(getPorts());
 			if (this.viewerSelector == null) {
 				this.viewerSelector = new EMFTableViewerElementSelector(this.portsViewer);
 			}
-			if (!getPorts().eAdapters().contains(this.viewerSelector)) {
-				getPorts().eAdapters().add(this.viewerSelector);
-			}
+			getPorts().eAdapters().add(this.viewerSelector);
 
 			// Set default selection
 			if (portsViewer.getSelection().isEmpty() && portsViewer.getTable().getItemCount() >= 1) {
 				portsViewer.setSelection(new StructuredSelection(portsViewer.getElementAt(0)), true);
 			}
-		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Fallback
-			// Some problem occurred while trying to set the viewer input,
-			// therefore set to empty
-			// TODO: This catch block is terrible. Throw an error message instead
 		}
 	}
 
