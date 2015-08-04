@@ -28,6 +28,7 @@ import java.util.Collection;
 
 import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.PortType;
+import mil.jpeojtrs.sca.scd.PortTypeContainer;
 import mil.jpeojtrs.sca.scd.Ports;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
@@ -39,10 +40,14 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.edit.EMFEditObservables;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
@@ -53,6 +58,7 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -372,58 +378,57 @@ public class PortDetailsSection extends ScaSection {
 
 	public void addTypeViewerListener() {
 		this.typeViewer.addCheckStateListener(new ICheckStateListener() {
-			private boolean ignore = false;
 
 			@Override
 			public void checkStateChanged(final CheckStateChangedEvent event) {
-				if (this.ignore) {
-					return;
+				EditingDomain domain = editor.getEditingDomain();
+				AbstractPort port = PortDetailsSection.this.model.getPort();
+				Object type = event.getElement();
+				Command command;
+				if (event.getChecked()) {
+					command = AddCommand.create(domain, port, ScdPackage.Literals.ABSTRACT_PORT__PORT_TYPE, type);
+				} else {
+					command = RemoveCommand.create(domain, port, ScdPackage.Literals.ABSTRACT_PORT__PORT_TYPE, type);
 				}
-				for (final PortType type : PortType.values()) {
-					if (PortDetailsSection.this.typeViewer.getChecked(type) && !PortDetailsSection.this.typeViewer.getGrayed(type)) {
-						PortDetailsSection.this.model.getPortTypes().add(type);
-					} else {
-						PortDetailsSection.this.model.getPortTypes().remove(type);
+				domain.getCommandStack().execute(command);
+				PortDetailsSection.this.typeViewer.refresh();
+			}
+		});
+
+		this.typeViewer.setCheckStateProvider(new ICheckStateProvider() {
+
+			@Override
+			public boolean isGrayed(Object element) {
+				if (element == PortType.CONTROL) {
+					AbstractPort port = PortDetailsSection.this.model.getPort();
+					return port == null || port.getPortType().isEmpty();
+				}
+				return false;
+			}
+
+			@Override
+			public boolean isChecked(Object element) {
+				AbstractPort port = PortDetailsSection.this.model.getPort();
+				if (port == null) {
+					return false;
+				}
+				if (element == PortType.CONTROL) {
+					if (port.getPortType().isEmpty()) {
+						return true;
 					}
 				}
-				this.ignore = true;
-				if (PortDetailsSection.this.model.getPortTypes().contains(PortType.CONTROL)) {
-					if (PortDetailsSection.this.model.getPortTypes().size() == 1) {
-						PortDetailsSection.this.model.getPortTypes().clear();
+				for (PortTypeContainer container : port.getPortType()) {
+					if (container.getType().equals(element)) {
+						return true;
 					}
-				} else if (PortDetailsSection.this.model.getPortTypes().size() == 1) {
-					PortDetailsSection.this.typeViewer.setGrayed(PortType.CONTROL, false);
-					PortDetailsSection.this.typeViewer.setChecked(PortType.CONTROL, false);
 				}
-
-				if (PortDetailsSection.this.model.getPortTypes().isEmpty()) {
-					selectDefaultChecks();
-				}
-
-				PortDetailsSection.this.model.updateModelPortTypes();
-				this.ignore = false;
+				return false;
 			}
 		});
 	}
 
 	private SoftwareComponent getScd() {
 		return (SoftwareComponent) this.scdResource.getContents().get(0);
-	}
-
-	private void selectDefaultChecks() {
-		this.typeViewer.setChecked(PortType.CONTROL, true);
-		this.typeViewer.setGrayed(PortType.CONTROL, true);
-	}
-
-	private void updatePortTypes() {
-		if (this.model.getPortTypes().isEmpty()) {
-			selectDefaultChecks();
-		} else {
-			typeViewer.setAllChecked(false);
-			for (final PortType pt : this.model.getPortTypes()) {
-				this.typeViewer.setChecked(pt, true);
-			}
-		}
 	}
 
 	private void updatePortDirectionCombo() {
@@ -462,7 +467,7 @@ public class PortDetailsSection extends ScaSection {
 		super.refresh();
 		this.scdResource = resource;
 
-		updatePortTypes();
+		this.typeViewer.refresh();
 		updatePortDirectionCombo();
 
 		this.bind();

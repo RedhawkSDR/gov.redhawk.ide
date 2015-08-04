@@ -18,17 +18,13 @@ import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.ComponentFeatures;
 import mil.jpeojtrs.sca.scd.InheritsInterface;
 import mil.jpeojtrs.sca.scd.Interface;
-import mil.jpeojtrs.sca.scd.PortType;
-import mil.jpeojtrs.sca.scd.PortTypeContainer;
 import mil.jpeojtrs.sca.scd.Ports;
 import mil.jpeojtrs.sca.scd.Provides;
 import mil.jpeojtrs.sca.scd.ScdFactory;
@@ -47,9 +43,6 @@ import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 
 public class PortsPageModel {
 
@@ -60,7 +53,6 @@ public class PortsPageModel {
 
 	private SoftwareComponent softwareComponent;
 	private AbstractPort port = null;
-	private final Set<PortType> portTypes = new HashSet<PortType>();
 
 	private PortDirection portDirection = PortDirection.PROVIDES;
 
@@ -113,10 +105,6 @@ public class PortsPageModel {
 		} else if (port instanceof Provides) {
 			setPortDirection(PortDirection.PROVIDES);
 		}
-
-		for (final PortTypeContainer ptc : this.port.getPortType()) {
-			this.portTypes.add(ptc.getType());
-		}
 	}
 
 	public Ports getPorts() {
@@ -133,18 +121,6 @@ public class PortsPageModel {
 		final String oldValue = this.repId;
 		this.repId = repId;
 		this.pcs.firePropertyChange(new PropertyChangeEvent(this, PortsPageModel.PROP_REP_ID, oldValue, repId));
-	}
-
-	public Set<PortType> getPortTypes() {
-		return this.portTypes;
-	}
-
-	public void setPortTypes(final EList<PortTypeContainer> newTypes) {
-		this.portTypes.clear();
-		for (PortTypeContainer portType : newTypes) {
-			this.portTypes.add(portType.getType());
-		}
-		this.pcs.firePropertyChange(new PropertyChangeEvent(this, PortsPageModel.PROP_PORT_TYPES, null, this.portTypes));
 	}
 
 	public PortDirection getPortDirection() {
@@ -289,34 +265,6 @@ public class PortsPageModel {
 			return command;
 		}
 		return null;
-	}
-
-	public void updateModelPortTypes() {
-		final List<AbstractPort> portsToUpdate = new ArrayList<AbstractPort>();
-		portsToUpdate.add(port);
-		if (port.isBiDirectional()) {
-			portsToUpdate.add(port.getSibling());
-		}
-
-		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) AdapterFactoryEditingDomain.getEditingDomainFor(softwareComponent);
-		if (editingDomain != null) {
-			TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-			stack.execute(new RecordingCommand(editingDomain) {
-				@Override
-				protected void doExecute() {
-					for (AbstractPort p : portsToUpdate) {
-						p.getPortType().clear();
-						if (getPortTypes().isEmpty()) {
-							p.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(PortType.CONTROL));
-						} else {
-							for (PortType portType : getPortTypes()) {
-								p.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(portType));
-							}
-						}
-					}
-				}
-			});
-		}
 	}
 
 	private void copyPort(AbstractPort source, AbstractPort dest) {
