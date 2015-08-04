@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 
 /**
- * An incremental builder that adds a top-level RPM spec file to components / devices.
+ * An incremental builder that adds a top-level RPM spec file to waveforms and nodes.
  */
 public class TopLevelRPMSpec extends IncrementalProjectBuilder {
 
