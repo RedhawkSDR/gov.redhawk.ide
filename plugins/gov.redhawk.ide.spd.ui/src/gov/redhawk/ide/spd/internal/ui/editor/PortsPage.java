@@ -16,9 +16,6 @@ import gov.redhawk.ide.spd.internal.ui.handlers.PortsHandlerUtil;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.Ports;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -60,7 +57,7 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 	private Resource scdResource;
 	private ISelectionChangedListener portViewerListener;
 	private SelectionListener directionComboListener;
-	private List<IContextActivation> contextActivations = new ArrayList<IContextActivation>();
+	private IContextActivation contextActivation = null;
 	private SoftPkg spd;
 
 	private PortsSection fPortsSection;
@@ -88,7 +85,6 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 
 	public PortsPage(SCAFormEditor editor) {
 		super(editor, PAGE_ID, "Ports");
-		activateContext(PORTS_TAB_CONTEXT);
 		this.model = new PortsPageModel(editor);
 	}
 
@@ -113,7 +109,7 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 
 	@Override
 	public void dispose() {
-		deactivateAllContexts();
+		deactivateContext();
 		this.removeResourceListener(this.scdResource);
 		this.removeResourceChangedListener(this.scdResource);
 		if (this.fPortsSection != null) {
@@ -249,13 +245,11 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 
 	@Override
 	protected void refresh(Resource resource) {
-		if (resource == this.scdResource) {
-			if (this.fPortsSection != null) {
-				this.fPortsSection.refresh(this.scdResource);
-			}
-			if (this.fPortDetailsSection != null) {
-				this.fPortDetailsSection.refresh(this.scdResource);
-			}
+		if (this.fPortsSection != null) {
+			this.fPortsSection.refresh(this.scdResource);
+		}
+		if (this.fPortDetailsSection != null) {
+			this.fPortDetailsSection.refresh(this.scdResource);
 		}
 	}
 
@@ -267,21 +261,30 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 		return null;
 	}
 
-	public void activateContext(String context) {
-		IContextService contextService = (IContextService) getEditor().getSite().getService(IContextService.class);
-		if (contextService != null) {
-			IContextActivation activation = contextService.activateContext(context);
-			contextActivations.add(activation);
+	@Override
+	public void setActive(boolean active) {
+		super.setActive(active);
+		if (active) {
+			activateContext();
+		} else {
+			deactivateContext();
 		}
-
 	}
 
-	private void deactivateAllContexts() {
-		if (!contextActivations.isEmpty()) {
+	private void activateContext() {
+		if (contextActivation == null) {
 			IContextService contextService = (IContextService) getSite().getService(IContextService.class);
-			for (IContextActivation activation : contextActivations) {
-				contextService.deactivateContext(activation);
+			if (contextService != null) {
+				contextActivation = contextService.activateContext(PORTS_TAB_CONTEXT);
 			}
+		}
+	}
+
+	private void deactivateContext() {
+		if (contextActivation != null) {
+			IContextService contextService = (IContextService) getSite().getService(IContextService.class);
+			contextService.deactivateContext(contextActivation);
+			contextActivation = null;
 		}
 	}
 }
