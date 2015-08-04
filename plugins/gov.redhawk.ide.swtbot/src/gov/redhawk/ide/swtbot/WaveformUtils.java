@@ -13,6 +13,7 @@ package gov.redhawk.ide.swtbot;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
@@ -32,7 +33,7 @@ public class WaveformUtils {
 	 * @param bot - the executing SWTBot
 	 * @param waveformName
 	 */
-	public static void createNewWaveform(SWTBot bot, String waveformName) {
+	public static void createNewWaveform(SWTBot bot, String waveformName, String assemblyController) {
 		// Open the new waveform project wizard
 		SWTBotMenu fileMenu = bot.menu("File");
 		SWTBotMenu newMenu = fileMenu.menu("New");
@@ -46,6 +47,27 @@ public class WaveformUtils {
 
 		// Enter the name for the new waveform
 		wizardBot.textWithLabel("Project name:").setText(waveformName);
+
+		// Select the assembly controller, if requested
+		if (assemblyController != null) {
+			wizardBot.button("Next >").click();
+
+			SWTBotTable table = wizardBot.table();
+			bot.waitWhile(Conditions.tableHasRows(table, 0));
+
+			String prefix = assemblyController + " (";
+			boolean found = false;
+			for (int i = 0; i < table.rowCount(); i++) {
+				if (table.getTableItem(i).getText(0).startsWith(prefix)) {
+					table.getTableItem(i).select();
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				throw new WidgetNotFoundException("Couldn't find component for assembly controller: " + assemblyController);
+			}
+		}
 
 		// Close wizard
 		SWTBotButton finishButton = wizardBot.button("Finish");
