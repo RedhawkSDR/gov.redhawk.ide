@@ -19,6 +19,7 @@ import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
 import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
+import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
@@ -148,18 +149,8 @@ public class ViewUtils {
 	 * @param bot
 	 */
 	public static void waitUntilSRIViewPopulates(final SWTWorkbenchBot bot) {
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return "SRI View property rows did not populate";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				final SWTBotView sriView = getSRIView((SWTWorkbenchBot) bot);
-				return sriView.bot().tree().rowCount() > 0;
-			}
-		});
+		final SWTBotView sriView = getSRIView((SWTWorkbenchBot) bot);
+		bot.waitWhile(Conditions.treeHasRows(sriView.bot().tree(), 0));
 	}
 
 	/**

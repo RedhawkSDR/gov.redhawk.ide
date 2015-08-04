@@ -164,7 +164,6 @@ public class ScaExplorerTestUtils {
 	 * @param domainName
 	 */
 	public static void launchDomain(SWTWorkbenchBot bot, String domainName, String deviceName) {
-
 		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
 		SWTBotTreeItem targetSDRTreeItem = scaExplorerView.bot().tree().getTreeItem("Target SDR");
 		targetSDRTreeItem.select();
