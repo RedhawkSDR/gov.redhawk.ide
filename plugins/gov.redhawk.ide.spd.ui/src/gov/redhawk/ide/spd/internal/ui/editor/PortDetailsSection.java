@@ -310,14 +310,6 @@ public class PortDetailsSection extends ScaSection {
 			EMFEditObservables.observeValue(editor.getEditingDomain(), truePort, ScdPackage.Literals.ABSTRACT_PORT__NAME),
 			new UpdateValueStrategy().setBeforeSetValidator(nameValidator), null);
 
-		if (truePort.isBiDirectional()) {
-			// Handle bi-directional ports by binding siblings as well
-			Binding siblingBinding = this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.nameText),
-				EMFEditObservables.observeValue(editor.getEditingDomain(), truePort.getSibling(), ScdPackage.Literals.ABSTRACT_PORT__NAME),
-				new UpdateValueStrategy().setBeforeSetValidator(nameValidator), null);
-			this.bindings.add(siblingBinding);
-		}
-
 		ControlDecorationSupport.create(nameModelBinding, SWT.TOP | SWT.LEFT);
 		this.bindings.add(nameModelBinding);
 
@@ -325,13 +317,6 @@ public class PortDetailsSection extends ScaSection {
 		Binding repIdModelBinding = this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.repIdText),
 			EMFEditObservables.observeValue(editor.getEditingDomain(), truePort, ScdPackage.Literals.ABSTRACT_PORT__REP_ID));
 		this.bindings.add(repIdModelBinding);
-
-		if (truePort.isBiDirectional()) {
-			// Handle bi-directional ports by binding siblings as well
-			Binding siblingBinding = this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.repIdText),
-				EMFEditObservables.observeValue(editor.getEditingDomain(), truePort.getSibling(), ScdPackage.Literals.ABSTRACT_PORT__REP_ID));
-			this.bindings.add(siblingBinding);
-		}
 
 		/** Bind portDirection combo to the type of port (provides, uses, bi-directional) **/
 		Binding portDirectionModelBinding = this.context.bindValue(ViewerProperties.singleSelection().observe(portViewer),
@@ -351,13 +336,6 @@ public class PortDetailsSection extends ScaSection {
 		Binding descriptionModelBinding = this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.descriptionText),
 			EMFEditObservables.observeValue(editor.getEditingDomain(), truePort, ScdPackage.Literals.ABSTRACT_PORT__DESCRIPTION));
 		this.bindings.add(descriptionModelBinding);
-
-		if (truePort.isBiDirectional()) {
-			// Handle bi-directional ports by binding siblings as well
-			Binding siblingBinding = this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.descriptionText),
-				EMFEditObservables.observeValue(editor.getEditingDomain(), truePort.getSibling(), ScdPackage.Literals.ABSTRACT_PORT__DESCRIPTION));
-			this.bindings.add(siblingBinding);
-		}
 
 		// Add IdlLibrary adapter
 		final IdlLibrary library = this.editor.getIdlLibrary();
