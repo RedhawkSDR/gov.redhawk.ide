@@ -324,7 +324,7 @@ public final class GenerateCode {
 			if (isDeprecated) {
 				CodegenUtil.addTopLevelBuildScriptBuilder(project, progress.newChild(1));
 			} else {
-				CodegenUtil.removeTopLevelBuildScriptBuilder(project, progress.newChild(1));
+				CodegenUtil.removeDeprecatedBuilders(project, progress.newChild(1));
 			}
 
 			// Refresh project after generating code
