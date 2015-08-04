@@ -131,7 +131,7 @@
             <iterate
                   ifEmpty="false">
                <instanceof
-                     value="mil.jpeojtrs.sca.scd.AbstractPort">
+                     value="org.eclipse.emf.edit.provider.IWrapperItemProvider">
                </instanceof>
             </iterate>
          </enabledWhen>
