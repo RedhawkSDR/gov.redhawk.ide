@@ -190,7 +190,7 @@ public class PortsPageModel {
 			}
 
 			// Update the repId of the affected port
-			Command updateCommand = SetCommand.create(editingDomain, port, ScdPackage.ABSTRACT_PORT__REP_ID, newRepId);
+			Command updateCommand = SetCommand.create(editingDomain, port, ScdPackage.Literals.ABSTRACT_PORT__REP_ID, newRepId);
 
 			// Add in all expected port interfaces
 			final CompoundCommand addCommand = new CompoundCommand("Add Port Interfaces Command");
