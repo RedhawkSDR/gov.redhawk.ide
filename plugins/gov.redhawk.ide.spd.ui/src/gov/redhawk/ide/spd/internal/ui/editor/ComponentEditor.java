@@ -14,6 +14,7 @@ import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
 import gov.redhawk.prf.ui.provider.PropertiesEditorPrfItemProviderAdapterFactory;
+import gov.redhawk.scd.ui.editor.page.PortsFormPage;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class ComponentEditor extends SCAFormEditor {
 	        SpdPackage.Literals.SOFT_PKG__DESCRIPTOR, SpdPackage.Literals.DESCRIPTOR__COMPONENT
 	};
 	private ComponentOverviewPage overviewPage;
-	private PortsPage portsPage;
+	private PortsFormPage portsPage;
 	private PropertiesFormPage propertiesPage;
 	private ImplementationPage implementationPage;
 
@@ -391,7 +392,7 @@ public class ComponentEditor extends SCAFormEditor {
 		return implementationPage;
 	}
 	
-	public PortsPage getPortsPage() {
+	public PortsFormPage getPortsPage() {
 		return portsPage;
 	}
 
@@ -588,7 +589,7 @@ public class ComponentEditor extends SCAFormEditor {
 		if (this.scdInput != null) {
 			try {
 				// Add the ports page after the properties page, if available, otherwise after the overview page
-				this.portsPage = new PortsPage(this);
+				this.portsPage = new PortsFormPage(this);
 				int index;
 				if (this.getPropertiesPageIndex() == -1) {
 					index = this.overviewPage.getIndex() + 1;
