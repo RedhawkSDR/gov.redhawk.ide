@@ -26,8 +26,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
@@ -164,16 +166,32 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	@SuppressWarnings("restriction")
 	public static IDimension calculateTreeDimensions(RHContainerShape rhContainerShape) {
+		return calculateTreeDimensions(rhContainerShape, new HashSet<RHContainerShape>());
+	}
 
-		List<Connection> outs = getOutgoingConnectionsContainedInContainerShape(rhContainerShape);
+	/**
+	 * Internal method used by {@link #calculateTreeDimensions(RHContainerShape)}.
+	 * @param rhContainerShape
+	 * @return
+	 */
+	private static IDimension calculateTreeDimensions(RHContainerShape rhContainerShape, Set<RHContainerShape> visitedShapes) {
+		// Keep track of the shape we're visiting; if we've been here, we're in a circular recursion
+		if (!visitedShapes.add(rhContainerShape)) {
+			return null;
+		}
 
 		int height = rhContainerShape.getGraphicsAlgorithm().getHeight();
 		int width = rhContainerShape.getGraphicsAlgorithm().getWidth();
 		int childWidth = 0;
 		int childHeight = 0;
+
+		List<Connection> outs = getOutgoingConnectionsContainedInContainerShape(rhContainerShape);
 		for (Connection conn : outs) {
 			RHContainerShape targetRHContainerShape = RHContainerShapeImpl.findFromChild(conn.getEnd());
-			IDimension childDimension = calculateTreeDimensions(targetRHContainerShape);
+			IDimension childDimension = calculateTreeDimensions(targetRHContainerShape, visitedShapes);
+			if (childDimension == null) {
+				continue;
+			}
 			childHeight += childDimension.getHeight() + DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING;
 			// use largest width but don't add
 			childWidth = (childDimension.getWidth() > childWidth) ? childDimension.getWidth() : childWidth;
