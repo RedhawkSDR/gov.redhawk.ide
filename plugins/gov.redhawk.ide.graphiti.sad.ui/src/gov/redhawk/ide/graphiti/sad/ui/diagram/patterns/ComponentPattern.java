@@ -759,7 +759,8 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	 * @return
 	 */
 	public String getInnerTitle(SadComponentInstantiation ci) {
-		return ci.getUsageName();
+		String usageName = ci.getUsageName();
+		return (usageName != null) ? usageName : ci.getId();
 	}
 
 	@Override
