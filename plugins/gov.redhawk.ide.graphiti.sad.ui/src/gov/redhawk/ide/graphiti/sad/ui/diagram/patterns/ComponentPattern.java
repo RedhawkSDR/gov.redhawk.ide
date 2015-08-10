@@ -619,17 +619,6 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 
 	}
 
-	// returns the assembly controller for this waveform if it happens to be the passed in Component
-	public AssemblyController getComponentAssemblyController(SadComponentInstantiation ci) {
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
-		if (sad.getAssemblyController() != null && sad.getAssemblyController().getComponentInstantiationRef() != null
-			&& sad.getAssemblyController().getComponentInstantiationRef().getRefid().equals(ci.getId())) {
-			return sad.getAssemblyController();
-		}
-		return null;
-
-	}
-
 	@Override
 	public boolean update(IUpdateContext context) {
 		Reason updated = ((ComponentShape) context.getPictogramElement()).update(context, this);
