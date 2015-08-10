@@ -216,16 +216,13 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 		partitioning.getComponentPlacement().add(placement);
 
 		final SadComponentInstantiation inst = SadFactory.eINSTANCE.createSadComponentInstantiation();
-		if (inst == null) {
-			return;
-		}
 		inst.setUsageName(comp.getName());
 		final FindComponent findComponent = SadFactory.eINSTANCE.createFindComponent();
 		final NamingService namingService = PartitioningFactory.eINSTANCE.createNamingService();
 		namingService.setName(comp.getName());
 		findComponent.setNamingService(namingService);
 		inst.setFindComponent(findComponent);
-		inst.setId(comp.getName());
+		inst.setId(comp.getInstantiationIdentifier());
 
 		final ComponentFileRef fileRef = PartitioningFactory.eINSTANCE.createComponentFileRef();
 		fileRef.setFile(spdFile);
