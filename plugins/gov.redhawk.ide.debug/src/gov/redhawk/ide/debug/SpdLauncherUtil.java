@@ -66,6 +66,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TCKind;
 import org.omg.CosNaming.NamingContextExt;
@@ -244,8 +245,8 @@ public final class SpdLauncherUtil {
 	private static LocalAbstractComponent postLaunchComponent(SoftPkg spd, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
 		final int WORK_WAIT_REGISTRATION = 10;
 		final int WORK_GENERAL = 1, WORK_INITIALIZE_PROPS = 1, WORK_INITIALIZE = 1, WORK_ADD_TO_MODEL = 1;
-		SubMonitor progress = SubMonitor.convert(monitor, "Wait for component to register", WORK_WAIT_REGISTRATION + 2 * WORK_GENERAL + WORK_INITIALIZE_PROPS
-			+ WORK_INITIALIZE + WORK_ADD_TO_MODEL);
+		SubMonitor progress = SubMonitor.convert(monitor, "Wait for component to register",
+			WORK_WAIT_REGISTRATION + 2 * WORK_GENERAL + WORK_INITIALIZE_PROPS + WORK_INITIALIZE + WORK_ADD_TO_MODEL);
 
 		final String nameBinding = launch.getAttribute(LaunchVariables.NAME_BINDING);
 		final String namingContextIOR = launch.getAttribute(LaunchVariables.NAMING_CONTEXT_IOR);
@@ -369,6 +370,10 @@ public final class SpdLauncherUtil {
 			component.initializeProperties(initializePropsArray);
 		} catch (AlreadyInitialized | InvalidConfiguration | PartialConfiguration e) {
 			ScaDebugPlugin.logError("Error while initializing properties", e);
+		} catch (BAD_OPERATION e) {
+			String msg = "Could not call initializeProperties on component %s in the sandbox. "
+				+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.";
+			ScaDebugPlugin.logWarning(String.format(msg, compID), e);
 		}
 		progress.newChild(WORK_INITIALIZE_PROPS);
 
@@ -809,8 +814,8 @@ public final class SpdLauncherUtil {
 					} catch (final DebugException e) {
 						return new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to terminate " + localScaWaveform.getName(), e);
 					} catch (ReleaseError e) {
-						return new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to terminate: " + localScaWaveform.getName() + " "
-							+ Arrays.toString(e.errorMessages), e);
+						return new Status(IStatus.ERROR, ScaDebugPlugin.ID,
+							"Failed to terminate: " + localScaWaveform.getName() + " " + Arrays.toString(e.errorMessages), e);
 					}
 					return Status.OK_STATUS;
 				}
