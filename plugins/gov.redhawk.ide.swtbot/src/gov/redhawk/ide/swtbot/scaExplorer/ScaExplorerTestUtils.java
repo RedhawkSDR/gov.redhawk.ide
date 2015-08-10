@@ -33,6 +33,7 @@ public class ScaExplorerTestUtils {
 	public static final String SCA_EXPLORER_VIEW_ID = "gov.redhawk.ui.sca_explorer";
 
 	public static enum DiagramType {
+		GRAPHITI_WAVEFORM_EDITOR("Waveform Editor"),
 		GRAPHITI_CHALKBOARD("Chalkboard"),
 		GRAPHITI_WAVEFORM_EXPLORER("Waveform Explorer"),
 		GRAPHITI_NODE_EXPLORER("Node Explorer");
