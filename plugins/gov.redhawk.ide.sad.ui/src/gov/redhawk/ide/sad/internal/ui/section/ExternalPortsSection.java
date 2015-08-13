@@ -17,6 +17,7 @@ import gov.redhawk.ide.sad.internal.ui.handler.RemoveExternalPortAction;
 import gov.redhawk.ide.sad.internal.ui.wizard.ExternalPortWizard;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
 import gov.redhawk.ui.editor.ScaSection;
+import gov.redhawk.ui.util.SCAEditorUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +137,8 @@ public class ExternalPortsSection extends ScaSection {
 	public void refresh(final Resource resource) {
 		super.refresh(resource);
 		this.sadResource = resource;
+
+		this.client.setEditable(SCAEditorUtil.isEditableResource(getPage(), this.sadResource));
 		for (final Binding binding : this.bindings) {
 			binding.dispose();
 		}
