@@ -36,6 +36,7 @@ public class ScaExplorerTestUtils {
 		GRAPHITI_WAVEFORM_EDITOR("Waveform Editor"),
 		GRAPHITI_CHALKBOARD("Chalkboard"),
 		GRAPHITI_WAVEFORM_EXPLORER("Waveform Explorer"),
+		GRAPHITI_NODE_EDITOR("Node Editor"),
 		GRAPHITI_NODE_EXPLORER("Node Explorer");
 
 		private final String diagramName;
