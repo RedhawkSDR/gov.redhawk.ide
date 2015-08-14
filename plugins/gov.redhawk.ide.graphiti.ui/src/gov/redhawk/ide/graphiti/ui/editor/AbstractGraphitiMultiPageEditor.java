@@ -15,6 +15,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.RHCommandStackImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
 import gov.redhawk.ui.editor.SCAFormEditor;
+import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -310,7 +311,9 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 	 * @return
 	 */
 	public String getDiagramContext(Resource sadResource) {
-		if (sadResource.getURI().toString().matches(".*" + System.getenv("SDRROOT") + ".*")) {
+		// We assume this is design-time, not runtime. The runtime editors will override this method.
+		// So, if the SCA file system scheme is in use that means the file is from the Target SDR.
+		if (ScaFileSystemConstants.SCHEME.equals(sadResource.getURI().scheme())) {
 			return DUtil.DIAGRAM_CONTEXT_TARGET_SDR;
 		} else {
 			return DUtil.DIAGRAM_CONTEXT_DESIGN;
