@@ -100,7 +100,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		if (shapeType != null) {
 			List<IPattern> patterns = getPatterns();
 
-			// Insures the correct add feature is returned based on selection
+			// Ensures the correct add feature is returned based on selection
 			switch (shapeType) {
 			case DeviceCreateFeature.SHAPE_TYPE:
 				for (IPattern pattern : patterns) {
@@ -175,7 +175,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, 
 			RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE, RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE})) {
 			return new DefaultMoveShapeFeature(this) {
-				public boolean canMove(IContext context) {
+				public boolean canMoveShape(IMoveShapeContext context) {
 					return false;
 				}
 			};
