@@ -50,11 +50,10 @@ import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
-import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.DecrementStartOrderFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.IncrementStartOrderFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkExternalPortFeature;
@@ -74,6 +73,7 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerP
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseAllShapesFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseShapeFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DisabledDeleteFeatureWrapper;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandAllShapesFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandShapeFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
@@ -286,47 +286,44 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 	@Override
 	public IDeleteFeature getDeleteFeature(IDeleteContext context) {
+		// Don't show delete for the waveform explorer
+		final Diagram diagram = getDiagramTypeProvider().getDiagram();
+		if (DUtil.isDiagramExplorer(diagram)) {
+			return null;
+		}
+
 		// Search for shapes for which we don't want the user to have the delete capability,
 		// including the diagram as a whole
-		if (context.getPictogramElement() instanceof Diagram
-			|| context.getPictogramElement() instanceof FixPointAnchor
-			|| DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
-				RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-				RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
-				RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
-				RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE, RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE,
-				RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
-			return new DefaultDeleteFeature(this) {
-				@Override
-				public boolean canDelete(IDeleteContext context) {
-					return false;
-				}
-
-				@Override
-				public boolean isAvailable(IContext context) {
-					return false;
-				}
-			};
+		final PictogramElement pe = context.getPictogramElement();
+		if (pe instanceof Diagram || pe instanceof FixPointAnchor
+			|| DUtil.doesPictogramContainProperty(context,
+				new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER,
+					RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER,
+					RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE,
+					RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE,
+					RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
+			return null;
 		}
 
 		// If the element to be deleted is a connection, return the proper feature
-		if (context.getPictogramElement() instanceof Connection && !DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
+		if (pe instanceof Connection) {
 			return new SADConnectionInterfaceDeleteFeature(this);
-		}
-
-		if (DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
-			return null;
 		}
 
 		// If the element is in the Chalkboard, it's removal will be handled by the Release and Terminate features
 		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
-			if (context.getPictogramElement() instanceof ComponentShapeImpl) {
+			if (pe instanceof ComponentShape) {
 				return new ReleaseComponentFeature(this);
 			}
 			return null;
 		}
 
-		return super.getDeleteFeature(context);
+		// Use parent class logic, but disable the result
+		IDeleteFeature deleteFeature = super.getDeleteFeature(context);
+		if (deleteFeature != null && DUtil.isDiagramReadOnly(diagram)) {
+			deleteFeature = new DisabledDeleteFeatureWrapper(deleteFeature);
+		}
+		return deleteFeature;
 	}
 
 	@Override
