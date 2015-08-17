@@ -12,6 +12,7 @@
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
@@ -44,6 +45,7 @@ import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AddFeatureForPattern;
 import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
@@ -124,65 +126,46 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 	@Override
 	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
-		ICustomFeature[] ret = super.getCustomFeatures(context);
-		List<ICustomFeature> retList = new ArrayList<ICustomFeature>();
-		for (int i = 0; i < ret.length; i++) {
-			retList.add(ret[i]);
-		}
+		ICustomFeature[] parentCustomFeatures = super.getCustomFeatures(context);
+		List<ICustomFeature> retList = new ArrayList<ICustomFeature>(Arrays.asList(parentCustomFeatures));
 
-		
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0 && context.getPictogramElements()[0] instanceof Diagram) {
-			// diagram selected
-			
-			//zest layout feature 
-			retList.add(new LayoutDiagramFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-			
-			//expand all shapes
-			retList.add(new ExpandAllShapesFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-			
-			//collapse all shapes
-			retList.add(new CollapseAllShapesFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+		Diagram diagram = getDiagramTypeProvider().getDiagram();
+		PictogramElement[] pes = context.getPictogramElements();
+		if (pes == null || pes.length == 0) {
+			return retList.toArray(new ICustomFeature[retList.size()]);
 		}
-		
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0 && context.getPictogramElements()[0] instanceof RHContainerShape) {
-			//RHContainerShape selected
-			
-			//expand shape
-			retList.add(new ExpandShapeFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-			
-			//collapse shape
-			retList.add(new CollapseShapeFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-		}
+		Object businessObject = DUtil.getBusinessObject(pes[0]);
 
-		// add findBy edit feature if findByStub selected
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof FindByStub) {
+		if (pes[0] instanceof Diagram) {
+			// Diagram features
+			retList.add(new LayoutDiagramFeature(this));
+			retList.add(new ExpandAllShapesFeature(this));
+			retList.add(new CollapseAllShapesFeature(this));
+		} else if (pes[0] instanceof RHContainerShape) {
+			// Our standard shape features
+			retList.add(new ExpandShapeFeature(this));
+			retList.add(new CollapseShapeFeature(this));
+
+			if (businessObject instanceof FindByStub) {
+				// findby features
 				retList.add(new FindByEditFeature(this));
-			}
-		}
-
-		// add runtime features - start/stop device
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (context.getPictogramElements()[0] instanceof RHContainerShape) {
-				Diagram diagram = DUtil.findDiagram((RHContainerShape) context.getPictogramElements()[0]);
-				if (obj instanceof DcdComponentInstantiation && DUtil.isDiagramRuntime(diagram)) {
+			} else if (businessObject instanceof DcdComponentInstantiation) {
+				if (DUtil.isDiagramRuntime(diagram)) {
+					// Device/service runtime features
 					retList.add(new StartFeature(this));
 					retList.add(new StopFeature(this));
 					retList.add(new ShowConsoleFeature(this));
 					retList.add(new LogLevelFeature(this));
 
-					// Don't add ability to remove components to Graphiti Waveform Explorer
-					if (!DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
+					// Add terminate, but not for the explorer
+					if (!DUtil.isDiagramExplorer(diagram)) {
 						retList.add(new TerminateFeature(this));
 					}
 				}
 			}
 		}
 
-		ret = retList.toArray(ret);
-		return ret;
+		return retList.toArray(new ICustomFeature[retList.size()]);
 	}
 
 	@Override

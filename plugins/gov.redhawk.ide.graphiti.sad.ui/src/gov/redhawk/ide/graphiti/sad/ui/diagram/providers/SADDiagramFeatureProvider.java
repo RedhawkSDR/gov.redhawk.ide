@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
@@ -44,9 +45,9 @@ import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
 import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
@@ -138,85 +139,67 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 	@Override
 	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
-		ICustomFeature[] ret = super.getCustomFeatures(context);
-		List<ICustomFeature> retList = new ArrayList<ICustomFeature>();
-		for (int i = 0; i < ret.length; i++) {
-			retList.add(ret[i]);
-		}
+		ICustomFeature[] parentCustomFeatures = super.getCustomFeatures(context);
+		List<ICustomFeature> retList = new ArrayList<ICustomFeature>(Arrays.asList(parentCustomFeatures));
 
-		// if diagram selected
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0 && context.getPictogramElements()[0] instanceof Diagram) {
-			
-			//zest layout feature 
-			retList.add(new LayoutDiagramFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-			
-			//expand all shapes
-			retList.add(new ExpandAllShapesFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-			
-			//collapse all shapes
-			retList.add(new CollapseAllShapesFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+		Diagram diagram = getDiagramTypeProvider().getDiagram();
+		PictogramElement[] pes = context.getPictogramElements();
+		if (pes == null || pes.length == 0) {
+			return retList.toArray(new ICustomFeature[retList.size()]);
 		}
-		
-		// if container shape selected
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0 && context.getPictogramElements()[0] instanceof RHContainerShape) {
+		Object businessObject = DUtil.getBusinessObject(pes[0]);
 
-			//expand shape
-			retList.add(new ExpandShapeFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-			
-			//collapse shape
-			retList.add(new CollapseShapeFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-		}
+		if (pes[0] instanceof Diagram) {
+			// Diagram features
+			retList.add(new LayoutDiagramFeature(this));
+			retList.add(new ExpandAllShapesFeature(this));
+			retList.add(new CollapseAllShapesFeature(this));
+		} else if (pes[0] instanceof RHContainerShape) {
+			// Our standard shape features
+			retList.add(new ExpandShapeFeature(this));
+			retList.add(new CollapseShapeFeature(this));
 
-		// add findBy edit feature if findByStub selected
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof FindByStub) {
+			if (businessObject instanceof FindByStub) {
+				// findby features
 				retList.add(new FindByEditFeature(this));
-			}
-		}
-
-		// add usesDeviceEdit feature if usesDevice selected
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof UsesDeviceStub) {
-				if (UsesDeviceFrontEndTunerPattern.isFrontEndDevice(((UsesDeviceStub) obj).getUsesDevice())) {
+			} else if (businessObject instanceof UsesDeviceStub) {
+				// usesdevice features
+				if (UsesDeviceFrontEndTunerPattern.isFrontEndDevice(((UsesDeviceStub) businessObject).getUsesDevice())) {
 					retList.add(new UsesFrontEndDeviceEditFeature(this));
 				} else {
 					retList.add(new UsesDeviceEditFeature(this));
 				}
-			}
-		}
-
-		// add runtime features, start/stop component only work in sandbox and targetSDR, not design time
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (context.getPictogramElements()[0] instanceof ContainerShape) {
-				Diagram diagram = DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]);
-				if (obj instanceof SadComponentInstantiation && DUtil.isDiagramRuntime(diagram)) {
+			} else if (businessObject instanceof SadComponentInstantiation) {
+				// Component features
+				if (DUtil.isDiagramRuntime(diagram)) {
+					// Runtime-only component features
 					retList.add(new StartFeature(this));
 					retList.add(new StopFeature(this));
 					retList.add(new ShowConsoleFeature(this));
 					retList.add(new LogLevelFeature(this));
 
-					// Don't add ability to remove components to Graphiti Waveform Explorer
-					if (!DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
+					// Don't add ability to remove components from Graphiti Waveform Explorer
+					if (!DUtil.isDiagramExplorer(diagram)) {
 						retList.add(new TerminateFeature(this));
 					}
+				} else {
+					// Design-time-only component features
+					retList.add(new SetAsAssemblyControllerFeature(this));
+					retList.add(new IncrementStartOrderFeature(this));
+					retList.add(new DecrementStartOrderFeature(this));
 				}
 			}
 		}
 
 		// add external port menu item if we clicked on a port
-		if (!DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram()) && (context.getPictogramElements() != null && context.getPictogramElements().length > 0)) {
-			EObject obj = (EObject) DUtil.getBusinessObject(context.getPictogramElements()[0]);
-
+		if (!DUtil.isDiagramRuntime(diagram)) {
 			// make sure business object is port stub and container is a component
+			EObject obj = (EObject) businessObject;
 			if ((obj instanceof ProvidesPortStub || obj instanceof UsesPortStub) && obj.eContainer() instanceof SadComponentInstantiation) {
-
 				boolean mark = true;
 
 				// get sad from diagram
-				final SoftwareAssembly sad = DUtil.getDiagramSAD(this.getDiagramTypeProvider().getDiagram());
+				final SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
 
 				if (sad.getExternalPorts() != null) {
 
@@ -244,39 +227,14 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 				}
 				// add the mark feature
 				if (mark) {
-					retList.add(new MarkExternalPortFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+					retList.add(new MarkExternalPortFeature(this));
 				} else {
-					retList.add(new MarkNonExternalPortFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+					retList.add(new MarkNonExternalPortFeature(this));
 				}
 			}
 		}
 
-		// add Set As Assembly Controller menu item
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation && !DUtil.isDiagramRuntime(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
-				retList.add(new SetAsAssemblyControllerFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-			}
-		}
-
-		// add Increment Start Order menu item
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation && !DUtil.isDiagramRuntime(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
-				retList.add(new IncrementStartOrderFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-			}
-		}
-
-		// add Decrement Start Order menu item
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation && !DUtil.isDiagramRuntime(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
-				retList.add(new DecrementStartOrderFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-			}
-		}
-
-		ret = retList.toArray(ret);
-		return ret;
+		return retList.toArray(new ICustomFeature[retList.size()]);
 	}
 
 	@Override
