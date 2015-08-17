@@ -40,7 +40,7 @@ public interface ComponentShape extends RHContainerShape {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * performs a layout on the contents of this shape
+	 * Performs a layout on the contents of this shape
 	 * <!-- end-model-doc -->
 	 * @model
 	 * @generated

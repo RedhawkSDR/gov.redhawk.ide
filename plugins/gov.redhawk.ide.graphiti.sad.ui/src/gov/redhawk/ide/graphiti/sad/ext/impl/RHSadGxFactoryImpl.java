@@ -92,10 +92,12 @@ public class RHSadGxFactoryImpl extends EFactoryImpl implements RHSadGxFactory {
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
+		case RHSadGxPackage.LIST:
+			return createListFromString(eDataType, initialValue);
+		case RHSadGxPackage.COMPONENT_PATTERN:
+			return createComponentPatternFromString(eDataType, initialValue);
 		case RHSadGxPackage.COMPONENT_SUPPORTED_INTERFACE_STUB:
 			return createComponentSupportedInterfaceStubFromString(eDataType, initialValue);
-		case RHSadGxPackage.IFEATURE_PROVIDER:
-			return createIFeatureProviderFromString(eDataType, initialValue);
 		case RHSadGxPackage.USES_PORT_STUB:
 			return createUsesPortStubFromString(eDataType, initialValue);
 		case RHSadGxPackage.PROVIDES_PORT_STUB:
@@ -106,18 +108,16 @@ public class RHSadGxFactoryImpl extends EFactoryImpl implements RHSadGxFactory {
 			return createAssemblyControllerFromString(eDataType, initialValue);
 		case RHSadGxPackage.EXTERNAL_PORTS:
 			return createExternalPortsFromString(eDataType, initialValue);
-		case RHSadGxPackage.REASON:
-			return createReasonFromString(eDataType, initialValue);
-		case RHSadGxPackage.LIST:
-			return createListFromString(eDataType, initialValue);
 		case RHSadGxPackage.SAD_COMPONENT_INSTANTIATION:
 			return createSadComponentInstantiationFromString(eDataType, initialValue);
 		case RHSadGxPackage.IADD_CONTEXT:
 			return createIAddContextFromString(eDataType, initialValue);
-		case RHSadGxPackage.COMPONENT_PATTERN:
-			return createComponentPatternFromString(eDataType, initialValue);
 		case RHSadGxPackage.IUPDATE_CONTEXT:
 			return createIUpdateContextFromString(eDataType, initialValue);
+		case RHSadGxPackage.IFEATURE_PROVIDER:
+			return createIFeatureProviderFromString(eDataType, initialValue);
+		case RHSadGxPackage.REASON:
+			return createReasonFromString(eDataType, initialValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -131,10 +131,12 @@ public class RHSadGxFactoryImpl extends EFactoryImpl implements RHSadGxFactory {
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
+		case RHSadGxPackage.LIST:
+			return convertListToString(eDataType, instanceValue);
+		case RHSadGxPackage.COMPONENT_PATTERN:
+			return convertComponentPatternToString(eDataType, instanceValue);
 		case RHSadGxPackage.COMPONENT_SUPPORTED_INTERFACE_STUB:
 			return convertComponentSupportedInterfaceStubToString(eDataType, instanceValue);
-		case RHSadGxPackage.IFEATURE_PROVIDER:
-			return convertIFeatureProviderToString(eDataType, instanceValue);
 		case RHSadGxPackage.USES_PORT_STUB:
 			return convertUsesPortStubToString(eDataType, instanceValue);
 		case RHSadGxPackage.PROVIDES_PORT_STUB:
@@ -145,18 +147,16 @@ public class RHSadGxFactoryImpl extends EFactoryImpl implements RHSadGxFactory {
 			return convertAssemblyControllerToString(eDataType, instanceValue);
 		case RHSadGxPackage.EXTERNAL_PORTS:
 			return convertExternalPortsToString(eDataType, instanceValue);
-		case RHSadGxPackage.REASON:
-			return convertReasonToString(eDataType, instanceValue);
-		case RHSadGxPackage.LIST:
-			return convertListToString(eDataType, instanceValue);
 		case RHSadGxPackage.SAD_COMPONENT_INSTANTIATION:
 			return convertSadComponentInstantiationToString(eDataType, instanceValue);
 		case RHSadGxPackage.IADD_CONTEXT:
 			return convertIAddContextToString(eDataType, instanceValue);
-		case RHSadGxPackage.COMPONENT_PATTERN:
-			return convertComponentPatternToString(eDataType, instanceValue);
 		case RHSadGxPackage.IUPDATE_CONTEXT:
 			return convertIUpdateContextToString(eDataType, instanceValue);
+		case RHSadGxPackage.IFEATURE_PROVIDER:
+			return convertIFeatureProviderToString(eDataType, instanceValue);
+		case RHSadGxPackage.REASON:
+			return convertReasonToString(eDataType, instanceValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}

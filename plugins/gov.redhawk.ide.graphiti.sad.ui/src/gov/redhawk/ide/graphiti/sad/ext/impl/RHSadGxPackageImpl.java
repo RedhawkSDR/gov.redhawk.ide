@@ -155,7 +155,7 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 *
+	 * 
 	 * <p>This method is used to initialize {@link RHSadGxPackage#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
@@ -350,19 +350,19 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 		componentShapeEClass = createEClass(COMPONENT_SHAPE);
 
 		// Create data types
+		listEDataType = createEDataType(LIST);
+		componentPatternEDataType = createEDataType(COMPONENT_PATTERN);
 		componentSupportedInterfaceStubEDataType = createEDataType(COMPONENT_SUPPORTED_INTERFACE_STUB);
-		iFeatureProviderEDataType = createEDataType(IFEATURE_PROVIDER);
 		usesPortStubEDataType = createEDataType(USES_PORT_STUB);
 		providesPortStubEDataType = createEDataType(PROVIDES_PORT_STUB);
 		portEDataType = createEDataType(PORT);
 		assemblyControllerEDataType = createEDataType(ASSEMBLY_CONTROLLER);
 		externalPortsEDataType = createEDataType(EXTERNAL_PORTS);
-		reasonEDataType = createEDataType(REASON);
-		listEDataType = createEDataType(LIST);
 		sadComponentInstantiationEDataType = createEDataType(SAD_COMPONENT_INSTANTIATION);
 		iAddContextEDataType = createEDataType(IADD_CONTEXT);
-		componentPatternEDataType = createEDataType(COMPONENT_PATTERN);
 		iUpdateContextEDataType = createEDataType(IUPDATE_CONTEXT);
+		iFeatureProviderEDataType = createEDataType(IFEATURE_PROVIDER);
+		reasonEDataType = createEDataType(REASON);
 	}
 
 	/**
@@ -418,21 +418,21 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		// Initialize data types
+		initEDataType(listEDataType, List.class, "List", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(componentPatternEDataType, ComponentPattern.class, "ComponentPattern", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(componentSupportedInterfaceStubEDataType, ComponentSupportedInterfaceStub.class, "ComponentSupportedInterfaceStub", IS_SERIALIZABLE,
 			!IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(iFeatureProviderEDataType, IFeatureProvider.class, "IFeatureProvider", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(usesPortStubEDataType, UsesPortStub.class, "UsesPortStub", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(providesPortStubEDataType, ProvidesPortStub.class, "ProvidesPortStub", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(portEDataType, Port.class, "Port", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(assemblyControllerEDataType, AssemblyController.class, "AssemblyController", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(externalPortsEDataType, ExternalPorts.class, "ExternalPorts", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(reasonEDataType, Reason.class, "Reason", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(listEDataType, List.class, "List", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(sadComponentInstantiationEDataType, SadComponentInstantiation.class, "SadComponentInstantiation", IS_SERIALIZABLE,
 			!IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iAddContextEDataType, IAddContext.class, "IAddContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(componentPatternEDataType, ComponentPattern.class, "ComponentPattern", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iUpdateContextEDataType, IUpdateContext.class, "IUpdateContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iFeatureProviderEDataType, IFeatureProvider.class, "IFeatureProvider", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(reasonEDataType, Reason.class, "Reason", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);
