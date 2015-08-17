@@ -1303,6 +1303,15 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
+	 * Determines if the diagram is read-only (only applies to design-time).
+	 * @param diagram
+	 * @return
+	 */
+	public static boolean isDiagramReadOnly(Diagram diagram) {
+		return isDiagramTargetSdr(diagram);
+	}
+
+	/**
 	 * Returns true if the portContainer is a super port
 	 * @param portContainer - The port container to be tested
 	 * @return
@@ -1468,5 +1477,4 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 
 		return connectInterface;
 	}
-
 }
