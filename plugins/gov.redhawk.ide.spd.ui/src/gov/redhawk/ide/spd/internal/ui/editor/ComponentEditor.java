@@ -10,12 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.spd.internal.ui.editor;
 
+import gov.redhawk.ide.scd.ui.editor.page.PortsFormPage;
+import gov.redhawk.ide.scd.ui.provider.PortsEditorScdItemProviderAdapterFactory;
 import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
 import gov.redhawk.prf.ui.provider.PropertiesEditorPrfItemProviderAdapterFactory;
-import gov.redhawk.scd.ui.editor.page.PortsFormPage;
-import gov.redhawk.scd.ui.provider.PortsEditorScdItemProviderAdapterFactory;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.util.ArrayList;
