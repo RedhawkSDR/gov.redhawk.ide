@@ -15,6 +15,7 @@ import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
 import gov.redhawk.prf.ui.provider.PropertiesEditorPrfItemProviderAdapterFactory;
 import gov.redhawk.scd.ui.editor.page.PortsFormPage;
+import gov.redhawk.scd.ui.provider.PortsEditorScdItemProviderAdapterFactory;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
-import mil.jpeojtrs.sca.scd.provider.ScdItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.Descriptor;
 import mil.jpeojtrs.sca.spd.Implementation;
@@ -424,7 +424,7 @@ public class ComponentEditor extends SCAFormEditor {
 	@Override
 	protected AdapterFactory getSpecificAdapterFactory() {
 		final ComposedAdapterFactory factory = new ComposedAdapterFactory();
-		factory.addAdapterFactory(new ScdItemProviderAdapterFactory());
+		factory.addAdapterFactory(new PortsEditorScdItemProviderAdapterFactory());
 		factory.addAdapterFactory(new SpdItemProviderAdapterFactory());
 		factory.addAdapterFactory(new PropertiesEditorPrfItemProviderAdapterFactory());
 		return factory;
