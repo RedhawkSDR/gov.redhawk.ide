@@ -32,7 +32,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	public static int getStartOrder(SWTBotGefEditor editor, String component) {
-		ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
+		ComponentShape componentShape = (ComponentShape) editor.getEditPart(component).part().getModel();
 		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		return ci.getStartOrder().intValue();
 	}
@@ -42,7 +42,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	public static boolean isAssemblyController(SWTGefBot bot, SWTBotGefEditor editor, String component) {
-		ComponentShape assemblyController = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
+		ComponentShape assemblyController = (ComponentShape) editor.getEditPart(component).part().getModel();
 		return isAssemblyController(assemblyController);
 	}
 
@@ -63,7 +63,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	}
 	
 	public static boolean isAssemblyController(SWTBotGefEditPart gefEditPart) {
-		return isAssemblyController((ComponentShapeImpl) gefEditPart.part().getModel());
+		return isAssemblyController((ComponentShape) gefEditPart.part().getModel());
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 * @return - True if component start order text matches expected value AND component styling is set correctly
 	 */
 	public static boolean correctStylingAndValue(SWTBotGefEditor editor, String component, String expectedValue, boolean isAssemblyController) {
-		ComponentShape componentShape = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
+		ComponentShape componentShape = (ComponentShape) editor.getEditPart(component).part().getModel();
 		return correctStartOrderValue(componentShape, expectedValue) && correctStartOrderStyling(componentShape, isAssemblyController);
 	}
 

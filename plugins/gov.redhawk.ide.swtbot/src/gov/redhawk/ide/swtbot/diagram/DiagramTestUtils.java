@@ -50,8 +50,9 @@ import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.junit.Assert;
 
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.util.SadStyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
@@ -268,8 +269,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	 * @return
 	 */
 	public static SadComponentInstantiation getComponentObject(SWTBotGefEditor editor, String componentName) {
-
-		ComponentShapeImpl componentShape = getComponentShape(editor, componentName);
+		ComponentShape componentShape = getComponentShape(editor, componentName);
 		if (componentShape == null) {
 			return null;
 		}
@@ -284,8 +284,8 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	 * @param componentName
 	 * @return
 	 */
-	public static ComponentShapeImpl getComponentShape(SWTBotGefEditor editor, String componentName) {
-		return (ComponentShapeImpl) getRHContainerShape(editor, componentName);
+	public static ComponentShape getComponentShape(SWTBotGefEditor editor, String componentName) {
+		return (ComponentShape) getRHContainerShape(editor, componentName);
 	}
 	
 	/**
@@ -330,7 +330,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	 * @return
 	 */
 	public static DcdComponentInstantiation getDeviceObject(SWTBotGefEditor editor, String deviceName) {
-		RHContainerShapeImpl deviceShape = getRHContainerShape(editor, deviceName);
+		RHContainerShape deviceShape = getRHContainerShape(editor, deviceName);
 		if (deviceShape == null) {
 			return null;
 		}
@@ -347,7 +347,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	 */
 	public static FindByStub getFindByObject(SWTBotGefEditor editor, String findByName) {
 
-		RHContainerShapeImpl findByShape = getRHContainerShape(editor, findByName);
+		RHContainerShape findByShape = getRHContainerShape(editor, findByName);
 		if (findByShape == null) {
 			return null;
 		}
@@ -389,19 +389,19 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	}
 
 	/**
-	 * Utility method to extract RHContainerShapeImpl from the Graphiti diagram with the provided objectName.
+	 * Utility method to extract RHContainerShape from the Graphiti diagram with the provided objectName.
 	 * Returns null if object not found
 	 * @param editor
 	 * @param findByName
 	 * @return
 	 */
-	public static RHContainerShapeImpl getRHContainerShape(SWTBotGefEditor editor, String objectName) {
+	private static RHContainerShape getRHContainerShape(SWTBotGefEditor editor, String objectName) {
 
 		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(objectName);
 		if (swtBotGefEditPart == null) {
 			return null;
 		}
-		return (RHContainerShapeImpl) swtBotGefEditPart.part().getModel();
+		return (RHContainerShape) swtBotGefEditPart.part().getModel();
 	}
 
 	/**
@@ -715,7 +715,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	 * @param componentShape
 	 * @return
 	 */
-	public static String regexStringForComponent(ComponentShapeImpl componentShape) {
+	public static String regexStringForComponent(ComponentShape componentShape) {
 		Object bo = DUtil.getBusinessObject(componentShape);
 		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
 		String componentinstantiation = "<componentinstantiation id=\"" + ci.getUsageName() + "\""
@@ -732,7 +732,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	 * @param deviceShape
 	 * @return
 	 */
-	public static String regexStringForDevice(RHContainerShapeImpl deviceShape) {
+	public static String regexStringForDevice(RHContainerShape deviceShape) {
 		Object bo = DUtil.getBusinessObject(deviceShape);
 		DcdComponentInstantiation ci = (DcdComponentInstantiation) bo;
 		String componentinstantiation = "<componentinstantiation id=\"" + ci.getId() + "\">";
