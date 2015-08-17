@@ -10,21 +10,20 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom;
 
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-
 import java.math.BigInteger;
-
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
-import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
-public class IncrementStartOrderFeature extends AbstractCustomFeature {
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+
+public class IncrementStartOrderFeature extends AbstractComponentInstantiationFeature {
 
 	public IncrementStartOrderFeature(IFeatureProvider fp) {
 		super(fp);
@@ -43,40 +42,34 @@ public class IncrementStartOrderFeature extends AbstractCustomFeature {
 		return DESCRIPTION;
 	}
 
-	/**
-	 * Returns true if linked business object is SadComponentInstantiation and
-	 * Start Order is not the highest in the Software Assembly
-	 */
 	@Override
 	public boolean canExecute(ICustomContext context) {
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation) {
-				// its a component
-				SadComponentInstantiation ci = (SadComponentInstantiation) obj;
+		// Can't execute if the diagram is read-only
+		if (DUtil.isDiagramReadOnly(getDiagram())) {
+			return false;
+		}
 
-				// get sad from diagram
-				final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+		// May only have 1 component instantiation selected
+		PictogramElement[] pes = context.getPictogramElements();
+		if (pes.length != 1) {
+			return false;
+		}
 
-				// don't allow increment if there is not already a start order assigned
-				if (ci.getStartOrder() == null) {
-					return false;
-				}
+		// Don't allow increment if there is not already a start order assigned
+		SadComponentInstantiation compInst = (SadComponentInstantiation) DUtil.getBusinessObject(pes[0]);
+		if (compInst.getStartOrder() == null) {
+			return false;
+		}
 
-				// don't allow increment if its already the highest (components with start orders of null are removed
-				// from this assessment)
-				EList<SadComponentInstantiation> sortedComponents = sad.getComponentInstantiationsInStartOrder();
-				for (int i = 0; i < sortedComponents.size(); i++) {
-					if (sortedComponents.get(i).getStartOrder() == null) {
-						sortedComponents.remove(i);
-						i--;
-					}
-				}
-				if (sortedComponents.get(sortedComponents.size() - 1).equals(ci)) {
-					return false;
-				}
+		// Don't allow increment if its already the highest
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+		EList<SadComponentInstantiation> sortedComponents = sad.getComponentInstantiationsInStartOrder();
+		for (int i = sortedComponents.size() - 1; i >= 0; i--) {
+			if (sortedComponents.get(i).getStartOrder() != null) {
+				return !sortedComponents.get(i).equals(compInst);
 			}
 		}
+
 		return true;
 	}
 

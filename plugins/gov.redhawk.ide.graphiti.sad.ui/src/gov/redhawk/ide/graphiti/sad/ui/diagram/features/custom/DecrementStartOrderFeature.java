@@ -10,21 +10,20 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom;
 
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-
 import java.math.BigInteger;
-
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
-import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
-public class DecrementStartOrderFeature extends AbstractCustomFeature {
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+
+public class DecrementStartOrderFeature extends AbstractComponentInstantiationFeature {
 
 	public DecrementStartOrderFeature(IFeatureProvider fp) {
 		super(fp);
@@ -43,35 +42,40 @@ public class DecrementStartOrderFeature extends AbstractCustomFeature {
 		return DESCRIPTION;
 	}
 
-	/**
-	 * Returns true if linked business object is SadComponentInstantiation and Start Order is not zero
-	 */
 	@Override
 	public boolean canExecute(ICustomContext context) {
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation) {
-				// its a component
-				SadComponentInstantiation ci = (SadComponentInstantiation) obj;
-
-				// get sad from diagram
-				final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
-
-				// don't allow decrement if its already the lowest
-				EList<SadComponentInstantiation> sortedComponents = sad.getComponentInstantiationsInStartOrder();
-				if (sortedComponents.get(0).equals(ci)) {
-					return false;
-				}
-
-				// start order NOT zero
-				if (ci.getStartOrder() != null) {
-					if (ci.getStartOrder().compareTo(BigInteger.ZERO) != 0) {
-						return true;
-					}
-				}
-			}
+		// Can't execute if the diagram is read-only
+		if (DUtil.isDiagramReadOnly(getDiagram())) {
+			return false;
 		}
-		return false;
+
+		// May only have 1 component instantiation selected
+		PictogramElement[] pes = context.getPictogramElements();
+		if (pes.length != 1) {
+			return false;
+		}
+
+		// Don't allow decrement if there is not already a start order assigned
+		SadComponentInstantiation compInst = (SadComponentInstantiation) DUtil.getBusinessObject(pes[0]);
+		if (compInst.getStartOrder() == null) {
+			return false;
+		}
+
+		// Don't allow decrement if its already the lowest start order. Note that the assembly controller is always
+		// first, and may not have a start order, so we have to check the first and second instances in the ordered
+		// list.
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+		EList<SadComponentInstantiation> sortedComponents = sad.getComponentInstantiationsInStartOrder();
+		SadComponentInstantiation firstComponent = sortedComponents.get(0);
+		if (firstComponent.equals(compInst)) {
+			return false;
+		}
+		if (sortedComponents.size() > 1 && firstComponent.getStartOrder() == null && sortedComponents.get(1).equals(compInst)) {
+			return false;
+		}
+
+		// Start order must be greater than zero
+		return compInst.getStartOrder().compareTo(BigInteger.ZERO) > 0;
 	}
 
 	/**

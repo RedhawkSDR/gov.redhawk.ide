@@ -10,30 +10,28 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom;
 
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-
-import mil.jpeojtrs.sca.sad.AssemblyController;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
-import mil.jpeojtrs.sca.sad.SadFactory;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
-import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 
-public class SetAsAssemblyControllerFeature extends AbstractCustomFeature {
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.sad.AssemblyController;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
+import mil.jpeojtrs.sca.sad.SadFactory;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+
+public class SetAsAssemblyControllerFeature extends AbstractComponentInstantiationFeature {
 
 	public SetAsAssemblyControllerFeature(IFeatureProvider fp) {
 		super(fp);
@@ -52,29 +50,22 @@ public class SetAsAssemblyControllerFeature extends AbstractCustomFeature {
 		return DESCRIPTION;
 	}
 
-	/**
-	 * Returns true if linked business object is SadComponentInstantiation and Assembly Controller is not currently set
-	 * to selected Component
-	 */
 	@Override
 	public boolean canExecute(ICustomContext context) {
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation) {
-
-				// get sad from diagram
-				final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
-
-				// get AssemblyController
-				final AssemblyController assemblyController = sad.getAssemblyController();
-
-				if (assemblyController != null && assemblyController.getComponentInstantiationRef() != null
-					&& !assemblyController.getComponentInstantiationRef().getRefid().equals(((SadComponentInstantiation) obj).getId())) {
-					return true;
-				}
-			}
+		// Can't execute if the diagram is read-only
+		if (DUtil.isDiagramReadOnly(getDiagram())) {
+			return false;
 		}
-		return false;
+
+		// May only have 1 component instantiation selected
+		PictogramElement[] pes = context.getPictogramElements();
+		if (pes.length != 1) {
+			return false;
+		}
+
+		// Component instantiation must not already be the assembly controller
+		SadComponentInstantiation compInst = (SadComponentInstantiation) DUtil.getBusinessObject(pes[0]);
+		return !SoftwareAssembly.Util.isAssemblyController(compInst);
 	}
 
 	/**
@@ -116,7 +107,8 @@ public class SetAsAssemblyControllerFeature extends AbstractCustomFeature {
 				newRef.setInstantiation(newAssemblyCI);
 				sad.setAssemblyController(newAsm);
 
-				// if new assembly controller has a start order declared, change it to zero and update all other component start orders
+				// if new assembly controller has a start order declared, change it to zero and update all other
+				// component start orders
 				if (newAssemblyCI.getStartOrder() != null) {
 					newAssemblyCI.setStartOrder(BigInteger.ZERO);
 				}
