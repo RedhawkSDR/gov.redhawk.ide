@@ -38,7 +38,7 @@ public class DCDConnectionInterfaceDeleteFeature extends DefaultDeleteFeature {
 	
 	@Override
 	public boolean canDelete(IDeleteContext context) {
-		return true;
+		return !DUtil.isDiagramReadOnly(getDiagram());
 	}
 
 	@Override
