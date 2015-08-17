@@ -57,13 +57,17 @@ public class ShowConsoleFeature extends AbstractCustomFeature {
 		}
 		ICustomContext customContext = (ICustomContext) context;
 
-		// Selected object must have an ILaunch or we can't show a console
+		// Selected object(s) must have an ILaunch or we can't show a console
 		if (customContext.getPictogramElements().length == 0) {
 			return false;
 		}
-		PictogramElement pe = customContext.getPictogramElements()[0];
-		LocalLaunch localLaunch = Platform.getAdapterManager().getAdapter(pe, LocalLaunch.class);
-		return localLaunch != null && localLaunch.getLaunch() != null;
+		for (PictogramElement pe : customContext.getPictogramElements()) {
+			LocalLaunch localLaunch = Platform.getAdapterManager().getAdapter(pe, LocalLaunch.class);
+			if (localLaunch == null || localLaunch.getLaunch() == null) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override

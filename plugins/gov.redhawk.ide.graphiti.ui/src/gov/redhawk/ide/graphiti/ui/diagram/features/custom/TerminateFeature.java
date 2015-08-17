@@ -51,6 +51,9 @@ public class TerminateFeature extends NonUndoableCustomFeature {
 		ICustomContext customContext = (ICustomContext) context;
 
 		// Selected objects must be have an ILaunch or we can't terminate them
+		if (customContext.getPictogramElements().length == 0) {
+			return false;
+		}
 		for (PictogramElement pe : customContext.getPictogramElements()) {
 			LocalLaunch localLaunch = Platform.getAdapterManager().getAdapter(pe, LocalLaunch.class);
 			if (localLaunch == null || localLaunch.getLaunch() == null) {
