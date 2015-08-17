@@ -980,7 +980,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		load(subMonitor.newChild(1));
 		if (getIdlLibrary() != null) {
 			try {
-				getIdlLibrary().load(subMonitor.newChild(1));
+				getIdlLibrary().reload(subMonitor.newChild(1));
 			} catch (CoreException e) {
 				IdeSdrActivator.getDefault().getLog().log(new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to reload sdr", e));
 			}
