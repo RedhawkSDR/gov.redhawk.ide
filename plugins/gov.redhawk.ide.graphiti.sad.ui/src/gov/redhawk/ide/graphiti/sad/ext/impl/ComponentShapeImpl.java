@@ -259,7 +259,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		IFeatureProvider featureProvider = pattern.getFeatureProvider();
 		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
 		ExternalPorts externalPorts = DUtil.getDiagramSAD(diagram).getExternalPorts();
-		AssemblyController assemblyController = SoftwareAssembly.Util.isAssemblyController(ci) ? sad.getAssemblyController() : null; 
+		AssemblyController assemblyController = SoftwareAssembly.Util.isAssemblyController(ci) ? sad.getAssemblyController() : null;
 
 		// get external ports relevant to component instantiation
 		final List<Port> ciExternalPorts = getComponentExternalPorts(ci, externalPorts);

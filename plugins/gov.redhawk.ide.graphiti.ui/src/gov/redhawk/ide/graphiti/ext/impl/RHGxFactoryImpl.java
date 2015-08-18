@@ -196,9 +196,8 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 */
 	public Event createEventFromString(EDataType eDataType, String initialValue) {
 		Event result = Event.get(initialValue);
-		if (result == null) {
+		if (result == null)
 			throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		}
 		return result;
 	}
 
@@ -208,7 +207,7 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * @generated
 	 */
 	public String convertEventToString(EDataType eDataType, Object instanceValue) {
-		return (instanceValue == null) ? null : instanceValue.toString();
+		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**

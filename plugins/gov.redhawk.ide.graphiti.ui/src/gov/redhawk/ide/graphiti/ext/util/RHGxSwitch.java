@@ -65,7 +65,7 @@ public class RHGxSwitch< T > extends Switch<T> {
 	 * Checks whether this is a switch for the given package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @parameter ePackage the package in question.
+	 * @param ePackage the package in question.
 	 * @return whether this is a switch for the given package.
 	 * @generated
 	 */
@@ -84,13 +84,6 @@ public class RHGxSwitch< T > extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
-		case RHGxPackage.CONTAINER_SHAPE_IMPL: {
-			ContainerShape containerShapeImpl = (ContainerShape) theEObject;
-			T result = caseContainerShapeImpl(containerShapeImpl);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
 		case RHGxPackage.RH_CONTAINER_SHAPE: {
 			RHContainerShape rhContainerShape = (RHContainerShape) theEObject;
 			T result = caseRHContainerShape(rhContainerShape);
@@ -113,21 +106,6 @@ public class RHGxSwitch< T > extends Switch<T> {
 		default:
 			return defaultCase(theEObject);
 		}
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Container Shape Impl</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Container Shape Impl</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseContainerShapeImpl(ContainerShape object) {
-		return null;
 	}
 
 	/**

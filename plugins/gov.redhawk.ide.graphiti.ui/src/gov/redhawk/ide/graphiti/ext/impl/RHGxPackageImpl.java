@@ -40,7 +40,8 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.MmPackage;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
+import org.eclipse.graphiti.mm.algorithms.styles.StylesPackage;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
 import org.eclipse.graphiti.util.IColorConstant;
 
@@ -52,12 +53,6 @@ import org.eclipse.graphiti.util.IColorConstant;
  */
 public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass containerShapeImplEClass = null;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -204,14 +199,17 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 			return (RHGxPackage) EPackage.Registry.INSTANCE.getEPackage(RHGxPackage.eNS_URI);
 
 		// Obtain or create and register package
-		RHGxPackageImpl theRHGxPackage = (RHGxPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof RHGxPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI)
-			: new RHGxPackageImpl());
+		RHGxPackageImpl theRHGxPackage = (RHGxPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof RHGxPackageImpl
+			? EPackage.Registry.INSTANCE.get(eNS_URI) : new RHGxPackageImpl());
 
 		isInited = true;
 
 		// Initialize simple dependencies
+		PictogramsPackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
 		EcorePackage.eINSTANCE.eClass();
+		StylesPackage.eINSTANCE.eClass();
+		AlgorithmsPackage.eINSTANCE.eClass();
 
 		// Create package meta-data objects
 		theRHGxPackage.createPackageContents();
@@ -225,15 +223,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(RHGxPackage.eNS_URI, theRHGxPackage);
 		return theRHGxPackage;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getContainerShapeImpl() {
-		return containerShapeImplEClass;
 	}
 
 	/**
@@ -481,8 +470,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		isCreated = true;
 
 		// Create classes and their features
-		containerShapeImplEClass = createEClass(CONTAINER_SHAPE_IMPL);
-
 		rhContainerShapeEClass = createEClass(RH_CONTAINER_SHAPE);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__STARTED);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE);
@@ -550,11 +537,9 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		rhContainerShapeEClass.getESuperTypes().add(thePictogramsPackage.getContainerShape());
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(containerShapeImplEClass, ContainerShape.class, "ContainerShapeImpl", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-
 		initEClass(rhContainerShapeEClass, RHContainerShape.class, "RHContainerShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getRHContainerShape_Started(), theEcorePackage.getEBoolean(), "started", null, 0, 1, RHContainerShape.class, !IS_TRANSIENT,
-			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRHContainerShape_Started(), theEcorePackage.getEBoolean(), "started", null, 0, 1, RHContainerShape.class, !IS_TRANSIENT, !IS_VOLATILE,
+			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_IStatusErrorState(), theEcorePackage.getEInt(), "iStatusErrorState", null, 0, 1, RHContainerShape.class,
 			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_ConnectionMap(), this.getMap(), "connectionMap", null, 0, 1, RHContainerShape.class, !IS_TRANSIENT, !IS_VOLATILE,

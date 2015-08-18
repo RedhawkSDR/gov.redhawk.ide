@@ -74,23 +74,6 @@ public interface RHGxPackage extends EPackage {
 	 */
 	RHGxPackage eINSTANCE = gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl.init();
 	/**
-	 * The meta object id for the '{@link org.eclipse.graphiti.mm.pictograms.ContainerShape <em>Container Shape Impl</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.graphiti.mm.pictograms.ContainerShape
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getContainerShapeImpl()
-	 * @generated
-	 */
-	int CONTAINER_SHAPE_IMPL = 0;
-	/**
-	 * The number of structural features of the '<em>Container Shape Impl</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CONTAINER_SHAPE_IMPL_FEATURE_COUNT = 0;
-	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl <em>RH Container Shape</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -98,7 +81,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getRHContainerShape()
 	 * @generated
 	 */
-	int RH_CONTAINER_SHAPE = 1;
+	int RH_CONTAINER_SHAPE = 0;
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -235,7 +218,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getEvent()
 	 * @generated
 	 */
-	int EVENT = 2;
+	int EVENT = 1;
 	/**
 	 * The meta object id for the '<em>Component Supported Interface Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -244,7 +227,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getComponentSupportedInterfaceStub()
 	 * @generated
 	 */
-	int COMPONENT_SUPPORTED_INTERFACE_STUB = 3;
+	int COMPONENT_SUPPORTED_INTERFACE_STUB = 2;
 	/**
 	 * The meta object id for the '<em>IFeature Provider</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -253,7 +236,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIFeatureProvider()
 	 * @generated
 	 */
-	int IFEATURE_PROVIDER = 4;
+	int IFEATURE_PROVIDER = 3;
 	/**
 	 * The meta object id for the '<em>Uses Port Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -262,7 +245,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getUsesPortStub()
 	 * @generated
 	 */
-	int USES_PORT_STUB = 5;
+	int USES_PORT_STUB = 4;
 	/**
 	 * The meta object id for the '<em>Provides Port Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -271,7 +254,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getProvidesPortStub()
 	 * @generated
 	 */
-	int PROVIDES_PORT_STUB = 6;
+	int PROVIDES_PORT_STUB = 5;
 	/**
 	 * The meta object id for the '<em>Port</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -280,7 +263,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getPort()
 	 * @generated
 	 */
-	int PORT = 7;
+	int PORT = 6;
 	/**
 	 * The meta object id for the '<em>Assembly Controller</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -289,7 +272,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAssemblyController()
 	 * @generated
 	 */
-	int ASSEMBLY_CONTROLLER = 8;
+	int ASSEMBLY_CONTROLLER = 7;
 	/**
 	 * The meta object id for the '<em>External Ports</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -298,7 +281,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getExternalPorts()
 	 * @generated
 	 */
-	int EXTERNAL_PORTS = 9;
+	int EXTERNAL_PORTS = 8;
 	/**
 	 * The meta object id for the '<em>Reason</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -307,7 +290,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getReason()
 	 * @generated
 	 */
-	int REASON = 10;
+	int REASON = 9;
 	/**
 	 * The meta object id for the '<em>List</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -316,7 +299,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getList()
 	 * @generated
 	 */
-	int LIST = 11;
+	int LIST = 10;
 	/**
 	 * The meta object id for the '<em>Sad Component Instantiation</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -325,7 +308,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getSadComponentInstantiation()
 	 * @generated
 	 */
-	int SAD_COMPONENT_INSTANTIATION = 12;
+	int SAD_COMPONENT_INSTANTIATION = 11;
 	/**
 	 * The meta object id for the '<em>IAdd Context</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -334,7 +317,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIAddContext()
 	 * @generated
 	 */
-	int IADD_CONTEXT = 13;
+	int IADD_CONTEXT = 12;
 	/**
 	 * The meta object id for the '<em>Abstract Container Pattern</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -343,7 +326,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAbstractContainerPattern()
 	 * @generated
 	 */
-	int ABSTRACT_CONTAINER_PATTERN = 14;
+	int ABSTRACT_CONTAINER_PATTERN = 13;
 	/**
 	 * The meta object id for the '<em>IUpdate Context</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -352,7 +335,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIUpdateContext()
 	 * @generated
 	 */
-	int IUPDATE_CONTEXT = 15;
+	int IUPDATE_CONTEXT = 14;
 	/**
 	 * The meta object id for the '<em>IColor Constant</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -361,7 +344,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIColorConstant()
 	 * @generated
 	 */
-	int ICOLOR_CONSTANT = 16;
+	int ICOLOR_CONSTANT = 15;
 	/**
 	 * The meta object id for the '<em>Map</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -370,18 +353,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getMap()
 	 * @generated
 	 */
-	int MAP = 17;
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.graphiti.mm.pictograms.ContainerShape <em>Container Shape Impl</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Container Shape Impl</em>'.
-	 * @see org.eclipse.graphiti.mm.pictograms.ContainerShape
-	 * @model instanceClass="org.eclipse.graphiti.mm.pictograms.ContainerShape"
-	 * @generated
-	 */
-	EClass getContainerShapeImpl();
+	int MAP = 16;
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape <em>RH Container Shape</em>}'.
@@ -667,16 +639,6 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	interface Literals {
-		/**
-		 * The meta object literal for the '{@link org.eclipse.graphiti.mm.pictograms.ContainerShape <em>Container Shape Impl</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.graphiti.mm.pictograms.ContainerShape
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getContainerShapeImpl()
-		 * @generated
-		 */
-		EClass CONTAINER_SHAPE_IMPL = eINSTANCE.getContainerShapeImpl();
-
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl <em>RH Container Shape</em>}' class.
 		 * <!-- begin-user-doc -->

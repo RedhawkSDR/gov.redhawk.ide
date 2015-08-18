@@ -72,6 +72,7 @@ import org.eclipse.graphiti.util.IColorConstant;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isStarted <em>Started</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getIStatusErrorState <em>IStatus Error State</em>}</li>
@@ -81,7 +82,6 @@ import org.eclipse.graphiti.util.IColorConstant;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -325,7 +325,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		int oldIStatusErrorState = iStatusErrorState;
 		iStatusErrorState = newIStatusErrorState;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE, oldIStatusErrorState, iStatusErrorState));
+			eNotify(
+				new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE, oldIStatusErrorState, iStatusErrorState));
 
 		// END GENERATED CODE
 
@@ -574,8 +575,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
 
 		// outerRoundedRectangle
-		gaLayoutService.setLocationAndSize(getOuterText(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4, 0, containerWidth
-			- (INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4), 20);
+		gaLayoutService.setLocationAndSize(getOuterText(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4, 0,
+			containerWidth - (INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4), 20);
 		gaLayoutService.setLocationAndSize(getOuterImage(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
 
 		// innerRoundedRectangle
@@ -601,8 +602,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				ContainerShape superProvidesPortsContainerShape = getSuperProvidesPortsContainerShape();
 
 				//anchor container
-				gaLayoutService.setLocationAndSize(superProvidesPortsContainerShape.getGraphicsAlgorithm(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING
-					- SUPER_PORT_SHAPE_WIDTH, y, SUPER_PORT_SHAPE_WIDTH, innerContainerShapeHeight - SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2);
+				gaLayoutService.setLocationAndSize(superProvidesPortsContainerShape.getGraphicsAlgorithm(),
+					INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING - SUPER_PORT_SHAPE_WIDTH, y, SUPER_PORT_SHAPE_WIDTH,
+					innerContainerShapeHeight - SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2);
 
 				//anchor
 				Rectangle fixPointAnchorRectangle = (Rectangle) superProvidesPortsContainerShape.getAnchors().get(0).getGraphicsAlgorithm();
@@ -990,7 +992,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Diagram diagram = DUtil.findDiagram(providesPortsContainerShape);
 
 		ContainerShape providesPortContainerShape = Graphiti.getCreateService().createContainerShape(providesPortsContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(providesPortContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORT_CONTAINER);  // ref
+		Graphiti.getPeService().setPropertyValue(providesPortContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORT_CONTAINER); // ref
 		// prevent
 		// selection/deletion/removal
 		Rectangle providesPortContainerShapeRectangle = Graphiti.getCreateService().createRectangle(providesPortContainerShape);
@@ -1699,7 +1701,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 					updateStatus = true;
 					EObject eObject = this.getLink().getBusinessObjects().get(0);
 					//create super ports
-					addSuperProvidesPortContainerShape(pattern.getProvides(eObject), pattern.getInterface(eObject), pattern.getFeatureProvider(), externalPorts);
+					addSuperProvidesPortContainerShape(pattern.getProvides(eObject), pattern.getInterface(eObject), pattern.getFeatureProvider(),
+						externalPorts);
 				} else {
 					return new Reason(true, "Super Provides Ports require creation");
 				}
@@ -1898,7 +1901,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 
 		//update uses ports
-		Reason updateUsesPortsReason = internalUpdateUsesPortsContainerShape(pattern, businessObject, externalPorts, uses, diagram, performUpdate, updateStatus);
+		Reason updateUsesPortsReason = internalUpdateUsesPortsContainerShape(pattern, businessObject, externalPorts, uses, diagram, performUpdate,
+			updateStatus);
 		if (!performUpdate && updateUsesPortsReason.toBoolean()) {
 			//if updates required return true
 			return updateUsesPortsReason;

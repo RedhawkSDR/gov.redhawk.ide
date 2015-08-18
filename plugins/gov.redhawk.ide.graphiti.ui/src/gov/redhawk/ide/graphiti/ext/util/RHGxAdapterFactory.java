@@ -85,11 +85,6 @@ public class RHGxAdapterFactory extends AdapterFactoryImpl {
 	 */
 	protected RHGxSwitch<Adapter> modelSwitch = new RHGxSwitch<Adapter>() {
 		@Override
-		public Adapter caseContainerShapeImpl(ContainerShape object) {
-			return createContainerShapeImplAdapter();
-		}
-
-		@Override
 		public Adapter caseRHContainerShape(RHContainerShape object) {
 			return createRHContainerShapeAdapter();
 		}
@@ -141,20 +136,6 @@ public class RHGxAdapterFactory extends AdapterFactoryImpl {
 	@Override
 	public Adapter createAdapter(Notifier target) {
 		return modelSwitch.doSwitch((EObject) target);
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.graphiti.mm.pictograms.ContainerShape <em>Container Shape Impl</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.graphiti.mm.pictograms.ContainerShape
-	 * @generated
-	 */
-	public Adapter createContainerShapeImplAdapter() {
-		return null;
 	}
 
 	/**
