@@ -1144,7 +1144,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// convenient method for getting business object for PictogramElement
-	public static Object getBusinessObject(PictogramElement pe) {
+	public static EObject getBusinessObject(PictogramElement pe) {
 		return GraphitiUi.getLinkService().getBusinessObjectForLinkedPictogramElement(pe);
 	}
 
