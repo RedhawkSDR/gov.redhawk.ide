@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.tests.projectCreation;
 
+import gov.redhawk.ide.swtbot.ProjectExplorerUtils;
 import gov.redhawk.ide.swtbot.condition.WaitForEditorCondition;
 import gov.redhawk.model.sca.util.ModelUtil;
 
@@ -74,15 +75,9 @@ public class WaveformWizardTest extends AbstractCreationWizardTest {
 		bot.textWithLabel("SAD File:").setText(file.getAbsolutePath());
 		bot.button("Finish").click();
 
-		// Ensure SAD file was created
-		SWTBotView view = bot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
-		view.show();
-		view.bot().tree().setFocus();
-		view.bot().tree().getTreeItem("WaveformProj01").select();
-		view.bot().tree().getTreeItem("WaveformProj01").expand();
-		view.bot().tree().getTreeItem("WaveformProj01").getNode("WaveformProj01.sad.xml");
-
-		bot.waitUntil(new WaitForEditorCondition(), 30000, 500);
+		// Ensure SAD file was created and the editor opens
+		ProjectExplorerUtils.waitUntilNodeAppears(bot, "WaveformProj01", "WaveformProj01.sad.xml");
+		bot.waitUntil(new WaitForEditorCondition());
 
 		SWTBotEditor editorBot = bot.activeEditor();
 		editorBot.bot().cTabItem("Overview").activate();
