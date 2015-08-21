@@ -59,8 +59,8 @@ public class ContentsGroup {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				page.validate();
-				ContentsGroup.this.fileText.setEnabled(ContentsGroup.this.importFileButton.getSelection());
-				ContentsGroup.this.browseButton.setEnabled(ContentsGroup.this.importFileButton.getSelection());
+				ContentsGroup.this.fileText.setEnabled(!ContentsGroup.this.createNewResourceButton.getSelection());
+				ContentsGroup.this.browseButton.setEnabled(!ContentsGroup.this.createNewResourceButton.getSelection());
 			}
 		});
 
