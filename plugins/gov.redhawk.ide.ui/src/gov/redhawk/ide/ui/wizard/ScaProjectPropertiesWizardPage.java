@@ -159,16 +159,6 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 	}
 
 	/**
-	 * Returns the ID group which could be null.
-	 * 
-	 * @deprecated use {@link getID()} instead if the ID is needed
-	 */
-	@Deprecated
-	public IDGroup getIdGroup() {
-		return this.idGroup;
-	}
-
-	/**
 	 * @since 9.1
 	 */
 	public String getID() {
