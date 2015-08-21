@@ -39,10 +39,12 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import gov.redhawk.ui.editor.IScaComposite;
+
 /**
  * 
  */
-public class ExternalPortsComposite extends Composite {
+public class ExternalPortsComposite extends Composite implements IScaComposite {
 
 	private final AdapterFactory adapterFactory;
 	private final FormToolkit toolkit;
@@ -167,5 +169,10 @@ public class ExternalPortsComposite extends Composite {
 
 	public Button getRemoveButton() {
 		return this.removeButton;
+	}
+
+	public void setEditable(boolean canEdit) {
+		addButton.setEnabled(canEdit);
+		removeButton.setEnabled(canEdit);
 	}
 }
