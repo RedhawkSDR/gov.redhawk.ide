@@ -266,7 +266,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getRHContainerShape_Event() {
+	public EAttribute getRHContainerShape_HasSuperPortsContainerShape() {
 		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -275,7 +275,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getRHContainerShape_HasSuperPortsContainerShape() {
+	public EAttribute getRHContainerShape_HasPortsContainerShape() {
 		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -284,17 +284,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getRHContainerShape_HasPortsContainerShape() {
-		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(5);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getRHContainerShape_HideUnusedPorts() {
-		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(6);
+		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -474,7 +465,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__STARTED);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__CONNECTION_MAP);
-		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__EVENT);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS);
@@ -538,14 +528,12 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(rhContainerShapeEClass, RHContainerShape.class, "RHContainerShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getRHContainerShape_Started(), theEcorePackage.getEBoolean(), "started", null, 0, 1, RHContainerShape.class, !IS_TRANSIENT, !IS_VOLATILE,
+		initEAttribute(getRHContainerShape_Started(), theEcorePackage.getEBoolean(), "started", null, 0, 1, RHContainerShape.class, IS_TRANSIENT, !IS_VOLATILE,
 			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_IStatusErrorState(), theEcorePackage.getEInt(), "iStatusErrorState", null, 0, 1, RHContainerShape.class,
-			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRHContainerShape_ConnectionMap(), this.getMap(), "connectionMap", null, 0, 1, RHContainerShape.class, !IS_TRANSIENT, !IS_VOLATILE,
+			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRHContainerShape_ConnectionMap(), this.getMap(), "connectionMap", null, 0, 1, RHContainerShape.class, IS_TRANSIENT, !IS_VOLATILE,
 			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRHContainerShape_Event(), this.getEvent(), "event", null, 0, 1, RHContainerShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
-			!IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_HasSuperPortsContainerShape(), theEcorePackage.getEBoolean(), "hasSuperPortsContainerShape", null, 0, 1,
 			RHContainerShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_HasPortsContainerShape(), theEcorePackage.getEBoolean(), "hasPortsContainerShape", null, 0, 1,

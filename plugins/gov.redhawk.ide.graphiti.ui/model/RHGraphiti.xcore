@@ -1,4 +1,13 @@
-
+//
+// This file is protected by Copyright.
+// Please refer to the COPYRIGHT file distributed with this source distribution.
+//
+// This file is part of REDHAWK IDE.
+//
+// All rights reserved.  This program and the accompanying materials are made available under
+// the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+// http://www.eclipse.org/legal/epl-v10.html.
+//
 
 @Ecore(nsURI="http://www.redhawk.gov/model/rhgext/1.0.0")
 @GenModel(prefix="RHGx", codeFormatting="true")
@@ -33,16 +42,20 @@ type IColorConstant wraps org.eclipse.graphiti.util.IColorConstant
 type Map wraps java.util.Map< String , org.eclipse.graphiti.util.IColorConstant >
 
 class RHContainerShape extends ContainerShape {
-	
-	boolean started
-	int iStatusErrorState
-	Map connectionMap 
-	Event event
-	
+
+	/*If the component is started*/
+	transient boolean started
+
+	/*The severity of the component's status*/
+	transient int iStatusErrorState
+
+	/*This map is used to store color information for connections between redraws. This matters for instances such as
+	 * when monitor ports is active, where a connection may need to have a specific color set at creation.*/
+	transient Map connectionMap
+
 	boolean hasSuperPortsContainerShape  //creates a single anchor on each side of container to represent ports
 	boolean hasPortsContainerShape //creates a container that displays an anchor per port
 	boolean hideUnusedPorts //hides all ports without connection
-	
 	
 	op void init(IAddContext context, AbstractContainerPattern pattern) 
 	op void init(IAddContext context, AbstractContainerPattern pattern, List<Port> externalPorts)
@@ -57,8 +70,7 @@ class RHContainerShape extends ContainerShape {
 	op void layout()
 	
 	/*Updates the shape with supplied values */
-	op Reason update(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts) 
-	
+	op Reason update(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts)
 	
 	/*Updates the shape with supplied values */
 	op Reason update(IUpdateContext context, AbstractContainerPattern pattern) 

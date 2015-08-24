@@ -12,7 +12,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.ext.impl;
 
-import gov.redhawk.ide.graphiti.ext.Event;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
@@ -77,7 +76,6 @@ import org.eclipse.graphiti.util.IColorConstant;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isStarted <em>Started</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getIStatusErrorState <em>IStatus Error State</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getConnectionMap <em>Connection Map</em>}</li>
- *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getEvent <em>Event</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
@@ -130,35 +128,12 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * The cached value of the '{@link #getConnectionMap() <em>Connection Map</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * This map is used to store color information for connections between redraws.  
-	 * This matters for instances such as when monitor ports is active, where a connection may need to have a 
-	 * specific color set at creation.
 	 * <!-- end-user-doc -->
 	 * @see #getConnectionMap()
 	 * @generated NOT
 	 * @ordered
 	 */
 	protected Map<String, IColorConstant> connectionMap = Collections.synchronizedMap(new HashMap<String, IColorConstant>());
-
-	/**
-	 * The default value of the '{@link #getEvent() <em>Event</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getEvent()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Event EVENT_EDEFAULT = Event.RELEASE;
-
-	/**
-	 * The cached value of the '{@link #getEvent() <em>Event</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getEvent()
-	 * @generated
-	 * @ordered
-	 */
-	protected Event event = EVENT_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #isHasSuperPortsContainerShape() <em>Has Super Ports Container Shape</em>}' attribute.
@@ -348,9 +323,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * This map is used to store color information for connections between redraws.  
-	 * This matters for instances such as when monitor ports is active, where a connection may need to have a 
-	 * specific color set at creation.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -368,27 +340,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		connectionMap = newConnectionMap;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP, oldConnectionMap, connectionMap));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Event getEvent() {
-		return event;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setEvent(Event newEvent) {
-		Event oldEvent = event;
-		event = newEvent == null ? EVENT_EDEFAULT : newEvent;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__EVENT, oldEvent, event));
 	}
 
 	/**
@@ -688,8 +639,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return getIStatusErrorState();
 		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
 			return getConnectionMap();
-		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
-			return getEvent();
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			return isHasSuperPortsContainerShape();
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE:
@@ -717,9 +666,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
 			setConnectionMap((Map<String, IColorConstant>) newValue);
-			return;
-		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
-			setEvent((Event) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			setHasSuperPortsContainerShape((Boolean) newValue);
@@ -751,9 +697,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
 			setConnectionMap((Map<String, IColorConstant>) null);
 			return;
-		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
-			setEvent(EVENT_EDEFAULT);
-			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			setHasSuperPortsContainerShape(HAS_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT);
 			return;
@@ -781,8 +724,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return iStatusErrorState != ISTATUS_ERROR_STATE_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
 			return connectionMap != null;
-		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
-			return event != EVENT_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			return hasSuperPortsContainerShape != HAS_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE:
@@ -810,8 +751,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		result.append(iStatusErrorState);
 		result.append(", connectionMap: ");
 		result.append(connectionMap);
-		result.append(", event: ");
-		result.append(event);
 		result.append(", hasSuperPortsContainerShape: ");
 		result.append(hasSuperPortsContainerShape);
 		result.append(", hasPortsContainerShape: ");

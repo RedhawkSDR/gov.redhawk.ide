@@ -37,7 +37,6 @@ import org.eclipse.graphiti.util.IColorConstant;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted <em>Started</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState <em>IStatus Error State</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}</li>
- *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent <em>Event</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
@@ -52,15 +51,14 @@ public interface RHContainerShape extends ContainerShape {
 	/**
 	 * Returns the value of the '<em><b>Started</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Started</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * If the component is started
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Started</em>' attribute.
 	 * @see #setStarted(boolean)
 	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_Started()
-	 * @model unique="false"
+	 * @model unique="false" transient="true"
 	 * @generated
 	 */
 	boolean isStarted();
@@ -78,15 +76,14 @@ public interface RHContainerShape extends ContainerShape {
 	/**
 	 * Returns the value of the '<em><b>IStatus Error State</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>IStatus Error State</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * The severity of the component's status
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>IStatus Error State</em>' attribute.
 	 * @see #setIStatusErrorState(int)
 	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_IStatusErrorState()
-	 * @model unique="false"
+	 * @model unique="false" transient="true"
 	 * @generated
 	 */
 	int getIStatusErrorState();
@@ -104,15 +101,15 @@ public interface RHContainerShape extends ContainerShape {
 	/**
 	 * Returns the value of the '<em><b>Connection Map</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Connection Map</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * This map is used to store color information for connections between redraws. This matters for instances such as
+	 * when monitor ports is active, where a connection may need to have a specific color set at creation.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Connection Map</em>' attribute.
 	 * @see #setConnectionMap(Map)
 	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_ConnectionMap()
-	 * @model unique="false" dataType="gov.redhawk.ide.graphiti.ext.Map"
+	 * @model unique="false" dataType="gov.redhawk.ide.graphiti.ext.Map" transient="true"
 	 * @generated
 	 */
 	Map<String, IColorConstant> getConnectionMap();
@@ -126,35 +123,6 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	void setConnectionMap(Map<String, IColorConstant> value);
-
-	/**
-	 * Returns the value of the '<em><b>Event</b></em>' attribute.
-	 * The literals are from the enumeration {@link gov.redhawk.ide.graphiti.ext.Event}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Event</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Event</em>' attribute.
-	 * @see gov.redhawk.ide.graphiti.ext.Event
-	 * @see #setEvent(Event)
-	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_Event()
-	 * @model unique="false"
-	 * @generated
-	 */
-	Event getEvent();
-
-	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent <em>Event</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Event</em>' attribute.
-	 * @see gov.redhawk.ide.graphiti.ext.Event
-	 * @see #getEvent()
-	 * @generated
-	 */
-	void setEvent(Event value);
 
 	/**
 	 * Returns the value of the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
