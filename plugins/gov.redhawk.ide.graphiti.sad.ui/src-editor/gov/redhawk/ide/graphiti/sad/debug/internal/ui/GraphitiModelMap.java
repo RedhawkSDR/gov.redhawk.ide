@@ -914,7 +914,7 @@ public class GraphitiModelMap implements IPortStatListener {
 
 						@Override
 						public void execute() {
-							componentShape.setIStatusErrorState(status.getSeverity());
+							componentShape.setIStatusSeverity(status.getSeverity());
 						}
 
 					});

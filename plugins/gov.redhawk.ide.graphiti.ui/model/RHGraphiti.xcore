@@ -47,7 +47,7 @@ class RHContainerShape extends ContainerShape {
 	transient boolean started
 
 	/*The severity of the component's status*/
-	transient int iStatusErrorState
+	transient int iStatusSeverity
 
 	/*This map is used to store color information for connections between redraws. This matters for instances such as
 	 * when monitor ports is active, where a connection may need to have a specific color set at creation.*/

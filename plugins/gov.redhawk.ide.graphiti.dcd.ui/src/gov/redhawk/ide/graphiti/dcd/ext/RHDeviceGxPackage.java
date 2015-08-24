@@ -165,13 +165,13 @@ public interface RHDeviceGxPackage extends EPackage {
 	int DEVICE_SHAPE__STARTED = RHGxPackage.RH_CONTAINER_SHAPE__STARTED;
 
 	/**
-	 * The feature id for the '<em><b>IStatus Error State</b></em>' attribute.
+	 * The feature id for the '<em><b>IStatus Severity</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DEVICE_SHAPE__ISTATUS_ERROR_STATE = RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE;
+	int DEVICE_SHAPE__ISTATUS_SEVERITY = RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY;
 
 	/**
 	 * The feature id for the '<em><b>Connection Map</b></em>' attribute.
@@ -310,13 +310,13 @@ public interface RHDeviceGxPackage extends EPackage {
 	int SERVICE_SHAPE__STARTED = RHGxPackage.RH_CONTAINER_SHAPE__STARTED;
 
 	/**
-	 * The feature id for the '<em><b>IStatus Error State</b></em>' attribute.
+	 * The feature id for the '<em><b>IStatus Severity</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICE_SHAPE__ISTATUS_ERROR_STATE = RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE;
+	int SERVICE_SHAPE__ISTATUS_SEVERITY = RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY;
 
 	/**
 	 * The feature id for the '<em><b>Connection Map</b></em>' attribute.

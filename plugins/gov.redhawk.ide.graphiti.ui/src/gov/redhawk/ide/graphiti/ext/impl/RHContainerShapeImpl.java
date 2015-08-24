@@ -74,7 +74,7 @@ import org.eclipse.graphiti.util.IColorConstant;
  * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isStarted <em>Started</em>}</li>
- *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getIStatusErrorState <em>IStatus Error State</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getIStatusSeverity <em>IStatus Severity</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getConnectionMap <em>Connection Map</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
@@ -106,24 +106,24 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	protected boolean started = STARTED_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getIStatusErrorState() <em>IStatus Error State</em>}' attribute.
+	 * The default value of the '{@link #getIStatusSeverity() <em>IStatus Severity</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getIStatusErrorState()
+	 * @see #getIStatusSeverity()
 	 * @generated NOT
 	 * @ordered
 	 */
-	protected static final int ISTATUS_ERROR_STATE_EDEFAULT = IStatus.OK;
+	protected static final int ISTATUS_SEVERITY_EDEFAULT = IStatus.OK;
 
 	/**
-	 * The cached value of the '{@link #getIStatusErrorState() <em>IStatus Error State</em>}' attribute.
+	 * The cached value of the '{@link #getIStatusSeverity() <em>IStatus Severity</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getIStatusErrorState()
+	 * @see #getIStatusSeverity()
 	 * @generated
 	 * @ordered
 	 */
-	protected int iStatusErrorState = ISTATUS_ERROR_STATE_EDEFAULT;
+	protected int iStatusSeverity = ISTATUS_SEVERITY_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getConnectionMap() <em>Connection Map</em>}' attribute.
@@ -287,8 +287,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public int getIStatusErrorState() {
-		return iStatusErrorState;
+	public int getIStatusSeverity() {
+		return iStatusSeverity;
 	}
 
 	/**
@@ -296,12 +296,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public void setIStatusErrorState(int newIStatusErrorState) {
-		int oldIStatusErrorState = iStatusErrorState;
-		iStatusErrorState = newIStatusErrorState;
+	public void setIStatusSeverity(int newIStatusSeverity) {
+		int oldIStatusSeverity = iStatusSeverity;
+		iStatusSeverity = newIStatusSeverity;
 		if (eNotificationRequired())
-			eNotify(
-				new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE, oldIStatusErrorState, iStatusErrorState));
+			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY, oldIStatusSeverity, iStatusSeverity));
 
 		// END GENERATED CODE
 
@@ -309,7 +308,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		final Diagram diagram = DUtil.findDiagram(this);
 		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
 		if (innerRoundedRectangle != null) {
-			if (iStatusErrorState == IStatus.ERROR) {
+			if (iStatusSeverity == IStatus.ERROR) {
 				// errored
 				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerError(diagram));
 			} else {
@@ -635,8 +634,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		switch (featureID) {
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			return isStarted();
-		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
-			return getIStatusErrorState();
+		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
+			return getIStatusSeverity();
 		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
 			return getConnectionMap();
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
@@ -661,8 +660,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			setStarted((Boolean) newValue);
 			return;
-		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
-			setIStatusErrorState((Integer) newValue);
+		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
+			setIStatusSeverity((Integer) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
 			setConnectionMap((Map<String, IColorConstant>) newValue);
@@ -691,8 +690,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			setStarted(STARTED_EDEFAULT);
 			return;
-		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
-			setIStatusErrorState(ISTATUS_ERROR_STATE_EDEFAULT);
+		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
+			setIStatusSeverity(ISTATUS_SEVERITY_EDEFAULT);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
 			setConnectionMap((Map<String, IColorConstant>) null);
@@ -720,8 +719,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		switch (featureID) {
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			return started != STARTED_EDEFAULT;
-		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
-			return iStatusErrorState != ISTATUS_ERROR_STATE_EDEFAULT;
+		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
+			return iStatusSeverity != ISTATUS_SEVERITY_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
 			return connectionMap != null;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
@@ -747,8 +746,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (started: ");
 		result.append(started);
-		result.append(", iStatusErrorState: ");
-		result.append(iStatusErrorState);
+		result.append(", iStatusSeverity: ");
+		result.append(iStatusSeverity);
 		result.append(", connectionMap: ");
 		result.append(connectionMap);
 		result.append(", hasSuperPortsContainerShape: ");

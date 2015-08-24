@@ -248,7 +248,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getRHContainerShape_IStatusErrorState() {
+	public EAttribute getRHContainerShape_IStatusSeverity() {
 		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -463,7 +463,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		// Create classes and their features
 		rhContainerShapeEClass = createEClass(RH_CONTAINER_SHAPE);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__STARTED);
-		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE);
+		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__ISTATUS_SEVERITY);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__CONNECTION_MAP);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE);
@@ -530,8 +530,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		initEClass(rhContainerShapeEClass, RHContainerShape.class, "RHContainerShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRHContainerShape_Started(), theEcorePackage.getEBoolean(), "started", null, 0, 1, RHContainerShape.class, IS_TRANSIENT, !IS_VOLATILE,
 			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRHContainerShape_IStatusErrorState(), theEcorePackage.getEInt(), "iStatusErrorState", null, 0, 1, RHContainerShape.class,
-			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRHContainerShape_IStatusSeverity(), theEcorePackage.getEInt(), "iStatusSeverity", null, 0, 1, RHContainerShape.class, IS_TRANSIENT,
+			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_ConnectionMap(), this.getMap(), "connectionMap", null, 0, 1, RHContainerShape.class, IS_TRANSIENT, !IS_VOLATILE,
 			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_HasSuperPortsContainerShape(), theEcorePackage.getEBoolean(), "hasSuperPortsContainerShape", null, 0, 1,

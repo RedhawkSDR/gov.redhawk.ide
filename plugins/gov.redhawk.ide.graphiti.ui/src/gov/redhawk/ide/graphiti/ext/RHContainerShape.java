@@ -35,7 +35,7 @@ import org.eclipse.graphiti.util.IColorConstant;
  * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted <em>Started</em>}</li>
- *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState <em>IStatus Error State</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusSeverity <em>IStatus Severity</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
@@ -74,29 +74,29 @@ public interface RHContainerShape extends ContainerShape {
 	void setStarted(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>IStatus Error State</b></em>' attribute.
+	 * Returns the value of the '<em><b>IStatus Severity</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * The severity of the component's status
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>IStatus Error State</em>' attribute.
-	 * @see #setIStatusErrorState(int)
-	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_IStatusErrorState()
+	 * @return the value of the '<em>IStatus Severity</em>' attribute.
+	 * @see #setIStatusSeverity(int)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_IStatusSeverity()
 	 * @model unique="false" transient="true"
 	 * @generated
 	 */
-	int getIStatusErrorState();
+	int getIStatusSeverity();
 
 	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState <em>IStatus Error State</em>}' attribute.
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusSeverity <em>IStatus Severity</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>IStatus Error State</em>' attribute.
-	 * @see #getIStatusErrorState()
+	 * @param value the new value of the '<em>IStatus Severity</em>' attribute.
+	 * @see #getIStatusSeverity()
 	 * @generated
 	 */
-	void setIStatusErrorState(int value);
+	void setIStatusSeverity(int value);
 
 	/**
 	 * Returns the value of the '<em><b>Connection Map</b></em>' attribute.

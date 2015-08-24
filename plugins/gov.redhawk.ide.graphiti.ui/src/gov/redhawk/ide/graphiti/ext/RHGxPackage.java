@@ -155,13 +155,13 @@ public interface RHGxPackage extends EPackage {
 	 */
 	int RH_CONTAINER_SHAPE__STARTED = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 0;
 	/**
-	 * The feature id for the '<em><b>IStatus Error State</b></em>' attribute.
+	 * The feature id for the '<em><b>IStatus Severity</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 1;
+	int RH_CONTAINER_SHAPE__ISTATUS_SEVERITY = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 1;
 	/**
 	 * The feature id for the '<em><b>Connection Map</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -369,15 +369,15 @@ public interface RHGxPackage extends EPackage {
 	EAttribute getRHContainerShape_Started();
 
 	/**
-	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState <em>IStatus Error State</em>}'.
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusSeverity <em>IStatus Severity</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>IStatus Error State</em>'.
-	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState()
+	 * @return the meta object for the attribute '<em>IStatus Severity</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusSeverity()
 	 * @see #getRHContainerShape()
 	 * @generated
 	 */
-	EAttribute getRHContainerShape_IStatusErrorState();
+	EAttribute getRHContainerShape_IStatusSeverity();
 
 	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}'.
@@ -639,12 +639,12 @@ public interface RHGxPackage extends EPackage {
 		EAttribute RH_CONTAINER_SHAPE__STARTED = eINSTANCE.getRHContainerShape_Started();
 
 		/**
-		 * The meta object literal for the '<em><b>IStatus Error State</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>IStatus Severity</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE = eINSTANCE.getRHContainerShape_IStatusErrorState();
+		EAttribute RH_CONTAINER_SHAPE__ISTATUS_SEVERITY = eINSTANCE.getRHContainerShape_IStatusSeverity();
 
 		/**
 		 * The meta object literal for the '<em><b>Connection Map</b></em>' attribute feature.
