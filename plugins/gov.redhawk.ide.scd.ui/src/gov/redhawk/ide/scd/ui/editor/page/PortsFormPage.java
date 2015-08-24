@@ -30,7 +30,7 @@ public class PortsFormPage extends ScaFormPage implements IViewerProvider {
 	public static final String PAGE_ID = "ports"; //$NON-NLS-1$
 
 	/** The toolbar contribution ID */
-	public static final String TOOLBAR_ID = "gov.redhawk.ide.spd.internal.ui.editor.overview.toolbar";
+	public static final String TOOLBAR_ID = "gov.redhawk.ide.scd.ui.editor.page.toolbar";
 
 	public PortsFormPage(SCAFormEditor editor) {
 		super(editor, PortsFormPage.PAGE_ID, "Ports");

@@ -152,6 +152,19 @@
          </command>
       </menuContribution>
       <menuContribution
+            locationURI="toolbar:gov.redhawk.ide.scd.ui.editor.page.toolbar?before=additions">
+         <command
+               commandId="gov.redhawk.ide.codegen.ui.command.generatecode"
+               icon="icons/generate_code.gif"
+               label="%command.label"
+               style="push"
+               tooltip="%command.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
             locationURI="toolbar:gov.redhawk.ide.spd.internal.ui.editor.implementation.toolbar?before=additions">
          <command
                commandId="gov.redhawk.ide.codegen.ui.command.generatecode"
