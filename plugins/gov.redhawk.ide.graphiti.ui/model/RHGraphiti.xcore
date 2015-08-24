@@ -88,8 +88,3 @@ class RHContainerShape extends ContainerShape {
 	op Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern)
 	
 }
-
-enum Event {
-	RELEASE  //indicates user issued release action on component
-	TERMINATE //indicates user issued terminate action on component
-}
