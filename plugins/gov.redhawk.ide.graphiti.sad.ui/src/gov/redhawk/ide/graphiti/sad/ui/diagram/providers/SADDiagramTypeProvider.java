@@ -17,13 +17,17 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.graphiti.dt.AbstractDiagramTypeProvider;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implements IDiagramTypeProvider {
 
 	public static final String DIAGRAM_TYPE_ID = "SADDiagram";
 	public static final String DIAGRAM_EXT = ".sad_GDiagram";
 	public static final String PROVIDER_ID = "gov.redhawk.ide.graphiti.sad.ui.FactoryProvider";
+
+	private static final String PROPERTY_VIEW_ID = "org.eclipse.ui.views.PropertySheet";
 
 	private IToolBehaviorProvider[] toolBehaviorProviders;
 
@@ -35,11 +39,11 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implemen
 		super();
 		setFeatureProvider(new SADDiagramFeatureProvider(this));
 
-		// open properties view
+		// Open properties view
 		try {
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("org.eclipse.ui.views.PropertySheet");
-		} catch (Exception e) { // SUPPRESS CHECKSTYLE catching Exception allowed here
-			IStatus status = new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, e.getMessage(), e);
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PROPERTY_VIEW_ID);
+		} catch (PartInitException e) {
+			StatusManager.getManager().handle(new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Unable to open property view", e));
 		}
 	}
 
