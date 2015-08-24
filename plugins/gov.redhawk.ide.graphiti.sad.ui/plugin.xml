@@ -288,20 +288,5 @@
                sequence="CTRL+S">
          </key>
       </extension>
-      <extension
-            point="org.eclipse.ui.preferencePages">
-         <page
-               category="gov.redhawk.ui.preferences"
-               class="gov.redhawk.ide.graphiti.sad.ui.preferences.PortStatisticsPreferencePage"
-               id="gov.redhawk.ide.graphiti.sad.ui.PortStatisticsPreferencePage"
-               name="Port Statistics">
-         </page>
-      </extension>
-      <extension
-            point="org.eclipse.core.runtime.preferences">
-         <initializer
-               class="gov.redhawk.ide.graphiti.sad.ui.preferences.PreferenceInitializer">
-         </initializer>
-      </extension>
 
 </plugin>

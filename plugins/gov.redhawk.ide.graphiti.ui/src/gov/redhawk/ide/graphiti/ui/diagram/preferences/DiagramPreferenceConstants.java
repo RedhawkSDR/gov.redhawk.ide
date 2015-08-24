@@ -15,6 +15,10 @@ public class DiagramPreferenceConstants {
 	public static final String HIDE_DETAILS = "hideDetails";
 	public static final String HIDE_UNUSED_PORTS = "hideUnusedPorts";
 
+	public static final String PREF_PORT_STATISTICS_QUEUE_LEVEL = "warningQueueLevel";
+	public static final String PREF_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS = "warningNoDataPushedOverConnection";
+	public static final String PREF_PORT_STATISTICS_QUEUE_FLUSH_DISPLAY = "errorQueueFlush";
+
 	private DiagramPreferenceConstants() {
 	}
 

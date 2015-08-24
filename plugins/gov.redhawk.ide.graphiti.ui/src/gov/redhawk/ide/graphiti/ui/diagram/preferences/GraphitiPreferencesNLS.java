@@ -9,17 +9,17 @@
  * http://www.eclipse.org/legal/epl-v10.html.
  *
  */
-package gov.redhawk.ide.graphiti.sad.ui.preferences;
+package gov.redhawk.ide.graphiti.ui.diagram.preferences;
 
 import org.eclipse.osgi.util.NLS;
 
 // CHECKSTYLE:OFF
-public class GraphitiSadMessages extends NLS {
-	private static final String BUNDLE_NAME = "gov.redhawk.ide.graphiti.sad.ui.preferences.messages"; //$NON-NLS-1$
+public class GraphitiPreferencesNLS extends NLS {
+	private static final String BUNDLE_NAME = "gov.redhawk.ide.graphiti.ui.diagram.preferences.messages"; //$NON-NLS-1$
 
 	static {
 		// load message values from bundle file
-		NLS.initializeMessages(BUNDLE_NAME, GraphitiSadMessages.class);
+		NLS.initializeMessages(BUNDLE_NAME, GraphitiPreferencesNLS.class);
 	}
 
 	// ==============================================================================
@@ -32,14 +32,13 @@ public class GraphitiSadMessages extends NLS {
 	public static String PortStatPreference_errorQueueFlush;
 	public static String PortStatPreference_errorQueueFlushToolTip;
 	public static String PortStatPreference_errorQueueFlushError;
-	
+
 	public static String PortStatPreference_warningGroupTitle;
 	public static String PortStatPreference_warningGroupToolTip;
-	public static String PortStatPreference_warningQueueLevel; 
+	public static String PortStatPreference_warningQueueLevel;
 	public static String PortStatPreference_warningQueueLevelToolTip;
 	public static String PortStatPreference_warningQueueLevelError;
 	public static String PortStatPreference_warningNoData;
 	public static String PortStatPreference_warningNoDataToolTip;
 	public static String PortStatPreference_warningNoDataError;
-
 }

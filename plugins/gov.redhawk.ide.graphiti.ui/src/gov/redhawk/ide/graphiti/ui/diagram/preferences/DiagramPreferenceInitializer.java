@@ -24,6 +24,9 @@ public class DiagramPreferenceInitializer extends AbstractPreferenceInitializer 
 		store.setDefault(DiagramPreferenceConstants.HIDE_DETAILS, false);
 		store.setDefault(DiagramPreferenceConstants.HIDE_UNUSED_PORTS, false);
 		
+		store.setDefault(DiagramPreferenceConstants.PREF_PORT_STATISTICS_QUEUE_LEVEL, 60);
+		store.setDefault(DiagramPreferenceConstants.PREF_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS, 1);
+		store.setDefault(DiagramPreferenceConstants.PREF_PORT_STATISTICS_QUEUE_FLUSH_DISPLAY, 30);
 	}
 
 }

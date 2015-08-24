@@ -19,7 +19,8 @@ import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramFeatureProvider;
-import gov.redhawk.ide.graphiti.sad.ui.preferences.GraphitiSadPreferenceConstants;
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
+import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.model.sca.ScaComponent;
@@ -958,11 +959,11 @@ public class GraphitiModelMap implements IPortStatListener {
 	@Override
 	public void newStatistics(final ScaPort< ? , ? > port, final PortStatistics stats) {
 		ScaPortContainer container = port.getPortContainer();
-		IPreferenceStore store = SADUIGraphitiPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = GraphitiUIPlugin.getDefault().getPreferenceStore();
 		final float queueDepth = stats.averageQueueDepth;
-		final double queueDepthWarningLevel = store.getDouble(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_QUEUE_LEVEL) / 100;
+		final double queueDepthWarningLevel = store.getDouble(DiagramPreferenceConstants.PREF_PORT_STATISTICS_QUEUE_LEVEL) / 100;
 		final double queueDepthIncrement = (1.0 - queueDepthWarningLevel) / 4;
-		final double lastFlushResetTime = store.getDouble(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_QUEUE_FLUSH_DISPLAY);
+		final double lastFlushResetTime = store.getDouble(DiagramPreferenceConstants.PREF_PORT_STATISTICS_QUEUE_FLUSH_DISPLAY);
 
 		Double lastFlushKeyword = null;
 		DataType[] keywords = stats.keywords;
@@ -1049,7 +1050,7 @@ public class GraphitiModelMap implements IPortStatListener {
 	 */
 	@Override
 	public void newStatistics(ScaPort< ? , ? > port, final String connectionId, PortStatistics stats) {
-		IPreferenceStore store = SADUIGraphitiPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = GraphitiUIPlugin.getDefault().getPreferenceStore();
 
 		if (editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramBehavior() == null) {
 			return;
@@ -1077,7 +1078,7 @@ public class GraphitiModelMap implements IPortStatListener {
 		}
 
 		final float timeSinceLastCall = stats.timeSinceLastCall;
-		final double lastCallWarningLevel = store.getDouble(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS);
+		final double lastCallWarningLevel = store.getDouble(DiagramPreferenceConstants.PREF_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS);
 		
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override

@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.preferences;
+package gov.redhawk.ide.graphiti.ui.diagram.preferences;
 
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -16,22 +16,19 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-/**
- * 
- */
 public class DoubleFieldEditor extends StringFieldEditor {
-	/** a 64-bit double has 15-17 decimal digit precision 
-	 *  + 7 (1 for decimal point, 1 for negative sign, 5 for E-xxx)
+	/**
+	 * a 64-bit double has 15-17 decimal digit precision
+	 * + 7 (1 for decimal point, 1 for negative sign, 5 for E-xxx)
 	 */
 	static final int DEFAULT_TEXT_LIMIT = 24;
-	
+
 	private Double minValidValue;
 	private Double maxValidValue;
 	private final Composite parent;
 
 	/**
 	 * Creates an double field editor.
-	 * 
 	 * @param name the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
 	 * @param parent the parent of the field editor's control
@@ -42,7 +39,6 @@ public class DoubleFieldEditor extends StringFieldEditor {
 
 	/**
 	 * Creates an double field editor.
-	 * 
 	 * @param name the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
 	 * @param parent the parent of the field editor's control
@@ -59,22 +55,17 @@ public class DoubleFieldEditor extends StringFieldEditor {
 
 	/**
 	 * Sets the range of valid values for this field.
-	 * 
 	 * @param min the minimum allowed value (inclusive)
 	 * @param max the maximum allowed value (inclusive)
 	 */
 	public void setValidRange(Double min, Double max) {
 		minValidValue = min;
 		maxValidValue = max;
-		
+
 		setErrorMessage(JFaceResources.format("Entry must be a value between {1} and {2}", //$NON-NLS-1$
 			new Object[] { getLabelText(), min, max }));
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on StringFieldEditor.
-	 * Checks whether the entered String is a valid double or not.
-	 */
 	@Override
 	protected boolean checkState() {
 
@@ -102,9 +93,6 @@ public class DoubleFieldEditor extends StringFieldEditor {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on FieldEditor.
-	 */
 	@Override
 	protected void doLoad() {
 		Text text = getTextControl();
@@ -116,9 +104,6 @@ public class DoubleFieldEditor extends StringFieldEditor {
 
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on FieldEditor.
-	 */
 	@Override
 	protected void doLoadDefault() {
 		Text text = getTextControl();
@@ -129,9 +114,6 @@ public class DoubleFieldEditor extends StringFieldEditor {
 		valueChanged();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on FieldEditor.
-	 */
 	@Override
 	protected void doStore() {
 		Text text = getTextControl();
@@ -143,7 +125,6 @@ public class DoubleFieldEditor extends StringFieldEditor {
 
 	/**
 	 * Returns this field editor's current value as an double.
-	 *
 	 * @return the value
 	 * @exception NumberFormatException if the <code>String</code> does not contain a parsable double
 	 */
@@ -161,11 +142,11 @@ public class DoubleFieldEditor extends StringFieldEditor {
 	public void addFocusListener(FocusListener listener) {
 		getTextControl().addFocusListener(listener);
 	}
-	
+
 	public void removeFocusListener(FocusListener listener) {
 		getTextControl().removeFocusListener(listener);
 	}
-	
+
 	public void setEnabled(boolean enabled) {
 		setEnabled(enabled, this.parent);
 	}

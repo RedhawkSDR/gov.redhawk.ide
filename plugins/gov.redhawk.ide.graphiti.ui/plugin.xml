@@ -60,6 +60,12 @@
             id="gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferencePage"
             name="Graphiti Diagram Preferences">
       </page>
+      <page
+            category="gov.redhawk.ui.preferences"
+            class="gov.redhawk.ide.graphiti.ui.diagram.preferences.PortStatisticsPreferencePage"
+            id="gov.redhawk.ide.graphiti.ui.PortStatisticsPreferencePage"
+            name="Port Statistics">
+      </page>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
