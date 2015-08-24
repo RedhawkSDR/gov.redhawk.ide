@@ -10,17 +10,34 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalCommandStack;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.features.context.IAddConnectionContext;
+import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.ICreateConnectionContext;
+import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
+import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.services.IGaService;
+import org.eclipse.graphiti.services.IPeCreateService;
+import org.eclipse.graphiti.util.IColorConstant;
+
 import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDcdDiagramEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.dcd.validation.ConnectionsConstraint;
 import gov.redhawk.sca.util.StringUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.dcd.DcdFactory;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -28,28 +45,7 @@ import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.graphiti.features.context.IAddConnectionContext;
-import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.context.IConnectionContext;
-import org.eclipse.graphiti.features.context.ICreateConnectionContext;
-import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
-import org.eclipse.graphiti.mm.algorithms.Polyline;
-import org.eclipse.graphiti.mm.pictograms.Anchor;
-import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.pattern.AbstractConnectionPattern;
-import org.eclipse.graphiti.pattern.IConnectionPattern;
-import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.services.IGaService;
-import org.eclipse.graphiti.services.IPeCreateService;
-import org.eclipse.graphiti.util.IColorConstant;
-
-public class DCDConnectInterfacePattern extends AbstractConnectionPattern implements IConnectionPattern {
+public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern {
 
 	public static final String NAME = "Connection";
 	public static final String SHAPE_IMG_CONNECTION_DECORATOR = "imgConnectionDecorator";
@@ -174,23 +170,15 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 		}
 	}
 
-	/**
-	 * Return true if use selected
-	 */
 	@Override
 	public boolean canStartConnection(ICreateConnectionContext context) {
-		// get sad from diagram
+		// Verify DCD is available
 		final DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
-
-		// source anchor (allow creating connection by starting from either direction)
-		UsesPortStub source = getUsesPortStub(context);
-		ConnectionTarget target = getConnectionTarget(context);
-
-		if (dcd != null && (source != null || target != null)) {
-			return true;
+		if (dcd == null) {
+			return false;
 		}
 
-		return false;
+		return super.canStartConnection(context);
 	}
 
 	/* (non-Javadoc)
@@ -308,46 +296,6 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 		newConnection = (Connection) getFeatureProvider().addIfPossible(addContext);
 
 		return newConnection;
-	}
-
-	// Return UsesPortStub from either the source or target anchor. Depends on how user drew connection.
-	private UsesPortStub getUsesPortStub(IConnectionContext context) {
-		UsesPortStub source = getUsesPortStub(context.getSourceAnchor());
-		if (source != null) {
-			return source;
-		}
-		source = getUsesPortStub(context.getTargetAnchor());
-		return source;
-	}
-
-	private UsesPortStub getUsesPortStub(Anchor anchor) {
-		if (anchor != null) {
-			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
-			if (object instanceof UsesPortStub) {
-				return (UsesPortStub) object;
-			}
-		}
-		return null;
-	}
-
-	// Return ConnectionTarget from either the source or target anchor. Depends on how user drew connection.
-	private ConnectionTarget getConnectionTarget(IConnectionContext context) {
-		ConnectionTarget connectionTarget = getConnectionTarget(context.getSourceAnchor());
-		if (connectionTarget != null) {
-			return connectionTarget;
-		}
-		connectionTarget = getConnectionTarget(context.getTargetAnchor());
-		return connectionTarget;
-	}
-
-	private ConnectionTarget getConnectionTarget(Anchor anchor) {
-		if (anchor != null) {
-			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
-			if (object instanceof ConnectionTarget) {
-				return (ConnectionTarget) object;
-			}
-		}
-		return null;
 	}
 
 	/**

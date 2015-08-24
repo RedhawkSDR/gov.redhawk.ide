@@ -15,6 +15,7 @@ import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
@@ -43,33 +44,26 @@ import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.context.IConnectionContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
-import org.eclipse.graphiti.mm.algorithms.Rectangle;
-import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.pattern.AbstractConnectionPattern;
-import org.eclipse.graphiti.pattern.IConnectionPattern;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.IColorConstant;
 
-public class SADConnectInterfacePattern extends AbstractConnectionPattern implements IConnectionPattern {
+public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern {
 
 	public static final String NAME = "Connection";
 	public static final String SHAPE_IMG_CONNECTION_DECORATOR = "imgConnectionDecorator";
 	public static final String SHAPE_TEXT_CONNECTION_DECORATOR = "textConnectionDecorator";
 
 	public static final String OVERRIDE_CONNECTION_ID = "OverrideConnectionId";
-	private UsesPortStub sourcePort;
-	private ConnectionTarget targetPort;
 
 	@Override
 	public String getCreateName() {
@@ -210,30 +204,15 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		}
 	}
 
-	/**
-	 * Return true if use selected
-	 */
 	@Override
 	public boolean canStartConnection(ICreateConnectionContext context) {
-		// get sad from diagram
+		// Verify SAD is available
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 		if (sad == null) {
 			return false;
 		}
 
-		// source anchor (allow creating connection by starting from either direction)
-		UsesPortStub source = getUsesPortStub(context);
-		if (source != null) {
-			this.sourcePort = source;
-			return true;
-		}
-		ConnectionTarget target = getConnectionTarget(context);
-		if (target != null) {
-			this.targetPort = target;
-			return true;
-		}
-
-		return false;
+		return super.canStartConnection(context);
 	}
 
 	@Override
@@ -254,8 +233,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 	@Override
 	public void endConnecting() {
-		super.endConnecting();
-
 		if (!DUtil.isDiagramExplorer(getDiagram())) {
 			// Turns off the highlighting of compatible ports post-connection attempt
 			if (this.sourcePort != null) {
@@ -265,8 +242,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			}
 		}
 
-		this.sourcePort = null;
-		this.targetPort = null;
+		super.endConnecting();
 	}
 
 	// Utility method to either highlight compatible ports, or return them to default styling
@@ -545,46 +521,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		newConnection = (Connection) getFeatureProvider().addIfPossible(addContext);
 
 		return newConnection;
-	}
-
-	// Return UsesPortStub from either the source or target anchor. Depends on how user drew connection.
-	private UsesPortStub getUsesPortStub(IConnectionContext context) {
-		UsesPortStub source = getUsesPortStub(context.getSourceAnchor());
-		if (source != null) {
-			return source;
-		}
-		source = getUsesPortStub(context.getTargetAnchor());
-		return source;
-	}
-
-	private UsesPortStub getUsesPortStub(Anchor anchor) {
-		if (anchor != null) {
-			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
-			if (object instanceof UsesPortStub) {
-				return (UsesPortStub) object;
-			}
-		}
-		return null;
-	}
-
-	// Return ConnectionTarget from either the source or target anchor. Depends on how user drew connection.
-	private ConnectionTarget getConnectionTarget(IConnectionContext context) {
-		ConnectionTarget connectionTarget = getConnectionTarget(context.getSourceAnchor());
-		if (connectionTarget != null) {
-			return connectionTarget;
-		}
-		connectionTarget = getConnectionTarget(context.getTargetAnchor());
-		return connectionTarget;
-	}
-
-	private ConnectionTarget getConnectionTarget(Anchor anchor) {
-		if (anchor != null) {
-			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
-			if (object instanceof ConnectionTarget) {
-				return (ConnectionTarget) object;
-			}
-		}
-		return null;
 	}
 
 	/**
