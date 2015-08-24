@@ -217,19 +217,20 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	public boolean canStartConnection(ICreateConnectionContext context) {
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+		if (sad == null) {
+			return false;
+		}
 
 		// source anchor (allow creating connection by starting from either direction)
 		UsesPortStub source = getUsesPortStub(context);
+		if (source != null) {
+			this.sourcePort = source;
+			return true;
+		}
 		ConnectionTarget target = getConnectionTarget(context);
-
-		if (sad != null) {
-			if (source != null) {
-				this.sourcePort = source;
-				return true;
-			} else if (target != null) {
-				this.targetPort = target;
-				return true;
-			}
+		if (target != null) {
+			this.targetPort = target;
+			return true;
 		}
 
 		return false;
@@ -238,7 +239,8 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	@Override
 	public void startConnecting() {
 		super.startConnecting();
-		if (DUtil.DIAGRAM_CONTEXT_EXPLORER.equals(DUtil.getDiagramContext(getDiagram()))) {
+
+		if (DUtil.isDiagramExplorer(getDiagram())) {
 			return;
 		}
 
@@ -253,18 +255,18 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	@Override
 	public void endConnecting() {
 		super.endConnecting();
-		if (DUtil.DIAGRAM_CONTEXT_EXPLORER.equals(DUtil.getDiagramContext(getDiagram()))) {
-			return;
+
+		if (!DUtil.isDiagramExplorer(getDiagram())) {
+			// Turns off the highlighting of compatible ports post-connection attempt
+			if (this.sourcePort != null) {
+				highlightCompatiblePorts(sourcePort, false);
+			} else if (this.targetPort != null) {
+				highlightCompatiblePorts(targetPort, false);
+			}
 		}
 
-		// Turns off the highlighting of compatible ports post-connection attempt
-		if (this.sourcePort != null) {
-			highlightCompatiblePorts(sourcePort, false);
-			this.sourcePort = null;
-		} else if (this.targetPort != null) {
-			highlightCompatiblePorts(targetPort, false);
-			this.targetPort = null;
-		}
+		this.sourcePort = null;
+		this.targetPort = null;
 	}
 
 	// Utility method to either highlight compatible ports, or return them to default styling
