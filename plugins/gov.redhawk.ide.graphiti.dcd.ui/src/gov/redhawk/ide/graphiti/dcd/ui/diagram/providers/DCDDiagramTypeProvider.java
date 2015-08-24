@@ -11,15 +11,24 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.graphiti.dt.AbstractDiagramTypeProvider;
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.statushandlers.StatusManager;
+
+import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 
 public class DCDDiagramTypeProvider extends AbstractDiagramTypeProvider {
 
 	public static final String DIAGRAM_TYPE_ID = "DCDDiagram";
 	public static final String DIAGRAM_EXT = ".dcd_GDiagram"; // TODO: Where is this used?
 	public static final String PROVIDER_ID = "gov.redhawk.ide.graphiti.dcd.ui.FactoryProvider";
-	
+
+	private static final String PROPERTY_VIEW_ID = "org.eclipse.ui.views.PropertySheet";
+
 	private IToolBehaviorProvider[] toolBehaviorProviders;
 
 	//Enable events to determine when diagram automatically updates 
@@ -29,6 +38,13 @@ public class DCDDiagramTypeProvider extends AbstractDiagramTypeProvider {
 	public DCDDiagramTypeProvider() {
 		super();
 		setFeatureProvider(new DCDDiagramFeatureProvider(this));
+
+		// Open properties view
+		try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PROPERTY_VIEW_ID);
+		} catch (PartInitException e) {
+			StatusManager.getManager().handle(new Status(IStatus.WARNING, DCDUIGraphitiPlugin.PLUGIN_ID, "Unable to open property view", e));
+		}
 	}
 
 	@Override
