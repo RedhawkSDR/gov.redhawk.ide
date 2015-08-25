@@ -1301,7 +1301,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			//provides ports container exists, update it
 			IFeatureProvider featureProvider = pattern.getFeatureProvider();
 
-			if (StyleUtil.getCanUpdatePorts() && providesPortsContainerShape != null && provides != null) {
+			if (!DUtil.isConnecting(diagram) && providesPortsContainerShape != null && provides != null) {
 				List<Text> providesPortTexts = new ArrayList<Text>();
 
 				// capture all providesPortText values
@@ -1478,7 +1478,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		} else {
 			//uses ports container exists, update it
 			IFeatureProvider featureProvider = pattern.getFeatureProvider();
-			if (StyleUtil.getCanUpdatePorts() && usesPortsContainerShape != null && uses != null && uses.size() > 0) {
+			if (!DUtil.isConnecting(diagram) && usesPortsContainerShape != null && uses != null && uses.size() > 0) {
 
 				List<Text> usesPortTexts = new ArrayList<Text>();
 

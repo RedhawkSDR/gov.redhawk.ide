@@ -121,6 +121,11 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String DIAGRAM_CONTEXT_TARGET_SDR = "target-sdr";
 	public static final String DIAGRAM_CONTEXT_EXPLORER = "explorer";
 
+	/**
+	 * The <b>presence</b> of this property in the {@link Diagram} object indicates a connection is in progress.
+	 */
+	public static final String DIAGRAM_CONNECTION_IN_PROGRESS = "connecting";
+
 	public static final int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 100;
 	public static final int DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING = 5;
 	public static final int DIAGRAM_SHAPE_ROOT_VERTICAL_PADDING = 50;
@@ -262,6 +267,15 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
+	 * @return All ports which are descendants of the specified shape in the diagram
+	 */
+	public static List<ContainerShape> getDiagramPorts(ContainerShape shape) {
+		List<ContainerShape> ports = getDiagramProvidesPorts(shape);
+		ports.addAll(getDiagramUsesPorts(shape));
+		return ports;
+	}
+
+	/**
 	 * @return All provides ports which are descendants of the specified shape in the diagram
 	 */
 	public static List<ContainerShape> getDiagramProvidesPorts(ContainerShape shape) {
@@ -281,7 +295,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param portType - property value of the desired port type
 	 * @see {@link RHContainerShapeImpl} static property strings
 	 */
-	public static List<ContainerShape> getDiagramPorts(ContainerShape shape, String portType) {
+	private static List<ContainerShape> getDiagramPorts(ContainerShape shape, String portType) {
 		List<ContainerShape> portsList = new ArrayList<ContainerShape>();
 
 		for (Shape child : shape.getChildren()) {
@@ -1476,5 +1490,14 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 
 		return connectInterface;
+	}
+
+	/**
+	 * Determines if a connection is in progress in the diagram. Should be called from the UI thread to prevent any
+	 * race conditions.
+	 * @return
+	 */
+	public static boolean isConnecting(Diagram diagram) {
+		return Graphiti.getPeService().getProperty(diagram, DIAGRAM_CONNECTION_IN_PROGRESS) != null;
 	}
 }

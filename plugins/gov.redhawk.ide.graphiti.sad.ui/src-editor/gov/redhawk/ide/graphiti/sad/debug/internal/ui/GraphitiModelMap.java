@@ -10,48 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.debug.internal.ui;
 
-import gov.redhawk.ide.debug.LocalScaComponent;
-import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
-import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformSandboxEditor;
-import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramFeatureProvider;
-import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
-import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaConnection;
-import gov.redhawk.model.sca.ScaPort;
-import gov.redhawk.model.sca.ScaPortContainer;
-import gov.redhawk.model.sca.ScaProvidesPort;
-import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.model.sca.commands.NonDirtyingCommand;
-import gov.redhawk.monitor.IPortStatListener;
-import gov.redhawk.sca.ui.actions.StartAction;
-import gov.redhawk.sca.ui.actions.StopAction;
-import gov.redhawk.sca.util.SubMonitor;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadConnectInterface;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.sad.impl.SadComponentInstantiationImpl;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -75,7 +38,6 @@ import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
-import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -98,6 +60,43 @@ import CF.DataType;
 import CF.LifeCyclePackage.ReleaseError;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
+import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformSandboxEditor;
+import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramFeatureProvider;
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
+import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.PortStyleUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.PortStyleUtil.PortStyle;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaConnection;
+import gov.redhawk.model.sca.ScaPort;
+import gov.redhawk.model.sca.ScaPortContainer;
+import gov.redhawk.model.sca.ScaProvidesPort;
+import gov.redhawk.model.sca.ScaUsesPort;
+import gov.redhawk.model.sca.commands.NonDirtyingCommand;
+import gov.redhawk.monitor.IPortStatListener;
+import gov.redhawk.sca.ui.actions.StartAction;
+import gov.redhawk.sca.ui.actions.StopAction;
+import gov.redhawk.sca.util.SubMonitor;
+import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.sad.impl.SadComponentInstantiationImpl;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public class GraphitiModelMap implements IPortStatListener {
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
@@ -953,12 +952,8 @@ public class GraphitiModelMap implements IPortStatListener {
 	/******* These methods handle changing the color of the Graphiti port shape objects to reflect port status *******/
 	/*****************************************************************************************************************/
 
-	/* (non-Javadoc)
-	 * @see gov.redhawk.monitor.IPortStatListener#newStatistics(gov.redhawk.model.sca.ScaPort, BULKIO.PortStatistics)
-	 */
 	@Override
 	public void newStatistics(final ScaPort< ? , ? > port, final PortStatistics stats) {
-		ScaPortContainer container = port.getPortContainer();
 		IPreferenceStore store = GraphitiUIPlugin.getDefault().getPreferenceStore();
 		final float queueDepth = stats.averageQueueDepth;
 		final double queueDepthWarningLevel = store.getDouble(DiagramPreferenceConstants.PREF_PORT_STATISTICS_QUEUE_LEVEL) / 100;
@@ -981,12 +976,12 @@ public class GraphitiModelMap implements IPortStatListener {
 		}
 		final double lastFlush = (lastFlushKeyword != null) ? lastFlushKeyword.doubleValue() : Double.MAX_VALUE; 
 
+		ScaPortContainer container = port.getPortContainer();
 		if (!(container instanceof ScaComponent)) {
 			StatusManager.getManager().handle(new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Received statistics for a port not belonging to a component"),
 				StatusManager.LOG | StatusManager.SHOW);
 			return;
 		}
-
 		ScaComponent component = (ScaComponent) container;
 		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
 		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
@@ -1005,49 +1000,38 @@ public class GraphitiModelMap implements IPortStatListener {
 				}
 				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 				final Diagram diagram = provider.getDiagram();
-				ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
-			
-				// If something else has already locked updates to the port style, then disregard and return out.
-				// Otherwise, make sure we haven't locked updates ourselves.
-				if (!StyleUtil.getCanUpdatePorts() && !this.equals(StyleUtil.getLockingObject())) {
+
+				ComponentShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
+
+				// Can't update port styles while a connection is in progress
+				if (DUtil.isConnecting(diagram)) {
 					return;
-				} else {
-					StyleUtil.toggleUpdatePort(true, null);
 				}
-			
+
 				for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
 					ProvidesPortStub portStub = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
 					if (portStub.getName().equals(port.getName())) {
-						Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, portStub, Anchor.class);
-						Rectangle anchorGa = (Rectangle) anchor.getGraphicsAlgorithm();
-
 						if (lastFlush < lastFlushResetTime || (lastFlush != Double.MAX_VALUE && lastFlushResetTime < 0)) {
 							// If last flush reset time is set to -1, never reset the color if a flush has occurred
-							StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_4, editingDomain);
+							PortStyleUtil.updatePortStyle(diagram, editingDomain, portShape, PortStyle.STAT_WARN4);
 						} else if (queueDepth < queueDepthWarningLevel) {
-							StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_OK, editingDomain);
+							PortStyleUtil.updatePortStyle(diagram, editingDomain, portShape, PortStyle.STAT_OK);
 						} else if (queueDepth < (queueDepthWarningLevel + queueDepthIncrement)) {
-							StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_1, editingDomain);
+							PortStyleUtil.updatePortStyle(diagram, editingDomain, portShape, PortStyle.STAT_WARN1);
 						} else if (queueDepth < (queueDepthWarningLevel + 2 * queueDepthIncrement)) {
-							StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_2, editingDomain);
+							PortStyleUtil.updatePortStyle(diagram, editingDomain, portShape, PortStyle.STAT_WARN2);
 						} else if (queueDepth < (queueDepthWarningLevel + 3 * queueDepthIncrement)) {
-							StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_3, editingDomain);
+							PortStyleUtil.updatePortStyle(diagram, editingDomain, portShape, PortStyle.STAT_WARN3);
 						} else {
-							StyleUtil.updatePortStyle(anchorGa, diagram, StyleUtil.PORT_WARNING_4, editingDomain);
+							PortStyleUtil.updatePortStyle(diagram, editingDomain, portShape, PortStyle.STAT_WARN4);
 						}
 					}
 				}
-			
-				// Lock other things from changing the port style
-				StyleUtil.toggleUpdatePort(false, this);
 			}
 		});
 
 	}
 
-	/* (non-Javadoc)
-	 * @see gov.redhawk.monitor.IPortStatListener#newStatistics(gov.redhawk.model.sca.ScaPort, java.lang.String, BULKIO.PortStatistics)
-	 */
 	@Override
 	public void newStatistics(ScaPort< ? , ? > port, final String connectionId, PortStatistics stats) {
 		IPreferenceStore store = GraphitiUIPlugin.getDefault().getPreferenceStore();
@@ -1118,9 +1102,6 @@ public class GraphitiModelMap implements IPortStatListener {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see gov.redhawk.monitor.IPortStatListener#noStatistics(gov.redhawk.model.sca.ScaPort)
-	 */
 	@Override
 	public void noStatistics(final ScaPort< ? , ? > port) {
 		ScaPortContainer container = port.getPortContainer();
@@ -1138,16 +1119,18 @@ public class GraphitiModelMap implements IPortStatListener {
 					final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 					final Diagram diagram = provider.getDiagram();
 					TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-		
-					ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
-					StyleUtil.toggleUpdatePort(true, null);
+
+					// Can't update port styles while a connection is in progress
+					if (DUtil.isConnecting(diagram)) {
+						return;
+					}
+
 					if (port instanceof ScaProvidesPort) {
+						ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
 						EList<ProvidesPortStub> providesStubs = componentShape.getProvidesPortStubs();
 						for (ProvidesPortStub portStub : providesStubs) {
 							if (portStub.getName().equals(port.getName())) {
-								Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, portStub, Anchor.class);
-								Rectangle anchorGa = (Rectangle) anchor.getGraphicsAlgorithm();
-								StyleUtil.updatePortStyle(anchorGa, diagram, null, editingDomain);
+								PortStyleUtil.resetPortStyling(diagram, editingDomain, componentShape);
 							}
 						}
 					}
@@ -1156,9 +1139,6 @@ public class GraphitiModelMap implements IPortStatListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see gov.redhawk.monitor.IPortStatListener#noStatistics(gov.redhawk.model.sca.ScaPort, java.lang.String)
-	 */
 	@Override
 	public void noStatistics(ScaPort< ? , ? > port, final String connectionId) {
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();

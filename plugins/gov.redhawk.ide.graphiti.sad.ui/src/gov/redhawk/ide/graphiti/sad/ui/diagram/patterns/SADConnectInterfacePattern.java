@@ -17,14 +17,17 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.PortStyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
 import gov.redhawk.sca.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
@@ -96,7 +99,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 	 */
 	@Override
 	public PictogramElement add(IAddContext addContext) {
-
 		IGaService gaService = Graphiti.getGaService();
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
 		IAddConnectionContext context = (IAddConnectionContext) addContext;
@@ -219,45 +221,38 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 	public void startConnecting() {
 		super.startConnecting();
 
-		if (DUtil.isDiagramExplorer(getDiagram())) {
-			return;
-		}
-
-		// Handles the highlighting of compatible ports during connection attempt
-		if (this.sourcePort != null) {
-			highlightCompatiblePorts(sourcePort, true);
-		} else if (this.targetPort != null) {
-			highlightCompatiblePorts(targetPort, true);
+		// Highlight ports that may be valid for completing the connection
+		if (getSourcePort() != null) {
+			highlightCompatiblePorts(getSourcePort());
+		} else if (getTargetPort() != null) {
+			highlightCompatiblePorts(getTargetPort());
 		}
 	}
 
 	@Override
 	public void endConnecting() {
-		if (!DUtil.isDiagramExplorer(getDiagram())) {
-			// Turns off the highlighting of compatible ports post-connection attempt
-			if (this.sourcePort != null) {
-				highlightCompatiblePorts(sourcePort, false);
-			} else if (this.targetPort != null) {
-				highlightCompatiblePorts(targetPort, false);
-			}
+		// Turns off highlighting ports for the connection
+		if (!DUtil.isDiagramExplorer(getDiagram()) && (getSourcePort() != null || getTargetPort() != null)) {
+			PortStyleUtil.resetAllPortStyling(getDiagram(), getDiagramBehavior().getEditingDomain());
 		}
 
 		super.endConnecting();
 	}
 
 	// Utility method to either highlight compatible ports, or return them to default styling
-	private void highlightCompatiblePorts(EObject originatingPort, boolean shouldHighlight) {
+	private void highlightCompatiblePorts(EObject originatingPort) {
 		if (originatingPort == null) {
 			return;
 		}
 
 		// Don't execute highlighting if a super port is involved.
-		ContainerShape portContainer = (ContainerShape) DUtil.getPictogramElementForBusinessObject(getDiagram(), originatingPort, ContainerShape.class);
+		final Diagram diagram = getDiagram();
+		final ContainerShape portContainer = (ContainerShape) DUtil.getPictogramElementForBusinessObject(diagram, originatingPort, ContainerShape.class);
 		if (DUtil.isSuperPort(portContainer)) {
 			return;
 		}
 
-		List<ContainerShape> compatiblePorts;
+		Set<ContainerShape> compatiblePorts;
 		if (originatingPort instanceof UsesPortStub) {
 			UsesPortStub usesPort = (UsesPortStub) originatingPort;
 			compatiblePorts = getCompatiblePorts(usesPort);
@@ -269,31 +264,12 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			return;
 		}
 
-		// Clear any existing port styles before highlighting
-		StyleUtil.toggleUpdatePort(true, null);
-		setPortStyleDefault();
-
-		// Make sure port styles can be changed. Compatible port highlighting always takes precedence
-		StyleUtil.toggleUpdatePort(true, null);
-
 		// Highlight compatible ports
-		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
-		if (shouldHighlight) {
-			for (ContainerShape port : compatiblePorts) {
-				Rectangle anchorGa = (Rectangle) port.getChildren().get(0).getAnchors().get(0).getGraphicsAlgorithm();
-				StyleUtil.updatePortStyle(anchorGa, getDiagram(), StyleUtil.COMPATIBLE_PORT, editingDomain);
-			}
-			// Block other classes from changing port styles while connection is in progress
-			StyleUtil.toggleUpdatePort(false, this);
-		} else {
-			// Unlock and reset styles to default
-			StyleUtil.toggleUpdatePort(true, null);
-			setPortStyleDefault();
-		}
+		PortStyleUtil.highlightCompatiblePorts(diagram, getDiagramBehavior().getEditingDomain(), compatiblePorts);
 	}
 
-	private List<ContainerShape> getCompatiblePorts(UsesPortStub usesPort) {
-		List<ContainerShape> compatiblePorts = new ArrayList<ContainerShape>();
+	private Set<ContainerShape> getCompatiblePorts(UsesPortStub usesPort) {
+		Set<ContainerShape> compatiblePorts = new HashSet<ContainerShape>();
 
 		// The first time we come across an component instance, add the valid ports to this map.
 		// If we come across this component type again, refer to the map rather than redoing the port comparisons
@@ -308,7 +284,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 				// Not interested in highlighting ports of FindBy shapes
 				continue;
 			} else if (businessObj instanceof UsesDeviceStub) {
-				UsesDeviceStub usesDevice = (UsesDeviceStub) businessObj;
 				for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
 					ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
 					if (InterfacesUtil.areSuggestedMatch(usesPort, providesPort)) {
@@ -345,8 +320,8 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		return compatiblePorts;
 	}
 
-	private List<ContainerShape> getCompatiblePorts(ProvidesPortStub providesPort) {
-		List<ContainerShape> compatiblePorts = new ArrayList<ContainerShape>();
+	private Set<ContainerShape> getCompatiblePorts(ProvidesPortStub providesPort) {
+		Set<ContainerShape> compatiblePorts = new HashSet<ContainerShape>();
 
 		// The first time we come across an component instance, add the valid ports to this map.
 		// If we come across this component type again, refer to the map rather than redoing the port comparisons
@@ -361,7 +336,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 				// Not interested in highlighting ports of FindBy shapes
 				continue;
 			} else if (businessObj instanceof UsesDeviceStub) {
-				UsesDeviceStub usesDevice = (UsesDeviceStub) businessObj;
 				for (ContainerShape portShape : DUtil.getDiagramUsesPorts(componentShape)) {
 					UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(portShape);
 					if (InterfacesUtil.areSuggestedMatch(usesPort, providesPort)) {
@@ -395,19 +369,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			}
 		}
 		return compatiblePorts;
-	}
-
-	/**
-	 * Sets the ports to default style
-	 */
-	private void setPortStyleDefault() {
-		List<ContainerShape> allPorts = new ArrayList<ContainerShape>();
-		allPorts.addAll(DUtil.getDiagramProvidesPorts(getDiagram()));
-		allPorts.addAll(DUtil.getDiagramUsesPorts(getDiagram()));
-		for (ContainerShape port : allPorts) {
-			Rectangle anchorGa = (Rectangle) port.getChildren().get(0).getAnchors().get(0).getGraphicsAlgorithm();
-			StyleUtil.updatePortStyle(anchorGa, getDiagram(), null, getDiagramBehavior().getEditingDomain());
-		}
 	}
 
 	/**
@@ -472,10 +433,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			sadConnectInterface = (SadConnectInterface) DUtil.assignAnchorObjectsToConnection(SadFactory.eINSTANCE.createSadConnectInterface(),
 				context.getTargetAnchor(), context.getSourceAnchor());
 		}
-
-		// TODO: Hack to make sure ports revert to default color after connection attempt
-		highlightCompatiblePorts(sourcePort, false);
-		highlightCompatiblePorts(targetPort, false);
 
 		if (sadConnectInterface == null) {
 			// can't make a connection

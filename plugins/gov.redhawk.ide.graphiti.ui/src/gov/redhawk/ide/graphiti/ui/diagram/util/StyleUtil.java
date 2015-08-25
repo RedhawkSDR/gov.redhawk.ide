@@ -10,22 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.util;
 
-import gov.redhawk.model.sca.commands.NonDirtyingCommand;
-import gov.redhawk.sca.util.PluginUtil;
-
 import java.util.Collection;
 
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-
-import org.eclipse.emf.transaction.TransactionalCommandStack;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.mm.StyleContainer;
-import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.styles.Font;
 import org.eclipse.graphiti.mm.algorithms.styles.LineStyle;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
@@ -33,6 +23,8 @@ import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.graphiti.util.PredefinedColoredAreas;
 import org.eclipse.swt.graphics.Color;
+
+import gov.redhawk.sca.util.PluginUtil;
 
 public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
@@ -72,14 +64,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final IColorConstant OUTER_CONTAINER_BACKGROUND = new ColorConstant(250, 250, 250);
 
 	// Colors for port statistics feature
-	public static final IColorConstant PORT_OK = GREEN;
-	public static final IColorConstant PORT_WARNING_1 = YELLOW;
-	public static final IColorConstant PORT_WARNING_2 = new ColorConstant(255, 170, 0);
-	public static final IColorConstant PORT_WARNING_3 = new ColorConstant(255, 85, 0);
-	public static final IColorConstant PORT_WARNING_4 = IColorConstant.RED;
+	private static final IColorConstant PORT_OK = GREEN;
+	private static final IColorConstant PORT_WARNING_1 = YELLOW;
+	private static final IColorConstant PORT_WARNING_2 = new ColorConstant(255, 170, 0);
+	private static final IColorConstant PORT_WARNING_3 = new ColorConstant(255, 85, 0);
+	private static final IColorConstant PORT_WARNING_4 = IColorConstant.RED;
 
 	// Colors for port connection helpers
-	public static final IColorConstant COMPATIBLE_PORT = GREEN;
+	private static final IColorConstant COMPATIBLE_PORT = GREEN;
 
 	// COMPONENT
 	public static final int DEFAULT_LINE_WIDTH = 2;
@@ -96,10 +88,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	// FONTS
 	private static final String SANS_FONT = "Sans";
 	private static final String DEFAULT_FONT = SANS_FONT;
-
-	// USED TO LOCK/UNLOCK PORTS - locked ports cannot have their styles updated via updatePortStyle()
-	private static boolean canUpdatePorts = true;
-	private static Object lockingObject = null;
 
 	public static final Font getOuterTitleFont(Diagram diagram) {
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, true);
@@ -411,15 +399,35 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
+	/**
+	 * Style for a port which is compatible as the other end of a connection.
+	 * @param diagram
+	 * @return
+	 */
+	public static Style createStyleForCompatiblePort(Diagram diagram) {
+		final String styleId = "gov.redhawk.style.PortCompatible";
+		Style style = findStyle(diagram, styleId);
+		if (style == null) {
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			style.setForeground(gaService.manageColor(diagram, BLACK));
+			style.setBackground(gaService.manageColor(diagram, COMPATIBLE_PORT));
+			style.setFont(getPortFont(diagram));
+			style.setLineWidth(2);
+			style.setLineVisible(true);
+		}
+		return style;
+	}
+
 	// returns style for port statistics - no errors
-	public static Style createStyleForPortOK(Diagram diagram, IColorConstant warningLevel) {
+	public static Style createStyleForPortOK(Diagram diagram) {
 		final String styleId = "gov.redhawk.style.PortOK";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, warningLevel));
+			style.setBackground(gaService.manageColor(diagram, PORT_OK));
 			style.setFont(getPortFont(diagram));
 			style.setLineWidth(2);
 			style.setLineVisible(true);
@@ -428,14 +436,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns style for port statistics - error level 1
-	public static Style createStyleForPortWarning1(Diagram diagram, IColorConstant warningLevel) {
+	public static Style createStyleForPortWarning1(Diagram diagram) {
 		final String styleId = "gov.redhawk.style.PortWarning1";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, warningLevel));
+			style.setBackground(gaService.manageColor(diagram, PORT_WARNING_1));
 			style.setFont(getPortFont(diagram));
 			style.setLineWidth(2);
 			style.setLineVisible(true);
@@ -444,14 +452,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns style for port statistics - error level 2
-	public static Style createStyleForPortWarning2(Diagram diagram, IColorConstant warningLevel) {
+	public static Style createStyleForPortWarning2(Diagram diagram) {
 		final String styleId = "gov.redhawk.style.PortWarning2";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, warningLevel));
+			style.setBackground(gaService.manageColor(diagram, PORT_WARNING_2));
 			style.setFont(getPortFont(diagram));
 			style.setLineWidth(2);
 			style.setLineVisible(true);
@@ -460,14 +468,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns style for port statistics - error level 3
-	public static Style createStyleForPortWarning3(Diagram diagram, IColorConstant warningLevel) {
+	public static Style createStyleForPortWarning3(Diagram diagram) {
 		final String styleId = "gov.redhawk.style.PortWarning3";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, warningLevel));
+			style.setBackground(gaService.manageColor(diagram, PORT_WARNING_3));
 			style.setFont(getPortFont(diagram));
 			style.setLineWidth(2);
 			style.setLineVisible(true);
@@ -476,14 +484,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns style for port statistics - error level 4
-	public static Style createStyleForPortWarning4(Diagram diagram, IColorConstant warningLevel) {
+	public static Style createStyleForPortWarning4(Diagram diagram) {
 		final String styleId = "gov.redhawk.style.PortWarning4";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, warningLevel));
+			style.setBackground(gaService.manageColor(diagram, PORT_WARNING_4));
 			style.setFont(getPortFont(diagram));
 			style.setLineWidth(2);
 			style.setLineVisible(true);
@@ -806,89 +814,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * @return - True is ports can have their styles updated. If false, use getLockingObject to determine who locked the
-	 * object
-	 */
-	public static boolean getCanUpdatePorts() {
-		return StyleUtil.canUpdatePorts;
-	}
-
-	// Set via toggleUpdatePort method
-	private static void setCanUpdatePorts(boolean canUpdate) {
-		StyleUtil.canUpdatePorts = canUpdate;
-	}
-
-	/**
-	 * @return - The object that most recently locked ports, stopping their styles from updating. Null if ports are
-	 * currently unlocked.
-	 */
-	public static Object getLockingObject() {
-		return StyleUtil.lockingObject;
-	}
-
-	// Set via toggleUpdatePort method
-	private static void setLockingObject(Object lockingObject) {
-		StyleUtil.lockingObject = lockingObject;
-	}
-
-	/**
-	 * Toggles whether or not the update/internal update methods should run on a port.
-	 * Only blocks automated updates. Explicitly changing port styles will still work.
-	 * @param canUpdate - Setting to false locks port styles from being changed
-	 * @param lockingObject - Used in cases of conflict to determine priority for locking/unlocking style edits.
-	 */
-	public static void toggleUpdatePort(final boolean canUpdate, final Object lockingObject) {
-		setCanUpdatePorts(canUpdate);
-		setLockingObject(lockingObject);
-	}
-
-	/**
-	 * Changes the port color to reflect appropriate state
-	 * 
-	 * @param anchorGa - the port that is being modified
-	 * @param diagram
-	 * @param style - static reference to a color in the StyleUtil class, if null sets color to default
-	 */
-	public static void updatePortStyle(final Rectangle anchorGa, final Diagram diagram, final IColorConstant style,
-		final TransactionalEditingDomain editingDomain) {
-		if (StyleUtil.canUpdatePorts) {
-			final Object portObj = DUtil.getBusinessObject((ContainerShape) anchorGa.getPictogramElement().eContainer());
-
-			// don't change style color for super ports
-			ContainerShape portContainer = (ContainerShape) anchorGa.eContainer().eContainer();
-			if (DUtil.isSuperPort(portContainer)) {
-				return;
-			}
-
-			TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-			stack.execute(new NonDirtyingCommand() {
-				@Override
-				public void execute() {
-					if (style != null) {
-						if (style.equals(PORT_OK)) {
-							anchorGa.setStyle(StyleUtil.createStyleForPortOK(diagram, style));
-						} else if (style.equals(PORT_WARNING_1)) {
-							anchorGa.setStyle(StyleUtil.createStyleForPortWarning1(diagram, style));
-						} else if (style.equals(PORT_WARNING_2)) {
-							anchorGa.setStyle(StyleUtil.createStyleForPortWarning2(diagram, style));
-						} else if (style.equals(PORT_WARNING_3)) {
-							anchorGa.setStyle(StyleUtil.createStyleForPortWarning3(diagram, style));
-						} else if (style.equals(PORT_WARNING_4)) {
-							anchorGa.setStyle(StyleUtil.createStyleForPortWarning4(diagram, style));
-						}
-					} else {
-						if (portObj instanceof ProvidesPortStub) {
-							anchorGa.setStyle(StyleUtil.createStyleForProvidesPort(diagram));
-						} else if (portObj instanceof UsesPortStub) {
-							anchorGa.setStyle(StyleUtil.createStyleForUsesPort(diagram));
-						}
-					}
-				}
-			});
-		}
 	}
 
 }
