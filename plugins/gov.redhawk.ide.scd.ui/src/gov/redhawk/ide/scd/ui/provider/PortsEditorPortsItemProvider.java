@@ -71,6 +71,9 @@ public class PortsEditorPortsItemProvider extends PortsItemProvider {
 		for (Object object : collection) {
 			AbstractPort port = (AbstractPort) AdapterFactoryEditingDomain.unwrap(object);
 			removedInterfaces.add(port.getInterface());
+			if (port.isBiDirectional()) {
+				removedInterfaces.add(port.getInterface());
+			}
 		}
 
 		// Create a command to remove the referenced interfaces, if necessary

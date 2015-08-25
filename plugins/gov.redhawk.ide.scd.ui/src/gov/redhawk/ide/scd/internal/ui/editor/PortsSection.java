@@ -237,13 +237,9 @@ public class PortsSection extends TreeSection {
 	private void handleRemovePort() {
 		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
 		EditingDomain domain = getPage().getEditingDomain();
-		List<Object> removed = new ArrayList<Object>();
+		List<Object> removed = new ArrayList<Object>(selection.size());
 		for (Object item : selection.toList()) {
 			removed.add(item);
-			AbstractPort port = (AbstractPort) AdapterFactoryEditingDomain.unwrap(item);
-			if (port.isBiDirectional()) {
-				removed.add(port.getSibling());
-			}
 		}
 		Command removeCommand = RemoveCommand.create(domain, removed);
 		domain.getCommandStack().execute(removeCommand);
