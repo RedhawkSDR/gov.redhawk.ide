@@ -749,8 +749,8 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Returns true if the property container contains a property key DiagramUtil.GA_TYPE and with propertyValue as
-	 * value
+	 * Returns true if the property container contains a property key {@link #GA_TYPE} or {@link #SHAPE_TYPE} with value
+	 * <code>propertyValue</code>
 	 * @param pc
 	 * @param propertyValue
 	 * @return
