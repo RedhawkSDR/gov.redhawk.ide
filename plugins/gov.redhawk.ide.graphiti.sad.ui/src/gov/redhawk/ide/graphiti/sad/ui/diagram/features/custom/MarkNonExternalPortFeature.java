@@ -54,6 +54,11 @@ public class MarkNonExternalPortFeature extends AbstractCustomFeature {
 	 */
 	@Override
 	public boolean canExecute(ICustomContext context) {
+		// Can't execute if the diagram is read-only
+		if (DUtil.isDiagramReadOnly(getDiagram())) {
+			return false;
+		}
+
 		return true;
 	}
 

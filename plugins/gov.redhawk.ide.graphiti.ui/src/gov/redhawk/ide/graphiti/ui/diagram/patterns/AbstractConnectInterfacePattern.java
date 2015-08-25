@@ -47,9 +47,9 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 
 	@Override
 	public boolean canStartConnection(ICreateConnectionContext context) {
-		// Not allowed in the explorer
+		// Not allowed in the explorer or if read-only
 		Diagram diagram = getDiagram();
-		if (DUtil.isDiagramExplorer(diagram)) {
+		if (DUtil.isDiagramExplorer(diagram) || DUtil.isDiagramReadOnly(diagram)) {
 			return false;
 		}
 
