@@ -23,24 +23,26 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.provider.Disposable;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.omg.CosEventChannelAdmin.EventChannelHelper;
 
+import gov.redhawk.ide.scd.internal.ui.IndexedColumnLabelProvider;
 import gov.redhawk.ui.editor.TreeSection;
 import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.Ports;
@@ -58,30 +60,10 @@ public class PortsSection extends TreeSection {
 	private static final int BUTTON_ADD = 0;
 	private static final int BUTTON_REMOVE = 1;
 
-	private AdapterFactoryContentProvider contentProvider;
-	private AdapterFactoryLabelProvider labelProvider;
 	private TreeViewer fViewer;
 	private Ports ports;
 
-	private static class IndexedColumnLabelProvider extends ColumnLabelProvider {
-		private final ITableLabelProvider labelProvider;
-		private final int column;
-
-		public IndexedColumnLabelProvider(ITableLabelProvider labelProvider, int column) {
-			this.labelProvider = labelProvider;
-			this.column = column;
-		}
-
-		@Override
-		public Image getImage(Object element) {
-			return labelProvider.getColumnImage(element, column);
-		}
-
-		@Override
-		public String getText(Object element) {
-			return labelProvider.getColumnText(element, column);
-		}
-	}
+	private Disposable disposable;
 
 	private static class BidirPortFilter extends ViewerFilter {
 
@@ -118,9 +100,13 @@ public class PortsSection extends TreeSection {
 		final Composite container = this.createClientContainer(section, 2, toolkit);
 		this.createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
 
+		disposable = new Disposable();
+
 		fViewer = getTreePart().getTreeViewer();
-		contentProvider = new AdapterFactoryContentProvider(getAdapterFactory());
-		labelProvider = new AdapterFactoryLabelProvider(getAdapterFactory());
+		AdapterFactoryContentProvider contentProvider = new AdapterFactoryContentProvider(getAdapterFactory());
+		disposable.add(contentProvider);
+		AdapterFactoryLabelProvider labelProvider = new AdapterFactoryLabelProvider(getAdapterFactory());
+		disposable.add(labelProvider);
 		fViewer.setContentProvider(contentProvider);
 		fViewer.getTree().setHeaderVisible(true);
 		fViewer.getTree().setLinesVisible(true);
@@ -129,13 +115,19 @@ public class PortsSection extends TreeSection {
 
 		TreeViewerColumn column = new TreeViewerColumn(fViewer, SWT.DEFAULT);
 		column.getColumn().setText("Name");
-		column.getColumn().setWidth(200);
-		column.setLabelProvider(new IndexedColumnLabelProvider(labelProvider, 0));
+		column.getColumn().setWidth(160);
+		ILabelDecorator decorator = PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
+		disposable.add(decorator);
+		CellLabelProvider columnProvider = new IndexedColumnLabelProvider(labelProvider, 0, decorator);
+		disposable.add(columnProvider);
+		column.setLabelProvider(columnProvider);
 
 		column = new TreeViewerColumn(fViewer, SWT.DEFAULT);
 		column.getColumn().setText("Interface");
 		column.getColumn().setWidth(200);
-		column.setLabelProvider(new IndexedColumnLabelProvider(labelProvider, 1));
+		columnProvider = new IndexedColumnLabelProvider(labelProvider, 1);
+		disposable.add(columnProvider);
+		column.setLabelProvider(columnProvider);
 
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
@@ -150,14 +142,7 @@ public class PortsSection extends TreeSection {
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (contentProvider != null) {
-			contentProvider.dispose();
-			contentProvider = null;
-		}
-		if (labelProvider != null) {
-			labelProvider.dispose();
-			labelProvider = null;
-		}
+		disposable.dispose();
 	}
 
 	@Override
