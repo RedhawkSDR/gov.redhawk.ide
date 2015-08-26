@@ -39,7 +39,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -120,7 +119,7 @@ public class PortDetailsPage extends ScaDetails {
 	private FormEntry nameEntry;
 	private ComboViewer directionCombo;
 	private CheckboxTableViewer typeTable;
-	private Text descriptionText;
+	private FormEntry descriptionEntry;
 	private FormEntry idlEntry;
 
 	private AbstractPort port;
@@ -177,8 +176,8 @@ public class PortDetailsPage extends ScaDetails {
 		bindings.add(dataBindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(idlEntry.getText()),
 			EMFEditObservables.observeValue(getEditingDomain(), input, ScdPackage.Literals.ABSTRACT_PORT__REP_ID)));
 
-		bindings.add(dataBindingContext.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), descriptionText),
-			EMFEditObservables.observeValue(getEditingDomain(), input, ScdPackage.Literals.ABSTRACT_PORT__DESCRIPTION)));
+		bindings.add(dataBindingContext.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(),
+			descriptionEntry.getText()), EMFEditObservables.observeValue(getEditingDomain(), input, ScdPackage.Literals.ABSTRACT_PORT__DESCRIPTION)));
 
 		return bindings;
 	}
@@ -244,9 +243,12 @@ public class PortDetailsPage extends ScaDetails {
 			}
 		});
 
-		createLabel(client, toolkit, "Description:");
-		descriptionText = toolkit.createText(client, null, SWT.MULTI | SWT.WRAP);
-		descriptionText.setLayoutData(gridDataFactory.copy().hint(SWT.DEFAULT, 75).create());
+		descriptionEntry = new FormEntry(client, toolkit, "Description:", SWT.MULTI | SWT.WRAP);
+		((GridData) descriptionEntry.getLabel().getLayoutData()).verticalAlignment = SWT.TOP;
+		data = (GridData) descriptionEntry.getText().getLayoutData();
+		data.verticalAlignment = SWT.FILL;
+		data.heightHint = 75; // SUPPRESS CHECKSTYLE MagicNumber
+
 		return client;
 	}
 
