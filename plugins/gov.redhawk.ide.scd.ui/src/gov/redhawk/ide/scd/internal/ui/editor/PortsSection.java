@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.omg.CosEventChannelAdmin.EventChannelHelper;
 
 import gov.redhawk.ui.editor.TreeSection;
 import mil.jpeojtrs.sca.scd.AbstractPort;
@@ -81,7 +82,33 @@ public class PortsSection extends TreeSection {
 			return labelProvider.getColumnText(element, column);
 		}
 	}
-	
+
+	private static class BidirPortFilter extends ViewerFilter {
+
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			element = AdapterFactoryEditingDomain.unwrap(element);
+			if (element instanceof Uses) {
+				return !((Uses) element).isBiDirectional();
+			}
+			return true;
+		}
+	};
+
+	private static class PropertyChannelFilter extends ViewerFilter {
+
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			AbstractPort port = (AbstractPort) AdapterFactoryEditingDomain.unwrap(element);
+			if (port instanceof Uses) {
+				if (Uses.PORT_NAME_PROP_EVENTS.equals(port.getName()) && EventChannelHelper.id().equals(port.getRepID())) {
+					return false;
+				}
+			}
+			return true;
+		}
+	};
+
 	public PortsSection(PortsBlock block, Composite parent) {
 		super(block.getPage(), parent, Section.DESCRIPTION, new String[] { "Add", "Remove" });
 	}
@@ -97,17 +124,8 @@ public class PortsSection extends TreeSection {
 		fViewer.setContentProvider(contentProvider);
 		fViewer.getTree().setHeaderVisible(true);
 		fViewer.getTree().setLinesVisible(true);
-		fViewer.addFilter(new ViewerFilter() {
-			
-			@Override
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				element = AdapterFactoryEditingDomain.unwrap(element);
-				if (element instanceof Uses) {
-					return !((Uses) element).isBiDirectional();
-				}
-				return true;
-			}
-		});
+		fViewer.addFilter(new BidirPortFilter());
+		fViewer.addFilter(new PropertyChannelFilter());
 
 		TreeViewerColumn column = new TreeViewerColumn(fViewer, SWT.DEFAULT);
 		column.getColumn().setText("Name");
