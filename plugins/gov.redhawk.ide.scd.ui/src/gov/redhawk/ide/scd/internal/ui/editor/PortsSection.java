@@ -23,7 +23,6 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.edit.provider.IDisposable;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -41,7 +40,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-import gov.redhawk.ide.scd.ui.provider.PortsEditorScdItemProviderAdapterFactory;
 import gov.redhawk.ui.editor.TreeSection;
 import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.Ports;
@@ -59,7 +57,6 @@ public class PortsSection extends TreeSection {
 	private static final int BUTTON_ADD = 0;
 	private static final int BUTTON_REMOVE = 1;
 
-	private AdapterFactory adapterFactory;
 	private AdapterFactoryContentProvider contentProvider;
 	private AdapterFactoryLabelProvider labelProvider;
 	private TreeViewer fViewer;
@@ -129,19 +126,12 @@ public class PortsSection extends TreeSection {
 	}
 
 	private AdapterFactory getAdapterFactory() {
-		if (adapterFactory == null) {
-			adapterFactory = new PortsEditorScdItemProviderAdapterFactory();
-		}
-		return adapterFactory;
+		return getPage().getEditor().getAdapterFactory();
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (adapterFactory != null) {
-			((IDisposable) adapterFactory).dispose();
-			adapterFactory = null;
-		}
 		if (contentProvider != null) {
 			contentProvider.dispose();
 			contentProvider = null;
