@@ -14,6 +14,8 @@ package gov.redhawk.ide.graphiti.ui.diagram;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -23,6 +25,7 @@ import org.eclipse.emf.workspace.util.WorkspaceSynchronizer.Delegate;
 import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IUpdateFeature;
@@ -58,7 +61,7 @@ public abstract class AbstractGraphitiDiagramEditor extends DiagramEditor {
 	private List<IContextActivation> contextActivations = new ArrayList<IContextActivation>();
 	private MouseListener mouseListener = null;
 
-	protected EditingDomain editingDomain;
+	private EditingDomain editingDomain;
 
 	public AbstractGraphitiDiagramEditor(EditingDomain editingDomain) {
 		super();
@@ -72,6 +75,18 @@ public abstract class AbstractGraphitiDiagramEditor extends DiagramEditor {
 		// Activate contexts specified pre-init()
 		for (String context : contexts) {
 			activateContext(context);
+		}
+	}
+
+	@Override
+	public void initializeGraphicalViewer() {
+		super.initializeGraphicalViewer();
+
+		// Set a margin around the diagram border to make it easier to scroll a little bit to the side
+		EditPart ep = getGraphicalViewer().getRootEditPart().getContents();
+		if (ep instanceof AbstractGraphicalEditPart) {
+			IFigure fig = ((AbstractGraphicalEditPart) ep).getFigure();
+			fig.setBorder(new MarginBorder(50));
 		}
 	}
 
