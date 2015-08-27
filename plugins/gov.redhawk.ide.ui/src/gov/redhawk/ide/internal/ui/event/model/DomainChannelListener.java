@@ -12,6 +12,7 @@ package gov.redhawk.ide.internal.ui.event.model;
 
 import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 import gov.redhawk.model.sca.DomainConnectionException;
+import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDomainManager;
 import gov.redhawk.sca.ui.ConnectPortWizard;
 import gov.redhawk.sca.util.ORBUtil;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.omg.CORBA.SystemException;
 import org.omg.CosEventComm.PushConsumer;
@@ -89,7 +91,7 @@ public class DomainChannelListener extends ChannelListener {
 			boolean disconnect = false;
 			try {
 				if (!domain.isConnected()) {
-					domain.connect(null);
+					domain.connect(new NullProgressMonitor(), RefreshDepth.FULL);
 					disconnect = true;
 				}
 				domain.unregisterFromEventChannel(registrationId, getChannel());

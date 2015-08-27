@@ -13,6 +13,7 @@ package gov.redhawk.ide.dcd.internal.ui.handlers;
 import gov.redhawk.ide.sdr.ui.util.DebugLevel;
 import gov.redhawk.ide.sdr.ui.util.DeviceManagerLaunchConfiguration;
 import gov.redhawk.ide.sdr.ui.util.LaunchDeviceManagersHelper;
+import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDomainManager;
 
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class LaunchDeviceManager extends AbstractHandler implements IHandler {
 
 							@Override
 							protected IStatus run(final IProgressMonitor monitor) {
-								domMgr.fetchDeviceManagers(monitor);
+								domMgr.fetchDeviceManagers(monitor, RefreshDepth.SELF);
 								return Status.OK_STATUS;
 							}
 

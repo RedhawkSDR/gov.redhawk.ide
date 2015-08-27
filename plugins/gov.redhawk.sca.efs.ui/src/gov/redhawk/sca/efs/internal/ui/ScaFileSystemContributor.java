@@ -24,6 +24,7 @@ import java.util.List;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
@@ -89,7 +90,7 @@ public class ScaFileSystemContributor extends FileSystemContributor {
 							}
 						}
 
-						final IFileStore fileStore = domMgr.fetchFileManager(null).getFileStore();
+						final IFileStore fileStore = domMgr.fetchFileManager(new NullProgressMonitor(), RefreshDepth.SELF).getFileStore();
 						if (fileStore != null) {
 							return fileStore.toURI();
 						} else {

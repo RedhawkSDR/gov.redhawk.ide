@@ -465,7 +465,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 
 		for (int tries = 0; tries < 100; tries++) {
 			if (type == ComponentType.DEVICE) {
-				for (final ScaDevice< ? > comp : devMgrModelObj.fetchDevices(null)) {
+				for (final ScaDevice< ? > comp : devMgrModelObj.fetchDevices(new NullProgressMonitor(), RefreshDepth.SELF)) {
 					comp.fetchAttributes(null);
 					final String id = comp.getIdentifier();
 					if (id.equals(compId)) {
@@ -474,7 +474,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 				}
 			}
 			if (type == ComponentType.SERVICE) {
-				for (final ScaService comp : devMgrModelObj.fetchServices(null)) {
+				for (final ScaService comp : devMgrModelObj.fetchServices(new NullProgressMonitor(), RefreshDepth.SELF)) {
 					comp.fetchAttributes(null);
 					final String id = comp.getName();
 					if (id.equals(usageName)) {
