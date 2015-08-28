@@ -17,9 +17,10 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
@@ -36,9 +37,11 @@ import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadUsesPort;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -222,25 +225,23 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 
 		final DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
 
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		Collection<?> toRemove;
+		if (sad != null) {
+			toRemove = getFindByConnections(findByToDelete, sad.getConnections());
+		} else if (dcd != null) {
+			toRemove = getFindByConnections(findByToDelete, dcd.getConnections());
+		} else {
+			toRemove = Collections.EMPTY_LIST;
+		}
 
-		// Perform business object manipulation in a Command
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
+		if (!toRemove.isEmpty()) {
+			// editing domain for our transaction
+			TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
-				if (sad != null) {
-					// delete component from SoftwareAssembly
-					deleteFindByConnections(findByToDelete, sad.getConnections());
-				} else if (dcd != null) {
-					// delete component from DeviceConfiguration
-					deleteFindByConnections(findByToDelete, dcd.getConnections());
-				}
-
-			}
-		});
+			// Perform business object manipulation in a Command
+			Command command = RemoveCommand.create(editingDomain, toRemove);
+			editingDomain.getCommandStack().execute(command);
+		}
 
 		PictogramElement pe = context.getPictogramElement();
 		Object[] businessObjects = getFeatureProvider().getAllBusinessObjectsForPictogramElement(pe);
@@ -258,29 +259,25 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		super.delete(context);
 	}
 
-	private <E extends ConnectInterface<?,?,?>> void deleteFindByConnections(FindByStub findByToDelete, Connections<E> connections) {
-		if (connections == null) {
-			return;
-		}
-
-		// find and remove any attached connections
-		// gather connections
+	private <E extends ConnectInterface<?,?,?>> List<E> getFindByConnections(FindByStub findByToDelete, Connections<E> connections) {
 		List<E> connectionsToRemove = new ArrayList<E>();
-		for (E connection : connections.getConnectInterface()) {
-			if (connection.getProvidesPort() != null && connection.getProvidesPort().getFindBy() != null
-					&& doFindByObjectsMatch(connection.getProvidesPort().getFindBy(), findByToDelete)) {
-				connectionsToRemove.add(connection);
-			} else if (connection.getComponentSupportedInterface() != null && connection.getComponentSupportedInterface().getFindBy() != null
-					&& doFindByObjectsMatch(connection.getComponentSupportedInterface().getFindBy(), findByToDelete)) {
-				connectionsToRemove.add(connection);
-			} else if (connection.getUsesPort() != null && connection.getUsesPort().getFindBy() != null
-					&& doFindByObjectsMatch(connection.getUsesPort().getFindBy(), findByToDelete)) {
-				connectionsToRemove.add(connection);
+		if (connections != null) {
+			// find and remove any attached connections
+			// gather connections
+			for (E connection : connections.getConnectInterface()) {
+				if (connection.getProvidesPort() != null && connection.getProvidesPort().getFindBy() != null
+						&& doFindByObjectsMatch(connection.getProvidesPort().getFindBy(), findByToDelete)) {
+					connectionsToRemove.add(connection);
+				} else if (connection.getComponentSupportedInterface() != null && connection.getComponentSupportedInterface().getFindBy() != null
+						&& doFindByObjectsMatch(connection.getComponentSupportedInterface().getFindBy(), findByToDelete)) {
+					connectionsToRemove.add(connection);
+				} else if (connection.getUsesPort() != null && connection.getUsesPort().getFindBy() != null
+						&& doFindByObjectsMatch(connection.getUsesPort().getFindBy(), findByToDelete)) {
+					connectionsToRemove.add(connection);
+				}
 			}
 		}
-
-		// remove gathered connections
-		connections.getConnectInterface().removeAll(connectionsToRemove);
+		return connectionsToRemove;
 	}
 
 	@Override
