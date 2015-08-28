@@ -22,6 +22,8 @@ import java.util.List;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.ConnectInterface;
+import mil.jpeojtrs.sca.partitioning.Connections;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
@@ -231,10 +233,10 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 
 				if (sad != null) {
 					// delete component from SoftwareAssembly
-					deleteFindByConnections(findByToDelete, sad);
+					deleteFindByConnections(findByToDelete, sad.getConnections());
 				} else if (dcd != null) {
 					// delete component from DeviceConfiguration
-					deleteFindByConnections(findByToDelete, dcd);
+					deleteFindByConnections(findByToDelete, dcd.getConnections());
 				}
 
 			}
@@ -256,58 +258,29 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		super.delete(context);
 	}
 
-	private void deleteFindByConnections(FindByStub findByToDelete, SoftwareAssembly sad) {
-		// find and remove any attached connections
-		// gather connections
-		List<SadConnectInterface> connectionsToRemove = new ArrayList<SadConnectInterface>();
-		if (sad.getConnections() == null) {
+	private <E extends ConnectInterface<?,?,?>> void deleteFindByConnections(FindByStub findByToDelete, Connections<E> connections) {
+		if (connections == null) {
 			return;
 		}
-		for (SadConnectInterface connection : sad.getConnections().getConnectInterface()) {
-			if (connection.getProvidesPort() != null && connection.getProvidesPort().getFindBy() != null && connection.getProvidesPort().getFindBy().getNamingService() != null
-				&& connection.getProvidesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
+
+		// find and remove any attached connections
+		// gather connections
+		List<E> connectionsToRemove = new ArrayList<E>();
+		for (E connection : connections.getConnectInterface()) {
+			if (connection.getProvidesPort() != null && connection.getProvidesPort().getFindBy() != null
+					&& doFindByObjectsMatch(connection.getProvidesPort().getFindBy(), findByToDelete)) {
 				connectionsToRemove.add(connection);
 			} else if (connection.getComponentSupportedInterface() != null && connection.getComponentSupportedInterface().getFindBy() != null
-					&& connection.getComponentSupportedInterface().getFindBy().getNamingService() != null
-					&& connection.getComponentSupportedInterface().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
-					connectionsToRemove.add(connection);
-			} else if (connection.getUsesPort().getFindBy() != null && connection.getUsesPort().getFindBy().getNamingService() != null
-					&& connection.getUsesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
+					&& doFindByObjectsMatch(connection.getComponentSupportedInterface().getFindBy(), findByToDelete)) {
+				connectionsToRemove.add(connection);
+			} else if (connection.getUsesPort() != null && connection.getUsesPort().getFindBy() != null
+					&& doFindByObjectsMatch(connection.getUsesPort().getFindBy(), findByToDelete)) {
 				connectionsToRemove.add(connection);
 			}
 		}
 
 		// remove gathered connections
-		if (sad.getConnections() != null) {
-			sad.getConnections().getConnectInterface().removeAll(connectionsToRemove);
-		}
-	}
-
-	private void deleteFindByConnections(FindByStub findByToDelete, DeviceConfiguration dcd) {
-		// find and remove any attached connections
-		// gather connections
-		List<DcdConnectInterface> connectionsToRemove = new ArrayList<DcdConnectInterface>();
-		if (dcd.getConnections() == null) {
-			return;
-		}
-		for (DcdConnectInterface connection : dcd.getConnections().getConnectInterface()) {
-			if (connection.getProvidesPort() != null && connection.getProvidesPort().getFindBy() != null && connection.getProvidesPort().getFindBy().getNamingService() != null
-				&& connection.getProvidesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
-				connectionsToRemove.add(connection);
-			} else if (connection.getComponentSupportedInterface() != null && connection.getComponentSupportedInterface().getFindBy() != null
-					&& connection.getComponentSupportedInterface().getFindBy().getNamingService() != null
-					&& connection.getComponentSupportedInterface().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
-					connectionsToRemove.add(connection);
-			} else if (connection.getUsesPort().getFindBy() != null && connection.getUsesPort().getFindBy().getNamingService() != null
-					&& connection.getUsesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
-				connectionsToRemove.add(connection);
-			}
-		}
-
-		// remove gathered connections
-		if (dcd.getConnections() != null) {
-			dcd.getConnections().getConnectInterface().removeAll(connectionsToRemove);
-		}
+		connections.getConnectInterface().removeAll(connectionsToRemove);
 	}
 
 	@Override
