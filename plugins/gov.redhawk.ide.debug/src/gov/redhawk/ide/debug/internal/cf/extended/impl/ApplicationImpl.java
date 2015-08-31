@@ -573,9 +573,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	protected void releaseAll() {
 		this.streams.getOutStream().println("Releasing components...");
 		// Shutdown each component
-		for (final ScaComponent info : this.waveform.getComponents().toArray(new ScaComponent[this.waveform.getComponents().size()])) {
-			if (info instanceof LocalScaComponent) {
-				release(info);
+		for (final ScaComponent component : this.waveform.getComponents().toArray(new ScaComponent[this.waveform.getComponents().size()])) {
+			if (component instanceof LocalScaComponent && ((LocalScaComponent) component).getLaunch() != null) {
+				release(component);
 			}
 		}
 		this.streams.getOutStream().println("Released components");
@@ -599,9 +599,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	protected void disconnectAll() {
 		this.streams.getOutStream().println("Disconnecting connections...");
 		// Disconnect components
-		for (final ScaComponent info : this.waveform.getComponents().toArray(new ScaComponent[waveform.getComponents().size()])) {
-			if (info instanceof LocalScaComponent) {
-				disconnect(info);
+		for (final ScaComponent component : this.waveform.getComponents().toArray(new ScaComponent[waveform.getComponents().size()])) {
+			if (component instanceof LocalScaComponent && ((LocalScaComponent) component).getLaunch() != null) {
+				disconnect(component);
 			}
 		}
 		this.streams.getOutStream().println("Disconnected");
