@@ -32,6 +32,7 @@ import gov.redhawk.sca.efs.WrappedFileStore;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -352,35 +353,47 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			logException("Interrupted while waiting for application to launch", e);
 		}
 		this.streams.getOutStream().println("Starting...");
+
 		if (this.delegate != null) {
-			this.streams.getOutStream().println("Invoking delegate start");
+			this.streams.getOutStream().println("\tInvoking delegate start");
 			try {
 				this.delegate.start();
 			} catch (StartError e) {
 				throw logException("Error during delegate start", e);
 			}
-		}
 
-		SortedSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator());
-
-		for (ScaComponent comp : waveform.getComponents()) {
-			if (comp.getInstantiationIdentifier() != null) {
-				sortedSet.add(comp);
+			// Start local components added to the domain waveform
+			for (ScaComponent component : waveform.getComponents().toArray(new ScaComponent[0])) {
+				if (component instanceof LocalScaComponent && ((LocalScaComponent) component).getLaunch() != null) {
+					this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
+					try {
+						component.start();
+					} catch (final StartError e) {
+						throw logException("Error during start", e);
+					}
+				}
 			}
-		}
+		} else {
+			// Sort components
+			SortedSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator());
+			sortedSet.addAll(waveform.getComponents());
 
-		for (ScaComponent comp : sortedSet) {
-			if (comp instanceof LocalScaComponent) {
-				this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
+			for (ScaComponent component : sortedSet) {
+				// With the exception of the assembly controller, don't start things that have a component
+				// instantiation but don't have a start order (i.e. they're defined in a SAD without a start order)
+				if (component != assemblyController && component.getComponentInstantiation() != null && component.getComponentInstantiation().getStartOrder() == null) {
+					continue;
+				}
+				this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
 				try {
-					comp.start();
+					component.start();
 				} catch (final StartError e) {
 					throw logException("Error during start", e);
 				}
 			}
 		}
 
-		this.streams.getOutStream().println("Start succeeded");
+		this.streams.getOutStream().println("Started");
 		this.started = true;
 	}
 
@@ -395,31 +408,42 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			logException("Interrupted while waiting for application to launch", e);
 		}
 		this.streams.getOutStream().println("Stopping...");
+
 		if (this.delegate != null) {
-			this.streams.getOutStream().println("Invoking delegate stop");
+			// Stop local components added to the domain waveform
+			List<ScaComponent> components = new ArrayList<ScaComponent>(waveform.getComponents());
+			Collections.reverse(components);
+			for (ScaComponent component : components) {
+				if (component instanceof LocalScaComponent && ((LocalScaComponent) component).getLaunch() != null) {
+					this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
+					try {
+						component.stop();
+					} catch (final StopError e) {
+						throw logException("Error during stop", e);
+					}
+				}
+			}
+
+			this.streams.getOutStream().println("\tInvoking delegate stop");
 			try {
 				this.delegate.stop();
 			} catch (StopError e) {
 				throw logException("Error during delegate Stop", e);
 			}
-		}
+		} else {
+			TreeSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator());
+			sortedSet.addAll(waveform.getComponents());
 
-		TreeSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator() {
-			@Override
-			public int compare(ScaComponent o1, ScaComponent o2) {
-				// Reverse the order for stopping
-				return -1 * super.compare(o1, o2);
-			}
-		});
-		for (ScaComponent comp : waveform.getComponents()) {
-			sortedSet.add(comp);
-		}
-
-		for (ScaComponent comp : sortedSet) {
-			if (comp instanceof LocalScaComponent) {
-				this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
+			for (ScaComponent component : sortedSet.descendingSet()) {
+				// With the exception of the assembly controller, don't stop things that have a component
+				// instantiation but don't have a start order (i.e. they're defined in a SAD without a start order)
+				if (component != assemblyController && component.getComponentInstantiation() != null
+					&& component.getComponentInstantiation().getStartOrder() == null) {
+					continue;
+				}
+				this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
 				try {
-					comp.stop();
+					component.stop();
 				} catch (StopError e) {
 					logException("Error during stop of component", e);
 				}
