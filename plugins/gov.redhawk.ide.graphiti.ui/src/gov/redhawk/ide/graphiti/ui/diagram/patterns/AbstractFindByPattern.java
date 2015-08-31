@@ -259,20 +259,20 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		super.delete(context);
 	}
 
-	private <E extends ConnectInterface<?,?,?>> List<E> getFindByConnections(FindByStub findByToDelete, Connections<E> connections) {
+	private < E extends ConnectInterface< ? , ? , ? > > List<E> getFindByConnections(FindByStub findByToDelete, Connections<E> connections) {
 		List<E> connectionsToRemove = new ArrayList<E>();
 		if (connections != null) {
 			// find and remove any attached connections
 			// gather connections
 			for (E connection : connections.getConnectInterface()) {
 				if (connection.getProvidesPort() != null && connection.getProvidesPort().getFindBy() != null
-						&& doFindByObjectsMatch(connection.getProvidesPort().getFindBy(), findByToDelete)) {
+					&& doFindByObjectsMatch(connection.getProvidesPort().getFindBy(), findByToDelete)) {
 					connectionsToRemove.add(connection);
 				} else if (connection.getComponentSupportedInterface() != null && connection.getComponentSupportedInterface().getFindBy() != null
-						&& doFindByObjectsMatch(connection.getComponentSupportedInterface().getFindBy(), findByToDelete)) {
+					&& doFindByObjectsMatch(connection.getComponentSupportedInterface().getFindBy(), findByToDelete)) {
 					connectionsToRemove.add(connection);
 				} else if (connection.getUsesPort() != null && connection.getUsesPort().getFindBy() != null
-						&& doFindByObjectsMatch(connection.getUsesPort().getFindBy(), findByToDelete)) {
+					&& doFindByObjectsMatch(connection.getUsesPort().getFindBy(), findByToDelete)) {
 					connectionsToRemove.add(connection);
 				}
 			}
