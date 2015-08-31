@@ -27,8 +27,6 @@ import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
-import gov.redhawk.sca.ui.actions.StartAction;
-import gov.redhawk.sca.ui.actions.StopAction;
 import gov.redhawk.sca.util.SubMonitor;
 
 import java.util.ArrayList;
@@ -96,10 +94,6 @@ public class GraphitiDcdModelMap {
 	// maps containing to uniquely identify devices/connections, use with synchronized statement
 	private final Map<String, DcdNodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, DcdNodeMapEntry>());
 	private final Map<String, DcdConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, DcdConnectionMapEntry>());
-
-	// actions for starting/stopping devices
-	private final StartAction startAction = new StartAction();
-	private final StopAction stopAction = new StopAction();
 
 	public GraphitiDcdModelMap(final GraphitiDcdSandboxEditor editor, final DeviceConfiguration dcd, final ScaDeviceManager deviceManager) {
 		Assert.isNotNull(deviceManager, "Device Manager must not be null");
@@ -689,53 +683,6 @@ public class GraphitiDcdModelMap {
 		});
 
 		return dcdConnectInterfaces[0];
-	}
-
-	/**
-	 * Starts/Stops the device in the ScaExplorer as a result of the user
-	 * stopping/starting the component in the diagram
-	 * @param comp
-	 * @param started
-	 */
-	public void startStopDevice(final DcdComponentInstantiation comp, final Boolean started) {
-		if (comp == null) {
-			return;
-		}
-
-		final DcdNodeMapEntry nodeMapEntry = nodes.get(DcdNodeMapEntry.getKey(comp));
-		if (nodeMapEntry == null) {
-			return;
-		}
-
-		final ScaDevice< ? > scaDevice = nodeMapEntry.getScaDevice();
-
-		// start
-		if (started) {
-			Job job = new Job("Starting " + comp.getUsageName()) {
-
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					startAction.setContext(scaDevice);
-					startAction.run();
-					return Status.OK_STATUS;
-				}
-
-			};
-			job.schedule();
-
-			// stop
-		} else {
-			Job job = new Job("Stopping " + comp.getUsageName()) {
-
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					stopAction.setContext(scaDevice);
-					stopAction.run();
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-		}
 	}
 
 	public DcdComponentInstantiation get(final ScaDevice< ? > comp) {

@@ -19,7 +19,6 @@ import gov.redhawk.ide.graphiti.dcd.internal.ui.GraphitiDcdModelMap;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.GraphitiDcdModelMapInitializerCommand;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.ScaGraphitiModelAdapter;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
-import gov.redhawk.ide.graphiti.dcd.ui.adapters.GraphitiDcdDiagramAdapter;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDcdDiagramEditor;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.RefreshDepth;
@@ -63,7 +62,6 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 	private Resource mainResource;
 	private ScaGraphitiModelAdapter scaListener;
 	private DcdGraphitiModelAdapter dcdListener;
-	private GraphitiDcdDiagramAdapter graphitiDiagramListener;
 	private DeviceConfiguration dcd;
 	private GraphitiDcdModelMap modelMap;
 
@@ -230,7 +228,6 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 		getEditingDomain().getCommandStack().execute(new GraphitiDcdModelMapInitializerCommand(modelMap, dcd, deviceManager));
 		getEditingDomain().getCommandStack().flush();
 
-		this.graphitiDiagramListener = new GraphitiDcdDiagramAdapter(modelMap);
 		this.dcdListener = new DcdGraphitiModelAdapter(modelMap);
 		this.scaListener = new ScaGraphitiModelAdapter(modelMap) {
 			@Override
@@ -281,13 +278,6 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 			this.dcdListener = null;
 		}
 
-		if (this.graphitiDiagramListener != null) {
-			if (this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram() != null) {
-				this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram().eAdapters().remove(this.graphitiDiagramListener);
-			}
-			this.graphitiDiagramListener = null;
-		}
-
 		if (this.scaListener != null) {
 			ScaModelCommand.execute(deviceManager, new ScaModelCommand() {
 
@@ -322,9 +312,6 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 				}
 
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
-
-				// register the graphitiDiagramListener
-				this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram().eAdapters().add(graphitiDiagramListener);
 
 				// make sure diagram elements reflect current runtime state
 				this.modelMap.reflectRuntimeStatus();

@@ -83,8 +83,6 @@ import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.monitor.IPortStatListener;
-import gov.redhawk.sca.ui.actions.StartAction;
-import gov.redhawk.sca.ui.actions.StopAction;
 import gov.redhawk.sca.util.SubMonitor;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
@@ -108,10 +106,6 @@ public class GraphitiModelMap implements IPortStatListener {
 	// maps containing to uniquely identify component/connections, use with synchronized statement
 	private final Map<String, NodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, NodeMapEntry>());
 	private final Map<String, ConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMapEntry>());
-
-	// actions for starting/stopping components
-	private final StartAction startAction = new StartAction();
-	private final StopAction stopAction = new StopAction();
 
 	private final LocalScaWaveform waveform;
 	private final SoftwareAssembly sad;
@@ -801,49 +795,6 @@ public class GraphitiModelMap implements IPortStatListener {
 
 					});
 
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-		}
-	}
-
-	/**
-	 * Starts/Stops the component in the ScaExplorer as a result of the user
-	 * stopping/starting the component in the diagram
-	 * @param localScaComponent
-	 * @param started
-	 */
-	public void startStopComponent(final SadComponentInstantiation comp, final Boolean started) {
-		if (comp == null) {
-			return;
-		}
-		final NodeMapEntry nodeMapEntry = nodes.get(NodeMapEntry.getKey(comp));
-		if (nodeMapEntry == null) {
-			return;
-		}
-		final LocalScaComponent localComp = nodeMapEntry.getLocalScaComponent();
-
-		if (started) {
-			Job job = new Job("Starting " + comp.getUsageName()) {
-
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					startAction.setContext(localComp);
-					startAction.run();
-					return Status.OK_STATUS;
-				}
-
-			};
-			job.schedule();
-			// stop
-		} else {
-			Job job = new Job("Stopping " + comp.getUsageName()) {
-
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					stopAction.setContext(localComp);
-					stopAction.run();
 					return Status.OK_STATUS;
 				}
 			};

@@ -24,7 +24,6 @@ import gov.redhawk.ide.graphiti.sad.debug.internal.ui.SadGraphitiModelAdapter;
 import gov.redhawk.ide.graphiti.sad.debug.internal.ui.SadGraphitiModelInitializerCommand;
 import gov.redhawk.ide.graphiti.sad.debug.internal.ui.ScaGraphitiModelAdapter;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
-import gov.redhawk.ide.graphiti.sad.ui.adapters.GraphitiDiagramAdapter;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
@@ -81,7 +80,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 	private static final Debug DEBUG = new Debug(SADUIGraphitiPlugin.PLUGIN_ID, "editor");
 	private ScaGraphitiModelAdapter scaListener;
 	private SadGraphitiModelAdapter sadlistener;
-	private GraphitiDiagramAdapter graphitiDiagramListener;
 	private MonitorPortAdapter portStatisticsAdapter;
 	private LocalScaWaveform waveform;
 	private boolean isLocalSca;
@@ -365,7 +363,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 
 		modelMap = new GraphitiModelMap(this, sad, waveform);
 
-		this.graphitiDiagramListener = new GraphitiDiagramAdapter(modelMap);
 		this.sadlistener = new SadGraphitiModelAdapter(modelMap);
 		this.scaListener = new ScaGraphitiModelAdapter(modelMap) {
 			@Override
@@ -439,12 +436,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 			}
 			this.sadlistener = null;
 		}
-		if (this.graphitiDiagramListener != null) {
-			if (this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram() != null) {
-				this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram().eAdapters().remove(this.graphitiDiagramListener);
-			}
-			this.graphitiDiagramListener = null;
-		}
 		if (this.scaListener != null) {
 			ScaModelCommand.execute(waveform, new ScaModelCommand() {
 
@@ -488,9 +479,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 				DUtil.layout(editor);
 
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
-
-				// register graphitiDiagramListener
-				this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram().eAdapters().add(graphitiDiagramListener);
 
 				// reflect runtime aspects here
 				this.modelMap.reflectRuntimeStatus();
