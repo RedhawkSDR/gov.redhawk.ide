@@ -31,7 +31,6 @@ import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.impl.ScaComponentImpl;
 import gov.redhawk.sca.efs.WrappedFileStore;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,6 +52,7 @@ import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.sad.util.StartOrderComparator;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
@@ -123,9 +123,6 @@ import CF.ResourcePackage.StartError;
 import CF.ResourcePackage.StopError;
 import CF.TestableObjectPackage.UnknownTest;
 
-/**
- * 
- */
 public class ApplicationImpl extends PlatformObject implements IProcess, ApplicationOperations, IAdaptable {
 
 	private static interface ConnectionInfo {
@@ -138,53 +135,33 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 	private class ScaComponentComparator implements Comparator<ScaComponent> {
 
+		private StartOrderComparator innerCompatator;
+
+		public ScaComponentComparator() {
+			if (assemblyController == null) {
+				innerCompatator = new StartOrderComparator(null);
+			} else {
+				innerCompatator = new StartOrderComparator(assemblyController.getComponentInstantiation());
+			}
+		}
+
 		/**
 		 * Compare on the start order as the first priority, if no start order is found, compare on the pointer
 		 * location.
 		 */
 		@Override
 		public int compare(ScaComponent o1, ScaComponent o2) {
-			if (o1 == o2) {
+			if (o1 == null && o2 == null) {
 				return 0;
-			}
-			if (o1 == assemblyController) {
+			} else if (o1 != null && o2 == null) {
 				return -1;
-			} else if (o2 == assemblyController) {
+			} else if (o1 == null && o2 != null) {
 				return 1;
-			} else {
-
-				SadComponentInstantiation ci1 = o1.getComponentInstantiation();
-				int o1Index = o1.eContainer().eContents().indexOf(o1);
-
-				SadComponentInstantiation ci2 = o2.getComponentInstantiation();
-				int o2Index = o2.eContainer().eContents().indexOf(o2);
-
-				// If neither have start order we'll order them on list order.
-				if (ci1 == null && ci2 == null) {
-					return (o1Index < o2Index) ? -1 : 1;
-				}
-
-				// If c1 != null but ci2 is
-				if (ci2 == null) {
-					return -1;
-				}
-
-				// If c2 != null but ci1 is
-				if (ci1 == null) {
-					return 1;
-				}
-
-				// Neither ci1 or ci2 is null
-				BigInteger s1 = ci1.getStartOrder();
-				BigInteger s2 = ci2.getStartOrder();
-				if (s1 != null) {
-					return s1.compareTo(s2);
-				} else if (s2 != null) {
-					return 1;
-				} else {
-					return (o1Index < o2Index) ? -1 : 1;
-				}
 			}
+
+			SadComponentInstantiation ci1 = o1.getComponentInstantiation();
+			SadComponentInstantiation ci2 = o2.getComponentInstantiation();
+			return innerCompatator.compare(ci1, ci2);
 		}
 	}
 
@@ -317,17 +294,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return this.waveformContext.getNamingContext();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String identifier() {
 		return this.identifier;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean started() {
 		try {
@@ -348,9 +319,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return this.streams;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void start() throws StartError {
 		try {
@@ -369,7 +337,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 
 			// Start local components added to the domain waveform
-			for (ScaComponent component : waveform.getComponents().toArray(new ScaComponent[0])) {
+			for (ScaComponent component : waveform.getComponentsCopy()) {
 				if (component instanceof LocalScaComponent && ((LocalScaComponent) component).getLaunch() != null) {
 					this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
 					try {
@@ -382,7 +350,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		} else {
 			// Sort components
 			SortedSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator());
-			sortedSet.addAll(waveform.getComponents());
+			sortedSet.addAll(waveform.getComponentsCopy());
 
 			for (ScaComponent component : sortedSet) {
 				// With the exception of the assembly controller, don't start things that have a component
@@ -403,9 +371,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.started = true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void stop() throws StopError {
 		try {
@@ -417,7 +382,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 		if (this.delegate != null) {
 			// Stop local components added to the domain waveform
-			List<ScaComponent> components = new ArrayList<ScaComponent>(waveform.getComponents());
+			List<ScaComponent> components = waveform.getComponentsCopy();
 			Collections.reverse(components);
 			for (ScaComponent component : components) {
 				if (component instanceof LocalScaComponent && ((LocalScaComponent) component).getLaunch() != null) {
@@ -460,9 +425,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.started = false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void initialize() throws InitializeError {
 		try {
@@ -502,9 +464,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return e;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void releaseObject() throws ReleaseError {
 		if (this.terminated) {
@@ -639,9 +598,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void runTest(final int testid, final PropertiesHolder testValues) throws UnknownTest, UnknownProperties {
 		try {
@@ -679,9 +635,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		throw new InvalidConfiguration("Cannot call construct on an application", configProperties);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void configure(final DataType[] configProperties) throws InvalidConfiguration, PartialConfiguration {
 		try {
@@ -741,9 +694,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void query(final PropertiesHolder configProperties) throws UnknownProperties {
 		try {
@@ -821,9 +771,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		throw new IllegalStateException("Not implemented");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public org.omg.CORBA.Object getPort(final String name) throws UnknownPort {
 		try {
@@ -926,9 +873,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return waveform.getScaComponent(instId);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public ComponentType[] registeredComponents() {
 		try {
@@ -964,9 +908,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return types;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public ComponentElementType[] componentNamingContexts() {
 		try {
@@ -998,9 +939,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return types;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public ComponentProcessIdType[] componentProcessIds() {
 		if (this.delegate != null) {
@@ -1009,9 +947,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return new ComponentProcessIdType[0];
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public DeviceAssignmentType[] componentDevices() {
 		if (this.delegate != null) {
@@ -1020,9 +955,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return new DeviceAssignmentType[0];
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public ComponentElementType[] componentImplementations() {
 		try {
@@ -1063,9 +995,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return types;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String profile() {
 		return this.profile;
@@ -1076,17 +1005,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return profile();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String name() {
 		return this.name;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean aware() {
 		return true;
