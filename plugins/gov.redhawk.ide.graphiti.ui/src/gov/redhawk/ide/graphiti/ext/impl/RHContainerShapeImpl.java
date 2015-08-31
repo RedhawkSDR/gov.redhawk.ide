@@ -1498,6 +1498,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 								for (UsesPortStub portStub : uses) {
 									if (portStub.getName().equals(usesPortText.getValue())) {
 										found = true;
+										break;
 									}
 								}
 								if (!found) {
