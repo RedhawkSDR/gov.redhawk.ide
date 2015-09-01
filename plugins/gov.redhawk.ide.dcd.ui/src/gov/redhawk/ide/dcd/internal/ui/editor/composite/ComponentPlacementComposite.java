@@ -91,6 +91,7 @@ public class ComponentPlacementComposite extends Composite implements IScaCompos
 
 	@Override
 	public void dispose() {
+		this.adapter.dispose();
 		if (this.adapterFactory != null) {
 			this.adapterFactory.dispose();
 			this.adapterFactory = null;

@@ -80,6 +80,7 @@ public class ComponentPropertiesSection extends GFPropertySection implements ITa
 
 	@Override
 	public final void dispose() {
+		this.adapter.dispose();
 		if (this.adapterFactory != null) {
 			if (adapterFactory instanceof IDisposable) {
 				((IDisposable) this.adapterFactory).dispose();
