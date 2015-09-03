@@ -174,7 +174,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 				final ScaDomainManager config = dmReg.findDomain(model.getDomainName());
 
 				final String domainName = config.getLabel();
-				final String launchConfigName = getLaunchConfigName(incomingDomain);
+				final String launchConfigName = getLaunchConfigName(domainName);
 				final String spdPath = incomingDomain.getDomainManagerSoftPkg().getLocalFile().getName();
 				model.setLaunchConfigName(launchConfigName);
 				model.setSpdPath(spdPath);
@@ -319,7 +319,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 		return SdrUiPlugin.getDefault().getPreferenceStore().getInt(SdrUiPreferenceConstants.PREF_AUTO_CONNECT_MAX_CONNECTION_ATTEMPTS);
 	}
 
-	private static String getLaunchConfigName(final DomainManagerConfiguration domain) {
-		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DOMAIN_MANAGER_NAME) + " " + domain.getName();
+	private static String getLaunchConfigName(final String domainName) {
+		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DOMAIN_MANAGER_NAME) + " " + domainName;
 	}
 }
