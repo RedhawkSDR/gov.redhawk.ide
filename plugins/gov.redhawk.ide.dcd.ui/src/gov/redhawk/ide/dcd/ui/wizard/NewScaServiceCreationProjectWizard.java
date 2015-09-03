@@ -10,9 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.ui.wizard;
 
+import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
 import gov.redhawk.ide.codegen.util.ImplementationAndSettings;
 import gov.redhawk.ide.dcd.generator.newservice.ServiceProjectCreator;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.spd.ui.wizard.ImplementationWizardPage;
 import gov.redhawk.ide.spd.ui.wizard.NewScaResourceWizard;
 import gov.redhawk.ide.ui.wizard.IImportWizard;
@@ -89,8 +91,9 @@ public class NewScaServiceCreationProjectWizard extends NewScaResourceWizard imp
 
 	@Override
     protected IFile createComponentFiles(IProject project, String name, String spdId, String author, IProgressMonitor monitor) throws CoreException {
+		final IdlLibrary library = SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
 		final String serviceRepId = ((ScaServiceProjectPropertiesWizardPage) NewScaServiceCreationProjectWizard.this.getResourcePropertiesPage()).getRepId();
-	    return ServiceProjectCreator.createServiceFiles(project, name, spdId, author, serviceRepId, monitor);
+		return ServiceProjectCreator.createServiceFiles(project, name, spdId, author, library, serviceRepId, monitor);
     }
 
 	@Override
