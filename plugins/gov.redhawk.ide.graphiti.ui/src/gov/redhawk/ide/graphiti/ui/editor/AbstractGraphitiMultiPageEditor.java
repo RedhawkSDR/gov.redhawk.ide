@@ -57,7 +57,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -432,35 +431,5 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 	}
 
 	protected abstract EObject getMainObject();
-
-	/**
-	 * This sets the selection into whichever viewer is active.
-	 */
-	@Override
-	public void setSelectionToViewer(final Collection< ? > collection) {
-		final Collection< ? > theSelection = collection;
-		// Make sure it's okay.
-		//
-		if (theSelection != null && !theSelection.isEmpty()) {
-			// I don't know if this should be run this deferred
-			// because we might have to give the editor a chance to process the
-			// viewer update events
-			// and hence to update the views first.
-			//
-			//
-			final Runnable runnable = new Runnable() {
-				@Override
-				public void run() {
-					// Try to select the items in the current content viewer of
-					// the editor.
-					//
-					if (getViewer() != null) {
-						getViewer().setSelection(new StructuredSelection(theSelection.toArray()), true);
-					}
-				}
-			};
-			runnable.run();
-		}
-	}
 	
 }
