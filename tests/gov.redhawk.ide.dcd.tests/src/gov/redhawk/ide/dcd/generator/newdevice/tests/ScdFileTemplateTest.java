@@ -46,7 +46,7 @@ public class ScdFileTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testExeDevice() throws IOException {
+	public void testCreateExecDevSCDFile() throws IOException {
 		// Generate XML using the template
 		final ScdFileTemplate scdTemplate = ScdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
@@ -74,7 +74,7 @@ public class ScdFileTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testLoadDevice() throws IOException {
+	public void testCreateLoadDevSCDFile() throws IOException {
 		// Generate XML using the template
 		final ScdFileTemplate scdTemplate = ScdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
@@ -102,7 +102,7 @@ public class ScdFileTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testDeviceAndAggregate() throws IOException {
+	public void testCreateAggDevSCDFile() throws IOException {
 		// Generate XML using the template
 		final ScdFileTemplate scdTemplate = ScdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();

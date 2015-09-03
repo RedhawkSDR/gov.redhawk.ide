@@ -34,11 +34,10 @@ public class PrfFileTemplateTest {
 
 	/**
 	 * Tests generating a PRF file
-	 * 
 	 * @throws IOException
 	 */
 	@Test
-	public void test() throws IOException {
+	public void testCreateDevicePRFFile() throws IOException {
 		// Generate XML using the template
 		final PrfFileTemplate prfTemplate = PrfFileTemplate.create(null);
 		GeneratorArgs args = new GeneratorArgs();
@@ -55,12 +54,11 @@ public class PrfFileTemplateTest {
 	}
 	
 	/**
-	 * Tests generating a PRF file
-	 * 
+	 * Tests generating a PRF file with null argument
 	 * @throws IOException
 	 */
 	@Test
-	public void testNull() throws IOException {
+	public void testCreateDevicePRFFile_NullArg() throws IOException {
 		// Generate XML using the template
 		final PrfFileTemplate prfTemplate = PrfFileTemplate.create(null);
 		

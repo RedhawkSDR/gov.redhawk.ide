@@ -42,7 +42,7 @@ public class SpdFileTemplateTest {
 	 */
 	@Test
 	@SuppressWarnings("deprecation")
-	public void test() throws IOException {
+	public void testCreateServiceSPDFile() throws IOException {
 		// Generate XML using the template
 		final SpdFileTemplate spdTemplate = SpdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
