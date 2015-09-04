@@ -21,6 +21,7 @@ import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.sca.ui.views.ScaExplorer;
 import gov.redhawk.sca.util.OrbSession;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
@@ -78,7 +79,7 @@ public class FEIScaExplorerTest extends UITest {
 		ref = ExecutableDeviceHelper.narrow(session.getPOA().servant_to_reference(new ExecutableDevicePOATie(stubDevice)));
 		devMgr.registerDevice(ref);
 
-		devMgr.fetchDevices(null);
+		devMgr.fetchDevices(new NullProgressMonitor(), null);
 		ScaDevice< ? > device = devMgr.getDevice("analogDevice");
 		device.refresh(null, RefreshDepth.SELF);
 		viewBot.sleep(500);
@@ -92,7 +93,7 @@ public class FEIScaExplorerTest extends UITest {
 			} catch (InvalidObjectReference e) {
 				// PASS
 			}
-			devMgr.fetchDevices(null);
+			devMgr.fetchDevices(new NullProgressMonitor(), null);
 			viewBot.sleep(500);
 		}
 	}
