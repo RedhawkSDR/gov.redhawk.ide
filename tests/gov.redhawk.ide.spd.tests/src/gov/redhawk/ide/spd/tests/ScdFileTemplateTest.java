@@ -30,8 +30,8 @@ import org.junit.Test;
  */
 public class ScdFileTemplateTest {
 
-	private static final int SUPPORT_INTERFACE_COUNT = 5;
-	private static final int INTERFACE_COUNT = 5;
+	private static final int SUPPORT_INTERFACE_COUNT = 8;
+	private static final int INTERFACE_COUNT = 8;
 
 	/**
 	 * Tests generating an SCD file for an executable device
