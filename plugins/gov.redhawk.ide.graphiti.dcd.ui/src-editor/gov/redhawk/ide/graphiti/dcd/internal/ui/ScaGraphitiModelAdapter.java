@@ -10,19 +10,18 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui;
 
-import gov.redhawk.ide.debug.LocalSca;
-import gov.redhawk.model.sca.IDisposable;
+import java.util.Collection;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.util.EContentAdapter;
+
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaDeviceManager;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaUsesPort;
-
-import java.util.Collection;
-
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.util.EContentAdapter;
 
 /**
  * 
@@ -39,7 +38,7 @@ public class ScaGraphitiModelAdapter extends EContentAdapter {
 	public void notifyChanged(final Notification notification) {
 		super.notifyChanged(notification);
 		if (notification.getNotifier() instanceof ScaDeviceManager) {
-			switch (notification.getFeatureID(LocalSca.class)) {
+			switch (notification.getFeatureID(ScaDeviceManager.class)) {
 			case ScaPackage.SCA_DEVICE_MANAGER__ALL_DEVICES:
 				switch (notification.getEventType()) {
 				case Notification.REMOVE:
@@ -55,32 +54,34 @@ public class ScaGraphitiModelAdapter extends EContentAdapter {
 			default:
 				break;
 			}
-
 		} else if (notification.getNotifier() instanceof ScaDevice) {
+			ScaDevice< ? > device = (ScaDevice< ? >) notification.getNotifier();
 			switch (notification.getFeatureID(ScaDevice.class)) {
 			case ScaPackage.SCA_DEVICE__IDENTIFIER:
 				switch (notification.getEventType()) {
 				case Notification.SET:
-					this.modelMap.add((ScaDevice< ? >) notification.getNotifier());
+					this.modelMap.add(device);
 					break;
 				default:
 					break;
 				}
 				break;
 			case ScaPackage.SCA_DEVICE__STARTED:
-				ScaDevice< ? > scaDevice = (ScaDevice< ? >) notification.getNotifier();
 				final Boolean started = (Boolean) notification.getNewValue();
-				this.modelMap.startStopDevice(scaDevice, started);
+				this.modelMap.startStopDevice(device, started);
 				break;
-			default:
-				break;
-			}
-			switch (notification.getFeatureID(IDisposable.class)) {
-			case ScaPackage.IDISPOSABLE__DISPOSED:
-				if (notification.getNotifier() instanceof Notifier) {
-					final Notifier notifier = (Notifier) notification.getNotifier();
-					notifier.eAdapters().remove(this);
+			case ScaPackage.SCA_DEVICE__STATUS:
+				IStatus status = (IStatus) notification.getNewValue();
+				switch (status.getSeverity()) {
+				case IStatus.ERROR:
+					this.modelMap.reflectErrorState(device, status);
+					break;
+				default:
+					break;
 				}
+				break;
+			case ScaPackage.SCA_DEVICE__DISPOSED:
+				device.eAdapters().remove(this);
 				break;
 			default:
 				break;

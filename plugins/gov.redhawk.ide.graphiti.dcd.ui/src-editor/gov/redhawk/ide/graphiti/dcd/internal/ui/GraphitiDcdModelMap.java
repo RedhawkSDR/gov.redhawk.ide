@@ -10,42 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui;
 
-import gov.redhawk.ide.debug.LocalAbstractComponent;
-import gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl;
-import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor;
-import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramFeatureProvider;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.model.sca.ScaConnection;
-import gov.redhawk.model.sca.ScaDevice;
-import gov.redhawk.model.sca.ScaDeviceManager;
-import gov.redhawk.model.sca.ScaPort;
-import gov.redhawk.model.sca.ScaProvidesPort;
-import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.model.sca.commands.NonDirtyingCommand;
-import gov.redhawk.sca.util.SubMonitor;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
-import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.dcd.impl.DcdComponentInstantiationImpl;
-import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -73,6 +42,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
+import org.eclipse.ui.progress.UIJob;
 import org.omg.CORBA.SystemException;
 
 import CF.DataType;
@@ -80,6 +50,35 @@ import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.ReleaseError;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
+import gov.redhawk.ide.debug.LocalAbstractComponent;
+import gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl;
+import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor;
+import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramFeatureProvider;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.model.sca.ScaConnection;
+import gov.redhawk.model.sca.ScaDevice;
+import gov.redhawk.model.sca.ScaDeviceManager;
+import gov.redhawk.model.sca.ScaPort;
+import gov.redhawk.model.sca.ScaProvidesPort;
+import gov.redhawk.model.sca.ScaUsesPort;
+import gov.redhawk.model.sca.commands.NonDirtyingCommand;
+import gov.redhawk.sca.util.SubMonitor;
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.dcd.impl.DcdComponentInstantiationImpl;
+import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public class GraphitiDcdModelMap {
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
@@ -211,38 +210,35 @@ public class GraphitiDcdModelMap {
 	 * @param started
 	 */
 	public void startStopDevice(ScaDevice< ? > scaDevice, final Boolean started) {
+		final boolean resolveStarted = (started == null) ? false : started;
 		final DcdNodeMapEntry nodeMapEntry = nodes.get(DcdNodeMapEntry.getKey(scaDevice));
 		if (nodeMapEntry == null) {
 			return;
 		}
 		final DcdComponentInstantiation dcdComponentInstantiation = nodeMapEntry.getProfile();
 
-		// setup to perform diagram operations
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final Diagram diagram = provider.getDiagram();
-
-		// get pictogram for device
-		final RHContainerShape rhContainerShape = (RHContainerShape) DUtil.getPictogramElementForBusinessObject(diagram, dcdComponentInstantiation,
-			RHContainerShapeImpl.class);
-
-		if (rhContainerShape != null) {
-			Job job = new Job("Syncronizing Device diagram start/stop status: " + scaDevice.getIdentifier()) {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
-
-						@Override
-						public void execute() {
-							// paint device
-							rhContainerShape.setStarted(started);
-						}
-
-					});
-					return Status.OK_STATUS;
+		Job job = new UIJob("Update started state: " + scaDevice.getIdentifier()) {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+				final Diagram diagram = provider.getDiagram();
+				final RHContainerShape rhContainerShape = DUtil.getPictogramElementForBusinessObject(diagram, dcdComponentInstantiation, RHContainerShape.class);
+				if (rhContainerShape == null) {
+					return Status.CANCEL_STATUS;
 				}
-			};
-			job.schedule();
-		}
+
+				NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
+					@Override
+					public void execute() {
+						// paint device
+						rhContainerShape.setStarted(resolveStarted);
+					}
+				});
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	/**
@@ -250,36 +246,47 @@ public class GraphitiDcdModelMap {
 	 * Fires when the diagram is first launched
 	 */
 	public void reflectRuntimeStatus() {
-		// setup to perform diagram operations
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final Diagram diagram = provider.getDiagram();
+		synchronized (nodes) {
+			for (String nodeKey : nodes.keySet()) {
+				final DcdNodeMapEntry nodeMapEntry = nodes.get(nodeKey);
+				ScaDevice< ? > device = nodeMapEntry.getScaDevice();
+				startStopDevice(device, device.getStarted());
+			}
+		}
+	}
 
-		Job job = new Job("Syncronizing Device started status") {
+	/**
+	 * Updates the color of the component shape to reflect error state
+	 * @param scaComponent
+	 * @param status
+	 */
+	public void reflectErrorState(ScaDevice< ? > device, final IStatus status) {
+		final DcdNodeMapEntry nodeMapEntry = nodes.get(DcdNodeMapEntry.getKey(device));
+		if (nodeMapEntry == null) {
+			return;
+		}
+		final DcdComponentInstantiation dcdComponentInstantiation = nodeMapEntry.getProfile();
+
+		Job job = new UIJob("Update error state: " + device.getIdentifier()) {
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				for (String nodeKey : nodes.keySet()) {
-					final DcdNodeMapEntry nodeMapEntry = nodes.get(nodeKey);
-
-					// get pictogram for device
-					final RHContainerShape shape = (RHContainerShape) DUtil.getPictogramElementForBusinessObject(diagram, nodeMapEntry.getProfile(),
-						RHContainerShapeImpl.class);
-
-					final boolean started = nodeMapEntry.getScaDevice().getStarted();
-					if (started) {
-						NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
-
-							@Override
-							public void execute() {
-								// paint device
-								shape.setStarted(started);
-							}
-
-						});
-					}
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+				final Diagram diagram = provider.getDiagram();
+				final RHContainerShape deviceShape = DUtil.getPictogramElementForBusinessObject(diagram, dcdComponentInstantiation, RHContainerShape.class);
+				if (deviceShape == null) {
+					return Status.CANCEL_STATUS;
 				}
+
+				NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
+					@Override
+					public void execute() {
+						deviceShape.setIStatusSeverity(status.getSeverity());
+					}
+				});
 				return Status.OK_STATUS;
 			}
 		};
+		job.setSystem(true);
 		job.schedule();
 	}
 

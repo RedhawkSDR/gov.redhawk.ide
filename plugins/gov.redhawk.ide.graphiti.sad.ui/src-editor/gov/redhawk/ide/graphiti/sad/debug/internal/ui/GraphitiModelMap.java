@@ -51,6 +51,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.SystemException;
@@ -62,6 +63,7 @@ import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformSandboxEditor;
@@ -764,79 +766,52 @@ public class GraphitiModelMap implements IPortStatListener {
 
 	/**
 	 * Paints the Chalkboard diagram component appropriate color
-	 * @param localScaComponent
+	 * @param scaComponent
 	 * @param started
 	 */
-	public void startStopComponent(LocalScaComponent localScaComponent, final Boolean started) {
-		final NodeMapEntry nodeMapEntry = nodes.get(NodeMapEntry.getKey(localScaComponent));
+	public void startStopComponent(ScaComponent scaComponent, final Boolean started) {
+		final boolean resolveStarted = (started == null) ? false : started;
+		final NodeMapEntry nodeMapEntry = nodes.get(NodeMapEntry.getKey(scaComponent));
 		if (nodeMapEntry == null) {
 			return;
 		}
 		final SadComponentInstantiation sadComponentInstantiation = nodeMapEntry.getProfile();
 
-		// setup to perform diagram operations
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final Diagram diagram = provider.getDiagram();
-
 		// get pictogram for component
-		final ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation,
-			ComponentShapeImpl.class);
-
-		if (componentShape != null) {
-			Job job = new Job("Syncronizing Waveform diagram start/stop status: " + localScaComponent.getInstantiationIdentifier()) {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
-
-						@Override
-						public void execute() {
-							componentShape.setStarted(started);
-						}
-
-					});
-
-					return Status.OK_STATUS;
+		Job job = new UIJob("Update started state: " + scaComponent.getInstantiationIdentifier()) {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+				final Diagram diagram = provider.getDiagram();
+				final RHContainerShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, RHContainerShape.class);
+				if (componentShape == null) {
+					return Status.CANCEL_STATUS;
 				}
-			};
-			job.schedule();
-		}
+
+				NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
+					@Override
+					public void execute() {
+						componentShape.setStarted(resolveStarted);
+					}
+				});
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	/**
 	 * Modifies the diagram to reflect component runtime status
 	 */
 	public void reflectRuntimeStatus() {
-
-		// setup to perform diagram operations
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final Diagram diagram = provider.getDiagram();
-
-		Job job = new Job("Syncronizing Component started status") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				for (String nodeKey : nodes.keySet()) {
-					final NodeMapEntry nodeMapEntry = nodes.get(nodeKey);
-
-					// get pictogram for component
-					final ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(diagram, nodeMapEntry.getProfile(),
-						ComponentShapeImpl.class);
-
-					final boolean started = nodeMapEntry.getLocalScaComponent().getStarted();
-					if (started) {
-						NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
-
-							@Override
-							public void execute() {
-								componentShape.setStarted(started);
-							}
-
-						});
-					}
-				}
-				return Status.OK_STATUS;
+		synchronized (nodes) {
+			for (String nodeKey : nodes.keySet()) {
+				final NodeMapEntry nodeMapEntry = nodes.get(nodeKey);
+				LocalScaComponent component = nodeMapEntry.getLocalScaComponent();
+				startStopComponent(component, component.getStarted());
 			}
-		};
-		job.schedule();
+		}
 	}
 
 	/**
@@ -851,30 +826,27 @@ public class GraphitiModelMap implements IPortStatListener {
 		}
 		final SadComponentInstantiation sadComponentInstantiation = nodeMapEntry.getProfile();
 
-		// get pictogram for component
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final Diagram diagram = provider.getDiagram();
-		final ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation,
-			ComponentShapeImpl.class);
-
-		if (componentShape != null) {
-			Job job = new Job("Syncronizing diagram error state: " + scaComponent.getInstantiationIdentifier()) {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
-
-						@Override
-						public void execute() {
-							componentShape.setIStatusSeverity(status.getSeverity());
-						}
-
-					});
-
-					return Status.OK_STATUS;
+		Job job = new UIJob("Update error state: " + scaComponent.getInstantiationIdentifier()) {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+				final Diagram diagram = provider.getDiagram();
+				final RHContainerShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, RHContainerShape.class);
+				if (componentShape == null) {
+					return Status.CANCEL_STATUS;
 				}
-			};
-			job.schedule();
-		}
+
+				NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
+					@Override
+					public void execute() {
+						componentShape.setIStatusSeverity(status.getSeverity());
+					}
+				});
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	/**

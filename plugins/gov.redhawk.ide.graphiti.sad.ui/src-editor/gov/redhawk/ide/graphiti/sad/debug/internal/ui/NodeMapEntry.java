@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.model.sca.ScaComponent;
 
 public class NodeMapEntry {
 	private String key;
@@ -70,7 +71,7 @@ public class NodeMapEntry {
 		return null;
 	}
 
-	public static String getKey(LocalScaComponent obj) {
+	public static String getKey(ScaComponent obj) {
 		return obj.getInstantiationIdentifier();
 	}
 

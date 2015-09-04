@@ -10,23 +10,21 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.debug.internal.ui;
 
-import gov.redhawk.ide.debug.LocalSca;
-import gov.redhawk.ide.debug.LocalScaComponent;
-import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.ScaDebugPackage;
-import gov.redhawk.model.sca.IDisposable;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaConnection;
-import gov.redhawk.model.sca.ScaPackage;
-import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.model.sca.ScaWaveform;
-
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.util.EContentAdapter;
+
+import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.ScaDebugPackage;
+import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaConnection;
+import gov.redhawk.model.sca.ScaPackage;
+import gov.redhawk.model.sca.ScaUsesPort;
+import gov.redhawk.model.sca.ScaWaveform;
 
 /**
  * 
@@ -43,7 +41,7 @@ public class ScaGraphitiModelAdapter extends EContentAdapter {
 	public void notifyChanged(final Notification notification) {
 		super.notifyChanged(notification);
 		if (notification.getNotifier() instanceof LocalScaWaveform) {
-			switch (notification.getFeatureID(LocalSca.class)) {
+			switch (notification.getFeatureID(LocalScaWaveform.class)) {
 			case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENTS:
 				switch (notification.getEventType()) {
 				case Notification.ADD:
@@ -79,36 +77,27 @@ public class ScaGraphitiModelAdapter extends EContentAdapter {
 			default:
 				break;
 			}
-		} else if (notification.getNotifier() instanceof LocalScaComponent) {
-			switch (notification.getFeatureID(LocalScaComponent.class)) {
+		} else if (notification.getNotifier() instanceof ScaComponent) {
+			ScaComponent scaComponent = (ScaComponent) notification.getNotifier();
+			switch (notification.getFeatureID(ScaComponent.class)) {
 			case ScaPackage.SCA_COMPONENT__STARTED:
-				LocalScaComponent localScaComponent = (LocalScaComponent) notification.getNotifier();
 				final Boolean started = (Boolean) notification.getNewValue();
 				if (started != null) {
-					this.modelMap.startStopComponent(localScaComponent, started);
+					this.modelMap.startStopComponent(scaComponent, started);
 				}
 				break;
 			case ScaPackage.SCA_COMPONENT__STATUS:
 				IStatus status = (IStatus) notification.getNewValue();
 				switch (status.getSeverity()) {
 				case IStatus.ERROR:
-					ScaComponent scaComponent = (ScaComponent) notification.getNotifier();
 					this.modelMap.reflectErrorState(scaComponent, status);
 					break;
 				default:
 					break;
 				}
 				break;
-			default:
-				break;
-			}
-
-			switch (notification.getFeatureID(IDisposable.class)) {
-			case ScaPackage.IDISPOSABLE__DISPOSED:
-				if (notification.getNotifier() instanceof Notifier) {
-					final Notifier notifier = (Notifier) notification.getNotifier();
-					notifier.eAdapters().remove(this);
-				}
+			case ScaPackage.SCA_COMPONENT__DISPOSED:
+				scaComponent.eAdapters().remove(this);
 				break;
 			default:
 				break;
