@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.generator.newservice;
 
+import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.dcd.IdeDcdPlugin;
 import gov.redhawk.ide.natures.ScaComponentProjectNature;
@@ -61,6 +62,8 @@ public class ServiceProjectCreator extends ProjectCreator {
 	 * @param spdName The spd name
 	 * @param spdID The ID of the spd
 	 * @param authorName The name of the service author
+	 * @param library The IDL library, if available, or null
+	 * @param serviceRepId The service's repid
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
 	 *  reported and that the operation cannot be canceled.
@@ -68,7 +71,7 @@ public class ServiceProjectCreator extends ProjectCreator {
 	 * @throws CoreException An error occurs while generating files
 	 */
 	public static IFile createServiceFiles(final IProject project, final String spdName, final String spdID, 
-			final String authorName, final String serviceRepId, final IProgressMonitor monitor)
+			final String authorName, final IdlLibrary library, final String serviceRepId, final IProgressMonitor monitor)
 	        throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, "Creating SCA Service files", 2);
 
@@ -77,7 +80,8 @@ public class ServiceProjectCreator extends ProjectCreator {
 		args.setSoftPkgId(spdID);
 		args.setSoftPkgName(project.getName());
 		args.setAuthorName(authorName);
-		args.setProperty("service_repid", serviceRepId);
+		args.setLibrary(library);
+		args.setRepId(serviceRepId);
 		args.setScdFile(spdName + ScdPackage.FILE_EXTENSION);
 
 		// Generate file content from templates

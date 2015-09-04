@@ -33,12 +33,12 @@ import org.junit.Test;
  */
 public class ScdFileTemplateTest {
 
-	private static final int EXE_SUPPORT_INTERFACE_COUNT = 8;
-	private static final int EXE_INTERFACE_COUNT = 8;
-	private static final int LOAD_SUPPORT_INTERFACE_COUNT = 7;
-	private static final int LOAD_INTERFACE_COUNT = 7;
-	private static final int DEV_AND_AGGREGATE_SUPPORT_INTERFACE_COUNT = 7;
-	private static final int DEV_AND_AGGREGATE_INTERFACE_COUNT = 7;
+	private static final int EXE_SUPPORT_INTERFACE_COUNT = 11;
+	private static final int EXE_INTERFACE_COUNT = 11;
+	private static final int LOAD_SUPPORT_INTERFACE_COUNT = 10;
+	private static final int LOAD_INTERFACE_COUNT = 10;
+	private static final int DEV_AND_AGGREGATE_SUPPORT_INTERFACE_COUNT = 10;
+	private static final int DEV_AND_AGGREGATE_INTERFACE_COUNT = 10;
 
 	/**
 	 * Tests generating an SCD file for an executable device
@@ -46,7 +46,7 @@ public class ScdFileTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testExeDevice() throws IOException {
+	public void testCreateExecDevSCDFile() throws IOException {
 		// Generate XML using the template
 		final ScdFileTemplate scdTemplate = ScdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
@@ -74,7 +74,7 @@ public class ScdFileTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testLoadDevice() throws IOException {
+	public void testCreateLoadDevSCDFile() throws IOException {
 		// Generate XML using the template
 		final ScdFileTemplate scdTemplate = ScdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
@@ -102,7 +102,7 @@ public class ScdFileTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testDeviceAndAggregate() throws IOException {
+	public void testCreateAggDevSCDFile() throws IOException {
 		// Generate XML using the template
 		final ScdFileTemplate scdTemplate = ScdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();

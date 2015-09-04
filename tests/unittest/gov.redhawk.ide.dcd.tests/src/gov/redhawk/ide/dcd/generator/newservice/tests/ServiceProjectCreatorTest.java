@@ -11,8 +11,10 @@
 
 package gov.redhawk.ide.dcd.generator.newservice.tests;
 
+import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.ide.dcd.generator.newdevice.DeviceProjectCreator;
 import gov.redhawk.ide.dcd.generator.newservice.ServiceProjectCreator;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
 import org.junit.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
@@ -55,11 +57,13 @@ public class ServiceProjectCreatorTest {
 	@Test
 	public void testCreateServiceFiles() throws CoreException {
 		final IProject project = DeviceProjectCreator.createEmptyProject("serviceProjectTest", null, new NullProgressMonitor());
+		final IdlLibrary library = SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
 		Assert.assertNotNull(project);
 		Assert.assertTrue("serviceProjectTest".equals(project.getName()));
 		ServiceProjectCreator.createServiceFiles(project, "serviceProjectTest",
 				"gov.redhawk.serviceProjectTest",
 		        "Author",
+		        library,
 		        "IDL:MULTICASTALLOCATION/MulticastAllocationService:1.0",
 		        new NullProgressMonitor());
 

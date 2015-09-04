@@ -42,7 +42,7 @@ public class PrfFileTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void test() throws IOException {
+	public void testCreateDevicePRFFile() throws IOException {
 		// Generate XML using the template
 		final PrfFileTemplate prfTemplate = PrfFileTemplate.create(null);
 		GeneratorArgs args = new GeneratorArgs();
@@ -68,7 +68,7 @@ public class PrfFileTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testNull() throws IOException {
+	public void testCreateDevicePRFFile_NullArg() throws IOException {
 		// Generate XML using the template
 		final PrfFileTemplate prfTemplate = PrfFileTemplate.create(null);
 		
