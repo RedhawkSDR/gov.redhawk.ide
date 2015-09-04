@@ -40,7 +40,7 @@ import org.eclipse.ui.progress.UIJob;
  * same identifier as the {@link ScaWaveform}.
  * <p/>
  * This is used to make components started in the chalkboard editor for a domain waveform appear under that waveform in
- * the SCA Explorer view.
+ * the REDHAWK Explorer view.
  * <p/>
  * The provider also triggers a refresh on the {@link org.eclipse.jface.viewers.Viewer Viewer} for the
  * {@link ScaWaveform} whenever components are changed in the corresponding {@link LocalScaWaveform}.

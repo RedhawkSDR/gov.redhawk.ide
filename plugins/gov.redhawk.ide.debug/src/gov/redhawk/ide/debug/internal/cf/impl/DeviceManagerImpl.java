@@ -78,7 +78,7 @@ import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
 
 /**
- * This is the implementation of the sandbox's device manager. It is represented in the SCA model by a {@link LocalScaDeviceManager}.
+ * This is the implementation of the sandbox's device manager. It is represented in the REDHAWK model by a {@link LocalScaDeviceManager}.
  */
 public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOperations {
 

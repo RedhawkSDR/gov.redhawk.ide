@@ -214,7 +214,7 @@ public class LocalScaEditor extends SadEditor {
 
 		final ModelMap modelMap = new ModelMap(this, sad, waveform);
 		if (isLocalSca) {
-			// Use the SCA Model are source to build the SAD when we are in the chalkboard since the SAD file isn't
+			// Use the REDHAWK Model as source to build the SAD when we are in the chalkboard since the SAD file isn't
 			// modified
 			getEditingDomain().getCommandStack().execute(new SadModelInitializerCommand(modelMap, sad, waveform));
 		} else {

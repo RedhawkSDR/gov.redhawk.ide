@@ -102,7 +102,7 @@ public class RenameFileParticipant extends RenameParticipant {
 	/** List of folders that will be changed */
 	private final List<IFolder> affectedFolders = new ArrayList<IFolder>();
 
-	/** List of SCA Resource types */
+	/** List of REDHAWK XML file extensions */
 	private static final List<String> SUPPORTED_FILES = Arrays.asList(new String[] {
 	        PrfPackage.FILE_EXTENSION, SpdPackage.FILE_EXTENSION, ScdPackage.FILE_EXTENSION
 	});
@@ -114,7 +114,7 @@ public class RenameFileParticipant extends RenameParticipant {
 	@Override
 	protected boolean initialize(final Object element) {
 		/*
-		 *  Verify object for refactoring is a project with the SCA component nature.
+		 *  Verify object for refactoring is a project with the REDHAWK component nature.
 		 *  
 		 *  Grab it's spd file.
 		 *  

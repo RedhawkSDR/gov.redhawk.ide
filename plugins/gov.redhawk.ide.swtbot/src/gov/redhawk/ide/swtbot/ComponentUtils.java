@@ -22,14 +22,14 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class ComponentUtils {
 
-	public static final String COMPONENT_MENU_NAME = "SCA Component Project";
+	public static final String COMPONENT_MENU_NAME = "REDHAWK Component Project";
 
 	/** private to prevent instantiation since all functions are static. */
 	private ComponentUtils() {
 	}
 
 	/**
-	 * Launches the selected component in the SCA Explorer chalkboard
+	 * Launches the selected component in the REDHAWK Explorer chalkboard
 	 * @returns the SWTBotTreeItem for the component
 	 */
 	public static SWTBotTreeItem launchLocalComponent(final SWTWorkbenchBot bot, final String componentName, final String implementation) {
@@ -71,7 +71,7 @@ public class ComponentUtils {
 		return null;
 	}
 
-	/** create SCA Component in Workspace using default location */
+	/** create REDHAWK Component in Workspace using default location */
 	public static void createComponentProject(SWTBot bot, String componentProjectName, String progLanguage) {
 		StandardTestActions.configurePyDev(bot);
 
@@ -89,7 +89,7 @@ public class ComponentUtils {
 			@Override
 			public boolean test() throws Exception {
 				try {
-					wizardBot.tree().getTreeItem("SCA").expand().getNode(COMPONENT_MENU_NAME).select();
+					wizardBot.tree().getTreeItem("REDHAWK").expand().getNode(COMPONENT_MENU_NAME).select();
 					return true;
 				} catch (WidgetNotFoundException e) {
 					return false;

@@ -23,7 +23,7 @@ public class WaveformNamingRaceConditionTest extends UITest {
 
 	/**
 	 * Tests a race condition - it was possible to enter an illegal character in the waveform name while completing
-	 * the new SCA waveform wizard.
+	 * the new REDHAWK waveform wizard.
 	 *  
 	 * @throws Exception
 	 */
@@ -33,7 +33,7 @@ public class WaveformNamingRaceConditionTest extends UITest {
 		
 		SWTBotShell wizardShell = bot.shell("New");
 		wizardShell.activate();
-		bot.tree().getTreeItem("SCA").expand().getNode("SCA Waveform Project").select();
+		bot.tree().getTreeItem("SCA").expand().getNode("REDHAWK Waveform Project").select();
 		bot.button("Next >").click();
 
 		SWTBotText projectNameField = bot.textWithLabel("Project name:");

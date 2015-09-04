@@ -345,7 +345,7 @@
               point="org.eclipse.ui.importWizards">
            <category
                  id="gov.redhawk.ide.ui.import.sca"
-                 name="SCA Development">
+                 name="REDHAWK Development">
            </category>
            <wizard
                  category="gov.redhawk.ide.ui.import.sca"

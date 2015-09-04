@@ -60,7 +60,7 @@ public class ScaFileSystemContributor extends FileSystemContributor {
 			final ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, lp);
 			dialog.setAllowDuplicates(false);
 			dialog.setMultipleSelection(false);
-			dialog.setTitle("SCA File System");
+			dialog.setTitle("REDHAWK File System");
 			dialog.setMessage("Select file system root:");
 			dialog.setElements(input.toArray());
 			if (Window.OK == dialog.open()) {

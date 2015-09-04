@@ -386,7 +386,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 		};
 
 		if (isLocalSca) {
-			// Use the SCA Model source to build the SAD when in the chalkboard since the SAD file isn't modified
+			// Use the REDHAWK Model source to build the SAD when in the chalkboard since the SAD file isn't modified
 			getEditingDomain().getCommandStack().execute(new SadGraphitiModelInitializerCommand(modelMap, sad, waveform));
 			ScaModelCommand.execute(this.waveform, new ScaModelCommand() {
 

@@ -3,7 +3,7 @@
 <schema targetNamespace="gov.redhawk.ide.codegen" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="gov.redhawk.ide.codegen" id="codegens" name="SCA Component Code Generator"/>
+         <meta.schema plugin="gov.redhawk.ide.codegen" id="codegens" name="REDHAWK Component Code Generator"/>
       </appinfo>
       <documentation>
          Contribute a code generator for various REDHAWK resources.

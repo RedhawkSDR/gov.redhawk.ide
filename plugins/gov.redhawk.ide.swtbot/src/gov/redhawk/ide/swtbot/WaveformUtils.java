@@ -29,7 +29,7 @@ public class WaveformUtils {
 	}
 	
 	/**
-	 * Creates a new waveform using File > New > Other... > Graphiti SCA Waveform Project wizard
+	 * Creates a new waveform using File > New > Other... > Graphiti REDHAWK Waveform Project wizard
 	 * @param bot - the executing SWTBot
 	 * @param waveformName
 	 */
@@ -42,7 +42,7 @@ public class WaveformUtils {
 		SWTBotShell wizardShell = bot.shell("New");
 		SWTBot wizardBot = wizardShell.bot();
 		wizardShell.activate();
-		wizardBot.tree().getTreeItem("SCA").expand().getNode("SCA Waveform Project").select();
+		wizardBot.tree().getTreeItem("REDHAWK").expand().getNode("REDHAWK Waveform Project").select();
 		wizardBot.button("Next >").click();
 
 		// Enter the name for the new waveform
@@ -77,7 +77,7 @@ public class WaveformUtils {
 	}
 
 	/**
-	 * Creates a new waveform with an assembly controller using File > New > Graphiti SCA Waveform Project wizard
+	 * Creates a new waveform with an assembly controller using File > New > Graphiti REDHAWK Waveform Project wizard
 	 * @param bot - the executing SWTBot
 	 * @param waveformName
 	 */
@@ -90,7 +90,7 @@ public class WaveformUtils {
 		SWTBotShell wizardShell = bot.shell("New");
 		wizardShell.activate();
 		SWTBot wizardBot = wizardShell.bot();
-		wizardBot.tree().getTreeItem("SCA").expand().getNode("SCA Waveform Project").select();
+		wizardBot.tree().getTreeItem("REDHAWK").expand().getNode("REDHAWK Waveform Project").select();
 		wizardBot.button("Next >").click();
 
 		// Enter the name for the new waveform
@@ -121,7 +121,7 @@ public class WaveformUtils {
 	}
 
 	/**
-	 * Launches the selected waveform in the SCA Explorer sandbox
+	 * Launches the selected waveform in the REDHAWK Explorer sandbox
 	 * @returns the SWTBotTreeItem for the Waveform on the Sandbox
 	 */
 	public static SWTBotTreeItem launchLocalWaveform(final SWTWorkbenchBot bot, final String waveformName) {

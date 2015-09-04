@@ -32,7 +32,7 @@ public class WaveformWizardTest extends AbstractCreationWizardTest {
 
 	@Override
 	protected String getProjectType() {
-		return "SCA Waveform Project";
+		return "REDHAWK Waveform Project";
 	}
 
 	@Test

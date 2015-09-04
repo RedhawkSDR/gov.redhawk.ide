@@ -310,7 +310,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	private void adjustComponentLocation(ComponentShape componentShape) {
 		final int BUFFER_WIDTH = 20;
 
-		// if any overlap occurs (can happen when launching using the SCA Explorer) adjust x/y-coords
+		// if any overlap occurs (can happen when launching using the REDHAWK Explorer) adjust x/y-coords
 		Diagram diagram = getFeatureProvider().getDiagramTypeProvider().getDiagram();
 		EList<Shape> children = diagram.getChildren();
 		for (Shape child : children) {

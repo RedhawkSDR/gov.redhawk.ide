@@ -21,13 +21,13 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
  */
 public class ServiceUtils {
 
-	public static final String SERVICE_MENU_NAME = "SCA Service Project";
+	public static final String SERVICE_MENU_NAME = "REDHAWK Service Project";
 
 	/** private to prevent instantiation since all functions are static. */
 	private ServiceUtils() {
 	}
 
-	/** create SCA Service in Workspace using default location */
+	/** create REDHAWK Service in Workspace using default location */
 	public static void createServiceProject(SWTBot bot, String serviceProjectName, String interfaceName, String progLanguage) {
 		StandardTestActions.configurePyDev(bot);
 
@@ -45,7 +45,7 @@ public class ServiceUtils {
 			@Override
 			public boolean test() throws Exception {
 				try {
-					wizardBot.tree().getTreeItem("SCA").expand().getNode(SERVICE_MENU_NAME).select();
+					wizardBot.tree().getTreeItem("REDHAWK").expand().getNode(SERVICE_MENU_NAME).select();
 					return true;
 				} catch (WidgetNotFoundException e) {
 					return false;

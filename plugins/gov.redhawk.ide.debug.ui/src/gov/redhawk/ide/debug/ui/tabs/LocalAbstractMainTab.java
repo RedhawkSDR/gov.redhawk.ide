@@ -89,7 +89,7 @@ public abstract class LocalAbstractMainTab extends AbstractLaunchConfigurationTa
 
 		final Group profileGroup = new Group(composite, SWT.None);
 		profileGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		profileGroup.setText("SCA Profile");
+		profileGroup.setText("REDHAWK Profile");
 		createProfileGroup(profileGroup);
 
 		final Group launchConfigGroup = new Group(composite, SWT.None);

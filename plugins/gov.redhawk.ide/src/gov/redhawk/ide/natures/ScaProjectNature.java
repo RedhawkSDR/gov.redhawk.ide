@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A REDHAWK nature added to all SCA projects
+ * A REDHAWK nature added to all REDHAWK projects
  */
 public class ScaProjectNature implements IProjectNature {
 

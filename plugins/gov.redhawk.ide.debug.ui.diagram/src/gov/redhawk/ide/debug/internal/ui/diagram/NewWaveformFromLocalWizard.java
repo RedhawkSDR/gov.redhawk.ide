@@ -83,7 +83,7 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 		this.waveformPropertiesPage = new ScaWaveformProjectPropertiesWizardPage("");
 		this.waveformPropertiesPage.setShowContentsGroup(false);
 		this.waveformPropertiesPage.setTitle("Save Chalkboard");
-		this.waveformPropertiesPage.setDescription("Save the Chalkboard as a new SCA Waveform Project.");
+		this.waveformPropertiesPage.setDescription("Save the Chalkboard as a new REDHAWK Waveform Project.");
 		addPage(this.waveformPropertiesPage);
 	}
 

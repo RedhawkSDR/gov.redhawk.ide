@@ -27,7 +27,7 @@ public class DeviceCreationWizardTest extends ComponentWizardTest {
 
 	@Override
 	protected String getProjectType() {
-		return "SCA Device Project";
+		return "REDHAWK Device Project";
 	}
 	
 	@Test

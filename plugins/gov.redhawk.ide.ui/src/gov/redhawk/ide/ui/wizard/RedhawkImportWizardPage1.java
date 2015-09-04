@@ -358,7 +358,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	// the wizard was invoked.
 	private static String previouslyBrowsedArchive = ""; //$NON-NLS-1$
 
-	// SCA file type extensions
+	// XML file type extensions
 	private static String sadExtension = ".+\\.sad.xml";
 	private static String spdExtension = ".+\\.spd.xml";
 	private static String dcdExtension = ".+\\.dcd.xml";
@@ -1145,7 +1145,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 				return true;
 			}
 		}
-		// if project description files are not found look for SCA specific file names
+		// if project description files are not found look for REDHAWK-specific file names
 		for (int i = 0; i < contents.length; i++) {
 			File file = contents[i];
 			if (file.isFile() && file.getName().matches(sadExtension)) {

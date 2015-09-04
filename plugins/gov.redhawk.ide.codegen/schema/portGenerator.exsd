@@ -3,7 +3,7 @@
 <schema targetNamespace="gov.redhawk.ide.codegen" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="gov.redhawk.ide.codegen" id="portGenerator" name="SCA Port Code Generator"/>
+         <meta.schema plugin="gov.redhawk.ide.codegen" id="portGenerator" name="REDHAWK Port Code Generator"/>
       </appinfo>
       <documentation>
          Custom code generators used when generated code for ports

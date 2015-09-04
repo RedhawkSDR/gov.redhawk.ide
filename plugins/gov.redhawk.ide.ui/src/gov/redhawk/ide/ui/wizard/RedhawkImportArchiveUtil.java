@@ -212,7 +212,7 @@ public class RedhawkImportArchiveUtil extends RedhawkImportUtil {
 
 	@Override
 	protected WaveDevSettings createWaveDevFile() throws CoreException {
-		// Locate the SCA file that was just imported into workspace via the createDotProjectFile() method
+		// Locate the file that was just imported into workspace via the createDotProjectFile() method
 		String relativePath = structureProvider.getFullPath(record.projectArchiveFile);
 		IFile file = project.getFile(relativePath);
 

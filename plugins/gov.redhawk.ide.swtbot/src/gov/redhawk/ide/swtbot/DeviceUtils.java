@@ -21,13 +21,13 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
  */
 public class DeviceUtils {
 
-	public static final String DEVICE_MENU_NAME = "SCA Device Project";
+	public static final String DEVICE_MENU_NAME = "REDHAWK Device Project";
 
 	/** private to prevent instantiation since all functions are static. */
 	private DeviceUtils() {
 	}
 	
-	/** create SCA Device in Workspace using default location */
+	/** create REDHAWK Device in Workspace using default location */
 	public static void createDeviceProject(SWTBot bot, String deviceProjectName, String progLanguage) {
 		StandardTestActions.configurePyDev(bot);
 
@@ -45,7 +45,7 @@ public class DeviceUtils {
 			@Override
 			public boolean test() throws Exception {
 				try {
-					wizardBot.tree().getTreeItem("SCA").expand().getNode(DEVICE_MENU_NAME).select();
+					wizardBot.tree().getTreeItem("REDHAWK").expand().getNode(DEVICE_MENU_NAME).select();
 					return true;
 				} catch (WidgetNotFoundException e) {
 					return false;

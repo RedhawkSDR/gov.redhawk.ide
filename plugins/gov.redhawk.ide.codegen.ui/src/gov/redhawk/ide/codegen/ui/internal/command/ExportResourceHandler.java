@@ -56,7 +56,7 @@ public class ExportResourceHandler extends AbstractHandler implements IHandler {
 
 				final IProject project = file.getProject();
 
-				final WorkspaceJob job = new WorkspaceJob("Exporting SCA Resource") {
+				final WorkspaceJob job = new WorkspaceJob("Exporting REDHAWK Resource") {
 
 					@Override
 					public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {

@@ -30,6 +30,9 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class ScaExplorerTestUtils {
 
+	/**
+	 * The ID for the REDHAWK Explorer view
+	 */
 	public static final String SCA_EXPLORER_VIEW_ID = "gov.redhawk.ui.sca_explorer";
 
 	public static enum DiagramType {
@@ -54,7 +57,7 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/**
-	 * Opens and sets focus to the SCA Explorer view
+	 * Opens and sets focus to the REDHAWK Explorer view
 	 * @return Returns the SWTBot associated with the view
 	 */
 	public static SWTBot showScaExplorerView(SWTWorkbenchBot bot) {
@@ -65,7 +68,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Open the specified Graphiti Diagram from ScaExplorer.
+	 * Open the specified Graphiti Diagram from the REDHAWK Explorer.
 	 * @param bot
 	 * @param editor
 	 * @param componentName
@@ -75,7 +78,7 @@ public class ScaExplorerTestUtils {
 	public static void openDiagramFromScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String treeItemName, DiagramType diagramType) {
 		SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, treeItemName);
 		if (treeItem == null) {
-			throw new WidgetNotFoundException("Tree item " + treeItemName + " not found in SCA Explorer");
+			throw new WidgetNotFoundException("Tree item " + treeItemName + " not found in REDHAWK Explorer");
 		}
 
 		treeItem.select();
@@ -83,10 +86,10 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Returns the Tree item from SCA Explorer
+	 * Returns the Tree item from REDHAWK Explorer
 	 */
 	public static SWTBotTreeItem getTreeItemFromScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String treeItemName) {
-		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
+		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
 
 		List<String> path = new ArrayList<String>();
 		for (int i = 1; i < parentPath.length; i++) {
@@ -145,7 +148,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Returns the full name of the tree item found in SCA Explorer.
+	 * Returns the full name of the tree item found in REDHAWK Explorer.
 	 * You can pass this method a prefix for the waveform/node/etc that you are trying to find
 	 * @param bot
 	 * @param parentPath
@@ -166,7 +169,7 @@ public class ScaExplorerTestUtils {
 	 * @param domainName
 	 */
 	public static void launchDomain(SWTWorkbenchBot bot, String domainName, String deviceName) {
-		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
+		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
 		SWTBotTreeItem targetSDRTreeItem = scaExplorerView.bot().tree().getTreeItem("Target SDR");
 		targetSDRTreeItem.select();
 		SWTBotMenu launchDomain = targetSDRTreeItem.contextMenu("Launch Domain ...");
@@ -193,13 +196,13 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Returns the SWTBotTreeItem for the domain in ScaExplorer with the provided name
+	 * Returns the SWTBotTreeItem for the domain in REDHAWK Explorer with the provided name
 	 * @param bot
 	 * @param domainName
 	 * @return
 	 */
 	public static SWTBotTreeItem getDomain(SWTWorkbenchBot bot, String domainName) {
-		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
+		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
 
 		SWTBotTreeItem[] items = scaExplorerView.bot().tree().getAllItems();
 		for (SWTBotTreeItem item : items) {
@@ -211,7 +214,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Delete domain instance from ScaExplorer
+	 * Delete domain instance from REDHAWK Explorer
 	 * @param bot
 	 * @param domainName
 	 */
@@ -232,7 +235,7 @@ public class ScaExplorerTestUtils {
 
 	public static void launchWaveformFromDomain(SWTWorkbenchBot bot, String domain, String waveform) {
 
-		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
+		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
 		SWTBotTreeItem domainTreeItem = scaExplorerView.bot().tree().getTreeItem(domain + " CONNECTED");
 		domainTreeItem.select();
 		SWTBotMenu launchWaveform = domainTreeItem.contextMenu("Launch Waveform...");
@@ -268,7 +271,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Terminates component via ScaExplorer
+	 * Terminates component via REDHAWK Explorer
 	 * @param componentName
 	 * @deprecated Use {@link #terminateLocalResourceInExplorer(SWTWorkbenchBot, String[], String)}
 	 */
@@ -281,7 +284,7 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/**
-	 * Terminates component via ScaExplorer
+	 * Terminates component via REDHAWK Explorer
 	 * @param componentName
 	 * @deprecated Use {@link #terminateLocalResourceInExplorer(SWTWorkbenchBot, String[], String)}
 	 */
@@ -294,7 +297,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Connect component ports via SCA Explorer
+	 * Connect component ports via REDHAWK Explorer
 	 * @param componentName
 	 */
 	public static void connectComponentPortsInScaExplorer(SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveform,
@@ -344,7 +347,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Disconnect connection via SCA Explorer
+	 * Disconnect connection via REDHAWK Explorer
 	 * @param componentName
 	 */
 	public static void disconnectConnectionInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, String connectionName,
@@ -368,7 +371,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Start component from ScaExplorer
+	 * Start component from REDHAWK Explorer
 	 * @param componentName
 	 * @deprecated Use {@link #startResourceInExplorer(SWTWorkbenchBot, String[], String)}
 	 */
@@ -422,7 +425,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Stop components in Diagram via ScaExplorer
+	 * Stop components in Diagram via REDHAWK Explorer
 	 * @deprecated Use {@link #stopResourceInExplorer(SWTWorkbenchBot, String[], String)}
 	 */
 	@Deprecated
@@ -431,7 +434,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Terminate components in Diagram via ScaExplorer.
+	 * Terminate components in Diagram via REDHAWK Explorer.
 	 */
 	public static void terminateWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
@@ -443,7 +446,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Release node via ScaExplorer.
+	 * Release node via REDHAWK Explorer.
 	 */
 	public static void releaseFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
@@ -454,7 +457,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Release node via ScaExplorer.
+	 * Release node via REDHAWK Explorer.
 	 */
 	public static void terminateFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
@@ -466,7 +469,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Start container/component in Diagram via ScaExplorer
+	 * Start container/component in Diagram via REDHAWK Explorer
 	 * @deprecated Use {@link #startResourceInExplorer(SWTWorkbenchBot, String[], String)}
 	 */
 	@Deprecated
@@ -480,7 +483,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Stop component from ScaExplorer
+	 * Stop component from REDHAWK Explorer
 	 * @param bot
 	 * @param waveformParentPath
 	 * @param waveform
@@ -506,7 +509,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until node appears stopped in ScaExplorer
+	 * Waits until node appears stopped in REDHAWK Explorer
 	 * @param bot
 	 * @param parentPath - The domain or local path (e.g {"REDHAWK_DEV", "Device Managers"} or {"Sandbox"}
 	 * @param parent - The direct parent of the node (e.g. the waveform or device manager name) 
@@ -523,7 +526,7 @@ public class ScaExplorerTestUtils {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return nodeName + " Node did not appear stopped in SCA Explorer";
+				return nodeName + " Node did not appear stopped in REDHAWK Explorer";
 			}
 
 			@Override
@@ -596,7 +599,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until node appears stopped in ScaExplorer
+	 * Waits until node appears stopped in REDHAWK Explorer
 	 * @param bot
 	 * @param parentPath - The domain or local path (e.g {"REDHAWK_DEV", "Device Managers"} or {"Sandbox"}
 	 * @param parent - The direct parent of the node (e.g. the waveform or device manager name) 
@@ -613,7 +616,7 @@ public class ScaExplorerTestUtils {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return nodeName + " Node did not appear started in SCA Explorer";
+				return nodeName + " Node did not appear started in REDHAWK Explorer";
 			}
 
 			@Override
@@ -630,7 +633,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until Component displays in ScaExplorer
+	 * Waits until Component displays in REDHAWK Explorer
 	 * @param componentName
 	 */
 	public static void waitUntilComponentDisplaysInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, final String componentName) {
@@ -641,7 +644,7 @@ public class ScaExplorerTestUtils {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return componentName + " Component did not load into SCA Explorer";
+				return componentName + " Component did not load into REDHAWK Explorer";
 			}
 
 			@Override
@@ -658,7 +661,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until Component disappears in ScaExplorer
+	 * Waits until Component disappears in REDHAWK Explorer
 	 * @param componentName
 	 */
 	public static void waitUntilComponentDisappearsInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, final String componentName) {
@@ -669,7 +672,7 @@ public class ScaExplorerTestUtils {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return componentName + " Component did not disappear from SCA Explorer";
+				return componentName + " Component did not disappear from REDHAWK Explorer";
 			}
 
 			@Override
@@ -686,7 +689,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until Waveform disappears in ScaExplorer
+	 * Waits until Waveform disappears in REDHAWK Explorer
 	 * @param componentName
 	 * @deprecated use the type agnostic method call {@link #waitUntilNodeRemovedFromScaExplorer(SWTWorkbenchBot, String[], String)} instead
 	 */
@@ -696,7 +699,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until ScaExplorer Waveform is stopped
+	 * Waits until REDHAWK Explorer Waveform is stopped
 	 * @param componentName
 	 */
 	public static void waitUntilScaExplorerWaveformStopped(final SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveform) {
@@ -704,7 +707,7 @@ public class ScaExplorerTestUtils {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return "SCA Explorer Waveform is not stopped";
+				return "REDHAWK Explorer Waveform is not stopped";
 			}
 
 			@Override
@@ -719,16 +722,16 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until ScaExplorer Domain Launches and Connects
+	 * Waits until REDHAWK Explorer Domain Launches and Connects
 	 * @param componentName
 	 */
 	public static void waitUntilScaExplorerDomainConnects(SWTWorkbenchBot bot, final String domain) {
-		final SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
+		final SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
 
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return "SCA Explorer Domain did not launch and connect";
+				return "REDHAWK Explorer Domain did not launch and connect";
 			}
 
 			@Override
@@ -743,7 +746,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until ScaExplorer Waveform has no child items
+	 * Waits until REDHAWK Explorer Waveform has no child items
 	 * @param componentName
 	 */
 	public static void waitUntilScaExplorerWaveformEmpty(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
@@ -752,7 +755,7 @@ public class ScaExplorerTestUtils {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return "SCA Explorer Waveform is not empty";
+				return "REDHAWK Explorer Waveform is not empty";
 			}
 
 			@Override
@@ -790,7 +793,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until Connection displays in ScaExplorer
+	 * Waits until Connection displays in REDHAWK Explorer
 	 * @param componentName
 	 */
 	public static void waitUntilConnectionDisplaysInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, final String componentName,
@@ -803,7 +806,7 @@ public class ScaExplorerTestUtils {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return connectionName + " Connection did not load into SCA Explorer";
+				return connectionName + " Connection did not load into REDHAWK Explorer";
 			}
 
 			@Override
@@ -820,7 +823,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until Connection disappears in ScaExplorer
+	 * Waits until Connection disappears in REDHAWK Explorer
 	 * @param componentName
 	 */
 	public static void waitUntilConnectionDisappearsInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform,
@@ -833,7 +836,7 @@ public class ScaExplorerTestUtils {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return connectionName + " Connection did not load into SCA Explorer";
+				return connectionName + " Connection did not load into REDHAWK Explorer";
 			}
 
 			@Override
@@ -850,7 +853,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Launch component from ScaExplorer TargetSDR
+	 * Launch component from REDHAWK Explorer TargetSDR
 	 * @Param bot The SWTBot
 	 * @param componentName The component's name
 	 * @param implementationId The implementation ID to be launched
@@ -872,7 +875,7 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/**
-	 * Launch component from ScaExplorer TargetSDR
+	 * Launch component from REDHAWK Explorer TargetSDR
 	 * @param bot The SWTBot
 	 * @param deviceName The device's name
 	 * @param implementationId The implementation ID to be launched
@@ -888,7 +891,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Launch waveform from ScaExplorer TargetSDR
+	 * Launch waveform from REDHAWK Explorer TargetSDR
 	 * @param componentName
 	 * @param componentLanguage
 	 */
@@ -908,7 +911,7 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/** 
-	 * Type agnostic check to find if a node exists in the SCA Explorer.  Can be used for anything, Sandbox, Target SDR, etc. 
+	 * Type agnostic check to find if a node exists in the REDHAWK Explorer.  Can be used for anything, Sandbox, Target SDR, etc. 
 	 * @param bot
 	 * @param nodeParentPath
 	 * @param nodeName
@@ -922,7 +925,7 @@ public class ScaExplorerTestUtils {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return nodeName + " did not load into SCA Explorer";
+				return nodeName + " did not load into REDHAWK Explorer";
 			}
 
 			@Override
@@ -936,7 +939,7 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/** 
-	 * Type agnostic check to find if a node removed from SCA Explorer.  Can be used for anything, Sandbox, Target SDR, etc. 
+	 * Type agnostic check to find if a node removed from REDHAWK Explorer.  Can be used for anything, Sandbox, Target SDR, etc. 
 	 * @param bot
 	 * @param nodeParentPath
 	 * @param nodeName
@@ -949,7 +952,7 @@ public class ScaExplorerTestUtils {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return nodeName + " was not removed from the SCA Explorer";
+				return nodeName + " was not removed from the REDHAWK Explorer";
 			}
 
 			@Override
@@ -969,7 +972,7 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until Waveform displays in ScaExplorer
+	 * Waits until Waveform displays in REDHAWK Explorer
 	 * @param componentName
 	 * @deprecated use the type agnostic method call {@link #waitUntilNodeAppearsInScaExplorer(SWTWorkbenchBot, String[], String)} instead
 	 */

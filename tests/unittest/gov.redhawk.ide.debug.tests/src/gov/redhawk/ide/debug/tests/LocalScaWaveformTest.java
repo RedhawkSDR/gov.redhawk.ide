@@ -128,7 +128,7 @@ public class LocalScaWaveformTest extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testDisposeWithILaunch() throws CoreException {
-		// Ensure the local SCA initializes fully
+		// Ensure the local sandbox initializes fully
 		ScaDebugPlugin.getInstance().getLocalSca(new NullProgressMonitor());
 
 		// Listen to the job manager for changes
@@ -158,7 +158,7 @@ public class LocalScaWaveformTest extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testDisposeWithoutILaunch() throws CoreException {
-		// Ensure the local SCA initializes fully
+		// Ensure the local sandbox initializes fully
 		ScaDebugPlugin.getInstance().getLocalSca(new NullProgressMonitor());
 
 		// Listen to the job manager for changes

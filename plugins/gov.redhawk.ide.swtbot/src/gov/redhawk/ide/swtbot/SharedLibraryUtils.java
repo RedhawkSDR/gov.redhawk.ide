@@ -22,7 +22,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
  */
 public class SharedLibraryUtils {
 
-	public static final String SHARED_LIBRARY_MENU_NAME = "SCA Shared Library Project";
+	public static final String SHARED_LIBRARY_MENU_NAME = "REDHAWK Shared Library Project";
 
 	/** private to prevent instantiation since all functions are static. */
 	private SharedLibraryUtils() {
@@ -45,7 +45,7 @@ public class SharedLibraryUtils {
 			@Override
 			public boolean test() throws Exception {
 				try {
-					wizardBot.tree().getTreeItem("SCA").expand().getNode(SHARED_LIBRARY_MENU_NAME).select();
+					wizardBot.tree().getTreeItem("REDHAWK").expand().getNode(SHARED_LIBRARY_MENU_NAME).select();
 					return true;
 				} catch (WidgetNotFoundException e) {
 					return false;

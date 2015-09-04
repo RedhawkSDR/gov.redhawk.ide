@@ -29,7 +29,7 @@ public class NodeCreationWizardTest extends AbstractCreationWizardTest {
 
 	@Override
 	protected String getProjectType() {
-		return "SCA Node Project";
+		return "REDHAWK Node Project";
 	}
 
 	/**

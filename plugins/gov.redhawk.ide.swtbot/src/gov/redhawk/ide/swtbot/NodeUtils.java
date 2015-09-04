@@ -30,7 +30,7 @@ public class NodeUtils {
 	}
 
 	/**
-	 * Creates a new node project using File > New > Other... > Graphiti SCA Node Project wizard
+	 * Creates a new node project using File > New > Other... > Graphiti REDHAWK Node Project wizard
 	 * @param bot - the executing SWTBot
 	 * @param waveformName
 	 */
@@ -43,7 +43,7 @@ public class NodeUtils {
 		SWTBotShell wizardShell = bot.shell("New");
 		SWTBot wizardBot = wizardShell.bot();
 		wizardShell.activate();
-		wizardBot.tree().getTreeItem("SCA").expand().getNode("SCA Node Project").select();
+		wizardBot.tree().getTreeItem("REDHAWK").expand().getNode("REDHAWK Node Project").select();
 		wizardBot.button("Next >").click();
 
 		// Enter the name for the new waveform
@@ -66,7 +66,7 @@ public class NodeUtils {
 	
 	/**
 	 * Launches the names node in a running domain and opens the node explorer diagram.
-	 * Assumes domain is already running and visible in the SCA Explorer
+	 * Assumes domain is already running and visible in the REDHAWK Explorer
 	 * @param domainName
 	 * @param nodeName
 	 */

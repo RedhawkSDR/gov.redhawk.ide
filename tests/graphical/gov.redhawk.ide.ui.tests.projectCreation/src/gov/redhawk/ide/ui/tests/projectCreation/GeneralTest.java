@@ -21,44 +21,12 @@ public class GeneralTest extends UITest {
 	private void testNewProjectWizardAccess(String menuItem, String shellTitle) {
 		
 		SWTBotShell wizardShell;
-		/**
-		 * Wizard shortcut only available when product is installed
-		// Check File new menu shortcut
-		bot.menu("File").menu("New").menu(menuItem).click();
-		SWTBotShell wizardShell = bot.shell(shellTitle);
-		Assert.assertTrue(wizardShell.isActive());
-		wizardShell.close();	
-		
-		// Check wizard shortcut
-		bot.menu("File").menu("New").menu("Project...").click();
-		wizardShell = bot.shell("New Project");
-		Assert.assertTrue(wizardShell.isActive());
-		wizardShell.bot().tree().getTreeItem(menuItem).select();
-		wizardShell.bot().button("Next >").click();
-		wizardShell = bot.shell(shellTitle);
-		Assert.assertTrue(wizardShell.isActive());
-		wizardShell.close();
-		
-		// Check context menu
-		SWTBotView view = bot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
-		view.show();
-		view.bot().tree().setFocus();
-		SWTBotMenu menu = new SWTBotMenu(ContextMenuHelper.contextMenu(view.bot().tree(), "New", "Project..."));
-		menu.click();
-		wizardShell = bot.shell("New Project");
-		Assert.assertTrue(wizardShell.isActive());
-		wizardShell.bot().tree().getTreeItem(menuItem).select();
-		wizardShell.bot().button("Next >").click();
-		wizardShell = bot.shell(shellTitle);
-		Assert.assertTrue(wizardShell.isActive());
-		wizardShell.close();
-		*/	
-		
+
 		// Check SCA Category
 		bot.menu("File").menu("New").menu("Project...").click();
 		wizardShell = bot.shell("New Project");
 		Assert.assertTrue(wizardShell.isActive());
-		wizardShell.bot().tree().getTreeItem("SCA").expand().getNode(menuItem).select();
+		wizardShell.bot().tree().getTreeItem("REDHAWK").expand().getNode(menuItem).select();
 		wizardShell.bot().button("Next >").click();
 		wizardShell = bot.shell(shellTitle);
 		Assert.assertTrue(wizardShell.isActive());
@@ -67,32 +35,32 @@ public class GeneralTest extends UITest {
 	
 	@Test
 	public void testNewComponentProject() {
-		testNewProjectWizardAccess("SCA Component Project", "New Component Project");
+		testNewProjectWizardAccess("REDHAWK Component Project", "New Component Project");
 	}
 	
 	@Test
 	public void testNewWaveformProject() {
-		testNewProjectWizardAccess("SCA Waveform Project", "New Waveform Project");
+		testNewProjectWizardAccess("REDHAWK Waveform Project", "New Waveform Project");
 	}
 	
 	@Test
 	public void testNewDeviceProject() {
-		testNewProjectWizardAccess("SCA Device Project", "New Device Project");
+		testNewProjectWizardAccess("REDHAWK Device Project", "New Device Project");
 	}
 	
 	@Test
 	public void testNewServiceProject() {
-		testNewProjectWizardAccess("SCA Service Project", "New Service Project");
+		testNewProjectWizardAccess("REDHAWK Service Project", "New Service Project");
 	}
 	
 	@Test
 	public void testNewNodeProject() {
-		testNewProjectWizardAccess("SCA Node Project", "Node Project");
+		testNewProjectWizardAccess("REDHAWK Node Project", "Node Project");
 	}
 	
 	@Test
 	public void testNewControlPanelProject() {
-		testNewProjectWizardAccess("SCA Control Panel Project", "New Plug-in Project");
+		testNewProjectWizardAccess("REDHAWK Control Panel Project", "New Plug-in Project");
 	}
 	
 }

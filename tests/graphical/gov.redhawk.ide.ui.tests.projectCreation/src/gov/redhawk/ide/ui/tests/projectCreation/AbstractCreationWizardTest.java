@@ -91,7 +91,7 @@ public abstract class AbstractCreationWizardTest extends UITest {
 		wizardShell = bot.shell("New Project");
 		Assert.assertTrue(wizardShell.isActive());
 		wizardBot = wizardShell.bot();
-		wizardBot.tree().getTreeItem("SCA").expand().getNode(getProjectType()).select();
+		wizardBot.tree().getTreeItem("REDHAWK").expand().getNode(getProjectType()).select();
 		wizardBot.button("Next >").click();
 	}
 	

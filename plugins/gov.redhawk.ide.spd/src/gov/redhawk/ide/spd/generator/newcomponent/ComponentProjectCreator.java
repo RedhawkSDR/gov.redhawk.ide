@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 
 /**
- * A utility class for creating new SCA component projects.
+ * A utility class for creating new REDHAWK component projects.
  */
 public class ComponentProjectCreator extends ProjectCreator {
 
@@ -39,7 +39,7 @@ public class ComponentProjectCreator extends ProjectCreator {
 	}
 
 	/**
-	 * Creates a new SCA component project without any files. Should be invoked in the context of a
+	 * Creates a new REDHAWK component project without any files. Should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param projectName The project name
@@ -62,7 +62,7 @@ public class ComponentProjectCreator extends ProjectCreator {
 
 	
 	/**
-	 * Creates the basic files for a component (SPD, PRF, SCD and test file) in an empty SCA component project. Should
+	 * Creates the basic files for a component (SPD, PRF, SCD and test file) in an empty REDHAWK component project. Should
 	 * be invoked in the context of a {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param project The project to generate files in
@@ -83,7 +83,7 @@ public class ComponentProjectCreator extends ProjectCreator {
 	}
 	
 	/**
-	 * Creates the basic files for a component (SPD, PRF, SCD and test file) in an empty SCA component project. Should
+	 * Creates the basic files for a component (SPD, PRF, SCD and test file) in an empty REDHAWK component project. Should
 	 * be invoked in the context of a {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param project The project to generate files in
@@ -99,7 +99,7 @@ public class ComponentProjectCreator extends ProjectCreator {
 	public static IFile createComponentFiles(final IProject project, final String spdName, final String spdId, final String authorName, final IProgressMonitor monitor)
 	        throws CoreException {
 		
-		final SubMonitor progress = SubMonitor.convert(monitor, "Creating SCA component files", 6);
+		final SubMonitor progress = SubMonitor.convert(monitor, "Creating REDHAWK component files", 6);
 		
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setProjectName(project.getName());

@@ -130,7 +130,7 @@ public class ImplementationWizard extends Wizard implements ScaImplementationWiz
 	@Override
 	public boolean performFinish() {
 		
-		// Create the SCA component project
+		// Create the REDHAWK component project
 		final WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 			
 			@Override

@@ -366,7 +366,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 	protected void adjustShapeLocation(RHContainerShape shape) {
 		final int BUFFER_WIDTH = 20;
 
-		// if any overlap occurs (can happen when launching using the SCA Explorer) adjust x/y-coords
+		// if any overlap occurs (can happen when launching using the REDHAWK Explorer) adjust x/y-coords
 		Diagram diagram = getFeatureProvider().getDiagramTypeProvider().getDiagram();
 		EList<Shape> children = diagram.getChildren();
 		for (Shape child : children) {

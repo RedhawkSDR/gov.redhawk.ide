@@ -539,7 +539,7 @@ public final class GenerateCode {
 			return new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Project does not exist");
 		}
 
-		// Check SCA XML files
+		// Check XML files
 		try {
 			// Check SPD file
 			final String spdFileName = ModelUtil.getSpdFileName(softPkg);
@@ -597,7 +597,7 @@ public final class GenerateCode {
 				}
 			}
 		} catch (final CoreException e) {
-			retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "A problem occurred while verifying the SCA XML files", e));
+			retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "A problem occurred while verifying the XML files", e));
 		}
 
 		// Wavedev checks

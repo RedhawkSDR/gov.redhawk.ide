@@ -34,7 +34,7 @@ public class NodeProjectCreator extends ProjectCreator {
 	}
 
 	/**
-	 * Creates a new SCA node project without any files. Should be invoked in the context of a
+	 * Creates a new REDHAWK node project without any files. Should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param projectName The project name
@@ -51,7 +51,7 @@ public class NodeProjectCreator extends ProjectCreator {
 	}
 
 	/**
-	 * Creates the basic files for a node in an empty SCA component project. Should be invoked in the context of a
+	 * Creates the basic files for a node in an empty REDHAWK component project. Should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param project The project to generate files in
@@ -67,7 +67,7 @@ public class NodeProjectCreator extends ProjectCreator {
 	 */
 	public static IFile createNodeFiles(final IProject project, final String nodeID, final String authorName, final String domainManagerName,
 	        final SoftPkg[] devices, final IProgressMonitor monitor) throws CoreException {
-		final SubMonitor progress = SubMonitor.convert(monitor, "Creating SCA node files", 2);
+		final SubMonitor progress = SubMonitor.convert(monitor, "Creating REDHAWK node files", 2);
 
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setProjectName(project.getName());

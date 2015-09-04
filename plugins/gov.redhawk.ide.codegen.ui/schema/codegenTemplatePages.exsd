@@ -3,7 +3,7 @@
 <schema targetNamespace="gov.redhawk.ide.codegen.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="gov.redhawk.ide.codegen.ui" id="codegenPages" name="SCA Component Code Generator Property Page"/>
+         <meta.schema plugin="gov.redhawk.ide.codegen.ui" id="codegenPages" name="REDHAWK Component Code Generator Property Page"/>
       </appInfo>
       <documentation>
          

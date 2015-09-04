@@ -84,7 +84,7 @@ public enum ScaDebugInstance {
 	
 
 	private ScaDebugInstance() {
-		Job job = new Job("Init Local SCA") {
+		Job job = new Job("Init Local REDHAWK Sandbox") {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {

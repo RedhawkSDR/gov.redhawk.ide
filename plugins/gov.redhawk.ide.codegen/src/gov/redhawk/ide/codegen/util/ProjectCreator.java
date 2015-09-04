@@ -65,7 +65,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 /**
- * A utility class for creating SCA projects.
+ * A utility class for creating REDHAWK projects.
  * 
  * @since 9.0
  */
@@ -75,7 +75,7 @@ public abstract class ProjectCreator {
 	}
 
 	/**
-	 * Creates a new SCA project without any files. Should be invoked in the context of a
+	 * Creates a new REDHAWK project without any files. Should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * <p />
 	 * This code is based on an IBM Developer Works article by Benoit Marchal.
@@ -91,7 +91,7 @@ public abstract class ProjectCreator {
 	 */
 	protected static IProject createEmptyProject(final String projectName, final java.net.URI projectLocation, final String[] additionalNatureIDs,
 		final IProgressMonitor monitor) throws CoreException {
-		final SubMonitor progress = SubMonitor.convert(monitor, "Creating SCA Project", 3);
+		final SubMonitor progress = SubMonitor.convert(monitor, "Creating REDHAWK Project", 3);
 
 		Set<String> natureIds = new HashSet<String>();
 		natureIds.addAll(Arrays.asList(additionalNatureIDs));
@@ -160,7 +160,7 @@ public abstract class ProjectCreator {
 	}
 
 	/**
-	 * Copies the existing SCA file into an empty SCA project. Should be invoked in the
+	 * Copies the existing REDHAWK file into an empty REDHAWK project. Should be invoked in the
 	 * context of a {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param project The project to generate files in
@@ -168,12 +168,12 @@ public abstract class ProjectCreator {
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	 * to call done() on the given monitor. Accepts null, indicating that no progress should be
 	 * reported and that the operation cannot be canceled.
-	 * @return The newly created SCA file
+	 * @return The newly created REDHAWK file
 	 * @throws CoreException An error occurs while generating files
 	 */
 	public static IFile importFile(final IProject project, IFile destination, final IPath existingFilePath, final IProgressMonitor monitor)
 		throws CoreException {
-		final SubMonitor progress = SubMonitor.convert(monitor, "Importing SCA file", 2);
+		final SubMonitor progress = SubMonitor.convert(monitor, "Importing REDHAWK file", 2);
 
 		final File existingFile = existingFilePath.toFile();
 		FileInputStream input = null;
@@ -181,7 +181,7 @@ public abstract class ProjectCreator {
 			input = new FileInputStream(existingFile);
 			destination.create(input, true, progress.newChild(1));
 		} catch (final FileNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "SCA file (" + existingFilePath.toString() + ") does not exist"));
+			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "REDHAWK file (" + existingFilePath.toString() + ") does not exist"));
 		} finally {
 			if (input != null) {
 				try {
@@ -198,7 +198,7 @@ public abstract class ProjectCreator {
 
 	/**
 	 * 
-	 * Copies existing SPD, PRF and SCD files into an empty SCA resource project. Should be invoked in the
+	 * Copies existing SPD, PRF and SCD files into an empty REDHAWK resource project. Should be invoked in the
 	 * context of a {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param project The project that the files will be imported to
@@ -217,7 +217,7 @@ public abstract class ProjectCreator {
 
 	/**
 	 * 
-	 * Copies existing SPD, PRF and SCD files into an empty SCA resource project. Should be invoked in the
+	 * Copies existing SPD, PRF and SCD files into an empty REDHAWK resource project. Should be invoked in the
 	 * context of a {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param project The project that the files will be imported to
@@ -232,7 +232,7 @@ public abstract class ProjectCreator {
 	 */
 	public static IFile importFiles(final IProject project, final IPath existingSpdFile, final List<ImplementationAndSettings> implList,
 		final HashMap<String, Boolean> importedSettingsMap, final IProgressMonitor monitor, String id) throws CoreException {
-		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Importing SCA XML", 7); // SUPPRESS CHECKSTYLE
+		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Importing REDHAWK XML", 7); // SUPPRESS CHECKSTYLE
 																							// MagicNumber
 
 		// Copy the SPD file into the project

@@ -601,7 +601,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 		this.resourcePropertiesPage.getProjectHandle();
 		final IPath existingResourceLocation = this.resourcePropertiesPage.getExistingResourcePath();
 
-		// Create the SCA component project
+		// Create the REDHAWK component project
 		final WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
 			@Override
@@ -649,7 +649,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 
 						// If we're creating a new component (vs importing one)
 						if (isCreateNewResource) {
-							// Create the SCA XML files
+							// Create the XML files
 							// IDE-1111: only use part of project name after last dot, if any, for file names
 							String spdName = getBaseFileName(projectName);
 							setOpenEditorOn(createComponentFiles(project, spdName, getSoftPkg().getId(), null, progress.newChild(1)));
@@ -743,7 +743,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 		try {
 			this.getContainer().run(true, false, operation);
 
-			// Open the default editor for the new SCA component; also invoke code generator for manual templates
+			// Open the default editor for the new REDHAWK component; also invoke code generator for manual templates
 			final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			final IFile spdFile = this.getOpenEditorOn();
 			if ((spdFile != null) && spdFile.exists()) {

@@ -170,7 +170,7 @@ public final class StandardTestActions {
 	}
 
 	/**
-	 * Activates the SCA perspective and resets it to defaults.
+	 * Activates the REDHAWK perspective and resets it to defaults.
 	 *
 	 * @param bot
 	 */

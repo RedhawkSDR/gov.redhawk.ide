@@ -33,7 +33,7 @@ public class ComponentWizardTest extends AbstractCreationWizardTest {
 
 	@Override
 	protected String getProjectType() {
-		return "SCA Component Project";
+		return "REDHAWK Component Project";
 	}
 
 	@Test

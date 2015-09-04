@@ -53,7 +53,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 /**
- * Wizard for creating new SCA waveform projects.
+ * Wizard for creating new REDHAWK waveform projects.
  */
 @SuppressWarnings("restriction")
 public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
@@ -155,7 +155,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 
 						// If we're creating a new waveform (vs importing one)
 						if (isCreateNewResource) {
-							// Create the SCA XML files
+							// Create the XML files
 							NewScaWaveformProjectWizard.this.openEditorOn = WaveformProjectCreator.createWaveformFiles(project, id, assemblyController,
 								progress.newChild(1));
 						} else {

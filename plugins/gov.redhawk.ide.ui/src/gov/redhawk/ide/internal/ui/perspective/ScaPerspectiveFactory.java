@@ -46,7 +46,7 @@ public class ScaPerspectiveFactory implements IPerspectiveFactory {
 		final IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, 0.20f, editorArea);
 		topLeft.addView(ProjectExplorer.VIEW_ID);
 
-		// Place SCA Explorer and CORBA Name Browser to right of editor area
+		// Place REDHAWK Explorer and CORBA Name Browser to right of editor area
 		final IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, 0.7f, editorArea);
 		right.addView(ScaExplorer.VIEW_ID);
 		right.addView(NameBrowserView.ID);

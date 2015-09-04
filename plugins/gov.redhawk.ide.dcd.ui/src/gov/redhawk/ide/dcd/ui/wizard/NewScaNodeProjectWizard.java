@@ -128,7 +128,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 
 						// If we're creating a new waveform (vs importing one)
 						if (isCreateNewResource) {
-							// Create the SCA XML files
+							// Create the XML files
 							NewScaNodeProjectWizard.this.openEditorOn = NodeProjectCreator.createNodeFiles(project, id, null, domainManagerName, devices,
 							        progress.newChild(1));
 						} else {

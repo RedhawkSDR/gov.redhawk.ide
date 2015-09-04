@@ -179,19 +179,19 @@ public class DeployableScaExportWizard extends Wizard implements IExportWizard {
 				public void run() {
 
 					ErrorDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "Export error",
-					        "There was an error exporting the SCA projects", status);
+					        "There was an error exporting the REDHAWK projects", status);
 				}
 
 			});
 		} catch (final InterruptedException e) {
-			final IStatus status = new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Exporting SCA projects interrupted", e);
+			final IStatus status = new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Exporting REDHAWK projects interrupted", e);
 			RedhawkIDEUiPlugin.getDefault().getLog().log(status);
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 				@Override
 				public void run() {
 					ErrorDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "Export error",
-					        "There was an error exporting the SCA projects", status);
+					        "There was an error exporting the REDHAWK projects", status);
 				}
 
 			});

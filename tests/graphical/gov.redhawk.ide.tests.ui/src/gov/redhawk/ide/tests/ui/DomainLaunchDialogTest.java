@@ -29,7 +29,7 @@ public class DomainLaunchDialogTest extends UITest {
 	 */
 	@Test
 	public void test_IDE_828() {
-		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
+		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
 		SWTBotTree scaTree = scaExplorerView.bot().tree();
 		SWTBotTreeItem targetSDR = scaTree.getTreeItem("Target SDR");
 		

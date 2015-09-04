@@ -86,7 +86,7 @@ public class ScaDebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Get the instance of the Local SCA tool.  This method block until the tool is available.
+	 * Get the instance of the Local REDHAWK Sandbox.  This method block until the sandbox is available.
 	 * @since 6.0
 	 */
 	public LocalSca getLocalSca(IProgressMonitor monitor) throws CoreException {

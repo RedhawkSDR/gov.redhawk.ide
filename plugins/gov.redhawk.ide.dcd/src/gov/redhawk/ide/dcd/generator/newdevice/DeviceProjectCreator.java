@@ -36,7 +36,7 @@ public class DeviceProjectCreator extends ProjectCreator {
 	}
 
 	/**
-	 * Creates a new SCA device project without any files. Should be invoked in the context of a
+	 * Creates a new REDHAWK device project without any files. Should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param projectName The project name
@@ -58,7 +58,7 @@ public class DeviceProjectCreator extends ProjectCreator {
 	
 	
 	/**
-	 * Creates the basic files for a device in an empty SCA resource project. Should be invoked in the context of a
+	 * Creates the basic files for a device in an empty REDHAWK resource project. Should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param project The project to generate files in
@@ -82,7 +82,7 @@ public class DeviceProjectCreator extends ProjectCreator {
 	
 	
 	/**
-	 * Creates the basic files for a device in an empty SCA resource project. Should be invoked in the context of a
+	 * Creates the basic files for a device in an empty REDHAWK resource project. Should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param project The project to generate files in
@@ -99,7 +99,7 @@ public class DeviceProjectCreator extends ProjectCreator {
 	 */
 	public static IFile createDeviceFiles(final IProject project, final String spdName, final String spdID, final String authorName, final String deviceType,
 	        final boolean aggregateDevice, final IProgressMonitor monitor) throws CoreException {
-		final SubMonitor progress = SubMonitor.convert(monitor, "Creating SCA device files", 2);
+		final SubMonitor progress = SubMonitor.convert(monitor, "Creating REDHAWK device files", 2);
 
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setProjectName(project.getName());

@@ -67,7 +67,7 @@ public interface IScaComponentCodegen {
 	 * @param softPkg the softpkg
 	 * @param settings the implementation settings to initialize
 	 * @param impl the implementation
-	 * @return the SCA Code struct representing the code generator settings
+	 * @return the {@link Code} object representing the component's executable details
 	 * @since 9.0
 	 */
 	Code getInitialCodeSettings(SoftPkg softPkg, ImplementationSettings settings, Implementation impl);

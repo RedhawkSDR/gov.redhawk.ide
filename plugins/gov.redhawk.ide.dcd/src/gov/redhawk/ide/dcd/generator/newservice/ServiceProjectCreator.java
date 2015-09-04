@@ -35,7 +35,7 @@ public class ServiceProjectCreator extends ProjectCreator {
 	}
 
 	/**
-	 * Creates a new SCA service project without any files. Should be invoked in the context of a
+	 * Creates a new REDHAWK service project without any files. Should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param projectName The project name
@@ -55,7 +55,7 @@ public class ServiceProjectCreator extends ProjectCreator {
 	}
 
 	/**
-	 * Creates the basic files for a service in an empty SCA resource project. Should be invoked in the context of a
+	 * Creates the basic files for a service in an empty REDHAWK resource project. Should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param project The project to generate files in
@@ -73,7 +73,7 @@ public class ServiceProjectCreator extends ProjectCreator {
 	public static IFile createServiceFiles(final IProject project, final String spdName, final String spdID, 
 			final String authorName, final IdlLibrary library, final String serviceRepId, final IProgressMonitor monitor)
 	        throws CoreException {
-		final SubMonitor progress = SubMonitor.convert(monitor, "Creating SCA Service files", 2);
+		final SubMonitor progress = SubMonitor.convert(monitor, "Creating REDHAWK Service files", 2);
 
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setProjectName(project.getName());

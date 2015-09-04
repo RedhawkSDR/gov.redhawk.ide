@@ -22,7 +22,7 @@ public class ServiceWizardTest extends ComponentWizardTest {
 
 	@Override
 	protected String getProjectType() {
-		return "SCA Service Project";
+		return "REDHAWK Service Project";
 	}
 
 	protected void testProjectCreation(String name, String lang, String generator, String template) {

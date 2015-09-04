@@ -103,8 +103,8 @@ public class GraphitiDcdModelMap {
 		this.editor = editor;
 	}
 
-	/********************** SCA EXPLORER TO DIAGRAM *****************************/
-	/*	These actions are fired when interacting with a shape in the SCA		*/
+	/********************** REDHAWK EXPLORER TO DIAGRAM *************************/
+	/*	These actions are fired when interacting with a shape in the REDHAWK	*/
 	/*	Explorer View and the results are reflected in the Graphiti Diagram		*/
 	/****************************************************************************/
 
@@ -206,7 +206,7 @@ public class GraphitiDcdModelMap {
 
 	/**
 	 * Paints the Chalkboard diagram device appropriate color
-	 * Fired when a device is started/stopped in the SCA Explorer
+	 * Fired when a device is started/stopped in the REDHAWK Explorer
 	 * @param ScaDevice
 	 * @param started
 	 */
@@ -246,7 +246,7 @@ public class GraphitiDcdModelMap {
 	}
 
 	/**
-	 * Modifies the diagram to reflect runtime status of the SCA Explorer
+	 * Modifies the diagram to reflect runtime status of the REDHAWK Explorer
 	 * Fires when the diagram is first launched
 	 */
 	public void reflectRuntimeStatus() {
@@ -284,7 +284,7 @@ public class GraphitiDcdModelMap {
 	}
 
 	/**
-	 * Called when we release a device in the SCA Explorer
+	 * Called when we release a device in the REDHAWK Explorer
 	 * This method removes DcdComponentInstantiation from the diagram
 	 * @param comp
 	 */
@@ -383,9 +383,9 @@ public class GraphitiDcdModelMap {
 		}
 	}
 
-	/********************** DIAGRAM TO SCA EXPLORER *****************************/
+	/********************** DIAGRAM TO REDHAWK EXPLORER *************************/
 	/*	These actions are fired when interacting with a shape in the diagram	*/
-	/*	and the results are reflected in the SCA Explorer view					*/
+	/*	and the results are reflected in the REDHAWK Explorer view				*/
 	/****************************************************************************/
 
 	/**

@@ -286,7 +286,7 @@ public class CodegenUtil {
 	}
 
 	/**
-	 * Adds the top level build script generator to an SCA project, if applicable for the project type.
+	 * Adds the top level build script generator to a REDHAWK project, if applicable for the project type.
 	 * @param project The project to add the top level build script generator to
 	 * @param progress the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be reported and that the

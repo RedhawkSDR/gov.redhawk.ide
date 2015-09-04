@@ -75,8 +75,8 @@ public class DeployableScaExportWizardPage extends WizardPage {
 		final DataBindingContext dbc = new DataBindingContext();
 		WizardPageSupport.create(this, dbc);
 
-		setTitle("Deployable SCA");
-		setMessage("Export the selected projects into a form suitable for deploying into a OSSIE SDR root");
+		setTitle("Deployable REDHAWK Project");
+		setDescription("Deploy the selected projects into an SDR root or archive file");
 
 		final Composite client = new Composite(parent, SWT.NULL);
 		client.setLayout(new GridLayout(1, false));
@@ -86,7 +86,7 @@ public class DeployableScaExportWizardPage extends WizardPage {
 		projectSelectionGroup.setLayout(new GridLayout(2, false));
 
 		final Label availScaProjects = new Label(projectSelectionGroup, SWT.NONE);
-		availScaProjects.setText("Available SCA Projects:");
+		availScaProjects.setText("Available REDHAWK Projects:");
 		availScaProjects.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
 
 		final CheckboxTableViewer availableProjectsViewer = new CheckboxTableViewer(new Table(projectSelectionGroup, SWT.CHECK | SWT.READ_ONLY | SWT.BORDER));

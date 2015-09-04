@@ -62,7 +62,7 @@ public class DependencyDetailsPage extends ScaDetails {
 		section.setText("Dependency");
 		section.setDescription("The dependency element is used to "
 		        + "indicate the dependent relationships between the components being"
-		        + " delivered and other components and devices, in an SCA compliant system.");
+		        + " delivered and other components and devices in the system.");
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));

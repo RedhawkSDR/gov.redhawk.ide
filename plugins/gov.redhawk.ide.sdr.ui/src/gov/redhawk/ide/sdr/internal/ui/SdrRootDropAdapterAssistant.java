@@ -76,7 +76,7 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 					try {
 						if (!proj.hasNature(ScaNodeProjectNature.ID) && !proj.hasNature(ScaComponentProjectNature.ID)
 							&& !proj.hasNature(ScaWaveformProjectNature.ID)) {
-							return new Status(IStatus.CANCEL, SdrUiPlugin.PLUGIN_ID, "Project is not an SCA Waveform, Node, Component, or Device");
+							return new Status(IStatus.CANCEL, SdrUiPlugin.PLUGIN_ID, "Project is not a REDHAWK project");
 						}
 					} catch (CoreException e) {
 						return new Status(IStatus.CANCEL, SdrUiPlugin.PLUGIN_ID, "Drop is not supported transfer type");

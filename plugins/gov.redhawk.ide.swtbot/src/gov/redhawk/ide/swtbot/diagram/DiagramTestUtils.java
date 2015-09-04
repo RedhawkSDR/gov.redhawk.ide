@@ -118,7 +118,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	}
 
 	private static void dragFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String componentName, String sdrLocation) {
-		SWTBotView scaExplorerView = gefBot.viewByTitle("SCA Explorer");
+		SWTBotView scaExplorerView = gefBot.viewByTitle("REDHAWK Explorer");
 		SWTBotTree scaTree = scaExplorerView.bot().tree();
 		SWTBotTreeItem componentTreeItem = scaTree.expandNode("Target SDR", sdrLocation).expandNode(componentName.split("\\."));
 

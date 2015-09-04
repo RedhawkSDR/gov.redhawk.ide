@@ -80,7 +80,7 @@ public class RecreateSettingsWizard extends NewScaResourceWizard {
 	public boolean performFinish() {
 		updateEntryPoints();
 
-		// Create the SCA component project
+		// Create the REDHAWK component project
 		final WorkspaceJob job = new WorkspaceJob("Creating New Project") {
 
 			@Override
