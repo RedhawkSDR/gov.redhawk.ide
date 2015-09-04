@@ -79,7 +79,7 @@ public class EventChannelListener extends ChannelListener {
 		if (pushSupplier != null) {
 			try {
 				pushSupplier.disconnect_push_supplier();
-			} catch (Exception e) {
+			} catch (SystemException e) {
 				// PASS
 			}
 		}
