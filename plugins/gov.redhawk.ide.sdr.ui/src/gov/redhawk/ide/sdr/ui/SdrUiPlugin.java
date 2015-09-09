@@ -135,25 +135,30 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	}
 
 	private void initSdr() throws URISyntaxException {
+		// Create the root model object
 		this.targetSdrRoot = SdrFactory.eINSTANCE.createSdrRoot();
-		this.reloadSdrJob = new RefreshSdrJob(this.targetSdrRoot);
-		this.editingDomain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(SdrUiPlugin.EDITING_DOMAIN_ID);
 
+		// Create the job to refresh the SDR root
+		this.reloadSdrJob = new RefreshSdrJob(this.targetSdrRoot);
+		this.reloadSdrJob.setSystem(true);
+		this.reloadSdrJob.setUser(false);
+
+		// Create the EditingDomain and a Resource, and place the root model object in the Resource
+		this.editingDomain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(SdrUiPlugin.EDITING_DOMAIN_ID);
+		final ResourceSet resourceSet = SdrUiPlugin.this.editingDomain.getResourceSet();
+		final Resource sdrResource = resourceSet.createResource(URI.createURI("virtual://sdr.sdr"));
+		SdrUiPlugin.this.editingDomain.getCommandStack().execute(new AddCommand(SdrUiPlugin.this.editingDomain,
+			sdrResource.getContents(), SdrUiPlugin.this.targetSdrRoot));
+
+		// Add the IDL model object and our IDL paths
 		loadIdlPath();
 
+		// Schedule the initial load of the SDR root
 		final Job job = new Job("Startup Job") {
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
-
-				final ResourceSet resourceSet = SdrUiPlugin.this.editingDomain.getResourceSet();
-				final Resource sdrResource = resourceSet.createResource(URI.createURI("virtual://sdr.sdr"));
-				SdrUiPlugin.this.editingDomain.getCommandStack().execute(new AddCommand(SdrUiPlugin.this.editingDomain,
-				        sdrResource.getContents(),
-				        SdrUiPlugin.this.targetSdrRoot));
 				reloadSdr();
-				SdrUiPlugin.this.reloadSdrJob.setSystem(true);
-				SdrUiPlugin.this.reloadSdrJob.setUser(false);
 				SdrUiPlugin.this.reloadSdrJob.schedule();
 				return Status.OK_STATUS;
 			}
