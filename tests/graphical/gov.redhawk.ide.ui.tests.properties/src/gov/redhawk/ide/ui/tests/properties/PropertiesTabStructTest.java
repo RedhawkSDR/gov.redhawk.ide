@@ -81,15 +81,6 @@ public class PropertiesTabStructTest extends PropertiesTabSimpleTest {
 	}
 
 	@Test
-	@Override
-	public void testOptional() {
-		selectSimple();
-		testOptional(true);
-		selectStruct();
-		testOptional(false);
-	}
-	
-	@Test
 	public void testSimpleDescription() {
 		selectSimple();
 		super.testDescription();

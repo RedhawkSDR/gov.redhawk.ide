@@ -10,12 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.tests.properties;
 
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotCombo;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class PropertiesTabSimpleTest extends AbstractBasicPropertyTest {
@@ -237,32 +233,5 @@ public class PropertiesTabSimpleTest extends AbstractBasicPropertyTest {
 		bot.comboBox().setSelection("objref");
 		bot.textWithLabel(valueLabel).setText("1");
 		assertFormInvalid();
-	}
-
-	@Test
-	public void testOptional() {
-		testOptional(false);
-	}
-	
-	protected void testOptional(boolean shouldExist) {
-		boolean found;
-		try {
-			SWTBotCombo combo = bot.comboBoxWithLabel("Optional:");
-			found = true;
-			if (shouldExist) {
-				String[] testScenarios = { "false", "true", "" };
-				String text = combo.getText();
-				Assert.assertEquals("default optional selection", "", text);
-				for (String test : testScenarios) {
-					combo.setSelection(test);
-					text = combo.getText();
-					Assert.assertEquals("text after selection", test, text);
-					assertFormValid();
-				}
-			}
-		} catch (WidgetNotFoundException e) {
-			found = false;
-		}
-		Assert.assertEquals("optional field exist", shouldExist, found);
 	}
 }

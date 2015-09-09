@@ -111,12 +111,6 @@ public class PropertiesTabStructSequenceTest extends PropertiesTabSimpleTest {
 	}
 
 	@Test
-	public void testOptionalInSimpleInStruct() {
-		selectSimple();
-		testOptional(true); // optional should exists in simple in struct
-	}
-
-	@Test
 	public void testDescriptionSimple() {
 		selectSimple();
 		super.testDescription();
