@@ -85,7 +85,6 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IGotoMarker;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageSelectionProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -557,20 +556,9 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 				pageIndex = addPage(this.diagramEditor, diagramInput);
 				setPageText(pageIndex, "Diagram");
 
-				// StructuredTextEditors only work on workspace entries because
-				// org.eclipse.wst.sse.core.FileBufferModelManager:bufferCreated()
-				// assumes that the editor input is in the workspace.
-				if (getEditorInput() instanceof FileEditorInput) {
-					try {
-						this.dcdSourcePageNum = addPage(new org.eclipse.wst.sse.ui.StructuredTextEditor(), this.getEditorInput());
-					} catch (final NoClassDefFoundError e) {
-						this.dcdSourcePageNum = addPage(new TextEditor(), this.getEditorInput());
-					}
-				} else {
-					this.dcdSourcePageNum = addPage(new TextEditor(), this.getEditorInput());
-				}
+				TextEditor textEditor = createTextEditor(getEditorInput());
+				this.dcdSourcePageNum = addPage(textEditor, this.getEditorInput());
 				this.setPageText(this.dcdSourcePageNum, this.getEditorInput().getName());
-
 			} catch (final PartInitException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, DcdUiActivator.getPluginId(), "Failed to add pages.", e));
 			} catch (final IOException e) {
