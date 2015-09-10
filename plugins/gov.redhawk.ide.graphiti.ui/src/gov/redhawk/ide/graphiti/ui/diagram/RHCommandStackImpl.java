@@ -11,10 +11,14 @@
  */
 package gov.redhawk.ide.graphiti.ui.diagram;
 
+import java.util.Map;
+
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.transaction.RollbackException;
+import org.eclipse.emf.transaction.impl.InternalTransaction;
 import org.eclipse.emf.workspace.EMFCommandOperation;
 import org.eclipse.graphiti.ui.internal.editor.GFWorkspaceCommandStackImpl;
 
@@ -40,4 +44,21 @@ public class RHCommandStackImpl extends GFWorkspaceCommandStackImpl {
 		return super.isSaveNeeded();
 	}
 
+	/*
+	 * Override execute just for the special case where another thread owns the current transaction, to ensure that a
+	 * new transaction is created to serialize access (see Eclipse Bugzilla bug 477083)
+	 */
+	@Override
+	public void execute(Command command, Map<?, ?> options) throws InterruptedException, RollbackException {
+		if (getDomain().getActiveTransaction() != null && getDomain().getActiveTransaction().getOwner() != Thread.currentThread()) {
+			InternalTransaction tx = createTransaction(command, options);
+			try {
+				super.execute(command, options);
+			} finally {
+				tx.commit();
+			}
+		} else {
+			super.execute(command, options);
+		}
+	}
 }

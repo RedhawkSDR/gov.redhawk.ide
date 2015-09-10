@@ -35,6 +35,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.editor.DefaultMarkerBehavior;
 import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
+import org.eclipse.graphiti.ui.editor.DefaultRefreshBehavior;
 import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
@@ -210,6 +211,11 @@ public abstract class AbstractGraphitiDiagramEditor extends DiagramEditor {
 				};
 
 			};
+
+			@Override
+			protected DefaultRefreshBehavior createRefreshBehavior() {
+				return new RunExclusiveRefreshBehavior(this);
+			}
 
 			@Override
 			protected DefaultUpdateBehavior createUpdateBehavior() {
