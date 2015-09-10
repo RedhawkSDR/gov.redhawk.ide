@@ -84,10 +84,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IGotoMarker;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageSelectionProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -601,7 +599,7 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 				pageIndex = addPage(editor, diagramInput);
 				setPageText(pageIndex, "Diagram");
 
-				final IEditorPart textEditor = createTextEditor();
+				final IEditorPart textEditor = createTextEditor(getEditorInput());
 				if (textEditor != null) {
 					final int sadSourcePageNum = addPage(textEditor, this.getEditorInput());
 					this.setPageText(sadSourcePageNum, this.getEditorInput().getName());
@@ -630,24 +628,6 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 		SadPropertiesPage retVal = new SadPropertiesPage(this, "propertiesPage", "Properties", true);
 		retVal.setInput(sadResource);
 		return retVal;
-	}
-
-	protected IEditorPart createTextEditor() {
-		// StructuredTextEditors only work on workspace entries
-		// because
-		// org.eclipse.wst.sse.core.FileBufferModelManager:bufferCreated()
-		// assumes that the editor input is in the workspace.
-		if (getEditorInput() instanceof FileEditorInput) {
-			try {
-				return new org.eclipse.wst.sse.ui.StructuredTextEditor();
-			} catch (final NoClassDefFoundError e) {
-				return new TextEditor();
-			}
-		} else if (!getMainResource().getURI().isPlatformPlugin()) {
-			return new TextEditor();
-		}
-
-		return null;
 	}
 
 	protected void addNameListener(final Resource sadResource) {
