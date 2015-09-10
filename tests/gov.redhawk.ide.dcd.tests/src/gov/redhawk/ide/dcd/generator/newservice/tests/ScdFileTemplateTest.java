@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -85,7 +86,11 @@ public class ScdFileTemplateTest {
 	 * @throws CoreException
 	 */
 	@Test
-	public void testCreateServiceSCDFile_ResourceIDL() throws IOException, CoreException {
+	public void testCreateServiceSCDFile_IDLWithInheritance() throws IOException, CoreException {
+		// Wait for the IDL library to load
+		library.load(new NullProgressMonitor());
+
+		// Add test interfaces to the IDL library
 		ScaModelCommand.execute(library, new ScaModelCommand() {
 			@Override
 			public void execute() {
