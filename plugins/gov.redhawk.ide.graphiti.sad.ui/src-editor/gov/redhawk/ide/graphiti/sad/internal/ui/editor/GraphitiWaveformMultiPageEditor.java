@@ -16,6 +16,8 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.SadDiagramUtilHelper;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
+import gov.redhawk.ide.sad.internal.ui.editor.SadOverviewPage;
+import gov.redhawk.ide.sad.internal.ui.editor.SadPropertiesPage;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.model.sca.util.ModelUtil;
@@ -61,6 +63,7 @@ import CF.Application;
 /**
  * This is an example of a Sad model editor.
  */
+@SuppressWarnings("restriction")
 public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEditor {
 
 	public static final String ID = "gov.redhawk.ide.graphiti.sad.ui.editor.presentation.SadEditorID";
@@ -253,9 +256,9 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 	}
 
 	protected IFormPage createPropertiesPage(Resource sadResource) {
-		GraphitiWaveformPropertiesPage retVal = new GraphitiWaveformPropertiesPage(this, "propertiesPage", "Properties", true);
-		retVal.setInput(sadResource);
-		return retVal;
+		SadPropertiesPage page = new SadPropertiesPage(this, "propertiesPage", "Properties", true);
+		page.setInput(sadResource);
+		return page;
 	}
 
 
@@ -313,9 +316,9 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 
 
 	protected IFormPage createOverviewPage(final Resource sadResource) {
-		final GraphitiWaveformOverviewPage retVal = new GraphitiWaveformOverviewPage(this);
-		retVal.setInput(sadResource);
-		return retVal;
+		final SadOverviewPage page = new SadOverviewPage(this);
+		page.setInput(sadResource);
+		return page;
 	}
 
 	/**
