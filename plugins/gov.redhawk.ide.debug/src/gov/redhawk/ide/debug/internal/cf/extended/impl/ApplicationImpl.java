@@ -1365,7 +1365,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
