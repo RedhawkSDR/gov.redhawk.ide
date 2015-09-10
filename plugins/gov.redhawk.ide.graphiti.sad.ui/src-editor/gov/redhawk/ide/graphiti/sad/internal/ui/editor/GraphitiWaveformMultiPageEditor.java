@@ -232,7 +232,7 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 				// set layout for target-sdr editors
 				DUtil.layout(editor);
 
-				IEditorPart textEditor = createTextEditor();
+				IEditorPart textEditor = createTextEditor(getEditorInput());
 				setTextEditor(textEditor);
 				if (textEditor != null) {
 					final int sadSourcePageNum = addPage(-1, textEditor, getEditorInput(), sadResource);

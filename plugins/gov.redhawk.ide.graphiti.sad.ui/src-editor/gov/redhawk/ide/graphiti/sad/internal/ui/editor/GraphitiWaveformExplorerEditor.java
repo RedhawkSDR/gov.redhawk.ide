@@ -36,7 +36,7 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformSandboxEdito
 	protected void addPages() {
 		super.addPages();
 		try {
-			IEditorPart textEditor = createTextEditor();
+			IEditorPart textEditor = createTextEditor(getEditorInput());
 			setTextEditor(textEditor);
 			if (textEditor != null) {
 				final int sadSourcePageNum = addPage(-1, textEditor, getEditorInput(), getMainResource());

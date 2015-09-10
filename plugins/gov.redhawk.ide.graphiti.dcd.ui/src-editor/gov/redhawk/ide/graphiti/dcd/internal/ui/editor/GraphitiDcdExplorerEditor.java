@@ -45,7 +45,7 @@ public class GraphitiDcdExplorerEditor extends GraphitiDcdSandboxEditor {
 	protected void addPages() {
 		super.addPages();
 		try {
-			IEditorPart textEditor = createTextEditor();
+			IEditorPart textEditor = createTextEditor(getEditorInput());
 			setTextEditor(textEditor);
 			if (textEditor != null) {
 				final int dcdSourcePageNum = addPage(-1, textEditor, getEditorInput(), getMainResource());

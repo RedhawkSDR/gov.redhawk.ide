@@ -62,9 +62,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageSelectionProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -280,24 +278,6 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 
 	public void setTextEditor(IEditorPart textEditor) {
 		this.textEditor = textEditor;
-	}
-
-	protected IEditorPart createTextEditor() {
-		// StructuredTextEditors only work on workspace entries
-		// because
-		// org.eclipse.wst.sse.core.FileBufferModelManager:bufferCreated()
-		// assumes that the editor input is in the workspace.
-		if (getEditorInput() instanceof FileEditorInput) {
-			try {
-				return new org.eclipse.wst.sse.ui.StructuredTextEditor();
-			} catch (final NoClassDefFoundError e) {
-				return new TextEditor();
-			}
-		} else if (!getMainResource().getURI().isPlatformPlugin()) {
-			return new TextEditor();
-		}
-
-		return null;
 	}
 	
 	protected abstract void addNameListener(final Resource resource);
