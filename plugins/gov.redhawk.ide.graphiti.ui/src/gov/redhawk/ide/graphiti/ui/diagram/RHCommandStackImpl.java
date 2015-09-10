@@ -46,10 +46,10 @@ public class RHCommandStackImpl extends GFWorkspaceCommandStackImpl {
 
 	/*
 	 * Override execute just for the special case where another thread owns the current transaction, to ensure that a
-	 * new transaction is created to serialize access (see Eclipse Bugzilla bug 477083)
+	 * new transaction is created to serialize access (see Eclipse Bugzilla bug 477083).
 	 */
 	@Override
-	public void execute(Command command, Map<?, ?> options) throws InterruptedException, RollbackException {
+	public synchronized void execute(Command command, Map<?, ?> options) throws InterruptedException, RollbackException {
 		if (getDomain().getActiveTransaction() != null && getDomain().getActiveTransaction().getOwner() != Thread.currentThread()) {
 			InternalTransaction tx = createTransaction(command, options);
 			try {
