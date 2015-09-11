@@ -34,7 +34,7 @@ public class SynchronizedRefreshBehavior extends DefaultRefreshBehavior {
 		});
 	}
 
-	protected boolean runInUIThread(final Runnable runnable) {
+	protected void runInUIThread(final Runnable runnable) {
 		synchronized (diagramBehavior.getEditingDomain().getCommandStack()) {
 			if (Display.getCurrent() == null) {
 				Display.getDefault().syncExec(runnable);
@@ -42,7 +42,6 @@ public class SynchronizedRefreshBehavior extends DefaultRefreshBehavior {
 				runnable.run();
 			}
 		}
-		return true;
 	}
 
 	private void doRefresh() {
