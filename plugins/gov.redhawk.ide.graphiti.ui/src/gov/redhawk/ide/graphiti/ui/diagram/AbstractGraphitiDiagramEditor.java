@@ -98,6 +98,17 @@ public abstract class AbstractGraphitiDiagramEditor extends DiagramEditor {
 	}
 
 	/**
+	 * Every time the diagram receives focus update the diagram's components and connections
+	 */
+	@Override
+	public void setFocus() {
+		super.setFocus();
+
+		updateDiagram();
+		getDiagramBehavior().refresh();
+	}
+
+	/**
 	 * Update the diagram's components and connections
 	 */
 	protected void updateDiagram() {

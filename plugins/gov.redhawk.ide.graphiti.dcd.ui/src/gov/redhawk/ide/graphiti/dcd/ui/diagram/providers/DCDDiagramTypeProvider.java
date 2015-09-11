@@ -31,10 +31,6 @@ public class DCDDiagramTypeProvider extends AbstractDiagramTypeProvider {
 
 	private IToolBehaviorProvider[] toolBehaviorProviders;
 
-	//Enable events to determine when diagram automatically updates 
-	//(current happens when showing diagram)
-	private boolean autoUpdateAtRuntime = false;
-		
 	public DCDDiagramTypeProvider() {
 		super();
 		setFeatureProvider(new DCDDiagramFeatureProvider(this));
@@ -65,15 +61,12 @@ public class DCDDiagramTypeProvider extends AbstractDiagramTypeProvider {
 
 	@Override
 	public boolean isAutoUpdateAtRuntime() {
-		return autoUpdateAtRuntime;
+		return false;
 	}
 
 	@Override
 	public boolean isAutoUpdateAtReset() {
 		return true;
 	}
-	
-	public void setAutoUpdateAtRuntime(boolean autoUpdateAtRuntime) {
-		this.autoUpdateAtRuntime = autoUpdateAtRuntime;
-	}
+
 }

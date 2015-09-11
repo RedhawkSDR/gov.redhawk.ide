@@ -31,10 +31,6 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implemen
 
 	private IToolBehaviorProvider[] toolBehaviorProviders;
 
-	//Enable events to determine when diagram automatically updates
-	//(current happens when showing diagram)
-	private boolean autoUpdateAtRuntime = false;
-
 	public SADDiagramTypeProvider() {
 		super();
 		setFeatureProvider(new SADDiagramFeatureProvider(this));
@@ -68,17 +64,12 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implemen
 
 	@Override
 	public boolean isAutoUpdateAtRuntime() {
-		return autoUpdateAtRuntime;
+		return false;
 	}
 
 	@Override
 	public boolean isAutoUpdateAtReset() {
 		return true;
 	}
-
-	public void setAutoUpdateAtRuntime(boolean autoUpdateAtRuntime) {
-		this.autoUpdateAtRuntime = autoUpdateAtRuntime;
-	}
-
 
 }
