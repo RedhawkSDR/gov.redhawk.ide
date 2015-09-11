@@ -361,7 +361,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 				StatusManager.SHOW | StatusManager.LOG);
 		}
 
-		modelMap = new GraphitiModelMap(this, sad, waveform);
+		modelMap = new GraphitiModelMap(this, waveform);
 
 		this.sadlistener = new SadGraphitiModelAdapter(modelMap);
 		this.scaListener = new ScaGraphitiModelAdapter(modelMap) {

@@ -93,7 +93,6 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.sad.impl.SadComponentInstantiationImpl;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
@@ -110,15 +109,12 @@ public class GraphitiModelMap implements IPortStatListener {
 	private final Map<String, ConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMapEntry>());
 
 	private final LocalScaWaveform waveform;
-	private final SoftwareAssembly sad;
 
-	public GraphitiModelMap(@NonNull final GraphitiWaveformSandboxEditor editor, @NonNull final SoftwareAssembly sad, @NonNull final LocalScaWaveform waveform) {
+	public GraphitiModelMap(@NonNull final GraphitiWaveformSandboxEditor editor, @NonNull final LocalScaWaveform waveform) {
 		Assert.isNotNull(waveform, "Sandbox Waveform must not be null");
 		Assert.isNotNull(editor, "Sandbox Editor must not be null");
-		Assert.isNotNull(sad, "Software Assembly must not be null");
 		this.waveform = waveform;
 		this.editor = editor;
-		this.sad = sad;
 	}
 
 	/**
