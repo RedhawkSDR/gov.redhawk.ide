@@ -214,7 +214,7 @@ public abstract class AbstractGraphitiDiagramEditor extends DiagramEditor {
 
 			@Override
 			protected DefaultRefreshBehavior createRefreshBehavior() {
-				return new RunExclusiveRefreshBehavior(this);
+				return new SynchronizedRefreshBehavior(this);
 			}
 
 			@Override
