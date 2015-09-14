@@ -188,6 +188,7 @@ public class GraphitiModelMap implements IPortStatListener {
 				try {
 					newComp = GraphitiModelMap.this.create(comp, implID);
 					nodeMapEntry.setLocalScaComponent(newComp);
+					editor.componentRegistered(comp);
 
 					return Status.OK_STATUS;
 				} catch (final CoreException e) {

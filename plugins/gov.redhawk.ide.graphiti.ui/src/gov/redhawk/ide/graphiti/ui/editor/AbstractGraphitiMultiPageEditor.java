@@ -49,6 +49,8 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.impl.TransactionalEditingDomainImpl;
 import org.eclipse.emf.workspace.IWorkspaceCommandStack;
 import org.eclipse.emf.workspace.WorkspaceEditingDomainFactory;
+import org.eclipse.gef.EditPart;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -57,7 +59,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -411,5 +415,34 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 	}
 
 	protected abstract EObject getMainObject();
+
+	/**
+	 * Triggers a selection update if the given object is the current selection. This can be used from the sandbox
+	 * editors to refresh the properties view when the local component/device has registered.
+	 * @param object
+	 */
+	protected void refreshSelectedObject(final Object object) {
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				ISelection selection = getSelection();
+				if (!selection.isEmpty()) {
+					IStructuredSelection ss = (IStructuredSelection) selection;
+					Object element = ss.getFirstElement();
+					if (element instanceof EditPart) {
+						EditPart part = (EditPart) element;
+						Object bo = DUtil.getBusinessObject((PictogramElement) part.getModel());
+						if (bo == object) {
+							// The properties view ignores the new selection if it's equal to the old selection, even
+							// though in our case it may lead to a change in input; setting the selection to the whole
+							// diagram and then back to the original selection triggers a refresh.
+							getSite().getSelectionProvider().setSelection(new StructuredSelection(part.getRoot()));
+							getSite().getSelectionProvider().setSelection(selection);
+						}
+					}
+				}
+			}
+		});
+	}
 	
 }

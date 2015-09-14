@@ -121,6 +121,7 @@ public class GraphitiDcdModelMap {
 			if (nodes.get(nodeMapEntry.getKey()) != null) {
 				if (nodes.get(nodeMapEntry.getKey()).getScaDevice() == null) {
 					nodes.get(nodeMapEntry.getKey()).setScaDevice(device);
+					editor.deviceRegistered(nodes.get(nodeMapEntry.getKey()).getProfile());
 				}
 				return;
 			} else {

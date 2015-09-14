@@ -48,6 +48,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.CorbaUtils;
@@ -558,5 +559,9 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 	 */
 	public LocalScaWaveform getWaveform() {
 		return waveform;
+	}
+
+	public void componentRegistered(final SadComponentInstantiation component) {
+		refreshSelectedObject(component);
 	}
 }

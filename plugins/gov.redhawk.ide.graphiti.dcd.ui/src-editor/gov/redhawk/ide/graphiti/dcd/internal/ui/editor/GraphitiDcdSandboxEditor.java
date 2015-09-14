@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.dcd.DcdFactory;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.util.CorbaUtils;
@@ -351,4 +352,7 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 		return deviceManager;
 	}
 
+	public void deviceRegistered(DcdComponentInstantiation device) {
+		refreshSelectedObject(device);
+	}
 }
