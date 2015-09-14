@@ -1279,7 +1279,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 				if (performUpdate) {
 					updateStatus = true;
-					Graphiti.getPeService().deletePictogramElement(providesPortsContainerShape);
+					DUtil.fastDeletePictogramElement(providesPortsContainerShape);
 				} else {
 					return new Reason(true, "Provides Ports Shape requires deletion");
 				}
@@ -1326,7 +1326,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 									if (performUpdate) {
 										updateStatus = true;
 										// delete shape
-										Graphiti.getPeService().deletePictogramElement((PictogramElement) providesPortContainerShape);
+										DUtil.fastDeletePictogramElement((PictogramElement) providesPortContainerShape);
 									} else {
 										return new Reason(true, "Provides ports requires update");
 									}
@@ -1413,7 +1413,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				if (performUpdate) {
 					updateStatus = true;
 					ContainerShape lollipopContainerShape = getLollipop();
-					Graphiti.getPeService().deletePictogramElement(lollipopContainerShape);
+					DUtil.fastDeletePictogramElement(lollipopContainerShape);
 				} else {
 					return new Reason(true, "Lollipop Shape requires deletion");
 				}
@@ -1457,7 +1457,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 				if (performUpdate) {
 					updateStatus = true;
-					Graphiti.getPeService().deletePictogramElement(usesPortsContainerShape);
+					DUtil.fastDeletePictogramElement(usesPortsContainerShape);
 				} else {
 					return new Reason(true, "Uses Ports Shape requires deletion");
 				}
@@ -1505,7 +1505,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 									if (performUpdate) {
 										updateStatus = true;
 										// delete shape
-										Graphiti.getPeService().deletePictogramElement((PictogramElement) usesPortContainerShape);
+										DUtil.fastDeletePictogramElement((PictogramElement) usesPortContainerShape);
 									} else {
 										return new Reason(true, "Uses ports requires update");
 									}
@@ -1598,7 +1598,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				//super ports exist, delete them
 				if (performUpdate) {
 					updateStatus = true;
-					Graphiti.getPeService().deletePictogramElement(superProvidesPortsRectangleShape);
+					DUtil.fastDeletePictogramElement(superProvidesPortsRectangleShape);
 				} else {
 					return new Reason(true, "Super Provides Ports Shape requires deletion");
 				}
@@ -1684,7 +1684,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				//super ports exist, delete them
 				if (performUpdate) {
 					updateStatus = true;
-					Graphiti.getPeService().deletePictogramElement(superUsesPortsRectangleShape);
+					DUtil.fastDeletePictogramElement(superUsesPortsRectangleShape);
 				} else {
 					return new Reason(true, "Super Uses Ports Shape requires deletion");
 				}

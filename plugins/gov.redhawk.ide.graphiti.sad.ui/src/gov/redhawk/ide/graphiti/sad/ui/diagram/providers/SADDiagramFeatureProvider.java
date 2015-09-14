@@ -41,7 +41,6 @@ import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
-import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
 import org.eclipse.graphiti.mm.pictograms.Connection;
@@ -83,6 +82,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StopFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TerminateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.remove.FastRemoveFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
@@ -328,8 +328,8 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 	@Override
 	public IRemoveFeature getRemoveFeature(IRemoveContext context) {
-		return new DefaultRemoveFeature(this) {
-			// overridding the method below causes Remove to NOT show up in context menus but still allows
+		return new FastRemoveFeature(this) {
+			// overriding the method below causes Remove to NOT show up in context menus but still allows
 			// us to getRemoveFeature and execute it.
 			public boolean isAvailable(IContext context) {
 				return false;

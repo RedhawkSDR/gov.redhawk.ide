@@ -1500,4 +1500,33 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static boolean isConnecting(Diagram diagram) {
 		return Graphiti.getPeService().getProperty(diagram, DIAGRAM_CONNECTION_IN_PROGRESS) != null;
 	}
+
+	/**
+	 * Deletes a PictogramElement from its Diagram without doing a cross-reference search. The default PeService
+	 * implementation of deletePictogramElement() recursively deletes all of the children of a container using
+	 * EcoreUtil.delete(), which searches the entire resource set for references and removes them as well. This
+	 * quickly becomes an expensive operation as the graph grows, and in our case, should be unnecessary.
+	 * @param pe the pictogram element to delete
+	 */
+	public static void fastDeletePictogramElement(PictogramElement pe) {
+		if (pe instanceof Connection) {
+			// Connections may be referenced by their endpoints, so remove them from the anchors if necessary
+			Connection connection = (Connection) pe;
+			Anchor end = connection.getEnd();
+			if (end != null) {
+				end.getIncomingConnections().remove(connection);
+			}
+			Anchor start = connection.getStart();
+			if (start != null) {
+				start.getOutgoingConnections().remove(connection);
+			}
+		}
+		// The diagram holds references to all the of links as well
+		Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pe);
+		diagram.getPictogramLinks().remove(pe.getLink());
+
+		// Finally, remove directly from the parent
+		ContainerShape container = (ContainerShape) pe.eContainer();
+		container.getChildren().remove(pe);
+	}
 }
