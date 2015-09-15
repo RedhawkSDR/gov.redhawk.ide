@@ -256,17 +256,23 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
-	public void setStarted(boolean newStarted) {
+	public void setStartedGen(boolean newStarted) {
 		boolean oldStarted = started;
 		started = newStarted;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__STARTED, oldStarted, started));
+	}
 
-		// END GENERATED CODE
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public void setStarted(boolean newStarted) {
+		setStartedGen(newStarted);
 		updateStyleForComponentInner();
-		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -281,17 +287,23 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
-	public void setIStatusSeverity(int newIStatusSeverity) {
+	public void setIStatusSeverityGen(int newIStatusSeverity) {
 		int oldIStatusSeverity = iStatusSeverity;
 		iStatusSeverity = newIStatusSeverity;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY, oldIStatusSeverity, iStatusSeverity));
+	}
 
-		// END GENERATED CODE
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public void setIStatusSeverity(int newIStatusSeverity) {
+		setIStatusSeverityGen(newIStatusSeverity);
 		updateStyleForComponentInner();
-		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -1960,18 +1972,32 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Updates the style of the component's inner rounded rectangle based on the current state.
 	 */
-	private void updateStyleForComponentInner() {
+	protected void updateStyleForComponentInner() {
 		final Diagram diagram = DUtil.findDiagram(this);
 		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
 		if (innerRoundedRectangle != null) {
+			Style style;
 			if (iStatusSeverity == IStatus.ERROR) {
-				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerError(diagram));
+				style = getInnerErrorStyle(diagram);
 			} else if (started) {
-				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerStarted(diagram));
+				style = getInnerStartedStyle(diagram);
 			} else {
-				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
+				style = getInnerStyle(diagram);
 			}
+			innerRoundedRectangle.setStyle(style);
 		}
+	}
+
+	protected Style getInnerStyle(Diagram diagram) {
+		return StyleUtil.createStyleForComponentInner(diagram);
+	}
+
+	protected Style getInnerStartedStyle(Diagram diagram) {
+		return StyleUtil.createStyleForComponentInnerStarted(diagram);
+	}
+
+	protected Style getInnerErrorStyle(Diagram diagram) {
+		return StyleUtil.createStyleForComponentInnerError(diagram);
 	}
 
 } // RHContainerShapeImpl

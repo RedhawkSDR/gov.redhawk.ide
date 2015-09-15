@@ -14,7 +14,6 @@ import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxPackage;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.util.SadStyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import java.math.BigInteger;
@@ -27,11 +26,9 @@ import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -39,7 +36,6 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
-import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -95,32 +91,6 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public void setStarted(boolean newStarted) {
-		boolean oldStarted = started;
-		started = newStarted;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RHSadGxPackage.COMPONENT_SHAPE__STARTED, oldStarted, started));
-
-		// update color according to value
-		final Diagram diagram = DUtil.findDiagram(this);
-		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
-		if (innerRoundedRectangle != null) {
-			if (newStarted) {
-				// started
-				innerRoundedRectangle.setStyle(SadStyleUtil.createStyleForComponentInnerStarted(diagram));
-			} else {
-				// not started
-				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
-			}
-		}
-
-	}
-
-	/**
 	 * Creates the inner shapes that make up this container shape
 	 */
 	public void init(IAddContext context, ComponentPattern pattern) {
@@ -148,10 +118,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		}
 
 		// set innerContainer color based on started value
-		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
-		if (isStarted()) {
-			innerRoundedRectangle.setStyle(StyleUtil.getStyleForComponentInnerStarted(diagram));
-		}
+		updateStyleForComponentInner();
 
 		// runtimeAdapter = new ComponentRuntimeAdapter(this, featureProvider);
 	}

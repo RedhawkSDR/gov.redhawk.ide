@@ -53,7 +53,6 @@ import org.junit.Assert;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.util.SadStyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.logging.ui.LogLevels;
@@ -928,7 +927,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 				RHContainerShapeImpl componentShape = (RHContainerShapeImpl) editor.getEditPart(componentName).part().getModel();
 				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) componentShape.getInnerContainerShape().getGraphicsAlgorithm();
 				Diagram diagram = DUtil.findDiagram(componentShape);
-				return innerRoundedRectangle.getStyle().equals(SadStyleUtil.createStyleForComponentInnerStarted(diagram));
+				return innerRoundedRectangle.getStyle().equals(StyleUtil.createStyleForComponentInnerStarted(diagram));
 			}
 		}, 10000);
 	}
