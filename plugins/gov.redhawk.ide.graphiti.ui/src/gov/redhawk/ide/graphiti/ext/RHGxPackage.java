@@ -154,13 +154,21 @@ public interface RHGxPackage extends EPackage {
 	 */
 	int RH_CONTAINER_SHAPE__STARTED = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 0;
 	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RH_CONTAINER_SHAPE__ENABLED = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 1;
+	/**
 	 * The feature id for the '<em><b>IStatus Severity</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__ISTATUS_SEVERITY = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 1;
+	int RH_CONTAINER_SHAPE__ISTATUS_SEVERITY = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 2;
 	/**
 	 * The feature id for the '<em><b>Connection Map</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -168,7 +176,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__CONNECTION_MAP = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 2;
+	int RH_CONTAINER_SHAPE__CONNECTION_MAP = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 3;
 	/**
 	 * The feature id for the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -176,7 +184,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 3;
+	int RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 4;
 	/**
 	 * The feature id for the '<em><b>Has Ports Container Shape</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -184,7 +192,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 4;
+	int RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 5;
 	/**
 	 * The feature id for the '<em><b>Hide Unused Ports</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -192,7 +200,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 5;
+	int RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 6;
 	/**
 	 * The number of structural features of the '<em>RH Container Shape</em>' class.
 	 * <!-- begin-user-doc -->
@@ -200,7 +208,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 6;
+	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 7;
 	/**
 	 * The meta object id for the '<em>Component Supported Interface Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -357,6 +365,17 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getRHContainerShape_Started();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isEnabled <em>Enabled</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Enabled</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#isEnabled()
+	 * @see #getRHContainerShape()
+	 * @generated
+	 */
+	EAttribute getRHContainerShape_Enabled();
 
 	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusSeverity <em>IStatus Severity</em>}'.
@@ -617,6 +636,14 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute RH_CONTAINER_SHAPE__STARTED = eINSTANCE.getRHContainerShape_Started();
+
+		/**
+		 * The meta object literal for the '<em><b>Enabled</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RH_CONTAINER_SHAPE__ENABLED = eINSTANCE.getRHContainerShape_Enabled();
 
 		/**
 		 * The meta object literal for the '<em><b>IStatus Severity</b></em>' attribute feature.

@@ -152,6 +152,14 @@ public interface RHSadGxPackage extends EPackage {
 	 */
 	int COMPONENT_SHAPE__STARTED = RHGxPackage.RH_CONTAINER_SHAPE__STARTED;
 	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_SHAPE__ENABLED = RHGxPackage.RH_CONTAINER_SHAPE__ENABLED;
+	/**
 	 * The feature id for the '<em><b>IStatus Severity</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

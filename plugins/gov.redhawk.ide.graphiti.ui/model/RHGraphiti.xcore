@@ -46,6 +46,9 @@ class RHContainerShape extends ContainerShape {
 	/*If the component is started*/
 	transient boolean started
 
+	/*Is the component enabled?*/
+	transient boolean enabled = "true"
+
 	/*The severity of the component's status*/
 	transient int iStatusSeverity
 

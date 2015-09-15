@@ -191,6 +191,26 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
+	// updates component inner rectangle style when it is in a disabled state
+	public static Style createStyleForComponentInnerDisabled(Diagram diagram) {
+		final String styleId = "ComponentInnerDisabled";
+		Style style = StyleUtil.findStyle(diagram, styleId);
+		if (style == null) {
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			gaService.setRenderingStyle(style, PredefinedColoredAreas.getLightGrayAdaptions());
+			style.setLineWidth(2);
+		}
+		return style;
+	}
+
+	// returns component inner rectangle style for when it is in a disabled state
+	public static Style getStyleForComponentInnerDisabled(Diagram diagram) {
+		final String styleId = "ComponentInnerDisabled";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
 	// returns findby outer rectangle style
 	public static Style getStyleForFindByOuter(Diagram diagram) {
 		final String styleId = FIND_BY_OUTER;

@@ -74,6 +74,7 @@ import org.eclipse.graphiti.util.IColorConstant;
  * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isStarted <em>Started</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getIStatusSeverity <em>IStatus Severity</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getConnectionMap <em>Connection Map</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
@@ -104,6 +105,26 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @ordered
 	 */
 	protected boolean started = STARTED_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isEnabled() <em>Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isEnabled()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean ENABLED_EDEFAULT = true;
+
+	/**
+	 * The cached value of the '{@link #isEnabled() <em>Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isEnabled()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean enabled = ENABLED_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getIStatusSeverity() <em>IStatus Severity</em>}' attribute.
@@ -272,6 +293,37 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	public void setStarted(boolean newStarted) {
 		setStartedGen(newStarted);
+		updateStyleForComponentInner();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setEnabledGen(boolean newEnabled) {
+		boolean oldEnabled = enabled;
+		enabled = newEnabled;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__ENABLED, oldEnabled, enabled));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public void setEnabled(boolean newEnabled) {
+		setEnabledGen(newEnabled);
 		updateStyleForComponentInner();
 	}
 
@@ -620,6 +672,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		switch (featureID) {
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			return isStarted();
+		case RHGxPackage.RH_CONTAINER_SHAPE__ENABLED:
+			return isEnabled();
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
 			return getIStatusSeverity();
 		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
@@ -645,6 +699,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		switch (featureID) {
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			setStarted((Boolean) newValue);
+			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__ENABLED:
+			setEnabled((Boolean) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
 			setIStatusSeverity((Integer) newValue);
@@ -676,6 +733,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			setStarted(STARTED_EDEFAULT);
 			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__ENABLED:
+			setEnabled(ENABLED_EDEFAULT);
+			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
 			setIStatusSeverity(ISTATUS_SEVERITY_EDEFAULT);
 			return;
@@ -705,6 +765,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		switch (featureID) {
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			return started != STARTED_EDEFAULT;
+		case RHGxPackage.RH_CONTAINER_SHAPE__ENABLED:
+			return enabled != ENABLED_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
 			return iStatusSeverity != ISTATUS_SEVERITY_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
@@ -732,6 +794,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (started: ");
 		result.append(started);
+		result.append(", enabled: ");
+		result.append(enabled);
 		result.append(", iStatusSeverity: ");
 		result.append(iStatusSeverity);
 		result.append(", connectionMap: ");
@@ -1979,6 +2043,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			Style style;
 			if (iStatusSeverity == IStatus.ERROR) {
 				style = getInnerErrorStyle(diagram);
+			} else if (!enabled) {
+				style = getInnerDisabledStyle(diagram);
 			} else if (started) {
 				style = getInnerStartedStyle(diagram);
 			} else {
@@ -2000,4 +2066,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		return StyleUtil.createStyleForComponentInnerError(diagram);
 	}
 
+	protected Style getInnerDisabledStyle(Diagram diagram) {
+		return StyleUtil.createStyleForComponentInnerDisabled(diagram);
+	}
 } // RHContainerShapeImpl

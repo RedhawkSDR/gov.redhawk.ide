@@ -1273,15 +1273,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Determines if the diagram is for the sandbox waveform.
-	 * @param resource
-	 * @return
-	 */
-	public static boolean isDiagramLocalSandbox(final Resource resource) {
-		return ".LocalSca.sad.xml".equals(resource.getURI().lastSegment());
-	}
-
-	/**
 	 * Determines if this is a runtime diagram.
 	 * @param diagram
 	 * @return

@@ -35,6 +35,7 @@ import org.eclipse.graphiti.util.IColorConstant;
  * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted <em>Started</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusSeverity <em>IStatus Severity</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
@@ -72,6 +73,32 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	void setStarted(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Enabled</b></em>' attribute.
+	 * The default value is <code>"true"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Is the component enabled?
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Enabled</em>' attribute.
+	 * @see #setEnabled(boolean)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_Enabled()
+	 * @model default="true" unique="false" transient="true"
+	 * @generated
+	 */
+	boolean isEnabled();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isEnabled <em>Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Enabled</em>' attribute.
+	 * @see #isEnabled()
+	 * @generated
+	 */
+	void setEnabled(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>IStatus Severity</b></em>' attribute.

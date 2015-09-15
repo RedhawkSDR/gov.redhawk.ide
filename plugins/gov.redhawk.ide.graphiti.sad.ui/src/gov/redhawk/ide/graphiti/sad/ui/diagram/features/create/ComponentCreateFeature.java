@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.create;
 
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.sca.util.PluginUtil;
@@ -134,7 +135,13 @@ public class ComponentCreateFeature extends AbstractCreateFeature {
 		});
 
 		// call add feature
-		addGraphicalRepresentation(context, componentInstantiations[0]);
+		ComponentShape shape = (ComponentShape) addGraphicalRepresentation(context, componentInstantiations[0]);
+
+		// If this is a runtime diagram (i.e., local sandbox), the component shape should start off as disabled
+		// because there is no LocalScaComponent associated with the SadComponentInstantiation yet.
+		if (DUtil.isDiagramRuntime(getDiagram())) {
+			shape.setEnabled(false);
+		}
 
 		return new Object[] { componentInstantiations[0] };
 	}

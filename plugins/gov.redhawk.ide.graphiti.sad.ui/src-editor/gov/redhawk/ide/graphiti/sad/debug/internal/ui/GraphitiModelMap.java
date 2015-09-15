@@ -188,6 +188,7 @@ public class GraphitiModelMap implements IPortStatListener {
 				try {
 					newComp = GraphitiModelMap.this.create(comp, implID);
 					nodeMapEntry.setLocalScaComponent(newComp);
+					updateEnabledState(comp, true);
 					editor.componentRegistered(comp);
 
 					return Status.OK_STATUS;
@@ -798,6 +799,19 @@ public class GraphitiModelMap implements IPortStatListener {
 		job.schedule();
 	}
 
+	private void updateEnabledState(final SadComponentInstantiation component, final boolean enabled) {
+		getEditingDomain().getCommandStack().execute(new NonDirtyingCommand() {
+			@Override
+			public void execute() {
+				Diagram diagram = editor.getDiagramEditor().getDiagramTypeProvider().getDiagram();
+				RHContainerShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, component, RHContainerShape.class);
+				if (componentShape != null) {
+					componentShape.setEnabled(enabled);
+				}
+			}
+		});
+	}
+
 	/**
 	 * Modifies the diagram to reflect component runtime status
 	 */
@@ -806,7 +820,12 @@ public class GraphitiModelMap implements IPortStatListener {
 			for (String nodeKey : nodes.keySet()) {
 				final NodeMapEntry nodeMapEntry = nodes.get(nodeKey);
 				LocalScaComponent component = nodeMapEntry.getLocalScaComponent();
-				startStopComponent(component, component.getStarted());
+				if (component == null) {
+					updateEnabledState(nodeMapEntry.getProfile(), false);
+				} else {
+					updateEnabledState(nodeMapEntry.getProfile(), true);
+					startStopComponent(component, component.getStarted());
+				}
 			}
 		}
 	}
