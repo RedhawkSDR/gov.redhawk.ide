@@ -38,17 +38,23 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IDoubleClickContext;
+import org.eclipse.graphiti.features.context.IPictogramElementContext;
+import org.eclipse.graphiti.features.context.impl.CustomContext;
+import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.IToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.pattern.CreateFeatureForPattern;
+import org.eclipse.graphiti.tb.ContextButtonEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
+import org.eclipse.graphiti.tb.IContextButtonPadData;
 
 public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
@@ -61,7 +67,38 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	public AbstractGraphitiToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 	}
-	
+
+	/**
+	 * IDE-1021: Adds start/stop/etc. buttons to hover context button pad of component as applicable.
+	 */
+	@Override
+	public IContextButtonPadData getContextButtonPad(IPictogramElementContext context) {
+		// IDE-1061 allow button pad to appear when cursor is anywhere
+		// inside the ComponentShape
+		PictogramElement pe = context.getPictogramElement();
+		if (pe instanceof Shape) {
+			while (!(pe instanceof RHContainerShapeImpl || pe == null)) {
+				pe = (PictogramElement) pe.eContainer();
+			}
+			if (pe == null) {
+				return null;
+			}
+		}
+		context = new LayoutContext(pe);
+
+		IContextButtonPadData pad = super.getContextButtonPad(context);
+
+		// Add domain-specific context buttons
+		CustomContext cc = new CustomContext(new PictogramElement[] {pe});
+		ICustomFeature[] cf = getFeatureProvider().getCustomFeatures(cc);
+		for (ICustomFeature feature: cf) {
+			if (feature.getImageId() != null && feature.canExecute(cc)) {
+				pad.getDomainSpecificContextButtons().add(new ContextButtonEntry(feature, cc));
+			}
+		}
+		return pad;
+	}
+
 	/**
 	 * Provides compartment entries that can be used extending ToolBehavoirProvider classes
 	 */

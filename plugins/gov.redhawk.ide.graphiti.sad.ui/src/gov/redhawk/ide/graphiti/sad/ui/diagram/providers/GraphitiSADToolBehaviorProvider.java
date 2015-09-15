@@ -31,20 +31,13 @@ import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDoubleClickContext;
-import org.eclipse.graphiti.features.context.IPictogramElementContext;
-import org.eclipse.graphiti.features.context.impl.CustomContext;
-import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.IToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.StackEntry;
-import org.eclipse.graphiti.tb.ContextButtonEntry;
 import org.eclipse.graphiti.tb.ContextMenuEntry;
-import org.eclipse.graphiti.tb.IContextButtonPadData;
 import org.eclipse.graphiti.tb.IContextMenuEntry;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -52,7 +45,6 @@ import gov.redhawk.core.resourcefactory.ComponentDesc;
 import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
@@ -500,36 +492,6 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
         return contextMenuItems.toArray(new IContextMenuEntry[contextMenuItems.size()]);
 	}
 
-	/**
-	 * IDE-1021: Adds start/stop/etc. buttons to hover context button pad of component as applicable.
-	 */
-	@Override
-	public IContextButtonPadData getContextButtonPad(IPictogramElementContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		// IDE-1061 allow button pad to appear when cursor is anywhere 
-		// inside the ComponentShape
-		if (pe instanceof Shape) {
-			while (!(pe instanceof RHContainerShapeImpl || pe == null)) {
-				pe = (PictogramElement) pe.eContainer();
-			}
-			if (pe == null) {
-				return null;
-			}
-		}
-		context = new LayoutContext(pe);
-		IContextButtonPadData pad = super.getContextButtonPad(context);
-		CustomContext cc = new CustomContext(new PictogramElement[] {pe});
-		ICustomFeature[] cf = getFeatureProvider().getCustomFeatures(cc);
-		for (ICustomFeature feature: cf) {
-			if (feature.getImageId() != null && feature.canExecute(cc)) {
-				pad.getDomainSpecificContextButtons().add(new ContextButtonEntry(feature, cc));
-			}
-		}
-		return pad;
-	}
-	
-	
-	
 	@Override
 	public ICustomFeature getDoubleClickFeature(IDoubleClickContext context) {
 		//UsesFrontEndDeviceEditFeature
