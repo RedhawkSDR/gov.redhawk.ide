@@ -11,6 +11,8 @@
  */
 package gov.redhawk.ide.graphiti.dcd.internal.ui.editor;
 
+import gov.redhawk.ide.dcd.internal.ui.editor.DevicesPage;
+import gov.redhawk.ide.dcd.internal.ui.editor.NodeOverviewPage;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.DcdDiagramUtilHelper;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDcdDiagramEditor;
@@ -58,6 +60,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+@SuppressWarnings("restriction")
 public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor {
 
 	public static final String ID = "gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor";
@@ -65,7 +68,6 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 	public static final String EDITING_DOMAIN_ID = "mil.jpeojtrs.sca.dcd.diagram.EditingDomain";
 
 	private ResourceListener nameListener;
-	private GraphitiDcdDevicesPage dcdDevicesPage;
 
 	private class ResourceListener extends AdapterImpl {
 		private DeviceConfiguration dcd;
@@ -203,9 +205,8 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 				setOverviewPage(overviewPage);
 				this.addPage(overviewPage);
 
-				dcdDevicesPage = new GraphitiDcdDevicesPage(this);
-				dcdDevicesPage.setInput(dcdResource);
-				addPage(dcdDevicesPage);
+				final IFormPage devicesPage = createDcdDevicesPage(dcdResource);
+				addPage(devicesPage);
 
 				// This is the page for the graphical diagram viewer
 				final DiagramEditor editor = createDiagramEditor();
@@ -279,13 +280,13 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 	}
 
 	protected IFormPage createOverviewPage(final Resource dcdResource) {
-		final GraphitiDcdOverviewPage retVal = new GraphitiDcdOverviewPage(this);
+		final NodeOverviewPage retVal = new NodeOverviewPage(this);
 		retVal.setInput(dcdResource);
 		return retVal;
 	}
 	
 	protected IFormPage createDcdDevicesPage(final Resource dcdResource) {
-		final GraphitiDcdDevicesPage retVal = new GraphitiDcdDevicesPage(this);
+		final DevicesPage retVal = new DevicesPage(this);
 		retVal.setInput(dcdResource);
 		return retVal;
 	}
