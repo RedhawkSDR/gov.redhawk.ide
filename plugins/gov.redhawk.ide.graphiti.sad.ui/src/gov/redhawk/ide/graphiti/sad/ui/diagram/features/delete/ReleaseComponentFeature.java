@@ -11,7 +11,6 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete;
 
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -52,7 +51,7 @@ public class ReleaseComponentFeature extends DefaultDeleteFeature {
 	
 	@Override
 	public boolean canDelete(IDeleteContext context) {
-		if (context.getPictogramElement() instanceof ComponentShapeImpl) {
+		if (context.getPictogramElement() instanceof ComponentShape) {
 			return true;
 		}
 		return false;
@@ -60,7 +59,7 @@ public class ReleaseComponentFeature extends DefaultDeleteFeature {
 
 	@Override
 	public void delete(IDeleteContext context) {
-		final ComponentShape componentShape = (ComponentShapeImpl) context.getPictogramElement();
+		final ComponentShape componentShape = (ComponentShape) context.getPictogramElement();
 
 		final SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
