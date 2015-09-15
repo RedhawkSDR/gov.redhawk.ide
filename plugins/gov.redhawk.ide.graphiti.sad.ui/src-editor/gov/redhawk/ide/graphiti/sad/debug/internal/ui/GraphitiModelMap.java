@@ -342,6 +342,10 @@ public class GraphitiModelMap implements IPortStatListener {
 				createContext.setTargetContainer(diagram);
 				final Object[] objects = createComponentFeature.create(createContext);
 				sadComponentInstantiations[0] = (SadComponentInstantiation) objects[0];
+
+				// The LocalSCAComponent already exists, so enable it here.
+				RHContainerShape shape = DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiations[0], RHContainerShape.class);
+				shape.setEnabled(true);
 			}
 		});
 
