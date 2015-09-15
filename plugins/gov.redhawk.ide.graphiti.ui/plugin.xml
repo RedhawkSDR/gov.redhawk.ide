@@ -97,6 +97,9 @@
                type="CF.ResourceOperations">
          </adapter>
          <adapter
+               type="CF.LifeCycleOperations">
+         </adapter>
+         <adapter
                type="CF.LoggingOperations">
          </adapter>
       </factory>
@@ -120,6 +123,9 @@
          </adapter>
          <adapter
                type="CF.ResourceOperations">
+         </adapter>
+         <adapter
+               type="CF.LifeCycleOperations">
          </adapter>
          <adapter
                type="CF.LoggingOperations">

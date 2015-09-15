@@ -53,7 +53,7 @@ import org.eclipse.graphiti.pattern.IPattern;
 import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
 import gov.redhawk.ide.graphiti.dcd.ext.ServiceShape;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DCDConnectionInterfaceDeleteFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.ReleaseShapeFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DeviceReleaseFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect.DCDReconnectFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.DCDConnectionInterfaceUpdateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.GraphitiDcdDiagramUpdateFeature;
@@ -237,12 +237,12 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		// If the element is in the Chalkboard, its removal will be handled by the Release and Terminate features
 		if (DUtil.isDiagramRuntime(diagram)) {
 			if (pe instanceof DeviceShape || pe instanceof ServiceShape) {
-				return new ReleaseShapeFeature(this);
+				return new DeviceReleaseFeature(this);
 			}
 			return null;
 		}
 
-		// Use parent class logic, but disable the result
+		// Use parent class logic, but disable the result if read-only
 		IDeleteFeature deleteFeature = super.getDeleteFeature(context);
 		if (deleteFeature != null && DUtil.isDiagramReadOnly(diagram)) {
 			deleteFeature = new DisabledDeleteFeatureWrapper(deleteFeature);

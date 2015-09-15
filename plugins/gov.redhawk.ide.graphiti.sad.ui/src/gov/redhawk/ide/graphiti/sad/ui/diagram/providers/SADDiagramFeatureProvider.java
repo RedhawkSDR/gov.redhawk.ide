@@ -60,8 +60,8 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkNonExternalPo
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.ReleaseComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.ComponentReleaseFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect.SADReconnectFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.update.GraphitiWaveformDiagramUpdateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.update.SADConnectionInterfaceUpdateFeature;
@@ -313,12 +313,12 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		// If the element is in the Chalkboard, it's removal will be handled by the Release and Terminate features
 		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			if (pe instanceof ComponentShape) {
-				return new ReleaseComponentFeature(this);
+				return new ComponentReleaseFeature(this);
 			}
 			return null;
 		}
 
-		// Use parent class logic, but disable the result
+		// Use parent class logic, but disable the result if read-only
 		IDeleteFeature deleteFeature = super.getDeleteFeature(context);
 		if (deleteFeature != null && DUtil.isDiagramReadOnly(diagram)) {
 			deleteFeature = new DisabledDeleteFeatureWrapper(deleteFeature);
