@@ -92,7 +92,7 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		CustomContext cc = new CustomContext(new PictogramElement[] {pe});
 		ICustomFeature[] cf = getFeatureProvider().getCustomFeatures(cc);
 		for (ICustomFeature feature: cf) {
-			if (feature.getImageId() != null && feature.canExecute(cc)) {
+			if (feature.getImageId() != null && feature.isAvailable(cc) && feature.canExecute(cc)) {
 				pad.getDomainSpecificContextButtons().add(new ContextButtonEntry(feature, cc));
 			}
 		}
