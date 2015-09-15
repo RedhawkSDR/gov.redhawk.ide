@@ -11,6 +11,7 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create;
 
+import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
@@ -115,7 +116,11 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 
 		// Call add feature
 		context.putProperty("shapeType", SHAPE_TYPE);
-		addGraphicalRepresentation(context, componentInstantiations[0]);
+		DeviceShape shape = (DeviceShape) addGraphicalRepresentation(context, componentInstantiations[0]);
+
+		if (DUtil.isDiagramRuntime(getDiagram())) {
+			shape.setEnabled(false);
+		}
 
 		return new Object[] { componentInstantiations[0] };
 	}

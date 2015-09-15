@@ -52,6 +52,7 @@ import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 import gov.redhawk.ide.debug.LocalAbstractComponent;
 import gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl;
+import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
@@ -119,9 +120,11 @@ public class GraphitiDcdModelMap {
 			// Do a merge of the nodeMapEntry to populate missing ScaDevice content
 			// This occurs when adding from the diagram palette
 			if (nodes.get(nodeMapEntry.getKey()) != null) {
-				if (nodes.get(nodeMapEntry.getKey()).getScaDevice() == null) {
-					nodes.get(nodeMapEntry.getKey()).setScaDevice(device);
-					editor.deviceRegistered(nodes.get(nodeMapEntry.getKey()).getProfile());
+				DcdNodeMapEntry entry = nodes.get(nodeMapEntry.getKey());
+				if (entry.getScaDevice() == null) {
+					entry.setScaDevice(device);
+					updateEnabledState(entry.getProfile(), true);
+					editor.deviceRegistered(entry.getProfile());
 				}
 				return;
 			} else {
@@ -198,6 +201,10 @@ public class GraphitiDcdModelMap {
 				createContext.setTargetContainer(diagram);
 				final Object[] objects = createDeviceFeature.create(createContext);
 				dcdComponentInstantiations[0] = (DcdComponentInstantiation) objects[0];
+
+				// The LocalScaDevice already exists, so enable it here.
+				DeviceShape shape = DUtil.getPictogramElementForBusinessObject(diagram, dcdComponentInstantiations[0], DeviceShape.class);
+				shape.setEnabled(true);
 			}
 		});
 
@@ -240,6 +247,19 @@ public class GraphitiDcdModelMap {
 		};
 		job.setSystem(true);
 		job.schedule();
+	}
+
+	private void updateEnabledState(final DcdComponentInstantiation component, final boolean enabled) {
+		editor.getEditingDomain().getCommandStack().execute(new NonDirtyingCommand() {
+			@Override
+			public void execute() {
+				Diagram diagram = editor.getDiagramEditor().getDiagramTypeProvider().getDiagram();
+				RHContainerShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, component, RHContainerShape.class);
+				if (componentShape != null) {
+					componentShape.setEnabled(enabled);
+				}
+			}
+		});
 	}
 
 	/**
