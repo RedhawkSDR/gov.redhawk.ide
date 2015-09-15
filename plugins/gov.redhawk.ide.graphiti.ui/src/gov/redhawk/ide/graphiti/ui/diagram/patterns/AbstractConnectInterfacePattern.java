@@ -18,10 +18,12 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.pattern.AbstractConnectionPattern;
 import org.eclipse.graphiti.services.Graphiti;
 
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 
@@ -50,6 +52,12 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 		// Not allowed in the explorer or if read-only
 		Diagram diagram = getDiagram();
 		if (DUtil.isDiagramExplorer(diagram) || DUtil.isDiagramReadOnly(diagram)) {
+			return false;
+		}
+
+		// Check if the source anchor belongs to a component, and disallow the connection if it's disabled
+		RHContainerShape component = ScaEcoreUtils.getEContainerOfType(context.getSourceAnchor(), RHContainerShape.class);
+		if (component != null && !component.isEnabled()) {
 			return false;
 		}
 
