@@ -854,7 +854,7 @@ public class ScaExplorerTestUtils {
 
 	/**
 	 * Launch component from REDHAWK Explorer TargetSDR
-	 * @Param bot The SWTBot
+	 * @param bot The SWTBot
 	 * @param componentName The component's name
 	 * @param implementationId The implementation ID to be launched
 	 */
