@@ -43,14 +43,14 @@ public class LogLevelFeature extends NonUndoableCustomFeature {
 
 	@Override
 	public boolean canExecute(ICustomContext context) {
-		if (context.getPictogramElements().length == 1) {
-			RHContainerShape componentShape = (RHContainerShape) context.getPictogramElements()[0];
-			Object object = DUtil.getBusinessObject(componentShape);
-			if (object instanceof ComponentInstantiation) {
-				return true;
-			}
+		// It only makes sense to allow the user to do this with one selected resource
+		if (context.getPictogramElements().length != 1) {
+			return false;
 		}
-		return false;
+
+		RHContainerShape componentShape = (RHContainerShape) context.getPictogramElements()[0];
+		Object object = DUtil.getBusinessObject(componentShape);
+		return (object instanceof ComponentInstantiation) && componentShape.isEnabled();
 	}
 
 	@Override

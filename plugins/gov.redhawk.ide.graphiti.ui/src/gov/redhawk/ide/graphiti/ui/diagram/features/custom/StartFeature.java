@@ -41,11 +41,7 @@ public class StartFeature extends NonUndoableCustomFeature {
 	public boolean canExecute(ICustomContext context) {
 		RHContainerShape shape = (RHContainerShape) context.getPictogramElements()[0];
 		Object object = DUtil.getBusinessObject(shape);
-		if (object instanceof ComponentInstantiation && !shape.isStarted()) {
-			return true;
-		}
-
-		return super.canExecute(context);
+		return (object instanceof ComponentInstantiation) && !shape.isStarted() && shape.isEnabled();
 	}
 
 	@Override
