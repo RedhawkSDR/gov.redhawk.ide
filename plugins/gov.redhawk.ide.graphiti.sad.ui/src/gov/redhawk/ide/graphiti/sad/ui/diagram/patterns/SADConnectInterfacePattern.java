@@ -13,7 +13,6 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -383,16 +382,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 		if (sad == null) {
 			return false;
-		}
-
-		// doing the null check because it breaks when loading a findby without a diagram
-		if (((GraphitiWaveformDiagramEditor) getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer()).getGraphicalViewer() != null) {
-			// force selection of shape so that we can then right click for contextual options
-			// this is kind of a hack, it would be better if selection happened automatically when its clicked.
-			if (context.getSourcePictogramElement() != null) {
-				getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer().selectPictogramElements(
-					new PictogramElement[] { context.getSourcePictogramElement() });
-			}
 		}
 
 		return super.canCreate(context);

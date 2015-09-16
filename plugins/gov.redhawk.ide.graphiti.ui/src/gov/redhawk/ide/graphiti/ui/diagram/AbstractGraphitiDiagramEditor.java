@@ -147,10 +147,10 @@ public abstract class AbstractGraphitiDiagramEditor extends DiagramEditor {
 	public void hookGraphicalViewer() {
 		super.hookGraphicalViewer();
 
-		// IDE-1029: Normally in Graphiti, right-clicking on anchors will not select them, which means that a context
-		// menu for the currently selected object pops up (often the wrong object). In order to get the context menu
-		// for a port without having to left-click first, we intercept mouse down events on the viewer's control, and
-		// if it looks like an anchor we forcibly update the selection.
+		// Normally in Graphiti, clicking on anchors will not select them, which is not the behavior we want. As noted
+		// in IDE-1029, right-clicking on a port pops up the context menu for the currently selected object (often the
+		// wrong one). In order to enable selection, we intercept mouse down events on the viewer's control, and if it
+		// looks like an anchor we forcibly update the selection.
 		//
 		// It does not appear to be necessary to remove the listener in dispose(), as the CanvasViewer has already
 		// been disposed at that point.
@@ -158,7 +158,7 @@ public abstract class AbstractGraphitiDiagramEditor extends DiagramEditor {
 	}
 
 	protected void handleMouseDown(MouseEvent e) {
-		if (e.button == 3) {
+		if (e.button == 1 || e.button == 3) {
 			GraphicalViewer viewer = getGraphicalViewer();
 			if (viewer != null) {
 				EditPart part = viewer.findObjectAt(new Point(e.x, e.y));
