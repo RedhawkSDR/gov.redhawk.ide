@@ -395,23 +395,7 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			}
 		}
 
-		// determine source
-		UsesPortStub source = getUsesPortStub(context);
-		if (source == null) {
-			return false;
-		}
-
-		// determine destination
-		// getConnectionTarget handles connecting to ports on components, not ports or interfaces on FindBy Shapes
-		ConnectionTarget target = getConnectionTarget(context);
-		if (target == null) {
-			// PASS
-			// TODO: check if interface on findBy Shape
-			// TODO: check if provides port on findBy...not sure how were doing all this??
-		}
-
-		return true;
-
+		return super.canCreate(context);
 	}
 
 	/**

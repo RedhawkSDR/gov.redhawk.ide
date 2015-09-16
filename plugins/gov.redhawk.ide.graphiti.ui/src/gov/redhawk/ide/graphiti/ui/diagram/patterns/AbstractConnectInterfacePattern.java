@@ -91,6 +91,33 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 	}
 
 	@Override
+	public boolean canCreate(ICreateConnectionContext context) {
+		// Check if the target anchor belongs to a component, and disallow the connection if it's disabled; the source
+		// was already checked in canStart().
+		RHContainerShape component = ScaEcoreUtils.getEContainerOfType(context.getTargetAnchor(), RHContainerShape.class);
+		if (component != null && !component.isEnabled()) {
+			return false;
+		}
+
+		// determine source
+		UsesPortStub source = getUsesPortStub(context);
+		if (source == null) {
+			return false;
+		}
+
+		// determine destination
+		// getConnectionTarget handles connecting to ports on components, not ports or interfaces on FindBy Shapes
+		ConnectionTarget target = getConnectionTarget(context);
+		if (target == null) {
+			// PASS
+			// TODO: check if interface on findBy Shape
+			// TODO: check if provides port on findBy...not sure how were doing all this??
+		}
+
+		return true;
+	}
+
+	@Override
 	public void endConnecting() {
 		this.sourcePort = null;
 		this.targetPort = null;
