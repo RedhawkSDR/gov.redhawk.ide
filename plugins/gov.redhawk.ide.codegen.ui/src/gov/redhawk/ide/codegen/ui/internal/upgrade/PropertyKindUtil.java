@@ -10,6 +10,29 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen.ui.internal.upgrade;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.util.FeatureMap;
+import org.eclipse.emf.transaction.RunnableWithResult;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.ResourceUtil;
+import org.osgi.framework.Version;
+
 import gov.redhawk.ide.codegen.IScaComponentCodegen;
 import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
@@ -17,12 +40,6 @@ import gov.redhawk.ide.codegen.ui.internal.GeneratorUtil;
 import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-
 import mil.jpeojtrs.sca.prf.ConfigurationKind;
 import mil.jpeojtrs.sca.prf.Kind;
 import mil.jpeojtrs.sca.prf.PrfFactory;
@@ -35,23 +52,6 @@ import mil.jpeojtrs.sca.prf.StructPropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.util.FeatureMap;
-import org.eclipse.emf.transaction.RunnableWithResult;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.ResourceUtil;
-import org.osgi.framework.Version;
 
 public class PropertyKindUtil {
 
@@ -155,14 +155,18 @@ public class PropertyKindUtil {
 			}
 		}
 
-		// Force upgrade if using deprecated property kinds with a newer codegen
+		// Offer upgrade if using deprecated property kinds with a newer codegen
 		for (Version codegenVersion : codegenVersions) {
 			if (codegenVersion.compareTo(new Version(2, 0, 0)) >= 0 && propTypes.hasConfigOrExecParamKind()) {
-				String message = "Your properties file contains properties deprecated in REDHAWK 2.0 ('configure' or 'execparam' property kinds). They will be upgraded to the new 'property' kind if you proceed.";
-				boolean result = MessageDialog.openConfirm(shell, "Deprecated property kinds", message);
-				if (result) {
+				String message = "Your properties file contains properties deprecated in REDHAWK 2.0 ('configure' or 'execparam' property kinds). Do you want to upgrade them (recommended) to the new 'property' kind?";
+				String[] buttons = new String[] { IDialogConstants.CANCEL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_LABEL };
+				MessageDialog dialog = new MessageDialog(shell, "Deprecated property kinds", null, message, MessageDialog.QUESTION, buttons, 2);				
+				int result = dialog.open();
+				if (result == 2) {
 					upgradeProperties(prf);
 					save(parentProject, spd, prf);
+					break;
+				} else if (result == 1) {
 					break;
 				} else {
 					throw new OperationCanceledException();
