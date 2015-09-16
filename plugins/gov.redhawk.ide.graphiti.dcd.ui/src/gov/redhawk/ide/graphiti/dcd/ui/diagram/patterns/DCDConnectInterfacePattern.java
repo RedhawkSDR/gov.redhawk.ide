@@ -31,7 +31,6 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.IColorConstant;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDcdDiagramEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
