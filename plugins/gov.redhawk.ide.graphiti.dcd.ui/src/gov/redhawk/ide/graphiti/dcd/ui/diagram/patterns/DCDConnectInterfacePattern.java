@@ -31,13 +31,10 @@ import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.dcd.validation.ConnectionsConstraint;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.dcd.DcdFactory;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern {
 
@@ -63,36 +60,11 @@ public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern 
 	 */
 	@Override
 	public PictogramElement add(IAddContext addContext) {
-
-		IGaService gaService = Graphiti.getGaService();
-		IPeCreateService peCreateService = Graphiti.getPeCreateService();
-		IAddConnectionContext context = (IAddConnectionContext) addContext;
-		DcdConnectInterface connectInterface = (DcdConnectInterface) addContext.getNewObject();
-
-		// source and target
-		UsesPortStub source = getUsesPortStub(context);
-		ConnectionTarget target = getConnectionTarget(context);
-
-		// Create connection (handle user selecting source or target)
-		Connection connectionPE = peCreateService.createFreeFormConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
-		if (source == getUsesPortStub(context.getSourceAnchor()) && target == getConnectionTarget(context.getTargetAnchor())) {
-			connectionPE.setStart(context.getSourceAnchor());
-			connectionPE.setEnd(context.getTargetAnchor());
-		} else if (source == getUsesPortStub(context.getTargetAnchor()) && target == getConnectionTarget(context.getSourceAnchor())) {
-			connectionPE.setStart(context.getTargetAnchor());
-			connectionPE.setEnd(context.getSourceAnchor());
-		}
-
-		// create line
-		Polyline line = gaService.createPolyline(connectionPE);
-		line.setLineWidth(2);
-		line.setForeground(gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), StyleUtil.BLACK));
+		Connection connectionPE = (Connection) super.add(addContext);
 
 		// add any decorators
+		DcdConnectInterface connectInterface = (DcdConnectInterface) addContext.getNewObject();
 		decorateConnection(connectionPE, connectInterface, getDiagram());
-
-		// link ports to connection
-		getFeatureProvider().link(connectionPE, new Object[] { connectInterface, source, target });
 
 		return connectionPE;
 	}

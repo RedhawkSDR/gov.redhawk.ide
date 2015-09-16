@@ -66,42 +66,24 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 	 */
 	@Override
 	public PictogramElement add(IAddContext addContext) {
-		IGaService gaService = Graphiti.getGaService();
-		IPeCreateService peCreateService = Graphiti.getPeCreateService();
 		IAddConnectionContext context = (IAddConnectionContext) addContext;
 		SadConnectInterface connectInterface = (SadConnectInterface) addContext.getNewObject();
 
-		// source and target
-		UsesPortStub source = getUsesPortStub(context);
-		ConnectionTarget target = getConnectionTarget(context);
-
 		// check and see if the connection has any special color requirements, such as during a monitor port call
+		UsesPortStub source = getUsesPortStub(context);
 		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.getPictogramElementForBusinessObject(getDiagram(), source.eContainer(),
 			RHContainerShape.class);
 		Map<String, IColorConstant> connectionMap = rhContainerShape.getConnectionMap();
-		IColorConstant defaultColor = (IColorConstant) connectionMap.get(connectInterface.getId());
-
-		// Create connection (handle user selecting source or target)
-		Connection connectionPE = peCreateService.createFreeFormConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
-		if (source == getUsesPortStub(context.getSourceAnchor()) && target == getConnectionTarget(context.getTargetAnchor())) {
-			connectionPE.setStart(context.getSourceAnchor());
-			connectionPE.setEnd(context.getTargetAnchor());
-		} else if (source == getUsesPortStub(context.getTargetAnchor()) && target == getConnectionTarget(context.getSourceAnchor())) {
-			connectionPE.setStart(context.getTargetAnchor());
-			connectionPE.setEnd(context.getSourceAnchor());
+		IColorConstant color = (IColorConstant) connectionMap.get(connectInterface.getId());
+		if (color == null) {
+			color = StyleUtil.BLACK;
 		}
+		context.putProperty("LineColor", color);
 
-		// create line
-		Polyline line = gaService.createPolyline(connectionPE);
-		line.setLineWidth(2);
-		IColorConstant style = (defaultColor != null) ? defaultColor : StyleUtil.BLACK;
-		line.setForeground(gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), style));
+		Connection connectionPE = (Connection) super.add(addContext);
 
 		// add any decorators
-		decorateConnection(connectionPE, connectInterface, getDiagram(), style);
-
-		// link ports to connection
-		getFeatureProvider().link(connectionPE, new Object[] { connectInterface, source, target });
+		decorateConnection(connectionPE, connectInterface, getDiagram(), color);
 
 		return connectionPE;
 	}

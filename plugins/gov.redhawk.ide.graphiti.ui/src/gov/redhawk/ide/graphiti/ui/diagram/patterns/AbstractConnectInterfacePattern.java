@@ -19,19 +19,27 @@ import java.util.Set;
 
 import org.eclipse.emf.common.command.CommandStack;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.graphiti.features.context.IAddConnectionContext;
+import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IConnectionContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
+import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AbstractConnectionPattern;
 import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.services.IGaService;
+import org.eclipse.graphiti.util.IColorConstant;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.PortStyleUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.sca.util.StringUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
@@ -141,6 +149,40 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 
 		// In any other case, assume it's a valid connection so that the mouse pointer doesn't give negative feedback.
 		return true;
+	}
+
+	@Override
+	public PictogramElement add(IAddContext addContext) {
+		IAddConnectionContext context = (IAddConnectionContext) addContext;
+
+		// source and target
+		UsesPortStub source = getUsesPortStub(context);
+		ConnectionTarget target = getConnectionTarget(context);
+
+		// Create connection (handle user selecting source or target)
+		Connection connectionPE = Graphiti.getPeCreateService().createFreeFormConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
+		if (source == getUsesPortStub(context.getSourceAnchor()) && target == getConnectionTarget(context.getTargetAnchor())) {
+			connectionPE.setStart(context.getSourceAnchor());
+			connectionPE.setEnd(context.getTargetAnchor());
+		} else if (source == getUsesPortStub(context.getTargetAnchor()) && target == getConnectionTarget(context.getSourceAnchor())) {
+			connectionPE.setStart(context.getTargetAnchor());
+			connectionPE.setEnd(context.getSourceAnchor());
+		}
+
+		// create line
+		IGaService gaService = Graphiti.getGaService();
+		Polyline line = gaService.createPolyline(connectionPE);
+		line.setLineWidth(2);
+		IColorConstant color = (IColorConstant) context.getProperty("LineColor");
+		if (color == null) {
+			color = StyleUtil.BLACK;
+		}
+		line.setForeground(gaService.manageColor(getDiagram(), color));
+
+		// link ports to connection
+		getFeatureProvider().link(connectionPE, new Object[] { context.getNewObject(), source, target });
+
+		return connectionPE;
 	}
 
 	@Override
