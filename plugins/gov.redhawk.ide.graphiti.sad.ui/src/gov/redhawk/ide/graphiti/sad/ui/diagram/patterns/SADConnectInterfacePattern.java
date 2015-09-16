@@ -19,7 +19,6 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.PortStyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
-import gov.redhawk.sca.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -60,22 +58,6 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.IColorConstant;
 
 public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern {
-
-	public static final String NAME = "Connection";
-	public static final String SHAPE_IMG_CONNECTION_DECORATOR = "imgConnectionDecorator";
-	public static final String SHAPE_TEXT_CONNECTION_DECORATOR = "textConnectionDecorator";
-
-	public static final String OVERRIDE_CONNECTION_ID = "OverrideConnectionId";
-
-	@Override
-	public String getCreateName() {
-		return NAME;
-	}
-
-	@Override
-	public String getCreateDescription() {
-		return "Create new Connect Interface";
-	}
 
 	@Override
 	public String getCreateImageId() {
@@ -421,7 +403,7 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		// create connectionId first check if provided in context (currently used by GraphitiModelMap), otherwise
 		// generate unique connection id
 		final String connectionId = (context.getProperty(OVERRIDE_CONNECTION_ID) != null) ? (String) context.getProperty(OVERRIDE_CONNECTION_ID)
-			: createConnectionId(sad);
+			: createConnectionId(sad.getConnections());
 		// set connection id
 		sadConnectInterface.setId(connectionId);
 
@@ -451,21 +433,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		newConnection = (Connection) getFeatureProvider().addIfPossible(addContext);
 
 		return newConnection;
-	}
-
-	/**
-	 * Returns the next available connection id
-	 * @param sad SoftwareAssembly
-	 */
-	private String createConnectionId(SoftwareAssembly sad) {
-		final List<String> ids = new ArrayList<String>();
-		if (sad.getConnections() != null) {
-			final List< ? extends ConnectInterface< ? , ? , ? >> connections = sad.getConnections().getConnectInterface();
-			for (final ConnectInterface< ? , ? , ? > connection : connections) {
-				ids.add(connection.getId());
-			}
-		}
-		return StringUtil.defaultCreateUniqueString("connection_1", ids);
 	}
 
 }

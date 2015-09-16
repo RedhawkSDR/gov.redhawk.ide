@@ -10,9 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -36,31 +33,13 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePatt
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.dcd.validation.ConnectionsConstraint;
-import gov.redhawk.sca.util.StringUtil;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.dcd.DcdFactory;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern {
-
-	public static final String NAME = "Connection";
-	public static final String SHAPE_IMG_CONNECTION_DECORATOR = "imgConnectionDecorator";
-	public static final String SHAPE_TEXT_CONNECTION_DECORATOR = "textConnectionDecorator";
-
-	public static final String OVERRIDE_CONNECTION_ID = "OverrideConnectionId";
-
-	@Override
-	public String getCreateName() {
-		return NAME;
-	}
-
-	@Override
-	public String getCreateDescription() {
-		return "Create new Connect Interface";
-	}
 
 	@Override
 	public String getCreateImageId() {
@@ -238,7 +217,7 @@ public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		// create connectionId first check if provided in context (currently used by GraphitiModelMap), otherwise
 		// generate unique connection id
 		final String connectionId = (context.getProperty(OVERRIDE_CONNECTION_ID) != null) ? (String) context.getProperty(OVERRIDE_CONNECTION_ID)
-			: createConnectionId(dcd);
+			: createConnectionId(dcd.getConnections());
 		// set connection id
 		dcdConnectInterface.setId(connectionId);
 
@@ -269,21 +248,6 @@ public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		newConnection = (Connection) getFeatureProvider().addIfPossible(addContext);
 
 		return newConnection;
-	}
-
-	/**
-	 * Returns the next available connection id
-	 * @param sad SoftwareAssembly
-	 */
-	private String createConnectionId(DeviceConfiguration dcd) {
-		final List<String> ids = new ArrayList<String>();
-		if (dcd.getConnections() != null) {
-			final List< ? extends ConnectInterface< ? , ? , ? >> connections = dcd.getConnections().getConnectInterface();
-			for (final ConnectInterface< ? , ? , ? > connection : connections) {
-				ids.add(connection.getId());
-			}
-		}
-		return StringUtil.defaultCreateUniqueString("connection_1", ids);
 	}
 
 }
