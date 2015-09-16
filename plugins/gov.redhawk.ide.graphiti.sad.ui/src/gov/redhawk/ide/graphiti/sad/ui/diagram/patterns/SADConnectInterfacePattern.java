@@ -33,14 +33,9 @@ import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
-import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.services.IGaService;
-import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.IColorConstant;
 
 public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern {
@@ -107,9 +102,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		// Clear any existing connection decorators
 		connectionPE.getConnectionDecorators().clear();
 
-		IGaService gaService = Graphiti.getGaService();
-		IPeCreateService peCreateService = Graphiti.getPeCreateService();
-
 		// establish source/target for connection
 		UsesPortStub source = connectInterface.getSource();
 		ConnectionTarget target = connectInterface.getTarget();
@@ -131,12 +123,7 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 
 			// Add error decorator if necessary
 			if (validationProblem) {
-
-				// add graphical X to the middle of the erroneous connection
-				ConnectionDecorator errorDecorator = peCreateService.createConnectionDecorator(connectionPE, false, 0.5, true);
-				Polyline errPolyline = gaService.createPolyline(errorDecorator, new int[] { -7, 7, 0, 0, -7, -7, 0, 0, 7, -7, 0, 0, 7, 7 });
-				errPolyline.setForeground(gaService.manageColor(diagram, IColorConstant.RED));
-				errPolyline.setLineWidth(2);
+				AbstractConnectInterfacePattern.addErrorDecorator(diagram, connectionPE);
 			}
 
 			// add graphical arrow to end of the connection
@@ -148,10 +135,7 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			} else {
 				arrowColor = IColorConstant.BLACK;
 			}
-			ConnectionDecorator arrowDecorator = peCreateService.createConnectionDecorator(connectionPE, false, 1.0, true);
-			Polyline polyline = gaService.createPolyline(arrowDecorator, new int[] { -15, 10, 0, 0, -15, -10 });
-			polyline.setForeground(gaService.manageColor(diagram, arrowColor));
-			polyline.setLineWidth(2);
+			AbstractConnectInterfacePattern.addConnectionArrow(diagram, connectionPE, arrowColor);
 		}
 	}
 

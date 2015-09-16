@@ -26,6 +26,7 @@ import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -183,6 +184,28 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 		getFeatureProvider().link(connectionPE, new Object[] { context.getNewObject(), source, target });
 
 		return connectionPE;
+	}
+
+	/**
+	 * Add graphical X to the middle of an erroneous connection
+	 */
+	protected static void addErrorDecorator(Diagram diagram, Connection connection) {
+		IGaService gaService = Graphiti.getGaService();
+		ConnectionDecorator errorDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, false, 0.5, true);
+		Polyline errPolyline = gaService.createPolyline(errorDecorator, new int[] { -7, 7, 0, 0, -7, -7, 0, 0, 7, -7, 0, 0, 7, 7 });
+		errPolyline.setForeground(gaService.manageColor(diagram, IColorConstant.RED));
+		errPolyline.setLineWidth(2);
+	}
+
+	/**
+	 *  Add a graphical arrow to end of the connection
+	 */
+	protected static void addConnectionArrow(Diagram diagram, Connection connection, IColorConstant color) {
+		IGaService gaService = Graphiti.getGaService();
+		ConnectionDecorator arrowDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, false, 1.0, true);
+		Polyline polyline = gaService.createPolyline(arrowDecorator, new int[] { -15, 10, 0, 0, -15, -10 });
+		polyline.setForeground(gaService.manageColor(diagram, color));
+		polyline.setLineWidth(2);
 	}
 
 	@Override
