@@ -12,33 +12,20 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.PortStyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -49,7 +36,6 @@ import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
@@ -196,160 +182,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		}
 
 		return super.canStartConnection(context);
-	}
-
-	@Override
-	public void startConnecting() {
-		super.startConnecting();
-
-		// Highlight ports that may be valid for completing the connection
-		if (getSourcePort() != null) {
-			highlightCompatiblePorts(getSourcePort());
-		} else if (getTargetPort() != null) {
-			highlightCompatiblePorts(getTargetPort());
-		}
-	}
-
-	@Override
-	public void endConnecting() {
-		// Turns off highlighting ports for the connection
-		if (!DUtil.isDiagramExplorer(getDiagram()) && (getSourcePort() != null || getTargetPort() != null)) {
-			PortStyleUtil.resetAllPortStyling(getDiagram(), getDiagramBehavior().getEditingDomain());
-		}
-
-		super.endConnecting();
-	}
-
-	// Utility method to either highlight compatible ports, or return them to default styling
-	private void highlightCompatiblePorts(EObject originatingPort) {
-		if (originatingPort == null) {
-			return;
-		}
-
-		// Don't execute highlighting if a super port is involved.
-		final Diagram diagram = getDiagram();
-		final ContainerShape portContainer = (ContainerShape) DUtil.getPictogramElementForBusinessObject(diagram, originatingPort, ContainerShape.class);
-		if (DUtil.isSuperPort(portContainer)) {
-			return;
-		}
-
-		Set<ContainerShape> compatiblePorts;
-		if (originatingPort instanceof UsesPortStub) {
-			UsesPortStub usesPort = (UsesPortStub) originatingPort;
-			compatiblePorts = getCompatiblePorts(usesPort);
-		} else if (originatingPort instanceof ProvidesPortStub) {
-			ProvidesPortStub providesPort = (ProvidesPortStub) originatingPort;
-			compatiblePorts = getCompatiblePorts(providesPort);
-		} else {
-			// Most likely user clicked a component supported interface shape
-			return;
-		}
-
-		// Highlight compatible ports
-		PortStyleUtil.highlightCompatiblePorts(diagram, getDiagramBehavior().getEditingDomain(), compatiblePorts);
-	}
-
-	private Set<ContainerShape> getCompatiblePorts(UsesPortStub usesPort) {
-		Set<ContainerShape> compatiblePorts = new HashSet<ContainerShape>();
-
-		// The first time we come across an component instance, add the valid ports to this map.
-		// If we come across this component type again, refer to the map rather than redoing the port comparisons
-		Map<String, ArrayList<String>> compatiblePortsMap = new HashMap<String, ArrayList<String>>();
-
-		// A list to hold all component shapes found in the diagram
-		List<ContainerShape> componentShapes = DUtil.getAllContainerShapes(getDiagram(), RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-
-		for (ContainerShape componentShape : componentShapes) {
-			Object businessObj = DUtil.getBusinessObject(componentShape);
-			if (businessObj instanceof FindByStub) {
-				// Not interested in highlighting ports of FindBy shapes
-				continue;
-			} else if (businessObj instanceof UsesDeviceStub) {
-				for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
-					ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
-					if (InterfacesUtil.areSuggestedMatch(usesPort, providesPort)) {
-						compatiblePorts.add(portShape);
-					}
-				}
-			} else {
-				SadComponentInstantiation component = (SadComponentInstantiation) businessObj;
-				String componentRefId = ((SadComponentPlacement) component.eContainer()).getComponentFileRef().getRefid();
-				if (compatiblePortsMap.containsKey(componentRefId)) {
-					// If we have already seen a component of this type, just grab the ports we know are compatible
-					ArrayList<String> portNames = compatiblePortsMap.get(componentRefId);
-					for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
-						ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
-						if (portNames.contains(providesPort.getName())) {
-							compatiblePorts.add(portShape);
-						}
-					}
-				} else {
-					// We haven't yet evaluated this component type. We'll find compatible ports and cache them in the
-					// map for future reference.
-					ArrayList<String> portNames = new ArrayList<String>();
-					for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
-						ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
-						if (InterfacesUtil.areCompatible(usesPort, providesPort)) {
-							compatiblePorts.add(portShape);
-							portNames.add(providesPort.getName());
-						}
-					}
-					compatiblePortsMap.put(componentRefId, portNames);
-				}
-			}
-		}
-		return compatiblePorts;
-	}
-
-	private Set<ContainerShape> getCompatiblePorts(ProvidesPortStub providesPort) {
-		Set<ContainerShape> compatiblePorts = new HashSet<ContainerShape>();
-
-		// The first time we come across an component instance, add the valid ports to this map.
-		// If we come across this component type again, refer to the map rather than redoing the port comparisons
-		Map<String, ArrayList<String>> compatiblePortsMap = new HashMap<String, ArrayList<String>>();
-
-		// A list to hold all component shapes found in the diagram
-		List<ContainerShape> componentShapes = DUtil.getAllContainerShapes(getDiagram(), RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-
-		for (ContainerShape componentShape : componentShapes) {
-			Object businessObj = DUtil.getBusinessObject(componentShape);
-			if (businessObj instanceof FindByStub) {
-				// Not interested in highlighting ports of FindBy shapes
-				continue;
-			} else if (businessObj instanceof UsesDeviceStub) {
-				for (ContainerShape portShape : DUtil.getDiagramUsesPorts(componentShape)) {
-					UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(portShape);
-					if (InterfacesUtil.areSuggestedMatch(usesPort, providesPort)) {
-						compatiblePorts.add(portShape);
-					}
-				}
-			} else {
-				SadComponentInstantiation component = (SadComponentInstantiation) businessObj;
-				String componentRefId = ((SadComponentPlacement) component.eContainer()).getComponentFileRef().getRefid();
-				if (!compatiblePortsMap.isEmpty() && compatiblePortsMap.containsKey(componentRefId)) {
-					// If we have already seen a component of this type, just grab the ports we know are compatible
-					ArrayList<String> portNames = compatiblePortsMap.get(componentRefId);
-					for (ContainerShape portShape : DUtil.getDiagramUsesPorts(componentShape)) {
-						UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(portShape);
-						if (portNames.contains(usesPort.getName())) {
-							compatiblePorts.add(portShape);
-						}
-					}
-				} else {
-					// If new component type, find compatible ports and add them to the map for future reference
-					ArrayList<String> portNames = new ArrayList<String>();
-					for (ContainerShape portShape : DUtil.getDiagramUsesPorts(componentShape)) {
-						UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(portShape);
-						if (InterfacesUtil.areCompatible(usesPort, providesPort)) {
-							compatiblePorts.add(portShape);
-							portNames.add(usesPort.getName());
-						}
-					}
-					compatiblePortsMap.put(componentRefId, portNames);
-				}
-			}
-		}
-		return compatiblePorts;
 	}
 
 	/**
