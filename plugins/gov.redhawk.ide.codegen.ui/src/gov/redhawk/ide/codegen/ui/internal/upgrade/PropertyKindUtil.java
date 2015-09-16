@@ -148,9 +148,7 @@ public class PropertyKindUtil {
 		// Don't allow the user to proceed if they're using an old codegen with the new 'property' kind
 		for (Version codegenVersion : codegenVersions) {
 			if (codegenVersion.compareTo(new Version(2, 0, 0)) < 0 && propTypes.hasPropertyKind()) {
-				String message = "The code generator you are attempting to use is older than 2.0.0 and does not support the 'property' kind for properties";
-				MessageDialog dialog = new MessageDialog(shell, "Older code generator", null, message, MessageDialog.ERROR, new String[] { "Ok" }, 0);
-				dialog.open();
+				MessageDialog.openError(shell, Messages.OldCodeGen_Title, Messages.OldCodeGen_Message);
 				throw new OperationCanceledException();
 			}
 		}
@@ -158,9 +156,8 @@ public class PropertyKindUtil {
 		// Offer upgrade if using deprecated property kinds with a newer codegen
 		for (Version codegenVersion : codegenVersions) {
 			if (codegenVersion.compareTo(new Version(2, 0, 0)) >= 0 && propTypes.hasConfigOrExecParamKind()) {
-				String message = "Your properties file contains properties deprecated in REDHAWK 2.0 ('configure' or 'execparam' property kinds). Do you want to upgrade them (recommended) to the new 'property' kind?";
 				String[] buttons = new String[] { IDialogConstants.CANCEL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_LABEL };
-				MessageDialog dialog = new MessageDialog(shell, "Deprecated property kinds", null, message, MessageDialog.QUESTION, buttons, 2);				
+				MessageDialog dialog = new MessageDialog(shell, Messages.DeprecatedProps_Title, null, Messages.DeprecatedProps_Message, MessageDialog.QUESTION, buttons, 2);				
 				int result = dialog.open();
 				if (result == 2) {
 					upgradeProperties(prf);
@@ -363,7 +360,7 @@ public class PropertyKindUtil {
 			try {
 				prf.eResource().save(null);
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Problem while saving PRF XML file", e));
+				throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, Messages.Error_CantSavePrf, e));
 			}
 		}
 	}
