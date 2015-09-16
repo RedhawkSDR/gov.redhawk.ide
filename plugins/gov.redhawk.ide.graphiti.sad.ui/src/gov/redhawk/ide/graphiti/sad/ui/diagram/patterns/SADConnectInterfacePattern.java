@@ -206,11 +206,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 	 */
 	@Override
 	public Connection create(ICreateConnectionContext context) {
-		// Don't allow connections to be drawn in the waveform explorer
-		if (DUtil.DIAGRAM_CONTEXT_EXPLORER.equals(DUtil.getDiagramContext(getDiagram()))) {
-			return null;
-		}
-
 		Connection newConnection = null;
 
 		SadConnectInterface sadConnectInterface = (SadConnectInterface) DUtil.assignAnchorObjectsToConnection(SadFactory.eINSTANCE.createSadConnectInterface(),

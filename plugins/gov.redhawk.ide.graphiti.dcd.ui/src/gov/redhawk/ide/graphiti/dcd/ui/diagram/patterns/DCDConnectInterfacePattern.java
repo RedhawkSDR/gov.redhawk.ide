@@ -159,18 +159,6 @@ public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		return super.canStartConnection(context);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.graphiti.pattern.AbstractConnectionPattern#startConnecting()
-	 */
-	@Override
-	public void startConnecting() {
-		super.startConnecting();
-		// Don't allow connections to be drawn in the node explorer
-		if (DUtil.DIAGRAM_CONTEXT_EXPLORER.equals(DUtil.getDiagramContext(getDiagram()))) {
-			return;
-		}
-	}
-
 	/**
 	 * Determines whether creation of an interface connection is possible between source and destination anchors.
 	 * User can begin drawing connection from either direction.
