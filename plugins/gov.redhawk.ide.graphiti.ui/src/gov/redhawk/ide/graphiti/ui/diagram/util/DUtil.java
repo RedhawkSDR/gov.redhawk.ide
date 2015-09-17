@@ -1500,6 +1500,15 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param pe the pictogram element to delete
 	 */
 	public static void fastDeletePictogramElement(PictogramElement pe) {
+		// Recursively remove any connections or links
+		unlinkPictogramElement(pe);
+
+		// Finally, remove directly from the parent
+		ContainerShape container = (ContainerShape) pe.eContainer();
+		container.getChildren().remove(pe);
+	}
+
+	private static void unlinkPictogramElement(PictogramElement pe) {
 		if (pe instanceof Connection) {
 			// Connections may be referenced by their endpoints, so remove them from the anchors if necessary
 			Connection connection = (Connection) pe;
@@ -1512,12 +1521,22 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 				start.getOutgoingConnections().remove(connection);
 			}
 		}
+
+		if (pe instanceof AnchorContainer) {
+			for (Anchor anchor : ((AnchorContainer) pe).getAnchors()) {
+				unlinkPictogramElement(anchor);
+			}
+		}
+
 		// The diagram holds references to all the of links as well
 		Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pe);
 		diagram.getPictogramLinks().remove(pe.getLink());
 
-		// Finally, remove directly from the parent
-		ContainerShape container = (ContainerShape) pe.eContainer();
-		container.getChildren().remove(pe);
+		// Recursively unlink children
+		if (pe instanceof ContainerShape) {
+			for (Shape child : ((ContainerShape) pe).getChildren()) {
+				unlinkPictogramElement(child);
+			}
+		}
 	}
 }
