@@ -1500,31 +1500,50 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param pe the pictogram element to delete
 	 */
 	public static void fastDeletePictogramElement(PictogramElement pe) {
-		// Recursively remove any connections or links
-		unlinkPictogramElement(pe);
+		if (pe instanceof Connection) {
+			DUtil.fastDeleteConnection((Connection) pe);
+		} else {
+			// Recursively remove any connections or links
+			DUtil.unlinkPictogramElement(pe);
 
-		// Finally, remove directly from the parent
-		ContainerShape container = (ContainerShape) pe.eContainer();
-		container.getChildren().remove(pe);
+			// Remove directly from the parent; as long as there are no cross-references, this effectively deletes all
+			// children as well
+			ContainerShape container = (ContainerShape) pe.eContainer();
+			container.getChildren().remove(pe);
+		}
 	}
 
-	private static void unlinkPictogramElement(PictogramElement pe) {
-		if (pe instanceof Connection) {
-			// Connections may be referenced by their endpoints, so remove them from the anchors if necessary
-			Connection connection = (Connection) pe;
-			Anchor end = connection.getEnd();
-			if (end != null) {
-				end.getIncomingConnections().remove(connection);
-			}
-			Anchor start = connection.getStart();
-			if (start != null) {
-				start.getOutgoingConnections().remove(connection);
-			}
+	/**
+	 * Deletes a Connection from its Diagram without doing a cross-reference search.
+	 * @see {@link #deletePictogramElement(PictogramElement)}
+	 * @param connection the connection to delete
+	 */
+	public static void fastDeleteConnection(Connection connection) {
+		// Connections may be referenced by their endpoints, so remove them from the anchors if necessary
+		Anchor end = connection.getEnd();
+		if (end != null) {
+			end.getIncomingConnections().remove(connection);
+		}
+		Anchor start = connection.getStart();
+		if (start != null) {
+			start.getOutgoingConnections().remove(connection);
 		}
 
+		Diagram diagram = connection.getParent();
+		diagram.getPictogramLinks().remove(connection.getLink());
+		diagram.getConnections().remove(connection);
+	}
+
+	/**
+	 * Internal method to recursively removes all business object links from a PictogramElement and its children.
+	 * Used by {@link #fastDeletePictogramElement(PictogramElement)}.
+	 * @param pe the pictogram element to unlink
+	 */
+	private static void unlinkPictogramElement(PictogramElement pe) {
 		if (pe instanceof AnchorContainer) {
+			// Remove business objects links from anchors
 			for (Anchor anchor : ((AnchorContainer) pe).getAnchors()) {
-				unlinkPictogramElement(anchor);
+				DUtil.unlinkPictogramElement(anchor);
 			}
 		}
 
@@ -1535,7 +1554,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		// Recursively unlink children
 		if (pe instanceof ContainerShape) {
 			for (Shape child : ((ContainerShape) pe).getChildren()) {
-				unlinkPictogramElement(child);
+				DUtil.unlinkPictogramElement(child);
 			}
 		}
 	}
