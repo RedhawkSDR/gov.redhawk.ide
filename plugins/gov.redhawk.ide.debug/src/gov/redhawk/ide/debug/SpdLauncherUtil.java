@@ -79,7 +79,7 @@ import CF.ResourceHelper;
 import CF.ResourceOperations;
 import CF.LifeCyclePackage.InitializeError;
 import CF.LifeCyclePackage.ReleaseError;
-import CF.PropertySetPackage.AlreadyInitialized;
+import CF.PropertyEmitterPackage.AlreadyInitialized;
 import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
 import CF.ResourcePackage.StartError;

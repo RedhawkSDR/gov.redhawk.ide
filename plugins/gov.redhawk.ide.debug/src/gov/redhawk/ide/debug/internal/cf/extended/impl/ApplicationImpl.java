@@ -116,7 +116,7 @@ import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 import CF.PortSupplierPackage.PortInfoType;
 import CF.PortSupplierPackage.UnknownPort;
-import CF.PropertySetPackage.AlreadyInitialized;
+import CF.PropertyEmitterPackage.AlreadyInitialized;
 import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
 import CF.ResourcePackage.StartError;
