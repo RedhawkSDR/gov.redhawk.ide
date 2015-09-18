@@ -32,7 +32,9 @@ import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.tb.IToolBehaviorProvider;
 import org.eclipse.graphiti.ui.editor.DefaultMarkerBehavior;
 import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
 import org.eclipse.graphiti.ui.editor.DefaultRefreshBehavior;
@@ -163,9 +165,14 @@ public abstract class AbstractGraphitiDiagramEditor extends DiagramEditor {
 			if (viewer != null) {
 				EditPart part = viewer.findObjectAt(new Point(e.x, e.y));
 				if (part.getModel() instanceof Anchor) {
-					if (part.getSelected() == EditPart.SELECTED_NONE) {
-						viewer.select(part);
+					Anchor anchor = (Anchor) part.getModel();
+					IToolBehaviorProvider behaviorProvider =  getDiagramTypeProvider().getCurrentToolBehaviorProvider();
+					PictogramElement selectedPe = behaviorProvider.getSelection(anchor, getDiagramBehavior().getSelectedPictogramElements());
+					if (selectedPe == null) {
+						selectedPe = anchor;
 					}
+					getDiagramBehavior().setPictogramElementForSelection(selectedPe);
+					getDiagramBehavior().selectBufferedPictogramElements();
 				}
 			}
 		}

@@ -11,6 +11,7 @@
  */
 package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
@@ -29,8 +30,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -42,8 +46,7 @@ import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
@@ -160,24 +163,21 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	 */
 	@Override
 	public PictogramElement getSelection(PictogramElement originalPe, PictogramElement[] oldSelection) {
+		// Select ports directly (including super ports)
+		if (originalPe instanceof Anchor) {
+			Object bo = DUtil.getBusinessObject(originalPe);
+			if (bo instanceof UsesPortStub || bo instanceof ProvidesPortStub) {
+				return null;
+			}
+		}
 
-		if (originalPe instanceof FixPointAnchor
-			|| DUtil.doesPictogramContainProperty(originalPe, new String[] { RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE,
-				RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE,
-				RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE})) {
+		// Select the container shape itself
+		if (originalPe instanceof RHContainerShape) {
 			return null;
 		}
 
-		// Always select outerContainershape instead of its contents
-		if (DUtil.doesPictogramContainProperty(originalPe, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE,
-			RHContainerShapeImpl.SHAPE_INNER_CONTAINER })) {
-			ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(originalPe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-			return outerContainerShape;
-		}
-		return null;
+		// Otherwise, always select outer container instead of its contents
+		return ScaEcoreUtils.getEContainerOfType(originalPe, RHContainerShape.class);
 	}
 	
 	public boolean passesFilter(String id) {
