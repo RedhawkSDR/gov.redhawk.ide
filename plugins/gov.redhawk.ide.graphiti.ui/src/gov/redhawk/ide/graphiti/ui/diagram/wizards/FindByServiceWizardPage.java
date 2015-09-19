@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.ui.diagram.wizards;
 
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
+import gov.redhawk.eclipsecorba.library.ui.IdlFilter;
 import gov.redhawk.eclipsecorba.library.ui.IdlInterfaceSelectionDialog;
 
 import java.beans.PropertyChangeEvent;
@@ -287,7 +288,7 @@ public class FindByServiceWizardPage extends WizardPage {
 					return;
 				}
 
-				IdlInterfaceDcl result = IdlInterfaceSelectionDialog.create(getShell());
+				IdlInterfaceDcl result = IdlInterfaceSelectionDialog.open(getShell(), IdlFilter.ALL_WITH_MODULE);
 				if (result != null) {
 					serviceTypeText.setText(result.getRepId());
 					// if the interface selected inherits from PortSupplier than allow user to

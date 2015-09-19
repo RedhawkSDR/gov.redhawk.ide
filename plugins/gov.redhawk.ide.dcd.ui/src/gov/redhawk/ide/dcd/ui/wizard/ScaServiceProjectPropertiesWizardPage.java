@@ -11,6 +11,7 @@
 package gov.redhawk.ide.dcd.ui.wizard;
 
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
+import gov.redhawk.eclipsecorba.library.ui.IdlFilter;
 import gov.redhawk.eclipsecorba.library.ui.IdlInterfaceSelectionDialog;
 import gov.redhawk.ide.spd.ui.wizard.ScaResourceProjectPropertiesWizardPage;
 
@@ -140,7 +141,7 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IdlInterfaceDcl result = IdlInterfaceSelectionDialog.create(getShell());
+				IdlInterfaceDcl result = IdlInterfaceSelectionDialog.open(getShell(), IdlFilter.ALL_WITH_MODULE);
 				if (result != null) {
 					serviceIdlText.setText(result.getRepId());
 				}

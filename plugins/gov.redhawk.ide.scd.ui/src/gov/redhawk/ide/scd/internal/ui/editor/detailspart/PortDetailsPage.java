@@ -46,6 +46,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
 import gov.redhawk.common.ui.parts.FormEntry;
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
+import gov.redhawk.eclipsecorba.library.ui.IdlFilter;
 import gov.redhawk.eclipsecorba.library.ui.IdlInterfaceSelectionDialog;
 import gov.redhawk.ui.editor.FormEntryAdapter;
 import gov.redhawk.ui.editor.SCAFormEditor;
@@ -236,7 +237,7 @@ public class PortDetailsPage extends ScaDetails {
 
 			@Override
 			public void buttonSelected(FormEntry entry) {
-				IdlInterfaceDcl result = IdlInterfaceSelectionDialog.create(entry.getButton().getShell());
+				IdlInterfaceDcl result = IdlInterfaceSelectionDialog.open(entry.getButton().getShell(), IdlFilter.PORTS);
 				if (result != null) {
 					idlEntry.getText().setText(result.getRepId());
 				}

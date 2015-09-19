@@ -10,10 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.eclipsecorba.library.ui;
 
-import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
-import gov.redhawk.eclipsecorba.library.IdlLibrary;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,12 +18,19 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
+
+import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
+import gov.redhawk.eclipsecorba.library.IdlLibrary;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
 /**
  * A selection dialog that allows the user to select an IDL interface.
@@ -38,18 +41,30 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 	private IdlFilteredTree filteredTree;
 	private IdlLibrary library;
 	private IStatus status;
+	private IdlFilter filter;
 	
 	/**
-	 * Construct a dialog against a given IdlLibrary.
-	 * @param parent
-	 * @param library
+	 * @deprecated Use {@link #IdlInterfaceSelectionDialog(Shell, IdlLibrary, IdlFilter)}
 	 */
+	@Deprecated
 	public IdlInterfaceSelectionDialog(Shell parent, IdlLibrary library) {
+		this(parent, library, IdlFilter.ALL);
+	}
+
+	/**
+	 * Construct an IDL selection dialog against a given IdlLibrary.
+	 * @param parent The parent shell
+	 * @param library The IDL library
+	 * @param filter The filtered set of IDLs to display
+	 * @since 1.2
+	 */
+	public IdlInterfaceSelectionDialog(Shell parent, IdlLibrary library, IdlFilter filter) {
 		super(parent);
 		Assert.isNotNull(library);
 		this.library = library;
+		this.filter = filter;
 	}
-		
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -61,7 +76,7 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 		headerLabel.setText("Select an IDL interface (? = any character, * = any string)");
 		headerLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		filteredTree = new IdlFilteredTree(composite, true, library);
+		filteredTree = new IdlFilteredTree(composite, library, filter);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		applyDialogFont(filteredTree.getViewer().getTree());
 		gd.heightHint = filteredTree.getViewer().getTree().getItemHeight() * 15; // hint to show 15 items
@@ -72,6 +87,19 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 			public void selectionChanged(SelectionChangedEvent event) {
 				StructuredSelection selection = (StructuredSelection) event.getSelection();
 				handleSelected(selection);
+			}
+		});
+        final Button showAllButton = new Button(composite, SWT.CHECK);
+        showAllButton.setText("Show all interfaces");
+        showAllButton.setSelection(false);
+        showAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (showAllButton.getSelection()) {
+					filteredTree.setFilter(IdlFilter.ALL);
+				} else {
+					filteredTree.setFilter(filter);
+				}
 			}
 		});
         
@@ -126,26 +154,45 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 	}
 	
 	/**
-	 * Display the contents of the target SDR interface library.
-	 * 
-	 * @param parent the shell
-	 * @return the selected interface or null if cancel was pressed
+	 * @deprecated Use {@link #open(Shell, IdlFilter)}
 	 */
+	@Deprecated
 	public static IdlInterfaceDcl create(Shell parent) {
 		// No library was supplied, using the IDL Library from the SDR Root.
 		IdlLibrary library =  SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
-		return create(parent, library);
+		return open(parent, library, IdlFilter.ALL);
 	}
 
 	/**
-	 * Display the contents of the provided interface library.
-	 * 
-	 * @param parent the shell
-	 * @param library an idl library.
-	 * @return the selected interface or null if cancel was pressed
+	 * @deprecated Use {@link #open(Shell, IdlLibrary, IdlFilter)}
 	 */
+	@Deprecated
 	public static IdlInterfaceDcl create(Shell parent, IdlLibrary library) {
-		IdlInterfaceSelectionDialog dialog = new IdlInterfaceSelectionDialog(parent, library);
+		return open(parent, library, IdlFilter.ALL);
+	}
+
+	/**
+	 * Display an IDL selection dialog with the contents of the IDE's IDL library.
+	 * @param parent The parent shell
+	 * @param filter The filtered set of IDLs to display
+	 * @return The selected interface, or null if cancel was pressed
+	 * @since 1.2
+	 */
+	public static IdlInterfaceDcl open(Shell parent, IdlFilter filter) {
+		IdlLibrary library =  SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
+		return open(parent, library, filter);
+	}
+
+	/**
+	 * Display an IDL selection dialog with the contents of the provided interface library.
+	 * @param parent The parent shell
+	 * @param library The IDL library.
+	 * @param filter The filtered set of IDLs to display
+	 * @return The selected interface, or null if cancel was pressed
+	 * @since 1.2
+	 */
+	public static IdlInterfaceDcl open(Shell parent, IdlLibrary library, IdlFilter filter) {
+		IdlInterfaceSelectionDialog dialog = new IdlInterfaceSelectionDialog(parent, library, filter);
 		int result = dialog.open();
 		if (result == Dialog.OK) {
 			return (IdlInterfaceDcl) dialog.getFirstResult();

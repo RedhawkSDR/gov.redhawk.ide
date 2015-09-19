@@ -10,12 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.eclipsecorba.library.ui;
 
-import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
-import gov.redhawk.eclipsecorba.idl.Module;
-import gov.redhawk.eclipsecorba.library.IdlLibrary;
-import gov.redhawk.eclipsecorba.library.RepositoryModule;
-import gov.redhawk.eclipsecorba.library.util.RefreshIdlLibraryJob;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
@@ -23,7 +17,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -32,6 +25,9 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FilteredTree;
+
+import gov.redhawk.eclipsecorba.library.IdlLibrary;
+import gov.redhawk.eclipsecorba.library.util.RefreshIdlLibraryJob;
 
 /**
  * A FilteredTree composite that display items from an IDL library.
@@ -42,9 +38,22 @@ public class IdlFilteredTree extends FilteredTree {
 	
 	private RefreshIdlLibraryJob refreshJob;
 
-
-
+	/**
+	 * @deprecated Use {@link #IdlFilteredTree(Composite, IdlLibrary)}
+	 */
+	@Deprecated
 	public IdlFilteredTree(final Composite parent, final boolean useNewLook, final IdlLibrary library) {
+		this(parent, library, IdlFilter.ALL_WITH_MODULE);
+	}
+
+	/**
+	 * Creates a {@link FilteredTree} that displays an {@link IdlLibrary}.
+	 * @param parent The parent composite
+	 * @param library The IDL library
+	 * @param filter The filtered set of IDLs to display
+	 * @since 1.2
+	 */
+	public IdlFilteredTree(final Composite parent, final IdlLibrary library, final IdlFilter filter) {
 		super(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, new IdlPatternFilter(), false);
 		Assert.isNotNull(library);
 		TransactionalEditingDomain editingDomain = TransactionUtil.getEditingDomain(library);
@@ -68,23 +77,24 @@ public class IdlFilteredTree extends FilteredTree {
 		idlTreeViewer.setContentProvider(contentProvider);
 		idlTreeViewer.setLabelProvider(new IdlRepositoryLabelProvider(contentProvider.getAdapterFactory()));
 		idlTreeViewer.setSorter(new ViewerSorter());
-		idlTreeViewer.addFilter(new ViewerFilter() {
+		idlTreeViewer.addFilter(filter.getFilter());
 
-			@Override
-			public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-				return element instanceof Module || element instanceof IdlInterfaceDcl || element instanceof RepositoryModule
-				        || element instanceof IdlRepositoryPendingUpdateAdapter;
-			}
-		});
-		
 		idlTreeViewer.setInput(library);
-		
+
 		if (library.getLoadStatus() == null) {
 			refresh();
 		}
-		
 	}
-	
+
+	/**
+	 * Changes the IDL selection filter applied to the tree.
+	 * @param filter The filter to apply
+	 * @since 1.2
+	 */
+	public void setFilter(IdlFilter filter) {
+		this.getViewer().setFilters(new ViewerFilter[] { filter.getFilter() });
+	}
+
 	@Override
 	protected Text doCreateFilterText(Composite parent) {
 		return new Text(parent, SWT.SINGLE | SWT.BORDER);
