@@ -35,17 +35,17 @@ import org.junit.Test;
  */
 public class ScdFileTemplateTest {
 
-	private static final int EXE_SUPPORT_INTERFACE_COUNT = 11;
-	private static final int EXE_INTERFACE_COUNT = 11;
-	private static final int EXE_INHERITS_INTERFACE_COUNT = 10;
+	private static final int EXE_SUPPORT_INTERFACE_COUNT = 12;
+	private static final int EXE_INTERFACE_COUNT = 12;
+	private static final int EXE_INHERITS_INTERFACE_COUNT = 11;
 
-	private static final int LOAD_SUPPORT_INTERFACE_COUNT = 10;
-	private static final int LOAD_INTERFACE_COUNT = 10;
-	private static final int LOAD_INHERITS_INTERFACE_COUNT = 9;
+	private static final int LOAD_SUPPORT_INTERFACE_COUNT = 11;
+	private static final int LOAD_INTERFACE_COUNT = 11;
+	private static final int LOAD_INHERITS_INTERFACE_COUNT = 10;
 
-	private static final int AGGREGATE_DEV_SUPPORT_INTERFACE_COUNT = 10;
-	private static final int AGGREGATE_DEV_INTERFACE_COUNT = 10;
-	private static final int AGGREGATE_DEV_INHERITS_INTERFACE_COUNT = 8;
+	private static final int AGGREGATE_DEV_SUPPORT_INTERFACE_COUNT = 11;
+	private static final int AGGREGATE_DEV_INTERFACE_COUNT = 11;
+	private static final int AGGREGATE_DEV_INHERITS_INTERFACE_COUNT = 9;
 
 	/**
 	 * Tests generating an SCD file for an executable device
