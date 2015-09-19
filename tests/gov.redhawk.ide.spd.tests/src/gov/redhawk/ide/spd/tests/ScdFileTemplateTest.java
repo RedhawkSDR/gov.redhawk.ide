@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Assert;
+
+import mil.jpeojtrs.sca.scd.Interface;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 
@@ -32,14 +34,15 @@ public class ScdFileTemplateTest {
 
 	private static final int SUPPORT_INTERFACE_COUNT = 8;
 	private static final int INTERFACE_COUNT = 8;
+	private static final int INHERITS_INTERFACE_COUNT = 7;
 
 	/**
-	 * Tests generating an SCD file for an executable device
+	 * Tests generating an SCD file for a component
 	 * 
 	 * @throws IOException The SCD file can't be written to disk
 	 */
 	@Test
-	public void testExeDevice() throws IOException {
+	public void componentScdFile() throws IOException {
 		// Generate XML using the template
 		final ScdFileTemplate scdTemplate = ScdFileTemplate.create(null);
 		final String scdContent = scdTemplate.generate(null);
@@ -56,6 +59,10 @@ public class ScdFileTemplateTest {
 		Assert.assertEquals(ScdFileTemplateTest.SUPPORT_INTERFACE_COUNT, component.getComponentFeatures().getSupportsInterface().size());
 		Assert.assertNotNull(component.getComponentFeatures().getPorts());
 		Assert.assertEquals(ScdFileTemplateTest.INTERFACE_COUNT, component.getInterfaces().getInterface().size());
+		int count = 0;
+		for (Interface intf : component.getInterfaces().getInterface()) {
+			count += intf.getInheritsInterfaces().size();
+		}
+		Assert.assertEquals(INHERITS_INTERFACE_COUNT, count);
 	}
-
 }

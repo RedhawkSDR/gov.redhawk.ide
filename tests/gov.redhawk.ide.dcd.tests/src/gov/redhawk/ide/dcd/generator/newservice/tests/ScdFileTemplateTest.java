@@ -34,6 +34,7 @@ import gov.redhawk.ide.dcd.generator.newservice.ScdFileTemplate;
 import gov.redhawk.ide.dcd.tests.TestUtils;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
+import mil.jpeojtrs.sca.scd.Interface;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
@@ -78,6 +79,11 @@ public class ScdFileTemplateTest {
 		Assert.assertEquals("IDL:FOO/FooService:1.0", component.getComponentRepID().getRepid());
 		Assert.assertEquals(1, component.getComponentFeatures().getSupportsInterface().size());
 		Assert.assertEquals(1, component.getInterfaces().getInterface().size());
+		int count = 0;
+		for (Interface intf : component.getInterfaces().getInterface()) {
+			count += intf.getInheritsInterfaces().size();
+		}
+		Assert.assertEquals(0, count);
 	}
 
 	/**
@@ -133,6 +139,11 @@ public class ScdFileTemplateTest {
 		Assert.assertEquals("IDL:BAR/FooBarA:1.0", component.getComponentRepID().getRepid());
 		Assert.assertEquals(2, component.getComponentFeatures().getSupportsInterface().size());
 		Assert.assertEquals(2, component.getInterfaces().getInterface().size());
+		int count = 0;
+		for (Interface intf : component.getInterfaces().getInterface()) {
+			count += intf.getInheritsInterfaces().size();
+		}
+		Assert.assertEquals(1, count);
 	}
 
 	private void standardChecks(SoftwareComponent component) {

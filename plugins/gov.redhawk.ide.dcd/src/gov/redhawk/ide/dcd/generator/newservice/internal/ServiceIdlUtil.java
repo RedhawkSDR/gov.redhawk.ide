@@ -101,8 +101,9 @@ public class ServiceIdlUtil {
 		intf.setRepid(target.getRepId());
 		intf.setName(target.getName());
 		for (IdlInterfaceDcl parent : target.getInheritedInterfaces()) {
-			InheritsInterface childIntf = ScdFactory.eINSTANCE.createInheritsInterface();
-			childIntf.setRepid(parent.getRepId());
+			InheritsInterface parentIntf = ScdFactory.eINSTANCE.createInheritsInterface();
+			parentIntf.setRepid(parent.getRepId());
+			intf.getInheritsInterfaces().add(parentIntf);
 		}
 		interfaces.add(intf);
 
