@@ -352,11 +352,11 @@ public final class SpdLauncherUtil {
 		propHolder.fetchProperties(progress.newChild(WORK_GENERAL));
 		ScaLaunchConfigurationUtil.loadProperties(launch.getLaunchConfiguration(), propHolder);
 
-		// Collect non-null properties of type 'property'
+		// Collect non-null properties of type 'property' (but not type 'execparam')
 		List<DataType> initializeProps = new ArrayList<DataType>();
 		for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
 			AbstractProperty propDef = prop.getDefinition();
-			if (propDef.isKind(PropertyConfigurationType.PROPERTY)) {
+			if (propDef.isKind(PropertyConfigurationType.PROPERTY) && !propDef.isKind(PropertyConfigurationType.EXECPARAM)) {
 				DataType dt = prop.getProperty();
 				if (dt.value != null && dt.value.type().kind() != TCKind.tk_null) {
 					initializeProps.add(dt);
