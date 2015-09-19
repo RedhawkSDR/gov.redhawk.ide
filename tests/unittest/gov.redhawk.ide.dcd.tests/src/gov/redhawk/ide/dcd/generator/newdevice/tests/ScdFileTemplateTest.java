@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Assert;
+
+import mil.jpeojtrs.sca.scd.Interface;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 
@@ -35,10 +37,15 @@ public class ScdFileTemplateTest {
 
 	private static final int EXE_SUPPORT_INTERFACE_COUNT = 11;
 	private static final int EXE_INTERFACE_COUNT = 11;
+	private static final int EXE_INHERITS_INTERFACE_COUNT = 10;
+
 	private static final int LOAD_SUPPORT_INTERFACE_COUNT = 10;
 	private static final int LOAD_INTERFACE_COUNT = 10;
-	private static final int DEV_AND_AGGREGATE_SUPPORT_INTERFACE_COUNT = 10;
-	private static final int DEV_AND_AGGREGATE_INTERFACE_COUNT = 10;
+	private static final int LOAD_INHERITS_INTERFACE_COUNT = 9;
+
+	private static final int AGGREGATE_DEV_SUPPORT_INTERFACE_COUNT = 10;
+	private static final int AGGREGATE_DEV_INTERFACE_COUNT = 10;
+	private static final int AGGREGATE_DEV_INHERITS_INTERFACE_COUNT = 8;
 
 	/**
 	 * Tests generating an SCD file for an executable device
@@ -46,7 +53,7 @@ public class ScdFileTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testCreateExecDevSCDFile() throws IOException {
+	public void executableDeviceScdFile() throws IOException {
 		// Generate XML using the template
 		final ScdFileTemplate scdTemplate = ScdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
@@ -66,6 +73,11 @@ public class ScdFileTemplateTest {
 		Assert.assertEquals(ScdFileTemplateTest.EXE_SUPPORT_INTERFACE_COUNT, component.getComponentFeatures().getSupportsInterface().size());
 		Assert.assertNotNull(component.getComponentFeatures().getPorts());
 		Assert.assertEquals(ScdFileTemplateTest.EXE_INTERFACE_COUNT, component.getInterfaces().getInterface().size());
+		int count = 0;
+		for (Interface intf : component.getInterfaces().getInterface()) {
+			count += intf.getInheritsInterfaces().size();
+		}
+		Assert.assertEquals(EXE_INHERITS_INTERFACE_COUNT, count);
 	}
 
 	/**
@@ -74,7 +86,7 @@ public class ScdFileTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testCreateLoadDevSCDFile() throws IOException {
+	public void loadableDeviceScdFile() throws IOException {
 		// Generate XML using the template
 		final ScdFileTemplate scdTemplate = ScdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
@@ -94,6 +106,11 @@ public class ScdFileTemplateTest {
 		Assert.assertEquals(ScdFileTemplateTest.LOAD_SUPPORT_INTERFACE_COUNT, component.getComponentFeatures().getSupportsInterface().size());
 		Assert.assertNotNull(component.getComponentFeatures().getPorts());
 		Assert.assertEquals(ScdFileTemplateTest.LOAD_INTERFACE_COUNT, component.getInterfaces().getInterface().size());
+		int count = 0;
+		for (Interface intf : component.getInterfaces().getInterface()) {
+			count += intf.getInheritsInterfaces().size();
+		}
+		Assert.assertEquals(LOAD_INHERITS_INTERFACE_COUNT, count);
 	}
 
 	/**
@@ -102,7 +119,7 @@ public class ScdFileTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testCreateAggDevSCDFile() throws IOException {
+	public void aggregateDeviceScdFile() throws IOException {
 		// Generate XML using the template
 		final ScdFileTemplate scdTemplate = ScdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
@@ -119,8 +136,13 @@ public class ScdFileTemplateTest {
 		Assert.assertEquals("2.2", component.getCorbaVersion());
 		Assert.assertEquals("IDL:CF/Device:1.0", component.getComponentRepID().getRepid());
 		Assert.assertEquals("device", component.getComponentType());
-		Assert.assertEquals(ScdFileTemplateTest.DEV_AND_AGGREGATE_SUPPORT_INTERFACE_COUNT, component.getComponentFeatures().getSupportsInterface().size());
+		Assert.assertEquals(ScdFileTemplateTest.AGGREGATE_DEV_SUPPORT_INTERFACE_COUNT, component.getComponentFeatures().getSupportsInterface().size());
 		Assert.assertNotNull(component.getComponentFeatures().getPorts());
-		Assert.assertEquals(ScdFileTemplateTest.DEV_AND_AGGREGATE_INTERFACE_COUNT, component.getInterfaces().getInterface().size());
+		Assert.assertEquals(ScdFileTemplateTest.AGGREGATE_DEV_INTERFACE_COUNT, component.getInterfaces().getInterface().size());
+		int count = 0;
+		for (Interface intf : component.getInterfaces().getInterface()) {
+			count += intf.getInheritsInterfaces().size();
+		}
+		Assert.assertEquals(AGGREGATE_DEV_INHERITS_INTERFACE_COUNT, count);
 	}
 }
