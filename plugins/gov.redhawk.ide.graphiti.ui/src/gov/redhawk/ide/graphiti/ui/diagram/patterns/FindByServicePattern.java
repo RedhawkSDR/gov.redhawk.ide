@@ -69,7 +69,7 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 
 	// DIAGRAM FEATURES
 	@Override
-	public Object[] create(ICreateContext context) {
+	protected FindByStub createFindByStub(ICreateContext context) {
 
 		// prompt user for Service information
 		FindByServiceWizardPage page = getWizardPage();
@@ -86,62 +86,41 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 			: null;
 
 		// create new business object
-		final FindByStub[] findByStubs = new FindByStub[1];
+		FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
 
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		// interface stub (lollipop)
+		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
 
-		// Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
+		// domain finder service of type domain manager
+		DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
+		findByStub.setDomainFinder(domainFinder);
+		if (serviceNameText != null && !serviceNameText.isEmpty()) {
+			domainFinder.setType(DomainFinderType.SERVICENAME);
+			domainFinder.setName(serviceNameText);
+		} else if (serviceTypeText != null && !serviceTypeText.isEmpty()) {
+			domainFinder.setType(DomainFinderType.SERVICETYPE);
+			domainFinder.setName(serviceTypeText);
+		}
 
-				findByStubs[0] = PartitioningFactory.eINSTANCE.createFindByStub();
-
-				// interface stub (lollipop)
-				findByStubs[0].setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-
-				// domain finder service of type domain manager
-				DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
-				findByStubs[0].setDomainFinder(domainFinder);
-				if (serviceNameText != null && !serviceNameText.isEmpty()) {
-					domainFinder.setType(DomainFinderType.SERVICENAME);
-					domainFinder.setName(serviceNameText);
-				} else if (serviceTypeText != null && !serviceTypeText.isEmpty()) {
-					domainFinder.setType(DomainFinderType.SERVICETYPE);
-					domainFinder.setName(serviceTypeText);
-				}
-
-				// if applicable add uses port stub(s)
-				if (usesPortNames != null) {
-					int i = 0; // counter
-					for (String usesPortName : usesPortNames) {
-						UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
-						usesPortStub.setName(usesPortName);
-						findByStubs[i].getUses().add(usesPortStub);
-					}
-				}
-
-				// if applicable add provides port stub(s)
-				if (providesPortNames != null) {
-					int i = 0; // counter
-					for (String providesPortName : providesPortNames) {
-						ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
-						providesPortStub.setName(providesPortName);
-						findByStubs[i].getProvides().add(providesPortStub);
-					}
-				}
-
-				// add to diagram resource file
-				getDiagram().eResource().getContents().add(findByStubs[0]);
-
+		// if applicable add uses port stub(s)
+		if (usesPortNames != null) {
+			for (String usesPortName : usesPortNames) {
+				UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
+				usesPortStub.setName(usesPortName);
+				findByStub.getUses().add(usesPortStub);
 			}
-		});
+		}
 
-		addGraphicalRepresentation(context, findByStubs[0]);
+		// if applicable add provides port stub(s)
+		if (providesPortNames != null) {
+			for (String providesPortName : providesPortNames) {
+				ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
+				providesPortStub.setName(providesPortName);
+				findByStub.getProvides().add(providesPortStub);
+			}
+		}
 
-		return new Object[] { findByStubs[0] };
+		return findByStub;
 	}
 
 	/**

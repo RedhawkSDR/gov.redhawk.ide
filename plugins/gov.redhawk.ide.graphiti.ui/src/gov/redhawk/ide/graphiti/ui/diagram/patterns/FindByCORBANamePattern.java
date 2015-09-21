@@ -65,7 +65,7 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IPa
 
 	// DIAGRAM FEATURES
 	@Override
-	public Object[] create(ICreateContext context) {
+	protected FindByStub createFindByStub(ICreateContext context) {
 		// prompt user for CORBA Name
 		FindByCORBANameWizardPage page = openWizard();
 		if (page == null) {
@@ -78,56 +78,35 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IPa
 		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null && !page.getModel().getProvidesPortNames().isEmpty()) ? page.getModel().getProvidesPortNames()
 			: null;
 
-		final FindByStub[] findByStubs = new FindByStub[1];
+		final FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
 
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		// interface stub (lollipop)
+		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
 
-		// Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
+		// naming service (corba name)
+		NamingService namingService = PartitioningFactory.eINSTANCE.createNamingService();
+		namingService.setName(corbaNameText);
+		findByStub.setNamingService(namingService);
 
-				findByStubs[0] = PartitioningFactory.eINSTANCE.createFindByStub();
-
-				// interface stub (lollipop)
-				findByStubs[0].setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-
-				// naming service (corba name)
-				NamingService namingService = PartitioningFactory.eINSTANCE.createNamingService();
-				namingService.setName(corbaNameText);
-				findByStubs[0].setNamingService(namingService);
-
-				// if applicable add uses port stub(s)
-				if (usesPortNames != null) {
-					int i = 0; // counter
-					for (String usesPortName : usesPortNames) {
-						UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
-						usesPortStub.setName(usesPortName);
-						findByStubs[i].getUses().add(usesPortStub);
-					}
-				}
-
-				// if applicable add provides port stub(s)
-				if (providesPortNames != null) {
-					int i = 0; // counter
-					for (String providesPortName : providesPortNames) {
-						ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
-						providesPortStub.setName(providesPortName);
-						findByStubs[i].getProvides().add(providesPortStub);
-					}
-				}
-
-				// add to diagram resource file
-				getDiagram().eResource().getContents().add(findByStubs[0]);
-
+		// if applicable add uses port stub(s)
+		if (usesPortNames != null) {
+			for (String usesPortName : usesPortNames) {
+				UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
+				usesPortStub.setName(usesPortName);
+				findByStub.getUses().add(usesPortStub);
 			}
-		});
+		}
 
-		addGraphicalRepresentation(context, findByStubs[0]);
+		// if applicable add provides port stub(s)
+		if (providesPortNames != null) {
+			for (String providesPortName : providesPortNames) {
+				ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
+				providesPortStub.setName(providesPortName);
+				findByStub.getProvides().add(providesPortStub);
+			}
+		}
 
-		return new Object[] { findByStubs[0] };
+		return findByStub;
 	}
 
 	/**

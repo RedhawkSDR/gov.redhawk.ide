@@ -57,38 +57,18 @@ public class FindByFileManagerPattern extends AbstractFindByPattern implements I
 	}
 
 	@Override
-	public Object[] create(ICreateContext context) {
+	protected FindByStub createFindByStub(ICreateContext context) {
+		FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
 
-		final FindByStub[] findByStubs = new FindByStub[1];
+		// interface stub (lollipop)
+		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
 
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		// domain finder service of type file manager
+		DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
+		domainFinder.setType(DomainFinderType.FILEMANAGER);
+		findByStub.setDomainFinder(domainFinder);
 
-		// Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-
-				findByStubs[0] = PartitioningFactory.eINSTANCE.createFindByStub();
-
-				// interface stub (lollipop)
-				findByStubs[0].setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-
-				// domain finder service of type domain manager
-				DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
-				domainFinder.setType(DomainFinderType.FILEMANAGER);
-				findByStubs[0].setDomainFinder(domainFinder);
-
-				// add to diagram resource file
-				getDiagram().eResource().getContents().add(findByStubs[0]);
-
-			}
-		});
-
-		addGraphicalRepresentation(context, findByStubs[0]);
-
-		return new Object[] { findByStubs[0] };
+		return findByStub;
 	}
 
 	/**

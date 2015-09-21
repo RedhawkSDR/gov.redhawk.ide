@@ -174,7 +174,28 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public abstract Object[] create(ICreateContext context);
+	public Object[] create(ICreateContext context) {
+		FindByStub findByStub = createFindByStub(context);
+		addFindByToDiagram(findByStub);
+		addGraphicalRepresentation(context, findByStub);
+		return new Object[] { findByStub };
+	}
+
+	protected abstract FindByStub createFindByStub(ICreateContext context);
+
+	protected void addFindByToDiagram(final FindByStub findByStub) {
+		final Diagram diagram = getDiagram();
+		final TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		// Create Component Related objects in SAD model
+		editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+
+				// add to diagram resource file
+				diagram.eResource().getContents().add(findByStub);
+			}
+		});
+	}
 
 	@Override
 	public boolean canResizeShape(IResizeShapeContext context) {

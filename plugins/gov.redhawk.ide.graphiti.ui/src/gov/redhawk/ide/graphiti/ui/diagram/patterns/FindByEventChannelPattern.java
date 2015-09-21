@@ -63,43 +63,24 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	}
 
 	@Override
-	public Object[] create(ICreateContext context) {
+	protected FindByStub createFindByStub(ICreateContext context) {
 		final String eventChannelName = getUserInput();
 		if (eventChannelName == null) {
 			return null;
 		}
 
-		final FindByStub[] findByStubs = new FindByStub[1];
+		FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
 
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		// interface stub (lollipop)
+		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
 
-		// Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
+		// domain finder service of type domain manager
+		DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
+		domainFinder.setType(DomainFinderType.EVENTCHANNEL);
+		domainFinder.setName(eventChannelName);
+		findByStub.setDomainFinder(domainFinder);
 
-				findByStubs[0] = PartitioningFactory.eINSTANCE.createFindByStub();
-
-				// interface stub (lollipop)
-				findByStubs[0].setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-
-				// domain finder service of type domain manager
-				DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
-				domainFinder.setType(DomainFinderType.EVENTCHANNEL);
-				domainFinder.setName(eventChannelName);
-				findByStubs[0].setDomainFinder(domainFinder);
-
-				// add to diagram resource file
-				getDiagram().eResource().getContents().add(findByStubs[0]);
-
-			}
-		});
-
-		addGraphicalRepresentation(context, findByStubs[0]);
-
-		return new Object[] { findByStubs[0] };
+		return findByStub;
 	}
 
 	/**
