@@ -54,18 +54,7 @@ public class FindByDomainManagerPattern extends AbstractFindByPattern implements
 	// DIAGRAM FEATURES
 	@Override
 	protected FindByStub createFindByStub(ICreateContext context) {
-
-		final FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
-
-		// interface stub (lollipop)
-		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-
-		// domain finder service of type domain manager
-		DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
-		domainFinder.setType(DomainFinderType.DOMAINMANAGER);
-		findByStub.setDomainFinder(domainFinder);
-
-		return findByStub;
+		return FindByDomainManagerPattern.create();
 	}
 
 	/**

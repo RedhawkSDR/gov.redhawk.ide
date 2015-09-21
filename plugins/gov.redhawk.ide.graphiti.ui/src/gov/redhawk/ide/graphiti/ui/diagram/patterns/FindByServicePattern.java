@@ -14,8 +14,6 @@ import gov.redhawk.diagram.util.FindByStubUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.wizards.FindByServiceWizardPage;
 
-import java.util.List;
-
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
@@ -72,48 +70,19 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 			return null;
 		}
 
-		// get user selections
-		final String serviceNameText = page.getModel().getEnableServiceName() ? page.getModel().getServiceName() : null;
-		final String serviceTypeText = page.getModel().getEnableServiceType() ? page.getModel().getServiceType() : null;
-		final List<String> usesPortNames = (page.getModel().getUsesPortNames() != null && !page.getModel().getUsesPortNames().isEmpty()) ? page.getModel().getUsesPortNames()
-			: null;
-		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null && !page.getModel().getProvidesPortNames().isEmpty()) ? page.getModel().getProvidesPortNames()
-			: null;
-
 		// create new business object
-		FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
-
-		// interface stub (lollipop)
-		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-
-		// domain finder service of type domain manager
-		DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
-		findByStub.setDomainFinder(domainFinder);
-		if (serviceNameText != null && !serviceNameText.isEmpty()) {
-			domainFinder.setType(DomainFinderType.SERVICENAME);
-			domainFinder.setName(serviceNameText);
-		} else if (serviceTypeText != null && !serviceTypeText.isEmpty()) {
-			domainFinder.setType(DomainFinderType.SERVICETYPE);
-			domainFinder.setName(serviceTypeText);
+		FindByStub findByStub = null;
+		if (page.getModel().getEnableServiceName()) {
+			findByStub = FindByServicePattern.createFindByServiceName(page.getModel().getServiceName());
+		} else if (page.getModel().getEnableServiceType()) {
+			findByStub = FindByServicePattern.createFindByServiceType(page.getModel().getServiceType());
 		}
 
 		// if applicable add uses port stub(s)
-		if (usesPortNames != null) {
-			for (String usesPortName : usesPortNames) {
-				UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
-				usesPortStub.setName(usesPortName);
-				findByStub.getUses().add(usesPortStub);
-			}
-		}
+		addUsesPortStubs(findByStub, page.getModel().getUsesPortNames());
 
 		// if applicable add provides port stub(s)
-		if (providesPortNames != null) {
-			for (String providesPortName : providesPortNames) {
-				ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
-				providesPortStub.setName(providesPortName);
-				findByStub.getProvides().add(providesPortStub);
-			}
-		}
+		addProvidesPortStubs(findByStub, page.getModel().getProvidesPortNames());
 
 		return findByStub;
 	}
@@ -126,12 +95,7 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 	 * @return
 	 */
 	public static FindByStub createFindByServiceName(String serviceName) {
-		final FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
-		DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
-		findByStub.setDomainFinder(domainFinder);
-		domainFinder.setType(DomainFinderType.SERVICENAME);
-		domainFinder.setName(serviceName);
-		return findByStub;
+		return create(DomainFinderType.SERVICENAME, serviceName);
 	}
 
 	/**
@@ -142,11 +106,15 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 	 * @return
 	 */
 	public static FindByStub createFindByServiceType(String serviceType) {
+		return create(DomainFinderType.SERVICETYPE, serviceType);
+	}
+
+	private static FindByStub create(DomainFinderType type, String name) {
 		final FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
 		DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
 		findByStub.setDomainFinder(domainFinder);
-		domainFinder.setType(DomainFinderType.SERVICETYPE);
-		domainFinder.setName(serviceType);
+		domainFinder.setType(type);
+		domainFinder.setName(name);
 		return findByStub;
 	}
 

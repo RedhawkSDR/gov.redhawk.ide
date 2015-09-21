@@ -65,18 +65,7 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 			return null;
 		}
 
-		FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
-
-		// interface stub (lollipop)
-		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-
-		// domain finder service of type domain manager
-		DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
-		domainFinder.setType(DomainFinderType.EVENTCHANNEL);
-		domainFinder.setName(eventChannelName);
-		findByStub.setDomainFinder(domainFinder);
-
-		return findByStub;
+		return FindByEventChannelPattern.create(eventChannelName);
 	}
 
 	/**

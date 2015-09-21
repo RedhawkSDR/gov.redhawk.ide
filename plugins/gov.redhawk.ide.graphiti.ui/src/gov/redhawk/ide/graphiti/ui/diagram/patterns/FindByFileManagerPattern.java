@@ -53,17 +53,7 @@ public class FindByFileManagerPattern extends AbstractFindByPattern implements I
 
 	@Override
 	protected FindByStub createFindByStub(ICreateContext context) {
-		FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
-
-		// interface stub (lollipop)
-		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-
-		// domain finder service of type file manager
-		DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
-		domainFinder.setType(DomainFinderType.FILEMANAGER);
-		findByStub.setDomainFinder(domainFinder);
-
-		return findByStub;
+		return FindByFileManagerPattern.create();
 	}
 
 	/**

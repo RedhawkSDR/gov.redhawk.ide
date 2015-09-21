@@ -14,8 +14,6 @@ import gov.redhawk.diagram.util.FindByStubUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.wizards.FindByCORBANameWizardPage;
 
-import java.util.List;
-
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.NamingService;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
@@ -67,39 +65,13 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IPa
 			return null;
 		}
 
-		final String corbaNameText = page.getModel().getCorbaName();
-		final List<String> usesPortNames = (page.getModel().getUsesPortNames() != null && !page.getModel().getUsesPortNames().isEmpty()) ? page.getModel().getUsesPortNames()
-			: null;
-		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null && !page.getModel().getProvidesPortNames().isEmpty()) ? page.getModel().getProvidesPortNames()
-			: null;
-
-		FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
-
-		// interface stub (lollipop)
-		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-
-		// naming service (corba name)
-		NamingService namingService = PartitioningFactory.eINSTANCE.createNamingService();
-		namingService.setName(corbaNameText);
-		findByStub.setNamingService(namingService);
+		FindByStub findByStub = FindByCORBANamePattern.create(page.getModel().getCorbaName());
 
 		// if applicable add uses port stub(s)
-		if (usesPortNames != null) {
-			for (String usesPortName : usesPortNames) {
-				UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
-				usesPortStub.setName(usesPortName);
-				findByStub.getUses().add(usesPortStub);
-			}
-		}
+		addUsesPortStubs(findByStub, page.getModel().getUsesPortNames());
 
 		// if applicable add provides port stub(s)
-		if (providesPortNames != null) {
-			for (String providesPortName : providesPortNames) {
-				ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
-				providesPortStub.setName(providesPortName);
-				findByStub.getProvides().add(providesPortStub);
-			}
-		}
+		addProvidesPortStubs(findByStub, page.getModel().getProvidesPortNames());
 
 		return findByStub;
 	}
