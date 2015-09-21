@@ -24,15 +24,10 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -124,54 +119,35 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 	}
 
 	/**
-	 * Creates the FindByStub in the diagram with the provided serviceNameText or serviceTypeText. Only one should be
-	 * passed in, the other should be null
-	 * Has no real purpose in this class except that it's logic is extremely similar to the above create method. It's
-	 * purpose
-	 * is to create a FindByStub using information in the model sad.xml file when no diagram file is available
-	 * @param namingServiceText
-	 * @param featureProvider
-	 * @param diagram
+	 * Creates the FindByStub in the diagram with the provided service name.
+	 * Has no real purpose in this class except that it's logic is extremely similar to the above create method. Its
+	 * purpose is to create a FindByStub using information in the model sad.xml file when no diagram file is available
+	 * @param serviceName
 	 * @return
 	 */
-	public static FindByStub create(final String serviceNameText, final String serviceTypeText, final IFeatureProvider featureProvider, final Diagram diagram) {
+	public static FindByStub createFindByServiceName(String serviceName) {
+		final FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
+		DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
+		findByStub.setDomainFinder(domainFinder);
+		domainFinder.setType(DomainFinderType.SERVICENAME);
+		domainFinder.setName(serviceName);
+		return findByStub;
+	}
 
-		// create new business object
-		final FindByStub[] findByStubs = new FindByStub[1];
-
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		// Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-
-				findByStubs[0] = PartitioningFactory.eINSTANCE.createFindByStub();
-
-				// interface stub (lollipop)
-				findByStubs[0].setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-
-				// domain finder service of type domain manager
-				DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
-				findByStubs[0].setDomainFinder(domainFinder);
-				if (serviceNameText != null && !serviceNameText.isEmpty()) {
-					domainFinder.setType(DomainFinderType.SERVICENAME);
-					domainFinder.setName(serviceNameText);
-				} else if (serviceTypeText != null && !serviceTypeText.isEmpty()) {
-					domainFinder.setType(DomainFinderType.SERVICETYPE);
-					domainFinder.setName(serviceTypeText);
-				}
-
-				// add to diagram resource file
-				diagram.eResource().getContents().add(findByStubs[0]);
-
-			}
-		});
-
-		return findByStubs[0];
-
+	/**
+	 * Creates the FindByStub in the diagram with the provided service type.
+	 * Has no real purpose in this class except that it's logic is extremely similar to the above create method. Its
+	 * purpose is to create a FindByStub using information in the model sad.xml file when no diagram file is available
+	 * @param serviceType
+	 * @return
+	 */
+	public static FindByStub createFindByServiceType(String serviceType) {
+		final FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
+		DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
+		findByStub.setDomainFinder(domainFinder);
+		domainFinder.setType(DomainFinderType.SERVICETYPE);
+		domainFinder.setName(serviceType);
+		return findByStub;
 	}
 
 	protected static FindByServiceWizardPage getWizardPage() {

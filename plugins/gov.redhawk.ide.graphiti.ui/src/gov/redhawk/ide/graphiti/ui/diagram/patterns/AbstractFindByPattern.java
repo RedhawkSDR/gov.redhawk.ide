@@ -176,16 +176,16 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	@Override
 	public Object[] create(ICreateContext context) {
 		FindByStub findByStub = createFindByStub(context);
-		addFindByToDiagram(findByStub);
+		AbstractFindByPattern.addFindByToDiagram(getDiagram(), getFeatureProvider(), findByStub);
 		addGraphicalRepresentation(context, findByStub);
 		return new Object[] { findByStub };
 	}
 
 	protected abstract FindByStub createFindByStub(ICreateContext context);
 
-	protected void addFindByToDiagram(final FindByStub findByStub) {
-		final Diagram diagram = getDiagram();
-		final TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+	public static void addFindByToDiagram(final Diagram diagram, IFeatureProvider featureProvider, final FindByStub findByStub) {
+		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+
 		// Create Component Related objects in SAD model
 		editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
 			@Override

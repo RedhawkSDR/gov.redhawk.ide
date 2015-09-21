@@ -17,13 +17,8 @@ import mil.jpeojtrs.sca.partitioning.DomainFinderType;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.pattern.IPattern;
 
 public class FindByFileManagerPattern extends AbstractFindByPattern implements IPattern {
@@ -76,40 +71,20 @@ public class FindByFileManagerPattern extends AbstractFindByPattern implements I
 	 * Has no real purpose in this class except that it's logic is extremely similar to the above create method. It's
 	 * purpose
 	 * is to create a FindByStub using information in the model sad.xml file when no diagram file is available
-	 * @param namingServiceText
-	 * @param featureProvider
-	 * @param diagram
 	 * @return
 	 */
-	public static FindByStub create(final IFeatureProvider featureProvider, final Diagram diagram) {
-		final FindByStub[] findByStubs = new FindByStub[1];
+	public static FindByStub create() {
+		FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
 
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		// interface stub (lollipop)
+		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
 
-		// Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
+		// domain finder service of type file manager
+		DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
+		domainFinder.setType(DomainFinderType.FILEMANAGER);
+		findByStub.setDomainFinder(domainFinder);
 
-				findByStubs[0] = PartitioningFactory.eINSTANCE.createFindByStub();
-
-				// interface stub (lollipop)
-				findByStubs[0].setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-
-				// domain finder service of type file manager
-				DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
-				domainFinder.setType(DomainFinderType.FILEMANAGER);
-				findByStubs[0].setDomainFinder(domainFinder);
-
-				// add to diagram resource file
-				diagram.eResource().getContents().add(findByStubs[0]);
-
-			}
-		});
-
-		return findByStubs[0];
+		return findByStub;
 	}
 
 	@Override

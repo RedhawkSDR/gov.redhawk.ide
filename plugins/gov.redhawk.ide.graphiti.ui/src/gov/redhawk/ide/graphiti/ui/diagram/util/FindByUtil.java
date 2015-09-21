@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.ui.diagram.util;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
@@ -20,7 +21,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByServicePattern;
 import java.util.List;
 import java.util.ListIterator;
 
-import mil.jpeojtrs.sca.partitioning.DomainFinderType;
+import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
@@ -44,33 +45,62 @@ public class FindByUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @return
 	 */
 	public static FindByStub createFindByStub(FindBy findBy, IFeatureProvider featureProvider, Diagram diagram) {
-
-		// CORBA naming service
-		if (findBy.getNamingService() != null && findBy.getNamingService().getName() != null) {
-			return FindByCORBANamePattern.create(findBy.getNamingService().getName(), featureProvider, diagram);
-		} else if (findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.DOMAINMANAGER) {
-			// domain manager
-			return FindByDomainManagerPattern.create(featureProvider, diagram);
-		} else if (findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.FILEMANAGER) {
-			// file manager
-			return FindByFileManagerPattern.create(featureProvider, diagram);
-		} else if (findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.EVENTCHANNEL
-			&& findBy.getDomainFinder().getName() != null) {
-			// event manager
-			return FindByEventChannelPattern.create(findBy.getDomainFinder().getName(), featureProvider, diagram);
-		} else if (findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.SERVICENAME
-			&& findBy.getDomainFinder().getName() != null) {
-			// service name
-			return FindByServicePattern.create(findBy.getDomainFinder().getName(), null, featureProvider, diagram);
-		} else if (findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.SERVICETYPE
-			&& findBy.getDomainFinder().getName() != null) {
-			// service type
-			return FindByServicePattern.create(null, findBy.getDomainFinder().getName(), featureProvider, diagram);
+		FindByStub findByStub = FindByUtil.createFindByStub(findBy);
+		if (findByStub != null) {
+			AbstractFindByPattern.addFindByToDiagram(diagram, featureProvider, findByStub);
 		}
+		return findByStub;
+	}
 
+	/**
+	 * Creates a FindByStub instance based on the input FindBy. The result is not contained by any resource.
+	 * @param findBy
+	 * @return
+	 */
+	private static FindByStub createFindByStub(FindBy findBy) {
+		if (findBy.getNamingService() != null) {
+			String name = findBy.getNamingService().getName();
+			if (name != null) {
+				return FindByCORBANamePattern.create(name);
+			}
+		} else if (findBy.getDomainFinder() != null) {
+			DomainFinder domainFinder = findBy.getDomainFinder();
+			String name = domainFinder.getName();
+			switch (domainFinder.getType()) {
+			case DOMAINMANAGER:
+				return FindByDomainManagerPattern.create();
+			case EVENTCHANNEL:
+				if (name != null) {
+					return FindByEventChannelPattern.create(name);
+				}
+				break;
+			case FILEMANAGER:
+				return FindByFileManagerPattern.create();
+			case LOG:
+				// Log is not supported
+				break;
+			case NAMINGSERVICE:
+				if (name != null) {
+					return FindByCORBANamePattern.create(name);
+				}
+				break;
+			case SERVICENAME:
+				if (name != null) {
+					return FindByServicePattern.createFindByServiceName(name);
+				}
+				break;
+			case SERVICETYPE:
+				if (name != null) {
+					return FindByServicePattern.createFindByServiceType(name);
+				}
+				break;
+			default:
+				break;
+			}
+		}
 		return null;
 	}
-	
+
 	/**
 	 * Iterates through all sadConnectInterfaces to look for connections that use findBy tag that are not contained
 	 * within ComponentInterface or Provides

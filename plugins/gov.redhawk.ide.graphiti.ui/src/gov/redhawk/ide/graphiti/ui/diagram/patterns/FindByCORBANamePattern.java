@@ -23,12 +23,7 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateContext;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -78,7 +73,7 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IPa
 		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null && !page.getModel().getProvidesPortNames().isEmpty()) ? page.getModel().getProvidesPortNames()
 			: null;
 
-		final FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
+		FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
 
 		// interface stub (lollipop)
 		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
@@ -114,41 +109,21 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IPa
 	 * Has no real purpose in this class except that it's logic is extremely similar to the above create method. It's
 	 * purpose
 	 * is to create a FindByStub using information in the model sad.xml file when no diagram file is available
-	 * @param namingServiceText
-	 * @param featureProvider
-	 * @param diagram
+	 * @param namingServiceName
 	 * @return
 	 */
-	public static FindByStub create(final String namingServiceText, final IFeatureProvider featureProvider, final Diagram diagram) {
+	public static FindByStub create(final String namingServiceName) {
+		FindByStub findByStub = PartitioningFactory.eINSTANCE.createFindByStub();
 
-		final FindByStub[] findByStubs = new FindByStub[1];
+		// interface stub (lollipop)
+		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
 
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		// naming service (corba name)
+		NamingService namingService = PartitioningFactory.eINSTANCE.createNamingService();
+		namingService.setName(namingServiceName);
+		findByStub.setNamingService(namingService);
 
-		// Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-
-				findByStubs[0] = PartitioningFactory.eINSTANCE.createFindByStub();
-
-				// interface stub (lollipop)
-				findByStubs[0].setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-
-				// naming service (corba name)
-				NamingService namingService = PartitioningFactory.eINSTANCE.createNamingService();
-				namingService.setName(namingServiceText);
-				findByStubs[0].setNamingService(namingService);
-
-				// add to diagram resource file
-				diagram.eResource().getContents().add(findByStubs[0]);
-
-			}
-		});
-
-		return findByStubs[0];
+		return findByStub;
 	}
 
 	@Override
