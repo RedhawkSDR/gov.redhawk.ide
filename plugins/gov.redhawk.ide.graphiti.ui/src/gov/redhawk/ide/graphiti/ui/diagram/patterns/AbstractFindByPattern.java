@@ -70,7 +70,12 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	// THE FOLLOWING THREE METHODS DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
-	public abstract boolean isMainBusinessObjectApplicable(Object mainBusinessObject);
+	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
+		if (mainBusinessObject instanceof FindByStub) {
+			return isMatchingFindByType((FindByStub) mainBusinessObject);
+		}
+		return false;
+	}
 
 	@Override
 	protected boolean isPatternControlled(PictogramElement pictogramElement) {
@@ -83,6 +88,11 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		Object domainObject = getBusinessObjectForPictogramElement(pictogramElement);
 		return isMainBusinessObjectApplicable(domainObject);
 	}
+
+	/**
+	 * Checks whether the FindBy type is supported by this pattern. Must be implemented by subclasses. 
+	 */
+	protected abstract boolean isMatchingFindByType(FindByStub findByStub);
 
 	// DIAGRAM FEATURES
 	@Override
@@ -101,6 +111,12 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 			return getOuterTitle((FindByStub) obj);
 		}
 		return null;
+	}
+
+	@Override
+	public boolean canDirectEdit(IDirectEditingContext context) {
+		String gaType = Graphiti.getPeService().getPropertyValue(context.getGraphicsAlgorithm(), DUtil.GA_TYPE);
+		return RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT.equals(gaType);
 	}
 
 	/**

@@ -11,11 +11,8 @@
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.diagram.util.FindByStubUtil;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
@@ -26,12 +23,7 @@ import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateContext;
-import org.eclipse.graphiti.features.context.IDirectEditingContext;
-import org.eclipse.graphiti.mm.Property;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.IPattern;
 
 public class FindByEventChannelPattern extends AbstractFindByPattern implements IPattern {
@@ -59,12 +51,8 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 
 	// THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
-	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
-		if (mainBusinessObject instanceof FindByStub) {
-			FindByStub findByStub = (FindByStub) mainBusinessObject;
-			return FindByStubUtil.isFindByStubEventChannel(findByStub);
-		}
-		return false;
+	protected boolean isMatchingFindByType(FindByStub findByStub) {
+		return FindByStubUtil.isFindByStubEventChannel(findByStub);
 	}
 
 	// DIAGRAM FEATURES
@@ -176,25 +164,6 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	private String getUserInput() {
 		// prompt user for FindBy Event Channel name
 		return getDialog().getInput();
-	}
-	
-	@Override
-	public boolean canDirectEdit(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape containerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		Object obj = getBusinessObjectForPictogramElement(containerShape);
-		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-
-		// allow if we've selected the inner Text for the component
-		if (obj instanceof FindByStub && ga instanceof Text) {
-			Text text = (Text) ga;
-			for (Property prop : text.getProperties()) {
-				if (prop.getValue().equals(RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT)) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 	
 	public AbstractInputValidationDialog getDialog() {

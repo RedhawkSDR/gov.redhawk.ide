@@ -11,10 +11,7 @@
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.diagram.util.FindByStubUtil;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.wizards.FindByServiceWizardPage;
 
 import java.util.List;
@@ -35,11 +32,7 @@ import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.mm.Property;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -70,13 +63,8 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 	}
 
 	// THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
-	@Override
-	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
-		if (mainBusinessObject instanceof FindByStub) {
-			FindByStub findByStub = (FindByStub) mainBusinessObject;
-			return FindByStubUtil.isFindByStubService(findByStub);
-		}
-		return false;
+	protected boolean isMatchingFindByType(FindByStub findByStub) {
+		return FindByStubUtil.isFindByStubService(findByStub);
 	}
 
 	// DIAGRAM FEATURES
@@ -281,27 +269,7 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 	public String checkValueValid(String value, IDirectEditingContext context) {
 		return null;
 	}
-	
-	
-	@Override
-	public boolean canDirectEdit(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape containerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		Object obj = getBusinessObjectForPictogramElement(containerShape);
-		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
 
-		// allow if we've selected the inner Text for the component
-		if (obj instanceof FindByStub && ga instanceof Text) {
-			Text text = (Text) ga;
-			for (Property prop : text.getProperties()) {
-				if (prop.getValue().equals(RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
 	@Override
 	public boolean update(IUpdateContext context) {
 		// TODO: Catch calls from the edit context wizard

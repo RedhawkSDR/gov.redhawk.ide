@@ -52,12 +52,8 @@ public class FindByDomainManagerPattern extends AbstractFindByPattern implements
 
 	// THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
-	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
-		if (mainBusinessObject instanceof FindByStub) {
-			FindByStub findByStub = (FindByStub) mainBusinessObject;
-			return FindByStubUtil.isFindByStubDomainManager(findByStub);
-		}
-		return false;
+	protected boolean isMatchingFindByType(FindByStub findByStub) {
+		return FindByStubUtil.isFindByStubDomainManager(findByStub);
 	}
 
 	// DIAGRAM FEATURES
