@@ -273,37 +273,41 @@ public final class GenerateCode {
 						}
 					});
 
-					// Our model object may / most likely belongs to an editor
-					RunnableWithResult<Boolean> saveViaEditor = new RunnableWithResult.Impl<Boolean>() {
-						@Override
-						public void run() {
-							IEditorPart editorPart = ResourceUtil.findEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-								project.getFile(softPkg.eResource().getURI().lastSegment()));
-							if (editorPart != null && editorPart.isDirty()) {
-								editorPart.doSave(new NullProgressMonitor());
-								setResult(true);
-							}
-						}
-					};
-					Display.getDefault().syncExec(saveViaEditor);
-
-					// If we were unable to save via editor, save the resource directly
-					if (saveViaEditor.getResult() == null) {
-						try {
-							softPkg.eResource().save(null);
-						} catch (IOException e) {
-							retStatus.add(new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Error when updating generator version", e));
-						}
-					}
 				}
 			}
 
-			// Save the implementation settings if there were any implementations we generated for (saves the CRC modifications)
-			progress.setTaskName("Save wavedev settings");
-			try {
-				saveResource(domain, waveDev);
-			} catch (final CoreException ex) {
-				retStatus.add(new Status(ex.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save CRCs", ex));
+			// Save updates to the SPD (codegen version) and wavedev (historically, file CRCs)
+			// Our model object may / most likely belongs to an editor
+			progress.setTaskName("Saving resource changes");
+			RunnableWithResult<Boolean> saveViaEditor = new RunnableWithResult.Impl<Boolean>() {
+				@Override
+				public void run() {
+					IEditorPart editorPart = ResourceUtil.findEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
+						project.getFile(softPkg.eResource().getURI().lastSegment()));
+					if (editorPart != null && editorPart.isDirty()) {
+						editorPart.doSave(new NullProgressMonitor());
+						setResult(true);
+					}
+				}
+			};
+			Display.getDefault().syncExec(saveViaEditor);
+
+			// If we were unable to save via editor, save the resources directly
+			if (saveViaEditor.getResult() == null) {
+				try {
+					softPkg.eResource().save(null);
+				} catch (IOException e) {
+					retStatus.add(new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Error when updating generator version", e));
+				}
+				try {
+					waveDev.eResource().save(null);
+					if (domain != null) {
+						((BasicCommandStack) domain.getCommandStack()).saveIsDone();
+						domain.getCommandStack().flush();
+					}
+				} catch (IOException e) {
+					retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save the updated implementation settings", e));
+				}
 			}
 
 			// Add the top-level build.sh script builder only for projects that are deprecated (i.e. 1.8)
@@ -654,26 +658,6 @@ public final class GenerateCode {
 			for (final Entry<FileToCRCMap, FileToCRCMap> crcEntry : foundCRCs.entrySet()) {
 				crcEntry.getKey().setCrc(crcEntry.getValue().getCrc());
 			}
-		}
-	}
-
-	/**
-	 * Saves the {@link WaveDevSettings} to disk.
-	 * 
-	 * @param waveDevSettings The settings to save
-	 * @throws CoreException A problem occurs while writing the settings to disk
-	 */
-	private static void saveResource(EditingDomain domain, final WaveDevSettings waveDevSettings) throws CoreException {
-		try {
-			waveDevSettings.eResource().save(null);
-
-			if (domain != null) {
-				((BasicCommandStack) domain.getCommandStack()).saveIsDone();
-				domain.getCommandStack().flush();
-			}
-
-		} catch (final IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save the updated implementation settings", e));
 		}
 	}
 }
