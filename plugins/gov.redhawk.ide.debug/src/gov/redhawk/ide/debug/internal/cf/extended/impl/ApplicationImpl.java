@@ -41,8 +41,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
@@ -349,8 +347,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 		} else {
 			// Sort components
-			SortedSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator());
-			sortedSet.addAll(waveform.getComponentsCopy());
+			List<ScaComponent> sortedSet = waveform.getComponentsCopy();
+			Collections.sort(sortedSet, new ScaComponentComparator());
 
 			for (ScaComponent component : sortedSet) {
 				// With the exception of the assembly controller, don't start things that have a component
@@ -402,10 +400,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				throw logException("Error during delegate Stop", e);
 			}
 		} else {
-			TreeSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator());
-			sortedSet.addAll(waveform.getComponents());
+			List<ScaComponent> sortedSet = waveform.getComponentsCopy();
+			Collections.sort(sortedSet, new ScaComponentComparator());
+			Collections.reverse(sortedSet);
 
-			for (ScaComponent component : sortedSet.descendingSet()) {
+			for (ScaComponent component : sortedSet) {
 				// With the exception of the assembly controller, don't stop things that have a component
 				// instantiation but don't have a start order (i.e. they're defined in a SAD without a start order)
 				if (component != assemblyController && component.getComponentInstantiation() != null
