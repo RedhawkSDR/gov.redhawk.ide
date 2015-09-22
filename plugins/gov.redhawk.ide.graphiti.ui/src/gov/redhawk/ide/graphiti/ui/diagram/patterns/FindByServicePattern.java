@@ -115,6 +115,7 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 		findByStub.setDomainFinder(domainFinder);
 		domainFinder.setType(type);
 		domainFinder.setName(name);
+		findByStub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
 		return findByStub;
 	}
 
