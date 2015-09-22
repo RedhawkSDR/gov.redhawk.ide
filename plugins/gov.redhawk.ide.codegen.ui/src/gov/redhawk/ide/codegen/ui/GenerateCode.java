@@ -121,15 +121,17 @@ public final class GenerateCode {
 			protected IStatus run(IProgressMonitor monitor) {
 				// Map of Implementation -> ( map of FileName relative to output location -> true will regenerate, 
 				// false wants to regenerate but contents different
+				SubMonitor progress = SubMonitor.convert(monitor, "Calculating files to generate", impls.size());
 				final Map<Implementation, Set<FileStatus>> implMap = new HashMap<Implementation, Set<FileStatus>>();
 				for (Implementation impl : impls) {
 					try {
-						Set<FileStatus> resultSet = getFilesToGenerate(monitor, impl);
+						Set<FileStatus> resultSet = getFilesToGenerate(progress.newChild(1, SubMonitor.SUPPRESS_NONE), impl);
 						implMap.put(impl, resultSet);
 					} catch (CoreException e) {
 						return new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to calculate files to generate", e);
 					}
 				}
+				progress.done();
 				WorkbenchJob checkFilesJob = new WorkbenchJob("Check files") {
 
 					@Override
@@ -480,7 +482,7 @@ public final class GenerateCode {
 	 * @since 8.0
 	 */
 	private static Set<FileStatus> getFilesToGenerate(IProgressMonitor monitor, Implementation impl) throws CoreException {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, "Calculating files to generate...", IProgressMonitor.UNKNOWN);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Calculating files for implementation " + impl.getId(), IProgressMonitor.UNKNOWN);
 		try {
 			final ImplementationSettings implSettings = WaveDevUtil.getImplSettings(impl);
 			final IScaComponentCodegen generator = GeneratorUtil.getGenerator(implSettings);
