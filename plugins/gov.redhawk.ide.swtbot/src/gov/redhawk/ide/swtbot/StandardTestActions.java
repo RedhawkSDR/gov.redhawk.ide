@@ -496,7 +496,7 @@ public final class StandardTestActions {
 		try {
 			waitForValidationState(bot, page, IMessageProvider.ERROR);
 		} catch (TimeoutException e) {
-			Assert.fail("Form should be valid");
+			Assert.fail("Form should be invalid");
 		}
 	}
 
