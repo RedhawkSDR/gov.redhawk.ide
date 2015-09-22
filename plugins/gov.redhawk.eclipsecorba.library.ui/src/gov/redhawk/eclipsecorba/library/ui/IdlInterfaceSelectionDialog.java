@@ -63,6 +63,7 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 		Assert.isNotNull(library);
 		this.library = library;
 		this.filter = filter;
+		setTitle("Select an interface");
 	}
 
 	/**
