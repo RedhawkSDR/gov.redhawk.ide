@@ -33,8 +33,6 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPort;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPort;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.SadConnectInterface;
-import mil.jpeojtrs.sca.sad.SadUsesPort;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.command.Command;
@@ -432,24 +430,6 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	/**
-	 * Add UsesPortStub to FindByStub
-	 * @param findByStub
-	 * @param usesPort
-	 * @param featureProvider
-	 */
-	public static void addUsesPortStubToFindByStub2(final FindByStub findByStub, final SadUsesPort usesPort, IFeatureProvider featureProvider) {
-
-		final String usesPortName = usesPort.getUsesIdentifier();
-
-		// add uses port stub
-		if (usesPortName != null && !usesPortName.isEmpty()) {
-			UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
-			usesPortStub.setName(usesPortName);
-			findByStub.getUses().add(usesPortStub);
-		}
-	}
-
-	/**
 	 * Add ProvidesPortStub to FindByStub
 	 * @param findByStub
 	 * @param sadUsesPort
@@ -579,20 +559,5 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		businessObjectsToLink.add(obj);
 		return businessObjectsToLink;
 	}
-	
-	
-	/**
-	 * Return true if connection involves find by
-	 * @param connectInterface
-	 * @return
-	 */
-	public static boolean isFindByConnection(SadConnectInterface connectInterface) {
-		boolean isFindByConnection = false;
-		if ((connectInterface.getComponentSupportedInterface() != null && connectInterface.getComponentSupportedInterface().getFindBy() != null)
-				|| (connectInterface.getProvidesPort() != null  && connectInterface.getProvidesPort().getFindBy() != null) 
-				|| (connectInterface.getUsesPort() != null && connectInterface.getUsesPort().getFindBy() != null)) {
-				isFindByConnection = true;
-		}
-		return isFindByConnection;
-	}
+
 }
