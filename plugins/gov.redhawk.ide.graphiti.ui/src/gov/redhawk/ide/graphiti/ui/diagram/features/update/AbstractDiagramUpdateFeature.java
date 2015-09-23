@@ -14,14 +14,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.impl.DefaultUpdateDiagramFeature;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.FindByUtil;
@@ -170,16 +175,181 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	 */
 	protected < E extends ConnectInterface< ? , ? , ? > > void removeInvalidConnections(List<E> connectInterfaces) {
 		for (Iterator<E> connIter = connectInterfaces.iterator(); connIter.hasNext();) {
-			// delete connection in model if either uses port is present but the referenced component isn't, 
+			// delete connection in model if either uses port is present but the referenced component isn't,
 			// or provides port is present but references component isn't
 			E con = connIter.next();
-			if ((con.getUsesPort() != null && con.getUsesPort().getComponentInstantiationRef() != null && con.getUsesPort().getComponentInstantiationRef().getInstantiation() == null)
-				|| (con.getProvidesPort() != null && con.getProvidesPort().getComponentInstantiationRef() != null && con.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
+			if ((con.getUsesPort() != null && con.getUsesPort().getComponentInstantiationRef() != null
+				&& con.getUsesPort().getComponentInstantiationRef().getInstantiation() == null)
+				|| (con.getProvidesPort() != null && con.getProvidesPort().getComponentInstantiationRef() != null
+					&& con.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
 				// endpoint missing, delete connection
 				connIter.remove();
 				EcoreUtil.delete(con, true);
 			}
 		}
+	}
+
+	protected < E extends ConnectInterface< ? , ? , ? > > Anchor addSourceAnchor(E connectInterface, Diagram diagram) throws CoreException {
+		Anchor sourceAnchor = DUtil.lookupSourceAnchor(connectInterface, diagram);
+
+		// if sourceAnchor wasn't found its because the findBy needs to be added to the diagram
+		if (sourceAnchor == null) {
+
+			// FindBy is always used inside usesPort
+			if (connectInterface.getUsesPort() != null && connectInterface.getUsesPort().getFindBy() != null) {
+
+				FindBy findBy = connectInterface.getUsesPort().getFindBy();
+
+				// search for findByStub in diagram
+				FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
+
+				if (findByStub == null) {
+					// should never occur, addRemoveUpdateFindBy() takes care of this
+					throw new CoreException(new Status(IStatus.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
+				}
+
+				// determine which usesPortStub
+				UsesPortStub usesPortStub = null;
+				for (UsesPortStub p : findByStub.getUses()) {
+					if (p != null && connectInterface.getUsesPort().getUsesIdentifier() != null
+						&& p.getName().equals(connectInterface.getUsesPort().getUsesIdentifier())) {
+						usesPortStub = p;
+					}
+				}
+				// determine port anchor for FindByMatch
+				if (usesPortStub != null) {
+					PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, Anchor.class);
+					sourceAnchor = (Anchor) pe;
+				} else {
+					System.out.println("our source port is not getting set"); // SUPPRESS CHECKSTYLE INLINE
+					// TODO: this means the provides port didn't exist in the existing findByStub..we need
+					// to add it
+				}
+			}
+		}
+		return sourceAnchor;
+	}
+
+	/**
+	 * Add new Connections and also add FindBy Shapes where necessary
+	 * @param connectInterfaces
+	 * @param pictogramLabel
+	 * @param featureProvider
+	 * @param performUpdate
+	 * @return
+	 * @throws CoreException
+	 */
+	protected < E extends ConnectInterface< ? , ? , ? > > void addConnections(List<E> connectInterfaces, Diagram diagram, IFeatureProvider featureProvider)
+		throws CoreException {
+
+		// add findByStub shapes
+		addFindBy(connectInterfaces, diagram, featureProvider);
+
+		// add Connections found in model, but not in diagram
+		for (E connectInterface : connectInterfaces) {
+
+			// wasn't found, add Connection
+			// lookup sourceAnchor
+			Anchor sourceAnchor = DUtil.lookupSourceAnchor(connectInterface, diagram);
+
+			// if sourceAnchor wasn't found its because the findBy needs to be added to the diagram
+			if (sourceAnchor == null) {
+				sourceAnchor = addSourceAnchor(connectInterface, diagram);
+			}
+
+			// lookup Target Anchor
+			Anchor targetAnchor = null;
+			PictogramElement targetAnchorPe = DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getTarget(), Anchor.class);
+			if (targetAnchorPe != null) {
+				targetAnchor = (Anchor) targetAnchorPe;
+			} else {
+				targetAnchor = addTargetAnchor(connectInterface, diagram, featureProvider);
+			}
+
+			// add Connection if anchors
+			if (sourceAnchor != null && targetAnchor != null) {
+				DUtil.addConnectionViaFeature(featureProvider, connectInterface, sourceAnchor, targetAnchor);
+			} else {
+				// PASS
+				// TODO: how do we handle this?
+			}
+		}
+	}
+
+	protected < E extends ConnectInterface< ? , ? , ? > > Anchor addTargetAnchor(E connectInterface, Diagram diagram, IFeatureProvider featureProvider)
+		throws CoreException {
+		// dcdConnectInterface.getComponentSupportedInterface().getFindBy()
+		if (connectInterface.getComponentSupportedInterface() != null && connectInterface.getComponentSupportedInterface().getSupportedIdentifier() != null
+			&& connectInterface.getComponentSupportedInterface().getFindBy() != null) {
+
+			// The model provides us with interface information for the FindBy we are connecting to
+			FindBy findBy = connectInterface.getComponentSupportedInterface().getFindBy();
+
+			// iterate through FindByStubs in diagram
+			FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
+
+			if (findByStub == null) {
+				// should never occur, addRemoveUpdateFindBy() takes care of this
+				throw new CoreException(new Status(IStatus.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
+			}
+
+			// determine port anchor for FindByMatch
+			if (findByStub.getInterface() != null) {
+				PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, findByStub.getInterface(), Anchor.class);
+				return (Anchor) pe;
+			}
+
+			// findBy nested in ProvidesPort
+		} else if (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getFindBy() != null) {
+
+			FindBy findBy = connectInterface.getProvidesPort().getFindBy();
+
+			// iterate through FindByStubs in diagram
+			FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
+
+			if (findByStub == null) {
+				// should never occur, addRemoveUpdateFindBy() takes care of this
+				throw new CoreException(new Status(IStatus.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
+			}
+
+			// ensure the providesPort exists in FindByStub that already exists in diagram
+			boolean foundProvidesPortStub = false;
+			for (ProvidesPortStub p : findByStub.getProvides()) {
+				if (p.getName().equals(connectInterface.getProvidesPort().getProvidesIdentifier())) {
+					foundProvidesPortStub = true;
+				}
+			}
+			if (!foundProvidesPortStub) {
+				// add the required providesPort
+				AbstractFindByPattern.addProvidesPortStubToFindByStub(findByStub, connectInterface.getProvidesPort(), featureProvider);
+				// Update on FindByStub PE
+				DUtil.updateShapeViaFeature(featureProvider, diagram, DUtil.getPictogramElementForBusinessObject(diagram, findByStub, RHContainerShape.class));
+
+				// maybe call layout?
+
+			}
+
+			// determine which providesPortStub we are targeting
+			ProvidesPortStub providesPortStub = null;
+			for (ProvidesPortStub p : findByStub.getProvides()) {
+				if (p != null && connectInterface.getProvidesPort().getProvidesIdentifier() != null
+					&& p.getName().equals(connectInterface.getProvidesPort().getProvidesIdentifier())) {
+					providesPortStub = p;
+					break;
+				}
+			}
+
+			// determine port anchor for FindByMatch
+			if (providesPortStub != null) {
+				PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, providesPortStub, Anchor.class);
+				return (Anchor) pe;
+			} else {
+				// PASS
+				// TODO: this means the provides port didn't exist in the existing findByStub..we need
+				// to add it
+			}
+		}
+		return null;
 	}
 
 }

@@ -12,13 +12,10 @@
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update;
 
 import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
-import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.update.AbstractDiagramUpdateFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
@@ -31,21 +28,13 @@ import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.partitioning.FindBy;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -215,154 +204,4 @@ public class GraphitiDcdDiagramUpdateFeature extends AbstractDiagramUpdateFeatur
 
 		return false;
 	}
-
-	/**
-	 * Add new Connections and also add FindBy Shapes where necessary
-	 * @param dcdConnectInterfaces
-	 * @param pictogramLabel
-	 * @param featureProvider
-	 * @param performUpdate
-	 * @return
-	 * @throws CoreException
-	 */
-	protected void addConnections(List<DcdConnectInterface> dcdConnectInterfaces, Diagram diagram, IFeatureProvider featureProvider) throws CoreException {
-
-		// add findByStub shapes
-		addFindBy(dcdConnectInterfaces, diagram, featureProvider);
-
-		// add Connections found in model, but not in diagram
-		for (DcdConnectInterface dcdConnectInterface : dcdConnectInterfaces) {
-
-			// wasn't found, add Connection
-			// lookup sourceAnchor
-			Anchor sourceAnchor = DUtil.lookupSourceAnchor(dcdConnectInterface, diagram);
-
-			// if sourceAnchor wasn't found its because the findBy needs to be added to the diagram
-			if (sourceAnchor == null) {
-
-				// FindBy is always used inside usesPort
-				if (dcdConnectInterface.getUsesPort() != null && dcdConnectInterface.getUsesPort().getFindBy() != null) {
-
-					FindBy findBy = (FindBy) dcdConnectInterface.getUsesPort().getFindBy();
-
-					// search for findByStub in diagram
-					FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
-
-					if (findByStub == null) {
-						// should never occur, addRemoveUpdateFindBy() takes care of this
-						throw new CoreException(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
-					}
-
-					// determine which usesPortStub
-					UsesPortStub usesPortStub = null;
-					for (UsesPortStub p : findByStub.getUses()) {
-						if (p != null && dcdConnectInterface.getUsesPort().getUsesIdentifier() != null
-							&& p.getName().equals(dcdConnectInterface.getUsesPort().getUsesIdentifier())) {
-							usesPortStub = p;
-						}
-					}
-					// determine port anchor for FindByMatch
-					if (usesPortStub != null) {
-						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, (EObject) usesPortStub, Anchor.class);
-						sourceAnchor = (Anchor) pe;
-					} else {
-						System.out.println("our source port is not getting set"); // SUPPRESS CHECKSTYLE INLINE
-						// TODO: this means the provides port didn't exist in the existing findByStub..we need
-						// to add it
-					}
-				}
-			}
-
-			// lookup Target Anchor
-			Anchor targetAnchor = null;
-			PictogramElement targetAnchorPe = DUtil.getPictogramElementForBusinessObject(diagram, dcdConnectInterface.getTarget(), Anchor.class);
-			if (targetAnchorPe != null) {
-				targetAnchor = (Anchor) targetAnchorPe;
-			} else {
-
-				// dcdConnectInterface.getComponentSupportedInterface().getFindBy()
-				if (dcdConnectInterface.getComponentSupportedInterface() != null
-					&& dcdConnectInterface.getComponentSupportedInterface().getSupportedIdentifier() != null
-					&& dcdConnectInterface.getComponentSupportedInterface().getFindBy() != null) {
-
-					// The model provides us with interface information for the FindBy we are connecting to
-					FindBy findBy = (FindBy) dcdConnectInterface.getComponentSupportedInterface().getFindBy();
-
-					// iterate through FindByStubs in diagram
-					FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
-
-					if (findByStub == null) {
-						// should never occur, addRemoveUpdateFindBy() takes care of this
-						throw new CoreException(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
-					}
-
-					// determine port anchor for FindByMatch
-					if (findByStub.getInterface() != null) {
-						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, findByStub.getInterface(), Anchor.class);
-						targetAnchor = (Anchor) pe;
-					}
-
-					// findBy nested in ProvidesPort
-				} else if (dcdConnectInterface.getProvidesPort() != null && dcdConnectInterface.getProvidesPort().getFindBy() != null) {
-
-					FindBy findBy = (FindBy) dcdConnectInterface.getProvidesPort().getFindBy();
-
-					// iterate through FindByStubs in diagram
-					FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
-
-					if (findByStub == null) {
-						// should never occur, addRemoveUpdateFindBy() takes care of this
-						throw new CoreException(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
-					}
-
-					// ensure the providesPort exists in FindByStub that already exists in diagram
-					boolean foundProvidesPortStub = false;
-					for (ProvidesPortStub p : findByStub.getProvides()) {
-						if (p.getName().equals(dcdConnectInterface.getProvidesPort().getProvidesIdentifier())) {
-							foundProvidesPortStub = true;
-						}
-					}
-					if (!foundProvidesPortStub) {
-						// add the required providesPort
-						AbstractFindByPattern.addProvidesPortStubToFindByStub(findByStub, dcdConnectInterface.getProvidesPort(), featureProvider);
-						// Update on FindByStub PE
-						DUtil.updateShapeViaFeature(featureProvider, diagram,
-							DUtil.getPictogramElementForBusinessObject(diagram, findByStub, RHContainerShape.class));
-
-						// maybe call layout?
-
-					}
-
-					// determine which providesPortStub we are targeting
-					ProvidesPortStub providesPortStub = null;
-					for (ProvidesPortStub p : findByStub.getProvides()) {
-						if (p != null && dcdConnectInterface.getProvidesPort().getProvidesIdentifier() != null
-							&& p.getName().equals(dcdConnectInterface.getProvidesPort().getProvidesIdentifier())) {
-							providesPortStub = p;
-							break;
-						}
-					}
-
-					// determine port anchor for FindByMatch
-					if (providesPortStub != null) {
-						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, (EObject) providesPortStub, Anchor.class);
-						targetAnchor = (Anchor) pe;
-					} else {
-						// PASS
-						// TODO: this means the provides port didn't exist in the existing findByStub..we need
-						// to add it
-					}
-				}
-			}
-
-			// add Connection if anchors
-			if (sourceAnchor != null && targetAnchor != null) {
-				DUtil.addConnectionViaFeature(featureProvider, dcdConnectInterface, sourceAnchor, targetAnchor);
-			} else {
-				// PASS
-				// TODO: how do we handle this?
-			}
-		}
-	}
-
 }

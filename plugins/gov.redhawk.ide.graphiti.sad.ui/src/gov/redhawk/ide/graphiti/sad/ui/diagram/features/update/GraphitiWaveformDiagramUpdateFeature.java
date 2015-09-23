@@ -10,40 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.update;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
-import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
-import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.update.AbstractDiagramUpdateFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import mil.jpeojtrs.sca.partitioning.FindBy;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.HostCollocation;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentPlacement;
-import mil.jpeojtrs.sca.sad.SadConnectInterface;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.spd.UsesDevice;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IUpdateContext;
@@ -54,6 +26,27 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
+import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.update.AbstractDiagramUpdateFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.partitioning.ConnectInterface;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.HostCollocation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentPlacement;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.spd.UsesDevice;
 
 public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateFeature {
 
@@ -89,7 +82,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			List<HostCollocation> hostCollocations = new ArrayList<HostCollocation>();
 			if (sad != null && sad.getPartitioning() != null && sad.getPartitioning().getHostCollocation() != null) {
 				// Elist -> List
-				Collections.addAll(hostCollocations, (HostCollocation[]) sad.getPartitioning().getHostCollocation().toArray(new HostCollocation[0]));
+				Collections.addAll(hostCollocations, sad.getPartitioning().getHostCollocation().toArray(new HostCollocation[0]));
 			}
 			// shape HostCollocation
 			List<ContainerShape> hostCollocationShapes = HostCollocationPattern.getHostCollocationContainerShapes(d);
@@ -99,8 +92,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			if (sad != null && sad.getPartitioning() != null && sad.getPartitioning().getComponentPlacement() != null) {
 				// Get list of componentInstantiations from model
 				for (SadComponentPlacement p : sad.getPartitioning().getComponentPlacement()) {
-					Collections.addAll(componentInstantiations,
-						(SadComponentInstantiation[]) p.getComponentInstantiation().toArray(new SadComponentInstantiation[0]));
+					Collections.addAll(componentInstantiations, p.getComponentInstantiation().toArray(new SadComponentInstantiation[0]));
 				}
 			}
 			// shape components, excluding those found in host collocations
@@ -110,13 +102,12 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 					iter.remove();
 				}
 			}
-			
+
 			// model UsesDevice
 			List<UsesDevice> usesDevices = new ArrayList<UsesDevice>();
 			if (sad != null && sad.getUsesDeviceDependencies() != null && sad.getUsesDeviceDependencies().getUsesdevice() != null) {
 				// Get list of UsesDeviceStub from model
-				Collections.addAll(usesDevices,
-					(UsesDevice[]) sad.getUsesDeviceDependencies().getUsesdevice().toArray(new UsesDevice[0]));
+				Collections.addAll(usesDevices, sad.getUsesDeviceDependencies().getUsesdevice().toArray(new UsesDevice[0]));
 			}
 			// shape UsesDeviceStub
 			List<RHContainerShape> usesDeviceStubShapes = AbstractUsesDevicePattern.getAllUsesDeviceStubShapes(d);
@@ -130,14 +121,14 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			List<SadConnectInterface> sadConnectInterfaces = new ArrayList<SadConnectInterface>();
 			if (sad != null && sad.getConnections() != null && sad.getConnections().getConnectInterface() != null) {
 				// Get list of SadConnectInterfaces from model
-				Collections.addAll(sadConnectInterfaces, (SadConnectInterface[]) sad.getConnections().getConnectInterface().toArray(new SadConnectInterface[0]));
+				Collections.addAll(sadConnectInterfaces, sad.getConnections().getConnectInterface().toArray(new SadConnectInterface[0]));
 			}
 			// remove invalid model connections
 			removeInvalidConnections(sadConnectInterfaces);
 
 			// shape connections
 			List<Connection> connections = new ArrayList<Connection>();
-			Collections.addAll(connections, (Connection[]) d.getConnections().toArray(new Connection[0]));
+			Collections.addAll(connections, d.getConnections().toArray(new Connection[0]));
 
 			/**** Check for inconsistencies in Host Collocation and number of components and connections ****/
 			// Check Host Collocations for inconsistencies on text/name values
@@ -174,31 +165,31 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 				// If inconsistencies found, redraw diagram elements based on model objects
 				boolean layoutNeeded = false;
 				if (hostCollocations.size() != hostCollocationShapes.size() || !numberOfComponentsMatch || !valuesMatch) {
-					Collections.addAll(pesToRemove, (PictogramElement[]) hostCollocationShapes.toArray(new PictogramElement[0]));
-					Collections.addAll(objsToAdd, (Object[]) hostCollocations.toArray(new Object[0]));
+					Collections.addAll(pesToRemove, hostCollocationShapes.toArray(new PictogramElement[0]));
+					Collections.addAll(objsToAdd, hostCollocations.toArray(new Object[0]));
 					layoutNeeded = true;
 				}
 				if (componentShapes.size() != componentInstantiations.size() || !componentsResolved(componentShapes)) {
-					Collections.addAll(pesToRemove, (PictogramElement[]) componentShapes.toArray(new PictogramElement[0]));
-					Collections.addAll(objsToAdd, (Object[]) componentInstantiations.toArray(new Object[0]));
+					Collections.addAll(pesToRemove, componentShapes.toArray(new PictogramElement[0]));
+					Collections.addAll(objsToAdd, componentInstantiations.toArray(new Object[0]));
 					layoutNeeded = true;
 				}
 				if (usesDeviceStubShapes.size() != usesDevices.size() || !usesDeviceStubsResolved(usesDeviceStubShapes)) {
-					Collections.addAll(pesToRemove, (PictogramElement[]) usesDeviceStubShapes.toArray(new PictogramElement[0]));
+					Collections.addAll(pesToRemove, usesDeviceStubShapes.toArray(new PictogramElement[0]));
 					List<UsesDeviceStub> usesDeviceStubsToAdd = new ArrayList<UsesDeviceStub>();
-					for (UsesDevice usesDevice: usesDevices) {
+					for (UsesDevice usesDevice : usesDevices) {
 						usesDeviceStubsToAdd.add(AbstractUsesDevicePattern.createUsesDeviceStub(usesDevice));
 					}
-					//add ports to model
+					// add ports to model
 					AbstractUsesDevicePattern.addUsesDeviceStubPorts(sadConnectInterfaces, usesDeviceStubsToAdd);
-					//VERY IMPORTANT, store copy in diagram file
+					// VERY IMPORTANT, store copy in diagram file
 					getDiagram().eResource().getContents().addAll(usesDeviceStubsToAdd);
-					Collections.addAll(objsToAdd, (Object[]) usesDeviceStubsToAdd.toArray(new Object[0]));
+					Collections.addAll(objsToAdd, usesDeviceStubsToAdd.toArray(new Object[0]));
 					layoutNeeded = true;
 				}
 
 				// Easiest just to remove and redraw connections every time
-				Collections.addAll(pesToRemove, (PictogramElement[]) connections.toArray(new PictogramElement[0]));
+				Collections.addAll(pesToRemove, connections.toArray(new PictogramElement[0]));
 
 				if (!pesToRemove.isEmpty()) {
 					// remove shapes from diagram
@@ -249,29 +240,34 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		return new Reason(false, "No updates required");
 	}
 
-	/** Checks if componentShape has lost its reference to the model object 
+	/**
+	 * Checks if componentShape has lost its reference to the model object
 	 * Very important to also check that component ports are still linked to the correct parent
-	 * Bad things can happen because port links use index based references (0, 1, 2 etc.*/
+	 * Bad things can happen because port links use index based references (0, 1, 2 etc.
+	 */
 	private boolean componentsResolved(List<ComponentShape> componentShapes) {
 		for (ComponentShape componentShape : componentShapes) {
-			SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape, SadComponentInstantiation.class);
-			if (sadComponentInstantiation == null || sadComponentInstantiation.getPlacement() == null || sadComponentInstantiation.getPlacement().getComponentFileRef() == null) {
+			SadComponentInstantiation sadComponentInstantiation = DUtil.getBusinessObject(componentShape, SadComponentInstantiation.class);
+			if (sadComponentInstantiation == null || sadComponentInstantiation.getPlacement() == null
+				|| sadComponentInstantiation.getPlacement().getComponentFileRef() == null) {
 				return false;
 			}
-			
+
 			if (!GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS)) {
-				//applies only if we are showing the component shape details (ports)
-				if (componentShape.getProvidesPortStubs().size() > 0 && !componentShape.getProvidesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
+				// applies only if we are showing the component shape details (ports)
+				if (componentShape.getProvidesPortStubs().size() > 0
+					&& !componentShape.getProvidesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
 					return false;
-				} else if (componentShape.getUsesPortStubs().size() > 0 && !componentShape.getUsesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
+				} else if (componentShape.getUsesPortStubs().size() > 0
+					&& !componentShape.getUsesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
 					return false;
 				}
 			}
-			
+
 		}
 		return true;
 	}
-	
+
 	/** Checks if rhContainerShape has lost its reference to the UsesDeviceStub model object */
 	private boolean usesDeviceStubsResolved(List<RHContainerShape> usesDeviceStubShapes) {
 		for (RHContainerShape usesDeviceStubShape : usesDeviceStubShapes) {
@@ -309,196 +305,67 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		return false;
 	}
 
-	/**
-	 * Add new Connections and also add FindBy Shapes where necessary
-	 * @param sadConnectInterfaces
-	 * @param pictogramLabel
-	 * @param featureProvider
-	 * @param performUpdate
-	 * @return
-	 * @throws CoreException
-	 */
-	protected void addConnections(List<SadConnectInterface> sadConnectInterfaces, Diagram diagram, IFeatureProvider featureProvider) throws CoreException {
+	@Override
+	protected < E extends ConnectInterface< ? , ? , ? > > Anchor addSourceAnchor(E connectInterface, Diagram diagram) throws CoreException {
+		if (connectInterface.getUsesPort() != null && connectInterface.getUsesPort().getDeviceUsedByApplication() != null) {
+			UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(connectInterface.getUsesPort().getDeviceUsedByApplication(), diagram);
 
-		// add findByStub shapes
-		addFindBy(sadConnectInterfaces, diagram, featureProvider);
-
-		// add Connections found in model, but not in diagram
-		for (SadConnectInterface sadConnectInterface : sadConnectInterfaces) {
-
-			// wasn't found, add Connection
-			// lookup sourceAnchor
-			Anchor sourceAnchor = DUtil.lookupSourceAnchor(sadConnectInterface, diagram);
-
-			// if sourceAnchor wasn't found its because the findBy needs to be added to the diagram
-			if (sourceAnchor == null) {
-
-				// FindBy is always used inside usesPort
-				if (sadConnectInterface.getUsesPort() != null && sadConnectInterface.getUsesPort().getFindBy() != null) {
-
-					FindBy findBy = (FindBy) sadConnectInterface.getUsesPort().getFindBy();
-
-					// search for findByStub in diagram
-					FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
-
-					if (findByStub == null) {
-						// should never occur, addRemoveUpdateFindBy() takes care of this
-						throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
-					}
-
-					// determine which usesPortStub
-					UsesPortStub usesPortStub = null;
-					for (UsesPortStub p : findByStub.getUses()) {
-						if (p != null && sadConnectInterface.getUsesPort().getUsesIdentifier() != null
-							&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIdentifier())) {
-							usesPortStub = p;
-						}
-					}
-					// determine port anchor for FindByMatch
-					if (usesPortStub != null) {
-						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, (EObject) usesPortStub, Anchor.class);
-						sourceAnchor = (Anchor) pe;
-					}
-				} else if (sadConnectInterface.getUsesPort() != null && sadConnectInterface.getUsesPort().getDeviceUsedByApplication() != null) {
-					
-					UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(sadConnectInterface.getUsesPort().getDeviceUsedByApplication(), diagram);
-					
-					// determine which usesPortStub we are targeting
-					UsesPortStub usesPortStub = null;
-					for (UsesPortStub p : usesDeviceStub.getUsesPortStubs()) {
-						if (p != null && sadConnectInterface.getUsesPort().getUsesIdentifier() != null
-							&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIdentifier())) {
-							usesPortStub = p;
-						}
-					}
-
-					// determine port anchor for usesDeviceStub
-					if (usesPortStub != null) {
-						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, Anchor.class);
-						sourceAnchor = (Anchor) pe;
-					}
+			// determine which usesPortStub we are targeting
+			UsesPortStub usesPortStub = null;
+			for (UsesPortStub p : usesDeviceStub.getUsesPortStubs()) {
+				if (p != null && connectInterface.getUsesPort().getUsesIdentifier() != null
+					&& p.getName().equals(connectInterface.getUsesPort().getUsesIdentifier())) {
+					usesPortStub = p;
 				}
 			}
 
-			// lookup Target Anchor
-			Anchor targetAnchor = null;
-			PictogramElement targetAnchorPe = DUtil.getPictogramElementForBusinessObject(diagram, sadConnectInterface.getTarget(), Anchor.class);
-			if (targetAnchorPe != null) {
-				targetAnchor = (Anchor) targetAnchorPe;
-			} else {
-
-				// sadConnectInterface.getComponentSupportedInterface().getFindBy()
-				if (sadConnectInterface.getComponentSupportedInterface() != null
-					&& sadConnectInterface.getComponentSupportedInterface().getSupportedIdentifier() != null
-					&& sadConnectInterface.getComponentSupportedInterface().getFindBy() != null) {
-
-					// The model provides us with interface information for the FindBy we are connecting to
-					FindBy findBy = (FindBy) sadConnectInterface.getComponentSupportedInterface().getFindBy();
-
-					// iterate through FindByStubs in diagram
-					FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
-
-					if (findByStub == null) {
-						// should never occur, addRemoveUpdateFindBy() takes care of this
-						throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
-					}
-
-					// determine port anchor for FindByMatch
-					if (findByStub.getInterface() != null) {
-						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, findByStub.getInterface(), Anchor.class);
-						targetAnchor = (Anchor) pe;
-					}
-
-					// findBy nested in ProvidesPort
-				} else if (sadConnectInterface.getProvidesPort() != null && sadConnectInterface.getProvidesPort().getFindBy() != null) {
-
-					FindBy findBy = (FindBy) sadConnectInterface.getProvidesPort().getFindBy();
-
-					// iterate through FindByStubs in diagram
-					FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
-
-					if (findByStub == null) {
-						// should never occur, addRemoveUpdateFindBy() takes care of this
-						throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
-					}
-
-					// ensure the providesPort exists in FindByStub that already exists in diagram
-					boolean foundProvidesPortStub = false;
-					for (ProvidesPortStub p : findByStub.getProvides()) {
-						if (p.getName().equals(sadConnectInterface.getProvidesPort().getProvidesIdentifier())) {
-							foundProvidesPortStub = true;
-						}
-					}
-					if (!foundProvidesPortStub) {
-						// add the required providesPort
-						AbstractFindByPattern.addProvidesPortStubToFindByStub(findByStub, sadConnectInterface.getProvidesPort(), featureProvider);
-						// Update on FindByStub PE
-						DUtil.updateShapeViaFeature(featureProvider, diagram,
-							DUtil.getPictogramElementForBusinessObject(diagram, findByStub, RHContainerShape.class));
-
-						// maybe call layout?
-
-					}
-
-					// determine which providesPortStub we are targeting
-					ProvidesPortStub providesPortStub = null;
-					for (ProvidesPortStub p : findByStub.getProvides()) {
-						if (p != null && sadConnectInterface.getProvidesPort().getProvidesIdentifier() != null
-							&& p.getName().equals(sadConnectInterface.getProvidesPort().getProvidesIdentifier())) {
-							providesPortStub = p;
-							break;
-						}
-					}
-
-					// determine port anchor for FindByMatch
-					if (providesPortStub != null) {
-						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, (EObject) providesPortStub, Anchor.class);
-						targetAnchor = (Anchor) pe;
-					} else {
-						// PASS
-						// TODO: this means the provides port didn't exist in the existing findByStub..we need
-						// to add it
-					}
-				} else if (sadConnectInterface.getProvidesPort() != null && sadConnectInterface.getProvidesPort().getDeviceUsedByApplication() != null) {
-
-					UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(sadConnectInterface.getProvidesPort().getDeviceUsedByApplication(), diagram);
-					
-					// determine which providesPortStub we are targeting
-					ProvidesPortStub providesPortStub = null;
-					for (ProvidesPortStub p : usesDeviceStub.getProvidesPortStubs()) {
-						if (p != null && sadConnectInterface.getProvidesPort().getProvidesIdentifier() != null
-							&& p.getName().equals(sadConnectInterface.getProvidesPort().getProvidesIdentifier())) {
-							providesPortStub = p;
-						}
-					}
-
-					// determine port anchor for usesDeviceStub
-					if (providesPortStub != null) {
-						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, providesPortStub, Anchor.class);
-						targetAnchor = (Anchor) pe;
-					}
-				} else if (sadConnectInterface.getComponentSupportedInterface() != null
-						&& sadConnectInterface.getComponentSupportedInterface().getSupportedIdentifier() != null
-						&& sadConnectInterface.getComponentSupportedInterface().getDeviceUsedByApplication() != null) {
-
-					UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(sadConnectInterface.getComponentSupportedInterface().getDeviceUsedByApplication(), diagram);
-					
-					// determine port anchor for UsesDevice
-					if (usesDeviceStub.getInterface() != null) {
-						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, usesDeviceStub.getInterface(), Anchor.class);
-						targetAnchor = (Anchor) pe;
-					}
-				}
+			// determine port anchor for usesDeviceStub
+			if (usesPortStub != null) {
+				PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, Anchor.class);
+				return (Anchor) pe;
 			}
-
-			// add Connection if anchors
-			if (sourceAnchor != null && targetAnchor != null) {
-				DUtil.addConnectionViaFeature(featureProvider, sadConnectInterface, sourceAnchor, targetAnchor);
-			} else {
-				// PASS
-				// TODO: how do we handle this?
-			}
+			return null;
 		}
+		return super.addSourceAnchor(connectInterface, diagram);
+	}
+
+	@Override
+	protected < E extends ConnectInterface< ? , ? , ? > > Anchor addTargetAnchor(E connectInterface, Diagram diagram, IFeatureProvider featureProvider)
+		throws CoreException {
+		if (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getDeviceUsedByApplication() != null) {
+			UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(connectInterface.getProvidesPort().getDeviceUsedByApplication(),
+				diagram);
+
+			// determine which providesPortStub we are targeting
+			ProvidesPortStub providesPortStub = null;
+			for (ProvidesPortStub p : usesDeviceStub.getProvidesPortStubs()) {
+				if (p != null && connectInterface.getProvidesPort().getProvidesIdentifier() != null
+					&& p.getName().equals(connectInterface.getProvidesPort().getProvidesIdentifier())) {
+					providesPortStub = p;
+				}
+			}
+
+			// determine port anchor for usesDeviceStub
+			if (providesPortStub != null) {
+				PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, providesPortStub, Anchor.class);
+				return (Anchor) pe;
+			}
+		} else
+			if (connectInterface.getComponentSupportedInterface() != null && connectInterface.getComponentSupportedInterface().getSupportedIdentifier() != null
+				&& connectInterface.getComponentSupportedInterface().getDeviceUsedByApplication() != null) {
+
+			UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(
+				connectInterface.getComponentSupportedInterface().getDeviceUsedByApplication(), diagram);
+
+			// determine port anchor for UsesDevice
+			if (usesDeviceStub.getInterface() != null) {
+				PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, usesDeviceStub.getInterface(), Anchor.class);
+				return (Anchor) pe;
+			}
+		} else {
+			return super.addTargetAnchor(connectInterface, diagram, featureProvider);
+		}
+		return null;
 	}
 
 }
