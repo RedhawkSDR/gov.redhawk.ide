@@ -17,10 +17,10 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.update.AbstractDiagramUpdateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.FindByUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,20 +40,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
-import org.eclipse.graphiti.features.impl.DefaultUpdateDiagramFeature;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.ui.services.GraphitiUi;
 
-public class GraphitiDcdDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
+public class GraphitiDcdDiagramUpdateFeature extends AbstractDiagramUpdateFeature {
 
 	public GraphitiDcdDiagramUpdateFeature(IFeatureProvider fp) {
 		super(fp);
@@ -220,139 +217,6 @@ public class GraphitiDcdDiagramUpdateFeature extends DefaultUpdateDiagramFeature
 	}
 
 	/**
-	 * Add necessary FindByShapes based on connections in model
-	 * @return
-	 */
-	public static void addFindBy(List<DcdConnectInterface> dcdConnectInterfaces, Diagram diagram, IFeatureProvider featureProvider) {
-
-		// contains all the findByStubs that should exist in the diagram
-		ArrayList<FindByStub> findByStubs = new ArrayList<FindByStub>();
-
-		// populate list of findByStubs with existing instances from diagram
-		List<RHContainerShape> findByShapes = AbstractFindByPattern.getAllFindByShapes(diagram);
-		for (RHContainerShape findByShape : findByShapes) {
-			findByStubs.add((FindByStub) DUtil.getBusinessObject(findByShape));
-		}
-
-		// look for findby in connections to add
-		for (DcdConnectInterface dcdConnectInterface : dcdConnectInterfaces) {
-
-			// FindBy is always used inside usesPort
-			if (dcdConnectInterface.getUsesPort() != null && dcdConnectInterface.getUsesPort().getFindBy() != null) {
-
-				// get FindBy model object
-				FindBy findBy = (FindBy) dcdConnectInterface.getUsesPort().getFindBy();
-
-				// search for findByStub in the list
-				FindByStub findByStub = findFindByStub(findBy, findByStubs);
-
-				// does findBy exist in diagram already?
-				if (findByStub == null) {
-					// create FindBy Shape for Source
-					findByStub = FindByUtil.createFindByStub(findBy, featureProvider, diagram);
-
-					// add to list
-					findByStubs.add(findByStub);
-				}
-				// add provides port to stub if doesn't already exist
-				boolean uPFound = false;
-				for (UsesPortStub p : findByStub.getUses()) {
-					if (p.equals(dcdConnectInterface.getUsesPort())) {
-						uPFound = true;
-					}
-				}
-				if (!uPFound) {
-					// add the required usesPort
-					AbstractFindByPattern.addUsesPortStubToFindByStub(findByStub, dcdConnectInterface.getUsesPort(), featureProvider);
-				}
-			}
-
-			// lookup Target Anchor
-			// dcdConnectInterface.getComponentSupportedInterface().getFindBy()
-			if (dcdConnectInterface.getComponentSupportedInterface() != null
-				&& dcdConnectInterface.getComponentSupportedInterface().getSupportedIdentifier() != null
-				&& dcdConnectInterface.getComponentSupportedInterface().getFindBy() != null) {
-
-				// The model provides us with interface information for the FindBy we are connecting to
-				FindBy findBy = (FindBy) dcdConnectInterface.getComponentSupportedInterface().getFindBy();
-
-				// search for findByStub in the list
-				FindByStub findByStub = findFindByStub(findBy, findByStubs);
-
-				if (findByStub == null) {
-					// create findByStub
-					findByStub = FindByUtil.createFindByStub(findBy, featureProvider, diagram);
-
-					// add to list
-					findByStubs.add(findByStub);
-				}
-
-				// findBy nested in ProvidesPort
-			} else if (dcdConnectInterface.getProvidesPort() != null && dcdConnectInterface.getProvidesPort().getFindBy() != null) {
-
-				FindBy findBy = (FindBy) dcdConnectInterface.getProvidesPort().getFindBy();
-
-				// search for findByStub in the list
-				FindByStub findByStub = findFindByStub(findBy, findByStubs);
-
-				// does findBy exist in diagram already?
-				if (findByStub == null) {
-					// create findByStub
-					findByStub = FindByUtil.createFindByStub(findBy, featureProvider, diagram);
-
-					// add to list
-					findByStubs.add(findByStub);
-				}
-
-				// add provides port to stub if doesn't already exist
-				boolean ppFound = false;
-				for (ProvidesPortStub p : findByStub.getProvides()) {
-					if (p.equals(dcdConnectInterface.getProvidesPort())) {
-						ppFound = true;
-					}
-				}
-				if (!ppFound) {
-					// add the required providesPort
-					AbstractFindByPattern.addProvidesPortStubToFindByStub(findByStub, dcdConnectInterface.getProvidesPort(), featureProvider);
-				}
-			}
-		}
-
-		// add new FindByStub(s), update existing FindByStub
-		for (FindByStub fbs : findByStubs) {
-			List<PictogramElement> elements = GraphitiUi.getLinkService().getPictogramElements(diagram, fbs);
-			if (elements == null || elements.size() < 1) {
-				DUtil.addShapeViaFeature(featureProvider, diagram, fbs);
-			} else {
-				DUtil.updateShapeViaFeature(featureProvider, diagram, elements.get(0));
-			}
-		}
-	}
-
-	/**
-	 * Removes invalid connections where start/end points no longer exist
-	 * TODO:Consider moving this method to another class
-	 * @param dcdConnectInterfaces
-	 * @return
-	 */
-	public static void removeInvalidConnections(List<DcdConnectInterface> dcdConnectInterfaces) {
-
-		for (Iterator<DcdConnectInterface> connIter = dcdConnectInterfaces.iterator(); connIter.hasNext();) {
-
-			// delete connection in model if either uses port is present but the referenced component isn't, 
-			// or provides port is present but references component isn't
-			DcdConnectInterface con = connIter.next();
-			if ((con.getUsesPort() != null && con.getUsesPort().getComponentInstantiationRef() != null && con.getUsesPort().getComponentInstantiationRef().getInstantiation() == null)
-				|| (con.getProvidesPort() != null && con.getProvidesPort().getComponentInstantiationRef() != null && con.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
-
-				// endpoint missing, delete connection
-				connIter.remove();
-				EcoreUtil.delete(con, true);
-			}
-		}
-	}
-
-	/**
 	 * Add new Connections and also add FindBy Shapes where necessary
 	 * @param dcdConnectInterfaces
 	 * @param pictogramLabel
@@ -361,7 +225,7 @@ public class GraphitiDcdDiagramUpdateFeature extends DefaultUpdateDiagramFeature
 	 * @return
 	 * @throws CoreException
 	 */
-	public static void addConnections(List<DcdConnectInterface> dcdConnectInterfaces, Diagram diagram, IFeatureProvider featureProvider) throws CoreException {
+	protected void addConnections(List<DcdConnectInterface> dcdConnectInterfaces, Diagram diagram, IFeatureProvider featureProvider) throws CoreException {
 
 		// add findByStub shapes
 		addFindBy(dcdConnectInterfaces, diagram, featureProvider);
@@ -499,22 +363,6 @@ public class GraphitiDcdDiagramUpdateFeature extends DefaultUpdateDiagramFeature
 				// TODO: how do we handle this?
 			}
 		}
-	}
-
-	/**
-	 * Search for the FindByStub in the diagram given the findBy object
-	 * @param findBy
-	 * @param diagram
-	 * @return
-	 */
-	public static FindByStub findFindByStub(FindBy findBy, List<FindByStub> findByStubs) {
-		for (FindByStub findByStub : findByStubs) {
-			if (AbstractFindByPattern.doFindByObjectsMatch(findBy, findByStub)) {
-				// it matches
-				return findByStub;
-			}
-		}
-		return null;
 	}
 
 }
