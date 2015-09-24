@@ -16,10 +16,13 @@ import gov.redhawk.ide.graphiti.ui.diagram.wizards.FindByServiceWizardPage;
 
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
+import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+
+import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.features.IReason;
@@ -185,8 +188,11 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 	}
 	
 	@Override
-	public void setInnerTitle(FindByStub findByStub, String value) {
+	protected void setInnerTitle(FindByStub findByStub, List<FindBy> findBys, String value) {
 		findByStub.getDomainFinder().setName(value);
+		for (FindBy findBy : findBys) {
+			findBy.getDomainFinder().setName(value);
+		}
 	}
 
 	@Override

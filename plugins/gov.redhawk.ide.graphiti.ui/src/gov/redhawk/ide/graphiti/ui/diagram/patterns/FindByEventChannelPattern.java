@@ -15,8 +15,11 @@ import gov.redhawk.ide.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
+import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+
+import java.util.List;
 
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -99,8 +102,11 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	}
 	
 	@Override
-	public void setInnerTitle(FindByStub findByStub, String value) {
+	protected void setInnerTitle(FindByStub findByStub, List<FindBy> findBys, String value) {
 		findByStub.getDomainFinder().setName(value);
+		for (FindBy findBy : findBys) {
+			findBy.getDomainFinder().setName(value);
+		}
 	}
 
 	/**

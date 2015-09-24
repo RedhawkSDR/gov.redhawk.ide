@@ -145,7 +145,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	 * @param findByStub
 	 * @return
 	 */
-	public void setInnerTitle(FindByStub findByStub, String value) {
+	protected void setInnerTitle(FindByStub findByStub, List<FindBy> findBys, String value) {
 	}
 
 	@Override
@@ -334,6 +334,20 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		return null;
 	}
 
+	protected List< FindBy > getModelFindBys(FindByStub findByStub) {
+		List< FindBy > findBys = new ArrayList< FindBy >();
+		Connections< ? > connections = getModelConnections();
+		if (connections != null) {
+			for (ConnectInterface< ? , ? , ? > connection : connections.getConnectInterface()) {
+				FindBy findBy = getMatchingFindBy(connection, findByStub);
+				if (findBy != null) {
+					findBys.add(findBy);
+				}
+			}
+		}
+		return findBys;
+	}
+
 	protected List< ConnectInterface< ? , ? , ? > > getFindByConnections(FindByStub findByToDelete) {
 		List< ConnectInterface< ? , ? , ? > > connectionsToRemove = new ArrayList< ConnectInterface< ? , ? , ? > >();
 		Connections< ? > connections = getModelConnections();
@@ -382,7 +396,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 			@Override
 			protected void doExecute() {
 				// set usage name
-				setInnerTitle(findByStub, value);
+				setInnerTitle(findByStub, getModelFindBys(findByStub), value);
 			}
 		});
 

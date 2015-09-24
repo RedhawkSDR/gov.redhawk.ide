@@ -13,12 +13,14 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 import gov.redhawk.diagram.util.FindByStubUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.wizards.FindByCORBANameWizardPage;
-
+import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.NamingService;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+
+import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.features.context.ICreateContext;
@@ -104,8 +106,11 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IPa
 	}
 	
 	@Override
-	public void setInnerTitle(FindByStub findByStub, String value) {
+	protected void setInnerTitle(FindByStub findByStub, List<FindBy> findBys, String value) {
 		findByStub.getNamingService().setName(value);
+		for (FindBy findBy : findBys) {
+			findBy.getNamingService().setName(value);
+		}
 	}
 
 	@Override 
