@@ -18,7 +18,6 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -275,20 +274,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		// set Find By to delete
 		final FindByStub findByToDelete = (FindByStub) DUtil.getBusinessObject(context.getPictogramElement());
 
-		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
-
-		final DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
-
-		Collection<?> toRemove;
-		if (sad != null) {
-			toRemove = getFindByConnections(findByToDelete, sad.getConnections());
-		} else if (dcd != null) {
-			toRemove = getFindByConnections(findByToDelete, dcd.getConnections());
-		} else {
-			toRemove = Collections.EMPTY_LIST;
-		}
-
+		Collection<?> toRemove = getFindByConnections(findByToDelete);
 		if (!toRemove.isEmpty()) {
 			// editing domain for our transaction
 			TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -314,20 +300,48 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		super.delete(context);
 	}
 
-	private < E extends ConnectInterface< ? , ? , ? > > List<E> getFindByConnections(FindByStub findByToDelete, Connections<E> connections) {
-		List<E> connectionsToRemove = new ArrayList<E>();
+	protected Connections<?> getModelConnections() {
+		SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+		if (sad != null) {
+			return sad.getConnections();
+		}
+		DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
+		if (dcd != null) {
+			return dcd.getConnections();
+		}
+		return null;
+	}
+
+	protected FindBy getMatchingFindBy(ConnectInterface<?,?,?> connection, FindByStub findByStub) {
+		if (connection.getProvidesPort() != null) {
+			FindBy findBy = connection.getProvidesPort().getFindBy();
+			if (findBy != null && doFindByObjectsMatch(findBy, findByStub)) {
+				return findBy;
+			}
+		}
+		if (connection.getComponentSupportedInterface() != null) {
+			FindBy findBy = connection.getComponentSupportedInterface().getFindBy();
+			if (findBy != null && doFindByObjectsMatch(findBy, findByStub)) {
+				return findBy;
+			}
+		}
+		if (connection.getUsesPort() != null) {
+			FindBy findBy = connection.getUsesPort().getFindBy();
+			if (findBy != null && doFindByObjectsMatch(findBy, findByStub)) {
+				return findBy;
+			}
+		}
+		return null;
+	}
+
+	protected List< ConnectInterface< ? , ? , ? > > getFindByConnections(FindByStub findByToDelete) {
+		List< ConnectInterface< ? , ? , ? > > connectionsToRemove = new ArrayList< ConnectInterface< ? , ? , ? > >();
+		Connections< ? > connections = getModelConnections();
 		if (connections != null) {
 			// find and remove any attached connections
 			// gather connections
-			for (E connection : connections.getConnectInterface()) {
-				if (connection.getProvidesPort() != null && connection.getProvidesPort().getFindBy() != null
-					&& doFindByObjectsMatch(connection.getProvidesPort().getFindBy(), findByToDelete)) {
-					connectionsToRemove.add(connection);
-				} else if (connection.getComponentSupportedInterface() != null && connection.getComponentSupportedInterface().getFindBy() != null
-					&& doFindByObjectsMatch(connection.getComponentSupportedInterface().getFindBy(), findByToDelete)) {
-					connectionsToRemove.add(connection);
-				} else if (connection.getUsesPort() != null && connection.getUsesPort().getFindBy() != null
-					&& doFindByObjectsMatch(connection.getUsesPort().getFindBy(), findByToDelete)) {
+			for (ConnectInterface< ? , ? , ? > connection : connections.getConnectInterface()) {
+				if (getMatchingFindBy(connection, findByToDelete) != null) {
 					connectionsToRemove.add(connection);
 				}
 			}
