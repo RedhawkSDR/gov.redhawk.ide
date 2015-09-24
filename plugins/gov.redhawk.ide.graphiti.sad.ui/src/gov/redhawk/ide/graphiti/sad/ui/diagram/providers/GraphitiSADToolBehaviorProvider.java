@@ -28,7 +28,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
-import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDoubleClickContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
@@ -69,7 +68,6 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 	private PaletteCompartmentEntry componentCompartmentEntry;
 	private PaletteCompartmentEntry workspaceCompartmentEntry;
-	private PaletteCompartmentEntry advancedCompartmentEntry;
 	
 	public GraphitiSADToolBehaviorProvider(final IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
@@ -162,71 +160,46 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		});
 	}
 
-	/**
-	 * Creates new palette compartments (categories), and populates the palette entries.
-	 */
 	@Override
-	public IPaletteCompartmentEntry[] getPalette() {
-		// palette compartments
-		List<IPaletteCompartmentEntry> compartments = new ArrayList<IPaletteCompartmentEntry>();
-
-		// COMPONENT Compartment
+	protected void refreshPalette() {
 		final ComponentsContainer container = SdrUiPlugin.getDefault().getTargetSdrRoot().getComponentsContainer();
-		PaletteCompartmentEntry componentsEntry = getComponentCompartmentEntry(container);
-		componentsEntry.setInitiallyOpen(true);
-		compartments.add(componentsEntry);
+		getComponentCompartmentEntry(container);
 
-		// FINDBY Compartment - add from super
-		for (IPaletteCompartmentEntry compartment : super.getPalette()) {
-			compartment.setInitiallyOpen(false);
-			compartments.add(compartment);
-		}
-		
-		// WORKSPACE Compartment
 		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
-			PaletteCompartmentEntry workspaceEntry = getWorkspaceCompartmentEntry();
-			workspaceEntry.setInitiallyOpen(true);
-			if (!workspaceEntry.getToolEntries().isEmpty()) {
-				compartments.add(workspaceEntry);
-			}
+			getWorkspaceCompartmentEntry();
 		}
+	}
 
-		// ADVANCED Compartment
-		PaletteCompartmentEntry advancedEntry = getAdvancedCompartmentEntry();
-		advancedEntry.setInitiallyOpen(false);
-		compartments.add(advancedEntry);
+	@Override
+	protected void addPaletteCompartments(List<IPaletteCompartmentEntry> compartments) {
+		componentCompartmentEntry = new PaletteCompartmentEntry("Components", null);
+		componentCompartmentEntry.setInitiallyOpen(true);
+		compartments.add(componentCompartmentEntry);
 
-		return compartments.toArray(new IPaletteCompartmentEntry[compartments.size()]);
+		super.addPaletteCompartments(compartments);
 
+		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
+			workspaceCompartmentEntry = new PaletteCompartmentEntry("Workspace", null);
+			workspaceCompartmentEntry.setInitiallyOpen(true);
+			compartments.add(workspaceCompartmentEntry);
+		} else {
+			compartments.add(getAdvancedCompartmentEntry());
+		}
 	}
 
 	/**
 	 * Returns a populated CompartmentEntry containing all the Base Types and Uses Device tools
 	 */
 	private PaletteCompartmentEntry getAdvancedCompartmentEntry() {
+		PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Advanced", null);
+		compartmentEntry.setInitiallyOpen(false);
 
-		advancedCompartmentEntry = initializeCompartment(advancedCompartmentEntry, "Advanced");
-		final PaletteCompartmentEntry compartmentEntry = advancedCompartmentEntry;
-
-		IFeatureProvider featureProvider = getFeatureProvider();
-		// host collocation
-		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();
-		for (ICreateFeature cf : createFeatures) {
-			if (HostCollocationPattern.NAME.equals(cf.getCreateName())) {
+		for (ICreateFeature cf : getFeatureProvider().getCreateFeatures()) {
+			if (HostCollocationPattern.NAME.equals(cf.getCreateName()) || UsesDeviceFrontEndTunerPattern.NAME.equals(cf.getCreateName())) {
 				ObjectCreationToolEntry objectCreationToolEntry = new ObjectCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),
 					cf.getCreateImageId(), cf.getCreateLargeImageId(), cf);
 
 				compartmentEntry.addToolEntry(objectCreationToolEntry);
-			}
-		}
-		// Uses Device
-		if (!DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
-			for (ICreateFeature cf : createFeatures) {
-				if (UsesDeviceFrontEndTunerPattern.NAME.equals(cf.getCreateName())) {
-					ObjectCreationToolEntry objectCreationToolEntry = new ObjectCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),
-						cf.getCreateImageId(), cf.getCreateLargeImageId(), cf);
-					compartmentEntry.addToolEntry(objectCreationToolEntry);
-				}
 			}
 		}
 

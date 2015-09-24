@@ -62,8 +62,8 @@ import org.eclipse.graphiti.tb.IContextButtonPadData;
 public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 	private RHGraphitiPaletteFilter paletteFilter;
-	private PaletteCompartmentEntry findByCompartmentEntry;
-	
+	protected List<IPaletteCompartmentEntry> paletteCompartments;
+
 	/**
 	 * @param diagramTypeProvider
 	 */
@@ -107,14 +107,24 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	 */
 	@Override
 	public IPaletteCompartmentEntry[] getPalette() {
-		List<IPaletteCompartmentEntry> compartments = new ArrayList<IPaletteCompartmentEntry>();
-		
-		// FINDBY Compartment
+		if (paletteCompartments == null) {
+			paletteCompartments = new ArrayList<IPaletteCompartmentEntry>();
+			addPaletteCompartments(paletteCompartments);
+		}
+
+		// Allow subclasses to refresh their palette entries
+		refreshPalette();
+
+		return paletteCompartments.toArray(new IPaletteCompartmentEntry[paletteCompartments.size()]);
+	}
+
+	protected void addPaletteCompartments(List<IPaletteCompartmentEntry> compartments) {
 		if (!DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			compartments.add(getFindByCompartmentEntry());
 		}
-		
-		return compartments.toArray(new IPaletteCompartmentEntry[compartments.size()]);
+	}
+
+	protected void refreshPalette() {
 	}
 
 	protected PaletteCompartmentEntry initializeCompartment(PaletteCompartmentEntry existing, String label) {
@@ -126,9 +136,7 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	}
 	
 	private PaletteCompartmentEntry getFindByCompartmentEntry() {
-
-		findByCompartmentEntry = initializeCompartment(findByCompartmentEntry, "Find By");
-		final PaletteCompartmentEntry compartmentEntry = findByCompartmentEntry;
+		PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Find By", null);
 
 		IFeatureProvider featureProvider = getFeatureProvider();
 		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();

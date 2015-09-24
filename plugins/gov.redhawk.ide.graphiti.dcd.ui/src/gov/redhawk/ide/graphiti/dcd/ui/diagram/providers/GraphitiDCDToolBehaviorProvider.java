@@ -13,7 +13,6 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
@@ -45,14 +44,11 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
-import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
-import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.IToolEntry;
-import org.eclipse.graphiti.palette.impl.ConnectionCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.tb.ContextMenuEntry;
@@ -63,7 +59,6 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 	private PaletteCompartmentEntry deviceCompartment;
 	private PaletteCompartmentEntry serviceCompartment;
-	private PaletteCompartmentEntry advancedCompartment;
 	
 	public GraphitiDCDToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
@@ -150,43 +145,40 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 	}
 
-	/** This is where we define the different compartments in the palette, and populate the palette entries */
 	@Override
-	public IPaletteCompartmentEntry[] getPalette() {
-		List<IPaletteCompartmentEntry> compartments = new ArrayList<IPaletteCompartmentEntry>();
+	protected void refreshPalette() {
+		DevicesContainer devicesContainer = SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer();
+		getCompartmentEntry(devicesContainer);
 
+		ServicesContainer servicesContainer = SdrUiPlugin.getDefault().getTargetSdrRoot().getServicesContainer();
+		getCompartmentEntry(servicesContainer);
+	}
+
+	@Override
+	protected void addPaletteCompartments(List<IPaletteCompartmentEntry> compartments) {
 		// DEVICES compartment
-		final DevicesContainer devicesContainer = SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer();
-		PaletteCompartmentEntry devicesCompartmentEntry = getCompartmentEntry(devicesContainer);
-		compartments.add(devicesCompartmentEntry);
+		deviceCompartment = new PaletteCompartmentEntry("Devices", null);
+		compartments.add(deviceCompartment);
 
 		// SERVICES compartment
-		final ServicesContainer servicesContainer = SdrUiPlugin.getDefault().getTargetSdrRoot().getServicesContainer();
-		PaletteCompartmentEntry servicesCompartmentEntry = getCompartmentEntry(servicesContainer);
-		compartments.add(servicesCompartmentEntry);
+		serviceCompartment = new PaletteCompartmentEntry("Services", null);
+		compartments.add(serviceCompartment);
 
-		// FINDBY Compartment - get from super
-		for (IPaletteCompartmentEntry compartment : super.getPalette()) {
-			compartments.add(compartment);
-		}
-
-		// BASE TYPES Compartment
-		PaletteCompartmentEntry baseTypesCompartmentEntry = getAdvancedCompartmentEntry();
-		compartments.add(baseTypesCompartmentEntry);
-
-		return compartments.toArray(new IPaletteCompartmentEntry[compartments.size()]);
+		// Get FindBy from superclass
+		super.addPaletteCompartments(compartments);
 	}
 
 	private PaletteCompartmentEntry getCompartmentEntry(SoftPkgRegistry container) {
 
 		final PaletteCompartmentEntry compartmentEntry;
 		if (container instanceof DevicesContainer) {
-			compartmentEntry = new PaletteCompartmentEntry("Devices", null);
+			compartmentEntry = deviceCompartment;
 		} else if (container instanceof ServicesContainer) {
-			compartmentEntry = new PaletteCompartmentEntry("Services", null);
+			compartmentEntry = serviceCompartment;
 		} else {
-			compartmentEntry = null;
+			return null;
 		}
+		compartmentEntry.getToolEntries().clear();
 
 		// add all palette entries into a entriesToRemove list.
 		final List<IToolEntry> entriesToRemove = new ArrayList<IToolEntry>();
@@ -283,32 +275,6 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		sort(entries);
 		compartmentEntry.getToolEntries().clear();
 		compartmentEntry.getToolEntries().addAll(entries);
-
-		return compartmentEntry;
-	}
-
-	/**
-	 * Returns a populated CompartmentEntry containing all the Base Types
-	 */
-	private PaletteCompartmentEntry getAdvancedCompartmentEntry() {
-
-		advancedCompartment = initializeCompartment(advancedCompartment, "Advanced");
-		final PaletteCompartmentEntry compartmentEntry = advancedCompartment;
-
-		IFeatureProvider featureProvider = getFeatureProvider();
-		// connection
-		ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
-		if (createConnectionFeatures.length > 0) {
-			for (ICreateConnectionFeature ccf : createConnectionFeatures) {
-				if (DCDConnectInterfacePattern.NAME.equals(ccf.getCreateName())) {
-					ConnectionCreationToolEntry ccTool = new ConnectionCreationToolEntry(ccf.getCreateName(), ccf.getCreateDescription(),
-						ccf.getCreateImageId(), ccf.getCreateLargeImageId());
-					ccTool.addCreateConnectionFeature(ccf);
-					compartmentEntry.addToolEntry(ccTool);
-				}
-			}
-
-		}
 
 		return compartmentEntry;
 	}
