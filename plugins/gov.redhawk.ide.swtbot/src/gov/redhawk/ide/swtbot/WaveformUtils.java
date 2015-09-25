@@ -29,7 +29,7 @@ public class WaveformUtils {
 	}
 	
 	/**
-	 * Creates a new waveform using File > New > Other... > Graphiti REDHAWK Waveform Project wizard
+	 * Creates a new waveform using File > New > Other... > REDHAWK Waveform Project wizard
 	 * @param bot - the executing SWTBot
 	 * @param waveformName
 	 */
@@ -74,50 +74,6 @@ public class WaveformUtils {
 		finishButton.click();
 
 		bot.waitUntil(Conditions.shellCloses(wizardShell));
-	}
-
-	/**
-	 * Creates a new waveform with an assembly controller using File > New > Graphiti REDHAWK Waveform Project wizard
-	 * @param bot - the executing SWTBot
-	 * @param waveformName
-	 */
-	public static void createNewWaveformWithAssemblyController(SWTBot bot, String waveformName, String assemblyControllerType) {
-		// Open the new waveform project wizard
-		SWTBotMenu fileMenu = bot.menu("File");
-		SWTBotMenu newMenu = fileMenu.menu("New");
-		SWTBotMenu otherMenu = newMenu.menu("Other...");
-		otherMenu.click();
-		SWTBotShell wizardShell = bot.shell("New");
-		wizardShell.activate();
-		SWTBot wizardBot = wizardShell.bot();
-		wizardBot.tree().getTreeItem("REDHAWK").expand().getNode("REDHAWK Waveform Project").select();
-		wizardBot.button("Next >").click();
-
-		// Enter the name for the new waveform
-		wizardBot.textWithLabel("Project name:").setText(waveformName);
-
-		// Click next
-		SWTBotButton nextButton = bot.button("Next >");
-		nextButton.click();
-
-		// Wait as the assembly controller table populates
-		wizardBot.sleep(1000);
-
-		// Select AC for new waveform
-		SWTBotTable acTable = wizardBot.table();
-		for (int row = 0; row < acTable.rowCount(); row++) {
-			if (acTable.getTableItem(row).getText().contains(assemblyControllerType)) {
-				acTable.select(row);
-				break;
-			}
-		}
-
-		// Click finish
-		SWTBotButton finishButton = wizardBot.button("Finish");
-		finishButton.click();
-
-		// TODO Why doesn't this work?
-//		bot.waitWhile(Conditions.shellCloses(wizardShell), 30000);
 	}
 
 	/**
