@@ -66,8 +66,7 @@ import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 @SuppressWarnings("restriction")
-public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKSTYLE INLINE - this utility method is
-																// intended to be public
+public class DiagramTestUtils extends AbstractGraphitiTest {
 
 	/** hide constructor, since all functions are static. */
 	private DiagramTestUtils() {
@@ -75,6 +74,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 
 	public static final String OVERVIEW_TAB = "Overview";
 	public static final String PROPERTIES_TAB = "Properties";
+	public static final String PORTS_TAB = "Ports";
 	public static final String IMPLEMENTATIONS = "Implementations";
 	public static final String DIAGRAM_TAB = "Diagram";
 	public static final String XML_TAB = ".sad.xml";
