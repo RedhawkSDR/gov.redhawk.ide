@@ -419,6 +419,7 @@ public final class StandardTestActions {
 	 * appears to be a bug in the SWTBot code, and definitely causes Eclipse to spew lots of errors when the visibility
 	 * state of things is changed.
 	 * @param bot
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=475346
 	 */
 	private static void closeAllShells(SWTWorkbenchBot bot) {
 		RunnableWithResult<Shell> getShellRunnable = new RunnableWithResult.Impl<Shell>() {
