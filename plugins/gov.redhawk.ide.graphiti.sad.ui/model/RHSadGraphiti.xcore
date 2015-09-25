@@ -5,7 +5,7 @@
 @GenModel(contentTypeIdentifier="http://www.redhawk.gov/model/rhsadgext/1.0.0")
 @GenModel(operationReflection="false")
 //prevents custom coding from getting blown away
-@GenModel(modelDirectory="/gov.redhawk.ide.graphiti.sad.ui/src") 
+@GenModel(modelDirectory="/gov.redhawk.ide.graphiti.sad.ui/src-model")
 
 package gov.redhawk.ide.graphiti.sad.ext
 

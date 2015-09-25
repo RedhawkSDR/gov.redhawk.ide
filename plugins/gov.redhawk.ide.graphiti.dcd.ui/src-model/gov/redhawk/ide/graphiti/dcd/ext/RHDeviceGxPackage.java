@@ -29,7 +29,7 @@ import org.eclipse.emf.ecore.EPackage;
  * <!-- end-user-doc -->
  * @see gov.redhawk.ide.graphiti.dcd.ext.RHDeviceGxFactory
  * @model kind="package"
- *        annotation="http://www.eclipse.org/emf/2002/GenModel prefix='RHDeviceGx' codeFormatting='true' modelPluginVariables='org.eclipse.xtext.xbase.lib' contentTypeIdentifier='http://www.redhawk.gov/model/rhdevicegext/1.0.0' operationReflection='false' modelDirectory='/gov.redhawk.ide.graphiti.dcd.ui/src' basePackage='gov.redhawk.ide.graphiti.dcd'"
+ *        annotation="http://www.eclipse.org/emf/2002/GenModel prefix='RHDeviceGx' codeFormatting='true' modelPluginVariables='org.eclipse.xtext.xbase.lib' contentTypeIdentifier='http://www.redhawk.gov/model/rhdevicegext/1.0.0' operationReflection='false' modelDirectory='/gov.redhawk.ide.graphiti.dcd.ui/src-model' basePackage='gov.redhawk.ide.graphiti.dcd'"
  * @generated
  */
 public interface RHDeviceGxPackage extends EPackage {
