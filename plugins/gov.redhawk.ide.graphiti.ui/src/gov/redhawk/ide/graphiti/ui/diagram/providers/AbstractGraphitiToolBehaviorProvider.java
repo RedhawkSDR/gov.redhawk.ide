@@ -14,6 +14,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.providers;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
@@ -23,6 +24,8 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.PaletteTreeEntry;
+import gov.redhawk.ide.sdr.ComponentsContainer;
+import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 
 import java.util.ArrayList;
@@ -40,11 +43,17 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
-import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDoubleClickContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CustomContext;
@@ -60,18 +69,48 @@ import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.pattern.CreateFeatureForPattern;
 import org.eclipse.graphiti.tb.ContextButtonEntry;
+import org.eclipse.graphiti.tb.ContextMenuEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
+import org.eclipse.graphiti.tb.IContextMenuEntry;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
+	protected final WorkbenchJob refreshPaletteJob = new WorkbenchJob("Refresh Palette") {
+		@Override
+		public IStatus runInUIThread(final IProgressMonitor monitor) {
+			// refresh palette which will call GraphitiDCDToolBehaviorProvider.getPalette()
+			getDiagramTypeProvider().getDiagramBehavior().refreshPalette();
+			return Status.OK_STATUS;
+		}
+	};
+
+	protected final Adapter sdrListener = new AdapterImpl() {
+		@Override
+		public void notifyChanged(final Notification msg) {
+			if (msg.getFeatureID(ComponentsContainer.class) == SdrPackage.COMPONENTS_CONTAINER__COMPONENTS) {
+				refreshPaletteJob.schedule(1000); // SUPPRESS CHECKSTYLE MagicNumber
+			}
+		}
+	};
+
 	protected List<IPaletteCompartmentEntry> paletteCompartments;
+	private List<SoftPkgRegistry> registries = new ArrayList<SoftPkgRegistry>();
 
 	/**
 	 * @param diagramTypeProvider
 	 */
 	public AbstractGraphitiToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		for (SoftPkgRegistry registry : registries) {
+			registry.eAdapters().remove(sdrListener);
+		}
 	}
 
 	@Override
@@ -153,6 +192,30 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		return pad;
 	}
 
+	@Override
+	public IContextMenuEntry[] getContextMenu(ICustomContext context) {
+		List<IContextMenuEntry> contextMenuItems = new ArrayList<IContextMenuEntry>();
+
+		for (ICustomFeature customFeature : getFeatureProvider().getCustomFeatures(context)) {
+			ContextMenuEntry entry = new ContextMenuEntry(customFeature, context);
+			if (customFeature instanceof LogLevelFeature) {
+				// Create a sub-menu for logging
+				ContextMenuEntry loggingSubMenu = new ContextMenuEntry(null, context);
+				loggingSubMenu.setText("Logging");
+				loggingSubMenu.setDescription("Logging");
+				loggingSubMenu.setSubmenu(true);
+				contextMenuItems.add(0, loggingSubMenu);
+
+				// Make the log level feature a sub-entry of this menu
+				loggingSubMenu.add(entry);
+			} else {
+				contextMenuItems.add(entry);
+			}
+		}
+
+		return contextMenuItems.toArray(new IContextMenuEntry[contextMenuItems.size()]);
+	}
+
 	/**
 	 * Provides compartment entries that can be used extending ToolBehavoirProvider classes
 	 */
@@ -171,27 +234,17 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 
 	protected void addPaletteCompartments(List<IPaletteCompartmentEntry> compartments) {
 		if (!DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
-			compartments.add(getFindByCompartmentEntry());
+			compartments.add(createFindByCompartmentEntry());
 		}
 	}
 
 	protected void refreshPalette() {
 	}
 
-	protected PaletteCompartmentEntry initializeCompartment(PaletteCompartmentEntry existing, String label) {
-		if (existing != null) {
-			existing.getToolEntries().clear();
-			return existing;
-		}
-		return new PaletteCompartmentEntry(label, null);
-	}
-	
-	private PaletteCompartmentEntry getFindByCompartmentEntry() {
+	private PaletteCompartmentEntry createFindByCompartmentEntry() {
 		PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Find By", null);
 
-		IFeatureProvider featureProvider = getFeatureProvider();
-		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();
-		for (ICreateFeature cf : createFeatures) {
+		for (ICreateFeature cf : getFeatureProvider().getCreateFeatures()) {
 			// IDE-1020: instanceof conditions added to exclude similarly-named non-findby create features
 			if ((cf instanceof CreateFeatureForPattern && ((CreateFeatureForPattern) cf).getPattern() instanceof AbstractFindByPattern) 
 					&& (FindByCORBANamePattern.NAME.equals(cf.getCreateName()) || FindByEventChannelPattern.NAME.equals(cf.getCreateName())
@@ -381,6 +434,15 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		sort(compartmentEntry.getToolEntries());
 	}
 	
+	/**
+	 * Add a refresh listener job that will refresh the palette of the associated diagramTypeProvider every time
+	 * the Target SDR refreshes
+	 */
+	protected void addTargetSdrRefreshJob(SoftPkgRegistry container) {
+		container.eAdapters().add(sdrListener);
+		registries.add(container);
+	}
+
 	protected abstract ICreateFeature getCreateFeature(SoftPkg spd, String implId, String iconId);
 
 }

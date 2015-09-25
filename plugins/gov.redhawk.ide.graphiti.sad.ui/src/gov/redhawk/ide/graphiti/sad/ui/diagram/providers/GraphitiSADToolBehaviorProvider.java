@@ -12,25 +12,15 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
-import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDoubleClickContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
-import org.eclipse.graphiti.tb.ContextMenuEntry;
-import org.eclipse.graphiti.tb.IContextMenuEntry;
-import org.eclipse.ui.progress.WorkbenchJob;
 
 import gov.redhawk.core.resourcefactory.ComponentDesc;
 import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
@@ -41,11 +31,9 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFea
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sdr.ComponentsContainer;
-import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -59,47 +47,12 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		super(diagramTypeProvider);
 
 		// sync palette Components with Target SDR Components
-		addComponentContainerRefreshJob(diagramTypeProvider);
-	}
-
-	/**
-	 * Add a refresh listener job that will refresh the palette of the provided diagramTypeProvider
-	 * every time Target SDR refreshes
-	 * @param diagramTypeProvider
-	 */
-	private void addComponentContainerRefreshJob(final IDiagramTypeProvider diagramTypeProvider) {
-
-		final ComponentsContainer container = SdrUiPlugin.getDefault().getTargetSdrRoot().getComponentsContainer();
-		container.eAdapters().add(new AdapterImpl() {
-			private final WorkbenchJob refreshPalletteJob = new WorkbenchJob("Refresh Pallette") {
-
-				@Override
-				public IStatus runInUIThread(final IProgressMonitor monitor) {
-					// refresh palette which will call GraphitiSADToolBehaviorProvider.getPalette()
-					diagramTypeProvider.getDiagramBehavior().refreshPalette();
-					return Status.OK_STATUS;
-				}
-
-			};
-
-			@Override
-			public void notifyChanged(final Notification msg) {
-				super.notifyChanged(msg);
-				switch (msg.getFeatureID(ComponentsContainer.class)) {
-				case SdrPackage.COMPONENTS_CONTAINER__COMPONENTS:
-					this.refreshPalletteJob.schedule(1000); // SUPPRESS CHECKSTYLE MagicNumber
-					break;
-				default:
-					break;
-				}
-			}
-		});
+		addTargetSdrRefreshJob(getComponentsContainer());
 	}
 
 	@Override
 	protected void refreshPalette() {
-		ComponentsContainer container = SdrUiPlugin.getDefault().getTargetSdrRoot().getComponentsContainer();
-		refreshCompartmentEntry(componentCompartment, container, WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
+		refreshCompartmentEntry(componentCompartment, getComponentsContainer(), WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
 
 		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			refreshWorkspaceComponents();
@@ -177,19 +130,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (IResourceFactoryRegistry.PROP_RESOURCES.equals(evt.getPropertyName())) {
-				WorkbenchJob refreshPalletteJob = new WorkbenchJob("Refresh Pallette") {
-
-					@Override
-					public IStatus runInUIThread(final IProgressMonitor monitor) {
-						// refresh palette which will call RHToolBehaviorProvider.getPalette()
-						getDiagramTypeProvider().getDiagramBehavior().refreshPalette();
-						return Status.OK_STATUS;
-					}
-
-				};
-				refreshPalletteJob.schedule(1000);
-			}
+			refreshPaletteJob.schedule(1000);
 		}
 	};
 
@@ -200,31 +141,6 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		super.dispose();
 	}
 	
-	@Override
-	public IContextMenuEntry[] getContextMenu(ICustomContext context) {
-		List<IContextMenuEntry> contextMenuItems = new ArrayList<IContextMenuEntry>();
-
-		ICustomFeature[] customFeatures = getFeatureProvider().getCustomFeatures(context);
-		for (ICustomFeature customFeature : customFeatures) {
-			ContextMenuEntry entry = new ContextMenuEntry(customFeature, context);
-			if (customFeature instanceof LogLevelFeature) {
-				// Create a sub-menu for logging
-				ContextMenuEntry loggingSubMenu = new ContextMenuEntry(null, context);
-				loggingSubMenu.setText("Logging");
-				loggingSubMenu.setDescription("Logging");
-				loggingSubMenu.setSubmenu(true);
-				contextMenuItems.add(0, loggingSubMenu);
-
-				// Make the log level feature a sub-entry of this menu
-				loggingSubMenu.add(entry);
-			} else {
-				contextMenuItems.add(entry);
-			}
-		}
-
-        return contextMenuItems.toArray(new IContextMenuEntry[contextMenuItems.size()]);
-	}
-
 	@Override
 	public ICustomFeature getDoubleClickFeature(IDoubleClickContext context) {
 		//UsesFrontEndDeviceEditFeature
@@ -246,5 +162,8 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 	protected ICreateFeature getCreateFeature(SoftPkg spd, String implId, String iconId) {
 		return new ComponentCreateFeature(getFeatureProvider(), spd, implId);
 	}
-	
+
+	private ComponentsContainer getComponentsContainer() {
+		return SdrUiPlugin.getDefault().getTargetSdrRoot().getComponentsContainer();
+	}
 }
