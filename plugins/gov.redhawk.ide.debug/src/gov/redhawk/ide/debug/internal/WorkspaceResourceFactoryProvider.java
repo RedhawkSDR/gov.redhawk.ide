@@ -29,12 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.sad.SadPackage;
-import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
@@ -86,7 +83,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 					final IFile file = (IFile) event.getResource();
 					try {
 						if (file.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-							addSpdResource(file, createSpdResourceFactory(file));
+							addSpdResource(file);
 						} else if (file.getName().endsWith(SadPackage.FILE_EXTENSION)) {
 							addSadResource(file, new WorkspaceWaveformFactory(file));
 						}
@@ -102,7 +99,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 								try {
 									final IFile file = (IFile) resource;
 									if (resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-										addSpdResource(file, createSpdResourceFactory((IFile) resource));
+										addSpdResource(file);
 									} else if (resource.getName().endsWith(SadPackage.FILE_EXTENSION)) {
 										addSadResource(file, new WorkspaceWaveformFactory((IFile) resource));
 									}
@@ -161,7 +158,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 						} else if (resource instanceof IProject) {
 							return WorkspaceResourceFactoryProvider.shouldVisit((IProject) resource);
 						} else if (resource instanceof IFile && resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-							addSpdResource((IFile) resource, createSpdResourceFactory((IFile) resource));
+							addSpdResource((IFile) resource);
 						} else if (resource instanceof IFile && resource.getName().endsWith(SadPackage.FILE_EXTENSION)) {
 							addSadResource((IFile) resource, new WorkspaceWaveformFactory((IFile) resource));
 						}
@@ -178,33 +175,6 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this.listener,
 		                                                         IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE
 		                                                             | IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_REFRESH);
-	}
-
-	protected ResourceFactoryOperations createSpdResourceFactory(IFile file) {
-		SoftPkg spd = loadSpd(file);
-		if (spd == null) {
-			return null;
-		}
-		return new SpdResourceFactory(spd);
-	}
-
-	protected String getTypeDir(final IFile resource) {
-		if (resource.getName().endsWith(SadPackage.FILE_EXTENSION)) {
-			return "waveforms";
-		}
-		if (resource.getName().endsWith(DcdPackage.FILE_EXTENSION)) {
-			return "nodes";
-		}
-		SoftPkg spd = loadSpd(resource);
-		SoftwareComponent scd = ScaEcoreUtils.getFeature(spd, SpdPackage.Literals.SOFT_PKG__DESCRIPTOR, SpdPackage.Literals.DESCRIPTOR__COMPONENT);
-		switch (SoftwareComponent.Util.getWellKnownComponentType(scd)) {
-		case DEVICE:
-			return "devices";
-		case SERVICE:
-			return "services";
-		default:
-			return "components";
-		}
 	}
 
 	private SoftPkg loadSpd(IFile resource) {
@@ -233,13 +203,10 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 		
 	}
 
-	private void addSpdResource(final IFile resource, final ResourceFactoryOperations resourceFactory) {
-		if (resourceFactory == null) {
-			return;
-		}
+	private void addSpdResource(final IFile resource) {
 		if (componentMap.containsKey(resource)) {
 			// Already mapped resource
-			return;
+			removeComponent(resource);
 		}
 		SoftPkg spd = loadSpd(resource);
 		if (spd == null) {
