@@ -8,6 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.sad.ext.impl;
 
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
@@ -52,6 +53,8 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  */
 public class ComponentShapeImpl extends RHContainerShapeImpl implements ComponentShape {
 
+	// END GENERATED CODE
+
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
 	public static final String GA_START_ORDER_ELLIPSE = "startOrderEllipse";
@@ -70,6 +73,8 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 	// Default start order text value for components that do not have a start order declared
 	private static final String NO_START_ORDER_STRING = "";
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -91,9 +96,13 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
 	 * Creates the inner shapes that make up this container shape
+	 * <!-- end-user-doc -->
+	 * @generated NOT
 	 */
 	public void init(IAddContext context, ComponentPattern pattern) {
+		// END GENERATED CODE
 		if (!(context.getNewObject() instanceof SadComponentInstantiation)) {
 			return;
 		}
@@ -121,24 +130,37 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		updateStyleForComponentInner();
 
 		// runtimeAdapter = new ComponentRuntimeAdapter(this, featureProvider);
+		// BEGIN GENERATED CODE
 	}
 
 	/**
-	 * Updates the shape's contents using the supplied fields. Return true if an update occurred, false otherwise.>
+	 * <!-- begin-user-doc -->
+	 * Updates the shape's contents using the supplied fields. Return true if an update occurred, false otherwise.
+	 * <!-- end-user-doc -->
+	 * @generated NOT
 	 */
 	public Reason update(final IUpdateContext context, ComponentPattern pattern) {
+		// END GENERATED CODE
 		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
 		return this.internalUpdate(pattern, ci, true);
+		// BEGIN GENERATED CODE
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
 	 * Return true (through Reason) if the shape's contents require an update based on the field supplied.
 	 * Also returns a textual reason why an update is needed. Returns false otherwise.
+	 * <!-- end-user-doc -->
+	 * @generated NOT
 	 */
 	public Reason updateNeeded(final IUpdateContext context, ComponentPattern pattern) {
+		// END GENERATED CODE
 		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
 		return this.internalUpdate(pattern, ci, false);
+		// BEGIN GENERATED CODE
 	}
+
+	// END GENERATED CODE
 
 	/**
 	 * Add an Ellipse to provided container shape that will contain the start order from sadComponentInstantiation
@@ -274,7 +296,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			// update assembly controller styling and text
 			Ellipse startOrderEllipse = (Ellipse) getStartOrderEllipseShape().getGraphicsAlgorithm();
 			boolean needsUpdate = StyleUtil.needsUpdateForStartOrderAssemblyControllerEllipse(diagram, startOrderEllipse.getStyle());
-			boolean isTextCorrect = ci.getStartOrder() != null ? (ci.getStartOrder().compareTo(BigInteger.ZERO) == 0) : startOrderTextGA.getValue().equals("");
+			boolean isTextCorrect = (ci.getStartOrder() != null) ? (ci.getStartOrder().compareTo(BigInteger.ZERO) == 0) : startOrderTextGA.getValue().isEmpty();
 			if ((needsUpdate || !isTextCorrect) && assemblyController != null) {
 				// if assembly controller, then use special style
 				if (performUpdate) {
@@ -367,5 +389,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		}
 		return ciExternalPorts;
 	}
+
+	// BEGIN GENERATED CODE
 
 } // ComponentShapeImpl

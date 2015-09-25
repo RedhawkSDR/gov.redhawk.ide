@@ -4,7 +4,7 @@
   <fileset name="all" enabled="true" check-config-name="REDHAWK" local="false">
     <file-match-pattern match-pattern="." include-pattern="true"/>
   </fileset>
-  <filter name="FilesFromPackage" enabled="true">
+  <filter name="FilesFromPackage" enabled="false">
     <filter-data value="src/gov/redhawk/ide/graphiti/sad/ext"/>
   </filter>
 </fileset-config>
