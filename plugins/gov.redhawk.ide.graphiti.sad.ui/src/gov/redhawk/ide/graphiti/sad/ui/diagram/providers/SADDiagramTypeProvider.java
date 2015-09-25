@@ -15,13 +15,12 @@ import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.graphiti.dt.AbstractDiagramTypeProvider;
-import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implements IDiagramTypeProvider {
+public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider {
 
 	public static final String DIAGRAM_TYPE_ID = "SADDiagram";
 	public static final String DIAGRAM_EXT = ".sad_GDiagram";
