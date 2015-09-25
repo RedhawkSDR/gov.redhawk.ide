@@ -312,7 +312,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		return null;
 	}
 
-	protected FindBy getMatchingFindBy(ConnectInterface<?,?,?> connection, FindByStub findByStub) {
+	protected FindBy getMatchingFindBy(ConnectInterface< ? , ? , ? > connection, FindByStub findByStub) {
 		if (connection.getProvidesPort() != null) {
 			FindBy findBy = connection.getProvidesPort().getFindBy();
 			if (findBy != null && doFindByObjectsMatch(findBy, findByStub)) {
