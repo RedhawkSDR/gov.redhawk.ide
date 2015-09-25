@@ -23,19 +23,24 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.PaletteTreeEntry;
+import gov.redhawk.ide.sdr.SoftPkgRegistry;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.spd.Code;
+import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
@@ -67,6 +72,54 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	 */
 	public AbstractGraphitiToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
+	}
+
+	@Override
+	public boolean isShowFlyoutPalette() {
+		if (DUtil.isDiagramExplorer(getFeatureProvider().getDiagramTypeProvider().getDiagram())) {
+			return false;
+		}
+		return super.isShowFlyoutPalette();
+	}
+
+	/**
+	 * Returns true if the business objects are equal. Overriding this because default implementation
+	 * doesn't check the objects container and in some cases when attempting to automatically create connections
+	 * in the diagram they are drawn to the wrong ports.
+	 */
+	@Override
+	public boolean equalsBusinessObjects(Object o1, Object o2) {
+		if (o1 instanceof ProvidesPortStub && o2 instanceof ProvidesPortStub) {
+			ProvidesPortStub ps1 = (ProvidesPortStub) o1;
+			ProvidesPortStub ps2 = (ProvidesPortStub) o2;
+			boolean ecoreEqual = EcoreUtil.equals(ps1, ps2);
+			if (ecoreEqual) {
+				// ecore says they are equal, but lets verify their containers are the same
+				return this.equalsBusinessObjects(ps1.eContainer(), ps2.eContainer());
+			}
+		} else if (o1 instanceof UsesPortStub && o2 instanceof UsesPortStub) {
+			UsesPortStub ps1 = (UsesPortStub) o1;
+			UsesPortStub ps2 = (UsesPortStub) o2;
+			boolean ecoreEqual = EcoreUtil.equals(ps1, ps2);
+			if (ecoreEqual) {
+				// ecore says they are equal, but lets verify their containers are the same
+				return this.equalsBusinessObjects(ps1.eContainer(), ps2.eContainer());
+			}
+		} else if (o1 instanceof ComponentSupportedInterfaceStub && o2 instanceof ComponentSupportedInterfaceStub) {
+			ComponentSupportedInterfaceStub obj1 = (ComponentSupportedInterfaceStub) o1;
+			ComponentSupportedInterfaceStub obj2 = (ComponentSupportedInterfaceStub) o2;
+			boolean ecoreEqual = EcoreUtil.equals(obj1, obj2);
+			if (ecoreEqual) {
+				// ecore says they are equal, but lets verify their containers are the same
+				return this.equalsBusinessObjects(obj1.eContainer(), obj2.eContainer());
+			}
+		}
+
+		if (o1 instanceof EObject && o2 instanceof EObject) {
+			return EcoreUtil.equals((EObject) o1, (EObject) o2);
+		}
+		// Both BOs have to be EMF objects. Otherwise the IndependenceSolver does the job.
+		return false;
 	}
 
 	/**
@@ -276,6 +329,21 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		return retVal;
 	}
 
+	protected boolean isExecutable(SoftPkg spd) {
+		for (Implementation impl : spd.getImplementation()) {
+			Code code = impl.getCode();
+			if (code == null) {
+				return false;
+			}
+			CodeFileType type = code.getType();
+			if (type == null) {
+				return false;
+			}
+			return type == CodeFileType.EXECUTABLE;
+		}
+		return false;
+	}
+
 	private IToolEntry makeTool(SoftPkg spd, String iconId) {
 		List<IToolEntry> newEntries = createPaletteEntries(spd, iconId);
 		if (newEntries != null && newEntries.size() > 1) {
@@ -301,6 +369,18 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		return fullName.split("\\.");
 	}
 
-	protected abstract ICreateFeature getCreateFeature(SoftPkg spd, String implId, String iconId);
+	protected void refreshCompartmentEntry(PaletteCompartmentEntry compartmentEntry, SoftPkgRegistry container, String iconId) {
+		compartmentEntry.getToolEntries().clear();
+
+		for (SoftPkg spd : container.getComponents()) {
+			if (isExecutable(spd)) {
+				addToolToCompartment(compartmentEntry, spd, iconId);
+			}
+		}
+
+		sort(compartmentEntry.getToolEntries());
+	}
 	
+	protected abstract ICreateFeature getCreateFeature(SoftPkg spd, String implId, String iconId);
+
 }

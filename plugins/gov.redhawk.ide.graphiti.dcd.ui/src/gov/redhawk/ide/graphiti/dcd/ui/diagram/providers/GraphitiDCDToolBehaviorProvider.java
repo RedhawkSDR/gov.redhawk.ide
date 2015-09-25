@@ -14,25 +14,16 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.ServicesContainer;
-import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.spd.Code;
-import mil.jpeojtrs.sca.spd.CodeFileType;
-import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,17 +31,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
-import org.eclipse.graphiti.palette.IToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
-import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.tb.ContextMenuEntry;
 import org.eclipse.graphiti.tb.IContextMenuEntry;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -65,55 +51,6 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 		// sync palette with Target SDR contents
 		addTargetSdrRefreshJob(diagramTypeProvider);
-	}
-
-	@Override
-	public boolean isShowFlyoutPalette() {
-		if (DUtil.isDiagramExplorer(getFeatureProvider().getDiagramTypeProvider().getDiagram())) {
-			return false;
-		}
-		return super.isShowFlyoutPalette();
-	}
-
-	/**
-	 * Returns true if the business objects are equal. Overriding this because default implementation
-	 * doesn't check the objects container and in some cases when attempting to automatically create connections
-	 * in the diagram they are drawn to the wrong ports.
-	 */
-	@Override
-	public boolean equalsBusinessObjects(Object o1, Object o2) {
-
-		if (o1 instanceof ProvidesPortStub && o2 instanceof ProvidesPortStub) {
-			ProvidesPortStub ps1 = (ProvidesPortStub) o1;
-			ProvidesPortStub ps2 = (ProvidesPortStub) o2;
-			boolean ecoreEqual = EcoreUtil.equals(ps1, ps2);
-			if (ecoreEqual) {
-				// ecore says they are equal, but lets verify their containers are the same
-				return this.equalsBusinessObjects(ps1.eContainer(), ps2.eContainer());
-			}
-		} else if (o1 instanceof UsesPortStub && o2 instanceof UsesPortStub) {
-			UsesPortStub ps1 = (UsesPortStub) o1;
-			UsesPortStub ps2 = (UsesPortStub) o2;
-			boolean ecoreEqual = EcoreUtil.equals(ps1, ps2);
-			if (ecoreEqual) {
-				// ecore says they are equal, but lets verify their containers are the same
-				return this.equalsBusinessObjects(ps1.eContainer(), ps2.eContainer());
-			}
-		} else if (o1 instanceof ComponentSupportedInterfaceStub && o2 instanceof ComponentSupportedInterfaceStub) {
-			ComponentSupportedInterfaceStub obj1 = (ComponentSupportedInterfaceStub) o1;
-			ComponentSupportedInterfaceStub obj2 = (ComponentSupportedInterfaceStub) o2;
-			boolean ecoreEqual = EcoreUtil.equals(obj1, obj2);
-			if (ecoreEqual) {
-				// ecore says they are equal, but lets verify their containers are the same
-				return this.equalsBusinessObjects(obj1.eContainer(), obj2.eContainer());
-			}
-		}
-
-		if (o1 instanceof EObject && o2 instanceof EObject) {
-			return EcoreUtil.equals((EObject) o1, (EObject) o2);
-		}
-		// Both BOs have to be EMF objects. Otherwise the IndependenceSolver does the job.
-		return false;
 	}
 
 	private void addTargetSdrRefreshJob(final IDiagramTypeProvider diagramTypeProvider) {
@@ -148,10 +85,10 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 	@Override
 	protected void refreshPalette() {
 		DevicesContainer devicesContainer = SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer();
-		getCompartmentEntry(devicesContainer);
+		refreshCompartmentEntry(deviceCompartment, devicesContainer, NodeImageProvider.IMG_SCA_DEVICE);
 
 		ServicesContainer servicesContainer = SdrUiPlugin.getDefault().getTargetSdrRoot().getServicesContainer();
-		getCompartmentEntry(servicesContainer);
+		refreshCompartmentEntry(serviceCompartment, servicesContainer, NodeImageProvider.IMG_SCA_SERVICE);
 	}
 
 	@Override
@@ -166,60 +103,6 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 		// Get FindBy from superclass
 		super.addPaletteCompartments(compartments);
-	}
-
-	private PaletteCompartmentEntry getCompartmentEntry(SoftPkgRegistry container) {
-
-		final PaletteCompartmentEntry compartmentEntry;
-		if (container instanceof DevicesContainer) {
-			compartmentEntry = deviceCompartment;
-		} else if (container instanceof ServicesContainer) {
-			compartmentEntry = serviceCompartment;
-		} else {
-			return null;
-		}
-		compartmentEntry.getToolEntries().clear();
-
-		// add all palette entries into a entriesToRemove list.
-		final List<IToolEntry> entriesToRemove = new ArrayList<IToolEntry>();
-		for (final Object obj : compartmentEntry.getToolEntries()) {
-			if (obj instanceof SpdToolEntry || obj instanceof StackEntry) {
-				entriesToRemove.add((IToolEntry) obj);
-			}
-		}
-
-		// Loop through all devices in the Target SDR. When one is found, remove it from the entriesToRemove list.
-		final EList<SoftPkg> components = container.getComponents();
-		final SoftPkg[] devicesArray = components.toArray(new SoftPkg[components.size()]);
-		spdLoop: for (final SoftPkg spd : devicesArray) {
-			for (Implementation impl : spd.getImplementation()) {
-				Code code = impl.getCode();
-				if (code == null) {
-					continue spdLoop;
-				}
-				CodeFileType type = code.getType();
-				if (type == null) {
-					continue spdLoop;
-				}
-				switch (type) {
-				case EXECUTABLE:
-					break;
-				default:
-					continue spdLoop;
-				}
-			}
-			// special way of instantiating create feature, allows us to know which palette tool was used
-			String iconId = NodeImageProvider.IMG_COMPONENT_PLACEMENT;
-			if ("Devices".equals(compartmentEntry.getLabel())) {
-				iconId = NodeImageProvider.IMG_SCA_DEVICE;
-			} else if ("Services".equals(compartmentEntry.getLabel())) {
-				iconId = NodeImageProvider.IMG_SCA_SERVICE;
-			}
-			this.addToolToCompartment(compartmentEntry, spd, iconId);
-		}
-
-		sort(compartmentEntry.getToolEntries());
-		return compartmentEntry;
 	}
 
 	@Override
@@ -246,8 +129,6 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 		return contextMenuItems.toArray(new IContextMenuEntry[contextMenuItems.size()]);
 	}
-
-	// TODO: reimplement the filter. May be able to refactor this backwards out of the WaveformToolBehaviorProvider?
 
 	@Override
 	protected ICreateFeature getCreateFeature(SoftPkg spd, String implId, String iconId) {
