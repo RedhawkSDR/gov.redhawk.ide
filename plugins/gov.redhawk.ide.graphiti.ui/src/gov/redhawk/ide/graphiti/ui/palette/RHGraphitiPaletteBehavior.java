@@ -47,7 +47,7 @@ public class RHGraphitiPaletteBehavior extends DefaultPaletteBehavior {
 			protected void configurePaletteViewer(PaletteViewer viewer) {
 				super.configurePaletteViewer(viewer);
 				viewer.addDragSourceListener(new TemplateTransferDragSourceListener(viewer));
-				viewer.setEditPartFactory(new RHGraphitiPaletteEditPartFactory(RHGraphitiPaletteBehavior.this, diagramBehavior, viewer)); 
+				viewer.setEditPartFactory(new RHGraphitiPaletteEditPartFactory(viewer)); 
 			}
 		};
 	}

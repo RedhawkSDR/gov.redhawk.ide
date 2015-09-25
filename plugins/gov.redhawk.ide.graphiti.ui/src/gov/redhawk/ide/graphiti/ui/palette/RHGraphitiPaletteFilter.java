@@ -20,14 +20,12 @@ import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.palette.PaletteToolbar;
 import org.eclipse.gef.ui.palette.PaletteViewer;
-import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
 
 /**
  * 
  */
 public class RHGraphitiPaletteFilter {
 
-	private DefaultPaletteBehavior paletteBehavior;
 	private String filter = "";
 	private PaletteViewer viewer;
 	private Pattern pattern;
@@ -39,7 +37,7 @@ public class RHGraphitiPaletteFilter {
 	/**
 	 * 
 	 */
-	public void refresh() {
+	private void refresh() {
 		PaletteRoot root = viewer.getPaletteRoot();
 		for (Object obj : root.getChildren()) {
 			if (obj instanceof PaletteToolbar) {
@@ -97,10 +95,6 @@ public class RHGraphitiPaletteFilter {
 		return filter;
 	}
 	
-	public void setPaletteBehavior(DefaultPaletteBehavior behavior) {
-		paletteBehavior = behavior;
-	}
-	
 	public void setFilter(String filter) {
 		if (this.filter.equals(filter)) {
 			return;
@@ -111,9 +105,7 @@ public class RHGraphitiPaletteFilter {
 		} else {
 			this.pattern = Pattern.compile(".*" + Pattern.quote(this.filter) + ".*", Pattern.CASE_INSENSITIVE);
 		}
-		if (paletteBehavior != null) {
-			paletteBehavior.refreshPalette();
-		}
+		refresh();
 	}
 
 }

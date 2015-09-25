@@ -23,7 +23,6 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.PaletteTreeEntry;
-import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteFilter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,7 +60,6 @@ import org.eclipse.graphiti.tb.IContextButtonPadData;
 
 public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
-	private RHGraphitiPaletteFilter paletteFilter;
 	protected List<IPaletteCompartmentEntry> paletteCompartments;
 
 	/**
@@ -188,17 +186,6 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		return ScaEcoreUtils.getEContainerOfType(originalPe, RHContainerShape.class);
 	}
 	
-	public boolean passesFilter(String id) {
-		if (paletteFilter == null || paletteFilter.getFilter().isEmpty() || paletteFilter.matches(id)) {
-			return true;
-		}
-		return false;
-	}
-
-	public void setFilter(RHGraphitiPaletteFilter filter) {
-		paletteFilter = filter;
-	}
-
 	protected void sort(List<IToolEntry> entries) {
 		Collections.sort(entries, new Comparator<IToolEntry>() {
 

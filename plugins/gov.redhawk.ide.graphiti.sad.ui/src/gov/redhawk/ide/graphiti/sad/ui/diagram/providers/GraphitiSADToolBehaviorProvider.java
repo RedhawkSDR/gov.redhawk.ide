@@ -13,9 +13,7 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -25,17 +23,14 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDoubleClickContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
-import org.eclipse.graphiti.palette.IToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
-import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.tb.ContextMenuEntry;
 import org.eclipse.graphiti.tb.IContextMenuEntry;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -50,7 +45,6 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDevic
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sdr.ComponentsContainer;
@@ -182,6 +176,10 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 			workspaceCompartmentEntry = new PaletteCompartmentEntry("Workspace", null);
 			workspaceCompartmentEntry.setInitiallyOpen(true);
 			compartments.add(workspaceCompartmentEntry);
+
+			// Add a listener to refresh the palette when the workspace is updated
+			IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
+			registry.addListener(listener);
 		} else {
 			compartments.add(getAdvancedCompartmentEntry());
 		}
@@ -211,16 +209,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 	 * @param container
 	 */
 	private PaletteCompartmentEntry getComponentCompartmentEntry(final ComponentsContainer container) {
-		componentCompartmentEntry = initializeCompartment(componentCompartmentEntry, "Components");
-		final PaletteCompartmentEntry compartmentEntry = componentCompartmentEntry;
-
-		// add all palette entries into a entriesToRemove list.
-		final List<IToolEntry> entriesToRemove = new ArrayList<IToolEntry>();
-		for (final Object obj : compartmentEntry.getToolEntries()) {
-			if (obj instanceof SpdToolEntry || obj instanceof StackEntry) {
-				entriesToRemove.add((IToolEntry) obj);
-			}
-		}
+		componentCompartmentEntry.getToolEntries().clear();
 
 		// loop through all components in Target SDR and if present then remove it from the entriesToRemove list
 		final EList<SoftPkg> components = container.getComponents();
@@ -242,60 +231,12 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 					continue spdLoop;
 				}
 			}
-			boolean foundTool = false;
-			for (int i = 0; i < entriesToRemove.size(); i++) {
-				final IToolEntry entry = entriesToRemove.get(i);
-				if (entry.getLabel().equals(spd.getId())) {
-					foundTool = true;
-					if (passesFilter(entry.getLabel())) {
-						entriesToRemove.remove(i);
-					}
-					break;
-				}
-			}
-			if (!foundTool && passesFilter(spd.getName())) {
-				addToolToCompartment(compartmentEntry, spd, WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
-				// special way of instantiating create feature
-				// allows us to know which palette tool was used
-				
-//				if (spd.getImplementation().size() > 1) {
-//					StackEntry stackEntry = new StackEntry(spd.getName() + spd.getImplementation().get(0).getId(), spd.getDescription(),
-//						WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
-//					compartmentEntry.addToolEntry(stackEntry);
-//					List<IToolEntry> stackEntries = new ArrayList<IToolEntry>();
-//					for (Implementation impl : spd.getImplementation()) {
-//						ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd, impl.getId());
-//						SpdToolEntry entry = new SpdToolEntry(spd.getName() + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd),
-//							spd.getId(), null, WaveformImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
-//						stackEntries.add(entry);
-//					}
-//					sort(stackEntries);
-//					for (IToolEntry entry : stackEntries) {
-//						stackEntry.addCreationToolEntry((SpdToolEntry) entry);
-//					}
-//				} else {
-//					ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
-//					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
-//					compartmentEntry.addToolEntry(entry);
-//				}
-			}
-		}
-		for (final IToolEntry entry : entriesToRemove) {
-			compartmentEntry.getToolEntries().remove(entry);
+			addToolToCompartment(componentCompartmentEntry, spd, WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
 		}
 
 		// Sort the children and return the new list of components
-		final ArrayList<IToolEntry> entries = new ArrayList<IToolEntry>();
-		for (final IToolEntry entry : compartmentEntry.getToolEntries()) {
-			if (entry instanceof IToolEntry) {
-				entries.add((IToolEntry) entry);
-			}
-		}
-//		sort(entries);
-		compartmentEntry.getToolEntries().clear();
-		compartmentEntry.getToolEntries().addAll(entries);
-		sort(compartmentEntry.getToolEntries());
-		return compartmentEntry;
+		sort(componentCompartmentEntry.getToolEntries());
+		return componentCompartmentEntry;
 	}
 
 	/**
@@ -303,117 +244,30 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 	 * @param container
 	 */
 	private PaletteCompartmentEntry getWorkspaceCompartmentEntry() {
-		workspaceCompartmentEntry = initializeCompartment(workspaceCompartmentEntry, "Workspace");
-		final PaletteCompartmentEntry compartmentEntry = workspaceCompartmentEntry;
+		workspaceCompartmentEntry.getToolEntries().clear();
 
-		Map<String, List<PaletteEntry>> containerMap = new HashMap<String, List<PaletteEntry>>();
-
-		// Add a listener to refresh the palette when the workspace is updated
-		IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
-		registry.addListener(listener);
-
-		List<IToolEntry> entries = new ArrayList<IToolEntry>();
 		final String componentType = mil.jpeojtrs.sca.scd.ComponentType.RESOURCE.getLiteral();
-		for (ResourceDesc desc : registry.getResourceDescriptors()) {
-			String category = desc.getCategory();
-			List<PaletteEntry> containerList = containerMap.get(category);
-			if (containerList == null) {
-				String label = category;
-				if (!("Workspace".equals(label))) {
-					continue;
-				}
-				containerList = new ArrayList<PaletteEntry>();
-				containerMap.put(category, containerList);
+		for (ResourceDesc desc : ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry().getResourceDescriptors()) {
+			if (!"Workspace".equals(desc.getCategory())) {
+				continue;
 			}
-//			List<IToolEntry> newEntries = new ArrayList<IToolEntry>();
 			if (desc instanceof ComponentDesc) {
 				ComponentDesc compDesc = (ComponentDesc) desc;
 				// Filter out devices and services, and apply name filter
-				if ((compDesc.getComponentType() != null) && compDesc.getComponentType().equals(componentType) && passesFilter(compDesc.getName())) {
-					addToolToCompartment(compartmentEntry, compDesc.getSoftPkg(), WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
-//					newEntries = createPaletteEntries(compDesc);
-//					if (newEntries != null && newEntries.size() > 1) {
-//						sort(newEntries);
-//						IToolEntry firstEntry = newEntries.get(0);
-//						StackEntry stackEntry = new StackEntry(firstEntry.getLabel(), ((SpdToolEntry) firstEntry).getDescription(), firstEntry.getIconId());
-//						entries.add(stackEntry);
-//						for (IToolEntry entry : newEntries) {
-//							stackEntry.addCreationToolEntry((SpdToolEntry) entry);
-//						}
-//					} else {
-//						entries.addAll(newEntries);
-//					}
+				if ((compDesc.getComponentType() != null) && compDesc.getComponentType().equals(componentType)) {
+					addToolToCompartment(workspaceCompartmentEntry, compDesc.getSoftPkg(), WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
 				}
 			}
 		}
 
-//		sort(entries);
-		compartmentEntry.getToolEntries().addAll(entries);
-		sort(compartmentEntry.getToolEntries());
-		return compartmentEntry;
+		sort(workspaceCompartmentEntry.getToolEntries());
+		return workspaceCompartmentEntry;
 	}
-
-//	private String getLastSegment(String[] segments) {
-//		if (segments == null || segments.length < 1) {
-//			return "";
-//		}
-//		return segments[segments.length - 1];
-//	}
-//	
-//	private PaletteTreeEntry getSegmentEntry(PaletteCompartmentEntry parent, String label) {
-//		if (label == null) {
-//			return null;
-//		}
-//		if (parent == null) {
-//			return new PaletteTreeEntry(label);
-//		}
-//		for (IToolEntry entry: parent.getToolEntries()) {
-//			if (entry instanceof PaletteTreeEntry && label.equals(entry.getLabel())) {
-//				return (PaletteTreeEntry) entry;
-//			}
-//		}
-//		return new PaletteTreeEntry(label, parent);
-//	}
-//	
-//	protected void addToolToCompartment(PaletteCompartmentEntry compartment, SoftPkg spd) {
-//		Assert.isNotNull(compartment, "Cannot add tool to non-existent compartment");
-//		String[] segments = getNameSegments(spd);
-//		PaletteCompartmentEntry folder = compartment;
-//		for (int index = 0; index < segments.length - 1; ++index) {
-//			folder = getSegmentEntry(folder, segments[index]);
-//		}
-//		folder.addToolEntry(makeTool(spd));
-//	}
-//	
-//	private IToolEntry makeTool(SoftPkg spd) {
-//		List<IToolEntry> newEntries = createPaletteEntries(spd);
-//		if (newEntries != null && newEntries.size() > 1) {
-//			sort(newEntries);
-//			IToolEntry firstEntry = newEntries.get(0);
-//			StackEntry stackEntry = new StackEntry(firstEntry.getLabel(), ((SpdToolEntry) firstEntry).getDescription(), firstEntry.getIconId());
-//			for (IToolEntry entry : newEntries) {
-//				stackEntry.addCreationToolEntry((SpdToolEntry) entry);
-//			}
-//			return stackEntry;
-//		}
-//		return newEntries.get(0);
-//	}
-//
-//	private String[] getNameSegments(SoftPkg spd) {
-//		String fullName = spd.getName();
-//		if (fullName == null) {
-//			return new String[] {""};
-//		}
-//		if (!fullName.contains(".")) {
-//			return new String[] {fullName};
-//		}
-//		return fullName.split("\\.");
-//	}
 
 	/**
 	 * Returns a listener that refreshes the palette
 	 */
-	private java.beans.PropertyChangeListener listener = new PropertyChangeListener() {
+	private PropertyChangeListener listener = new PropertyChangeListener() {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {

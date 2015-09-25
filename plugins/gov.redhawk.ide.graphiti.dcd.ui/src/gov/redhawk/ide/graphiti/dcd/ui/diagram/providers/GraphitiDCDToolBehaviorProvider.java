@@ -208,74 +208,17 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 					continue spdLoop;
 				}
 			}
-			boolean foundTool = false;
-			for (int i = 0; i < entriesToRemove.size(); i++) {
-				final IToolEntry entry = entriesToRemove.get(i);
-				if (entry.getLabel().equals(spd.getId())) {
-					foundTool = true;
-					if (passesFilter(entry.getLabel())) {
-						entriesToRemove.remove(i);
-					}
-					break;
-				}
+			// special way of instantiating create feature, allows us to know which palette tool was used
+			String iconId = NodeImageProvider.IMG_COMPONENT_PLACEMENT;
+			if ("Devices".equals(compartmentEntry.getLabel())) {
+				iconId = NodeImageProvider.IMG_SCA_DEVICE;
+			} else if ("Services".equals(compartmentEntry.getLabel())) {
+				iconId = NodeImageProvider.IMG_SCA_SERVICE;
 			}
-			if (!foundTool && passesFilter(spd.getName())) {
-				// special way of instantiating create feature, allows us to know which palette tool was used
-				String iconId = NodeImageProvider.IMG_COMPONENT_PLACEMENT;
-				if ("Devices".equals(compartmentEntry.getLabel())) {
-					iconId = NodeImageProvider.IMG_SCA_DEVICE;
-				} else if ("Services".equals(compartmentEntry.getLabel())) {
-					iconId = NodeImageProvider.IMG_SCA_SERVICE;
-				}
-				this.addToolToCompartment(compartmentEntry, spd, iconId);
-
-//				if (spd.getImplementation().size() > 1) {
-//					StackEntry stackEntry = new StackEntry(spd.getName() + spd.getImplementation().get(0).getId(), spd.getDescription(),
-//						iconId);
-//					compartmentEntry.addToolEntry(stackEntry);
-//					List<IToolEntry> stackEntries = new ArrayList<IToolEntry>();
-//					for (Implementation impl : spd.getImplementation()) {
-//						ICreateFeature createComponentFeature = null;
-//						if (container instanceof DevicesContainer) {
-//							createComponentFeature = new DeviceCreateFeature(getFeatureProvider(), spd, impl.getId());
-//						} else if (container instanceof ServicesContainer) {
-//							createComponentFeature = new ServiceCreateFeature(getFeatureProvider(), spd, impl.getId());
-//						}
-//						SpdToolEntry entry = new SpdToolEntry(spd.getName() + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd),
-//							spd.getId(), null, iconId, createComponentFeature);
-//						stackEntries.add(entry);
-//					}
-//					sort(stackEntries);
-//					for (IToolEntry entry : stackEntries) {
-//						stackEntry.addCreationToolEntry((SpdToolEntry) entry);
-//					}
-//				} else {
-//					ICreateFeature createComponentFeature = null;
-//					if (container instanceof DevicesContainer) {
-//						createComponentFeature = new DeviceCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
-//					} else if (container instanceof ServicesContainer) {
-//						createComponentFeature = new ServiceCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
-//					}
-//					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, iconId);
-//					compartmentEntry.addToolEntry(entry);
-//				}
-			}
-		}
-		for (final IToolEntry entry : entriesToRemove) {
-			compartmentEntry.getToolEntries().remove(entry);
+			this.addToolToCompartment(compartmentEntry, spd, iconId);
 		}
 
-		// Sort the children and return the new list of components
-		final ArrayList<IToolEntry> entries = new ArrayList<IToolEntry>();
-		for (final IToolEntry entry : compartmentEntry.getToolEntries()) {
-			if (entry instanceof IToolEntry) {
-				entries.add((IToolEntry) entry);
-			}
-		}
-		sort(entries);
-		compartmentEntry.getToolEntries().clear();
-		compartmentEntry.getToolEntries().addAll(entries);
-
+		sort(compartmentEntry.getToolEntries());
 		return compartmentEntry;
 	}
 
