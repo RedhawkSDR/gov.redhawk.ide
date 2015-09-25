@@ -15,7 +15,6 @@ import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
@@ -360,26 +359,36 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	}
 	
 	/**
-	 * Creates a new SpdToolEntry for each implementation in the component description.
+	 * Creates a new IToolEntry for each implementation in the component description.
 	 * Also assigns the createComponentFeature to the palette entry so that the diagram knows which shape to create.
 	 */
 	protected List<IToolEntry> createPaletteEntries(SoftPkg spd, String iconId) {
 		String label = getLastSegment(getNameSegments(spd));
-		List<IToolEntry> retVal = new ArrayList<IToolEntry>(spd.getImplementation().size());
+		List<IToolEntry> entries = new ArrayList<IToolEntry>(spd.getImplementation().size());
 		if (spd.getImplementation().size() == 1 || DUtil.isDiagramWorkpace(this.getDiagramTypeProvider().getDiagram())) {
-			ICreateFeature createComponentFeature = getCreateFeature(spd, spd.getImplementation().get(0).getId(), iconId);
-			SpdToolEntry entry = new SpdToolEntry(label, spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(),
-				spd.getImplementation().get(0).getId(), iconId, createComponentFeature);
-			retVal.add(entry);
+			entries.add(createSpdToolEntry(label, spd, null, iconId));
 		} else {
 			for (Implementation impl : spd.getImplementation()) {
-				ICreateFeature createComponentFeature = getCreateFeature(spd, impl.getId(), iconId);
-				SpdToolEntry entry = new SpdToolEntry(label + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(),
-					impl.getId(), iconId, createComponentFeature);
-				retVal.add(entry);
+				entries.add(createSpdToolEntry(label, spd, impl.getId(), iconId));
 			}
 		}
-		return retVal;
+		return entries;
+	}
+
+	private ObjectCreationToolEntry createSpdToolEntry(String label, SoftPkg spd, String implId, String iconId) {
+		if (implId == null) {
+			// Use default implementation
+			implId = spd.getImplementation().get(0).getId();
+		} else {
+			// Implementation given, include it in the label
+			label = label + " (" + implId + ")";
+		}
+		String description = spd.getDescription();
+		if (description == null) {
+			description = "Create a new instance of \"" + label + "\"";
+		}
+		ICreateFeature createComponentFeature = getCreateFeature(spd, implId, iconId);
+		return new ObjectCreationToolEntry(label, description, iconId, null, createComponentFeature);
 	}
 
 	protected boolean isExecutable(SoftPkg spd) {
@@ -402,9 +411,9 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		if (newEntries != null && newEntries.size() > 1) {
 			sort(newEntries);
 			IToolEntry firstEntry = newEntries.get(0);
-			StackEntry stackEntry = new StackEntry(firstEntry.getLabel(), ((SpdToolEntry) firstEntry).getDescription(), firstEntry.getIconId());
+			StackEntry stackEntry = new StackEntry(firstEntry.getLabel(), ((ObjectCreationToolEntry) firstEntry).getDescription(), firstEntry.getIconId());
 			for (IToolEntry entry : newEntries) {
-				stackEntry.addCreationToolEntry((SpdToolEntry) entry);
+				stackEntry.addCreationToolEntry((ObjectCreationToolEntry) entry);
 			}
 			return stackEntry;
 		}
