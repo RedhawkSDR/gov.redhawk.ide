@@ -52,7 +52,6 @@ import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -572,13 +571,13 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public Style createStyleForOuter() {
-		return StyleUtil.getStyle(StyleUtil.FIND_BY_OUTER);
+	public String getStyleForOuter() {
+		return StyleUtil.FIND_BY_OUTER;
 	}
 
 	@Override
-	public Style createStyleForInner() {
-		return StyleUtil.getStyle(StyleUtil.FIND_BY_INNER);
+	public String getStyleForInner() {
+		return StyleUtil.FIND_BY_INNER;
 	}
 
 	@Override

@@ -63,7 +63,6 @@ import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
-import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -391,13 +390,13 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 	}
 
 	@Override
-	public Style createStyleForOuter() {
-		return StyleUtil.getStyle(StyleUtil.USES_DEVICE_OUTER);
+	public String getStyleForOuter() {
+		return StyleUtil.USES_DEVICE_OUTER;
 	}
 
 	@Override
-	public Style createStyleForInner() {
-		return StyleUtil.getStyle(StyleUtil.USES_DEVICE_INNER);
+	public String getStyleForInner() {
+		return StyleUtil.USES_DEVICE_INNER;
 	}
 
 	@Override

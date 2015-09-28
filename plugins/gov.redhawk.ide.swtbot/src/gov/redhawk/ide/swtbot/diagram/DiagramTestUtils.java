@@ -926,7 +926,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 			public boolean test() throws Exception {
 				RHContainerShapeImpl componentShape = (RHContainerShapeImpl) editor.getEditPart(componentName).part().getModel();
 				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) componentShape.getInnerContainerShape().getGraphicsAlgorithm();
-				return innerRoundedRectangle.getStyle().equals(StyleUtil.getStyle(StyleUtil.COMPONENT_INNER_STARTED));
+				return innerRoundedRectangle.getStyle().getId().equals(StyleUtil.COMPONENT_INNER_STARTED);
 			}
 		}, 10000);
 	}
@@ -947,7 +947,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 			public boolean test() throws Exception {
 				RHContainerShapeImpl componentShape = (RHContainerShapeImpl) editor.getEditPart(componentName).part().getModel();
 				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) componentShape.getInnerContainerShape().getGraphicsAlgorithm();
-				return innerRoundedRectangle.getStyle().equals(StyleUtil.getStyle(StyleUtil.COMPONENT_INNER));
+				return innerRoundedRectangle.getStyle().getId().equals(StyleUtil.COMPONENT_INNER);
 			}
 		}, 10000);
 	}

@@ -26,7 +26,6 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -116,13 +115,13 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 	}
 
 	@Override
-	public Style createStyleForOuter() {
-		return StyleUtil.getStyle(StyleUtil.COMPONENT_OUTER);
+	public String getStyleForOuter() {
+		return StyleUtil.COMPONENT_OUTER;
 	}
 
 	@Override
-	public Style createStyleForInner() {
-		return StyleUtil.getStyle(StyleUtil.COMPONENT_INNER);
+	public String getStyleForInner() {
+		return StyleUtil.COMPONENT_INNER;
 	}
 
 	/**

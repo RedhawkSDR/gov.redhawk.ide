@@ -61,7 +61,6 @@ import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
-import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -787,13 +786,13 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	}
 
 	@Override
-	public Style createStyleForOuter() {
-		return StyleUtil.getStyle(StyleUtil.COMPONENT_OUTER);
+	public String getStyleForOuter() {
+		return StyleUtil.COMPONENT_OUTER;
 	}
 
 	@Override
-	public Style createStyleForInner() {
-		return StyleUtil.getStyle(StyleUtil.COMPONENT_INNER);
+	public String getStyleForInner() {
+		return StyleUtil.COMPONENT_INNER;
 	}
 
 	/**

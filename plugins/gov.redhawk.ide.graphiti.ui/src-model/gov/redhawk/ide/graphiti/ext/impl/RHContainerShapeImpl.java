@@ -52,7 +52,6 @@ import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
-import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -479,7 +478,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// graphic
 		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(this, 5, 5);
 		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE);
-		outerRoundedRectangle.setStyle(pattern.createStyleForOuter());
+		StyleUtil.setStyle(outerRoundedRectangle, pattern.getStyleForOuter());
 		outerRoundedRectangle.setTransparency(0.5); // 50%
 
 		// image
@@ -488,7 +487,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// text
 		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, pattern.getOuterTitle(newObject));
-		cText.setStyle(StyleUtil.getStyle(StyleUtil.OUTER_TEXT));
+		StyleUtil.setStyle(cText, StyleUtil.OUTER_TEXT);
 		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 
 		IFeatureProvider featureProvider = pattern.getFeatureProvider();
@@ -496,7 +495,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// link objects
 		featureProvider.link(this, pattern.getBusinessObjectsToLink(newObject).toArray());
 
-		addInnerContainer(pattern.getInnerTitle(newObject), pattern.getInnerImageId(), pattern.createStyleForInner());
+		addInnerContainer(pattern.getInnerTitle(newObject), pattern.getInnerImageId(), pattern.getStyleForInner());
 
 		EList<ProvidesPortStub> provides = pattern.getProvides(newObject);
 		EList<UsesPortStub> uses = pattern.getUses(newObject);
@@ -815,11 +814,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * add inner container
 	 */
-	public ContainerShape addInnerContainer(String text, String imageId, Style containerStyle) {
+	public ContainerShape addInnerContainer(String text, String imageId, String styleId) {
 		ContainerShape innerContainerShape = Graphiti.getCreateService().createContainerShape(this, false);
 		Graphiti.getPeService().setPropertyValue(innerContainerShape, DUtil.GA_TYPE, SHAPE_INNER_CONTAINER);
 		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(innerContainerShape, 5, 5);
-		innerRoundedRectangle.setStyle(containerStyle);
+		StyleUtil.setStyle(innerRoundedRectangle, styleId);
 		Graphiti.getPeService().setPropertyValue(innerRoundedRectangle, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE);
 
 		// image
@@ -828,7 +827,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// text
 		Text ciText = Graphiti.getCreateService().createText(innerRoundedRectangle, text);
-		ciText.setStyle(StyleUtil.getStyle(StyleUtil.INNER_TEXT));
+		StyleUtil.setStyle(ciText, StyleUtil.INNER_TEXT);
 		Graphiti.getPeService().setPropertyValue(ciText, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_TEXT);
 
 		// draw line if showing shape details (ports)
@@ -859,13 +858,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Shape lollipopEllipseShape = Graphiti.getCreateService().createShape(interfaceContainerShape, true);
 		Graphiti.getPeService().setPropertyValue(lollipopEllipseShape, DUtil.GA_TYPE, SHAPE_INTERFACE_ELLIPSE);
 		Ellipse lollipopEllipse = Graphiti.getCreateService().createEllipse(lollipopEllipseShape);
-		lollipopEllipse.setStyle(StyleUtil.createStyleForLollipopEllipse(DUtil.findDiagram(this)));
+		StyleUtil.setStyle(lollipopEllipse, StyleUtil.LOLLIPOP_ELLIPSE);
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
 
 		// interface lollipop line
 		Shape lollipopLineShape = Graphiti.getCreateService().createContainerShape(interfaceContainerShape, false);
 		Rectangle lollipopLine = Graphiti.getCreateService().createRectangle(lollipopLineShape);
-		lollipopLine.setStyle(StyleUtil.createStyleForLollipopLine(DUtil.findDiagram(this)));
+		StyleUtil.setStyle(lollipopLine, StyleUtil.LOLLIPOP_LINE);
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopLine, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER / 2,
 			INTERFACE_SHAPE_WIDTH - LOLLIPOP_ELLIPSE_DIAMETER, 1);
 
@@ -2040,33 +2039,33 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		final Diagram diagram = DUtil.findDiagram(this);
 		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
 		if (innerRoundedRectangle != null) {
-			Style style;
+			String styleId;
 			if (iStatusSeverity == IStatus.ERROR) {
-				style = getInnerErrorStyle(diagram);
+				styleId = getInnerErrorStyle(diagram);
 			} else if (!enabled) {
-				style = getInnerDisabledStyle(diagram);
+				styleId = getInnerDisabledStyle(diagram);
 			} else if (started) {
-				style = getInnerStartedStyle(diagram);
+				styleId = getInnerStartedStyle(diagram);
 			} else {
-				style = getInnerStyle(diagram);
+				styleId = getInnerStyle(diagram);
 			}
-			innerRoundedRectangle.setStyle(style);
+			StyleUtil.setStyle(innerRoundedRectangle, styleId);
 		}
 	}
 
-	protected Style getInnerStyle(Diagram diagram) {
-		return StyleUtil.getStyle(StyleUtil.COMPONENT_INNER);
+	protected String getInnerStyle(Diagram diagram) {
+		return StyleUtil.COMPONENT_INNER;
 	}
 
-	protected Style getInnerStartedStyle(Diagram diagram) {
-		return StyleUtil.getStyle(StyleUtil.COMPONENT_INNER_STARTED);
+	protected String getInnerStartedStyle(Diagram diagram) {
+		return StyleUtil.COMPONENT_INNER_STARTED;
 	}
 
-	protected Style getInnerErrorStyle(Diagram diagram) {
-		return StyleUtil.getStyle(StyleUtil.COMPONENT_INNER_ERROR);
+	protected String getInnerErrorStyle(Diagram diagram) {
+		return StyleUtil.COMPONENT_INNER_ERROR;
 	}
 
-	protected Style getInnerDisabledStyle(Diagram diagram) {
-		return StyleUtil.getStyle(StyleUtil.COMPONENT_INNER_DISABLED);
+	protected String getInnerDisabledStyle(Diagram diagram) {
+		return StyleUtil.COMPONENT_INNER_DISABLED;
 	}
 } // RHContainerShapeImpl

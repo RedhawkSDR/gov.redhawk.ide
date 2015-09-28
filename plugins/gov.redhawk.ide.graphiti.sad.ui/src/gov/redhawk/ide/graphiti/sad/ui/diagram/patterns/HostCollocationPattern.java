@@ -54,7 +54,6 @@ import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
-import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -151,7 +150,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 
 		// OUTER RECTANGLE
 		ContainerShape outerContainerShape = addOuterRectangle(diagram, hostCollocation.getName(), hostCollocation, getFeatureProvider(), getCreateImageId(),
-			StyleUtil.getStyle(StyleUtil.HOST_COLLOCATION));
+			StyleUtil.HOST_COLLOCATION);
 
 		RoundedRectangle outerRoundedRectangle = null;
 		Text outerRoundedRectangleText = null;
@@ -507,11 +506,11 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	 * @return
 	 */
 	private ContainerShape addOuterRectangle(ContainerShape targetContainerShape, String text, Object businessObject, IFeatureProvider featureProvider,
-		String imageId, Style containerStyle) {
+		String imageId, String styleId) {
 		ContainerShape outerContainerShape = Graphiti.getCreateService().createContainerShape(targetContainerShape, true);
 		Graphiti.getPeService().setPropertyValue(outerContainerShape, DUtil.SHAPE_TYPE, HOST_COLLOCATION_OUTER_CONTAINER_SHAPE);
 		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(outerContainerShape, 5, 5);
-		outerRoundedRectangle.setStyle(containerStyle);
+		StyleUtil.setStyle(outerRoundedRectangle, styleId);
 		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE);
 		// image
 		Image imgIcon = Graphiti.getGaCreateService().createImage(outerRoundedRectangle, imageId);
@@ -520,7 +519,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		// resize
 		// text
 		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, text);
-		cText.setStyle(StyleUtil.getStyle(StyleUtil.OUTER_TEXT));
+		StyleUtil.setStyle(cText, StyleUtil.OUTER_TEXT);
 		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 		featureProvider.link(outerContainerShape, businessObject); // link container and business object
 

@@ -19,7 +19,6 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
-import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.config.IPatternConfiguration;
 
@@ -136,7 +135,7 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 	 * @param
 	 * @return
 	 */
-	public Style createStyleForOuter() {
+	public String getStyleForOuter() {
 		return null;
 	}
 	
@@ -145,7 +144,7 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 	 * @param
 	 * @return
 	 */
-	public Style createStyleForInner() {
+	public String getStyleForInner() {
 		return null;
 	}
 	

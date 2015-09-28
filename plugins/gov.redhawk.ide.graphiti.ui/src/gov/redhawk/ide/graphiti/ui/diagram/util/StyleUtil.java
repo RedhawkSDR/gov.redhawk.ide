@@ -12,8 +12,11 @@ package gov.redhawk.ide.graphiti.ui.diagram.util;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.graphiti.mm.StyleContainer;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.styles.Font;
 import org.eclipse.graphiti.mm.algorithms.styles.LineStyle;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
@@ -25,7 +28,7 @@ import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.graphiti.util.PredefinedColoredAreas;
 import org.eclipse.swt.graphics.Color;
 
-import gov.redhawk.ide.graphiti.internal.ui.resource.StyleResourceFactory;
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.sca.util.PluginUtil;
 
 public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
@@ -34,8 +37,8 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String START_ORDER_TEXT = "gov.redhawk.style.StartOrderText";
 	private static final String START_ORDER_ELLIPSE = "gov.redhawk.style.StartOrderEllipse";
 	private static final String START_ORDER_ASSEMBLY_CONTROLLER_ELLIPSE = "gov.redhawk.style.StartOrderAssemblyControllerEllipse";
-	private static final String LOLLIPOP_LINE = "gov.redhawk.style.LollipopLine";
-	private static final String LOLLIPOP_ELLIPSE = "gov.redhawk.style.LollipopEllipse";
+	public static final String LOLLIPOP_LINE = "gov.redhawk.style.LollipopLine";
+	public static final String LOLLIPOP_ELLIPSE = "gov.redhawk.style.LollipopEllipse";
 	private static final String USES_PORT_ANCHOR = "gov.redhawk.style.UsesPortAnchor";
 	private static final String USES_EXTERNAL_PORT = "gov.redhawk.style.UsesExternalPort";
 	private static final String SUPER_USES_PORT = "gov.redhawk.style.SuperUsesPort";
@@ -94,17 +97,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String SANS_FONT = "Sans";
 	private static final String DEFAULT_FONT = SANS_FONT;
 
-	/**
-	 * Globally shared instance for styles
-	 */
-	private static Resource styleResource = null;
-
 	public static final Font getOuterTitleFont(Diagram diagram) {
-		return getStyle(OUTER_TEXT).getFont();
+		diagram = getStyleDiagram(diagram);
+		return findStyle(diagram, OUTER_TEXT).getFont();
 	}
 
 	public static final Font getInnerTitleFont(Diagram diagram) {
-		return getStyle(INNER_TEXT).getFont();
+		diagram = getStyleDiagram(diagram);
+		return findStyle(diagram, INNER_TEXT).getFont();
 	}
 
 	public static final Font getErrorConnectionFont(Diagram diagram) {
@@ -117,13 +117,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	public static final Font getPortFont(Diagram diagram) {
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
-	}
-
-	private static Diagram getStyleDiagram() {
-		if (styleResource == null) {
-			styleResource = StyleResourceFactory.createResource();
-		}
-		return (Diagram) styleResource.getContents().get(0);
 	}
 
 	public static void createAllStyles(Diagram diagram) {
@@ -139,13 +132,21 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		createStyleForUsesDeviceInner(diagram);
 		createStyleForOuterText(diagram);
 		createStyleForInnerText(diagram);
+		createStyleForLollipopEllipse(diagram);
+		createStyleForLollipopLine(diagram);
 	}
 
-	public static Style getStyle(String styleId) {
-		Diagram diagram = getStyleDiagram();
-		return findStyle(diagram, styleId);
+	private static Diagram getStyleDiagram(EObject object) {
+		URI uri = URI.createPlatformPluginURI(GraphitiUIPlugin.PLUGIN_ID + "/style", false);
+		Resource resource = object.eResource().getResourceSet().getResource(uri, true);
+		return (Diagram) resource.getContents().get(0);
 	}
 
+	public static void setStyle(GraphicsAlgorithm ga, String styleId) {
+		Diagram styleDiagram = getStyleDiagram(ga);
+		ga.setStyle(findStyle(styleDiagram, styleId));
+	}
+	
 	// returns component outer rectangle style
 	private static Style createStyleForComponentOuter(Diagram diagram) {
 		IGaService gaService = Graphiti.getGaService();
@@ -534,30 +535,20 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns style for lollipop ellipse
-	public static Style createStyleForLollipopEllipse(Diagram diagram) {
-		final String styleId = LOLLIPOP_ELLIPSE;
-		Style style = findStyle(diagram, styleId);
-
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setLineWidth(1);
-			style.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
-			style.setTransparency(.99d);
-		}
+	private static Style createStyleForLollipopEllipse(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, LOLLIPOP_ELLIPSE);
+		style.setLineWidth(1);
+		style.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
+		style.setTransparency(.99d);
 		return style;
 	}
 
 	// returns style for lollipop line
-	public static Style createStyleForLollipopLine(Diagram diagram) {
-		final String styleId = LOLLIPOP_LINE;
-		Style style = findStyle(diagram, styleId);
-
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setBackground(Graphiti.getGaService().manageColor(diagram, BLACK));
-		}
+	private static Style createStyleForLollipopLine(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, LOLLIPOP_LINE);
+		style.setBackground(Graphiti.getGaService().manageColor(diagram, BLACK));
 		return style;
 	}
 
