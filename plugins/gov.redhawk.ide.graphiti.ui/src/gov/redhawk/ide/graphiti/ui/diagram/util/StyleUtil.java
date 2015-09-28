@@ -51,11 +51,11 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String HOST_COLLOCATION = "gov.redhawk.style.HostCollocation";
 	private static final String FIND_BY_OUTER = "gov.redhawk.style.FindByOuter";
 	private static final String USES_DEVICE_OUTER = "gov.redhawk.style.UsesDeviceOuter";
-	private static final String COMPONENT_INNER = "gov.redhawk.style.ComponentInner";
-	private static final String COMPONENT_INNER_STARTED = "gov.redhawk.style.ComponentInnerStarted";
-	private static final String COMPONENT_INNER_ERROR = "gov.redhawk.style.ComponentInnerError";
-	private static final String COMPONENT_INNER_DISABLED = "gov.redhawk.style.ComponentInnerDisabled";
-	private static final String COMPONENT_OUTER = "gov.redhawk.style.ComponentOuter";
+	public static final String COMPONENT_INNER = "gov.redhawk.style.ComponentInner";
+	public static final String COMPONENT_INNER_STARTED = "gov.redhawk.style.ComponentInnerStarted";
+	public static final String COMPONENT_INNER_ERROR = "gov.redhawk.style.ComponentInnerError";
+	public static final String COMPONENT_INNER_DISABLED = "gov.redhawk.style.ComponentInnerDisabled";
+	public static final String COMPONENT_OUTER = "gov.redhawk.style.ComponentOuter";
 	public static final IColorConstant TEXT_FOREGROUND = IColorConstant.BLACK;
 	public static final IColorConstant WHITE = IColorConstant.WHITE;
 	public static final IColorConstant BLACK = IColorConstant.BLACK;
@@ -140,10 +140,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns component outer rectangle style
-	public static Style getStyleForComponentOuter() {
-		return getStyle(COMPONENT_OUTER);
-	}
-
 	private static Style createStyleForComponentOuter(Diagram diagram) {
 		IGaService gaService = Graphiti.getGaService();
 		Style style = gaService.createStyle(diagram, COMPONENT_OUTER);
@@ -156,10 +152,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns component inner rectangle style
-	public static Style getStyleForComponentInner() {
-		return getStyle(COMPONENT_INNER);
-	}
-
 	private static Style createStyleForComponentInner(Diagram diagram) {
 		IGaService gaService = Graphiti.getGaService();
 		Style style = gaService.createStyle(diagram, COMPONENT_INNER);
@@ -169,10 +161,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// updates component inner rectangle style
-	public static Style getStyleForComponentInnerStarted() {
-		return getStyle(COMPONENT_INNER_STARTED);
-	}
-
 	private static Style createStyleForComponentInnerStarted(Diagram diagram) {
 		IGaService gaService = Graphiti.getGaService();
 		Style style = gaService.createStyle(diagram, COMPONENT_INNER_STARTED);
@@ -182,10 +170,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// updates component inner rectangle style when it is in an error state
-	public static Style getStyleForComponentInnerError() {
-		return getStyle(COMPONENT_INNER_ERROR);
-	}
-
 	private static Style createStyleForComponentInnerError(Diagram diagram) {
 		IGaService gaService = Graphiti.getGaService();
 		Style style = gaService.createStyle(diagram, COMPONENT_INNER_ERROR);
@@ -195,10 +179,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// updates component inner rectangle style when it is in a disabled state
-	public static Style getStyleForComponentInnerDisabled() {
-		return getStyle(COMPONENT_INNER_DISABLED);
-	}
-
 	private static Style createStyleForComponentInnerDisabled(Diagram diagram) {
 		IGaService gaService = Graphiti.getGaService();
 		Style style = gaService.createStyle(diagram, COMPONENT_INNER_DISABLED);
