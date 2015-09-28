@@ -12,6 +12,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.util;
 
 import java.util.Collection;
 
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.graphiti.mm.StyleContainer;
 import org.eclipse.graphiti.mm.algorithms.styles.Font;
 import org.eclipse.graphiti.mm.algorithms.styles.LineStyle;
@@ -24,6 +25,7 @@ import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.graphiti.util.PredefinedColoredAreas;
 import org.eclipse.swt.graphics.Color;
 
+import gov.redhawk.ide.graphiti.internal.ui.resource.StyleResourceFactory;
 import gov.redhawk.sca.util.PluginUtil;
 
 public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
@@ -50,6 +52,9 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String FIND_BY_OUTER = "gov.redhawk.style.FindByOuter";
 	private static final String USES_DEVICE_OUTER = "gov.redhawk.style.UsesDeviceOuter";
 	private static final String COMPONENT_INNER = "gov.redhawk.style.ComponentInner";
+	private static final String COMPONENT_INNER_STARTED = "gov.redhawk.style.ComponentInnerStarted";
+	private static final String COMPONENT_INNER_ERROR = "gov.redhawk.style.ComponentInnerError";
+	private static final String COMPONENT_INNER_DISABLED = "gov.redhawk.style.ComponentInnerDisabled";
 	private static final String COMPONENT_OUTER = "gov.redhawk.style.ComponentOuter";
 	public static final IColorConstant TEXT_FOREGROUND = IColorConstant.BLACK;
 	public static final IColorConstant WHITE = IColorConstant.WHITE;
@@ -89,6 +94,11 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String SANS_FONT = "Sans";
 	private static final String DEFAULT_FONT = SANS_FONT;
 
+	/**
+	 * Globally shared instance for styles
+	 */
+	private static Resource styleResource = null;
+
 	public static final Font getOuterTitleFont(Diagram diagram) {
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, true);
 	}
@@ -109,71 +119,91 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
 	}
 
-	// returns component outer rectangle style
-	public static Style createStyleForComponentOuter(Diagram diagram) {
-		final String styleId = COMPONENT_OUTER;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
-			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
-			style.setLineWidth(0);
-			style.setLineVisible(false);
+	private static Diagram getStyleDiagram() {
+		if (styleResource == null) {
+			styleResource = StyleResourceFactory.createResource();
 		}
+		return (Diagram) styleResource.getContents().get(0);
+	}
+
+	public static void createAllStyles(Diagram diagram) {
+		createStyleForComponentOuter(diagram);
+		createStyleForComponentInner(diagram);
+		createStyleForComponentInnerStarted(diagram);
+		createStyleForComponentInnerError(diagram);
+		createStyleForComponentInnerDisabled(diagram);
+	}
+
+	public static Style getStyle(String styleId) {
+		Diagram diagram = getStyleDiagram();
+		return findStyle(diagram, styleId);
+	}
+
+	// returns component outer rectangle style
+	public static Style getStyleForComponentOuter() {
+		return getStyle(COMPONENT_OUTER);
+	}
+
+	private static Style createStyleForComponentOuter(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, COMPONENT_OUTER);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
+		style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
+		style.setLineWidth(0);
+		style.setLineVisible(false);
 		return style;
 	}
 
 	// returns component inner rectangle style
-	public static Style createStyleForComponentInner(Diagram diagram) {
-		final String styleId = COMPONENT_INNER;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			gaService.setRenderingStyle(style, PredefinedColoredAreas.getBlueWhiteAdaptions());
-			style.setLineWidth(2);
-		}
+	public static Style getStyleForComponentInner() {
+		return getStyle(COMPONENT_INNER);
+	}
+
+	private static Style createStyleForComponentInner(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, COMPONENT_INNER);
+		gaService.setRenderingStyle(style, PredefinedColoredAreas.getBlueWhiteAdaptions());
+		style.setLineWidth(2);
 		return style;
 	}
 
 	// updates component inner rectangle style
-	public static Style createStyleForComponentInnerStarted(Diagram diagram) {
-		final String styleId = "ComponentInnerStarted";
-		Style style = StyleUtil.findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			gaService.setRenderingStyle(style, RHContainerColoredAreas.getGreenWhiteAdaptions());
-			style.setLineWidth(2);
-		}
+	public static Style getStyleForComponentInnerStarted() {
+		return getStyle(COMPONENT_INNER_STARTED);
+	}
+
+	private static Style createStyleForComponentInnerStarted(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, COMPONENT_INNER_STARTED);
+		gaService.setRenderingStyle(style, RHContainerColoredAreas.getGreenWhiteAdaptions());
+		style.setLineWidth(2);
 		return style;
 	}
 
 	// updates component inner rectangle style when it is in an error state
-	public static Style createStyleForComponentInnerError(Diagram diagram) {
-		final String styleId = "ComponentInnerError";
-		Style style = StyleUtil.findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			gaService.setRenderingStyle(style, RHContainerColoredAreas.getYellowWhiteAdaptions());
-			style.setLineWidth(2);
-		}
+	public static Style getStyleForComponentInnerError() {
+		return getStyle(COMPONENT_INNER_ERROR);
+	}
+
+	private static Style createStyleForComponentInnerError(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, COMPONENT_INNER_ERROR);
+		gaService.setRenderingStyle(style, RHContainerColoredAreas.getYellowWhiteAdaptions());
+		style.setLineWidth(2);
 		return style;
 	}
 
 	// updates component inner rectangle style when it is in a disabled state
-	public static Style createStyleForComponentInnerDisabled(Diagram diagram) {
-		final String styleId = "ComponentInnerDisabled";
-		Style style = StyleUtil.findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			gaService.setRenderingStyle(style, PredefinedColoredAreas.getLightGrayAdaptions());
-			style.setLineWidth(2);
-		}
+	public static Style getStyleForComponentInnerDisabled() {
+		return getStyle(COMPONENT_INNER_DISABLED);
+	}
+
+	private static Style createStyleForComponentInnerDisabled(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, COMPONENT_INNER_DISABLED);
+		gaService.setRenderingStyle(style, PredefinedColoredAreas.getLightGrayAdaptions());
+		style.setLineWidth(2);
 		return style;
 	}
 

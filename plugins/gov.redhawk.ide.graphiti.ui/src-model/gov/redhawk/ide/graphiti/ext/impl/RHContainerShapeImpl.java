@@ -2055,18 +2055,18 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	protected Style getInnerStyle(Diagram diagram) {
-		return StyleUtil.createStyleForComponentInner(diagram);
+		return StyleUtil.getStyleForComponentInner();
 	}
 
 	protected Style getInnerStartedStyle(Diagram diagram) {
-		return StyleUtil.createStyleForComponentInnerStarted(diagram);
+		return StyleUtil.getStyleForComponentInnerStarted();
 	}
 
 	protected Style getInnerErrorStyle(Diagram diagram) {
-		return StyleUtil.createStyleForComponentInnerError(diagram);
+		return StyleUtil.getStyleForComponentInnerError();
 	}
 
 	protected Style getInnerDisabledStyle(Diagram diagram) {
-		return StyleUtil.createStyleForComponentInnerDisabled(diagram);
+		return StyleUtil.getStyleForComponentInnerDisabled();
 	}
 } // RHContainerShapeImpl

@@ -117,12 +117,12 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 
 	@Override
 	public Style createStyleForOuter() {
-		return StyleUtil.createStyleForComponentOuter(getDiagram());
+		return StyleUtil.getStyleForComponentOuter();
 	}
 
 	@Override
 	public Style createStyleForInner() {
-		return StyleUtil.createStyleForComponentInner(getDiagram());
+		return StyleUtil.getStyleForComponentInner();
 	}
 
 	/**
