@@ -17,7 +17,6 @@ import org.eclipse.emf.common.command.CommandStack;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -124,46 +123,46 @@ public class PortStyleUtil {
 		stack.execute(new NonDirtyingCommand() {
 			@Override
 			public void execute() {
-				Style style = null;
+				String styleId = null;
 				switch (portStyle) {
 				case NORMAL:
 					if (portObj instanceof ProvidesPortStub) {
-						style = StyleUtil.createStyleForProvidesPort(diagram);
+						styleId = StyleUtil.PROVIDES_PORT;
 					} else if (portObj instanceof UsesPortStub) {
-						style = StyleUtil.createStyleForUsesPort(diagram);
+						styleId = StyleUtil.USES_PORT;
 					}
 					break;
 				case EXTERNAL:
 					if (portObj instanceof ProvidesPortStub) {
-						style = StyleUtil.createStyleForExternalProvidesPort(diagram);
+						styleId = StyleUtil.EXTERNAL_PROVIDES_PORT;
 					} else if (portObj instanceof UsesPortStub) {
-						style = StyleUtil.createStyleForExternalUsesPort(diagram);
+						styleId = StyleUtil.USES_EXTERNAL_PORT;
 					}
 					break;
 				case COMPATIBLE_PORT:
-					style = StyleUtil.createStyleForCompatiblePort(diagram);
+					styleId = StyleUtil.PORT_STYLE_COMPATIBLE;
 					break;
 				case STAT_OK:
-					style = StyleUtil.createStyleForPortOK(diagram);
+					styleId = StyleUtil.PORT_STYLE_OK;
 					break;
 				case STAT_WARN1:
-					style = StyleUtil.createStyleForPortWarning1(diagram);
+					styleId = StyleUtil.PORT_STYLE_WARN1;
 					break;
 				case STAT_WARN2:
-					style = StyleUtil.createStyleForPortWarning2(diagram);
+					styleId = StyleUtil.PORT_STYLE_WARN2;
 					break;
 				case STAT_WARN3:
-					style = StyleUtil.createStyleForPortWarning3(diagram);
+					styleId = StyleUtil.PORT_STYLE_WARN3;
 					break;
 				case STAT_WARN4:
-					style = StyleUtil.createStyleForPortWarning4(diagram);
+					styleId = StyleUtil.PORT_STYLE_WARN4;
 					break;
 				default:
 					break;
 				}
 
-				if (style != null) {
-					ga.setStyle(style);
+				if (styleId != null) {
+					StyleUtil.setStyle(ga, styleId);
 				}
 			}
 		});

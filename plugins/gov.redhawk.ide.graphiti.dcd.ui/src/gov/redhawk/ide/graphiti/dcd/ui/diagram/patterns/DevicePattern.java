@@ -73,9 +73,6 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 		// set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(deviceShape.getGraphicsAlgorithm(), context.getX(), context.getY());
 
-		StyleUtil.createStyleForUsesPort(getDiagram());
-		StyleUtil.createStyleForProvidesPort(getDiagram());
-
 		// layout
 		deviceShape.layout();
 

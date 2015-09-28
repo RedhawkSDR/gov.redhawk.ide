@@ -280,15 +280,6 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		// set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(componentShape.getGraphicsAlgorithm(), context.getX(), context.getY());
 
-		// TODO: should we handle this differently?
-		// pre-add a few styles that will be used for updates. This is necessary because if the style isn't present
-		// during updateNeeded (Not a Transaction) it will try to create it and an exception will occur
-		StyleUtil.createStyleForExternalUsesPort(getDiagram());
-		StyleUtil.createStyleForExternalProvidesPort(getDiagram());
-		StyleUtil.createStyleForUsesPort(getDiagram());
-		StyleUtil.createStyleForProvidesPort(getDiagram());
-		StyleUtil.createStyleForStartOrderEllipse(getDiagram());
-
 		// add runtime listeners
 		// ((ComponentShapeImpl) componentShape).runtimeAdapter.addRuntimeListeners();
 

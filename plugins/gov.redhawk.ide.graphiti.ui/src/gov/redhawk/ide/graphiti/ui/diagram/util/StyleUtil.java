@@ -40,13 +40,12 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String LOLLIPOP_LINE = "gov.redhawk.style.LollipopLine";
 	public static final String LOLLIPOP_ELLIPSE = "gov.redhawk.style.LollipopEllipse";
 	private static final String USES_PORT_ANCHOR = "gov.redhawk.style.UsesPortAnchor";
-	private static final String USES_EXTERNAL_PORT = "gov.redhawk.style.UsesExternalPort";
-	private static final String SUPER_USES_PORT = "gov.redhawk.style.SuperUsesPort";
-	private static final String USES_PORT = "gov.redhawk.style.UsesPort";
-	private static final String EXTERNAL_PROVIDES_PORT = "gov.redhawk.style.ExternalProvidesPort";
-	private static final String PROVIDES_PORT = "gov.redhawk.style.ProvidesPort";
-	private static final String SUPER_PROVIDES_PORT = "gov.redhawk.style.SuperProvidesPort";
-	private static final String ERROR_TEXT_CONNECTIONS = "gov.redhawk.style.ErrorTextConnections";
+	public static final String USES_EXTERNAL_PORT = "gov.redhawk.style.UsesExternalPort";
+	public static final String SUPER_USES_PORT = "gov.redhawk.style.SuperUsesPort";
+	public static final String USES_PORT = "gov.redhawk.style.UsesPort";
+	public static final String EXTERNAL_PROVIDES_PORT = "gov.redhawk.style.ExternalProvidesPort";
+	public static final String PROVIDES_PORT = "gov.redhawk.style.ProvidesPort";
+	public static final String SUPER_PROVIDES_PORT = "gov.redhawk.style.SuperProvidesPort";
 	public static final String INNER_TEXT = "gov.redhawk.style.InnerText";
 	public static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
 	public static final String HOST_COLLOCATION = "gov.redhawk.style.HostCollocation";
@@ -59,6 +58,13 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String COMPONENT_INNER_ERROR = "gov.redhawk.style.ComponentInnerError";
 	public static final String COMPONENT_INNER_DISABLED = "gov.redhawk.style.ComponentInnerDisabled";
 	public static final String COMPONENT_OUTER = "gov.redhawk.style.ComponentOuter";
+	public static final String PORT_STYLE_COMPATIBLE = "gov.redhawk.style.PortCompatible";
+	public static final String PORT_STYLE_OK = "gov.redhawk.style.PortOK";
+	public static final String PORT_STYLE_WARN1 = "gov.redhawk.style.PortWarning1";
+	public static final String PORT_STYLE_WARN2 = "gov.redhawk.style.PortWarning2";
+	public static final String PORT_STYLE_WARN3 = "gov.redhawk.style.PortWarning3";
+	public static final String PORT_STYLE_WARN4 = "gov.redhawk.style.PortWarning4";
+
 	public static final IColorConstant TEXT_FOREGROUND = IColorConstant.BLACK;
 	public static final IColorConstant WHITE = IColorConstant.WHITE;
 	public static final IColorConstant BLACK = IColorConstant.BLACK;
@@ -134,6 +140,15 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		createStyleForInnerText(diagram);
 		createStyleForLollipopEllipse(diagram);
 		createStyleForLollipopLine(diagram);
+		createStyleForUsesPort(diagram);
+		createStyleForProvidesPort(diagram);
+
+		createStyleForCompatiblePort(diagram);
+		createStyleForPortOK(diagram);
+		createStyleForPortWarning1(diagram);
+		createStyleForPortWarning2(diagram);
+		createStyleForPortWarning3(diagram);
+		createStyleForPortWarning4(diagram);
 	}
 
 	private static Diagram getStyleDiagram(EObject object) {
@@ -276,21 +291,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	// returns error message font for improper connections
-	public static Style createStyleForErrorTextConnections(Diagram diagram) {
-		final String styleId = ERROR_TEXT_CONNECTIONS;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setFont(getErrorConnectionFont(diagram));
-			style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
-			style.setForeground(gaService.manageColor(diagram, RED));
-			style.setLineWidth(2);
-		}
-		return style;
-	}
-
 	public static boolean needsUpdateForProvidesPort(Diagram diagram, Style style) {
 		if (style == null) {
 			return true;
@@ -300,18 +300,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns style for provides port
-	public static Style createStyleForProvidesPort(Diagram diagram) {
-		final String styleId = PROVIDES_PORT;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, WHITE));
-			style.setFont(getPortFont(diagram));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
+	private static Style createStyleForProvidesPort(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, PROVIDES_PORT);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, WHITE));
+		style.setFont(getPortFont(diagram));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 
@@ -320,98 +316,74 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param diagram
 	 * @return
 	 */
-	public static Style createStyleForCompatiblePort(Diagram diagram) {
-		final String styleId = "gov.redhawk.style.PortCompatible";
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, COMPATIBLE_PORT));
-			style.setFont(getPortFont(diagram));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
+	private static Style createStyleForCompatiblePort(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, PORT_STYLE_COMPATIBLE);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, COMPATIBLE_PORT));
+		style.setFont(getPortFont(diagram));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 
 	// returns style for port statistics - no errors
-	public static Style createStyleForPortOK(Diagram diagram) {
-		final String styleId = "gov.redhawk.style.PortOK";
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, PORT_OK));
-			style.setFont(getPortFont(diagram));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
+	private static Style createStyleForPortOK(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, PORT_STYLE_OK);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, PORT_OK));
+		style.setFont(getPortFont(diagram));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 
 	// returns style for port statistics - error level 1
-	public static Style createStyleForPortWarning1(Diagram diagram) {
-		final String styleId = "gov.redhawk.style.PortWarning1";
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, PORT_WARNING_1));
-			style.setFont(getPortFont(diagram));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
+	private static Style createStyleForPortWarning1(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, PORT_STYLE_WARN1);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, PORT_WARNING_1));
+		style.setFont(getPortFont(diagram));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 
 	// returns style for port statistics - error level 2
-	public static Style createStyleForPortWarning2(Diagram diagram) {
-		final String styleId = "gov.redhawk.style.PortWarning2";
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, PORT_WARNING_2));
-			style.setFont(getPortFont(diagram));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
+	private static Style createStyleForPortWarning2(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, PORT_STYLE_WARN2);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, PORT_WARNING_2));
+		style.setFont(getPortFont(diagram));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 
 	// returns style for port statistics - error level 3
-	public static Style createStyleForPortWarning3(Diagram diagram) {
-		final String styleId = "gov.redhawk.style.PortWarning3";
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, PORT_WARNING_3));
-			style.setFont(getPortFont(diagram));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
+	private static Style createStyleForPortWarning3(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, PORT_STYLE_WARN3);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, PORT_WARNING_3));
+		style.setFont(getPortFont(diagram));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 
 	// returns style for port statistics - error level 4
-	public static Style createStyleForPortWarning4(Diagram diagram) {
-		final String styleId = "gov.redhawk.style.PortWarning4";
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, PORT_WARNING_4));
-			style.setFont(getPortFont(diagram));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
+	private static Style createStyleForPortWarning4(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, PORT_STYLE_WARN4);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, PORT_WARNING_4));
+		style.setFont(getPortFont(diagram));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 
@@ -448,18 +420,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns style for uses port
-	public static Style createStyleForUsesPort(Diagram diagram) {
-		final String styleId = USES_PORT;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, BLACK));
-			style.setFont(getPortFont(diagram));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
+	private static Style createStyleForUsesPort(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, USES_PORT);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, BLACK));
+		style.setFont(getPortFont(diagram));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 
