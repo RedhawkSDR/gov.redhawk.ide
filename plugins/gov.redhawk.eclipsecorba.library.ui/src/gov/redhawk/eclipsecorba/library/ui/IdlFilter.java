@@ -56,6 +56,7 @@ public enum IdlFilter {
 		redhawkModules.add("CF");
 		redhawkModules.add("BULKIO");
 		redhawkModules.add("BURSTIO");
+		redhawkModules.add("ExtendedEvent");
 		redhawkModules.add("FRONTEND");
 
 		cfIntfs = new HashSet<String>();
