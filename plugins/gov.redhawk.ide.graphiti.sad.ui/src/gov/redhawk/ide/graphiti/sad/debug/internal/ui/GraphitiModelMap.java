@@ -1017,9 +1017,9 @@ public class GraphitiModelMap implements IPortStatListener {
 		
 				Polyline line = (Polyline) connection.getGraphicsAlgorithm();
 				if (timeSinceLastCall < lastCallWarningLevel) {
-					updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.GREEN);
+					updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.COLOR_OK);
 				} else {
-					updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.YELLOW);
+					updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.COLOR_WARN);
 				}
 			}
 		});
@@ -1034,8 +1034,8 @@ public class GraphitiModelMap implements IPortStatListener {
 			public void execute() {
 				if (style == null) {
 					componentShape.getConnectionMap().remove(connectionId);
-					line.setForeground(Graphiti.getGaService().manageColor(diagram, StyleUtil.BLACK));
-					SADConnectInterfacePattern.decorateConnection(connection, connInterface, diagram, StyleUtil.BLACK);
+					line.setForeground(Graphiti.getGaService().manageColor(diagram, IColorConstant.BLACK));
+					SADConnectInterfacePattern.decorateConnection(connection, connInterface, diagram, IColorConstant.BLACK);
 				} else {
 					componentShape.getConnectionMap().put(connectionId, style);
 					line.setForeground(Graphiti.getGaService().manageColor(diagram, style));

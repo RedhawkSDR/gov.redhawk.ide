@@ -15,7 +15,6 @@ import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
 
 import java.util.Map;
@@ -71,7 +70,7 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		Map<String, IColorConstant> connectionMap = rhContainerShape.getConnectionMap();
 		IColorConstant color = (IColorConstant) connectionMap.get(connectInterface.getId());
 		if (color == null) {
-			color = StyleUtil.BLACK;
+			color = IColorConstant.BLACK;
 		}
 		context.putProperty("LineColor", color);
 

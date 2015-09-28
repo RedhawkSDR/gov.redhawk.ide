@@ -40,7 +40,6 @@ import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.PortStyleUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.sca.util.StringUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
@@ -176,7 +175,7 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 		line.setLineWidth(2);
 		IColorConstant color = (IColorConstant) context.getProperty("LineColor");
 		if (color == null) {
-			color = StyleUtil.BLACK;
+			color = IColorConstant.BLACK;
 		}
 		line.setForeground(gaService.manageColor(getDiagram(), color));
 

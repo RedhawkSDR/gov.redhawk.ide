@@ -26,7 +26,6 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.graphiti.util.PredefinedColoredAreas;
-import org.eclipse.swt.graphics.Color;
 
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.sca.util.PluginUtil;
@@ -63,39 +62,29 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String PORT_STYLE_WARN3 = "gov.redhawk.style.PortWarning3";
 	public static final String PORT_STYLE_WARN4 = "gov.redhawk.style.PortWarning4";
 
-	public static final IColorConstant TEXT_FOREGROUND = IColorConstant.BLACK;
 	public static final IColorConstant WHITE = IColorConstant.WHITE;
 	public static final IColorConstant BLACK = IColorConstant.BLACK;
-	public static final IColorConstant RED = IColorConstant.RED;
-	public static final IColorConstant YELLOW = IColorConstant.YELLOW;
-	public static final IColorConstant GREEN = IColorConstant.GREEN;
 	public static final IColorConstant BLUE = new ColorConstant(0, 0, 194);
 	public static final IColorConstant GOLD = new ColorConstant(255, 218, 105);
-	public static final IColorConstant COMPONENT_FOREGROUND = new ColorConstant(98, 131, 167);
-	public static final IColorConstant COMPONENT_BACKGROUND = new ColorConstant(187, 218, 247);
 	public static final IColorConstant OUTER_CONTAINER_BACKGROUND = new ColorConstant(250, 250, 250);
 
+	// Colors for connection state
+	public static final IColorConstant COLOR_OK = IColorConstant.GREEN;
+	public static final IColorConstant COLOR_WARN = IColorConstant.YELLOW;
+
 	// Colors for port statistics feature
-	private static final IColorConstant PORT_OK = GREEN;
-	private static final IColorConstant PORT_WARNING_1 = YELLOW;
+	private static final IColorConstant PORT_OK = COLOR_OK;
+	private static final IColorConstant PORT_WARNING_1 = COLOR_WARN;
 	private static final IColorConstant PORT_WARNING_2 = new ColorConstant(255, 170, 0);
 	private static final IColorConstant PORT_WARNING_3 = new ColorConstant(255, 85, 0);
 	private static final IColorConstant PORT_WARNING_4 = IColorConstant.RED;
 
 	// Colors for port connection helpers
-	private static final IColorConstant COMPATIBLE_PORT = GREEN;
+	private static final IColorConstant COMPATIBLE_PORT = COLOR_OK;
 
 	// COMPONENT
 	public static final int DEFAULT_LINE_WIDTH = 2;
 	public static final int ASSEMBLY_CONTROLLER_LINE_WIDTH = 3;
-
-	// COLORS
-	// TODO shouldn't we be disposing of these Colors correctly?
-	public static final Color FOREGROUND_COLOR = new Color(null, 116, 130, 141); // TODO dispose?
-	public static final Color COMPONENT_IDLE_COLOR = new Color(null, 219, 233, 246); // TODO dispose?
-	public static final Color COMPONENT_STARTED_COLOR = new Color(null, 186, 234, 173); // TODO dispose?
-	public static final Color DEFAULT_COMPONENT_COLOR = new Color(null, 176, 176, 176); // TODO dispose?
-	public static final Color ASSEMBLY_CONTROLLER_COLOR = new Color(null, 255, 218, 105); // TODO dispose?
 
 	// FONTS
 	private static final String SANS_FONT = "Sans";

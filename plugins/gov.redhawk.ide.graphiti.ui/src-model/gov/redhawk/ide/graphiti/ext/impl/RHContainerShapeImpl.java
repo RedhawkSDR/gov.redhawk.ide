@@ -834,8 +834,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Polyline polyline = Graphiti.getGaCreateService().createPolyline(innerRoundedRectangle,
 			new int[] { 0, INNER_ROUNDED_RECTANGLE_LINE_Y, innerRoundedRectangle.getWidth(), INNER_ROUNDED_RECTANGLE_LINE_Y });
 		polyline.setLineWidth(1);
-		polyline.setBackground(Graphiti.getGaService().manageColor(DUtil.findDiagram(this), StyleUtil.BLACK));
-		polyline.setForeground(Graphiti.getGaService().manageColor(DUtil.findDiagram(this), StyleUtil.BLACK));
+		polyline.setBackground(Graphiti.getGaService().manageColor(DUtil.findDiagram(this), IColorConstant.BLACK));
+		polyline.setForeground(Graphiti.getGaService().manageColor(DUtil.findDiagram(this), IColorConstant.BLACK));
 		Graphiti.getPeService().setPropertyValue(polyline, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_LINE);
 
 		return innerContainerShape;
