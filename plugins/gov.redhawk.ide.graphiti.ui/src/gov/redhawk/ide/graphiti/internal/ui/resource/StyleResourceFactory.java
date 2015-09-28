@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramsFactory;
 
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
 public class StyleResourceFactory implements Factory {
@@ -17,7 +18,7 @@ public class StyleResourceFactory implements Factory {
 	}
 
 	public static Resource createResource() {
-		return StyleResourceFactory.create(URI.createURI("http://www.redhawk.gov/model/rhstyle/1.0.0"));
+		return StyleResourceFactory.create(URI.createPlatformPluginURI(GraphitiUIPlugin.PLUGIN_ID + "/style", false));
 	}
 
 	private static Resource create(URI uri) {

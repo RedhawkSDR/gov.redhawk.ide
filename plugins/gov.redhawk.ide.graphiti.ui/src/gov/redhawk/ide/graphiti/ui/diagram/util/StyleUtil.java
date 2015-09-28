@@ -46,11 +46,11 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String ERROR_TEXT_CONNECTIONS = "gov.redhawk.style.ErrorTextConnections";
 	private static final String INNER_TEXT = "gov.redhawk.style.InnerText";
 	private static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
-	private static final String FIND_BY_INNER = "gov.redhawk.style.FindByInner";
-	private static final String USES_DEVICE_INNER = "gov.redhawk.style.UsesDeviceInner";
-	private static final String HOST_COLLOCATION = "gov.redhawk.style.HostCollocation";
-	private static final String FIND_BY_OUTER = "gov.redhawk.style.FindByOuter";
-	private static final String USES_DEVICE_OUTER = "gov.redhawk.style.UsesDeviceOuter";
+	public static final String HOST_COLLOCATION = "gov.redhawk.style.HostCollocation";
+	public static final String FIND_BY_INNER = "gov.redhawk.style.FindByInner";
+	public static final String FIND_BY_OUTER = "gov.redhawk.style.FindByOuter";
+	public static final String USES_DEVICE_INNER = "gov.redhawk.style.UsesDeviceInner";
+	public static final String USES_DEVICE_OUTER = "gov.redhawk.style.UsesDeviceOuter";
 	public static final String COMPONENT_INNER = "gov.redhawk.style.ComponentInner";
 	public static final String COMPONENT_INNER_STARTED = "gov.redhawk.style.ComponentInnerStarted";
 	public static final String COMPONENT_INNER_ERROR = "gov.redhawk.style.ComponentInnerError";
@@ -132,6 +132,11 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		createStyleForComponentInnerStarted(diagram);
 		createStyleForComponentInnerError(diagram);
 		createStyleForComponentInnerDisabled(diagram);
+		createStyleForHostCollocation(diagram);
+		createStyleForFindByOuter(diagram);
+		createStyleForFindByInner(diagram);
+		createStyleForUsesDeviceOuter(diagram);
+		createStyleForUsesDeviceInner(diagram);
 	}
 
 	public static Style getStyle(String styleId) {
@@ -187,84 +192,62 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	// returns findby outer rectangle style
-	public static Style createStyleForFindByOuter(Diagram diagram) {
-		final String styleId = FIND_BY_OUTER;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setTransparency(.99d);
-			style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
-			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
-			style.setLineWidth(0);
-			style.setLineVisible(false);
-		}
+	private static Style createStyleForFindByOuter(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, FIND_BY_OUTER);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setTransparency(.99d);
+		style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
+		style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
+		style.setLineWidth(0);
+		style.setLineVisible(false);
+		return style;
+	}
+
+	private static Style createStyleForFindByInner(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, FIND_BY_INNER);
+		style.setBackground(gaService.manageColor(diagram, new ColorConstant(255, 0, 0)));
+		style.setLineStyle(LineStyle.DASH);
+		gaService.setRenderingStyle(style, FindByColoredAreas.getCopperWhiteAdaptions());
+		style.setLineWidth(2);
 		return style;
 	}
 
 	// returns uses device outer rectangle style
-	public static Style createStyleForUsesDeviceOuter(Diagram diagram) {
-		final String styleId = USES_DEVICE_OUTER;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setTransparency(.99d);
-			style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
-			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
-			style.setLineWidth(0);
-			style.setLineVisible(false);
-		}
-		return style;
-	}
-
-	// returns host collocation rectangle style
-	public static Style createStyleForHostCollocation(Diagram diagram) {
-		final String styleId = HOST_COLLOCATION;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setTransparency(.99d);
-			style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
-			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
-			style.setLineWidth(1);
-			style.setLineVisible(true);
-		}
-		return style;
-	}
-
-	// returns find by inner rectangle style
-	public static Style createStyleForFindByInner(Diagram diagram) {
-		final String styleId = FIND_BY_INNER;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setBackground(gaService.manageColor(diagram, new ColorConstant(255, 0, 0)));
-			style.setLineStyle(LineStyle.DASH);
-			gaService.setRenderingStyle(style, FindByColoredAreas.getCopperWhiteAdaptions());
-			style.setLineWidth(2);
-		}
+	private static Style createStyleForUsesDeviceOuter(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, USES_DEVICE_OUTER);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setTransparency(.99d);
+		style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
+		style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
+		style.setLineWidth(0);
+		style.setLineVisible(false);
 		return style;
 	}
 
 	// returns uses device inner rectangle style
-	public static Style createStyleForUsesDeviceInner(Diagram diagram) {
-		final String styleId = USES_DEVICE_INNER;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setBackground(gaService.manageColor(diagram, new ColorConstant(255, 0, 0)));
-			style.setLineStyle(LineStyle.DASH);
-			gaService.setRenderingStyle(style, FindByColoredAreas.getLightGrayAdaptions());
-			style.setLineWidth(2);
-		}
+	private static Style createStyleForUsesDeviceInner(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, USES_DEVICE_INNER);
+		style.setBackground(gaService.manageColor(diagram, new ColorConstant(255, 0, 0)));
+		style.setLineStyle(LineStyle.DASH);
+		gaService.setRenderingStyle(style, FindByColoredAreas.getLightGrayAdaptions());
+		style.setLineWidth(2);
+		return style;
+	}
+
+	// returns host collocation rectangle style
+	private static Style createStyleForHostCollocation(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, HOST_COLLOCATION);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setTransparency(.99d);
+		style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
+		style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
+		style.setLineWidth(1);
+		style.setLineVisible(true);
 		return style;
 	}
 

@@ -392,12 +392,12 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 
 	@Override
 	public Style createStyleForOuter() {
-		return StyleUtil.createStyleForUsesDeviceOuter(getDiagram());
+		return StyleUtil.getStyle(StyleUtil.USES_DEVICE_OUTER);
 	}
 
 	@Override
 	public Style createStyleForInner() {
-		return StyleUtil.createStyleForUsesDeviceInner(getDiagram());
+		return StyleUtil.getStyle(StyleUtil.USES_DEVICE_INNER);
 	}
 
 	@Override

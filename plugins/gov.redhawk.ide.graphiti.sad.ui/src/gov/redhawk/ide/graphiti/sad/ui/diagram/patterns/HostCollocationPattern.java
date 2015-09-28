@@ -151,7 +151,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 
 		// OUTER RECTANGLE
 		ContainerShape outerContainerShape = addOuterRectangle(diagram, hostCollocation.getName(), hostCollocation, getFeatureProvider(), getCreateImageId(),
-			StyleUtil.createStyleForHostCollocation(diagram));
+			StyleUtil.getStyle(StyleUtil.HOST_COLLOCATION));
 
 		RoundedRectangle outerRoundedRectangle = null;
 		Text outerRoundedRectangleText = null;

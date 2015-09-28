@@ -31,7 +31,7 @@
             class="org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl"/>
       <parser
             class="gov.redhawk.ide.graphiti.internal.ui.resource.StyleResourceFactory"
-            contentTypeIdentifier="http://www.redhawk.gov/model/rhstyle/1.0.0">
+            contentTypeIdentifier="gov.redhawk.ide.graphiti.ui.style">
       </parser>
    </extension>
    <extension
