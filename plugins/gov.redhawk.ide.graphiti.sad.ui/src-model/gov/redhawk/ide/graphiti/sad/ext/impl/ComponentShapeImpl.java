@@ -176,10 +176,10 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 		if (assemblyController != null) {
 			// If component is assembly controller, then set background to a different color
-			startOrderEllipse.setStyle(StyleUtil.createStyleForStartOrderAssemblyControllerEllipse(diagram));
+			StyleUtil.setStyle(startOrderEllipse, StyleUtil.ASSEMBLY_CONTROLLER_ELLIPSE);
 			featureProvider.link(startOrderEllipseShape, assemblyController);
 		} else {
-			startOrderEllipse.setStyle(StyleUtil.createStyleForStartOrderEllipse(diagram));
+			StyleUtil.setStyle(startOrderEllipse, StyleUtil.START_ORDER_ELLIPSE);
 		}
 		Graphiti.getPeService().setPropertyValue(startOrderEllipse, DUtil.GA_TYPE, GA_START_ORDER_ELLIPSE);
 		Graphiti.getGaLayoutService().setSize(startOrderEllipse, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
@@ -198,7 +198,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		Shape startOrderTextShape = Graphiti.getPeCreateService().createShape(startOrderEllipseShape, false);
 		Text startOrderText = Graphiti.getCreateService().createText(startOrderTextShape, startOrder);
 		Graphiti.getPeService().setPropertyValue(startOrderText, DUtil.GA_TYPE, GA_START_ORDER_TEXT);
-		startOrderText.setStyle(StyleUtil.createStyleForStartOrderText(diagram));
+		StyleUtil.setStyle(startOrderText, StyleUtil.START_ORDER_TEXT);
 		IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(startOrder, StyleUtil.getStartOrderFont(diagram));
 		int textX = START_ORDER_ELLIPSE_DIAMETER / 2 - textDimension.getWidth() / 2;
 		Graphiti.getGaLayoutService().setLocationAndSize(startOrderText, textX, START_ORDER_TOP_TEXT_PADDING, START_ORDER_ELLIPSE_DIAMETER,
@@ -301,7 +301,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 				// if assembly controller, then use special style
 				if (performUpdate) {
 					updateStatus = true;
-					startOrderEllipse.setStyle(StyleUtil.createStyleForStartOrderAssemblyControllerEllipse(diagram));
+					StyleUtil.setStyle(startOrderEllipse, StyleUtil.ASSEMBLY_CONTROLLER_ELLIPSE);
 					if (ci.getStartOrder() != null && ci.getStartOrder().compareTo(BigInteger.ZERO) != 0) {
 						// Make sure start order is set to zero for assembly controller, if the update occurred from
 						// elsewhere in the model
@@ -318,7 +318,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 				}
 			} else if (StyleUtil.needsUpdateForStartOrderEllipse(diagram, startOrderEllipse.getStyle()) && assemblyController == null) {
 				if (performUpdate) {
-					startOrderEllipse.setStyle(StyleUtil.createStyleForStartOrderEllipse(diagram));
+					StyleUtil.setStyle(startOrderEllipse, StyleUtil.START_ORDER_ELLIPSE);
 					// remove assembly controller links
 					EcoreUtil.delete((EObject) startOrderEllipse.getPictogramElement().getLink());
 				} else {

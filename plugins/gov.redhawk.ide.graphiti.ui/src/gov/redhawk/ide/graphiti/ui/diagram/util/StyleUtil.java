@@ -33,9 +33,9 @@ import gov.redhawk.sca.util.PluginUtil;
 
 public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
-	private static final String START_ORDER_TEXT = "gov.redhawk.style.StartOrderText";
-	private static final String START_ORDER_ELLIPSE = "gov.redhawk.style.StartOrderEllipse";
-	private static final String START_ORDER_ASSEMBLY_CONTROLLER_ELLIPSE = "gov.redhawk.style.StartOrderAssemblyControllerEllipse";
+	public static final String START_ORDER_TEXT = "gov.redhawk.style.StartOrderText";
+	public static final String START_ORDER_ELLIPSE = "gov.redhawk.style.StartOrderEllipse";
+	public static final String ASSEMBLY_CONTROLLER_ELLIPSE = "gov.redhawk.style.StartOrderAssemblyControllerEllipse";
 	public static final String LOLLIPOP_LINE = "gov.redhawk.style.LollipopLine";
 	public static final String LOLLIPOP_ELLIPSE = "gov.redhawk.style.LollipopEllipse";
 	public static final String USES_PORT = "gov.redhawk.style.UsesPort";
@@ -136,8 +136,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		createStyleForUsesDeviceInner(diagram);
 		createStyleForOuterText(diagram);
 		createStyleForInnerText(diagram);
+
 		createStyleForLollipopEllipse(diagram);
 		createStyleForLollipopLine(diagram);
+
+		createStyleForStartOrderAssemblyControllerEllipse(diagram);
+		createStyleForStartOrderEllipse(diagram);
+		createStyleForStartOrderText(diagram);
+
 		createStyleForUsesPort(diagram);
 		createStyleForExternalUsesPort(diagram);
 		createStyleForSuperUsesPort(diagram);
@@ -493,21 +499,16 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		if (style == null) {
 			return true;
 		}
-		boolean result = PluginUtil.equals(style.getId(), START_ORDER_ASSEMBLY_CONTROLLER_ELLIPSE);
+		boolean result = PluginUtil.equals(style.getId(), ASSEMBLY_CONTROLLER_ELLIPSE);
 		return !result;
 	}
 
-	public static Style createStyleForStartOrderAssemblyControllerEllipse(Diagram diagram) {
-		final String styleId = START_ORDER_ASSEMBLY_CONTROLLER_ELLIPSE;
-		Style style = findStyle(diagram, styleId);
-
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setLineWidth(1);
-			style.setBackground(Graphiti.getGaService().manageColor(diagram, GOLD));
-			style.setTransparency(.99d);
-		}
+	private static Style createStyleForStartOrderAssemblyControllerEllipse(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, ASSEMBLY_CONTROLLER_ELLIPSE);
+		style.setLineWidth(1);
+		style.setBackground(Graphiti.getGaService().manageColor(diagram, GOLD));
+		style.setTransparency(.99d);
 		return style;
 	}
 
@@ -519,31 +520,21 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return !result;
 	}
 
-	public static Style createStyleForStartOrderEllipse(Diagram diagram) {
-		final String styleId = START_ORDER_ELLIPSE;
-		Style style = findStyle(diagram, styleId);
-
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setLineWidth(1);
-			style.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
-			style.setTransparency(.99d);
-		}
+	private static Style createStyleForStartOrderEllipse(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, START_ORDER_ELLIPSE);
+		style.setLineWidth(1);
+		style.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
+		style.setTransparency(.99d);
 		return style;
 	}
 
-	public static Style createStyleForStartOrderText(Diagram diagram) {
-		final String styleId = START_ORDER_TEXT;
-		Style style = findStyle(diagram, styleId);
-
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, WHITE));
-			style.setFont(getStartOrderFont(diagram));
-		}
+	private static Style createStyleForStartOrderText(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, START_ORDER_TEXT);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, WHITE));
+		style.setFont(getStartOrderFont(diagram));
 		return style;
 	}
 
