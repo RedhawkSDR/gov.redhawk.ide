@@ -100,14 +100,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return findStyle(diagram, INNER_TEXT).getFont();
 	}
 
-	public static final Font getErrorConnectionFont(Diagram diagram) {
-		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
-	}
-
-	public static final Font getStartOrderFont(Diagram diagram) {
-		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
-	}
-
 	public static final Font getPortFont(Diagram diagram) {
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
 	}
@@ -523,7 +515,8 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		Style style = gaService.createStyle(diagram, START_ORDER_TEXT);
 		style.setForeground(gaService.manageColor(diagram, BLACK));
 		style.setBackground(gaService.manageColor(diagram, WHITE));
-		style.setFont(getStartOrderFont(diagram));
+		Font font = gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false);
+		style.setFont(font);
 		return style;
 	}
 

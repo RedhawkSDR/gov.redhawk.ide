@@ -167,7 +167,6 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 */
 	public ContainerShape addStartOrderEllipse(SadComponentInstantiation sadComponentInstantiation, AssemblyController assemblyController,
 		IFeatureProvider featureProvider) {
-		Diagram diagram = DUtil.findDiagram(getInnerContainerShape());
 
 		// Create ellipse shape to display component start order
 		ContainerShape startOrderEllipseShape = Graphiti.getCreateService().createContainerShape(getInnerContainerShape(), false);
@@ -199,7 +198,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		Text startOrderText = Graphiti.getCreateService().createText(startOrderTextShape, startOrder);
 		Graphiti.getPeService().setPropertyValue(startOrderText, DUtil.GA_TYPE, GA_START_ORDER_TEXT);
 		StyleUtil.setStyle(startOrderText, StyleUtil.START_ORDER_TEXT);
-		IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(startOrder, StyleUtil.getStartOrderFont(diagram));
+		IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(startOrder, startOrderText.getStyle().getFont());
 		int textX = START_ORDER_ELLIPSE_DIAMETER / 2 - textDimension.getWidth() / 2;
 		Graphiti.getGaLayoutService().setLocationAndSize(startOrderText, textX, START_ORDER_TOP_TEXT_PADDING, START_ORDER_ELLIPSE_DIAMETER,
 			START_ORDER_ELLIPSE_DIAMETER);
