@@ -520,7 +520,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		// resize
 		// text
 		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, text);
-		cText.setStyle(StyleUtil.createStyleForOuterText(DUtil.findDiagram(targetContainerShape)));
+		cText.setStyle(StyleUtil.getStyle(StyleUtil.OUTER_TEXT));
 		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 		featureProvider.link(outerContainerShape, businessObject); // link container and business object
 

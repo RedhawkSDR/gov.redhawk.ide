@@ -488,7 +488,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// text
 		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, pattern.getOuterTitle(newObject));
-		cText.setStyle(StyleUtil.createStyleForOuterText(DUtil.findDiagram(targetContainerShape)));
+		cText.setStyle(StyleUtil.getStyle(StyleUtil.OUTER_TEXT));
 		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 
 		IFeatureProvider featureProvider = pattern.getFeatureProvider();
@@ -828,7 +828,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// text
 		Text ciText = Graphiti.getCreateService().createText(innerRoundedRectangle, text);
-		ciText.setStyle(StyleUtil.createStyleForInnerText(DUtil.findDiagram(this)));
+		ciText.setStyle(StyleUtil.getStyle(StyleUtil.INNER_TEXT));
 		Graphiti.getPeService().setPropertyValue(ciText, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_TEXT);
 
 		// draw line if showing shape details (ports)

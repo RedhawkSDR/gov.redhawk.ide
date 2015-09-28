@@ -44,8 +44,8 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String PROVIDES_PORT = "gov.redhawk.style.ProvidesPort";
 	private static final String SUPER_PROVIDES_PORT = "gov.redhawk.style.SuperProvidesPort";
 	private static final String ERROR_TEXT_CONNECTIONS = "gov.redhawk.style.ErrorTextConnections";
-	private static final String INNER_TEXT = "gov.redhawk.style.InnerText";
-	private static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
+	public static final String INNER_TEXT = "gov.redhawk.style.InnerText";
+	public static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
 	public static final String HOST_COLLOCATION = "gov.redhawk.style.HostCollocation";
 	public static final String FIND_BY_INNER = "gov.redhawk.style.FindByInner";
 	public static final String FIND_BY_OUTER = "gov.redhawk.style.FindByOuter";
@@ -100,11 +100,11 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static Resource styleResource = null;
 
 	public static final Font getOuterTitleFont(Diagram diagram) {
-		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, true);
+		return getStyle(OUTER_TEXT).getFont();
 	}
 
 	public static final Font getInnerTitleFont(Diagram diagram) {
-		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 11, false, false);
+		return getStyle(INNER_TEXT).getFont();
 	}
 
 	public static final Font getErrorConnectionFont(Diagram diagram) {
@@ -137,6 +137,8 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		createStyleForFindByInner(diagram);
 		createStyleForUsesDeviceOuter(diagram);
 		createStyleForUsesDeviceInner(diagram);
+		createStyleForOuterText(diagram);
+		createStyleForInnerText(diagram);
 	}
 
 	public static Style getStyle(String styleId) {
@@ -252,30 +254,24 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns outer text style
-	public static Style createStyleForOuterText(Diagram diagram) {
-		final String styleId = OUTER_TEXT;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setFont(getOuterTitleFont(diagram));
-			style.setLineWidth(2);
-		}
+	private static Style createStyleForOuterText(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, OUTER_TEXT);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		Font font = gaService.manageFont(diagram, DEFAULT_FONT, 8, false, true);
+		style.setFont(font);
+		style.setLineWidth(2);
 		return style;
 	}
 
 	// returns inner text style
-	public static Style createStyleForInnerText(Diagram diagram) {
-		final String styleId = INNER_TEXT;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setFont(getInnerTitleFont(diagram));
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setLineWidth(2);
-		}
+	private static Style createStyleForInnerText(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, INNER_TEXT);
+		Font font = gaService.manageFont(diagram, DEFAULT_FONT, 11, false, false);
+		style.setFont(font);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setLineWidth(2);
 		return style;
 	}
 
