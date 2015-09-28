@@ -109,12 +109,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
 	}
 
-	public static Style getStyleForComponentOuter(Diagram diagram) {
-		final String styleId = COMPONENT_OUTER;
-		Style style = findStyle(diagram, styleId);
-		return style;
-	}
-
 	// returns component outer rectangle style
 	public static Style createStyleForComponentOuter(Diagram diagram) {
 		final String styleId = COMPONENT_OUTER;
@@ -128,13 +122,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setLineWidth(0);
 			style.setLineVisible(false);
 		}
-		return style;
-	}
-
-	// returns component inner rectangle style
-	public static Style getStyleForComponentInner(Diagram diagram) {
-		final String styleId = COMPONENT_INNER;
-		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
@@ -164,13 +151,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	// returns component inner rectangle style
-	public static Style getStyleForComponentInnerStarted(Diagram diagram) {
-		final String styleId = "ComponentInnerStarted";
-		Style style = findStyle(diagram, styleId);
-		return style;
-	}
-
 	// updates component inner rectangle style when it is in an error state
 	public static Style createStyleForComponentInnerError(Diagram diagram) {
 		final String styleId = "ComponentInnerError";
@@ -184,13 +164,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	// returns component inner rectangle style for when it is in an error state
-	public static Style getStyleForComponentInnerError(Diagram diagram) {
-		final String styleId = "ComponentInnerError";
-		Style style = findStyle(diagram, styleId);
-		return style;
-	}
-
 	// updates component inner rectangle style when it is in a disabled state
 	public static Style createStyleForComponentInnerDisabled(Diagram diagram) {
 		final String styleId = "ComponentInnerDisabled";
@@ -201,20 +174,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			gaService.setRenderingStyle(style, PredefinedColoredAreas.getLightGrayAdaptions());
 			style.setLineWidth(2);
 		}
-		return style;
-	}
-
-	// returns component inner rectangle style for when it is in a disabled state
-	public static Style getStyleForComponentInnerDisabled(Diagram diagram) {
-		final String styleId = "ComponentInnerDisabled";
-		Style style = findStyle(diagram, styleId);
-		return style;
-	}
-
-	// returns findby outer rectangle style
-	public static Style getStyleForFindByOuter(Diagram diagram) {
-		final String styleId = FIND_BY_OUTER;
-		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
@@ -236,13 +195,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns uses device outer rectangle style
-	public static Style getStyleForUsesDeviceOuter(Diagram diagram) {
-		final String styleId = USES_DEVICE_OUTER;
-		Style style = findStyle(diagram, styleId);
-		return style;
-	}
-
-	// returns uses device outer rectangle style
 	public static Style createStyleForUsesDeviceOuter(Diagram diagram) {
 		final String styleId = USES_DEVICE_OUTER;
 		Style style = findStyle(diagram, styleId);
@@ -256,13 +208,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setLineWidth(0);
 			style.setLineVisible(false);
 		}
-		return style;
-	}
-
-	// returns host collocation rectangle style
-	public static Style getStyleForHostCollocation(Diagram diagram) {
-		final String styleId = HOST_COLLOCATION;
-		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
@@ -284,13 +229,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns find by inner rectangle style
-	public static Style getStyleForFindByInner(Diagram diagram) {
-		final String styleId = FIND_BY_INNER;
-		Style style = findStyle(diagram, styleId);
-		return style;
-	}
-
-	// returns find by inner rectangle style
 	public static Style createStyleForFindByInner(Diagram diagram) {
 		final String styleId = FIND_BY_INNER;
 		Style style = findStyle(diagram, styleId);
@@ -302,13 +240,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			gaService.setRenderingStyle(style, FindByColoredAreas.getCopperWhiteAdaptions());
 			style.setLineWidth(2);
 		}
-		return style;
-	}
-
-	// returns uses device inner rectangle style
-	public static Style getStyleForUsesDeviceInner(Diagram diagram) {
-		final String styleId = USES_DEVICE_INNER;
-		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
@@ -328,13 +259,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns outer text style
-	public static Style getStyleForOuterText(Diagram diagram) {
-		final String styleId = OUTER_TEXT;
-		Style style = findStyle(diagram, styleId);
-		return style;
-	}
-
-	// returns outer text style
 	public static Style createStyleForOuterText(Diagram diagram) {
 		final String styleId = OUTER_TEXT;
 		Style style = findStyle(diagram, styleId);
@@ -345,12 +269,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setFont(getOuterTitleFont(diagram));
 			style.setLineWidth(2);
 		}
-		return style;
-	}
-
-	public static Style getStyleForInnerText(Diagram diagram) {
-		final String styleId = INNER_TEXT;
-		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
@@ -365,12 +283,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setForeground(gaService.manageColor(diagram, BLACK));
 			style.setLineWidth(2);
 		}
-		return style;
-	}
-
-	public static Style getStyleForErrorTextConnections(Diagram diagram) {
-		final String styleId = ERROR_TEXT_CONNECTIONS;
-		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
@@ -395,12 +307,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		boolean result = PluginUtil.equals(PROVIDES_PORT, style.getId());
 		return !result;
-	}
-
-	public static Style getStyleForProvidesPort(Diagram diagram) {
-		final String styleId = PROVIDES_PORT;
-		Style style = findStyle(diagram, styleId);
-		return style;
 	}
 
 	// returns style for provides port
@@ -527,12 +433,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return !result;
 	}
 
-	public static Style getStyleForExternalProvidesPort(Diagram diagram) {
-		final String styleId = EXTERNAL_PROVIDES_PORT;
-		Style style = findStyle(diagram, styleId);
-		return style;
-	}
-
 	// returns style for provides port
 	public static Style createStyleForExternalProvidesPort(Diagram diagram) {
 		final String styleId = EXTERNAL_PROVIDES_PORT;
@@ -555,12 +455,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		boolean result = PluginUtil.equals(USES_PORT, style.getId());
 		return !result;
-	}
-
-	public static Style getStyleForUsesPort(Diagram diagram) {
-		final String styleId = USES_PORT;
-		Style style = findStyle(diagram, styleId);
-		return style;
 	}
 
 	// returns style for uses port
@@ -618,13 +512,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns style for uses external port
-	public static Style getStyleForExternalUsesPort(Diagram diagram) {
-		final String styleId = USES_EXTERNAL_PORT;
-		Style style = findStyle(diagram, styleId);
-		return style;
-	}
-
-	// returns style for uses external port
 	public static Style createStyleForExternalUsesPort(Diagram diagram) {
 		final String styleId = USES_EXTERNAL_PORT;
 		Style style = findStyle(diagram, styleId);
@@ -637,13 +524,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setLineWidth(2);
 			style.setLineVisible(true);
 		}
-		return style;
-	}
-
-	// returns style for uses port
-	public static Style getStyleForUsesPortAnchor(Diagram diagram) {
-		final String styleId = USES_PORT_ANCHOR;
-		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
@@ -664,31 +544,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-//	//returns style for provides port
-//	public static Style getStyleForProvidesPortAnchor(Diagram diagram){
-//		final String styleId = "ProvidesPortAnchor";
-//		Style style = findStyle(diagram, styleId);
-//		
-//		if(style == null){
-//			IGaService gaService = Graphiti.getGaService();
-//			style = gaService.createStyle(diagram, styleId);
-//			style.setTransparency(100d);
-//			style.setForeground(gaService.manageColor(diagram, BLACK));
-//			style.setBackground(gaService.manageColor(diagram, WHITE));
-//			style.setFont(getPortFont(diagram));
-//			style.setLineWidth(2);
-//			style.setLineVisible(true);
-//		}
-//		return style;
-//	}
-
-	// returns style for lollipop ellipse
-	public static Style getStyleForLollipopEllipse(Diagram diagram) {
-		final String styleId = LOLLIPOP_ELLIPSE;
-		Style style = findStyle(diagram, styleId);
-		return style;
-	}
-
 	// returns style for lollipop ellipse
 	public static Style createStyleForLollipopEllipse(Diagram diagram) {
 		final String styleId = LOLLIPOP_ELLIPSE;
@@ -701,13 +556,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
 			style.setTransparency(.99d);
 		}
-		return style;
-	}
-
-	// returns style for lollipop line
-	public static Style getStyleForLollipopLine(Diagram diagram) {
-		final String styleId = LOLLIPOP_LINE;
-		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
@@ -732,12 +580,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return !result;
 	}
 
-	public static Style getStyleForStartOrderAssemblyControllerEllipse(Diagram diagram) {
-		final String styleId = START_ORDER_ASSEMBLY_CONTROLLER_ELLIPSE;
-		Style style = findStyle(diagram, styleId);
-		return style;
-	}
-
 	public static Style createStyleForStartOrderAssemblyControllerEllipse(Diagram diagram) {
 		final String styleId = START_ORDER_ASSEMBLY_CONTROLLER_ELLIPSE;
 		Style style = findStyle(diagram, styleId);
@@ -749,12 +591,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setBackground(Graphiti.getGaService().manageColor(diagram, GOLD));
 			style.setTransparency(.99d);
 		}
-		return style;
-	}
-
-	public static Style getStyleForStartOrderEllipse(Diagram diagram) {
-		final String styleId = START_ORDER_ELLIPSE;
-		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
@@ -780,12 +616,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	public static Style getStyleForStartOrderText(Diagram diagram) {
-		final String styleId = START_ORDER_TEXT;
-		Style style = findStyle(diagram, styleId);
-		return style;
-	}
-
 	public static Style createStyleForStartOrderText(Diagram diagram) {
 		final String styleId = START_ORDER_TEXT;
 		Style style = findStyle(diagram, styleId);
@@ -797,13 +627,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setBackground(gaService.manageColor(diagram, WHITE));
 			style.setFont(getStartOrderFont(diagram));
 		}
-		return style;
-	}
-
-	// returns component text style
-	public static Style getStyleForPortText(Diagram diagram) {
-		final String styleId = COMPONENT_TEXT;
-		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
