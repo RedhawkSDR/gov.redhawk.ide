@@ -35,8 +35,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String START_ORDER_TEXT = "gov.redhawk.style.StartOrderText";
 	public static final String START_ORDER_ELLIPSE = "gov.redhawk.style.StartOrderEllipse";
 	public static final String ASSEMBLY_CONTROLLER_ELLIPSE = "gov.redhawk.style.StartOrderAssemblyControllerEllipse";
-	public static final String LOLLIPOP_LINE = "gov.redhawk.style.LollipopLine";
-	public static final String LOLLIPOP_ELLIPSE = "gov.redhawk.style.LollipopEllipse";
+	public static final String LOLLIPOP = "gov.redhawk.style.Lollipop";
 	public static final String USES_PORT = "gov.redhawk.style.UsesPort";
 	public static final String EXTERNAL_USES_PORT = "gov.redhawk.style.UsesExternalPort";
 	public static final String SUPER_USES_PORT = "gov.redhawk.style.SuperUsesPort";
@@ -118,8 +117,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		createStyleForOuterText(diagram);
 		createStyleForInnerText(diagram);
 
-		createStyleForLollipopEllipse(diagram);
-		createStyleForLollipopLine(diagram);
+		createStyleForLollipop(diagram);
 
 		createStyleForStartOrderAssemblyControllerEllipse(diagram);
 		createStyleForStartOrderEllipse(diagram);
@@ -459,20 +457,13 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns style for lollipop ellipse
-	private static Style createStyleForLollipopEllipse(Diagram diagram) {
+	private static Style createStyleForLollipop(Diagram diagram) {
 		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, LOLLIPOP_ELLIPSE);
+		Style style = gaService.createStyle(diagram, LOLLIPOP);
 		style.setLineWidth(1);
 		style.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
+		style.setForeground(Graphiti.getGaService().manageColor(diagram, BLACK));
 		style.setTransparency(.99d);
-		return style;
-	}
-
-	// returns style for lollipop line
-	private static Style createStyleForLollipopLine(Diagram diagram) {
-		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, LOLLIPOP_LINE);
-		style.setBackground(Graphiti.getGaService().manageColor(diagram, BLACK));
 		return style;
 	}
 

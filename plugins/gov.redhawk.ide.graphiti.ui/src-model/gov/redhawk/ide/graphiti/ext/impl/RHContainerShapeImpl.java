@@ -858,13 +858,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Shape lollipopEllipseShape = Graphiti.getCreateService().createShape(interfaceContainerShape, true);
 		Graphiti.getPeService().setPropertyValue(lollipopEllipseShape, DUtil.GA_TYPE, SHAPE_INTERFACE_ELLIPSE);
 		Ellipse lollipopEllipse = Graphiti.getCreateService().createEllipse(lollipopEllipseShape);
-		StyleUtil.setStyle(lollipopEllipse, StyleUtil.LOLLIPOP_ELLIPSE);
+		StyleUtil.setStyle(lollipopEllipse, StyleUtil.LOLLIPOP);
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
 
 		// interface lollipop line
 		Shape lollipopLineShape = Graphiti.getCreateService().createContainerShape(interfaceContainerShape, false);
 		Rectangle lollipopLine = Graphiti.getCreateService().createRectangle(lollipopLineShape);
-		StyleUtil.setStyle(lollipopLine, StyleUtil.LOLLIPOP_LINE);
+		StyleUtil.setStyle(lollipopLine, StyleUtil.LOLLIPOP);
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopLine, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER / 2,
 			INTERFACE_SHAPE_WIDTH - LOLLIPOP_ELLIPSE_DIAMETER, 1);
 
