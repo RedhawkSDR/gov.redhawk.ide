@@ -33,18 +33,16 @@ import gov.redhawk.sca.util.PluginUtil;
 
 public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
-	private static final String COMPONENT_TEXT = "gov.redhawk.style.ComponentText";
 	private static final String START_ORDER_TEXT = "gov.redhawk.style.StartOrderText";
 	private static final String START_ORDER_ELLIPSE = "gov.redhawk.style.StartOrderEllipse";
 	private static final String START_ORDER_ASSEMBLY_CONTROLLER_ELLIPSE = "gov.redhawk.style.StartOrderAssemblyControllerEllipse";
 	public static final String LOLLIPOP_LINE = "gov.redhawk.style.LollipopLine";
 	public static final String LOLLIPOP_ELLIPSE = "gov.redhawk.style.LollipopEllipse";
-	private static final String USES_PORT_ANCHOR = "gov.redhawk.style.UsesPortAnchor";
-	public static final String USES_EXTERNAL_PORT = "gov.redhawk.style.UsesExternalPort";
-	public static final String SUPER_USES_PORT = "gov.redhawk.style.SuperUsesPort";
 	public static final String USES_PORT = "gov.redhawk.style.UsesPort";
-	public static final String EXTERNAL_PROVIDES_PORT = "gov.redhawk.style.ExternalProvidesPort";
+	public static final String EXTERNAL_USES_PORT = "gov.redhawk.style.UsesExternalPort";
+	public static final String SUPER_USES_PORT = "gov.redhawk.style.SuperUsesPort";
 	public static final String PROVIDES_PORT = "gov.redhawk.style.ProvidesPort";
+	public static final String EXTERNAL_PROVIDES_PORT = "gov.redhawk.style.ExternalProvidesPort";
 	public static final String SUPER_PROVIDES_PORT = "gov.redhawk.style.SuperProvidesPort";
 	public static final String INNER_TEXT = "gov.redhawk.style.InnerText";
 	public static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
@@ -141,7 +139,11 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		createStyleForLollipopEllipse(diagram);
 		createStyleForLollipopLine(diagram);
 		createStyleForUsesPort(diagram);
+		createStyleForExternalUsesPort(diagram);
+		createStyleForSuperUsesPort(diagram);
 		createStyleForProvidesPort(diagram);
+		createStyleForExternalProvidesPort(diagram);
+		createStyleForSuperProvidesPort(diagram);
 
 		createStyleForCompatiblePort(diagram);
 		createStyleForPortOK(diagram);
@@ -396,18 +398,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns style for provides port
-	public static Style createStyleForExternalProvidesPort(Diagram diagram) {
-		final String styleId = EXTERNAL_PROVIDES_PORT;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, BLUE));
-			style.setFont(getPortFont(diagram));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
+	private static Style createStyleForExternalProvidesPort(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, EXTERNAL_PROVIDES_PORT);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, BLUE));
+		style.setFont(getPortFont(diagram));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 
@@ -432,32 +430,24 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// returns style for super uses port
-	public static Style createStyleForSuperUsesPort(Diagram diagram) {
-		final String styleId = SUPER_USES_PORT;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, BLACK));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
+	private static Style createStyleForSuperUsesPort(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, SUPER_USES_PORT);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, BLACK));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 
 	// returns style for super uses port
-	public static Style createStyleForSuperProvidesPort(Diagram diagram) {
-		final String styleId = SUPER_PROVIDES_PORT;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, WHITE));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
+	private static Style createStyleForSuperProvidesPort(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, SUPER_PROVIDES_PORT);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, WHITE));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 
@@ -465,40 +455,19 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		if (style == null) {
 			return true;
 		}
-		boolean result = PluginUtil.equals(USES_EXTERNAL_PORT, style.getId());
+		boolean result = PluginUtil.equals(EXTERNAL_USES_PORT, style.getId());
 		return !result;
 	}
 
 	// returns style for uses external port
-	public static Style createStyleForExternalUsesPort(Diagram diagram) {
-		final String styleId = USES_EXTERNAL_PORT;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, BLUE));
-			style.setFont(getPortFont(diagram));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
-		return style;
-	}
-
-	// returns style for uses port
-	public static Style createStyleForUsesPortAnchor(Diagram diagram) {
-		final String styleId = USES_PORT_ANCHOR;
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setTransparency(100d);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, BLACK));
-			style.setFont(getPortFont(diagram));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
+	private static Style createStyleForExternalUsesPort(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, EXTERNAL_USES_PORT);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, BLUE));
+		style.setFont(getPortFont(diagram));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 
@@ -574,21 +543,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setForeground(gaService.manageColor(diagram, BLACK));
 			style.setBackground(gaService.manageColor(diagram, WHITE));
 			style.setFont(getStartOrderFont(diagram));
-		}
-		return style;
-	}
-
-	// returns component text style
-	public static Style createStyleForPortText(Diagram diagram) {
-		final String styleId = COMPONENT_TEXT;
-		Style style = findStyle(diagram, styleId);
-
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, WHITE));
-			style.setFont(getOuterTitleFont(diagram));
 		}
 		return style;
 	}

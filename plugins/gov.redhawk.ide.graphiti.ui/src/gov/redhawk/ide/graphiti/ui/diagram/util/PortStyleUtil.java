@@ -136,7 +136,7 @@ public class PortStyleUtil {
 					if (portObj instanceof ProvidesPortStub) {
 						styleId = StyleUtil.EXTERNAL_PROVIDES_PORT;
 					} else if (portObj instanceof UsesPortStub) {
-						styleId = StyleUtil.USES_EXTERNAL_PORT;
+						styleId = StyleUtil.EXTERNAL_USES_PORT;
 					}
 					break;
 				case COMPATIBLE_PORT:
