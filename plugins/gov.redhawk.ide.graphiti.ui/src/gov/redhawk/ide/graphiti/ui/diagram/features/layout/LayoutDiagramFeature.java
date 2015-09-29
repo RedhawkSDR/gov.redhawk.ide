@@ -54,9 +54,10 @@ import org.eclipse.zest.layouts.algorithms.VerticalLayoutAlgorithm;
 import org.eclipse.zest.layouts.dataStructures.BendPoint;
 import org.eclipse.zest.layouts.exampleStructures.SimpleNode;
 
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.sad.HostCollocation;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 @SuppressWarnings("restriction")
 public class LayoutDiagramFeature extends AbstractCustomFeature {
@@ -312,11 +313,11 @@ public class LayoutDiagramFeature extends AbstractCustomFeature {
 			// Modified from Spray code to handle the nested nature of the Component Shapes. Code prior to change looked
 			// like: connection.getStart().getParent()
 			// get the SimpleNode already created from the map:
-			Shape source = (Shape) RHContainerShapeImpl.findFromChild(connection.getStart());
-			Shape target = (Shape) RHContainerShapeImpl.findFromChild(connection.getEnd());
+			RHContainerShape source = ScaEcoreUtils.getEContainerOfType(connection.getStart(), RHContainerShape.class);
+			RHContainerShape target = ScaEcoreUtils.getEContainerOfType(connection.getEnd(), RHContainerShape.class);
 
-			HostCollocation sourceHostCo = DUtil.getHostCollocation(((ContainerShape) source).getContainer());
-			HostCollocation targetHostCo = DUtil.getHostCollocation(((ContainerShape) target).getContainer());
+			HostCollocation sourceHostCo = DUtil.getHostCollocation(source.getContainer());
+			HostCollocation targetHostCo = DUtil.getHostCollocation(target.getContainer());
 			
 			SimpleNode sourceEntity = null;
 			SimpleNode targetEntity = null;

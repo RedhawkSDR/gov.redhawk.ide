@@ -41,6 +41,7 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
@@ -170,7 +171,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param rhContainerShape
 	 * @return
 	 */
-	@SuppressWarnings("restriction")
 	public static IDimension calculateTreeDimensions(RHContainerShape rhContainerShape) {
 		return calculateTreeDimensions(rhContainerShape, new HashSet<RHContainerShape>());
 	}
@@ -193,7 +193,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 
 		List<Connection> outs = getOutgoingConnectionsContainedInContainerShape(rhContainerShape);
 		for (Connection conn : outs) {
-			RHContainerShape targetRHContainerShape = RHContainerShapeImpl.findFromChild(conn.getEnd());
+			RHContainerShape targetRHContainerShape = ScaEcoreUtils.getEContainerOfType(conn.getEnd(), RHContainerShape.class);
 			IDimension childDimension = calculateTreeDimensions(targetRHContainerShape, visitedShapes);
 			if (childDimension == null) {
 				continue;
