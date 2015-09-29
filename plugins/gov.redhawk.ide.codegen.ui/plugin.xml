@@ -21,11 +21,6 @@
             id="gov.redhawk.ide.codegen.ui.command.generatecode"
             name="%command.name">
       </command>
-      <command
-            description="%command.description.0"
-            id="gov.redhawk.ide.codegen.ui.command.exportResource"
-            name="%command.name.0">
-      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -66,78 +61,10 @@
             </or>
          </activeWhen>
       </handler>
-      <handler
-            class="gov.redhawk.ide.codegen.ui.internal.command.ExportResourceHandler"
-            commandId="gov.redhawk.ide.codegen.ui.command.exportResource">
-         <activeWhen>
-            <iterate
-                  ifEmpty="false">
-               <or>
-                  <adapt
-                        type="org.eclipse.core.resources.IResource">
-                     <test
-                           property="org.eclipse.core.resources.name"
-                           value="*.spd.xml">
-                     </test>
-                  </adapt>
-                  <adapt
-                        type="org.eclipse.core.resources.IResource">
-                     <test
-                           property="org.eclipse.core.resources.name"
-                           value="*.sad.xml">
-                     </test>
-                  </adapt>
-                  <adapt
-                        type="org.eclipse.core.resources.IResource">
-                     <test
-                           property="org.eclipse.core.resources.name"
-                           value="*.dcd.xml">
-                     </test>
-                  </adapt>
-               </or>
-            </iterate>
-         </activeWhen>
-      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
 
-      <menuContribution
-            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <command
-               commandId="gov.redhawk.ide.codegen.ui.command.exportResource"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <or>
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                        <test
-                              property="org.eclipse.core.resources.name"
-                              value="*.sad.xml">
-                        </test>
-                     </adapt>
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                        <test
-                              property="org.eclipse.core.resources.name"
-                              value="*.dcd.xml">
-                        </test>
-                     </adapt>
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                        <test
-                              property="org.eclipse.core.resources.name"
-                              value="*.spd.xml">
-                        </test>
-                     </adapt>
-                  </or>
-               </iterate>
-            </visibleWhen>
-         </command>
-      </menuContribution>
       <menuContribution
             locationURI="toolbar:gov.redhawk.prf.ui.editor.page.toolbar?before=additions">
          <command

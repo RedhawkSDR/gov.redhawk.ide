@@ -10,69 +10,56 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.internal.handlers;
 
-import gov.redhawk.ide.natures.ScaComponentProjectNature;
-import gov.redhawk.ide.natures.ScaNodeProjectNature;
-import gov.redhawk.ide.natures.ScaWaveformProjectNature;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.ide.sdr.ui.export.ExportUtils;
-import gov.redhawk.ide.sdr.ui.export.FileStoreExporter;
-import gov.redhawk.ide.sdr.ui.export.IScaExporter;
-
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.ui.export.FileStoreExporter;
+import gov.redhawk.ide.sdr.ui.export.IScaExporter;
+import gov.redhawk.ide.sdr.ui.util.ExportToSdrRootJob;
+import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
+
 public class ExportToSDRHandler extends AbstractHandler implements IHandler {
-	private IScaExporter exporter;
 
 	@Override
 	public Object execute(@Nullable final ExecutionEvent event) throws ExecutionException {
-		this.exporter = new FileStoreExporter(SdrUiPlugin.getDefault().getTargetSdrPath());
 		final ISelection sel = HandlerUtil.getCurrentSelection(event);
-		Job exportJob = new Job("Exporting Project to SDR") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				final SubMonitor subMonitor = SubMonitor.convert(monitor, "Exporting...", 5);
-				if (sel instanceof IStructuredSelection) {
-					Object obj = ((IStructuredSelection) sel).getFirstElement();
-					if (obj instanceof IProject) {
-						IProject project = (IProject) obj;
-						try {
-							if (project.hasNature(ScaNodeProjectNature.ID)) {
-								ExportUtils.exportNode(project, exporter, subMonitor.newChild(1));
-							} else if (project.hasNature(ScaWaveformProjectNature.ID)) {
-								ExportUtils.exportWaveform(project, exporter, subMonitor.newChild(1));
-							} else if (project.hasNature(ScaComponentProjectNature.ID)) {
-								ExportUtils.exportComponent(project, exporter, subMonitor.newChild(1));
-							}
-						} catch (CoreException e) {
-							return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Error exporting project to SDR root", e);
-						} catch (IOException e) {
-							return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Error exporting project to SDR root", e);
-						}
-
-						// Refresh Target SDR
-						SdrUiPlugin.getDefault().getTargetSdrRoot().reload(subMonitor.newChild(1));
-					}
+		if (sel instanceof IStructuredSelection) {
+			List<IProject> projects = new ArrayList<IProject>();
+			for (Object obj : ((IStructuredSelection) sel).toList()) {
+				if (obj instanceof IProject) {
+					projects.add((IProject) obj);
+				} else if (obj instanceof IFile) {
+					projects.add(((IFile) obj).getProject());
 				}
-				return Status.OK_STATUS;
 			}
-		};
-		exportJob.schedule();
+
+			// Export, then refresh the SDRROOT
+			final IScaExporter exporter = new FileStoreExporter(SdrUiPlugin.getDefault().getTargetSdrPath());
+			final ExportToSdrRootJob exportJob = new ExportToSdrRootJob(exporter, projects);
+			final RefreshSdrJob refreshJob = new RefreshSdrJob();
+			exportJob.addJobChangeListener(new JobChangeAdapter() {
+				@Override
+				public void done(IJobChangeEvent event) {
+					refreshJob.schedule();
+				}
+			});
+			exportJob.schedule();
+		}
+
 		return null;
 	}
 }

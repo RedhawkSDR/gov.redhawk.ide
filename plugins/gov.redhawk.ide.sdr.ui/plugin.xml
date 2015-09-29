@@ -237,9 +237,30 @@
                  checkEnabled="false">
               <iterate
                     ifEmpty="false">
-                 <instanceof
-                       value="org.eclipse.core.resources.IProject">
-                 </instanceof>
+                 <or>
+                    <instanceof
+                          value="org.eclipse.core.resources.IProject">
+                    </instanceof>
+                    <and>
+                       <adapt
+                             type="org.eclipse.core.resources.IResource">
+                       </adapt>
+                       <or>
+                          <test
+                                property="org.eclipse.core.resources.name"
+                                value="*.spd.xml">
+                          </test>
+                          <test
+                                property="org.eclipse.core.resources.name"
+                                value="*.sad.xml">
+                          </test>
+                          <test
+                                property="org.eclipse.core.resources.name"
+                                value="*.dcd.xml">
+                          </test>
+                       </or>
+                    </and>
+                 </or>
               </iterate>
            </visibleWhen>
         </command>
@@ -255,11 +276,31 @@
            <visibleWhen
                  checkEnabled="false">
               <iterate
-                    ifEmpty="false"
-                    operator="and">
-                 <instanceof
-                       value="org.eclipse.core.resources.IProject">
-                 </instanceof>
+                    ifEmpty="false">
+                 <or>
+                    <instanceof
+                          value="org.eclipse.core.resources.IProject">
+                    </instanceof>
+                    <and>
+                       <adapt
+                             type="org.eclipse.core.resources.IResource">
+                       </adapt>
+                       <or>
+                          <test
+                                property="org.eclipse.core.resources.name"
+                                value="*.spd.xml">
+                          </test>
+                          <test
+                                property="org.eclipse.core.resources.name"
+                                value="*.sad.xml">
+                          </test>
+                          <test
+                                property="org.eclipse.core.resources.name"
+                                value="*.dcd.xml">
+                          </test>
+                       </or>
+                    </and>
+                 </or>
               </iterate>
            </visibleWhen>
         </command>
@@ -359,11 +400,31 @@
            class="gov.redhawk.ide.sdr.ui.internal.handlers.ExportToSDRHandler"
            commandId="gov.redhawk.ide.sdr.ui.command.ExportToSDR">
         <activeWhen>
-           <iterate>
+           <iterate
+                 ifEmpty="false">
               <or>
                  <instanceof
                        value="org.eclipse.core.resources.IProject">
                  </instanceof>
+                 <and>
+                    <adapt
+                          type="org.eclipse.core.resources.IResource">
+                    </adapt>
+                    <or>
+                       <test
+                             property="org.eclipse.core.resources.name"
+                             value="*.spd.xml">
+                       </test>
+                       <test
+                             property="org.eclipse.core.resources.name"
+                             value="*.sad.xml">
+                       </test>
+                       <test
+                             property="org.eclipse.core.resources.name"
+                             value="*.dcd.xml">
+                       </test>
+                    </or>
+                 </and>
               </or>
            </iterate>
         </activeWhen>
