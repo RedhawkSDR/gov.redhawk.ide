@@ -2022,36 +2022,19 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Updates the style of the component's inner rounded rectangle based on the current state.
 	 */
 	protected void updateStyleForComponentInner() {
-		final Diagram diagram = DUtil.findDiagram(this);
 		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
 		if (innerRoundedRectangle != null) {
 			String styleId;
 			if (iStatusSeverity == IStatus.ERROR) {
-				styleId = getInnerErrorStyle(diagram);
+				styleId = StyleUtil.COMPONENT_INNER_ERROR;
 			} else if (!enabled) {
-				styleId = getInnerDisabledStyle(diagram);
+				styleId = StyleUtil.COMPONENT_INNER_DISABLED;
 			} else if (started) {
-				styleId = getInnerStartedStyle(diagram);
+				styleId = StyleUtil.COMPONENT_INNER_STARTED;
 			} else {
-				styleId = getInnerStyle(diagram);
+				styleId = StyleUtil.COMPONENT_INNER;
 			}
 			StyleUtil.setStyle(innerRoundedRectangle, styleId);
 		}
-	}
-
-	protected String getInnerStyle(Diagram diagram) {
-		return StyleUtil.COMPONENT_INNER;
-	}
-
-	protected String getInnerStartedStyle(Diagram diagram) {
-		return StyleUtil.COMPONENT_INNER_STARTED;
-	}
-
-	protected String getInnerErrorStyle(Diagram diagram) {
-		return StyleUtil.COMPONENT_INNER_ERROR;
-	}
-
-	protected String getInnerDisabledStyle(Diagram diagram) {
-		return StyleUtil.COMPONENT_INNER_DISABLED;
 	}
 } // RHContainerShapeImpl
