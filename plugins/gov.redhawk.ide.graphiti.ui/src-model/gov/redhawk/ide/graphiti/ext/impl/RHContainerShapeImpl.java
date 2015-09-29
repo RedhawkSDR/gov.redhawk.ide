@@ -1026,6 +1026,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// Resize container to contents and adjust position so that ports are aligned to the outer edge
 		currentY = Math.max(currentY - 5, 0); // remove extra spacing, if it was added above
 		gaLayoutService.setSize(providesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
+		// NB: For FindBy shapes and the like, the normal layout was not occurring for the provides port container
+		Graphiti.getGaLayoutService().setLocation(providesPortsContainer.getGraphicsAlgorithm(), PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING);
 	}
 
 	private void layoutUsesPorts(ContainerShape usesPortsContainer) {
@@ -1509,7 +1511,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 							}
 						}
 					}
-					layoutProvidesPorts(providesPortsContainerShape);
+					if (performUpdate) {
+						layoutProvidesPorts(providesPortsContainerShape);
+					}
 				}
 			}
 		}
@@ -1690,7 +1694,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 							}
 						}
 					}
-					layoutUsesPorts(usesPortsContainerShape);
+					if (performUpdate) {
+						layoutUsesPorts(usesPortsContainerShape);
+					}
 				}
 			}
 		}
