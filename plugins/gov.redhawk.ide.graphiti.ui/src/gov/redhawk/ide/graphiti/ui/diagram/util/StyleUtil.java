@@ -89,10 +89,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String SANS_FONT = "Sans";
 	private static final String DEFAULT_FONT = SANS_FONT;
 
-	public static final Font getPortFont(Diagram diagram) {
-		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
-	}
-
 	public static void createAllStyles(Diagram diagram) {
 		createStyleForComponentOuter(diagram);
 		createStyleForComponentInner(diagram);
@@ -274,6 +270,10 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		boolean result = PluginUtil.equals(PROVIDES_PORT, style.getId());
 		return !result;
+	}
+
+	private static final Font getPortFont(Diagram diagram) {
+		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
 	}
 
 	// returns style for provides port

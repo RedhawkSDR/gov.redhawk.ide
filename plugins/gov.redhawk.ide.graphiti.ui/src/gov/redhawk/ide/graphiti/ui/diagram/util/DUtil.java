@@ -715,23 +715,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		return false;
 	}
 
-	// returns width required to support longest uses port name
-	// 4 used as minimum, characters cut off otherwise
-	public static int getLongestUsesPortWidth(final EList<UsesPortStub> usesPortsStubs, Diagram diagram) {
-		String longest = "four";
-		if (usesPortsStubs != null) {
-			for (final UsesPortStub uses : usesPortsStubs) {
-				if (uses.getName().length() > longest.length()) {
-					longest = uses.getName();
-				}
-			}
-		}
-
-		IDimension requiredWidth = GraphitiUi.getUiLayoutService().calculateTextSize(longest, StyleUtil.getPortFont(diagram));
-
-		return requiredWidth.getWidth() + 20;
-	}
-
 	/**
 	 * Returns true if the property container contains a property key {@link #GA_TYPE} or {@link #SHAPE_TYPE} with value
 	 * <code>propertyValue</code>
