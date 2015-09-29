@@ -45,6 +45,7 @@ import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
@@ -61,7 +62,6 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.impl.ContainerShapeImpl;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaLayoutService;
-import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.graphiti.util.IColorConstant;
 
 /**
@@ -532,13 +532,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Performs a layout on the contents of this shape
 	 */
 	public void layout() {
-		// get shape being laid out
-		RoundedRectangle outerRoundedRectangle = (RoundedRectangle) this.getGraphicsAlgorithm();
-
 		int minimumHeight = 0;
 		int minimumWidth = 0;
 		if (isHasPortsContainerShape()) {
-			getInnerPolyline().setTransparency(0d); //hide line
+			// Show inner line
+			getInnerPolyline().setTransparency(0d);
 
 			// Layout provides ports
 			ContainerShape providesPortsContainer = getProvidesPortsContainerShape();
@@ -559,6 +557,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 
 		// Resize height if necessary to accomodate contents (always requires padding)
+		RoundedRectangle outerRoundedRectangle = (RoundedRectangle) this.getGraphicsAlgorithm();
 		minimumHeight += PORTS_CONTAINER_SHAPE_TOP_PADDING;
 		if (outerRoundedRectangle.getHeight() < minimumHeight) {
 			outerRoundedRectangle.setHeight(minimumHeight);
@@ -573,69 +572,32 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			adjustUsesPortsPosition(getUsesPortsContainerShape());
 		}
 
-		int containerWidth = outerRoundedRectangle.getWidth();
-		int containerHeight = outerRoundedRectangle.getHeight();
-
-		// resize all diagram elements
 		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
 
 		// outerRoundedRectangle
+		int containerWidth = outerRoundedRectangle.getWidth();
 		gaLayoutService.setLocationAndSize(getOuterText(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4, 0,
 			containerWidth - (INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4), 20);
 		gaLayoutService.setLocationAndSize(getOuterImage(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
 
 		// innerRoundedRectangle
-		int innerContainerShapeWidth = containerWidth - INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING * 2 - PROVIDES_PORTS_LEFT_PADDING;
-		int innerContainerShapeHeight = containerHeight - INNER_CONTAINER_SHAPE_TOP_PADDING;
-		gaLayoutService.setLocationAndSize(getInnerContainerShape().getGraphicsAlgorithm(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING,
-			INNER_CONTAINER_SHAPE_TOP_PADDING, innerContainerShapeWidth, innerContainerShapeHeight);
-		IDimension innerRoundedRectangleTextSize = GraphitiUi.getUiLayoutService().calculateTextSize(getInnerText().getValue(), Graphiti.getGaService().getFont(getInnerText(), true));
-		int xForImage = (getInnerContainerShape().getGraphicsAlgorithm().getWidth() - (innerRoundedRectangleTextSize.getWidth() + ICON_IMAGE_LENGTH + 5)) / 2;
-		gaLayoutService.setLocationAndSize(getInnerImage(), xForImage, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
-		gaLayoutService.setLocationAndSize(getInnerText(), xForImage + ICON_IMAGE_LENGTH + 5, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING,
-			innerRoundedRectangleTextSize.getWidth() + 10, innerRoundedRectangleTextSize.getHeight());
-		getInnerPolyline().getPoints().get(1).setX(innerContainerShapeWidth);
-
-		if (isHasSuperPortsContainerShape()) {
-			//position across from inner container text
-			int spaceAboveInnerShape = getGraphicsAlgorithm().getHeight() - getInnerContainerShape().getGraphicsAlgorithm().getHeight();
-			int y = spaceAboveInnerShape + SUPER_PORT_SHAPE_HEIGHT_MARGIN;
-
-			//superProvidesPorts
-			if (getSuperProvidesPortsContainerShape() != null) {
-				ContainerShape superProvidesPortsContainerShape = getSuperProvidesPortsContainerShape();
-
-				//anchor container
-				gaLayoutService.setLocationAndSize(superProvidesPortsContainerShape.getGraphicsAlgorithm(),
-					INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING - SUPER_PORT_SHAPE_WIDTH, y, SUPER_PORT_SHAPE_WIDTH,
-					innerContainerShapeHeight - SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2);
-
-				//anchor
-				Rectangle fixPointAnchorRectangle = (Rectangle) superProvidesPortsContainerShape.getAnchors().get(0).getGraphicsAlgorithm();
-				gaLayoutService.setLocationAndSize(fixPointAnchorRectangle, 0, -SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2, SUPER_PORT_SHAPE_WIDTH,
-					innerContainerShapeHeight - SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2);
-
-			}
-			//superUsesPorts
-			if (getSuperUsesPortsContainerShape() != null) {
-				ContainerShape superUsesPortsContainerShape = getSuperUsesPortsContainerShape();
-
-				int intPortTextX = getInnerContainerShape().getGraphicsAlgorithm().getX() + innerContainerShapeWidth;
-
-				//anchor container
-				gaLayoutService.setLocationAndSize(superUsesPortsContainerShape.getGraphicsAlgorithm(), intPortTextX, y, SUPER_PORT_SHAPE_WIDTH,
-					innerContainerShapeHeight - SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2);
-
-				//anchor
-				Rectangle fixPointAnchorRectangle = (Rectangle) superUsesPortsContainerShape.getAnchors().get(0).getGraphicsAlgorithm();
-				gaLayoutService.setLocationAndSize(fixPointAnchorRectangle, 0, -SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2, SUPER_PORT_SHAPE_WIDTH,
-					innerContainerShapeHeight - SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2);
-			}
-			getInnerPolyline().setTransparency(1d); //hide line
-		}
-
 		ContainerShape innerShape = getInnerContainerShape();
 		layoutInnerShape(innerShape);
+
+		if (isHasSuperPortsContainerShape()) {
+			ContainerShape superProvidesPortsContainerShape = getSuperProvidesPortsContainerShape();
+			if (superProvidesPortsContainerShape != null) {
+				layoutSuperProvidesPorts(superProvidesPortsContainerShape);
+			}
+
+			ContainerShape superUsesPortsContainerShape = getSuperUsesPortsContainerShape();
+			if (superUsesPortsContainerShape != null) {
+				layoutSuperUsesPorts(superUsesPortsContainerShape);
+			}
+
+			// Hide inner line
+			getInnerPolyline().setTransparency(1d); //hide line
+		}
 	}
 
 	/**
@@ -823,12 +785,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * add inner container
 	 */
-	public ContainerShape addInnerContainer(String text, String imageId, String styleId) {
+	protected ContainerShape addInnerContainer(String text, String imageId, String styleId) {
 		ContainerShape innerContainerShape = Graphiti.getCreateService().createContainerShape(this, false);
 		Graphiti.getPeService().setPropertyValue(innerContainerShape, DUtil.GA_TYPE, SHAPE_INNER_CONTAINER);
 		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(innerContainerShape, 5, 5);
 		StyleUtil.setStyle(innerRoundedRectangle, styleId);
 		Graphiti.getPeService().setPropertyValue(innerRoundedRectangle, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE);
+		Graphiti.getGaLayoutService().setLocation(innerRoundedRectangle, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, INNER_CONTAINER_SHAPE_TOP_PADDING);
 
 		// image
 		Image imgIcon = Graphiti.getGaCreateService().createImage(innerRoundedRectangle, imageId);
@@ -908,7 +871,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Rectangle superUsesPortsRectangle = Graphiti.getCreateService().createRectangle(superUsesPortsRectangleShape);
 		DUtil.addLinks(featureProvider, superUsesPortsRectangleShape, usesPortStubs);
 		StyleUtil.setStyle(superUsesPortsRectangle, StyleUtil.SUPER_USES_PORT);
-		Graphiti.getGaLayoutService().setSize(superUsesPortsRectangle, SUPER_PORT_SHAPE_WIDTH, SUPER_PORT_SHAPE_HEIGHT);
 
 		// fix point anchor
 		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(superUsesPortsRectangleShape);
@@ -925,7 +887,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		if (externalPorts != null && externalPorts.size() > 0) {
 			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
 		}
-		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, 0, SUPER_PORT_SHAPE_WIDTH, SUPER_PORT_SHAPE_HEIGHT);
+		Graphiti.getGaLayoutService().setLocation(fixPointAnchorRectangle, 0, -SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2);
 	}
 
 	/**
@@ -945,7 +907,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		DUtil.addLinks(featureProvider, superProvidesPortsRectangleShape, providesPortStubs);
 		DUtil.addLink(featureProvider, superProvidesPortsRectangleShape, interfaceStub);
 		StyleUtil.setStyle(superProvidesPortsRectangle, StyleUtil.SUPER_PROVIDES_PORT);
-		Graphiti.getGaLayoutService().setSize(superProvidesPortsRectangle, SUPER_PORT_SHAPE_WIDTH, SUPER_PORT_SHAPE_HEIGHT);
+		Graphiti.getGaLayoutService().setLocation(superProvidesPortsRectangle, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING - SUPER_PORT_SHAPE_WIDTH,
+			INNER_CONTAINER_SHAPE_TOP_PADDING + SUPER_PORT_SHAPE_HEIGHT_MARGIN);
 
 		// fix point anchor
 		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(superProvidesPortsRectangleShape);
@@ -963,7 +926,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		if (externalPorts != null && externalPorts.size() > 0) {
 			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
 		}
-		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, 0, SUPER_PORT_SHAPE_WIDTH, SUPER_PORT_SHAPE_HEIGHT);
+		Graphiti.getGaLayoutService().setLocation(fixPointAnchorRectangle, 0, -SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2);
 	}
 
 	/**
@@ -1025,8 +988,18 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getGaLayoutService().setSize(text, textWidth, 20);
 	}
 
-	protected void layoutInnerShape(ContainerShape innerShape) {
-		// Nothing to do by default
+	protected void layoutInnerShape(ContainerShape innerContainerShape) {
+		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
+		IDimension parentSize = gaLayoutService.calculateSize(innerContainerShape.getContainer().getGraphicsAlgorithm());
+		int width = parentSize.getWidth() - INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING * 2 - PROVIDES_PORTS_LEFT_PADDING;
+		int height = parentSize.getHeight() - INNER_CONTAINER_SHAPE_TOP_PADDING;
+		gaLayoutService.setSize(innerContainerShape.getGraphicsAlgorithm(), width, height);
+		IDimension innerRoundedRectangleTextSize = DUtil.calculateTextSize(getInnerText());
+		int xForImage = (innerContainerShape.getGraphicsAlgorithm().getWidth() - (innerRoundedRectangleTextSize.getWidth() + ICON_IMAGE_LENGTH + 5)) / 2;
+		gaLayoutService.setLocationAndSize(getInnerImage(), xForImage, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
+		gaLayoutService.setLocationAndSize(getInnerText(), xForImage + ICON_IMAGE_LENGTH + 5, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING,
+			innerRoundedRectangleTextSize.getWidth() + 10, innerRoundedRectangleTextSize.getHeight());
+		getInnerPolyline().getPoints().get(1).setX(width);
 	}
 
 	private void layoutProvidesPorts(ContainerShape providesPortsContainer) {
@@ -1095,6 +1068,30 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			int xOffset = parentWidth - usesPortsContainer.getGraphicsAlgorithm().getWidth();
 			Graphiti.getGaLayoutService().setLocation(usesPortsContainer.getGraphicsAlgorithm(), xOffset, PORTS_CONTAINER_SHAPE_TOP_PADDING);
 		}
+	}
+
+	private void resizeSuperPort(ContainerShape superPortContainerShape) {
+		// Resize relative to inner shape
+		int height = getInnerContainerShape().getGraphicsAlgorithm().getHeight() - SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2;
+		Graphiti.getGaLayoutService().setSize(superPortContainerShape.getGraphicsAlgorithm(), SUPER_PORT_SHAPE_WIDTH, height);
+
+		// Resize anchor
+		Rectangle fixPointAnchorRectangle = (Rectangle) superPortContainerShape.getAnchors().get(0).getGraphicsAlgorithm();
+		Graphiti.getGaLayoutService().setSize(fixPointAnchorRectangle, SUPER_PORT_SHAPE_WIDTH, height);
+	}
+
+	protected void layoutSuperProvidesPorts(ContainerShape superProvidesPortsContainerShape) {
+		resizeSuperPort(superProvidesPortsContainerShape);
+	}
+
+	protected void layoutSuperUsesPorts(ContainerShape superUsesPortsContainerShape) {
+		resizeSuperPort(superUsesPortsContainerShape);
+
+		// Position at right edge of inner shape
+		GraphicsAlgorithm innerGa = getInnerContainerShape().getGraphicsAlgorithm();
+		int y = innerGa.getY() + SUPER_PORT_SHAPE_HEIGHT_MARGIN;
+		int x = innerGa.getX() + innerGa.getWidth();
+		Graphiti.getGaLayoutService().setLocation(superUsesPortsContainerShape.getGraphicsAlgorithm(), x, y);
 	}
 
 	/**
