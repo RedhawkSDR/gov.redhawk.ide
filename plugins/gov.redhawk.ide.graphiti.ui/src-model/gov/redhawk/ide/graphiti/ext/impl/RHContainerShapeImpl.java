@@ -243,8 +243,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5, LOLLIPOP_ELLIPSE_DIAMETER = 10, INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
 			INTERFACE_SHAPE_HEIGHT = 10, ICON_IMAGE_LENGTH = 16;
 
-	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_WIDTH = 5;
-	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT = 5;
+	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_WIDTH = 10;
+	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT = 10;
 	protected static final int PORT_SHAPE_HEIGHT = 15;
 	protected static final int PORT_SHAPE_WIDTH = PORT_SHAPE_HEIGHT;
 	protected static final int PORT_ROW_PADDING_HEIGHT = 5;
