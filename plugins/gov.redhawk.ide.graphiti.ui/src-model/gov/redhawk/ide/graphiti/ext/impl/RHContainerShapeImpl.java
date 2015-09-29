@@ -243,8 +243,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			LABEL_CHAR_WIDTH = 7, PORT_NAME_HORIZONTAL_PADDING = 5, PORT_ROW_HEIGHT = 15, PORT_ROW_PADDING_HEIGHT = 5, PORT_SHAPE_HEIGHT = 15,
 			SUPER_PORT_SHAPE_HEIGHT = 25, SUPER_PORT_SHAPE_WIDTH = 10, SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5, PORT_SHAPE_WIDTH = 15, PORT_CHAR_WIDTH = 7,
 			LOLLIPOP_ELLIPSE_DIAMETER = 10, INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
-			INTERFACE_SHAPE_HEIGHT = 10, REQ_PADDING_BETWEEN_PORT_TYPES = 0, ICON_IMAGE_LENGTH = 16;
+			INTERFACE_SHAPE_HEIGHT = 10, ICON_IMAGE_LENGTH = 16;
 
+	private static final int REQ_PADDING_BETWEEN_PORT_TYPES = 10;
 	// BEGIN GENERATED CODE
 
 	/**
@@ -533,24 +534,43 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	public void layout() {
 		// get shape being laid out
 		RoundedRectangle outerRoundedRectangle = (RoundedRectangle) this.getGraphicsAlgorithm();
-		EList<ProvidesPortStub> provides = null;
-		EList<UsesPortStub> uses = null;
+
+		int minimumHeight = 0;
+		int minimumWidth = 0;
 		if (isHasPortsContainerShape()) {
-			//no need to layout ports, they don't exist in shape
-			provides = getProvidesPortStubs();
-			uses = getUsesPortStubs();
+			getInnerPolyline().setTransparency(0d); //hide line
+
+			// Layout provides ports
+			ContainerShape providesPortsContainer = getProvidesPortsContainerShape();
+			layoutProvidesPorts(providesPortsContainer);
+			int providesHeight = providesPortsContainer.getGraphicsAlgorithm().getHeight();
+			int providesWidth = providesPortsContainer.getGraphicsAlgorithm().getWidth();
+
+			// Layout uses ports
+			ContainerShape usesPortsContainer = getUsesPortsContainerShape();
+			layoutUsesPorts(usesPortsContainer);
+			adjustUsesPortsPosition(usesPortsContainer);
+			int usesHeight = usesPortsContainer.getGraphicsAlgorithm().getHeight();
+			int usesWidth = usesPortsContainer.getGraphicsAlgorithm().getWidth();
+
+			// Account for port containers in outer sizing
+			minimumHeight = Math.max(providesHeight, usesHeight) + 10;
+			minimumWidth = providesWidth + usesWidth + REQ_PADDING_BETWEEN_PORT_TYPES;
 		}
 
-		// height
-		int minimumHeight = getMinimumHeight(provides, uses);
+		// Resize height if necessary to accomodate contents (always requires padding)
+		minimumHeight += PORTS_CONTAINER_SHAPE_TOP_PADDING;
 		if (outerRoundedRectangle.getHeight() < minimumHeight) {
 			outerRoundedRectangle.setHeight(minimumHeight);
 		}
 
 		// width
-		int minimumWidth = getMinimumWidth(getOuterText(), getInnerText(), getUsesPortsContainerShape(), getProvidesPortsContainerShape());
+		minimumWidth = Math.max(minimumWidth, getMinimumWidth(getOuterText(), getInnerText()));
 		if (outerRoundedRectangle.getWidth() < minimumWidth) {
 			outerRoundedRectangle.setWidth(minimumWidth);
+
+			// If the width changes, move the uses ports container
+			adjustUsesPortsPosition(getUsesPortsContainerShape());
 		}
 
 		int containerWidth = outerRoundedRectangle.getWidth();
@@ -614,13 +634,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			getInnerPolyline().setTransparency(1d); //hide line
 		}
 
-		if (isHasPortsContainerShape()) {
-			// usesPortsRectangle
-			if (uses != null && getUsesPortsContainerShape() != null) {
-				layoutUsesPorts(getUsesPortsContainerShape());
-			}
-			getInnerPolyline().setTransparency(0d); //hide line
-		}
 	}
 
 	/**
@@ -1062,12 +1075,21 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			currentY += shape.getGraphicsAlgorithm().getHeight() + 5;
 		}
 
-		// Resize container to contents and adjust position so that ports are aligned to the outer edge
+		// Resize container to contents
 		currentY = Math.max(currentY - 5, 0); // remove extra spacing, if it was added above
-		int parentWidth = usesPortsContainer.getContainer().getGraphicsAlgorithm().getWidth();
-		int xOffset = parentWidth - maxWidth;
-		gaLayoutService.setLocationAndSize(usesPortsContainer.getGraphicsAlgorithm(), xOffset, PORTS_CONTAINER_SHAPE_TOP_PADDING, maxWidth, currentY);
-}
+		gaLayoutService.setSize(usesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
+	}
+
+	/**
+	 * Adjusts the position of the uses ports container so that ports are aligned to the outer edge
+	 */
+	private void adjustUsesPortsPosition(ContainerShape usesPortsContainer) {
+		if (usesPortsContainer != null) {
+			int parentWidth = usesPortsContainer.getContainer().getGraphicsAlgorithm().getWidth();
+			int xOffset = parentWidth - usesPortsContainer.getGraphicsAlgorithm().getWidth();
+			Graphiti.getGaLayoutService().setLocation(usesPortsContainer.getGraphicsAlgorithm(), xOffset, PORTS_CONTAINER_SHAPE_TOP_PADDING);
+		}
+	}
 
 	/**
 	 * Adds provides port container to provided container shape. Adds a port shape with name and anchor for each
@@ -1972,9 +1994,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @param ci
 	 * @return
 	 */
-	protected int getMinimumWidth(Text outerTitle, Text innerTitle, ContainerShape providesPortsContainer, ContainerShape usesPortsContainer) {
-
-		int portsWidth = getPortsWidth(usesPortsContainer) + getPortsWidth(providesPortsContainer) + REQ_PADDING_BETWEEN_PORT_TYPES;
+	protected int getMinimumWidth(Text outerTitle, Text innerTitle) {
 
 		// inner title (potentially including start order)
 		int innerTitleWidth = getInnerWidth(innerTitle);
@@ -1983,27 +2003,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		int outerTitleWidth = getOuterWidth(outerTitle);
 
 		// return the largest
-		return Math.max(portsWidth, Math.max(innerTitleWidth, outerTitleWidth));
-	}
-
-	protected int getPortsWidth(ContainerShape portsContainer) {
-		int maxWidth = 0;
-		if (portsContainer != null) {
-			for (Shape usesPortContainer : portsContainer.getChildren()) {
-				maxWidth = Math.max(maxWidth, getPortWidth((ContainerShape) usesPortContainer));
-			}
-		}
-		return PORT_SHAPE_WIDTH + maxWidth + PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_WIDTH;
-	}
-
-	protected int getPortWidth(ContainerShape portContainer) {
-		for (Shape shape : portContainer.getChildren()) {
-			if (shape.getGraphicsAlgorithm() instanceof Text) {
-				IDimension textSize = DUtil.calculateTextSize((Text) shape.getGraphicsAlgorithm());
-				return textSize.getWidth();
-			}
-		}
-		return 0;
+		return Math.max(innerTitleWidth, outerTitleWidth);
 	}
 
 	protected int getInnerWidth(Text innerTitle) {
@@ -2015,37 +2015,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		IDimension outerTitleDimension = DUtil.calculateTextSize(outerTitle);
 		return INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + outerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH
 			+ OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING + 4;
-	}
-
-	/**
-	 * Determine the height by which we need to expand by comparing the number of uses and provides ports and return the
-	 * largest
-	 * @return int Return the length by which we need to expand the height of the associated Shape
-	 */
-	private static int getAdjustedHeight(final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs) {
-		int providesPortStubsSize = (providesPortStubs != null) ? providesPortStubs.size() : 0;
-		int usesPortStubsSize = (usesPortStubs != null) ? usesPortStubs.size() : 0;
-
-		int numPorts = Math.max(providesPortStubsSize, usesPortStubsSize);
-
-		return numPorts;
-	}
-
-	/**
-	 * Returns minimum height for Shape containing provides and uses ports
-	 * @param ci
-	 * @return
-	 */
-	private int getMinimumHeight(final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs) {
-
-		if (isHasSuperPortsContainerShape()) {
-			//hiding details
-			return PORTS_CONTAINER_SHAPE_TOP_PADDING;
-		} else if (isHasPortsContainerShape()) {
-			//show details
-			return getAdjustedHeight(providesPortStubs, usesPortStubs) * (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT) + PORTS_CONTAINER_SHAPE_TOP_PADDING + 10;
-		}
-		return PORTS_CONTAINER_SHAPE_TOP_PADDING;
 	}
 
 	/**
