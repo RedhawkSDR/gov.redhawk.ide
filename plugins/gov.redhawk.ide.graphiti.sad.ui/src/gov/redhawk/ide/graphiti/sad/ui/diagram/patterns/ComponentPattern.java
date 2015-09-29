@@ -778,7 +778,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 
 	@Override
 	public String getStyleForOuter() {
-		return StyleUtil.COMPONENT_OUTER;
+		return StyleUtil.OUTER_SHAPE;
 	}
 
 	@Override

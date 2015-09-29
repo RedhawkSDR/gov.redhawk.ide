@@ -108,7 +108,7 @@ public class ServicePattern extends AbstractNodeComponentPattern implements IPat
 
 	@Override
 	public String getStyleForOuter() {
-		return StyleUtil.COMPONENT_OUTER;
+		return StyleUtil.OUTER_SHAPE;
 	}
 
 	@Override

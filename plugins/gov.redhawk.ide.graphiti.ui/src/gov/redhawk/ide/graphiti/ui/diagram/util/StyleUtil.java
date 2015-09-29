@@ -32,6 +32,9 @@ import gov.redhawk.sca.util.PluginUtil;
 
 public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
+	public static final String OUTER_SHAPE = "gov.redhawk.style.OuterShape";
+	public static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
+
 	public static final String START_ORDER_TEXT = "gov.redhawk.style.StartOrderText";
 	public static final String START_ORDER_ELLIPSE = "gov.redhawk.style.StartOrderEllipse";
 	public static final String ASSEMBLY_CONTROLLER_ELLIPSE = "gov.redhawk.style.StartOrderAssemblyControllerEllipse";
@@ -43,17 +46,13 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String EXTERNAL_PROVIDES_PORT = "gov.redhawk.style.ExternalProvidesPort";
 	public static final String SUPER_PROVIDES_PORT = "gov.redhawk.style.SuperProvidesPort";
 	public static final String INNER_TEXT = "gov.redhawk.style.InnerText";
-	public static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
 	public static final String HOST_COLLOCATION = "gov.redhawk.style.HostCollocation";
 	public static final String FIND_BY_INNER = "gov.redhawk.style.FindByInner";
-	public static final String FIND_BY_OUTER = "gov.redhawk.style.FindByOuter";
 	public static final String USES_DEVICE_INNER = "gov.redhawk.style.UsesDeviceInner";
-	public static final String USES_DEVICE_OUTER = "gov.redhawk.style.UsesDeviceOuter";
 	public static final String COMPONENT_INNER = "gov.redhawk.style.ComponentInner";
 	public static final String COMPONENT_INNER_STARTED = "gov.redhawk.style.ComponentInnerStarted";
 	public static final String COMPONENT_INNER_ERROR = "gov.redhawk.style.ComponentInnerError";
 	public static final String COMPONENT_INNER_DISABLED = "gov.redhawk.style.ComponentInnerDisabled";
-	public static final String COMPONENT_OUTER = "gov.redhawk.style.ComponentOuter";
 	public static final String PORT_STYLE_COMPATIBLE = "gov.redhawk.style.PortCompatible";
 	public static final String PORT_STYLE_OK = "gov.redhawk.style.PortOK";
 	public static final String PORT_STYLE_WARN1 = "gov.redhawk.style.PortWarning1";
@@ -90,18 +89,17 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String DEFAULT_FONT = SANS_FONT;
 
 	public static void createAllStyles(Diagram diagram) {
-		createStyleForComponentOuter(diagram);
+		createStyleForOuterShape(diagram);
+		createStyleForOuterText(diagram);
+
+		createStyleForInnerText(diagram);
 		createStyleForComponentInner(diagram);
 		createStyleForComponentInnerStarted(diagram);
 		createStyleForComponentInnerError(diagram);
 		createStyleForComponentInnerDisabled(diagram);
 		createStyleForHostCollocation(diagram);
-		createStyleForFindByOuter(diagram);
 		createStyleForFindByInner(diagram);
-		createStyleForUsesDeviceOuter(diagram);
 		createStyleForUsesDeviceInner(diagram);
-		createStyleForOuterText(diagram);
-		createStyleForInnerText(diagram);
 
 		createStyleForLollipop(diagram);
 
@@ -136,14 +134,26 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 	
 	// returns component outer rectangle style
-	private static Style createStyleForComponentOuter(Diagram diagram) {
+	private static Style createStyleForOuterShape(Diagram diagram) {
 		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, COMPONENT_OUTER);
+		Style style = gaService.createStyle(diagram, OUTER_SHAPE);
 		style.setForeground(gaService.manageColor(diagram, BLACK));
 		style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
+		style.setTransparency(0.5);
 		style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
 		style.setLineWidth(0);
 		style.setLineVisible(false);
+		return style;
+	}
+
+	// returns outer text style
+	private static Style createStyleForOuterText(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style style = gaService.createStyle(diagram, OUTER_TEXT);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		Font font = gaService.manageFont(diagram, DEFAULT_FONT, 8, false, true);
+		style.setFont(font);
+		style.setLineWidth(2);
 		return style;
 	}
 
@@ -183,18 +193,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	private static Style createStyleForFindByOuter(Diagram diagram) {
-		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, FIND_BY_OUTER);
-		style.setForeground(gaService.manageColor(diagram, BLACK));
-		style.setTransparency(.99d);
-		style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
-		style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
-		style.setLineWidth(0);
-		style.setLineVisible(false);
-		return style;
-	}
-
 	private static Style createStyleForFindByInner(Diagram diagram) {
 		IGaService gaService = Graphiti.getGaService();
 		Style style = gaService.createStyle(diagram, FIND_BY_INNER);
@@ -205,18 +203,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	// returns uses device outer rectangle style
-	private static Style createStyleForUsesDeviceOuter(Diagram diagram) {
-		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, USES_DEVICE_OUTER);
-		style.setForeground(gaService.manageColor(diagram, BLACK));
-		style.setTransparency(.99d);
-		style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
-		style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
-		style.setLineWidth(0);
-		style.setLineVisible(false);
-		return style;
-	}
 
 	// returns uses device inner rectangle style
 	private static Style createStyleForUsesDeviceInner(Diagram diagram) {
@@ -239,17 +225,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
 		style.setLineWidth(1);
 		style.setLineVisible(true);
-		return style;
-	}
-
-	// returns outer text style
-	private static Style createStyleForOuterText(Diagram diagram) {
-		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, OUTER_TEXT);
-		style.setForeground(gaService.manageColor(diagram, BLACK));
-		Font font = gaService.manageFont(diagram, DEFAULT_FONT, 8, false, true);
-		style.setFont(font);
-		style.setLineWidth(2);
 		return style;
 	}
 

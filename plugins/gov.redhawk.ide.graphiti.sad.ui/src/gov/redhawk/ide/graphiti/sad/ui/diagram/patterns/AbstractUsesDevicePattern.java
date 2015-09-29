@@ -391,7 +391,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 
 	@Override
 	public String getStyleForOuter() {
-		return StyleUtil.USES_DEVICE_OUTER;
+		return StyleUtil.OUTER_SHAPE;
 	}
 
 	@Override

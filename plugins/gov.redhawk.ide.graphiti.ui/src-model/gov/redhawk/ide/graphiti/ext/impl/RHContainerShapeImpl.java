@@ -482,7 +482,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(this, 5, 5);
 		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE);
 		StyleUtil.setStyle(outerRoundedRectangle, pattern.getStyleForOuter());
-		outerRoundedRectangle.setTransparency(0.5); // 50%
+		outerRoundedRectangle.setTransparency(null); // inherit from style
 
 		// image
 		Image imgIcon = Graphiti.getGaCreateService().createImage(outerRoundedRectangle, pattern.getOuterImageId());

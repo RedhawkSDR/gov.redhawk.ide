@@ -113,7 +113,7 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 
 	@Override
 	public String getStyleForOuter() {
-		return StyleUtil.COMPONENT_OUTER;
+		return StyleUtil.OUTER_SHAPE;
 	}
 
 	@Override

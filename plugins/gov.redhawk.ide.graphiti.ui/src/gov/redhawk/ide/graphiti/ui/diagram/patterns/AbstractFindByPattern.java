@@ -572,7 +572,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 
 	@Override
 	public String getStyleForOuter() {
-		return StyleUtil.FIND_BY_OUTER;
+		return StyleUtil.OUTER_SHAPE;
 	}
 
 	@Override
