@@ -10,41 +10,15 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.internal.ui;
 
-import gov.redhawk.ide.RedhawkIdeActivator;
-import gov.redhawk.ide.natures.ScaComponentProjectNature;
-import gov.redhawk.ide.natures.ScaNodeProjectNature;
-import gov.redhawk.ide.natures.ScaWaveformProjectNature;
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.ide.sdr.ui.export.ExportUtils;
-import gov.redhawk.ide.sdr.ui.export.FileStoreExporter;
-import gov.redhawk.ide.sdr.ui.export.IScaExporter;
-import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
-import gov.redhawk.sca.util.PluginUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
-
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -54,6 +28,18 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonDropAdapter;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 
+import gov.redhawk.ide.natures.ScaComponentProjectNature;
+import gov.redhawk.ide.natures.ScaNodeProjectNature;
+import gov.redhawk.ide.natures.ScaWaveformProjectNature;
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.ui.export.FileStoreExporter;
+import gov.redhawk.ide.sdr.ui.export.IScaExporter;
+import gov.redhawk.ide.sdr.ui.util.ExportToSdrRootJob;
+import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
+import gov.redhawk.sca.util.PluginUtil;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
+
 public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 	public SdrRootDropAdapterAssistant() {
@@ -62,7 +48,7 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 	@Override
 	public IStatus validateDrop(final Object target, final int operation, final TransferData transferType) {
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
-			// If you use nativeToJava() here instead of getSelection(), you will get 
+			// If you use nativeToJava() here instead of getSelection(), you will get
 			// "Received wrong transfer data." messages in your error log.
 			// This is because on some platforms, the transfer information isn't available before the drop.
 			final Object data = LocalSelectionTransfer.getTransfer().getSelection();
@@ -90,128 +76,43 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 	@Override
 	public IStatus handleDrop(final CommonDropAdapter aDropAdapter, final DropTargetEvent aDropTargetEvent, final Object aTarget) {
+		// Verify source(s) and target types
 		final Object data = LocalSelectionTransfer.getTransfer().getSelection();
-		if (data instanceof TreeSelection) {
-			final TreeSelection sel = (TreeSelection) data;
-			if (!PlatformUI.getWorkbench().getActiveWorkbenchWindow().getWorkbench().saveAllEditors(true)) {
-				return Status.CANCEL_STATUS;
-			}
-			final List<Job> exportJobs = new ArrayList<Job>();
-			SdrRoot root = null;
-			for (final Object item : sel.toArray()) {
-				final IProject proj = PluginUtil.adapt(IProject.class, item);
-				if (proj != null && proj.exists() && proj.isOpen()) {
-					if (aTarget instanceof SdrRoot) {
-						root = (SdrRoot) aTarget;
-						exportJobs.add(handleProjectDrop(root, proj));
-					} else if (aTarget instanceof EObject) {
-						root = ScaEcoreUtils.getEContainerOfType((EObject) aTarget, SdrRoot.class);
-						if (root != null) {
-							exportJobs.add(handleProjectDrop(root, proj));
-						}
-					}
-				}
-			}
+		if (!(data instanceof TreeSelection) || !(aTarget instanceof EObject)) {
+			return Status.OK_STATUS;
+		}
+		if (!(aTarget instanceof SdrRoot) && ScaEcoreUtils.getEContainerOfType((EObject) aTarget, SdrRoot.class) == null) {
+			return Status.OK_STATUS;
+		}
 
-			final SdrRoot sdrRoot = root;
-			JobChangeAdapter listener = new JobChangeAdapter() {
-				private int numDone;
+		// Ensure everything is saved
+		if (!PlatformUI.getWorkbench().getActiveWorkbenchWindow().getWorkbench().saveAllEditors(true)) {
+			return Status.CANCEL_STATUS;
+		}
 
-				@Override
-				public void done(IJobChangeEvent event) {
-					numDone++;
-					if (numDone == exportJobs.size()) {
-						RefreshSdrJob refresh = new RefreshSdrJob(sdrRoot);
-						refresh.schedule();
-					}
-				}
-			};
-
-			for (Job j : exportJobs) {
-				j.addJobChangeListener(listener);
-				j.schedule();
+		// Find all IProject(s) in the drop
+		final TreeSelection sel = (TreeSelection) data;
+		final List<IProject> projects = new ArrayList<IProject>();
+		for (final Object item : sel.toArray()) {
+			final IProject proj = PluginUtil.adapt(IProject.class, item);
+			if (proj != null && proj.exists() && proj.isOpen()) {
+				projects.add(proj);
 			}
 		}
 
-		return Status.OK_STATUS;
-	}
-
-	private Job handleProjectDrop(final SdrRoot root, final IProject proj) {
-
-		final WorkspaceJob job = new WorkspaceJob("Exporting " + proj) {
-
+		// Export, then refresh the SDRROOT
+		final IScaExporter exporter = new FileStoreExporter(SdrUiPlugin.getDefault().getTargetSdrPath());
+		final ExportToSdrRootJob exportJob = new ExportToSdrRootJob(exporter, projects);
+		final RefreshSdrJob refreshJob = new RefreshSdrJob();
+		exportJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-				final int FETCH_INFO_WORK = 1;
-				final int TO_LOCAL_FILE_WORK = 1;
-				final int EXPORT_WORK = 98;
-				final SubMonitor progress = SubMonitor.convert(monitor, FETCH_INFO_WORK + TO_LOCAL_FILE_WORK + EXPORT_WORK);
-
-				try {
-					IPath sdrPath = SdrUiPlugin.getDefault().getTargetSdrPath();
-					if (sdrPath == null) {
-						throw new CoreException(new Status(Status.ERROR, SdrUiPlugin.PLUGIN_ID,
-							"The SDR root is undefined. Check the SDRROOT environment variable and your preference settings.", null));
-					}
-					final URI scaRoot = URI.createFileURI(sdrPath.toPortableString());
-					final IFileStore store = EFS.getStore(new java.net.URI(scaRoot.toString()));
-
-					if (!store.fetchInfo(EFS.NONE, progress.newChild(FETCH_INFO_WORK)).exists()) {
-						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID,
-							"The defined SDR root path does not exist.  Check the SDRROOT environment variable and your preference settings.");
-					}
-
-					// Currently we only support local target SDR roots, although in the future
-					// the SDR root
-					final File destDir = store.toLocalFile(EFS.NONE, progress.newChild(TO_LOCAL_FILE_WORK));
-					if (destDir == null) {
-						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Exporting is only supported for local SDR");
-					}
-					if (destDir.isFile()) {
-						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "An existing file " + destDir + "is in the way of the export");
-					}
-					if (!destDir.exists()) {
-						destDir.mkdirs();
-					}
-					IScaExporter exporter = null;
-
-					// TODO This should be here!!
-					if (proj.hasNature("gov.redhawk.ide.idl.natures.idllibrary")) {
-						exporter = new FileStoreExporter(RedhawkIdeActivator.getDefault().getRuntimePath());
-					} else {
-						exporter = new FileStoreExporter(new Path(destDir.toString()));
-					}
-
-					// The order of checking natures is important because
-					// nodes and devices also are components
-					if (proj.hasNature(ScaNodeProjectNature.ID)) {
-						ExportUtils.exportNode(proj, exporter, progress.newChild(EXPORT_WORK));
-					} else if (proj.hasNature(ScaComponentProjectNature.ID)) {
-						ExportUtils.exportComponent(proj, exporter, progress.newChild(EXPORT_WORK));
-					} else if (proj.hasNature(ScaWaveformProjectNature.ID)) {
-						ExportUtils.exportWaveform(proj, exporter, progress.newChild(EXPORT_WORK));
-					}
-
-					exporter.finished();
-
-				} catch (final CoreException e) {
-					return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Error exporting project to SDR root", e);
-				} catch (final URISyntaxException e) {
-					return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Error exporting project to SDR root", e);
-				} catch (final IOException e) {
-					return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Error exporting project to SDR root", e);
-				} finally {
-					monitor.done();
-				}
-
-				return Status.OK_STATUS;
+			public void done(IJobChangeEvent event) {
+				refreshJob.schedule();
 			}
-		};
+		});
+		exportJob.setUser(true);
+		exportJob.schedule();
 
-		job.setUser(true);
-		job.setRule(proj);
-		job.setPriority(Job.LONG);
-		
-		return job;
+		return Status.OK_STATUS;
 	}
 }
