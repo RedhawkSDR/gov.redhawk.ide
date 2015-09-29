@@ -352,27 +352,20 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	/**
 	 * Returns minimum width for Shape with provides and uses port stubs and name text
 	 */
-	public int getMinimumWidth(final String outerTitle, final String innerTitle, final EList<ProvidesPortStub> providesPortStubs,
+	protected int getMinimumWidth(final Text outerTitle, final Text innerTitle, final EList<ProvidesPortStub> providesPortStubs,
 		final EList<UsesPortStub> usesPortStubs) {
 
 		// determine width of parent shape
 		int rhContainerShapeMinWidth = super.getMinimumWidth(outerTitle, innerTitle, providesPortStubs, usesPortStubs);
 
-		int innerTitleWidth = 0;
-		Diagram diagram = DUtil.findDiagram(this);
-
 		// inner title (including start order)
-		IDimension innerTitleDimension = GraphitiUi.getUiLayoutService().calculateTextSize(innerTitle, StyleUtil.getInnerTitleFont(diagram));
-		innerTitleWidth = innerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING
+		IDimension innerTitleDimension = DUtil.calculateTextSize(innerTitle);
+		int innerTitleWidth = innerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING
 			+ ComponentShapeImpl.START_ORDER_ELLIPSE_DIAMETER + ComponentShapeImpl.START_ORDER_ELLIPSE_LEFT_PADDING
 			+ ComponentShapeImpl.START_ORDER_ELLIPSE_RIGHT_PADDING;
 
 		// return the largest width
-		if (rhContainerShapeMinWidth > innerTitleWidth) {
-			return rhContainerShapeMinWidth;
-		} else {
-			return innerTitleWidth;
-		}
+		return Math.max(rhContainerShapeMinWidth, innerTitleWidth);
 
 	}
 

@@ -532,7 +532,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	public void layout() {
 		// get shape being laid out
-		ContainerShape containerShape = (ContainerShape) this;
 		RoundedRectangle outerRoundedRectangle = (RoundedRectangle) this.getGraphicsAlgorithm();
 		Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(this);
 		EList<ProvidesPortStub> provides = null;
@@ -550,7 +549,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 
 		// width
-		int minimumWidth = getMinimumWidth(getOuterText().getValue(), getInnerText().getValue(), provides, uses);
+		int minimumWidth = getMinimumWidth(getOuterText(), getInnerText(), provides, uses);
 		if (outerRoundedRectangle.getWidth() < minimumWidth) {
 			outerRoundedRectangle.setWidth(minimumWidth);
 		}
@@ -571,8 +570,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		int innerContainerShapeHeight = containerHeight - INNER_CONTAINER_SHAPE_TOP_PADDING;
 		gaLayoutService.setLocationAndSize(getInnerContainerShape().getGraphicsAlgorithm(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING,
 			INNER_CONTAINER_SHAPE_TOP_PADDING, innerContainerShapeWidth, innerContainerShapeHeight);
-		IDimension innerRoundedRectangleTextSize = GraphitiUi.getUiLayoutService().calculateTextSize(getInnerText().getValue(),
-			StyleUtil.getInnerTitleFont(Graphiti.getPeService().getDiagramForPictogramElement(containerShape)));
+		IDimension innerRoundedRectangleTextSize = GraphitiUi.getUiLayoutService().calculateTextSize(getInnerText().getValue(), Graphiti.getGaService().getFont(getInnerText(), true));
 		int xForImage = (getInnerContainerShape().getGraphicsAlgorithm().getWidth() - (innerRoundedRectangleTextSize.getWidth() + ICON_IMAGE_LENGTH + 5)) / 2;
 		gaLayoutService.setLocationAndSize(getInnerImage(), xForImage, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
 		gaLayoutService.setLocationAndSize(getInnerText(), xForImage + ICON_IMAGE_LENGTH + 5, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING,
@@ -1946,7 +1944,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @param ci
 	 * @return
 	 */
-	public int getMinimumWidth(final String outerTitle, final String innerTitle, final EList<ProvidesPortStub> providesPortStubs,
+	protected int getMinimumWidth(final Text outerTitle, final Text innerTitle, final EList<ProvidesPortStub> providesPortStubs,
 		final EList<UsesPortStub> usesPortStubs) {
 
 		int portsWidth = 0;
@@ -1960,11 +1958,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		portsWidth = usesWidth + providesWidth + REQ_PADDING_BETWEEN_PORT_TYPES;
 
 		// inner title (including start order)
-		IDimension innerTitleDimension = GraphitiUi.getUiLayoutService().calculateTextSize(innerTitle, StyleUtil.getInnerTitleFont(diagram));
+		IDimension innerTitleDimension = DUtil.calculateTextSize(innerTitle);
 		innerTitleWidth = innerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING;
 
 		// outer title
-		IDimension outerTitleDimension = GraphitiUi.getUiLayoutService().calculateTextSize(outerTitle, StyleUtil.getOuterTitleFont(diagram));
+		IDimension outerTitleDimension = DUtil.calculateTextSize(outerTitle);
 		outerTitleWidth = INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + outerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH
 			+ OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING + 4;
 

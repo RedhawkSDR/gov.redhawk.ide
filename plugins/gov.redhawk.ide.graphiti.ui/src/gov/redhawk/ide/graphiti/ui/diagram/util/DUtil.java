@@ -83,6 +83,7 @@ import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.internal.datatypes.impl.DimensionImpl;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.PropertyContainer;
+import org.eclipse.graphiti.mm.algorithms.AbstractText;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
@@ -1557,5 +1558,15 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 				DUtil.unlinkPictogramElement(child);
 			}
 		}
+	}
+
+	/**
+	 * Calculates the width and height of the given text in the font of the given text. Unlike Graphiti's layout
+	 * service, this method takes the text's style into account when getting the font.
+	 * @param text the {@link AbstractText} to calculate the rendering size for
+	 * @return
+	 */
+	public static IDimension calculateTextSize(AbstractText text) {
+		return GraphitiUi.getUiLayoutService().calculateTextSize(text.getValue(), Graphiti.getGaService().getFont(text, true));
 	}
 }

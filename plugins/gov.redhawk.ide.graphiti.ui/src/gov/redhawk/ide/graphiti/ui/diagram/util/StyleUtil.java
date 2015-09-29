@@ -89,16 +89,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String SANS_FONT = "Sans";
 	private static final String DEFAULT_FONT = SANS_FONT;
 
-	public static final Font getOuterTitleFont(Diagram diagram) {
-		diagram = getStyleDiagram(diagram);
-		return findStyle(diagram, OUTER_TEXT).getFont();
-	}
-
-	public static final Font getInnerTitleFont(Diagram diagram) {
-		diagram = getStyleDiagram(diagram);
-		return findStyle(diagram, INNER_TEXT).getFont();
-	}
-
 	public static final Font getPortFont(Diagram diagram) {
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
 	}
