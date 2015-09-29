@@ -11,6 +11,7 @@
 package gov.redhawk.ide.ui.tests.properties;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotCombo;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTableItem;
 import org.junit.Assert;
@@ -127,80 +128,28 @@ public abstract class AbstractBasicPropertyTest extends AbstractBasicTest {
 		editor.bot().checkBox("Enable").click();
 		assertFormValid();
 	}
-	
-	public void testKind(boolean supportsExec) {
+
+	protected void testKind(boolean supportsExec) {
 		assertFormValid();
 		
-		SWTBotTable kindTable = editor.bot().tableWithLabel("Kind:");
-		kindTable.getTableItem("configure (default)").check();
-		assertFormValid();
-		
-		Assert.assertEquals("Support exec param: " + supportsExec, supportsExec, kindTable.containsItem("execparam"));
-		
-		if (supportsExec) {
-			kindTable.getTableItem("execparam").check();
-		}
-		assertFormValid();
-		kindTable.getTableItem("allocation").check();
-		assertFormValid();
-		kindTable.getTableItem("event").check();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		kindTable.getTableItem("event").uncheck();
-		assertFormValid();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		kindTable.getTableItem("allocation").uncheck();
-		assertFormValid();
-		kindTable.getTableItem("event").check();
-		assertFormValid();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		kindTable.getTableItem("event").uncheck();
-		assertFormValid();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		if (supportsExec) {
-			kindTable.getTableItem("execparam").uncheck();
-		}
-		kindTable.getTableItem("configure (default)").uncheck();
-		assertFormValid();
-		
-		kindTable.getTableItem("allocation").check();
-		assertFormValid();
-		kindTable.getTableItem("event").check();
-		assertFormValid();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		assertFormValid();
-		kindTable.getTableItem("event").uncheck();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		kindTable.getTableItem("allocation").uncheck();
+		SWTBotCombo kindCombo = editor.bot().comboBoxWithLabel("Kind:");
+		kindCombo.setSelection("property (default)");
 		assertFormValid();
 
-		
-		kindTable.getTableItem("event").check();
+		// TODO: Reformat for new commandline attribute
+		//Assert.assertEquals("Support exec param: " + supportsExec, supportsExec, kindTable.containsItem("execparam"));
+		//if (supportsExec) {
+		//	kindTable.getTableItem("execparam").check();
+		//}
+		//assertFormValid();
+
+		kindCombo.setSelection("allocation");
 		assertFormValid();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		kindTable.getTableItem("event").uncheck();
-		assertFormValid();
-		
-		kindTable.getTableItem("configure (default)").uncheck();
-		kindTable.getTableItem("message").check();
-		assertFormValid();
-		kindTable.getTableItem("message").uncheck();
+
+		kindCombo.setSelection("message");
 		assertFormValid();
 	}
-	
+
 	@Test
 	public void testEnum() throws CoreException {	
 		editor.bot().button("Add...").click();

@@ -26,7 +26,6 @@ public class PropertiesTabSimpleTest extends AbstractBasicPropertyTest {
 		testKind(true);
 	}
 	
-	
 	@Test
 	public void testValue() throws CoreException {
 		testValue("Value:");
