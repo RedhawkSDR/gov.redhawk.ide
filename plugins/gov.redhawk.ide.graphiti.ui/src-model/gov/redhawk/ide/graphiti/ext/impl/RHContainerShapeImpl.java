@@ -42,7 +42,6 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
@@ -244,6 +243,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5, LOLLIPOP_ELLIPSE_DIAMETER = 10, INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
 			INTERFACE_SHAPE_HEIGHT = 10, ICON_IMAGE_LENGTH = 16;
 
+	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_WIDTH = 5;
+	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT = 5;
 	protected static final int PORT_SHAPE_HEIGHT = 15;
 	protected static final int PORT_SHAPE_WIDTH = PORT_SHAPE_HEIGHT;
 	protected static final int PORT_ROW_PADDING_HEIGHT = 5;
@@ -463,7 +464,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		EObject newObject = (EObject) context.getNewObject();
 		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
 
-		getProperties().addAll(new ArrayList<Property>(0));
 		setVisible(true);
 		setActive(true);
 		setContainer(targetContainerShape);
@@ -538,7 +538,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		int minimumWidth = 0;
 		if (isHasPortsContainerShape()) {
 			// Show inner line
-			getInnerPolyline().setTransparency(0d);
+			getInnerPolyline().setLineVisible(true);
 
 			// Layout provides ports
 			ContainerShape providesPortsContainer = getProvidesPortsContainerShape();
@@ -558,7 +558,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			minimumWidth = providesWidth + usesWidth + REQ_PADDING_BETWEEN_PORT_TYPES;
 		}
 
-		// Resize height if necessary to accomodate contents (always requires padding)
+		// Resize height if necessary to accommodate contents (always requires padding)
 		RoundedRectangle outerRoundedRectangle = (RoundedRectangle) this.getGraphicsAlgorithm();
 		minimumHeight += PORTS_CONTAINER_SHAPE_TOP_PADDING;
 		if (outerRoundedRectangle.getHeight() < minimumHeight) {
@@ -598,7 +598,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			}
 
 			// Hide inner line
-			getInnerPolyline().setTransparency(1d); //hide line
+			getInnerPolyline().setLineVisible(false);
 		}
 	}
 
@@ -790,7 +790,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	protected ContainerShape addInnerContainer(String text, String imageId, String styleId) {
 		ContainerShape innerContainerShape = Graphiti.getCreateService().createContainerShape(this, false);
 		Graphiti.getPeService().setPropertyValue(innerContainerShape, DUtil.GA_TYPE, SHAPE_INNER_CONTAINER);
-		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(innerContainerShape, 5, 5);
+		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(innerContainerShape, INNER_ROUNDED_RECTANGLE_CORNER_WIDTH,
+			INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT);
+		innerRoundedRectangle.setLineWidth(null); // inherit from style
 		StyleUtil.setStyle(innerRoundedRectangle, styleId);
 		Graphiti.getPeService().setPropertyValue(innerRoundedRectangle, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE);
 		Graphiti.getGaLayoutService().setLocation(innerRoundedRectangle, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, INNER_CONTAINER_SHAPE_TOP_PADDING);
@@ -807,9 +809,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// draw line if showing shape details (ports)
 		Polyline polyline = Graphiti.getGaCreateService().createPolyline(innerRoundedRectangle,
 			new int[] { 0, INNER_ROUNDED_RECTANGLE_LINE_Y, innerRoundedRectangle.getWidth(), INNER_ROUNDED_RECTANGLE_LINE_Y });
-		polyline.setLineWidth(1);
-		polyline.setBackground(Graphiti.getGaService().manageColor(DUtil.findDiagram(this), IColorConstant.BLACK));
-		polyline.setForeground(Graphiti.getGaService().manageColor(DUtil.findDiagram(this), IColorConstant.BLACK));
+		polyline.setLineWidth(null);
+		StyleUtil.setStyle(polyline, styleId);
 		Graphiti.getPeService().setPropertyValue(polyline, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_LINE);
 
 		return innerContainerShape;
@@ -2022,19 +2023,17 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Updates the style of the component's inner rounded rectangle based on the current state.
 	 */
 	protected void updateStyleForComponentInner() {
-		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
-		if (innerRoundedRectangle != null) {
-			String styleId;
-			if (iStatusSeverity == IStatus.ERROR) {
-				styleId = StyleUtil.COMPONENT_INNER_ERROR;
-			} else if (!enabled) {
-				styleId = StyleUtil.COMPONENT_INNER_DISABLED;
-			} else if (started) {
-				styleId = StyleUtil.COMPONENT_INNER_STARTED;
-			} else {
-				styleId = StyleUtil.COMPONENT_INNER;
-			}
-			StyleUtil.setStyle(innerRoundedRectangle, styleId);
+		String styleId;
+		if (iStatusSeverity == IStatus.ERROR) {
+			styleId = StyleUtil.COMPONENT_INNER_ERROR;
+		} else if (!enabled) {
+			styleId = StyleUtil.COMPONENT_INNER_DISABLED;
+		} else if (started) {
+			styleId = StyleUtil.COMPONENT_INNER_STARTED;
+		} else {
+			styleId = StyleUtil.COMPONENT_INNER;
 		}
+		StyleUtil.setStyle(getInnerContainerShape().getGraphicsAlgorithm(), styleId);
+		StyleUtil.setStyle(getInnerPolyline(), styleId);
 	}
 } // RHContainerShapeImpl

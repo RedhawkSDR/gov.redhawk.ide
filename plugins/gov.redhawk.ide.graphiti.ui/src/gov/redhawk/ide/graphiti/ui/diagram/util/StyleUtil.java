@@ -152,7 +152,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		IGaService gaService = Graphiti.getGaService();
 		Style style = gaService.createStyle(diagram, COMPONENT_INNER);
 		gaService.setRenderingStyle(style, PredefinedColoredAreas.getBlueWhiteAdaptions());
-		style.setLineWidth(2);
+		style.setLineWidth(1);
 		return style;
 	}
 
@@ -161,7 +161,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		IGaService gaService = Graphiti.getGaService();
 		Style style = gaService.createStyle(diagram, COMPONENT_INNER_STARTED);
 		gaService.setRenderingStyle(style, RHContainerColoredAreas.getGreenWhiteAdaptions());
-		style.setLineWidth(2);
+		style.setLineWidth(1);
 		return style;
 	}
 
@@ -170,7 +170,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		IGaService gaService = Graphiti.getGaService();
 		Style style = gaService.createStyle(diagram, COMPONENT_INNER_ERROR);
 		gaService.setRenderingStyle(style, RHContainerColoredAreas.getYellowWhiteAdaptions());
-		style.setLineWidth(2);
+		style.setLineWidth(1);
 		return style;
 	}
 
@@ -179,7 +179,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		IGaService gaService = Graphiti.getGaService();
 		Style style = gaService.createStyle(diagram, COMPONENT_INNER_DISABLED);
 		gaService.setRenderingStyle(style, PredefinedColoredAreas.getLightGrayAdaptions());
-		style.setLineWidth(2);
+		style.setLineWidth(1);
 		return style;
 	}
 
@@ -201,7 +201,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		style.setBackground(gaService.manageColor(diagram, new ColorConstant(255, 0, 0)));
 		style.setLineStyle(LineStyle.DASH);
 		gaService.setRenderingStyle(style, FindByColoredAreas.getCopperWhiteAdaptions());
-		style.setLineWidth(2);
+		style.setLineWidth(1);
 		return style;
 	}
 
@@ -225,7 +225,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		style.setBackground(gaService.manageColor(diagram, new ColorConstant(255, 0, 0)));
 		style.setLineStyle(LineStyle.DASH);
 		gaService.setRenderingStyle(style, FindByColoredAreas.getLightGrayAdaptions());
-		style.setLineWidth(2);
+		style.setLineWidth(1);
 		return style;
 	}
 
