@@ -30,10 +30,10 @@ public class WaveformNamingRaceConditionTest extends UITest {
 	@Test
 	public void test_IDE_826() throws Exception {
 		bot.menu("File").menu("New").menu("Other...").click();
-		
+
 		SWTBotShell wizardShell = bot.shell("New");
 		wizardShell.activate();
-		bot.tree().getTreeItem("SCA").expand().getNode("REDHAWK Waveform Project").select();
+		bot.tree().getTreeItem("REDHAWK").expand().getNode("REDHAWK Waveform Project").select();
 		bot.button("Next >").click();
 
 		SWTBotText projectNameField = bot.textWithLabel("Project name:");
