@@ -44,7 +44,10 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -97,6 +100,7 @@ public class ComponentEditor extends SCAFormEditor {
 	private ImplementationPage implementationPage;
 
 	private ResourceListener nameListener;
+	private ProjectListener projectListener;
 
 	private TextEditor spdEditor;
 	private IEditorInput prfInput;
@@ -243,6 +247,10 @@ public class ComponentEditor extends SCAFormEditor {
 			this.prfListener.dispose();
 			this.prfListener = null;
 		}
+		if (this.projectListener != null) {
+			this.projectListener.dispose();
+			this.projectListener = null;
+		}
 		super.dispose();
 	}
 
@@ -251,6 +259,9 @@ public class ComponentEditor extends SCAFormEditor {
 		super.setInput(input);
 
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(this.getMainResource());
+
+		projectListener = new ProjectListener();
+		projectListener.activate();
 
 		createPrfInput(spd);
 		createScdInput(spd);
@@ -806,4 +817,41 @@ public class ComponentEditor extends SCAFormEditor {
 		return false;
 	}
 
+	/**
+	 * Listens to the project associated with the editor's input. Triggers a validation when changes occur to that
+	 * project.
+	 */
+	private class ProjectListener implements IResourceChangeListener {
+
+		public ProjectListener() {
+		}
+
+		public void activate() {
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		}
+
+		public void dispose() {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		}
+
+		public void resourceChanged(IResourceChangeEvent event) {
+			IEditorInput input = getEditorInput();
+			if (!(input instanceof IFileEditorInput)) {
+				return;
+			}
+			IFile file = ((IFileEditorInput) input).getFile();
+			final IProject project = file.getProject();
+
+			IResourceDelta delta = event.getDelta();
+			if (delta != null) {
+				if (delta.findMember(project.getFullPath()) != null) {
+					validate();
+				}
+			} else {
+				if (project.equals(event.getResource().getProject())) {
+					validate();
+				}
+			}
+		}
+	}
 }
