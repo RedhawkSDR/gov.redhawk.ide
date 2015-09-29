@@ -20,6 +20,7 @@
 <listEntry value="4"/>
 </listAttribute>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="DISPLAY" value=":1"/>
 <mapEntry key="OSSIEHOME" value="${resource_loc:/gov.redhawk.ide.ui.tests.properties/ossie}"/>
 <mapEntry key="SDRROOT" value="${resource_loc:/gov.redhawk.ide.ui.tests.properties/sdr}"/>
 </mapAttribute>
