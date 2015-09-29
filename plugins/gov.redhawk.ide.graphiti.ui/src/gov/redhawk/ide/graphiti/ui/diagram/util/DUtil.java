@@ -715,23 +715,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		return false;
 	}
 
-	// returns width required to support longest provides port name
-	// 4 used as minimum, characters cut off otherwise
-	public static int getLongestProvidesPortWidth(final EList<ProvidesPortStub> providesPortStubs, Diagram diagram) {
-		String longest = "four";
-		if (providesPortStubs != null) {
-			for (final ProvidesPortStub provides : providesPortStubs) {
-				if (provides.getName().length() > longest.length()) {
-					longest = provides.getName();
-				}
-			}
-		}
-
-		IDimension requiredWidth = GraphitiUi.getUiLayoutService().calculateTextSize(longest, StyleUtil.getPortFont(diagram));
-
-		return requiredWidth.getWidth() + 8; // 8 gives us some breathing room
-	}
-
 	// returns width required to support longest uses port name
 	// 4 used as minimum, characters cut off otherwise
 	public static int getLongestUsesPortWidth(final EList<UsesPortStub> usesPortsStubs, Diagram diagram) {

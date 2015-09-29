@@ -20,14 +20,11 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -349,24 +346,12 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		return new Reason(false, "No updates required");
 	}
 
-	/**
-	 * Returns minimum width for Shape with provides and uses port stubs and name text
-	 */
-	protected int getMinimumWidth(final Text outerTitle, final Text innerTitle, final EList<ProvidesPortStub> providesPortStubs,
-		final EList<UsesPortStub> usesPortStubs) {
-
-		// determine width of parent shape
-		int rhContainerShapeMinWidth = super.getMinimumWidth(outerTitle, innerTitle, providesPortStubs, usesPortStubs);
-
-		// inner title (including start order)
+	@Override
+	protected int getInnerWidth(Text innerTitle) {
 		IDimension innerTitleDimension = DUtil.calculateTextSize(innerTitle);
-		int innerTitleWidth = innerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING
+		return innerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING
 			+ ComponentShapeImpl.START_ORDER_ELLIPSE_DIAMETER + ComponentShapeImpl.START_ORDER_ELLIPSE_LEFT_PADDING
 			+ ComponentShapeImpl.START_ORDER_ELLIPSE_RIGHT_PADDING;
-
-		// return the largest width
-		return Math.max(rhContainerShapeMinWidth, innerTitleWidth);
-
 	}
 
 	// returns all external ports that belong to the provided Component.
