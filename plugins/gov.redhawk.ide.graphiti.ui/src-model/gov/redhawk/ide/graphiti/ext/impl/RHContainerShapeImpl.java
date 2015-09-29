@@ -818,7 +818,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Add lollipop to targetContainerShape. Lollipop anchor will link to the provided business object.T
 	 */
-	public ContainerShape addLollipop(Object anchorBusinessObject, IFeatureProvider featureProvider) {
+	protected ContainerShape addLollipop(Object anchorBusinessObject, IFeatureProvider featureProvider) {
 
 		// interface container lollipop
 		ContainerShape interfaceContainerShape = Graphiti.getCreateService().createContainerShape(this, true);
@@ -1382,7 +1382,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//Updates Provides Ports Container Shape
-	public Reason internalUpdateProvidesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
+	protected Reason internalUpdateProvidesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
 		EList<ProvidesPortStub> provides, Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		// providesPortsContainerShape
@@ -1521,7 +1521,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//update lollipop
-	public Reason internalUpdateLollipop(AbstractContainerPattern pattern, Diagram diagram, boolean performUpdate, boolean updateStatus) {
+	protected Reason internalUpdateLollipop(AbstractContainerPattern pattern, Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		if (isHasSuperPortsContainerShape()) {
 			//super ports exist, hide lollipop
@@ -1560,7 +1560,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//Updates Uses Ports Container Shape
-	public Reason internalUpdateUsesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
+	protected Reason internalUpdateUsesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
 		EList<UsesPortStub> uses, Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		// usesPortsContainerShape
@@ -1702,7 +1702,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//update super provides port container shape
-	public Reason internalUpdateSuperProvidesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
+	protected Reason internalUpdateSuperProvidesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
 		EList<ProvidesPortStub> provides, ComponentSupportedInterfaceStub interfaceStub, Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		// super port shape
@@ -1788,7 +1788,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//updates super uses ports container shape
-	public Reason internalUpdateSuperUsesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
+	protected Reason internalUpdateSuperUsesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
 		EList<UsesPortStub> uses, Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		// super port shape
@@ -1873,7 +1873,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * handles both determining whether an update is needed and performing an update for the shape.
 	 * @return
 	 */
-	public Reason internalUpdate(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts, boolean performUpdate) {
+	protected Reason internalUpdate(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts, boolean performUpdate) {
 
 		boolean updateStatus = false;
 
@@ -1998,39 +1998,24 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @return
 	 */
 	protected int getMinimumWidth(Text outerTitle, Text innerTitle) {
-
 		// inner title (potentially including start order)
 		int innerTitleWidth = getInnerWidth(innerTitle);
 
 		// outer title
 		int outerTitleWidth = getOuterWidth(outerTitle);
 
-		// return the largest
-		return Math.max(innerTitleWidth, outerTitleWidth);
+		// Return the largest, plus the lollipop width
+		return Math.max(innerTitleWidth, outerTitleWidth) + INTERFACE_SHAPE_WIDTH;
 	}
 
 	protected int getInnerWidth(Text innerTitle) {
 		IDimension innerTitleDimension = DUtil.calculateTextSize(innerTitle);
-		return innerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING;
+		return innerTitleDimension.getWidth() + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING;
 	}
 
 	protected int getOuterWidth(Text outerTitle) {
 		IDimension outerTitleDimension = DUtil.calculateTextSize(outerTitle);
-		return INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + outerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH
-			+ OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING + 4;
-	}
-
-	/**
-	 * Returns a instance of RHContainerShape that contains the provide PictogramElement
-	 * @param pe
-	 * @return
-	 */
-	public static RHContainerShape findFromChild(PictogramElement pe) {
-		ContainerShape cs = DUtil.findContainerShapeParentWithProperty(pe, SHAPE_OUTER_CONTAINER);
-		if (cs instanceof RHContainerShape) {
-			return (RHContainerShape) cs;
-		}
-		return null;
+		return INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + outerTitleDimension.getWidth() + OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING + 4;
 	}
 
 	/**

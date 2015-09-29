@@ -39,7 +39,6 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 /**
  * <!-- begin-user-doc -->
@@ -162,7 +161,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	/**
 	 * Add an Ellipse to provided container shape that will contain the start order from sadComponentInstantiation
 	 */
-	public ContainerShape addStartOrderEllipse(SadComponentInstantiation sadComponentInstantiation, AssemblyController assemblyController,
+	protected ContainerShape addStartOrderEllipse(SadComponentInstantiation sadComponentInstantiation, AssemblyController assemblyController,
 		IFeatureProvider featureProvider) {
 
 		// Create ellipse shape to display component start order
@@ -195,10 +194,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		Text startOrderText = Graphiti.getCreateService().createText(startOrderTextShape, startOrder);
 		Graphiti.getPeService().setPropertyValue(startOrderText, DUtil.GA_TYPE, GA_START_ORDER_TEXT);
 		StyleUtil.setStyle(startOrderText, StyleUtil.START_ORDER_TEXT);
-		IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(startOrder, startOrderText.getStyle().getFont());
-		int textX = START_ORDER_ELLIPSE_DIAMETER / 2 - textDimension.getWidth() / 2;
-		Graphiti.getGaLayoutService().setLocationAndSize(startOrderText, textX, START_ORDER_TOP_TEXT_PADDING, START_ORDER_ELLIPSE_DIAMETER,
-			START_ORDER_ELLIPSE_DIAMETER);
+		Graphiti.getGaLayoutService().setSize(startOrderText, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
 
 		return startOrderEllipseShape;
 	}
@@ -226,6 +222,12 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			// Set the layout for the start order ellipse
 			int xOffset = innerShape.getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING);
 			Graphiti.getGaLayoutService().setLocation(startOrderEllipse.getGraphicsAlgorithm(), xOffset, START_ORDER_ELLIPSE_TOP_PADDING);
+
+			// Position the text
+			Text startOrderText = getStartOrderText();
+			IDimension textDimension = DUtil.calculateTextSize(startOrderText);
+			int textX = START_ORDER_ELLIPSE_DIAMETER / 2 - textDimension.getWidth() / 2;
+			Graphiti.getGaLayoutService().setLocation(startOrderText, textX, START_ORDER_TOP_TEXT_PADDING);
 		}
 	}
 
@@ -237,7 +239,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * @param performUpdate
 	 * @return
 	 */
-	public Reason internalUpdate(ComponentPattern pattern, SadComponentInstantiation ci, boolean performUpdate) {
+	protected Reason internalUpdate(ComponentPattern pattern, SadComponentInstantiation ci, boolean performUpdate) {
 		Diagram diagram = DUtil.findDiagram(this);
 		IFeatureProvider featureProvider = pattern.getFeatureProvider();
 		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
@@ -346,9 +348,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 	@Override
 	protected int getInnerWidth(Text innerTitle) {
-		IDimension innerTitleDimension = DUtil.calculateTextSize(innerTitle);
-		return innerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING
-			+ ComponentShapeImpl.START_ORDER_ELLIPSE_DIAMETER + ComponentShapeImpl.START_ORDER_ELLIPSE_LEFT_PADDING
+		return super.getInnerWidth(innerTitle) + ComponentShapeImpl.START_ORDER_ELLIPSE_DIAMETER + ComponentShapeImpl.START_ORDER_ELLIPSE_LEFT_PADDING
 			+ ComponentShapeImpl.START_ORDER_ELLIPSE_RIGHT_PADDING;
 	}
 
