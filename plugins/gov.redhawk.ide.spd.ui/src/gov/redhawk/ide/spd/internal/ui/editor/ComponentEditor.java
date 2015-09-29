@@ -71,6 +71,7 @@ import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Composite;
@@ -872,7 +873,11 @@ public class ComponentEditor extends SCAFormEditor {
 	 * @return <code> true </code> if this is an spd resource; <code> false </code> otherwise
 	 */
 	private boolean isValidSpdResource(final IResource resource) {
-		for (final Resource r : getEditingDomain().getResourceSet().getResources()) {
+		EditingDomain editingDomain = getEditingDomain();
+		if (editingDomain == null) {
+			return false;
+		}
+		for (final Resource r : editingDomain.getResourceSet().getResources()) {
 			final IFile iFile = ModelUtil.getResource(r);
 			if (resource.equals(iFile)) {
 				return true;
