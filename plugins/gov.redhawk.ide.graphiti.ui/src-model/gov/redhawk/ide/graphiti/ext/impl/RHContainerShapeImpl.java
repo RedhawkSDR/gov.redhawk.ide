@@ -239,13 +239,15 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	public static final int OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING = 10, INNER_CONTAINER_SHAPE_TOP_PADDING = 20,
 			INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15, INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING = 60, PROVIDES_PORTS_LEFT_PADDING = 5,
 			INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
-			PORTS_CONTAINER_SHAPE_TOP_PADDING = 60, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8, INNER_ROUNDED_RECTANGLE_LINE_Y = 28, NAME_CHAR_WIDTH = 7,
-			LABEL_CHAR_WIDTH = 7, PORT_NAME_HORIZONTAL_PADDING = 5, PORT_ROW_HEIGHT = 15, PORT_ROW_PADDING_HEIGHT = 5, PORT_SHAPE_HEIGHT = 15,
-			SUPER_PORT_SHAPE_HEIGHT = 25, SUPER_PORT_SHAPE_WIDTH = 10, SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5, PORT_SHAPE_WIDTH = 15, PORT_CHAR_WIDTH = 7,
-			LOLLIPOP_ELLIPSE_DIAMETER = 10, INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
+			PORTS_CONTAINER_SHAPE_TOP_PADDING = 60, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8, INNER_ROUNDED_RECTANGLE_LINE_Y = 28,
+			PORT_NAME_HORIZONTAL_PADDING = 5, SUPER_PORT_SHAPE_HEIGHT = 25, SUPER_PORT_SHAPE_WIDTH = 10,
+			SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5, LOLLIPOP_ELLIPSE_DIAMETER = 10, INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
 			INTERFACE_SHAPE_HEIGHT = 10, ICON_IMAGE_LENGTH = 16;
 
-	private static final int REQ_PADDING_BETWEEN_PORT_TYPES = 10;
+	protected static final int PORT_SHAPE_HEIGHT = 15;
+	protected static final int PORT_SHAPE_WIDTH = PORT_SHAPE_HEIGHT;
+	protected static final int PORT_ROW_PADDING_HEIGHT = 5;
+	protected static final int REQ_PADDING_BETWEEN_PORT_TYPES = 10;
 	// BEGIN GENERATED CODE
 
 	/**
@@ -932,8 +934,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Adds a ProvidesPortStub shape to the providesPortsContainerShape
 	 */
-	private void addProvidesPortContainerShape(ProvidesPortStub p, ContainerShape providesPortsContainerShape,
-		IFeatureProvider featureProvider, Port externalPort) {
+	private void addProvidesPortContainerShape(ProvidesPortStub p, ContainerShape providesPortsContainerShape, IFeatureProvider featureProvider,
+		Port externalPort) {
 
 		ContainerShape providesPortContainerShape = Graphiti.getCreateService().createContainerShape(providesPortsContainerShape, true);
 		Graphiti.getPeService().setPropertyValue(providesPortContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORT_CONTAINER); // ref
@@ -985,7 +987,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// Graphiti appears to underestimate the width for some strings (e.g., those ending in "r"), so add a small
 		// amount of padding to ensure the entire letter is drawn
 		int textWidth = textSize.getWidth() + 2;
-		Graphiti.getGaLayoutService().setSize(text, textWidth, 20);
+		Graphiti.getGaLayoutService().setSize(text, textWidth, PORT_SHAPE_HEIGHT);
 	}
 
 	protected void layoutInnerShape(ContainerShape innerContainerShape) {
@@ -1017,7 +1019,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 			// Place the container at the next Y position
 			gaLayoutService.setLocation(providesPort.getGraphicsAlgorithm(), 0, currentY);
-			currentY += providesPort.getGraphicsAlgorithm().getHeight() + 5;
+			currentY += providesPort.getGraphicsAlgorithm().getHeight() + PORT_ROW_PADDING_HEIGHT;
 			maxWidth = Math.max(maxWidth, portWidth);
 		}
 		// Resize container to contents and adjust position so that ports are aligned to the outer edge
@@ -1051,7 +1053,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		for (Shape shape : usesPortsContainer.getChildren()) {
 			int xOffset = maxWidth - shape.getGraphicsAlgorithm().getWidth();
 			gaLayoutService.setLocation(shape.getGraphicsAlgorithm(), xOffset, currentY);
-			currentY += shape.getGraphicsAlgorithm().getHeight() + 5;
+			currentY += shape.getGraphicsAlgorithm().getHeight() + PORT_ROW_PADDING_HEIGHT;
 		}
 
 		// Resize container to contents
@@ -1153,9 +1155,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Adds a UsesPort shape to the usesPortsContainerShape
 	 */
-	private void addUsesPortContainerShape(UsesPortStub p, ContainerShape usesPortsContainerShape, IFeatureProvider featureProvider,
-		Port externalPort) {
-
+	private void addUsesPortContainerShape(UsesPortStub p, ContainerShape usesPortsContainerShape, IFeatureProvider featureProvider, Port externalPort) {
 		// port container
 		ContainerShape usesPortContainerShape = Graphiti.getPeService().createContainerShape(usesPortsContainerShape, true);
 		Graphiti.getPeService().setPropertyValue(usesPortContainerShape, DUtil.SHAPE_TYPE, SHAPE_USES_PORT_CONTAINER);
