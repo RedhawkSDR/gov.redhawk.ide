@@ -217,17 +217,15 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		return (Text) DUtil.findFirstPropertyContainer(getStartOrderEllipseShape(), GA_START_ORDER_TEXT);
 	}
 
-	/**
-	 * performs a layout on the contents of this shape
-	 */
-	public void layout() {
-		super.layout();
+	@Override
+	protected void layoutInnerShape(ContainerShape innerShape) {
+		super.layoutInnerShape(innerShape);
 
-		if (getStartOrderEllipseShape() != null && !DUtil.isDiagramRuntime(DUtil.findDiagram(this))) {
+		ContainerShape startOrderEllipse = (ContainerShape) DUtil.findFirstPropertyContainer(innerShape, SHAPE_START_ORDER_ELLIPSE_SHAPE);
+		if (startOrderEllipse != null && !DUtil.isDiagramRuntime(DUtil.findDiagram(this))) {
 			// Set the layout for the start order ellipse
-			Graphiti.getGaLayoutService().setLocation(getStartOrderEllipseShape().getGraphicsAlgorithm(),
-				getInnerContainerShape().getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING),
-				START_ORDER_ELLIPSE_TOP_PADDING);
+			int xOffset = innerShape.getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING);
+			Graphiti.getGaLayoutService().setLocation(startOrderEllipse.getGraphicsAlgorithm(), xOffset, START_ORDER_ELLIPSE_TOP_PADDING);
 		}
 	}
 

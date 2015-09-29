@@ -634,6 +634,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			getInnerPolyline().setTransparency(1d); //hide line
 		}
 
+		ContainerShape innerShape = getInnerContainerShape();
+		layoutInnerShape(innerShape);
 	}
 
 	/**
@@ -1021,6 +1023,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// amount of padding to ensure the entire letter is drawn
 		int textWidth = textSize.getWidth() + 2;
 		Graphiti.getGaLayoutService().setSize(text, textWidth, 20);
+	}
+
+	protected void layoutInnerShape(ContainerShape innerShape) {
+		// Nothing to do by default
 	}
 
 	private void layoutProvidesPorts(ContainerShape providesPortsContainer) {
