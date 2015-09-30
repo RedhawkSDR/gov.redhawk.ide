@@ -1376,7 +1376,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 							// ProvidesPortStub
 							if (isExternalPort(portObject, externalPorts)) {
 								// external port
-								if (!fixPointAnchorRectangle.getStyle().getId().equals(StyleUtil.EXTERNAL_PROVIDES_PORT)) {
+								if (!StyleUtil.isStyleSet(fixPointAnchorRectangle, StyleUtil.EXTERNAL_PROVIDES_PORT)) {
 									if (performUpdate) {
 										updateStatus = true;
 										// update style
@@ -1389,7 +1389,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 								}
 							} else {
 								// non-external port
-								if (!fixPointAnchorRectangle.getStyle().getId().equals(StyleUtil.PROVIDES_PORT)) {
+								if (!StyleUtil.isStyleSet(fixPointAnchorRectangle, StyleUtil.PROVIDES_PORT)) {
 									if (performUpdate) {
 										updateStatus = true;
 										// update style
@@ -1548,7 +1548,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 							// usesPortStub
 							if (isExternalPort(portObject, externalPorts)) {
 								// external port
-								if (!fixPointAnchorRectangle.getStyle().getId().equals(StyleUtil.EXTERNAL_USES_PORT)) {
+								if (!StyleUtil.isStyleSet(fixPointAnchorRectangle, StyleUtil.EXTERNAL_USES_PORT)) {
 									if (performUpdate) {
 										updateStatus = true;
 										// update style
@@ -1561,7 +1561,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 								}
 							} else {
 								// non-external port
-								if (!fixPointAnchorRectangle.getStyle().getId().equals(StyleUtil.USES_PORT)) {
+								if (!StyleUtil.isStyleSet(fixPointAnchorRectangle, StyleUtil.USES_PORT)) {
 									if (performUpdate) {
 										updateStatus = true;
 										// update style

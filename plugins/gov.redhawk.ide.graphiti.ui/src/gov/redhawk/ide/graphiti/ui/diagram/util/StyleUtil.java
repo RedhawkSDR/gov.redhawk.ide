@@ -27,7 +27,6 @@ import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.graphiti.util.PredefinedColoredAreas;
 
 import gov.redhawk.ide.graphiti.internal.ui.resource.StyleResource;
-import gov.redhawk.sca.util.PluginUtil;
 
 public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
@@ -197,14 +196,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	public static boolean needsUpdateForProvidesPort(Diagram diagram, Style style) {
-		if (style == null) {
-			return true;
-		}
-		boolean result = PluginUtil.equals(PROVIDES_PORT, style.getId());
-		return !result;
-	}
-
 	/**
 	 * Creates all of the styles used for drawing ports in the given diagram
 	 * @param diagram
@@ -259,30 +250,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		warn4Style.setBackground(gaService.manageColor(diagram, PORT_WARNING_4));
 	}
 
-	public static boolean needsUpdateForExternalProvidesPort(Diagram diagram, Style style) {
-		if (style == null) {
-			return true;
-		}
-		boolean result = PluginUtil.equals(EXTERNAL_PROVIDES_PORT, style.getId());
-		return !result;
-	}
-
-	public static boolean needsUpdateForUsesPort(Diagram diagram, Style style) {
-		if (style == null) {
-			return true;
-		}
-		boolean result = PluginUtil.equals(USES_PORT, style.getId());
-		return !result;
-	}
-
-	public static boolean needsUpdateForExternalUsesPort(Diagram diagram, Style style) {
-		if (style == null) {
-			return true;
-		}
-		boolean result = PluginUtil.equals(EXTERNAL_USES_PORT, style.getId());
-		return !result;
-	}
-
 	// returns style for lollipop ellipse
 	private static Style createStyleForLollipop(Diagram diagram) {
 		IGaService gaService = Graphiti.getGaService();
@@ -291,14 +258,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		style.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
 		style.setForeground(Graphiti.getGaService().manageColor(diagram, BLACK));
 		return style;
-	}
-
-	public static boolean needsUpdateForStartOrderAssemblyControllerEllipse(Diagram diagram, Style style) {
-		if (style == null) {
-			return true;
-		}
-		boolean result = PluginUtil.equals(style.getId(), ASSEMBLY_CONTROLLER_ELLIPSE);
-		return !result;
 	}
 
 	private static void createStylesForStartOrder(Diagram diagram) {
@@ -315,14 +274,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 		Style soStyle = gaService.createPlainStyle(baseStyle, START_ORDER_ELLIPSE);
 		soStyle.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
-	}
-
-	public static boolean needsUpdateForStartOrderEllipse(Diagram diagram, Style style) {
-		if (style == null) {
-			return true;
-		}
-		boolean result = PluginUtil.equals(style.getId(), START_ORDER_ELLIPSE);
-		return !result;
 	}
 
 	// find the style with given id in style-container
@@ -343,4 +294,10 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return null;
 	}
 
+	public static boolean isStyleSet(GraphicsAlgorithm ga, String styleId) {
+		if (ga.getStyle() == null) {
+			return false;
+		}
+		return styleId.equals(ga.getStyle().getId());
+	}
 }

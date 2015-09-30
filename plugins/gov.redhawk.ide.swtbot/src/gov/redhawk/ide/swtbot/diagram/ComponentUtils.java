@@ -19,6 +19,7 @@ import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
@@ -92,12 +93,11 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 * @return - True if component styling is set correctly
 	 */
 	public static boolean correctStartOrderStyling(ComponentShape componentShape, boolean isAssemblyController) {
-		Diagram diagram = DUtil.findDiagram(componentShape);
-		Style style = ((ComponentShapeImpl) componentShape).getStartOrderEllipseShape().getGraphicsAlgorithm().getStyle();
+		GraphicsAlgorithm ga = ((ComponentShapeImpl) componentShape).getStartOrderEllipseShape().getGraphicsAlgorithm();
 		if (isAssemblyController) {
-			return !StyleUtil.needsUpdateForStartOrderAssemblyControllerEllipse(diagram, style);
+			return !StyleUtil.isStyleSet(ga, StyleUtil.ASSEMBLY_CONTROLLER_ELLIPSE);
 		}
-		return !StyleUtil.needsUpdateForStartOrderEllipse(diagram, style);
+		return !StyleUtil.isStyleSet(ga, StyleUtil.START_ORDER_ELLIPSE);
 	}
 
 	/**

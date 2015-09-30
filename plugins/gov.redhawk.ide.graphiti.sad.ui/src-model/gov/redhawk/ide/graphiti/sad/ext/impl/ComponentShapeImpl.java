@@ -291,7 +291,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 			// update assembly controller styling and text
 			Ellipse startOrderEllipse = (Ellipse) getStartOrderEllipseShape().getGraphicsAlgorithm();
-			boolean needsUpdate = StyleUtil.needsUpdateForStartOrderAssemblyControllerEllipse(diagram, startOrderEllipse.getStyle());
+			boolean needsUpdate = !StyleUtil.isStyleSet(startOrderEllipse, StyleUtil.ASSEMBLY_CONTROLLER_ELLIPSE);
 			boolean isTextCorrect = (ci.getStartOrder() != null) ? (ci.getStartOrder().compareTo(BigInteger.ZERO) == 0) : startOrderTextGA.getValue().isEmpty();
 			if ((needsUpdate || !isTextCorrect) && assemblyController != null) {
 				// if assembly controller, then use special style
@@ -312,7 +312,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 				} else {
 					return new Reason(true, "Component start order requires update");
 				}
-			} else if (StyleUtil.needsUpdateForStartOrderEllipse(diagram, startOrderEllipse.getStyle()) && assemblyController == null) {
+			} else if (!StyleUtil.isStyleSet(startOrderEllipse, StyleUtil.START_ORDER_ELLIPSE) && assemblyController == null) {
 				if (performUpdate) {
 					StyleUtil.setStyle(startOrderEllipse, StyleUtil.START_ORDER_ELLIPSE);
 					// remove assembly controller links
