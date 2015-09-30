@@ -21,6 +21,8 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
+import gov.redhawk.ide.swtbot.condition.WaitForWidgetEnablement;
+
 public class ConsoleUtils {
 
 	/** private to prevent instantiation since all functions are static. */
@@ -81,17 +83,7 @@ public class ConsoleUtils {
 		// Click terminate, wait for it to disable (indicating process ended)
 		final SWTBotToolbarButton terminateButton = view.toolbarButton("Terminate");
 		terminateButton.click();
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public boolean test() throws Exception {
-				return !terminateButton.isEnabled();
-			}
-
-			@Override
-			public String getFailureMessage() {
-				return String.format("Process %s failed to terminate", processName);
-			}
-		});
+		bot.waitUntil(new WaitForWidgetEnablement(terminateButton, false));
 	}
 
 	/**
