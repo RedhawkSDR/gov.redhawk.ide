@@ -12,8 +12,10 @@ package gov.redhawk.ide.codegen.ui.internal.upgrade;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -58,27 +60,6 @@ public class PropertyKindUtil {
 	private PropertyKindUtil() {
 	}
 
-	private static class PropertyTypes {
-		private boolean hasConfigOrExecParamKind = false;
-		private boolean hasPropertyKind = false;
-
-		public boolean hasConfigOrExecParamKind() {
-			return hasConfigOrExecParamKind;
-		}
-
-		public boolean hasPropertyKind() {
-			return hasPropertyKind;
-		}
-
-		public void setHasConfigOrExecParamKind() {
-			hasConfigOrExecParamKind = true;
-		}
-
-		public void setHasPropertyKind() {
-			hasPropertyKind = true;
-		}
-	}
-
 	/**
 	 * Check if the properties associated with the implementation(s) need upgrading. The user will be prompted to
 	 * upgrade the properties if necessary, or codegen will be aborted.
@@ -115,30 +96,28 @@ public class PropertyKindUtil {
 		}
 
 		// Find if there are configure, execparam and property kinds in the properties file
-		PropertyTypes propTypes;
+		final Set<PropertyConfigurationType> kindTypes = new HashSet<PropertyConfigurationType>();
 		try {
-			propTypes = ScaModelCommandWithResult.runExclusive(prf, new RunnableWithResult.Impl<PropertyTypes>() {
+			ScaModelCommandWithResult.runExclusive(prf, new RunnableWithResult.Impl< Object >() {
 				@Override
 				public void run() {
-					PropertyTypes propTypes = new PropertyTypes();
 					FeatureMap props = prf.getProperties();
 					for (FeatureMap.Entry propEntry : props) {
 						Object propObj = propEntry.getValue();
 						if (propObj instanceof Simple) {
 							Simple prop = (Simple) propObj;
-							findKinds(prop.getKind(), propTypes);
+							findKinds(prop.getKind(), kindTypes);
 						} else if (propObj instanceof SimpleSequence) {
 							SimpleSequence prop = (SimpleSequence) propObj;
-							findKinds(prop.getKind(), propTypes);
+							findKinds(prop.getKind(), kindTypes);
 						} else if (propObj instanceof Struct) {
 							Struct prop = (Struct) propObj;
-							findConfigurationKinds(prop.getConfigurationKind(), propTypes);
+							findConfigurationKinds(prop.getConfigurationKind(), kindTypes);
 						} else if (propObj instanceof StructSequence) {
 							StructSequence prop = (StructSequence) propObj;
-							findConfigurationKinds(prop.getConfigurationKind(), propTypes);
+							findConfigurationKinds(prop.getConfigurationKind(), kindTypes);
 						}
 					}
-					setResult(propTypes);
 				}
 			});
 		} catch (InterruptedException e) {
@@ -147,7 +126,7 @@ public class PropertyKindUtil {
 
 		// Don't allow the user to proceed if they're using an old codegen with the new 'property' kind
 		for (Version codegenVersion : codegenVersions) {
-			if (codegenVersion.compareTo(new Version(2, 0, 0)) < 0 && propTypes.hasPropertyKind()) {
+			if (codegenVersion.compareTo(new Version(2, 0, 0)) < 0 && kindTypes.contains(PropertyConfigurationType.PROPERTY)) {
 				MessageDialog.openError(shell, Messages.OldCodeGen_Title, Messages.OldCodeGen_Message);
 				throw new OperationCanceledException();
 			}
@@ -155,7 +134,7 @@ public class PropertyKindUtil {
 
 		// Offer upgrade if using deprecated property kinds with a newer codegen
 		for (Version codegenVersion : codegenVersions) {
-			if (codegenVersion.compareTo(new Version(2, 0, 0)) >= 0 && propTypes.hasConfigOrExecParamKind()) {
+			if (codegenVersion.compareTo(new Version(2, 0, 0)) >= 0 && (kindTypes.contains(PropertyConfigurationType.CONFIGURE) || kindTypes.contains(PropertyConfigurationType.EXECPARAM))) {
 				String[] buttons = new String[] { IDialogConstants.CANCEL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_LABEL };
 				MessageDialog dialog = new MessageDialog(shell, Messages.DeprecatedProps_Title, null, Messages.DeprecatedProps_Message, MessageDialog.QUESTION, buttons, 2);				
 				int result = dialog.open();
@@ -173,51 +152,30 @@ public class PropertyKindUtil {
 	}
 
 	/**
-	 * Examines the list of kinds to see if configure, execparam, or property are explicitly (not implicitly) present.
+	 * Finds all unique kind types explicitly specified and adds them to the Set
 	 * @param kinds The list of kinds to look through
-	 * @param propTypes Flags are adjusted to true in this structure if the properties are present
+	 * @param kindTypes Any property kind types present are added to the Set
 	 */
-	private static void findKinds(EList<Kind> kinds, PropertyTypes propTypes) {
+	private static void findKinds(EList<Kind> kinds, Set<PropertyConfigurationType> kindTypes) {
 		if (kinds == null) {
 			return;
 		}
 		for (Kind kind : kinds) {
-			if (kind.isSetType()) {
-				switch (kind.getType()) {
-				case CONFIGURE:
-				case EXECPARAM:
-					propTypes.setHasConfigOrExecParamKind();
-					break;
-				case PROPERTY:
-					propTypes.setHasPropertyKind();
-					break;
-				default:
-				}
-			}
+			kindTypes.add(kind.getType());
 		}
 	}
 
 	/**
-	 * Examines the list of kinds to see if configure or property are explicitly (not implicitly) present.
+	 * Finds all unique configuration kind types explicitly specified and adds their kind type equivalent to the Set
 	 * @param kinds The list of kinds to look through
-	 * @param propTypes Flags are adjusted to true in this structure if the properties are present
+	 * @param kindTypes Any property kind types present are added to the Set
 	 */
-	private static void findConfigurationKinds(EList<ConfigurationKind> kinds, PropertyTypes propTypes) {
+	private static void findConfigurationKinds(EList<ConfigurationKind> kinds, Set<PropertyConfigurationType> kindTypes) {
 		if (kinds == null) {
 			return;
 		}
 		for (ConfigurationKind kind : kinds) {
-			if (kind.isSetType()) {
-				switch (kind.getType()) {
-				case CONFIGURE:
-					propTypes.setHasConfigOrExecParamKind();
-					break;
-				case PROPERTY:
-					propTypes.setHasPropertyKind();
-					break;
-				default:
-				}
-			}
+			kindTypes.add(kind.getType().getPropertyConfigurationType());
 		}
 	}
 
