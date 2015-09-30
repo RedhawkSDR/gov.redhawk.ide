@@ -70,7 +70,7 @@ public class PortStyleUtil {
 	 * @param portShape The shape for the port
 	 */
 	public static void resetPortStyling(Diagram diagram, EditingDomain editingDomain, ContainerShape portShape) {
-		Anchor anchor = portShape.getChildren().get(0).getAnchors().get(0);
+		Anchor anchor = portShape.getAnchors().get(0);
 
 		// Check if this is an external port (the anchor will be linked to the external port in the SAD
 		for (EObject object : anchor.getLink().getBusinessObjects()) {
@@ -109,7 +109,7 @@ public class PortStyleUtil {
 	 * @param portStyle The new style for the port
 	 */
 	public static void updatePortStyle(final Diagram diagram, final EditingDomain editingDomain, final ContainerShape portShape, final PortStyle portStyle) {
-		final Anchor anchor = portShape.getChildren().get(0).getAnchors().get(0);
+		final Anchor anchor = portShape.getAnchors().get(0);
 		final GraphicsAlgorithm ga = anchor.getGraphicsAlgorithm();
 		final EObject portObj = DUtil.getBusinessObject(portShape);
 
