@@ -7,15 +7,13 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.impl.ContentHandlerImpl;
 
-import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
-
 public class StyleContentHandler extends ContentHandlerImpl {
 
 	public static final String CONTENT_TYPE = "gov.redhawk.ide.graphiti.ui.style";
 
 	@Override
 	public boolean canHandle(URI uri) {
-		return URI.createPlatformPluginURI(GraphitiUIPlugin.PLUGIN_ID + "/style", false).equals(uri);
+		return StyleResource.STYLE_URI.equals(uri);
 	}
 
 	@Override

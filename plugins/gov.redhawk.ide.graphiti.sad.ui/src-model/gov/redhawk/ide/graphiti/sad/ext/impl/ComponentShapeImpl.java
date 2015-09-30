@@ -193,7 +193,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		Shape startOrderTextShape = Graphiti.getPeCreateService().createShape(startOrderEllipseShape, false);
 		Text startOrderText = Graphiti.getCreateService().createText(startOrderTextShape, startOrder);
 		Graphiti.getPeService().setPropertyValue(startOrderText, DUtil.GA_TYPE, GA_START_ORDER_TEXT);
-		StyleUtil.setStyle(startOrderText, StyleUtil.START_ORDER_TEXT);
+		StyleUtil.setStyle(startOrderText, StyleUtil.START_ORDER);
 		Graphiti.getGaLayoutService().setSize(startOrderText, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
 
 		return startOrderEllipseShape;

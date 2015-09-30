@@ -13,8 +13,6 @@ package gov.redhawk.ide.graphiti.ui.diagram.util;
 import java.util.Collection;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.graphiti.mm.StyleContainer;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.styles.Font;
@@ -27,7 +25,7 @@ import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.graphiti.util.PredefinedColoredAreas;
 
-import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
+import gov.redhawk.ide.graphiti.internal.ui.resource.StyleResource;
 import gov.redhawk.sca.util.PluginUtil;
 
 public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
@@ -35,9 +33,10 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String OUTER_SHAPE = "gov.redhawk.style.OuterShape";
 	public static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
 
-	public static final String START_ORDER_TEXT = "gov.redhawk.style.StartOrderText";
+	public static final String START_ORDER = "gov.redhawk.style.StartOrder";
 	public static final String START_ORDER_ELLIPSE = "gov.redhawk.style.StartOrderEllipse";
 	public static final String ASSEMBLY_CONTROLLER_ELLIPSE = "gov.redhawk.style.StartOrderAssemblyControllerEllipse";
+
 	public static final String LOLLIPOP = "gov.redhawk.style.Lollipop";
 	public static final String USES_PORT = "gov.redhawk.style.UsesPort";
 	public static final String EXTERNAL_USES_PORT = "gov.redhawk.style.UsesExternalPort";
@@ -103,9 +102,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 		createStyleForLollipop(diagram);
 
-		createStyleForStartOrderAssemblyControllerEllipse(diagram);
-		createStyleForStartOrderEllipse(diagram);
-		createStyleForStartOrderText(diagram);
+		createStylesForStartOrder(diagram);
 
 		createStyleForUsesPort(diagram);
 		createStyleForExternalUsesPort(diagram);
@@ -122,15 +119,11 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		createStyleForPortWarning4(diagram);
 	}
 
-	private static Diagram getStyleDiagram(EObject object) {
-		URI uri = URI.createPlatformPluginURI(GraphitiUIPlugin.PLUGIN_ID + "/style", false);
-		Resource resource = object.eResource().getResourceSet().getResource(uri, true);
-		return (Diagram) resource.getContents().get(0);
-	}
-
 	public static void setStyle(GraphicsAlgorithm ga, String styleId) {
-		Diagram styleDiagram = getStyleDiagram(ga);
-		ga.setStyle(findStyle(styleDiagram, styleId));
+		// Find the (potentially nested) style via the StyleResource's URI
+		URI uri = StyleResource.STYLE_URI.appendFragment(styleId);
+		Style style = (Style) ga.eResource().getResourceSet().getEObject(uri, true);
+		ga.setStyle(style);
 	}
 	
 	// returns component outer rectangle style
@@ -440,13 +433,20 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return !result;
 	}
 
-	private static Style createStyleForStartOrderAssemblyControllerEllipse(Diagram diagram) {
+	private static void createStylesForStartOrder(Diagram diagram) {
 		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, ASSEMBLY_CONTROLLER_ELLIPSE);
-		style.setLineWidth(1);
-		style.setBackground(Graphiti.getGaService().manageColor(diagram, GOLD));
-		style.setTransparency(.99d);
-		return style;
+		Style baseStyle = gaService.createStyle(diagram, START_ORDER);
+		baseStyle.setLineWidth(1);
+		baseStyle.setTransparency(.99d);
+		baseStyle.setForeground(gaService.manageColor(diagram, BLACK));
+		Font font = gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false);
+		baseStyle.setFont(font);
+
+		Style acStyle = gaService.createPlainStyle(baseStyle, ASSEMBLY_CONTROLLER_ELLIPSE);
+		acStyle.setBackground(Graphiti.getGaService().manageColor(diagram, GOLD));
+
+		Style soStyle = gaService.createPlainStyle(baseStyle, START_ORDER_ELLIPSE);
+		soStyle.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
 	}
 
 	public static boolean needsUpdateForStartOrderEllipse(Diagram diagram, Style style) {
@@ -457,25 +457,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return !result;
 	}
 
-	private static Style createStyleForStartOrderEllipse(Diagram diagram) {
-		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, START_ORDER_ELLIPSE);
-		style.setLineWidth(1);
-		style.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
-		style.setTransparency(.99d);
-		return style;
-	}
-
-	private static Style createStyleForStartOrderText(Diagram diagram) {
-		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, START_ORDER_TEXT);
-		style.setForeground(gaService.manageColor(diagram, BLACK));
-		style.setBackground(gaService.manageColor(diagram, WHITE));
-		Font font = gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false);
-		style.setFont(font);
-		return style;
-	}
-
 	// find the style with given id in style-container
 	public static Style findStyle(StyleContainer styleContainer, String id) {
 		// find and return style
@@ -484,6 +465,10 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			for (Style style : styles) {
 				if (id.equals(style.getId())) {
 					return style;
+				}
+				Style child = findStyle(style, id);
+				if (child != null) {
+					return child;
 				}
 			}
 		}

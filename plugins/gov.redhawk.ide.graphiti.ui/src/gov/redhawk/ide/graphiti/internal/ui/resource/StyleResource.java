@@ -10,12 +10,13 @@ import org.eclipse.graphiti.mm.pictograms.PictogramsFactory;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
-class StyleResource extends ResourceImpl {
+public class StyleResource extends ResourceImpl {
 
+	public static final URI STYLE_URI = URI.createPlatformPluginURI(GraphitiUIPlugin.PLUGIN_ID + "/style", false);
 	private Diagram diagram;
 
 	public StyleResource() {
-		this(URI.createPlatformPluginURI(GraphitiUIPlugin.PLUGIN_ID + "/style", false));
+		this(StyleResource.STYLE_URI);
 	}
 
 	public StyleResource(URI uri) {
