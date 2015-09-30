@@ -77,14 +77,8 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 					// add to list
 					findByStubs.add(findByStub);
 				}
-				// add provides port to stub if doesn't already exist
-				boolean uPFound = false;
-				for (UsesPortStub p : findByStub.getUses()) {
-					if (p.equals(connectInterface.getUsesPort())) {
-						uPFound = true;
-					}
-				}
-				if (!uPFound) {
+				// add uses port to stub if doesn't already exist
+				if (!hasMatchingUsesPort(findByStub, connectInterface.getUsesPort().getUsesIdentifier())) {
 					// add the required usesPort
 					AbstractFindByPattern.addUsesPortStubToFindByStub(findByStub, connectInterface.getUsesPort(), featureProvider);
 				}
@@ -127,13 +121,7 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				}
 
 				// add provides port to stub if doesn't already exist
-				boolean ppFound = false;
-				for (ProvidesPortStub p : findByStub.getProvides()) {
-					if (p.equals(connectInterface.getProvidesPort())) {
-						ppFound = true;
-					}
-				}
-				if (!ppFound) {
+				if (!hasMatchingProvidesPort(findByStub, connectInterface.getProvidesPort().getProvidesIdentifier())) {
 					// add the required providesPort
 					AbstractFindByPattern.addProvidesPortStubToFindByStub(findByStub, connectInterface.getProvidesPort(), featureProvider);
 				}
@@ -149,6 +137,24 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				DUtil.updateShapeViaFeature(featureProvider, diagram, elements.get(0));
 			}
 		}
+	}
+
+	protected boolean hasMatchingUsesPort(FindByStub findByStub, String name) {
+		for (UsesPortStub uses : findByStub.getUses()) {
+			if (uses.getName().equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected boolean hasMatchingProvidesPort(FindByStub findByStub, String name) {
+		for (ProvidesPortStub provides : findByStub.getProvides()) {
+			if (provides.getName().equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
