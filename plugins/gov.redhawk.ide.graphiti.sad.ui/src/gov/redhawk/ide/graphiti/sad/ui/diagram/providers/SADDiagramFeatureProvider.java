@@ -270,7 +270,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		// hide update icon for some pictogram elements
 		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
 			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE,
+			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
 			RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE, RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE})) {
 			return new UpdateNoBoFeature(this) {
 				public boolean isAvailable(IContext context) {
@@ -298,7 +298,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 				new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER,
 					RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER,
 					RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE,
-					RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
+					RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE })) {
 			return null;
 		}
 

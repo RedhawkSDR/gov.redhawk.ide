@@ -220,15 +220,15 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			GA_OUTER_ROUNDED_RECTANGLE_TEXT = "outerRoundedRectangleText", GA_INNER_ROUNDED_RECTANGLE_TEXT = "innerRoundedRectangleText",
 			GA_OUTER_ROUNDED_RECTANGLE_IMAGE = "outerRoundedRectangleImage", GA_INNER_ROUNDED_RECTANGLE_IMAGE = "innerRoundedRectangleImage",
 			GA_INNER_ROUNDED_RECTANGLE_LINE = "innerRoundedRectangleLine", GA_PROVIDES_PORT_RECTANGLE = "providesPortsRectangle",
-			GA_FIX_POINT_ANCHOR_RECTANGLE = "GA_FIX_POINT_ANCHOR_RECTANGLE", GA_USES_PORTS_RECTANGLE = "usesPortsRectangle";
+			GA_FIX_POINT_ANCHOR_RECTANGLE = "fixPointAnchorRectangle", GA_USES_PORTS_RECTANGLE = "usesPortsRectangle";
 
 	// Property key/value pairs help us identify Shapes to enable/disable user actions
 	// (move, resize, delete, remove, etc.)
 	public static final String SHAPE_OUTER_CONTAINER = "outerContainerShape", SHAPE_INNER_CONTAINER = "innerContainerShape",
 			SHAPE_USES_PORTS_CONTAINER = "usesPortsContainerShape", SHAPE_PROVIDES_PORTS_CONTAINER = "providesPortsContainerShape",
 			SHAPE_USES_PORT_CONTAINER = "usesPortContainerShape", SHAPE_PROVIDES_PORT_CONTAINER = "providesPortContainerShape",
-			SHAPE_INTERFACE_CONTAINER = "interfaceContainerShape", SHAPE_INTERFACE_ELLIPSE = "interfaceEllipseShape",
-			SUPER_PROVIDES_PORTS_RECTANGLE = "superProvidesPortsContainer", SUPER_USES_PORTS_RECTANGLE = "superUsesPortsContainer";
+			SHAPE_INTERFACE_CONTAINER = "interfaceContainerShape", SUPER_PROVIDES_PORTS_RECTANGLE = "superProvidesPortsContainer",
+			SUPER_USES_PORTS_RECTANGLE = "superUsesPortsContainer";
 
 	// Shape size constants
 	public static final int OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING = 10, INNER_CONTAINER_SHAPE_TOP_PADDING = 20,
@@ -823,13 +823,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		interfaceRectangle.setTransparency(.99d);
 		Graphiti.getGaLayoutService().setLocationAndSize(interfaceRectangle, 0, 25, INTERFACE_SHAPE_WIDTH, INTERFACE_SHAPE_HEIGHT);
 
-		// interface lollipop ellipse
-		Shape lollipopEllipseShape = Graphiti.getCreateService().createShape(interfaceContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(lollipopEllipseShape, DUtil.GA_TYPE, SHAPE_INTERFACE_ELLIPSE);
-		Ellipse lollipopEllipse = Graphiti.getCreateService().createPlainEllipse(lollipopEllipseShape);
-		StyleUtil.setStyle(lollipopEllipse, StyleUtil.LOLLIPOP);
-		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
-
 		// interface lollipop line
 		Shape lollipopLineShape = Graphiti.getCreateService().createContainerShape(interfaceContainerShape, false);
 		Rectangle lollipopLine = Graphiti.getCreateService().createPlainRectangle(lollipopLineShape);
@@ -837,7 +830,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopLine, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER / 2,
 			INTERFACE_SHAPE_WIDTH - LOLLIPOP_ELLIPSE_DIAMETER, 1);
 
-		// fix point anchor
+		// Interface lollipop ellipse and anchor
 		FixPointAnchor fixPointAnchor = Graphiti.getPeCreateService().createFixPointAnchor(interfaceContainerShape);
 		Point fixAnchorPoint = StylesFactory.eINSTANCE.createPoint();
 		fixAnchorPoint.setX(0);
@@ -846,10 +839,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		featureProvider.link(fixPointAnchor, anchorBusinessObject);
 		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
 		fixPointAnchor.setReferencedGraphicsAlgorithm(interfaceRectangle);
-		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
-		fixPointAnchorRectangle.setTransparency(.99d);
-		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, -INTERFACE_SHAPE_HEIGHT / 2, INTERFACE_SHAPE_WIDTH,
-			INTERFACE_SHAPE_HEIGHT);
+		Ellipse lollipopEllipse = Graphiti.getCreateService().createPlainEllipse(fixPointAnchor);
+		StyleUtil.setStyle(lollipopEllipse, StyleUtil.LOLLIPOP);
+		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, -PORT_SHAPE_HEIGHT / 2, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
 
 		return interfaceContainerShape;
 	}
