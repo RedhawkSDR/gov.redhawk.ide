@@ -36,7 +36,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -1115,32 +1114,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Adds provides ports if an RHContainerShape is edited after initial creation
 	 */
-	public void addNewProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
-		// Manually clean up any links
-		for (Shape child : getProvidesPortsContainerShape().getChildren()) {
-			EcoreUtil.delete(child.getLink()); // provides port individual container link
-			EcoreUtil.delete(((ContainerShape) child).getChildren().get(0).getLink()); // provides port shape link
-			EcoreUtil.delete(((ContainerShape) child).getChildren().get(0).getAnchors().get(0).getLink()); // anchor
-		}
-
+	public void setProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
 		// Manually clean up the provides port parent container. Easier to just rebuild from scratch
-		EcoreUtil.delete(getProvidesPortsContainerShape().getLink());
-		EcoreUtil.delete(getProvidesPortsContainerShape());
-
-		ContainerShape providesPortsContainerShape = Graphiti.getCreateService().createContainerShape(this, true);
-		Graphiti.getPeService().setPropertyValue(providesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORTS_CONTAINER);
-		Rectangle providesPortsRectangle = Graphiti.getCreateService().createRectangle(providesPortsContainerShape);
-		providesPortsRectangle.setTransparency(1d);
-		Graphiti.getPeService().setPropertyValue(providesPortsRectangle, DUtil.GA_TYPE, GA_PROVIDES_PORT_RECTANGLE);
-
-		if (providesPortStubs != null) {
-			// Reset links
-			featureProvider.link(providesPortsContainerShape, providesPortStubs.toArray());
-			for (ProvidesPortStub p : providesPortStubs) {
-				addProvidesPortContainerShape(p, providesPortsContainerShape, featureProvider, findExternalPort(p, externalPorts));
-			}
-		}
-		layoutProvidesPorts(providesPortsContainerShape);
+		DUtil.fastDeletePictogramElement(getProvidesPortsContainerShape());
+		addProvidesPorts(providesPortStubs, featureProvider, externalPorts);
 	}
 
 	/**
@@ -1210,32 +1187,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Adds uses ports if an RHContainerShape is edited after initial creation
 	 */
-	public void addNewUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
-		// Manually clean up any links
-		for (Shape child : getUsesPortsContainerShape().getChildren()) {
-			EcoreUtil.delete(child.getLink()); // uses port individual container link
-			EcoreUtil.delete(((ContainerShape) child).getChildren().get(0).getLink()); // uses port shape link
-			EcoreUtil.delete(((ContainerShape) child).getChildren().get(0).getAnchors().get(0).getLink()); // anchor
-		}
-
+	public void setUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
 		// Manually clean up the uses port parent container. Easier to just rebuild from scratch
-		EcoreUtil.delete(getUsesPortsContainerShape().getLink());
-		EcoreUtil.delete(getUsesPortsContainerShape());
-
-		ContainerShape usesPortsContainerShape = Graphiti.getCreateService().createContainerShape(this, true);
-		Graphiti.getPeService().setPropertyValue(usesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_USES_PORTS_CONTAINER);
-		Rectangle usesPortsRectangle = Graphiti.getCreateService().createRectangle(usesPortsContainerShape);
-		usesPortsRectangle.setTransparency(1d);
-		Graphiti.getPeService().setPropertyValue(usesPortsRectangle, DUtil.GA_TYPE, GA_USES_PORTS_RECTANGLE);
-
-		if (usesPortStubs != null) {
-			// Reset links
-			featureProvider.link(usesPortsContainerShape, usesPortStubs.toArray());
-			for (UsesPortStub p : usesPortStubs) {
-				addUsesPortContainerShape(p, usesPortsContainerShape, featureProvider, findExternalPort(p, externalPorts));
-			}
-		}
-		layoutUsesPorts(usesPortsContainerShape);
+		DUtil.fastDeletePictogramElement(getUsesPortsContainerShape());
+		addUsesPorts(usesPortStubs, featureProvider, externalPorts);
 	}
 
 	/**
