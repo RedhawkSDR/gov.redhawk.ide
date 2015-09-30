@@ -479,7 +479,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getPeService().setPropertyValue(this, DUtil.GA_TYPE, SHAPE_OUTER_CONTAINER);
 
 		// graphic
-		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(this, 5, 5);
+		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createPlainRoundedRectangle(this, 5, 5);
 		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE);
 		StyleUtil.setStyle(outerRoundedRectangle, pattern.getStyleForOuter());
 		outerRoundedRectangle.setTransparency(null); // inherit from style
@@ -489,7 +489,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_IMAGE);
 
 		// text
-		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, pattern.getOuterTitle(newObject));
+		Text cText = Graphiti.getCreateService().createPlainText(outerRoundedRectangle, pattern.getOuterTitle(newObject));
 		StyleUtil.setStyle(cText, StyleUtil.OUTER_TEXT);
 		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 
@@ -790,9 +790,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	protected ContainerShape addInnerContainer(String text, String imageId, String styleId) {
 		ContainerShape innerContainerShape = Graphiti.getCreateService().createContainerShape(this, false);
 		Graphiti.getPeService().setPropertyValue(innerContainerShape, DUtil.GA_TYPE, SHAPE_INNER_CONTAINER);
-		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(innerContainerShape, INNER_ROUNDED_RECTANGLE_CORNER_WIDTH,
+		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createPlainRoundedRectangle(innerContainerShape, INNER_ROUNDED_RECTANGLE_CORNER_WIDTH,
 			INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT);
-		innerRoundedRectangle.setLineWidth(null); // inherit from style
 		StyleUtil.setStyle(innerRoundedRectangle, styleId);
 		Graphiti.getPeService().setPropertyValue(innerRoundedRectangle, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE);
 		Graphiti.getGaLayoutService().setLocation(innerRoundedRectangle, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, INNER_CONTAINER_SHAPE_TOP_PADDING);
@@ -802,14 +801,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_IMAGE);
 
 		// text
-		Text ciText = Graphiti.getCreateService().createText(innerRoundedRectangle, text);
+		Text ciText = Graphiti.getCreateService().createPlainText(innerRoundedRectangle, text);
 		StyleUtil.setStyle(ciText, StyleUtil.INNER_TEXT);
 		Graphiti.getPeService().setPropertyValue(ciText, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_TEXT);
 
 		// draw line if showing shape details (ports)
-		Polyline polyline = Graphiti.getGaCreateService().createPolyline(innerRoundedRectangle,
+		Polyline polyline = Graphiti.getGaCreateService().createPlainPolyline(innerRoundedRectangle,
 			new int[] { 0, INNER_ROUNDED_RECTANGLE_LINE_Y, innerRoundedRectangle.getWidth(), INNER_ROUNDED_RECTANGLE_LINE_Y });
-		polyline.setLineWidth(null);
 		StyleUtil.setStyle(polyline, styleId);
 		Graphiti.getPeService().setPropertyValue(polyline, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_LINE);
 
@@ -832,13 +830,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// interface lollipop ellipse
 		Shape lollipopEllipseShape = Graphiti.getCreateService().createShape(interfaceContainerShape, true);
 		Graphiti.getPeService().setPropertyValue(lollipopEllipseShape, DUtil.GA_TYPE, SHAPE_INTERFACE_ELLIPSE);
-		Ellipse lollipopEllipse = Graphiti.getCreateService().createEllipse(lollipopEllipseShape);
+		Ellipse lollipopEllipse = Graphiti.getCreateService().createPlainEllipse(lollipopEllipseShape);
 		StyleUtil.setStyle(lollipopEllipse, StyleUtil.LOLLIPOP);
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
 
 		// interface lollipop line
 		Shape lollipopLineShape = Graphiti.getCreateService().createContainerShape(interfaceContainerShape, false);
-		Rectangle lollipopLine = Graphiti.getCreateService().createRectangle(lollipopLineShape);
+		Rectangle lollipopLine = Graphiti.getCreateService().createPlainRectangle(lollipopLineShape);
 		StyleUtil.setStyle(lollipopLine, StyleUtil.LOLLIPOP);
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopLine, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER / 2,
 			INTERFACE_SHAPE_WIDTH - LOLLIPOP_ELLIPSE_DIAMETER, 1);
@@ -951,7 +949,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getPeService().setPropertyValue(providesPortRectangleShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORT_RECTANGLE); // ref
 		// prevent
 		// move
-		Rectangle providesPortRectangle = Graphiti.getCreateService().createRectangle(providesPortRectangleShape);
+		Rectangle providesPortRectangle = Graphiti.getCreateService().createPlainRectangle(providesPortRectangleShape);
 		DUtil.addLink(featureProvider, providesPortRectangleShape, p);
 		StyleUtil.setStyle(providesPortRectangle, StyleUtil.USES_PORT);
 		Graphiti.getGaLayoutService().setLocationAndSize(providesPortRectangle, 0, 0, PORT_SHAPE_WIDTH, PORT_SHAPE_HEIGHT);
@@ -972,7 +970,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		DUtil.addLink(featureProvider, fixPointAnchor, p);
 		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
 		fixPointAnchor.setReferencedGraphicsAlgorithm(providesPortRectangle);
-		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
+		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createPlainRectangle(fixPointAnchor);
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		if (externalPort != null) {
 			StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.EXTERNAL_PROVIDES_PORT);
@@ -1169,7 +1167,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// port shape
 		ContainerShape usesPortRectangleShape = Graphiti.getPeService().createContainerShape(usesPortContainerShape, true);
 		Graphiti.getPeService().setPropertyValue(usesPortRectangleShape, DUtil.SHAPE_TYPE, SHAPE_USES_PORT_RECTANGLE);
-		Rectangle usesPortRectangle = Graphiti.getCreateService().createRectangle(usesPortRectangleShape);
+		Rectangle usesPortRectangle = Graphiti.getCreateService().createPlainRectangle(usesPortRectangleShape);
 		Graphiti.getPeService().setPropertyValue(usesPortRectangle, DUtil.GA_TYPE, GA_USES_PORT_RECTANGLE);
 		featureProvider.link(usesPortRectangleShape, p);
 		StyleUtil.setStyle(usesPortRectangle, StyleUtil.USES_PORT);
@@ -1192,7 +1190,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		featureProvider.link(fixPointAnchor, p);
 		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
 		fixPointAnchor.setReferencedGraphicsAlgorithm(usesPortRectangle);
-		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
+		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createPlainRectangle(fixPointAnchor);
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		if (externalPort != null) {
 			StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.EXTERNAL_USES_PORT);

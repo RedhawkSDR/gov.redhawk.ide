@@ -17,6 +17,7 @@ import org.eclipse.graphiti.mm.StyleContainer;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.styles.Font;
 import org.eclipse.graphiti.mm.algorithms.styles.LineStyle;
+import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.services.Graphiti;
@@ -31,7 +32,11 @@ import gov.redhawk.sca.util.PluginUtil;
 public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	public static final String OUTER_SHAPE = "gov.redhawk.style.OuterShape";
+
+	// Font-based styles; all inherit from TEXT_BASE
+	private static final String TEXT_BASE = "gov.redhawk.style.Text";
 	public static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
+	public static final String INNER_TEXT = "gov.redhawk.style.InnerText";
 
 	public static final String START_ORDER = "gov.redhawk.style.StartOrder";
 	public static final String START_ORDER_ELLIPSE = "gov.redhawk.style.StartOrderEllipse";
@@ -39,7 +44,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	public static final String LOLLIPOP = "gov.redhawk.style.Lollipop";
 
-	public static final String INNER_TEXT = "gov.redhawk.style.InnerText";
 	public static final String HOST_COLLOCATION = "gov.redhawk.style.HostCollocation";
 
 	// Inner shape styles; all inherit from INNER_BASE
@@ -95,10 +99,9 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String DEFAULT_FONT = SANS_FONT;
 
 	public static void createAllStyles(Diagram diagram) {
+		createStylesForText(diagram);
 		createStyleForOuterShape(diagram);
-		createStyleForOuterText(diagram);
 		createStyleForLollipop(diagram);
-		createStyleForInnerText(diagram);
 		createStylesForStartOrder(diagram);
 		createStylesForInnerShapes(diagram);
 		createStylesForPorts(diagram);
@@ -119,21 +122,28 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		style.setForeground(gaService.manageColor(diagram, BLACK));
 		style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
 		style.setTransparency(0.5);
-		style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
-		style.setLineWidth(0);
 		style.setLineVisible(false);
 		return style;
 	}
 
-	// returns outer text style
-	private static Style createStyleForOuterText(Diagram diagram) {
+	private static void createStylesForText(Diagram diagram) {
+		// Disable the background and set left alignment--these are the default settings for Text algorithms, but need
+		// to be set in the style when using createPlainText(). Unfortunately, it appears that you have to set filled
+		// on the child styles, otherwise it overrides the parent setting with a default value of true.
 		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, OUTER_TEXT);
-		style.setForeground(gaService.manageColor(diagram, BLACK));
-		Font font = gaService.manageFont(diagram, DEFAULT_FONT, 8, false, true);
-		style.setFont(font);
-		style.setLineWidth(2);
-		return style;
+		Style baseStyle = gaService.createStyle(diagram, TEXT_BASE);
+		baseStyle.setForeground(gaService.manageColor(diagram, BLACK));
+		baseStyle.setHorizontalAlignment(Orientation.ALIGNMENT_LEFT);
+
+		// Outer text style
+		Style outerStyle = gaService.createPlainStyle(baseStyle, OUTER_TEXT);
+		outerStyle.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, true));
+		outerStyle.setFilled(false);
+
+		// Inner text style
+		Style innerStyle = gaService.createPlainStyle(baseStyle, INNER_TEXT);
+		innerStyle.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 11, false, false));
+		innerStyle.setFilled(false);
 	}
 
 	private static void createStylesForInnerShapes(Diagram diagram) {
@@ -181,17 +191,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	// returns inner text style
-	private static Style createStyleForInnerText(Diagram diagram) {
-		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, INNER_TEXT);
-		Font font = gaService.manageFont(diagram, DEFAULT_FONT, 11, false, false);
-		style.setFont(font);
-		style.setForeground(gaService.manageColor(diagram, BLACK));
-		style.setLineWidth(2);
-		return style;
-	}
-
 	public static boolean needsUpdateForProvidesPort(Diagram diagram, Style style) {
 		if (style == null) {
 			return true;
@@ -208,7 +207,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		IGaService gaService = Graphiti.getGaService();
 		Style baseStyle = gaService.createStyle(diagram, PORT_BASE);
 		baseStyle.setForeground(gaService.manageColor(diagram, BLACK));
-		baseStyle.setLineWidth(2);
+		baseStyle.setLineWidth(1);
 		Font font = gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false);
 		baseStyle.setFont(font);
 		baseStyle.setLineVisible(true);
@@ -287,7 +286,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		style.setLineWidth(1);
 		style.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
 		style.setForeground(Graphiti.getGaService().manageColor(diagram, BLACK));
-		style.setTransparency(.99d);
 		return style;
 	}
 
