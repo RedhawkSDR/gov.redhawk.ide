@@ -945,8 +945,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// port text
 		Shape providesPortTextShape = Graphiti.getCreateService().createShape(providesPortContainerShape, false);
-		Text providesPortText = Graphiti.getCreateService().createText(providesPortTextShape, p.getName());
-		StyleUtil.setStyle(providesPortText, StyleUtil.USES_PORT);
+		Text providesPortText = Graphiti.getCreateService().createPlainText(providesPortTextShape, p.getName());
+		StyleUtil.setStyle(providesPortText, StyleUtil.PORT_TEXT);
 		Graphiti.getPeService().setPropertyValue(providesPortText, DUtil.GA_TYPE, GA_PROVIDES_PORT_TEXT);
 		Graphiti.getGaLayoutService().setLocation(providesPortText, PORT_SHAPE_WIDTH + PORT_NAME_HORIZONTAL_PADDING, 0);
 
@@ -1156,8 +1156,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// port text
 		Shape usesPortTextShape = Graphiti.getPeService().createShape(usesPortContainerShape, false);
-		Text usesPortText = Graphiti.getCreateService().createText(usesPortTextShape, p.getName());
-		StyleUtil.setStyle(usesPortText, StyleUtil.USES_PORT);
+		Text usesPortText = Graphiti.getCreateService().createPlainText(usesPortTextShape, p.getName());
+		StyleUtil.setStyle(usesPortText, StyleUtil.PORT_TEXT);
 		usesPortText.setHorizontalAlignment(Orientation.ALIGNMENT_RIGHT);
 		Graphiti.getPeService().setPropertyValue(usesPortText, DUtil.GA_TYPE, GA_USES_PORT_TEXT);
 		Graphiti.getGaLayoutService().setLocation(usesPortText, 0, 0);

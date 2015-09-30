@@ -37,6 +37,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String TEXT_BASE = "gov.redhawk.style.Text";
 	public static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
 	public static final String INNER_TEXT = "gov.redhawk.style.InnerText";
+	public static final String PORT_TEXT = "gov.redhawk.style.PortText";
 
 	public static final String START_ORDER = "gov.redhawk.style.StartOrder";
 	public static final String START_ORDER_ELLIPSE = "gov.redhawk.style.StartOrderEllipse";
@@ -144,6 +145,11 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		Style innerStyle = gaService.createPlainStyle(baseStyle, INNER_TEXT);
 		innerStyle.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 11, false, false));
 		innerStyle.setFilled(false);
+
+		// Port name text
+		Style portStyle = gaService.createPlainStyle(baseStyle, PORT_TEXT);
+		portStyle.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
+		portStyle.setFilled(false);
 	}
 
 	private static void createStylesForInnerShapes(Diagram diagram) {
@@ -208,8 +214,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		Style baseStyle = gaService.createStyle(diagram, PORT_BASE);
 		baseStyle.setForeground(gaService.manageColor(diagram, BLACK));
 		baseStyle.setLineWidth(1);
-		Font font = gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false);
-		baseStyle.setFont(font);
 		baseStyle.setLineVisible(true);
 
 		Style providesStyle = gaService.createPlainStyle(baseStyle, PROVIDES_PORT);
