@@ -10,8 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.util;
 
-import java.util.Collection;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.graphiti.mm.StyleContainer;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
@@ -108,11 +106,52 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		createStyleForHostCollocation(diagram);
 	}
 
+	/**
+	 * Checks whether a GraphicsAlgorithm's style is set to the desired styleId.
+	 *
+	 * @param ga the GraphicsAlgorithm to check
+	 * @param styleId the style id to look for
+	 * @return true if ga's style has the desired id
+	 */
+	public static boolean isStyleSet(GraphicsAlgorithm ga, String styleId) {
+		if (ga.getStyle() == null) {
+			return false;
+		}
+		return styleId.equals(ga.getStyle().getId());
+	}
+
+	/**
+	 * Sets the style for a GraphicsAlgorithm to the style associated with the given id.
+	 * If no style can be found, sets the style to null.
+	 *
+	 * @param ga the GraphicsAlgorithm on which to set the style
+	 * @param styleId the id for the style to set
+	 */
 	public static void setStyle(GraphicsAlgorithm ga, String styleId) {
 		// Find the (potentially nested) style via the StyleResource's URI
 		URI uri = StyleResource.STYLE_URI.appendFragment(styleId);
 		Style style = (Style) ga.eResource().getResourceSet().getEObject(uri, true);
 		ga.setStyle(style);
+	}
+
+	/**
+	 * Recursively searches for a style with given styleId in a StyleContainer.
+	 *
+	 * @param styleContainer the style container to search
+	 * @param id the style id to find
+	 * @return
+	 */
+	public static Style findStyle(StyleContainer styleContainer, String id) {
+		for (Style style : styleContainer.getStyles()) {
+			if (id.equals(style.getId())) {
+				return style;
+			}
+			Style child = findStyle(style, id);
+			if (child != null) {
+				return child;
+			}
+		}
+		return null;
 	}
 	
 	// returns component outer rectangle style
@@ -274,30 +313,5 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 		Style soStyle = gaService.createPlainStyle(baseStyle, START_ORDER_ELLIPSE);
 		soStyle.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
-	}
-
-	// find the style with given id in style-container
-	public static Style findStyle(StyleContainer styleContainer, String id) {
-		// find and return style
-		Collection<Style> styles = styleContainer.getStyles();
-		if (styles != null) {
-			for (Style style : styles) {
-				if (id.equals(style.getId())) {
-					return style;
-				}
-				Style child = findStyle(style, id);
-				if (child != null) {
-					return child;
-				}
-			}
-		}
-		return null;
-	}
-
-	public static boolean isStyleSet(GraphicsAlgorithm ga, String styleId) {
-		if (ga.getStyle() == null) {
-			return false;
-		}
-		return styleId.equals(ga.getStyle().getId());
 	}
 }

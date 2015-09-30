@@ -1871,7 +1871,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @param externalPorts
 	 * @return
 	 */
-	public static boolean isExternalPort(Object portObject, List<Port> externalPorts) {
+	private static boolean isExternalPort(Object portObject, List<Port> externalPorts) {
 		return findExternalPort(portObject, externalPorts) != null;
 	}
 
