@@ -41,6 +41,9 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	public static final String INNER_TEXT = "gov.redhawk.style.InnerText";
 	public static final String HOST_COLLOCATION = "gov.redhawk.style.HostCollocation";
+
+	// Inner shape styles; all inherit from INNER_BASE
+	private static final String INNER_BASE = "gov.redhawk.style.Inner";
 	public static final String FIND_BY_INNER = "gov.redhawk.style.FindByInner";
 	public static final String USES_DEVICE_INNER = "gov.redhawk.style.UsesDeviceInner";
 	public static final String COMPONENT_INNER = "gov.redhawk.style.ComponentInner";
@@ -94,21 +97,12 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static void createAllStyles(Diagram diagram) {
 		createStyleForOuterShape(diagram);
 		createStyleForOuterText(diagram);
-
-		createStyleForInnerText(diagram);
-		createStyleForComponentInner(diagram);
-		createStyleForComponentInnerStarted(diagram);
-		createStyleForComponentInnerError(diagram);
-		createStyleForComponentInnerDisabled(diagram);
-		createStyleForHostCollocation(diagram);
-		createStyleForFindByInner(diagram);
-		createStyleForUsesDeviceInner(diagram);
-
 		createStyleForLollipop(diagram);
-
+		createStyleForInnerText(diagram);
 		createStylesForStartOrder(diagram);
-
+		createStylesForInnerShapes(diagram);
 		createStylesForPorts(diagram);
+		createStyleForHostCollocation(diagram);
 	}
 
 	public static void setStyle(GraphicsAlgorithm ga, String styleId) {
@@ -142,62 +136,36 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	// returns component inner rectangle style
-	private static Style createStyleForComponentInner(Diagram diagram) {
+	private static void createStylesForInnerShapes(Diagram diagram) {
 		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, COMPONENT_INNER);
-		gaService.setRenderingStyle(style, PredefinedColoredAreas.getBlueWhiteAdaptions());
-		style.setLineWidth(1);
-		return style;
-	}
+		Style baseStyle = gaService.createStyle(diagram, INNER_BASE);
+		baseStyle.setLineWidth(1);
 
-	// updates component inner rectangle style
-	private static Style createStyleForComponentInnerStarted(Diagram diagram) {
-		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, COMPONENT_INNER_STARTED);
-		gaService.setRenderingStyle(style, RHContainerColoredAreas.getGreenWhiteAdaptions());
-		style.setLineWidth(1);
-		return style;
-	}
+		// Default component style
+		Style defaultStyle = gaService.createPlainStyle(baseStyle, COMPONENT_INNER);
+		gaService.setRenderingStyle(defaultStyle, PredefinedColoredAreas.getBlueWhiteAdaptions());
 
-	// updates component inner rectangle style when it is in an error state
-	private static Style createStyleForComponentInnerError(Diagram diagram) {
-		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, COMPONENT_INNER_ERROR);
-		gaService.setRenderingStyle(style, RHContainerColoredAreas.getYellowWhiteAdaptions());
-		style.setLineWidth(1);
-		return style;
-	}
+		// Started component style (runtime only)
+		Style startedStyle = gaService.createPlainStyle(baseStyle, COMPONENT_INNER_STARTED);
+		gaService.setRenderingStyle(startedStyle, RHContainerColoredAreas.getGreenWhiteAdaptions());
 
-	// updates component inner rectangle style when it is in a disabled state
-	private static Style createStyleForComponentInnerDisabled(Diagram diagram) {
-		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, COMPONENT_INNER_DISABLED);
-		gaService.setRenderingStyle(style, PredefinedColoredAreas.getLightGrayAdaptions());
-		style.setLineWidth(1);
-		return style;
-	}
+		// Style for component in an error state
+		Style errorStyle = gaService.createPlainStyle(baseStyle, COMPONENT_INNER_ERROR);
+		gaService.setRenderingStyle(errorStyle, RHContainerColoredAreas.getYellowWhiteAdaptions());
 
-	private static Style createStyleForFindByInner(Diagram diagram) {
-		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, FIND_BY_INNER);
-		style.setBackground(gaService.manageColor(diagram, new ColorConstant(255, 0, 0)));
-		style.setLineStyle(LineStyle.DASH);
-		gaService.setRenderingStyle(style, FindByColoredAreas.getCopperWhiteAdaptions());
-		style.setLineWidth(1);
-		return style;
-	}
+		// Disabled component style
+		Style disabledStyle = gaService.createPlainStyle(baseStyle, COMPONENT_INNER_DISABLED);
+		gaService.setRenderingStyle(disabledStyle, PredefinedColoredAreas.getLightGrayAdaptions());
 
+		// FindBy style
+		Style findbyStyle = gaService.createPlainStyle(baseStyle, FIND_BY_INNER);
+		findbyStyle.setLineStyle(LineStyle.DASH);
+		gaService.setRenderingStyle(findbyStyle, FindByColoredAreas.getCopperWhiteAdaptions());
 
-	// returns uses device inner rectangle style
-	private static Style createStyleForUsesDeviceInner(Diagram diagram) {
-		IGaService gaService = Graphiti.getGaService();
-		Style style = gaService.createStyle(diagram, USES_DEVICE_INNER);
-		style.setBackground(gaService.manageColor(diagram, new ColorConstant(255, 0, 0)));
-		style.setLineStyle(LineStyle.DASH);
-		gaService.setRenderingStyle(style, FindByColoredAreas.getLightGrayAdaptions());
-		style.setLineWidth(1);
-		return style;
+		// UsesDevice style
+		Style usesDeviceStyle = gaService.createPlainStyle(baseStyle, USES_DEVICE_INNER);
+		usesDeviceStyle.setLineStyle(LineStyle.DASH);
+		gaService.setRenderingStyle(usesDeviceStyle, FindByColoredAreas.getLightGrayAdaptions());
 	}
 
 	// returns host collocation rectangle style
