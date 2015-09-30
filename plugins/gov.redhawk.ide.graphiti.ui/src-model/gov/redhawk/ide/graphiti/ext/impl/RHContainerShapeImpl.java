@@ -41,7 +41,6 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Image;
@@ -221,8 +220,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			GA_OUTER_ROUNDED_RECTANGLE_TEXT = "outerRoundedRectangleText", GA_INNER_ROUNDED_RECTANGLE_TEXT = "innerRoundedRectangleText",
 			GA_OUTER_ROUNDED_RECTANGLE_IMAGE = "outerRoundedRectangleImage", GA_INNER_ROUNDED_RECTANGLE_IMAGE = "innerRoundedRectangleImage",
 			GA_INNER_ROUNDED_RECTANGLE_LINE = "innerRoundedRectangleLine", GA_PROVIDES_PORT_RECTANGLE = "providesPortsRectangle",
-			GA_PROVIDES_PORT_TEXT = "GA_PROVIDES_PORT_TEXT", GA_FIX_POINT_ANCHOR_RECTANGLE = "GA_FIX_POINT_ANCHOR_RECTANGLE",
-			GA_USES_PORTS_RECTANGLE = "usesPortsRectangle", GA_USES_PORT_TEXT = "GA_USES_PORT_TEXT";
+			GA_FIX_POINT_ANCHOR_RECTANGLE = "GA_FIX_POINT_ANCHOR_RECTANGLE", GA_USES_PORTS_RECTANGLE = "usesPortsRectangle";
 
 	// Property key/value pairs help us identify Shapes to enable/disable user actions
 	// (move, resize, delete, remove, etc.)
@@ -946,7 +944,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Shape providesPortTextShape = Graphiti.getCreateService().createShape(providesPortContainerShape, false);
 		Text providesPortText = Graphiti.getCreateService().createPlainText(providesPortTextShape, p.getName());
 		StyleUtil.setStyle(providesPortText, StyleUtil.PORT_TEXT);
-		Graphiti.getPeService().setPropertyValue(providesPortText, DUtil.GA_TYPE, GA_PROVIDES_PORT_TEXT);
 		Graphiti.getGaLayoutService().setLocation(providesPortText, PORT_SHAPE_WIDTH + PORT_NAME_HORIZONTAL_PADDING, 0);
 
 		// Port shape anchor
@@ -999,7 +996,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			ContainerShape providesPort = (ContainerShape) shape;
 
 			// Resize the text
-			Text portText = (Text) providesPort.getChildren().get(0).getGraphicsAlgorithm();
+			Text portText = getPortText(providesPort);
 			resizePortText(portText);
 			int portWidth = portText.getWidth() + PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_WIDTH;
 			gaLayoutService.setSize(providesPort.getGraphicsAlgorithm(), portWidth, PORT_SHAPE_HEIGHT);
@@ -1024,12 +1021,12 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			ContainerShape usesPort = (ContainerShape) shape;
 
 			// Resize the text
-			Text portText = (Text) usesPort.getChildren().get(0).getGraphicsAlgorithm();
+			Text portText = getPortText(usesPort);
 			resizePortText(portText);
 			int portWidth = portText.getWidth() + PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_WIDTH;
 
 			// Move the port anchor
-			FixPointAnchor portAnchor = (FixPointAnchor) usesPort.getAnchors().get(0);
+			FixPointAnchor portAnchor = getPortAnchor(usesPort);
 			portAnchor.getLocation().setX(portWidth);
 			portAnchor.getLocation().setY(PORT_SHAPE_HEIGHT/2);
 
@@ -1136,7 +1133,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Text usesPortText = Graphiti.getCreateService().createPlainText(usesPortTextShape, p.getName());
 		StyleUtil.setStyle(usesPortText, StyleUtil.PORT_TEXT);
 		usesPortText.setHorizontalAlignment(Orientation.ALIGNMENT_RIGHT);
-		Graphiti.getPeService().setPropertyValue(usesPortText, DUtil.GA_TYPE, GA_USES_PORT_TEXT);
 		Graphiti.getGaLayoutService().setLocation(usesPortText, 0, 0);
 
 		// Port shape/anchor
@@ -1360,64 +1356,54 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				List<Text> providesPortTexts = new ArrayList<Text>();
 
 				// capture all providesPortText values
-				for (PropertyContainer providesPortContainerShape : DUtil.collectPropertyContainerChildren(providesPortsContainerShape)) {
-					// if its a providesPortContainerShape
-					if (DUtil.isPropertyElementType(providesPortContainerShape, SHAPE_PROVIDES_PORT_CONTAINER)) {
-						// find all providesPortText, and fixPointAnchorRectangle
-						for (PropertyContainer providesPortChild : DUtil.collectPropertyContainerChildren(providesPortContainerShape)) {
-							// text?
-							if (DUtil.isPropertyElementType(providesPortChild, GA_PROVIDES_PORT_TEXT)) {
-								Text providesPortText = (Text) providesPortChild;
-								providesPortTexts.add(providesPortText);
-								// search for text in model
-								boolean found = false;
-								for (ProvidesPortStub portStub : provides) {
-									if (portStub.getName().equals(providesPortText.getValue())) {
-										found = true;
-									}
-								}
-								if (!found) {
-									// wasn't found, deleting this port
+				for (Shape providesPortShape : providesPortsContainerShape.getChildren()) {
+					ContainerShape providesPortContainerShape = (ContainerShape) providesPortShape;
+					Text providesPortText = getPortText(providesPortContainerShape);
+					providesPortTexts.add(providesPortText);
+					// search for text in model
+					boolean found = false;
+					for (ProvidesPortStub portStub : provides) {
+						if (portStub.getName().equals(providesPortText.getValue())) {
+							found = true;
+						}
+					}
+					if (!found) {
+						// wasn't found, deleting this port
+						if (performUpdate) {
+							updateStatus = true;
+							// delete shape
+							DUtil.fastDeletePictogramElement((PictogramElement) providesPortContainerShape);
+						} else {
+							return new Reason(true, "Provides ports requires update");
+						}
+					} else {
+						FixPointAnchor fixPointAnchor = getPortAnchor(providesPortContainerShape);
+						Rectangle fixPointAnchorRectangle = (Rectangle) fixPointAnchor.getGraphicsAlgorithm();
+						Object portObject = DUtil.getBusinessObject(fixPointAnchor);
+						if (portObject != null) {
+							// ProvidesPortStub
+							if (isExternalPort(portObject, externalPorts)) {
+								// external port
+								if (!fixPointAnchorRectangle.getStyle().getId().equals(StyleUtil.EXTERNAL_PROVIDES_PORT)) {
 									if (performUpdate) {
 										updateStatus = true;
-										// delete shape
-										DUtil.fastDeletePictogramElement((PictogramElement) providesPortContainerShape);
+										// update style
+										StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.EXTERNAL_PROVIDES_PORT);
+										// link to externalPort so that update fires when it changes
+										fixPointAnchor.getLink().getBusinessObjects().add(findExternalPort(portObject, externalPorts));
 									} else {
-										return new Reason(true, "Provides ports requires update");
+										return new Reason(true, "Port style requires update");
 									}
 								}
-							}
-							if (DUtil.isPropertyElementType(providesPortChild, GA_FIX_POINT_ANCHOR_RECTANGLE)) {
-								Rectangle fixPointAnchorRectangle = (Rectangle) providesPortChild;
-								// get business object linked to fixPointAnchor
-								Object portObject = DUtil.getBusinessObject(fixPointAnchorRectangle.getPictogramElement());
-								if (portObject != null) {
-									// ProvidesPortStub
-									if (isExternalPort(portObject, externalPorts)) {
-										// external port
-										if (StyleUtil.needsUpdateForExternalProvidesPort(DUtil.findDiagram(this), fixPointAnchorRectangle.getStyle())) {
-											if (performUpdate) {
-												updateStatus = true;
-												// update style
-												StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.EXTERNAL_PROVIDES_PORT);
-												// link to externalPort so that update fires when it changes
-												fixPointAnchorRectangle.getPictogramElement().getLink().getBusinessObjects().add(
-													findExternalPort(portObject, externalPorts));
-											} else {
-												return new Reason(true, "Port style requires update");
-											}
-										}
+							} else {
+								// non-external port
+								if (!fixPointAnchorRectangle.getStyle().getId().equals(StyleUtil.PROVIDES_PORT)) {
+									if (performUpdate) {
+										updateStatus = true;
+										// update style
+										StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.PROVIDES_PORT);
 									} else {
-										// non-external port
-										if (StyleUtil.needsUpdateForProvidesPort(DUtil.findDiagram(this), fixPointAnchorRectangle.getStyle())) {
-											if (performUpdate) {
-												updateStatus = true;
-												// update style
-												StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.PROVIDES_PORT);
-											} else {
-												return new Reason(true, "Port style requires update");
-											}
-										}
+										return new Reason(true, "Port style requires update");
 									}
 								}
 							}
@@ -1541,67 +1527,58 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 				// verify uses port quantity and text haven't changed
 				// find THE usesPortContainerShape
-				for (PropertyContainer usesPortContainerShape : DUtil.collectPropertyContainerChildren(usesPortsContainerShape)) {
-					// if its a usesPortContainerShape
-					if (DUtil.isPropertyElementType(usesPortContainerShape, SHAPE_USES_PORT_CONTAINER)) {
-						// find all usesPortText
-						for (PropertyContainer usesPortChild : DUtil.collectPropertyContainerChildren(usesPortContainerShape)) {
-							// compare text
-							if (DUtil.isPropertyElementType(usesPortChild, GA_USES_PORT_TEXT)) {
-								Text usesPortText = (Text) usesPortChild;
-								usesPortTexts.add(usesPortText);
-								// search for text in model
-								boolean found = false;
-								for (UsesPortStub portStub : uses) {
-									if (portStub.getName().equals(usesPortText.getValue())) {
-										found = true;
-										break;
-									}
-								}
-								if (!found) {
+				for (Shape usesPortShape : usesPortsContainerShape.getChildren()) {
+					ContainerShape usesPortContainerShape = (ContainerShape) usesPortShape;
+					Text usesPortText = getPortText(usesPortContainerShape);
+					usesPortTexts.add(usesPortText);
+					// search for text in model
+					boolean found = false;
+					for (UsesPortStub portStub : uses) {
+						if (portStub.getName().equals(usesPortText.getValue())) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						if (performUpdate) {
+							updateStatus = true;
+							// delete shape
+							DUtil.fastDeletePictogramElement(usesPortContainerShape);
+						} else {
+							return new Reason(true, "Uses ports requires update");
+						}
+					} else {
+						FixPointAnchor fixPointAnchor = getPortAnchor(usesPortContainerShape);
+						Rectangle fixPointAnchorRectangle = (Rectangle) fixPointAnchor.getGraphicsAlgorithm();
+						// get business object linked to fixPointAnchor
+						Object portObject = DUtil.getBusinessObject(fixPointAnchor);
+						if (portObject != null) {
+							// usesPortStub
+							if (isExternalPort(portObject, externalPorts)) {
+								// external port
+								if (!fixPointAnchorRectangle.getStyle().getId().equals(StyleUtil.EXTERNAL_USES_PORT)) {
 									if (performUpdate) {
 										updateStatus = true;
-										// delete shape
-										DUtil.fastDeletePictogramElement((PictogramElement) usesPortContainerShape);
+										// update style
+										StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.EXTERNAL_USES_PORT);
+										// link to externalPort so that update fires when it changes
+										fixPointAnchor.getLink().getBusinessObjects().add(findExternalPort(portObject, externalPorts));
 									} else {
-										return new Reason(true, "Uses ports requires update");
+										return new Reason(true, "Port style requires update");
 									}
 								}
-							}
-							if (DUtil.isPropertyElementType(usesPortChild, GA_FIX_POINT_ANCHOR_RECTANGLE)) {
-								Rectangle fixPointAnchorRectangle = (Rectangle) usesPortChild;
-								// get business object linked to fixPointAnchor
-								Object portObject = DUtil.getBusinessObject(fixPointAnchorRectangle.getPictogramElement());
-								if (portObject != null) {
-									// usesPortStub
-									if (isExternalPort(portObject, externalPorts)) {
-										// external port
-										if (StyleUtil.needsUpdateForExternalUsesPort(DUtil.findDiagram(this), fixPointAnchorRectangle.getStyle())) {
-											if (performUpdate) {
-												updateStatus = true;
-												// update style
-												StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.EXTERNAL_USES_PORT);
-												// link to externalPort so that update fires when it changes
-												fixPointAnchorRectangle.getPictogramElement().getLink().getBusinessObjects().add(
-													findExternalPort(portObject, externalPorts));
-											} else {
-												return new Reason(true, "Port style requires update");
-											}
-										}
+							} else {
+								// non-external port
+								if (!fixPointAnchorRectangle.getStyle().getId().equals(StyleUtil.USES_PORT)) {
+									if (performUpdate) {
+										updateStatus = true;
+										// update style
+										StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.USES_PORT);
+										// this line will actually remove existing links (which will include an
+										// external port) and simply add the portObject (which already existed)
+										featureProvider.link(fixPointAnchorRectangle.getPictogramElement(), portObject);
 									} else {
-										// non-external port
-										if (StyleUtil.needsUpdateForUsesPort(DUtil.findDiagram(this), fixPointAnchorRectangle.getStyle())) {
-											if (performUpdate) {
-												updateStatus = true;
-												// update style
-												StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.USES_PORT);
-												// this line will actually remove existing links (which will include an
-												// external port) and simply add the portObject (which already existed)
-												featureProvider.link(fixPointAnchorRectangle.getPictogramElement(), portObject);
-											} else {
-												return new Reason(true, "Port style requires update");
-											}
-										}
+										return new Reason(true, "Port style requires update");
 									}
 								}
 							}
@@ -1976,5 +1953,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 		StyleUtil.setStyle(getInnerContainerShape().getGraphicsAlgorithm(), styleId);
 		StyleUtil.setStyle(getInnerPolyline(), styleId);
+	}
+
+	protected Text getPortText(ContainerShape portContainerShape) {
+		return (Text) portContainerShape.getChildren().get(0).getGraphicsAlgorithm();
+	}
+
+	protected FixPointAnchor getPortAnchor(ContainerShape portContainerShape) {
+		return (FixPointAnchor) portContainerShape.getAnchors().get(0);
 	}
 } // RHContainerShapeImpl
