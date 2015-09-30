@@ -42,9 +42,11 @@ import gov.redhawk.ide.codegen.ui.internal.GeneratorUtil;
 import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
+import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.ConfigurationKind;
 import mil.jpeojtrs.sca.prf.Kind;
 import mil.jpeojtrs.sca.prf.PrfFactory;
+import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.Simple;
@@ -54,6 +56,7 @@ import mil.jpeojtrs.sca.prf.StructPropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.collections.FeatureMapList;
 
 public class PropertyKindUtil {
 
@@ -98,7 +101,7 @@ public class PropertyKindUtil {
 		// Find if there are configure, execparam and property kinds in the properties file
 		final Set<PropertyConfigurationType> kindTypes = new HashSet<PropertyConfigurationType>();
 		try {
-			ScaModelCommandWithResult.runExclusive(prf, new RunnableWithResult.Impl< Object >() {
+			ScaModelCommandWithResult.runExclusive(prf, new RunnableWithResult.Impl<Object>() {
 				@Override
 				public void run() {
 					FeatureMap props = prf.getProperties();
@@ -134,9 +137,11 @@ public class PropertyKindUtil {
 
 		// Offer upgrade if using deprecated property kinds with a newer codegen
 		for (Version codegenVersion : codegenVersions) {
-			if (codegenVersion.compareTo(new Version(2, 0, 0)) >= 0 && (kindTypes.contains(PropertyConfigurationType.CONFIGURE) || kindTypes.contains(PropertyConfigurationType.EXECPARAM))) {
+			// || kindTypes.contains(PropertyConfigurationType.EXECPARAM)
+			if (codegenVersion.compareTo(new Version(2, 0, 0)) >= 0 && (kindTypes.contains(PropertyConfigurationType.CONFIGURE))) {
 				String[] buttons = new String[] { IDialogConstants.CANCEL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_LABEL };
-				MessageDialog dialog = new MessageDialog(shell, Messages.DeprecatedProps_Title, null, Messages.DeprecatedProps_Message, MessageDialog.QUESTION, buttons, 2);				
+				MessageDialog dialog = new MessageDialog(shell, Messages.DeprecatedProps_Title, null, Messages.DeprecatedProps_Message, MessageDialog.QUESTION,
+					buttons, 2);
 				int result = dialog.open();
 				if (result == 2) {
 					upgradeProperties(prf);
@@ -180,7 +185,7 @@ public class PropertyKindUtil {
 	}
 
 	/**
-	 * Upgrade 'configure' and 'execparam' properties to 'property' properties.
+	 * Upgrade 'configure' properties to 'property' properties, or remove if superfluous.
 	 * @param prf The PRF model object to upgrade
 	 * @throws CoreException
 	 */
@@ -189,21 +194,19 @@ public class PropertyKindUtil {
 		ScaModelCommand.execute(prf, new ScaModelCommand() {
 			@Override
 			public void execute() {
-				FeatureMap props = prf.getProperties();
-				for (FeatureMap.Entry propEntry : props) {
-					Object propObj = propEntry.getValue();
-					if (propObj instanceof Simple) {
-						Simple prop = (Simple) propObj;
-						upgradeKinds(prop.getKind());
-					} else if (propObj instanceof SimpleSequence) {
-						SimpleSequence prop = (SimpleSequence) propObj;
-						upgradeKinds(prop.getKind());
-					} else if (propObj instanceof Struct) {
-						Struct prop = (Struct) propObj;
-						upgradeConfigurationKinds(prop.getConfigurationKind());
-					} else if (propObj instanceof StructSequence) {
-						StructSequence prop = (StructSequence) propObj;
-						upgradeConfigurationKinds(prop.getConfigurationKind());
+				FeatureMapList<AbstractProperty> props = new FeatureMapList<AbstractProperty>(prf.getProperties(), AbstractProperty.class);
+				for (AbstractProperty absProp : props) {
+					switch (absProp.eClass().getClassifierID()) {
+					case PrfPackage.SIMPLE:
+					case PrfPackage.SIMPLE_SEQUENCE:
+						upgradeKindProperties(absProp);
+						break;
+					case PrfPackage.STRUCT:
+					case PrfPackage.STRUCT_SEQUENCE:
+						upgradeConfigurationKindProperties(absProp);
+						break;
+					default:
+						throw new IllegalArgumentException();
 					}
 				}
 			}
@@ -211,73 +214,86 @@ public class PropertyKindUtil {
 	}
 
 	/**
-	 * Upgrade the list of {@link Kind} (configure or execparam -> property).
-	 * @param kinds
+	 * Upgrade properties with the "kind" XML type (simple / simple sequence)
+	 * @param prop
 	 */
-	private static void upgradeKinds(EList<Kind> kinds) {
-		if (kinds == null) {
-			return;
+	private static void upgradeKindProperties(AbstractProperty prop) {
+		List<Kind> kinds;
+		switch (prop.eClass().getClassifierID()) {
+		case PrfPackage.SIMPLE:
+			kinds = ((Simple) prop).getKind();
+			break;
+		case PrfPackage.SIMPLE_SEQUENCE:
+			kinds = ((SimpleSequence) prop).getKind();
+			break;
+		default:
+			throw new IllegalArgumentException();
 		}
 
-		boolean hasConfigureOrExecParam = false;
-		boolean hasPropertyKind = false;
-		ListIterator<Kind> kindIterator = kinds.listIterator();
-		while (kindIterator.hasNext()) {
-			Kind kind = kindIterator.next();
-			if (kind.isSetType()) {
-				switch (kind.getType()) {
-				case CONFIGURE:
-				case EXECPARAM:
-					kindIterator.remove();
-					hasConfigureOrExecParam = true;
-					break;
-				case PROPERTY:
-					hasPropertyKind = true;
-					break;
-				default:
-					break;
-				}
+		boolean hasHigherPriorityKind = false;
+		boolean hadConfigure = false;
+		ListIterator<Kind> iterator = kinds.listIterator();
+		while (iterator.hasNext()) {
+			Kind kind = iterator.next();
+			switch (kind.getType()) {
+			case ALLOCATION:
+			case PROPERTY:
+				hasHigherPriorityKind = true;
+				break;
+			case CONFIGURE:
+				iterator.remove();
+				hadConfigure = true;
+				break;
+			default:
+				break;
 			}
 		}
-		if (hasConfigureOrExecParam && !hasPropertyKind) {
-			Kind kind = PrfFactory.eINSTANCE.createKind();
-			kind.setType(PropertyConfigurationType.PROPERTY);
-			kinds.add(kind);
+		if (hadConfigure && !hasHigherPriorityKind) {
+			Kind newKind = PrfFactory.eINSTANCE.createKind();
+			newKind.setType(PropertyConfigurationType.PROPERTY);
+			kinds.add(newKind);
 		}
 	}
 
 	/**
-	 * Upgrade the list of {@link ConfigurationKind} (configure -> property).
-	 * @param kinds
+	 * Upgrade properties with the "configurationkind" XML type (struct / struct sequence)
+	 * @param prop
 	 */
-	private static void upgradeConfigurationKinds(EList<ConfigurationKind> kinds) {
-		if (kinds == null) {
-			return;
+	private static void upgradeConfigurationKindProperties(AbstractProperty prop) {
+		List<ConfigurationKind> kinds;
+		switch (prop.eClass().getClassifierID()) {
+		case PrfPackage.STRUCT:
+			kinds = ((Struct) prop).getConfigurationKind();
+			break;
+		case PrfPackage.STRUCT_SEQUENCE:
+			kinds = ((StructSequence) prop).getConfigurationKind();
+			break;
+		default:
+			throw new IllegalArgumentException();
 		}
 
-		boolean hasConfigure = false;
-		boolean hasPropertyKind = false;
-		ListIterator<ConfigurationKind> kindIterator = kinds.listIterator();
-		while (kindIterator.hasNext()) {
-			ConfigurationKind kind = kindIterator.next();
-			if (kind.isSetType()) {
-				switch (kind.getType()) {
-				case CONFIGURE:
-					kindIterator.remove();
-					hasConfigure = true;
-					break;
-				case PROPERTY:
-					hasPropertyKind = true;
-					break;
-				default:
-					break;
-				}
+		boolean hasHigherPriorityKind = false;
+		boolean hadConfigure = false;
+		ListIterator<ConfigurationKind> iterator = kinds.listIterator();
+		while (iterator.hasNext()) {
+			ConfigurationKind kind = iterator.next();
+			switch (kind.getType()) {
+			case ALLOCATION:
+			case PROPERTY:
+				hasHigherPriorityKind = true;
+				break;
+			case CONFIGURE:
+				iterator.remove();
+				hadConfigure = true;
+				break;
+			default:
+				break;
 			}
 		}
-		if (hasConfigure && !hasPropertyKind) {
-			ConfigurationKind kind = PrfFactory.eINSTANCE.createConfigurationKind();
-			kind.setType(StructPropertyConfigurationType.PROPERTY);
-			kinds.add(kind);
+		if (hadConfigure && !hasHigherPriorityKind) {
+			ConfigurationKind newKind = PrfFactory.eINSTANCE.createConfigurationKind();
+			newKind.setType(StructPropertyConfigurationType.PROPERTY);
+			kinds.add(newKind);
 		}
 	}
 
