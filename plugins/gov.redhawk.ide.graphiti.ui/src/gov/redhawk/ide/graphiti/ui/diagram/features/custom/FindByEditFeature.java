@@ -254,7 +254,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 			}
 
 			// Add the new ports to the Diagram model
-			findByShape.setUsesPorts((EList<UsesPortStub>) usesPortStubs, featureProvider, null);
+			findByShape.setUsesPorts((EList<UsesPortStub>) usesPortStubs, featureProvider);
 
 			// Build the new connections using the reconnect feature
 			for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {
@@ -281,7 +281,8 @@ public class FindByEditFeature extends AbstractCustomFeature {
 			}
 
 			// Delete all ports and rebuild from the list provided by the FindByEdit wizard
-			findByStub.getUses().removeAll(portsToDelete);
+			findByStub.getUses().clear();
+			findByStub.getUses().addAll(usesPortStubs);
 		}
 
 		// Update provides port stub(s)
@@ -315,7 +316,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 			}
 
 			// Add the new ports to the Diagram model
-			findByShape.setProvidesPorts((EList<ProvidesPortStub>) providesPortStubs, featureProvider, null);
+			findByShape.setProvidesPorts((EList<ProvidesPortStub>) providesPortStubs, featureProvider);
 
 			// Build the new connections using the reconnect feature
 			for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {

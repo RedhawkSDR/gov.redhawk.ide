@@ -704,7 +704,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 		}
 
 		// Add the new ports to the Diagram model
-		usesDeviceShape.setUsesPorts(usesPortStubs, featureProvider, null);
+		usesDeviceShape.setUsesPorts(usesPortStubs, featureProvider);
 		usesDeviceStub.getUsesPortStubs().addAll(usesPortStubs);
 
 		// Build the new connections using the reconnect feature
@@ -774,7 +774,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 		}
 
 		// Add the new ports to the Diagram model
-		usesDeviceShape.setProvidesPorts(providesPortStubs, featureProvider, null);
+		usesDeviceShape.setProvidesPorts(providesPortStubs, featureProvider);
 		usesDeviceStub.getProvidesPortStubs().addAll(providesPortStubs);
 
 		// Build the new connections using the reconnect feature

@@ -1103,10 +1103,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Adds provides ports if an RHContainerShape is edited after initial creation
 	 */
-	public void setProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
+	public void setProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider) {
 		// Manually clean up the provides port parent container. Easier to just rebuild from scratch
 		DUtil.fastDeletePictogramElement(getProvidesPortsContainerShape());
-		addProvidesPorts(providesPortStubs, featureProvider, externalPorts);
+		addProvidesPorts(providesPortStubs, featureProvider, null);
 	}
 
 	/**
@@ -1175,10 +1175,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Adds uses ports if an RHContainerShape is edited after initial creation
 	 */
-	public void setUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
+	public void setUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider) {
 		// Manually clean up the uses port parent container. Easier to just rebuild from scratch
 		DUtil.fastDeletePictogramElement(getUsesPortsContainerShape());
-		addUsesPorts(usesPortStubs, featureProvider, externalPorts);
+		addUsesPorts(usesPortStubs, featureProvider, null);
 	}
 
 	/**
