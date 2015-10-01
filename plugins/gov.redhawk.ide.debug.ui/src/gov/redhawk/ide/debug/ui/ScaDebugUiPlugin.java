@@ -13,8 +13,11 @@ package gov.redhawk.ide.debug.ui;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import gov.redhawk.ide.debug.internal.ui.console.ConsoleExitStatus;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -32,6 +35,8 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 	// The shared instance
 	private static ScaDebugUiPlugin plugin;
 
+	private ConsoleExitStatus consoleWriter;
+
 	/**
 	 * The constructor
 	 */
@@ -47,6 +52,9 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		ScaDebugUiPlugin.plugin = this;
+
+		consoleWriter = new ConsoleExitStatus();
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(consoleWriter);
 	}
 
 	/*
@@ -58,6 +66,11 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 	public void stop(final BundleContext context) throws Exception {
 		ScaDebugUiPlugin.plugin = null;
 		super.stop(context);
+
+		if (consoleWriter != null) {
+			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(consoleWriter);
+			consoleWriter = null;
+		}
 	}
 
 	/**

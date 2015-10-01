@@ -44,6 +44,13 @@ public class ScaDebugPlugin extends Plugin {
 
 	private static ScaDebugPlugin instance;
 
+	/**
+	 * Applied as an attribute on an ILaunch that should have its exit status reported in the console. The value
+	 * should be set to "true".
+	 * @since 8.0
+	 */
+	public static final String LAUNCH_ATTRIBUTE_REDHAWK_EXIT_STATUS = ID + ".ShowRedhawkExitStatus";
+
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		ScaDebugPlugin.instance = this;
