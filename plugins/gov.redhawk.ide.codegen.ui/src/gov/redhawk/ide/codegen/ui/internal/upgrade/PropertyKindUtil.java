@@ -137,8 +137,7 @@ public class PropertyKindUtil {
 
 		// Offer upgrade if using deprecated property kinds with a newer codegen
 		for (Version codegenVersion : codegenVersions) {
-			// || kindTypes.contains(PropertyConfigurationType.EXECPARAM)
-			if (codegenVersion.compareTo(new Version(2, 0, 0)) >= 0 && (kindTypes.contains(PropertyConfigurationType.CONFIGURE))) {
+			if (codegenVersion.compareTo(new Version(2, 0, 0)) >= 0 && (kindTypes.contains(PropertyConfigurationType.CONFIGURE) || kindTypes.contains(PropertyConfigurationType.EXECPARAM))) {
 				String[] buttons = new String[] { IDialogConstants.CANCEL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_LABEL };
 				MessageDialog dialog = new MessageDialog(shell, Messages.DeprecatedProps_Title, null, Messages.DeprecatedProps_Message, MessageDialog.QUESTION,
 					buttons, 2);
@@ -185,7 +184,7 @@ public class PropertyKindUtil {
 	}
 
 	/**
-	 * Upgrade 'configure' properties to 'property' properties, or remove if superfluous.
+	 * Upgrade 'configure' and 'execparam' properties to 'property' properties, or remove if superfluous.
 	 * @param prf The PRF model object to upgrade
 	 * @throws CoreException
 	 */
@@ -230,25 +229,36 @@ public class PropertyKindUtil {
 			throw new IllegalArgumentException();
 		}
 
-		boolean hasHigherPriorityKind = false;
+		boolean hasProperty = false;
 		boolean hadConfigure = false;
+		boolean hadExecParam = false;
 		ListIterator<Kind> iterator = kinds.listIterator();
 		while (iterator.hasNext()) {
 			Kind kind = iterator.next();
 			switch (kind.getType()) {
-			case ALLOCATION:
 			case PROPERTY:
-				hasHigherPriorityKind = true;
+				hasProperty = true;
 				break;
 			case CONFIGURE:
 				iterator.remove();
 				hadConfigure = true;
 				break;
+			case EXECPARAM:
+				iterator.remove();
+				hadExecParam = true;
+				break;
 			default:
 				break;
 			}
 		}
-		if (hadConfigure && !hasHigherPriorityKind) {
+		if (hadExecParam && prop.eClass().getClassifierID() == PrfPackage.SIMPLE) {
+			if (!hasProperty) {
+				Kind newKind = PrfFactory.eINSTANCE.createKind();
+				newKind.setType(PropertyConfigurationType.PROPERTY);
+				kinds.add(newKind);
+			}
+			((Simple) prop).setCommandline(true);
+		} else  if (hadConfigure && !hasProperty) {
 			Kind newKind = PrfFactory.eINSTANCE.createKind();
 			newKind.setType(PropertyConfigurationType.PROPERTY);
 			kinds.add(newKind);
@@ -272,15 +282,14 @@ public class PropertyKindUtil {
 			throw new IllegalArgumentException();
 		}
 
-		boolean hasHigherPriorityKind = false;
+		boolean hasProperty = false;
 		boolean hadConfigure = false;
 		ListIterator<ConfigurationKind> iterator = kinds.listIterator();
 		while (iterator.hasNext()) {
 			ConfigurationKind kind = iterator.next();
 			switch (kind.getType()) {
-			case ALLOCATION:
 			case PROPERTY:
-				hasHigherPriorityKind = true;
+				hasProperty = true;
 				break;
 			case CONFIGURE:
 				iterator.remove();
@@ -290,10 +299,34 @@ public class PropertyKindUtil {
 				break;
 			}
 		}
-		if (hadConfigure && !hasHigherPriorityKind) {
+		if (hadConfigure && !hasProperty) {
 			ConfigurationKind newKind = PrfFactory.eINSTANCE.createConfigurationKind();
 			newKind.setType(StructPropertyConfigurationType.PROPERTY);
 			kinds.add(newKind);
+		}
+
+		// Drop nested kinds
+		switch (prop.eClass().getClassifierID()) {
+		case PrfPackage.STRUCT:
+			Struct struct = (Struct) prop;
+			for (Simple simple : struct.getSimple()) {
+				simple.getKind().clear();
+			}
+			for (SimpleSequence simpleSequence : struct.getSimpleSequence()) {
+				simpleSequence.getKind().clear();
+			}
+			break;
+		case PrfPackage.STRUCT_SEQUENCE:
+			StructSequence structSequence = (StructSequence) prop;
+			for (Simple simple : structSequence.getStruct().getSimple()) {
+				simple.getKind().clear();
+			}
+			for (SimpleSequence simpleSequence : structSequence.getStruct().getSimpleSequence()) {
+				simpleSequence.getKind().clear();
+			}
+			break;
+		default:
+			throw new IllegalArgumentException();
 		}
 	}
 
