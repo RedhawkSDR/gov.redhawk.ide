@@ -235,8 +235,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15, INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING = 60, PROVIDES_PORTS_LEFT_PADDING = 5,
 			INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
 			PORTS_CONTAINER_SHAPE_TOP_PADDING = 60, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8, INNER_ROUNDED_RECTANGLE_LINE_Y = 28,
-			PORT_NAME_HORIZONTAL_PADDING = 5, SUPER_PORT_SHAPE_HEIGHT = 25, SUPER_PORT_SHAPE_WIDTH = 10,
-			SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5, LOLLIPOP_ELLIPSE_DIAMETER = 10, INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
+			PORT_NAME_HORIZONTAL_PADDING = 5, SUPER_PORT_SHAPE_HEIGHT = 25, SUPER_PORT_SHAPE_WIDTH = 10, SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5,
+			LOLLIPOP_ELLIPSE_DIAMETER = 10, INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
 			INTERFACE_SHAPE_HEIGHT = 10, ICON_IMAGE_LENGTH = 16;
 
 	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_WIDTH = 10;
@@ -786,8 +786,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	protected ContainerShape addInnerContainer(String text, String imageId, String styleId) {
 		ContainerShape innerContainerShape = Graphiti.getCreateService().createContainerShape(this, false);
 		Graphiti.getPeService().setPropertyValue(innerContainerShape, DUtil.GA_TYPE, SHAPE_INNER_CONTAINER);
-		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createPlainRoundedRectangle(innerContainerShape, INNER_ROUNDED_RECTANGLE_CORNER_WIDTH,
-			INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT);
+		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createPlainRoundedRectangle(innerContainerShape,
+			INNER_ROUNDED_RECTANGLE_CORNER_WIDTH, INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT);
 		StyleUtil.setStyle(innerRoundedRectangle, styleId);
 		Graphiti.getPeService().setPropertyValue(innerRoundedRectangle, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE);
 		Graphiti.getGaLayoutService().setLocation(innerRoundedRectangle, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, INNER_CONTAINER_SHAPE_TOP_PADDING);
@@ -1002,7 +1002,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		currentY = Math.max(currentY - 5, 0); // remove extra spacing, if it was added above
 		gaLayoutService.setSize(providesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
 		// NB: For FindBy shapes and the like, the normal layout was not occurring for the provides port container
-		Graphiti.getGaLayoutService().setLocation(providesPortsContainer.getGraphicsAlgorithm(), PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING);
+		Graphiti.getGaLayoutService().setLocation(providesPortsContainer.getGraphicsAlgorithm(), PROVIDES_PORTS_LEFT_PADDING,
+			PORTS_CONTAINER_SHAPE_TOP_PADDING);
 	}
 
 	private void layoutUsesPorts(ContainerShape usesPortsContainer) {
@@ -1020,7 +1021,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			// Move the port anchor
 			FixPointAnchor portAnchor = getPortAnchor(usesPort);
 			portAnchor.getLocation().setX(portWidth);
-			portAnchor.getLocation().setY(PORT_SHAPE_HEIGHT/2);
+			portAnchor.getLocation().setY(PORT_SHAPE_HEIGHT / 2);
 
 			// Resize container
 			gaLayoutService.setSize(usesPort.getGraphicsAlgorithm(), portWidth, PORT_SHAPE_HEIGHT);
@@ -1147,7 +1148,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.USES_PORT);
 		}
 		// The location is relative to the anchor's location
-		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, -PORT_SHAPE_WIDTH, -PORT_SHAPE_HEIGHT/2, PORT_SHAPE_WIDTH, PORT_SHAPE_HEIGHT);
+		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, -PORT_SHAPE_WIDTH, -PORT_SHAPE_HEIGHT / 2, PORT_SHAPE_WIDTH,
+			PORT_SHAPE_HEIGHT);
 	}
 
 	/**
@@ -1417,8 +1419,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 						if (!found) {
 							if (performUpdate) {
 								updateStatus = true;
-								addProvidesPortContainerShape(p, providesPortsContainerShape, featureProvider,
-									findExternalPort(p, externalPorts));
+								addProvidesPortContainerShape(p, providesPortsContainerShape, featureProvider, findExternalPort(p, externalPorts));
 							} else {
 								return new Reason(true, "Provides ports requires update");
 							}

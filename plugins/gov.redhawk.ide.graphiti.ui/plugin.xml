@@ -29,10 +29,6 @@
       <parser
             contentTypeIdentifier="http://www.redhawk.gov/model/rhgext/1.0.0"
             class="org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl"/>
-      <parser
-            class="gov.redhawk.ide.graphiti.internal.ui.resource.StyleResourceFactory"
-            contentTypeIdentifier="gov.redhawk.ide.graphiti.ui.style">
-      </parser>
    </extension>
    <extension
          point="org.eclipse.emf.ecore.content_handler">
