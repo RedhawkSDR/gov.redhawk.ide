@@ -442,8 +442,8 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, IColorConstant> createMapFromString(EDataType eDataType, String initialValue) {
-		return (Map<String, IColorConstant>) super.createFromString(initialValue);
+	public Map<String, String> createMapFromString(EDataType eDataType, String initialValue) {
+		return (Map<String, String>) super.createFromString(initialValue);
 	}
 
 	/**

@@ -59,7 +59,6 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.impl.ContainerShapeImpl;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaLayoutService;
-import org.eclipse.graphiti.util.IColorConstant;
 
 /**
  * <!-- begin-user-doc -->
@@ -150,7 +149,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @generated NOT
 	 * @ordered
 	 */
-	protected Map<String, IColorConstant> connectionMap = Collections.synchronizedMap(new HashMap<String, IColorConstant>());
+	protected Map<String, String> connectionMap = Collections.synchronizedMap(new HashMap<String, String>());
 
 	/**
 	 * The default value of the '{@link #isHasSuperPortsContainerShape() <em>Has Super Ports Container Shape</em>}' attribute.
@@ -363,7 +362,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Map<String, IColorConstant> getConnectionMap() {
+	public Map<String, String> getConnectionMap() {
 		return connectionMap;
 	}
 
@@ -372,8 +371,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setConnectionMap(Map<String, IColorConstant> newConnectionMap) {
-		Map<String, IColorConstant> oldConnectionMap = connectionMap;
+	public void setConnectionMap(Map<String, String> newConnectionMap) {
+		Map<String, String> oldConnectionMap = connectionMap;
 		connectionMap = newConnectionMap;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP, oldConnectionMap, connectionMap));
@@ -676,7 +675,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			setIStatusSeverity((Integer) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
-			setConnectionMap((Map<String, IColorConstant>) newValue);
+			setConnectionMap((Map<String, String>) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			setHasSuperPortsContainerShape((Boolean) newValue);
@@ -709,7 +708,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			setIStatusSeverity(ISTATUS_SEVERITY_EDEFAULT);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
-			setConnectionMap((Map<String, IColorConstant>) null);
+			setConnectionMap((Map<String, String>) null);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			setHasSuperPortsContainerShape(HAS_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT);

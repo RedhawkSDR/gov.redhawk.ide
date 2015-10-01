@@ -601,8 +601,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 			!IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iUpdateContextEDataType, IUpdateContext.class, "IUpdateContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iColorConstantEDataType, IColorConstant.class, "IColorConstant", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(mapEDataType, Map.class, "Map", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS,
-			"java.util.Map<java.lang.String, org.eclipse.graphiti.util.IColorConstant>");
+		initEDataType(mapEDataType, Map.class, "Map", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS, "java.util.Map<java.lang.String, java.lang.String>");
 
 		// Create resource
 		createResource(eNS_URI);

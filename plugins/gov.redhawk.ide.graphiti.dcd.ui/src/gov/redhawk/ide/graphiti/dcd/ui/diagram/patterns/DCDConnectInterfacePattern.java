@@ -20,12 +20,12 @@ import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.util.IColorConstant;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.dcd.validation.ConnectionsConstraint;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.dcd.DcdFactory;
@@ -95,13 +95,13 @@ public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			}
 
 			// add graphical arrow to end of the connection
-			IColorConstant arrowColor;
+			String styleId;
 			if (validationProblem) {
-				arrowColor = IColorConstant.RED;
+				styleId = StyleUtil.CONNECTION_ERROR;
 			} else {
-				arrowColor = IColorConstant.BLACK;
+				styleId = StyleUtil.CONNECTION;
 			}
-			AbstractConnectInterfacePattern.addConnectionArrow(diagram, connectionPE, arrowColor);
+			AbstractConnectInterfacePattern.addConnectionArrow(diagram, connectionPE, styleId);
 		}
 	}
 

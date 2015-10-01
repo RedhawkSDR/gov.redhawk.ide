@@ -592,7 +592,7 @@ public interface RHGxPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Map</em>'.
 	 * @see java.util.Map
-	 * @model instanceClass="java.util.Map<java.lang.String, org.eclipse.graphiti.util.IColorConstant>"
+	 * @model instanceClass="java.util.Map<java.lang.String, java.lang.String>"
 	 * @generated
 	 */
 	EDataType getMap();

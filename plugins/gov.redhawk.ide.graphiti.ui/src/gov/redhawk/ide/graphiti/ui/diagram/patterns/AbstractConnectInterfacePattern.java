@@ -34,13 +34,13 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AbstractConnectionPattern;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
-import org.eclipse.graphiti.util.IColorConstant;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.PortStyleUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.sca.util.StringUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
@@ -172,13 +172,12 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 
 		// create line
 		IGaService gaService = Graphiti.getGaService();
-		Polyline line = gaService.createPolyline(connectionPE);
-		line.setLineWidth(2);
-		IColorConstant color = (IColorConstant) context.getProperty("LineColor");
-		if (color == null) {
-			color = IColorConstant.BLACK;
+		Polyline line = gaService.createPlainPolyline(connectionPE);
+		String styleId = (String) context.getProperty("LineStyle");
+		if (styleId == null) {
+			styleId = StyleUtil.CONNECTION;
 		}
-		line.setForeground(gaService.manageColor(getDiagram(), color));
+		StyleUtil.setStyle(line, styleId);
 
 		// link ports to connection
 		getFeatureProvider().link(connectionPE, new Object[] { context.getNewObject(), source, target });
@@ -192,21 +191,18 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 	protected static void addErrorDecorator(Diagram diagram, Connection connection) {
 		IGaService gaService = Graphiti.getGaService();
 		ConnectionDecorator errorDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, false, 0.5, true);
-		Polyline errPolyline = gaService.createPolyline(errorDecorator, new int[] { -7, 7, 0, 0, -7, -7, 0, 0, 7, -7, 0, 0, 7, 7 });
-		errPolyline.setForeground(gaService.manageColor(diagram, IColorConstant.RED));
-		errPolyline.setLineWidth(2);
+		Polyline errPolyline = gaService.createPlainPolyline(errorDecorator, new int[] { -7, 7, 0, 0, -7, -7, 0, 0, 7, -7, 0, 0, 7, 7 });
+		StyleUtil.setStyle(errPolyline, StyleUtil.CONNECTION_ERROR);
 	}
 
 	/**
 	 *  Add a graphical arrow to end of the connection
 	 */
-	protected static void addConnectionArrow(Diagram diagram, Connection connection, IColorConstant color) {
+	protected static void addConnectionArrow(Diagram diagram, Connection connection, String styleId) {
 		IGaService gaService = Graphiti.getGaService();
 		ConnectionDecorator arrowDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, false, 1.0, true);
-		Polygon polyArrow = gaService.createPolygon(arrowDecorator, new int[] { -10, 5, 0, 0, -10, -5 });
-		polyArrow.setForeground(gaService.manageColor(diagram, color));
-		polyArrow.setBackground(gaService.manageColor(diagram, color));
-		polyArrow.setLineWidth(2);
+		Polygon polyArrow = gaService.createPlainPolygon(arrowDecorator, new int[] { -10, 5, 0, 0, -10, -5 });
+		StyleUtil.setStyle(polyArrow, styleId);
 	}
 
 	@Override

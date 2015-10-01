@@ -45,8 +45,6 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
-import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -1017,29 +1015,29 @@ public class GraphitiModelMap implements IPortStatListener {
 		
 				Polyline line = (Polyline) connection.getGraphicsAlgorithm();
 				if (timeSinceLastCall < lastCallWarningLevel) {
-					updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.COLOR_OK);
+					updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.CONNECTION_OK);
 				} else {
-					updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.COLOR_WARN);
+					updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.CONNECTION_WARN);
 				}
 			}
 		});
 	}
 
 	private void updateConnectionStyle(final ComponentShapeImpl componentShape, final Connection connection, final SadConnectInterface connInterface,
-		final String connectionId, final Polyline line, final Diagram diagram, final IColorConstant style) {
+		final String connectionId, final Polyline line, final Diagram diagram, final String styleId) {
 		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 		stack.execute(new NonDirtyingCommand() {
 			@Override
 			public void execute() {
-				if (style == null) {
+				if (styleId == null) {
 					componentShape.getConnectionMap().remove(connectionId);
-					line.setForeground(Graphiti.getGaService().manageColor(diagram, IColorConstant.BLACK));
-					SADConnectInterfacePattern.decorateConnection(connection, connInterface, diagram, IColorConstant.BLACK);
+					StyleUtil.setStyle(line, StyleUtil.CONNECTION);
+					SADConnectInterfacePattern.decorateConnection(connection, connInterface, diagram, StyleUtil.CONNECTION);
 				} else {
-					componentShape.getConnectionMap().put(connectionId, style);
-					line.setForeground(Graphiti.getGaService().manageColor(diagram, style));
-					SADConnectInterfacePattern.decorateConnection(connection, connInterface, diagram, style);
+					componentShape.getConnectionMap().put(connectionId, styleId);
+					StyleUtil.setStyle(line, styleId);
+					SADConnectInterfacePattern.decorateConnection(connection, connInterface, diagram, styleId);
 				}
 			}
 		});

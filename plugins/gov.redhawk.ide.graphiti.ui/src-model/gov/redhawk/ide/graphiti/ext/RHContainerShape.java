@@ -23,7 +23,6 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.util.IColorConstant;
 
 /**
  * <!-- begin-user-doc -->
@@ -139,7 +138,7 @@ public interface RHContainerShape extends ContainerShape {
 	 * @model unique="false" dataType="gov.redhawk.ide.graphiti.ext.Map" transient="true"
 	 * @generated
 	 */
-	Map<String, IColorConstant> getConnectionMap();
+	Map<String, String> getConnectionMap();
 
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}' attribute.
@@ -149,7 +148,7 @@ public interface RHContainerShape extends ContainerShape {
 	 * @see #getConnectionMap()
 	 * @generated
 	 */
-	void setConnectionMap(Map<String, IColorConstant> value);
+	void setConnectionMap(Map<String, String> value);
 
 	/**
 	 * Returns the value of the '<em><b>Has Super Ports Container Shape</b></em>' attribute.

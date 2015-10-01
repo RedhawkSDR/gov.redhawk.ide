@@ -68,6 +68,12 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String PORT_STYLE_WARN3 = "gov.redhawk.style.PortWarning3";
 	public static final String PORT_STYLE_WARN4 = "gov.redhawk.style.PortWarning4";
 
+	// Connection style
+	public static final String CONNECTION = "gov.redhawk.style.Connection";
+	public static final String CONNECTION_OK = "gov.redhawk.style.ConnectionOk";
+	public static final String CONNECTION_WARN = "gov.redhawk.style.ConnectionWarn";
+	public static final String CONNECTION_ERROR = "gov.redhawk.style.ConnectionError";
+
 	public static final IColorConstant WHITE = IColorConstant.WHITE;
 	public static final IColorConstant BLACK = IColorConstant.BLACK;
 	public static final IColorConstant BLUE = new ColorConstant(0, 0, 194);
@@ -77,6 +83,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	// Colors for connection state
 	public static final IColorConstant COLOR_OK = IColorConstant.GREEN;
 	public static final IColorConstant COLOR_WARN = IColorConstant.YELLOW;
+	public static final IColorConstant COLOR_ERROR = IColorConstant.RED;
 
 	// Colors for port statistics feature
 	private static final IColorConstant PORT_OK = COLOR_OK;
@@ -104,6 +111,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		createStylesForInnerShapes(diagram);
 		createStylesForPorts(diagram);
 		createStyleForHostCollocation(diagram);
+		createStylesForConnections(diagram);
 	}
 
 	/**
@@ -314,4 +322,27 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		Style soStyle = gaService.createPlainStyle(baseStyle, START_ORDER_ELLIPSE);
 		soStyle.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
 	}
+
+	private static void createStylesForConnections(Diagram diagram) {
+		IGaService gaService = Graphiti.getGaService();
+		Style baseStyle = gaService.createStyle(diagram, CONNECTION);
+		baseStyle.setLineWidth(2);
+		baseStyle.setBackground(gaService.manageColor(diagram, BLACK));
+		baseStyle.setForeground(gaService.manageColor(diagram, BLACK));
+
+		Style okStyle = gaService.createStyle(diagram, CONNECTION_OK);
+		okStyle.setLineWidth(2);
+		okStyle.setBackground(gaService.manageColor(diagram, COLOR_OK));
+		okStyle.setForeground(gaService.manageColor(diagram, COLOR_OK));
+
+		Style warnStyle = gaService.createStyle(diagram, CONNECTION_WARN);
+		warnStyle.setLineWidth(2);
+		warnStyle.setBackground(gaService.manageColor(diagram, COLOR_WARN));
+		warnStyle.setForeground(gaService.manageColor(diagram, COLOR_WARN));
+
+		Style errorStyle = gaService.createStyle(diagram, CONNECTION_ERROR);
+		errorStyle.setLineWidth(2);
+		errorStyle.setBackground(gaService.manageColor(diagram, COLOR_ERROR));
+		errorStyle.setForeground(gaService.manageColor(diagram, COLOR_ERROR));
+}
 }

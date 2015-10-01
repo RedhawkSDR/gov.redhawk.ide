@@ -15,9 +15,8 @@ import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
-
-import java.util.Map;
 
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -35,7 +34,6 @@ import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.util.IColorConstant;
 
 public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern {
 
@@ -67,17 +65,14 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		UsesPortStub source = getUsesPortStub(context);
 		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.getPictogramElementForBusinessObject(getDiagram(), source.eContainer(),
 			RHContainerShape.class);
-		Map<String, IColorConstant> connectionMap = rhContainerShape.getConnectionMap();
-		IColorConstant color = (IColorConstant) connectionMap.get(connectInterface.getId());
-		if (color == null) {
-			color = IColorConstant.BLACK;
+		String styleId = rhContainerShape.getConnectionMap().get(connectInterface.getId());
+		if (styleId != null) {
+			context.putProperty("LineStyle", styleId);
 		}
-		context.putProperty("LineColor", color);
-
 		Connection connectionPE = (Connection) super.add(addContext);
 
 		// add any decorators
-		decorateConnection(connectionPE, connectInterface, getDiagram(), color);
+		decorateConnection(connectionPE, connectInterface, getDiagram(), styleId);
 
 		return connectionPE;
 	}
@@ -97,7 +92,7 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 	 * provides a default color option for decorating connections
 	 * @param connectionPE
 	 */
-	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram, IColorConstant defaultColor) {
+	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram, String defaultStyleId) {
 		// Clear any existing connection decorators
 		connectionPE.getConnectionDecorators().clear();
 
@@ -126,15 +121,15 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			}
 
 			// add graphical arrow to end of the connection
-			IColorConstant arrowColor;
+			String styleId;
 			if (validationProblem) {
-				arrowColor = IColorConstant.RED;
-			} else if (defaultColor != null) {
-				arrowColor = defaultColor;
+				styleId = StyleUtil.CONNECTION_ERROR;
+			} else if (defaultStyleId != null) {
+				styleId = defaultStyleId;
 			} else {
-				arrowColor = IColorConstant.BLACK;
+				styleId = StyleUtil.CONNECTION;
 			}
-			AbstractConnectInterfacePattern.addConnectionArrow(diagram, connectionPE, arrowColor);
+			AbstractConnectInterfacePattern.addConnectionArrow(diagram, connectionPE, styleId);
 		}
 	}
 

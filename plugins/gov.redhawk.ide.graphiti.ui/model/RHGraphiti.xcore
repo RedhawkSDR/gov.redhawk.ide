@@ -39,7 +39,7 @@ type IAddContext wraps org.eclipse.graphiti.features.context.IAddContext
 type AbstractContainerPattern wraps AbstractContainerPattern
 type IUpdateContext wraps org.eclipse.graphiti.features.context.IUpdateContext
 type IColorConstant wraps org.eclipse.graphiti.util.IColorConstant
-type Map wraps java.util.Map< String , org.eclipse.graphiti.util.IColorConstant >
+type Map wraps java.util.Map< String , String >
 
 class RHContainerShape extends ContainerShape {
 
