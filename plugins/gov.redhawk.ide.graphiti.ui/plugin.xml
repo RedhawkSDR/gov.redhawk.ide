@@ -167,5 +167,12 @@
          </adapter>
       </factory>
    </extension>
+   <extension
+         point="org.eclipse.emf.ecore.content_parser">
+      <parser
+            class="gov.redhawk.ide.graphiti.internal.ui.resource.StyleResourceFactory"
+            contentTypeIdentifier="gov.redhawk.ide.graphiti.ui.style">
+      </parser>
+   </extension>
 
 </plugin>
