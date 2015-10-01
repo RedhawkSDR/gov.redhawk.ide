@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
+import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -47,9 +48,12 @@ public class ExecParamResolver extends AbstractLauncherResolver {
 
 			final Map<String, Object> execParams = new HashMap<String, Object>();
 			for (final ScaAbstractProperty< ? > prop : tmp.getProperties()) {
-				if (prop instanceof ScaSimpleProperty && prop.getDefinition() != null && prop.getDefinition().isKind(PropertyConfigurationType.EXECPARAM)) {
-					final ScaSimpleProperty simple = (ScaSimpleProperty) prop;
-					execParams.put(simple.getId(), simple.getValue());
+				if (prop instanceof ScaSimpleProperty && prop.getDefinition() != null) {
+					if ((prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY) && ((Simple) prop.getDefinition()).isCommandLine())
+						|| prop.getDefinition().isKind(PropertyConfigurationType.EXECPARAM)) {
+						final ScaSimpleProperty simple = (ScaSimpleProperty) prop;
+						execParams.put(simple.getId(), simple.getValue());
+					}
 				}
 			}
 			final String retVal = SpdLauncherUtil.createExecParamString(execParams);
