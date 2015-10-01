@@ -23,6 +23,7 @@ import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IConnectionContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
+import org.eclipse.graphiti.mm.algorithms.Polygon;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
@@ -202,9 +203,10 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 	protected static void addConnectionArrow(Diagram diagram, Connection connection, IColorConstant color) {
 		IGaService gaService = Graphiti.getGaService();
 		ConnectionDecorator arrowDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, false, 1.0, true);
-		Polyline polyline = gaService.createPolyline(arrowDecorator, new int[] { -15, 10, 0, 0, -15, -10 });
-		polyline.setForeground(gaService.manageColor(diagram, color));
-		polyline.setLineWidth(2);
+		Polygon polyArrow = gaService.createPolygon(arrowDecorator, new int[] { -10, 5, 0, 0, -10, -5 });
+		polyArrow.setForeground(gaService.manageColor(diagram, color));
+		polyArrow.setBackground(gaService.manageColor(diagram, color));
+		polyArrow.setLineWidth(2);
 	}
 
 	@Override
