@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This file is protected by Copyright.
+    Please refer to the COPYRIGHT file distributed with this source distribution.
+
+    This file is part of REDHAWK IDE.
+
+    All rights reserved.  This program and the accompanying materials are made available under
+    the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html.
+-->
+<!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
+<softpkg id="DCE:242afae5-e6fd-4cf9-bca2-a8e86c773a88" name="commandline" type="sca_compliant">
+  <propertyfile type="PRF">
+    <localfile name="commandline.prf.xml"/>
+  </propertyfile>
+  <descriptor>
+    <localfile name="commandline.scd.xml"/>
+  </descriptor>
+  <implementation id="cpp">
+    <code type="Executable">
+      <localfile name="commandline-entrypoint"/>
+      <entrypoint>commandline-entrypoint</entrypoint>
+    </code>
+    <os name="Linux"/>
+    <processor name="x86_64"/>
+  </implementation>
+</softpkg>

@@ -10,56 +10,83 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.variables.tests;
 
-import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
-import gov.redhawk.ide.debug.ILaunchConfigurationFactoryRegistry;
-import gov.redhawk.ide.debug.ILauncherVariableDesc;
-import gov.redhawk.ide.debug.ILauncherVariableRegistry;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
-import junit.framework.TestCase;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ExecParamResolverTest extends TestCase {
+import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
+import gov.redhawk.ide.debug.ILaunchConfigurationFactoryRegistry;
+import gov.redhawk.ide.debug.ILauncherVariableDesc;
+import gov.redhawk.ide.debug.ILauncherVariableRegistry;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
+
+public class ExecParamResolverTest {
 
 	protected ILauncherVariableDesc fixture = null; // SUPPRESS CHECKSTYLE VisibilityModifier
 
 	private static final String PLUGIN_ID = "gov.redhawk.ide.debug.tests";
 
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		ILauncherVariableRegistry registry = ScaDebugPlugin.getInstance().getLauncherVariableRegistry();
 		fixture = registry.getDesc("EXEC_PARAMS");
 	}
 
-	/**
-	 * Ensure that exec params get expanded when launching a component
-	 */
-	public void testIDE1066() throws CoreException {
-		final String EXEC_PARAM_SPD_PATH = "resources/execparam/execparam.spd.xml";
-		final String IMPL_NAME = "cpp";
-
-		String arg = null;
-
+	private String common(String spdPath, String implName) throws CoreException {
+		// Load SPD
 		ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		URI spdUri = URI.createPlatformPluginURI("/" + PLUGIN_ID + "/" + EXEC_PARAM_SPD_PATH, true).appendFragment(SoftPkg.EOBJECT_PATH);
+		URI spdUri = URI.createPlatformPluginURI("/" + PLUGIN_ID + "/" + spdPath, true).appendFragment(SoftPkg.EOBJECT_PATH);
 		SoftPkg softPkg = (SoftPkg) resourceSet.getEObject(spdUri, true);
 
+		// Create a launch configuration
 		ILaunchConfigurationFactoryRegistry registry = ScaDebugPlugin.getInstance().getLaunchConfigurationFactoryRegistry();
-		ILaunchConfigurationFactory factory = registry.getFactory(softPkg, IMPL_NAME);
-		ILaunchConfiguration launchConfig = factory.createLaunchConfiguration("test", IMPL_NAME, softPkg);
+		ILaunchConfigurationFactory factory = registry.getFactory(softPkg, implName);
+		ILaunchConfiguration launchConfig = factory.createLaunchConfiguration("test", implName, softPkg);
 
+		// Create a launch and then resolve exec params
 		ILaunch launch = new Launch(launchConfig, "debug", null);
-
-		String execParams = fixture.resolveValue(arg, softPkg, launch, launchConfig);
-		assertNotNull(execParams);
-		assertTrue("Didn't find exec param 'with_value'", execParams.contains("with_value \"my string\""));
-		assertTrue("Didn't find exec param 'with_value_config_too'", execParams.contains("with_value_config_too \"my other value\""));
+		return fixture.resolveValue(null, softPkg, launch, launchConfig);
 	}
 
+	/**
+	 * Ensure that non-null execparams get expanded when launching a component.
+	 * IDE-1006
+	 */
+	@Test
+	public void execparams_expanded() throws CoreException {
+		final String EXEC_PARAM_SPD_PATH = "resources/execparam/execparam.spd.xml";
+		final String IMPL_NAME = "cpp";
+		String execParams = common(EXEC_PARAM_SPD_PATH, IMPL_NAME);
+
+		Assert.assertNotNull(execParams);
+		Assert.assertTrue("Didn't find exec param 'with_value'", execParams.contains("with_value \"my string\""));
+		Assert.assertTrue("Didn't find exec param 'with_value_config_too'", execParams.contains("with_value_config_too \"my other value\""));
+		Assert.assertFalse("Property 'no_value' should not have been passed", execParams.contains("no_value"));
+		Assert.assertFalse("Property 'no_value_config_too' should not have been passed", execParams.contains("no_value_config_too"));
+	}
+
+	/**
+	 * Ensure that non-null commandline 'property' kinds get expanded when launching a component.
+	 * IDE-1392
+	 * @throws CoreException
+	 */
+	@Test
+	public void commandline_properties_expanded() throws CoreException {
+		final String EXEC_PARAM_SPD_PATH = "resources/commandline/commandline.spd.xml";
+		final String IMPL_NAME = "cpp";
+		String execParams = common(EXEC_PARAM_SPD_PATH, IMPL_NAME);
+
+		Assert.assertNotNull(execParams);
+		Assert.assertTrue("Didn't find exec param 'commandline_property_with_value'",
+			execParams.contains("commandline_property_with_value \"commandline attribute\""));
+		Assert.assertFalse("Property 'commandline_property_no_value' should not have been passed", execParams.contains("commandline_property_no_value"));
+	}
 }
