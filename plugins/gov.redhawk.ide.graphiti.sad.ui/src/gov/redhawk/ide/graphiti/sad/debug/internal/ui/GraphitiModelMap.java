@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
@@ -72,8 +71,6 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramFeatureProvid
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.PortStyleUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.PortStyleUtil.PortStyle;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
@@ -925,7 +922,6 @@ public class GraphitiModelMap implements IPortStatListener {
 		}
 		ScaComponent component = (ScaComponent) container;
 		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
-		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
 
 		// Since the same key(instantiationId) can be used in multiple editors, do an object comparison
 		if (nodeMapEntry == null || container != nodeMapEntry.getLocalScaComponent()) {
@@ -939,38 +935,52 @@ public class GraphitiModelMap implements IPortStatListener {
 				if (GraphitiModelMap.this.editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramBehavior() == null) {
 					return;
 				}
-				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-				final Diagram diagram = provider.getDiagram();
 
-				ComponentShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
-
-				// Can't update port styles while a connection is in progress
-				if (DUtil.isConnecting(diagram)) {
-					return;
+				final String styleId;
+				if (lastFlush < lastFlushResetTime || (lastFlush != Double.MAX_VALUE && lastFlushResetTime < 0)) {
+					// If last flush reset time is set to -1, never reset the color if a flush has occurred
+					styleId = StyleUtil.PORT_STYLE_WARN4;
+				} else if (queueDepth < queueDepthWarningLevel) {
+					styleId = StyleUtil.PORT_STYLE_OK;
+				} else if (queueDepth < (queueDepthWarningLevel + queueDepthIncrement)) {
+					styleId = StyleUtil.PORT_STYLE_WARN1;
+				} else if (queueDepth < (queueDepthWarningLevel + 2 * queueDepthIncrement)) {
+					styleId = StyleUtil.PORT_STYLE_WARN2;
+				} else if (queueDepth < (queueDepthWarningLevel + 3 * queueDepthIncrement)) {
+					styleId = StyleUtil.PORT_STYLE_WARN3;
+				} else {
+					styleId = StyleUtil.PORT_STYLE_WARN4;
 				}
 
+				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+				final Diagram diagram = provider.getDiagram();
+				ComponentShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
+				updatePortState(componentShape, port.getName(), styleId);
+			}
+		});
+
+	}
+
+	private void updatePortState(final RHContainerShape componentShape, final String portName, final String styleId) {
+		TransactionalEditingDomain editingDomain = getEditingDomain();
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new NonDirtyingCommand() {
+			@Override
+			public void execute() {
+				if (styleId == null) {
+					componentShape.getPortStates().remove(portName);
+				} else {
+					componentShape.getPortStates().put(portName, styleId);
+				}
+				IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 				for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
 					ProvidesPortStub portStub = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
-					if (portStub.getName().equals(port.getName())) {
-						if (lastFlush < lastFlushResetTime || (lastFlush != Double.MAX_VALUE && lastFlushResetTime < 0)) {
-							// If last flush reset time is set to -1, never reset the color if a flush has occurred
-							PortStyleUtil.updatePortStyle(diagram, editingDomain, portShape, PortStyle.STAT_WARN4);
-						} else if (queueDepth < queueDepthWarningLevel) {
-							PortStyleUtil.updatePortStyle(diagram, editingDomain, portShape, PortStyle.STAT_OK);
-						} else if (queueDepth < (queueDepthWarningLevel + queueDepthIncrement)) {
-							PortStyleUtil.updatePortStyle(diagram, editingDomain, portShape, PortStyle.STAT_WARN1);
-						} else if (queueDepth < (queueDepthWarningLevel + 2 * queueDepthIncrement)) {
-							PortStyleUtil.updatePortStyle(diagram, editingDomain, portShape, PortStyle.STAT_WARN2);
-						} else if (queueDepth < (queueDepthWarningLevel + 3 * queueDepthIncrement)) {
-							PortStyleUtil.updatePortStyle(diagram, editingDomain, portShape, PortStyle.STAT_WARN3);
-						} else {
-							PortStyleUtil.updatePortStyle(diagram, editingDomain, portShape, PortStyle.STAT_WARN4);
-						}
+					if (portName.equals(portStub.getName())) {
+						provider.getDiagramBehavior().refreshRenderingDecorators(portShape.getChildren().get(0));
 					}
 				}
 			}
 		});
-
 	}
 
 	@Override
@@ -1059,21 +1069,10 @@ public class GraphitiModelMap implements IPortStatListener {
 					SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
 					final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 					final Diagram diagram = provider.getDiagram();
-					TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-
-					// Can't update port styles while a connection is in progress
-					if (DUtil.isConnecting(diagram)) {
-						return;
-					}
 
 					if (port instanceof ScaProvidesPort) {
-						ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
-						EList<ProvidesPortStub> providesStubs = componentShape.getProvidesPortStubs();
-						for (ProvidesPortStub portStub : providesStubs) {
-							if (portStub.getName().equals(port.getName())) {
-								PortStyleUtil.resetPortStyling(diagram, editingDomain, componentShape);
-							}
-						}
+						ComponentShape componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
+						updatePortState(componentShape, port.getName(), null);
 					}
 				}
 			});

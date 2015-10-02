@@ -37,6 +37,7 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusSeverity <em>IStatus Severity</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getPortStates <em>Port States</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
@@ -149,6 +150,31 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	void setConnectionMap(Map<String, String> value);
+
+	/**
+	 * Returns the value of the '<em><b>Port States</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * This map is used to store color information for ports based on monitoring
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Port States</em>' attribute.
+	 * @see #setPortStates(Map)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_PortStates()
+	 * @model unique="false" dataType="gov.redhawk.ide.graphiti.ext.Map" transient="true"
+	 * @generated
+	 */
+	Map<String, String> getPortStates();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getPortStates <em>Port States</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Port States</em>' attribute.
+	 * @see #getPortStates()
+	 * @generated
+	 */
+	void setPortStates(Map<String, String> value);
 
 	/**
 	 * Returns the value of the '<em><b>Has Super Ports Container Shape</b></em>' attribute.

@@ -23,6 +23,7 @@ import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -67,6 +68,7 @@ import org.eclipse.graphiti.tb.ContextMenuEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
 import org.eclipse.graphiti.tb.IContextMenuEntry;
+import org.eclipse.graphiti.tb.IDecorator;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBehaviorProvider {
@@ -91,12 +93,15 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 
 	protected List<IPaletteCompartmentEntry> paletteCompartments;
 	private List<SoftPkgRegistry> registries = new ArrayList<SoftPkgRegistry>();
+	private List<IDecoratorProvider> decoratorProviders	= new ArrayList<IDecoratorProvider>();
 
 	/**
 	 * @param diagramTypeProvider
 	 */
 	public AbstractGraphitiToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
+		addDecoratorProvider(new PortMonitorDecoratorProvider());
+		addDecoratorProvider(new ConnectionHighlightingDecoratorProvider());
 	}
 
 	@Override
@@ -113,6 +118,29 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 			return false;
 		}
 		return super.isShowFlyoutPalette();
+	}
+
+	public List<IDecoratorProvider> getDecoratorProviders() {
+		 return decoratorProviders;
+	}
+
+	public void addDecoratorProvider(IDecoratorProvider provider) {
+		getDecoratorProviders().add(provider);
+	}
+
+	public void removeDecoratorProvider(IDecoratorProvider provider) {
+		if (decoratorProviders != null) {
+			decoratorProviders.remove(provider);
+		}
+	}
+
+	@Override
+	public IDecorator[] getDecorators(PictogramElement pe) {
+		List<IDecorator> decorators = new ArrayList<IDecorator>();
+		for (IDecoratorProvider provider : getDecoratorProviders()) {
+			decorators.addAll(Arrays.asList(provider.getDecorators(pe)));
+		}
+		return decorators.toArray(new IDecorator[decorators.size()]);
 	}
 
 	/**

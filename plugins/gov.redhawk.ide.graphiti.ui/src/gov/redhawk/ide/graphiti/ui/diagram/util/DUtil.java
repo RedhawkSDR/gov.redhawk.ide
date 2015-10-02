@@ -126,7 +126,8 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	/**
 	 * The <b>presence</b> of this property in the {@link Diagram} object indicates a connection is in progress.
 	 */
-	public static final String DIAGRAM_CONNECTION_IN_PROGRESS = "connecting";
+	public static final String DIAGRAM_CONNECTION_ANCHOR = "anchor";
+	public static final String DIAGRAM_CONNECTION_REPID = "repid";
 
 	public static final int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 100;
 	public static final int DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING = 5;
@@ -1448,15 +1449,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 
 		return connectInterface;
-	}
-
-	/**
-	 * Determines if a connection is in progress in the diagram. Should be called from the UI thread to prevent any
-	 * race conditions.
-	 * @return
-	 */
-	public static boolean isConnecting(Diagram diagram) {
-		return Graphiti.getPeService().getProperty(diagram, DIAGRAM_CONNECTION_IN_PROGRESS) != null;
 	}
 
 	/**
