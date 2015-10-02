@@ -11,43 +11,51 @@
  */
 package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.tb.ColorDecorator;
 import org.eclipse.graphiti.tb.IDecorator;
 
+import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
-class ConnectionHighlightingDecoratorProvider implements IDecoratorProvider {
+public class ConnectionHighlightingDecoratorProvider implements IDecoratorProvider {
+
+	private EObject source;
+
+	public void startHighlighting(EObject source) {
+		this.source = source;
+	}
+
+	public void endHighlighting() {
+		source = null;
+	}
 
 	@Override
 	public IDecorator[] getDecorators(PictogramElement pe) {
-		// Ports always have an invisible anchor overlaid on top of them; ignore everything else
-		if (pe instanceof AnchorContainer && !((AnchorContainer) pe).getAnchors().isEmpty()) {
-			Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pe);
-			String anchorType = Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CONNECTION_ANCHOR);
-			String repId = Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CONNECTION_REPID);
-			if (isMatch(DUtil.getBusinessObject(pe), anchorType, repId)) {
-				return new IDecorator[] {
-					new ColorDecorator(null, StyleUtil.COLOR_OK)
-				};
+		if (source != null) {
+			// Ports always have an invisible anchor overlaid on top of them; ignore everything else
+			if (pe instanceof AnchorContainer && !((AnchorContainer) pe).getAnchors().isEmpty()) {
+				if (isMatch(DUtil.getBusinessObject(pe))) {
+					return new IDecorator[] {
+						new ColorDecorator(null, StyleUtil.COLOR_OK)
+					};
+				}
 			}
 		}
 		return new IDecorator[0];
 	}
 
-	protected boolean isMatch(Object target, String anchorType, String repId) {
-		if (anchorType == null || repId == null) {
+	protected boolean isMatch(EObject target) {
+		if (source.getClass().equals(target.getClass())) {
 			return false;
-		} else if (target instanceof ProvidesPortStub) {
-			return anchorType.equals("uses") && repId.equals(((ProvidesPortStub) target).getProvides().getRepID());
-		}  else if (target instanceof UsesPortStub) {
-			return anchorType.equals("provides") && repId.equals(((UsesPortStub) target).getUses().getRepID());			
+		} else if (source instanceof UsesPortStub) {
+			return InterfacesUtil.areSuggestedMatch((UsesPortStub) source, target);
+		} else if (target instanceof UsesPortStub) {
+			return InterfacesUtil.areSuggestedMatch((UsesPortStub) target, source);
 		}
 		return false;
 	}

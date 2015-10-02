@@ -14,6 +14,6 @@ package gov.redhawk.ide.graphiti.ui.diagram.providers;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.tb.IDecorator;
 
-interface IDecoratorProvider {
+public interface IDecoratorProvider {
 	IDecorator[] getDecorators(PictogramElement pe);
 }

@@ -13,7 +13,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.common.command.CommandStack;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IConnectionContext;
@@ -30,14 +30,15 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.ConnectionHighlightingDecoratorProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.IDecoratorProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
-import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.sca.util.StringUtil;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.Connections;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
@@ -48,8 +49,7 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 	public static final String SHAPE_TEXT_CONNECTION_DECORATOR = "textConnectionDecorator";
 	public static final String OVERRIDE_CONNECTION_ID = "OverrideConnectionId";
 
-	private UsesPortStub sourcePort;
-	private ConnectionTarget targetPort;
+	private EObject source;
 
 	@Override
 	public String getCreateName() {
@@ -59,23 +59,6 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 	@Override
 	public String getCreateDescription() {
 		return "Create new Connect Interface";
-	}
-
-	/**
-	 * Returns the source port a connection is being initiated from. Only available after {@link #startConnecting()}.
-	 * @return The source port or null if none
-	 */
-	protected UsesPortStub getSourcePort() {
-		return sourcePort;
-	}
-
-	/**
-	 * Returns the connection target a connection is being initiated from. Only available after
-	 * {@link #startConnecting()}.
-	 * @return The target connection or null if none
-	 */
-	protected ConnectionTarget getTargetPort() {
-		return targetPort;
 	}
 
 	@Override
@@ -95,12 +78,12 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 		// We must be able to find a UsesPortStub or ConnectionTarget
 		UsesPortStub source = getUsesPortStub(context);
 		if (source != null) {
-			this.sourcePort = source;
+			this.source = source;
 			return true;
 		}
 		ConnectionTarget target = getConnectionTarget(context);
 		if (target != null) {
-			this.targetPort = target;
+			this.source = target;
 			return true;
 		}
 
@@ -110,33 +93,17 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 	@Override
 	public void startConnecting() {
 		// Highlight ports that may be valid for completing the connection
-		if (getSourcePort() != null) {
-			highlightCompatibleAnchors(getSourcePort());
-		} else {
-			highlightCompatibleAnchors(getTargetPort());
-		}
+		highlightCompatibleAnchors(source);
+		getDiagramBehavior().refreshContent();
 	}
 
-	protected void highlightCompatibleAnchors(UsesPortStub source) {
-		doHighlight("uses", getSourcePort().getUses().getRepID());
-	}
-
-	protected void highlightCompatibleAnchors(ConnectionTarget source) {
-		if (source instanceof ProvidesPortStub) {
-			doHighlight("provides", ((ProvidesPortStub) getTargetPort()).getProvides().getRepID());
-		}
-	}
-
-	protected void doHighlight(final String anchorType, final String repId) {
-		// Set a property on the diagram so it's easy to tell a connection is in progress
-		CommandStack stack = getDiagramBehavior().getEditingDomain().getCommandStack();
-		stack.execute(new NonDirtyingCommand() {
-			@Override
-			public void execute() {
-				Graphiti.getPeService().setPropertyValue(getDiagram(), DUtil.DIAGRAM_CONNECTION_REPID, repId);
-				Graphiti.getPeService().setPropertyValue(getDiagram(), DUtil.DIAGRAM_CONNECTION_ANCHOR, anchorType);
+	protected void highlightCompatibleAnchors(EObject source) {
+		AbstractGraphitiToolBehaviorProvider provider = (AbstractGraphitiToolBehaviorProvider) getDiagramBehavior().getDiagramContainer().getDiagramTypeProvider().getCurrentToolBehaviorProvider();
+		for (IDecoratorProvider decoratorProvider : provider.getDecoratorProviders()) {
+			if (decoratorProvider instanceof ConnectionHighlightingDecoratorProvider) {
+				((ConnectionHighlightingDecoratorProvider) decoratorProvider).startHighlighting(source);
 			}
-		});
+		}
 	}
 
 	@Override
@@ -208,19 +175,13 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 	@Override
 	public void endConnecting() {
 		// Turns off highlighting ports for the connection
-		final Diagram diagram = getDiagram();
-
-		this.sourcePort = null;
-		this.targetPort = null;
-
-		CommandStack stack = getDiagramBehavior().getEditingDomain().getCommandStack();
-		stack.execute(new NonDirtyingCommand() {
-			@Override
-			public void execute() {
-				Graphiti.getPeService().removeProperty(diagram, DUtil.DIAGRAM_CONNECTION_ANCHOR);
-				Graphiti.getPeService().removeProperty(diagram, DUtil.DIAGRAM_CONNECTION_REPID);
+		AbstractGraphitiToolBehaviorProvider provider = (AbstractGraphitiToolBehaviorProvider) getDiagramBehavior().getDiagramContainer().getDiagramTypeProvider().getCurrentToolBehaviorProvider();
+		for (IDecoratorProvider decoratorProvider : provider.getDecoratorProviders()) {
+			if (decoratorProvider instanceof ConnectionHighlightingDecoratorProvider) {
+				((ConnectionHighlightingDecoratorProvider) decoratorProvider).endHighlighting();
 			}
-		});
+		}
+		getDiagramBehavior().refreshContent();
 
 		super.endConnecting();
 	}

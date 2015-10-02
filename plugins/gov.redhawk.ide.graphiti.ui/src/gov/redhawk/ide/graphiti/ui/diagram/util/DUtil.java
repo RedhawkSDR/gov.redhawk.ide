@@ -123,12 +123,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String DIAGRAM_CONTEXT_TARGET_SDR = "target-sdr";
 	public static final String DIAGRAM_CONTEXT_EXPLORER = "explorer";
 
-	/**
-	 * The <b>presence</b> of this property in the {@link Diagram} object indicates a connection is in progress.
-	 */
-	public static final String DIAGRAM_CONNECTION_ANCHOR = "anchor";
-	public static final String DIAGRAM_CONNECTION_REPID = "repid";
-
 	public static final int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 100;
 	public static final int DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING = 5;
 	public static final int DIAGRAM_SHAPE_ROOT_VERTICAL_PADDING = 50;
