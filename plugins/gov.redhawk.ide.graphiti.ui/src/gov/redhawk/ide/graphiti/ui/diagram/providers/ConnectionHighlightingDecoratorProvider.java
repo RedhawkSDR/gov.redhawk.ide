@@ -39,7 +39,7 @@ public class ConnectionHighlightingDecoratorProvider implements IDecoratorProvid
 		if (source != null) {
 			// Ports always have an invisible anchor overlaid on top of them; ignore everything else
 			if (pe instanceof AnchorContainer && !((AnchorContainer) pe).getAnchors().isEmpty()) {
-				if (isMatch(pe)) {
+				if (isMatch(((AnchorContainer) pe).getAnchors().get(0))) {
 					return new IDecorator[] {
 						new ColorDecorator(null, StyleUtil.COLOR_OK)
 					};
@@ -49,7 +49,7 @@ public class ConnectionHighlightingDecoratorProvider implements IDecoratorProvid
 		return new IDecorator[0];
 	}
 
-	protected boolean isMatch(PictogramElement target) {
+	protected boolean isMatch(Anchor target) {
 		for (EObject sourceObject : source.getLink().getBusinessObjects()) {
 			for (EObject targetObject : target.getLink().getBusinessObjects()) {
 				if (isMatch(sourceObject, targetObject)) {
