@@ -873,7 +873,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		StyleUtil.setStyle(lollipopLine, StyleUtil.LOLLIPOP);
 
 		// Interface lollipop ellipse
-		Shape lollipopEllipseShape = Graphiti.getPeCreateService().createShape(interfaceContainerShape, true);
+		Shape lollipopEllipseShape = Graphiti.getPeCreateService().createContainerShape(interfaceContainerShape, true);
 		Ellipse lollipopEllipse = Graphiti.getCreateService().createPlainEllipse(lollipopEllipseShape);
 		StyleUtil.setStyle(lollipopEllipse, StyleUtil.LOLLIPOP);
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
