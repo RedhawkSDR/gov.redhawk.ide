@@ -858,34 +858,34 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Add lollipop to targetContainerShape. Lollipop anchor will link to the provided business object.T
 	 */
 	protected ContainerShape addLollipop(Object anchorBusinessObject, IFeatureProvider featureProvider) {
-
-		// interface container lollipop
+		// Interface container
 		ContainerShape interfaceContainerShape = Graphiti.getCreateService().createContainerShape(this, true);
 		Graphiti.getPeService().setPropertyValue(interfaceContainerShape, DUtil.GA_TYPE, SHAPE_INTERFACE_CONTAINER);
-		Rectangle interfaceRectangle = Graphiti.getCreateService().createRectangle(interfaceContainerShape);
-		featureProvider.link(interfaceContainerShape, anchorBusinessObject);
-		interfaceRectangle.setTransparency(.99d);
+		Rectangle interfaceRectangle = Graphiti.getCreateService().createPlainRectangle(interfaceContainerShape);
+		interfaceRectangle.setFilled(false);
+		interfaceRectangle.setLineVisible(false);
 		Graphiti.getGaLayoutService().setLocationAndSize(interfaceRectangle, 0, 25, INTERFACE_SHAPE_WIDTH, INTERFACE_SHAPE_HEIGHT);
 
-		// interface lollipop line
-		Shape lollipopLineShape = Graphiti.getCreateService().createContainerShape(interfaceContainerShape, false);
-		Rectangle lollipopLine = Graphiti.getCreateService().createPlainRectangle(lollipopLineShape);
+		// Interface lollipop line
+		Shape lollipopLineShape = Graphiti.getCreateService().createShape(interfaceContainerShape, false);
+		int[] linePoints = new int[] { LOLLIPOP_ELLIPSE_DIAMETER - 1, LOLLIPOP_ELLIPSE_DIAMETER / 2, INTERFACE_SHAPE_WIDTH, LOLLIPOP_ELLIPSE_DIAMETER / 2 };
+		Polyline lollipopLine = Graphiti.getCreateService().createPlainPolyline(lollipopLineShape, linePoints);
 		StyleUtil.setStyle(lollipopLine, StyleUtil.LOLLIPOP);
-		Graphiti.getGaLayoutService().setLocationAndSize(lollipopLine, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER / 2,
-			INTERFACE_SHAPE_WIDTH - LOLLIPOP_ELLIPSE_DIAMETER, 1);
 
-		// Interface lollipop ellipse and anchor
-		FixPointAnchor fixPointAnchor = Graphiti.getPeCreateService().createFixPointAnchor(interfaceContainerShape);
-		Point fixAnchorPoint = StylesFactory.eINSTANCE.createPoint();
-		fixAnchorPoint.setX(0);
-		fixAnchorPoint.setY(PORT_SHAPE_HEIGHT / 2);
-		fixPointAnchor.setLocation(fixAnchorPoint);
-		featureProvider.link(fixPointAnchor, anchorBusinessObject);
-		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
-		fixPointAnchor.setReferencedGraphicsAlgorithm(interfaceRectangle);
-		Ellipse lollipopEllipse = Graphiti.getCreateService().createPlainEllipse(fixPointAnchor);
+		// Interface lollipop ellipse
+		Shape lollipopEllipseShape = Graphiti.getPeCreateService().createShape(interfaceContainerShape, true);
+		Ellipse lollipopEllipse = Graphiti.getCreateService().createPlainEllipse(lollipopEllipseShape);
 		StyleUtil.setStyle(lollipopEllipse, StyleUtil.LOLLIPOP);
-		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, -PORT_SHAPE_HEIGHT / 2, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
+		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
+		featureProvider.link(lollipopEllipseShape, anchorBusinessObject);
+
+		// Overlay invisible ellipse
+		FixPointAnchor fixPointAnchor = createOverlayAnchor(lollipopEllipseShape, 0);
+		featureProvider.link(fixPointAnchor, anchorBusinessObject);
+		Ellipse anchorEllipse = Graphiti.getCreateService().createPlainEllipse(fixPointAnchor);
+		anchorEllipse.setFilled(false);
+		anchorEllipse.setLineVisible(false);
+		layoutAnchor(lollipopEllipseShape);
 
 		return interfaceContainerShape;
 	}
@@ -906,7 +906,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		StyleUtil.setStyle(superUsesPortsRectangle, StyleUtil.SUPER_USES_PORT);
 
 		// fix point anchor
-		FixPointAnchor fixPointAnchor = createInvisibleAnchor(superUsesPortsRectangleShape, SUPER_PORT_SHAPE_WIDTH);
+		FixPointAnchor fixPointAnchor = createPortAnchor(superUsesPortsRectangleShape, SUPER_PORT_SHAPE_WIDTH);
 		DUtil.addLinks(featureProvider, fixPointAnchor, usesPortStubs);
 		if (externalPorts != null && externalPorts.size() > 0) {
 			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
@@ -934,7 +934,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			INNER_CONTAINER_SHAPE_TOP_PADDING + SUPER_PORT_SHAPE_HEIGHT_MARGIN);
 
 		// fix point anchor
-		FixPointAnchor fixPointAnchor = createInvisibleAnchor(superProvidesPortsRectangleShape, 0);
+		FixPointAnchor fixPointAnchor = createPortAnchor(superProvidesPortsRectangleShape, 0);
 		DUtil.addLinks(featureProvider, fixPointAnchor, providesPortStubs);
 		DUtil.addLink(featureProvider, fixPointAnchor, interfaceStub);
 		if (externalPorts != null && externalPorts.size() > 0) {
@@ -942,15 +942,28 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 	}
 
-	private FixPointAnchor createInvisibleAnchor(ContainerShape portShape, int x) {
-		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(portShape);
-		IDimension portSize = Graphiti.getGaLayoutService().calculateSize(portShape.getGraphicsAlgorithm());
+	/**
+	 * Create an anchor overlay for a shape, with the anchor point vertically centered at horizontal position x.
+	 * The returned anchor has no graphics algorithm.
+	 */
+	private FixPointAnchor createOverlayAnchor(Shape parentShape, int x) {
+		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(parentShape);
+		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
 		Point point = StylesFactory.eINSTANCE.createPoint();
 		point.setX(x);
-		point.setY(portSize.getHeight() / 2);
+		point.setY(parentSize.getHeight() / 2);
 		fixPointAnchor.setLocation(point);
 		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
-		fixPointAnchor.setReferencedGraphicsAlgorithm(portShape.getGraphicsAlgorithm());
+		fixPointAnchor.setReferencedGraphicsAlgorithm(parentShape.getGraphicsAlgorithm());
+		return fixPointAnchor;
+	}
+
+	/**
+	 * Create an anchor overlay for a port, with the anchor point vertically centered at horizontal position x.
+	 * The returned anchor has an invisible rectangle for its graphics algorithm.
+	 */
+	private FixPointAnchor createPortAnchor(ContainerShape portShape, int x) {
+		FixPointAnchor fixPointAnchor = createOverlayAnchor(portShape, x);
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createPlainRectangle(fixPointAnchor);
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		fixPointAnchorRectangle.setFilled(false);
@@ -988,7 +1001,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		featureProvider.link(providesPortShape, p);
 
 		// Port shape anchor
-		FixPointAnchor fixPointAnchor = createInvisibleAnchor(providesPortShape, 0);
+		FixPointAnchor fixPointAnchor = createPortAnchor(providesPortShape, 0);
 		DUtil.addLink(featureProvider, fixPointAnchor, p);
 		if (externalPort != null) {
 			DUtil.addLink(featureProvider, fixPointAnchor, externalPort);
@@ -1102,7 +1115,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		layoutAnchor(superPortContainerShape);
 	}
 
-	private void layoutAnchor(ContainerShape parentShape) {
+	private void layoutAnchor(Shape parentShape) {
 		// Layout and resize anchor
 		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
 		FixPointAnchor portAnchor = (FixPointAnchor) parentShape.getAnchors().get(0);
@@ -1186,7 +1199,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		featureProvider.link(usesPortShape, p);
 
 		// Port anchor
-		FixPointAnchor fixPointAnchor = createInvisibleAnchor(usesPortShape, PORT_SHAPE_WIDTH);
+		FixPointAnchor fixPointAnchor = createPortAnchor(usesPortShape, PORT_SHAPE_WIDTH);
 		featureProvider.link(fixPointAnchor, p);
 		if (externalPort != null) {
 			fixPointAnchor.getLink().getBusinessObjects().add(externalPort); // link to externalPort so that update fires when it changes
@@ -1505,8 +1518,18 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 		if (isHasPortsContainerShape()) {
 			//individual ports exist, display lollipop
-
-			if (getLollipop() == null) {
+			ContainerShape lollipop = getLollipop();
+			// Upgrade from 2.0.0 RC1: re-create the lollipop to support highlighting during connection
+			if (lollipop != null && !lollipop.getAnchors().isEmpty()) {
+				if (performUpdate) {
+					updateStatus = true;
+					DUtil.fastDeletePictogramElement(lollipop);
+					lollipop = null;
+				} else {
+					return new Reason(true, "Lollipop Shape requires update");
+				}
+			}
+			if (lollipop == null) {
 				if (performUpdate) {
 					updateStatus = true;
 					EObject eObject = this.getLink().getBusinessObjects().get(0);
