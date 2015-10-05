@@ -33,8 +33,6 @@ import org.eclipse.graphiti.services.IGaService;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.providers.ConnectionHighlightingDecoratorProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.providers.IDecoratorProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.util.StringUtil;
@@ -86,21 +84,14 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 		return false;
 	}
 
+	protected AbstractGraphitiToolBehaviorProvider getToolBehaviorProvider() {
+		return (AbstractGraphitiToolBehaviorProvider) getFeatureProvider().getDiagramTypeProvider().getCurrentToolBehaviorProvider();
+	}
+
 	@Override
 	public void startConnecting() {
 		// Highlight ports that may be valid for completing the connection
-		highlightCompatibleAnchors(source);
-	}
-
-	protected void highlightCompatibleAnchors(Anchor source) {
-		AbstractGraphitiToolBehaviorProvider provider = (AbstractGraphitiToolBehaviorProvider) getDiagramBehavior().getDiagramContainer().getDiagramTypeProvider().getCurrentToolBehaviorProvider();
-		for (IDecoratorProvider decoratorProvider : provider.getDecoratorProviders()) {
-			if (decoratorProvider instanceof ConnectionHighlightingDecoratorProvider) {
-				((ConnectionHighlightingDecoratorProvider) decoratorProvider).startHighlighting(source);
-				getDiagramBehavior().refreshContent();
-				return;
-			}
-		}
+		getToolBehaviorProvider().startConnectionHighlighting(source);
 	}
 
 	@Override
@@ -235,13 +226,7 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 	@Override
 	public void endConnecting() {
 		// Turns off highlighting ports for the connection
-		AbstractGraphitiToolBehaviorProvider provider = (AbstractGraphitiToolBehaviorProvider) getDiagramBehavior().getDiagramContainer().getDiagramTypeProvider().getCurrentToolBehaviorProvider();
-		for (IDecoratorProvider decoratorProvider : provider.getDecoratorProviders()) {
-			if (decoratorProvider instanceof ConnectionHighlightingDecoratorProvider) {
-				((ConnectionHighlightingDecoratorProvider) decoratorProvider).endHighlighting();
-			}
-		}
-		getDiagramBehavior().refreshContent();
+		getToolBehaviorProvider().endConnectionHighlighting();
 
 		super.endConnecting();
 	}

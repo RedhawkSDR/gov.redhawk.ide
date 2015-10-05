@@ -95,13 +95,15 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	private List<SoftPkgRegistry> registries = new ArrayList<SoftPkgRegistry>();
 	private List<IDecoratorProvider> decoratorProviders	= new ArrayList<IDecoratorProvider>();
 
+	private ConnectionHighlightingDecoratorProvider connectionHighlighter = new ConnectionHighlightingDecoratorProvider();
+
 	/**
 	 * @param diagramTypeProvider
 	 */
 	public AbstractGraphitiToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 		addDecoratorProvider(new PortMonitorDecoratorProvider());
-		addDecoratorProvider(new ConnectionHighlightingDecoratorProvider());
+		addDecoratorProvider(connectionHighlighter);
 	}
 
 	@Override
@@ -110,6 +112,7 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		for (SoftPkgRegistry registry : registries) {
 			registry.eAdapters().remove(sdrListener);
 		}
+		connectionHighlighter.dispose();
 	}
 
 	@Override
@@ -118,6 +121,23 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 			return false;
 		}
 		return super.isShowFlyoutPalette();
+	}
+
+	/**
+	 * Turn on highlighting of potential connection endpoints that are compatible with source. 
+	 * @param source the starting Anchor of the connection
+	 */
+	public void startConnectionHighlighting(Anchor source) {
+		connectionHighlighter.startHighlighting(source);
+		getDiagramTypeProvider().getDiagramBehavior().refreshContent();
+	}
+
+	/**
+	 * Turn off highlighting of potential connection endpoints.
+	 */
+	public void endConnectionHighlighting() {
+		connectionHighlighter.endHighlighting();
+		getDiagramTypeProvider().getDiagramBehavior().refreshContent();
 	}
 
 	public List<IDecoratorProvider> getDecoratorProviders() {

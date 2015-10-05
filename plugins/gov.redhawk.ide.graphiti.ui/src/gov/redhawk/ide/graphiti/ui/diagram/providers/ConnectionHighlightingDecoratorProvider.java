@@ -34,6 +34,10 @@ public class ConnectionHighlightingDecoratorProvider implements IDecoratorProvid
 		source = null;
 	}
 
+	public void dispose() {
+		source = null;
+	}
+
 	@Override
 	public IDecorator[] getDecorators(PictogramElement pe) {
 		if (source != null) {
