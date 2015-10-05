@@ -12,21 +12,21 @@
 package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.tb.ColorDecorator;
 import org.eclipse.graphiti.tb.IDecorator;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 public class ConnectionHighlightingDecoratorProvider implements IDecoratorProvider {
 
-	private EObject source;
+	private Anchor source;
 
-	public void startHighlighting(EObject source) {
+	public void startHighlighting(Anchor source) {
 		this.source = source;
 	}
 
@@ -39,7 +39,7 @@ public class ConnectionHighlightingDecoratorProvider implements IDecoratorProvid
 		if (source != null) {
 			// Ports always have an invisible anchor overlaid on top of them; ignore everything else
 			if (pe instanceof AnchorContainer && !((AnchorContainer) pe).getAnchors().isEmpty()) {
-				if (isMatch(DUtil.getBusinessObject(pe))) {
+				if (isMatch(pe)) {
 					return new IDecorator[] {
 						new ColorDecorator(null, StyleUtil.COLOR_OK)
 					};
@@ -49,7 +49,18 @@ public class ConnectionHighlightingDecoratorProvider implements IDecoratorProvid
 		return new IDecorator[0];
 	}
 
-	protected boolean isMatch(EObject target) {
+	protected boolean isMatch(PictogramElement target) {
+		for (EObject sourceObject : source.getLink().getBusinessObjects()) {
+			for (EObject targetObject : target.getLink().getBusinessObjects()) {
+				if (isMatch(sourceObject, targetObject)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	protected boolean isMatch(EObject source, EObject target) {
 		if (source.getClass().equals(target.getClass())) {
 			return false;
 		} else if (source instanceof UsesPortStub) {

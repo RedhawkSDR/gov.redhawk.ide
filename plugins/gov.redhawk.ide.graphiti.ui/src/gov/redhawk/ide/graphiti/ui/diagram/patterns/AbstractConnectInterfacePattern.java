@@ -13,7 +13,6 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IConnectionContext;
@@ -49,7 +48,7 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 	public static final String SHAPE_TEXT_CONNECTION_DECORATOR = "textConnectionDecorator";
 	public static final String OVERRIDE_CONNECTION_ID = "OverrideConnectionId";
 
-	private EObject source;
+	private Anchor source;
 
 	@Override
 	public String getCreateName() {
@@ -76,14 +75,8 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 		}
 
 		// We must be able to find a UsesPortStub or ConnectionTarget
-		UsesPortStub source = getUsesPortStub(context);
-		if (source != null) {
-			this.source = source;
-			return true;
-		}
-		ConnectionTarget target = getConnectionTarget(context);
-		if (target != null) {
-			this.source = target;
+		if (getUsesPortStub(context) != null || getConnectionTarget(context) != null) {
+			source = context.getSourceAnchor();
 			return true;
 		}
 
@@ -94,14 +87,15 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 	public void startConnecting() {
 		// Highlight ports that may be valid for completing the connection
 		highlightCompatibleAnchors(source);
-		getDiagramBehavior().refreshContent();
 	}
 
-	protected void highlightCompatibleAnchors(EObject source) {
+	protected void highlightCompatibleAnchors(Anchor source) {
 		AbstractGraphitiToolBehaviorProvider provider = (AbstractGraphitiToolBehaviorProvider) getDiagramBehavior().getDiagramContainer().getDiagramTypeProvider().getCurrentToolBehaviorProvider();
 		for (IDecoratorProvider decoratorProvider : provider.getDecoratorProviders()) {
 			if (decoratorProvider instanceof ConnectionHighlightingDecoratorProvider) {
 				((ConnectionHighlightingDecoratorProvider) decoratorProvider).startHighlighting(source);
+				getDiagramBehavior().refreshContent();
+				return;
 			}
 		}
 	}
