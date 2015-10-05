@@ -17,20 +17,16 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePatt
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
-
+import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
-import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -161,65 +157,28 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		return super.canCreate(context);
 	}
 
-	/**
-	 * Creates a new connection between the selected usesPortStub and ConnectionTarget
-	 */
 	@Override
-	public Connection create(ICreateConnectionContext context) {
-		Connection newConnection = null;
+	protected ConnectInterface< ? , ? , ? > createConnectInterface() {
+		return SadFactory.eINSTANCE.createSadConnectInterface();
+	}
 
-		SadConnectInterface sadConnectInterface = (SadConnectInterface) DUtil.assignAnchorObjectsToConnection(SadFactory.eINSTANCE.createSadConnectInterface(),
-			context.getSourceAnchor(), context.getTargetAnchor());
-		if (sadConnectInterface == null) {
-			// switch source/target direction and try again
-			sadConnectInterface = (SadConnectInterface) DUtil.assignAnchorObjectsToConnection(SadFactory.eINSTANCE.createSadConnectInterface(),
-				context.getTargetAnchor(), context.getSourceAnchor());
+	@Override
+	protected String createConnectionId() {
+		SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+		return createConnectionId(sad.getConnections());
+	}
+
+	@Override
+	protected void addConnectInterface(ConnectInterface< ? , ? , ? > connection) {
+		SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+
+		// Create connections if necessary
+		if (sad.getConnections() == null) {
+			sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
 		}
 
-		if (sadConnectInterface == null) {
-			// can't make a connection
-			return null;
-		}
-
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
-
-		// create connectionId first check if provided in context (currently used by GraphitiModelMap), otherwise
-		// generate unique connection id
-		final String connectionId = (context.getProperty(OVERRIDE_CONNECTION_ID) != null) ? (String) context.getProperty(OVERRIDE_CONNECTION_ID)
-			: createConnectionId(sad.getConnections());
-		// set connection id
-		sadConnectInterface.setId(connectionId);
-
-		// container for new SadConnectInterface, necessary for reference after command execution
-		final SadConnectInterface[] sadConnectInterfaces = new SadConnectInterface[1];
-		sadConnectInterfaces[0] = sadConnectInterface;
-
-		// Create Connect Interface & related objects
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-
-				// create connections if necessary
-				if (sad.getConnections() == null) {
-					sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
-				}
-
-				// add to connections
-				sad.getConnections().getConnectInterface().add(sadConnectInterfaces[0]);
-			}
-		});
-
-		// add connection for business object
-		AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
-		addContext.setNewObject(sadConnectInterfaces[0]);
-		newConnection = (Connection) getFeatureProvider().addIfPossible(addContext);
-
-		return newConnection;
+		// Add to connections
+		sad.getConnections().getConnectInterface().add((SadConnectInterface) connection);
 	}
 
 }

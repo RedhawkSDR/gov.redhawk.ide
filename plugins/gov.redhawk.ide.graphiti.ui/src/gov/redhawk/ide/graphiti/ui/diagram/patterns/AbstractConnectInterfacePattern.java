@@ -13,10 +13,13 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IConnectionContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
+import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.mm.algorithms.Polygon;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -41,7 +44,7 @@ import mil.jpeojtrs.sca.partitioning.Connections;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
-public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
+public abstract class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 
 	public static final String NAME = "Connection";
 	public static final String SHAPE_IMG_CONNECTION_DECORATOR = "imgConnectionDecorator";
@@ -166,6 +169,69 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 		StyleUtil.setStyle(polyArrow, styleId);
 	}
 
+	/**
+	 * Override in subclass to return an instance of the specific ConnectInterface type
+	 */
+	protected abstract ConnectInterface< ? , ? , ? > createConnectInterface();
+
+	/**
+	 * Override in subclass to return a unique connection ID for the SAD/DCD
+	 */
+	protected abstract String createConnectionId();
+
+	/**
+	 * Override in subclass to add the ConnectInterface to the SAD/DCD
+	 */
+	protected abstract void addConnectInterface(ConnectInterface< ? , ? , ? > connection);
+
+	protected ConnectInterface< ? , ? , ? > createModelConnection(Anchor source, Anchor target) {
+		ConnectInterface< ? , ? , ? > connection = DUtil.assignAnchorObjectsToConnection(createConnectInterface(), source, target);
+		if (connection == null) {
+			// Switch source/target direction and try again
+			connection = DUtil.assignAnchorObjectsToConnection(createConnectInterface(), target, source);
+		}
+		return connection;
+	}
+
+	/**
+	 * Creates a new connection between the selected usesPortStub and ConnectionTarget
+	 */
+	@Override
+	public Connection create(ICreateConnectionContext context) {
+		// There appears to be a bug in Graphiti/GMF where endConnecting() does not get called if this method opens a
+		// dialog (e.g., a connection to/from a super port with more than one potential match); explicitly calling it
+		// here will clear the port highlighting.
+		endConnecting();
+
+		// Attempt to create the connection, trying both directions if necessary
+		final ConnectInterface< ? , ? , ? > modelConnection = createModelConnection(context.getSourceAnchor(), context.getTargetAnchor());
+		if (modelConnection == null) {
+			return null;
+		}
+
+		// Allow the caller to override the connection ID (e.g, building a diagram from runtime state)
+		String connectionId = (String) context.getProperty(OVERRIDE_CONNECTION_ID);
+		if (connectionId == null) {
+			connectionId = createConnectionId();
+		}
+		modelConnection.setId(connectionId);
+
+		// Add the connection to the SAD/DCD model
+		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
+		editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
+
+			@Override
+			protected void doExecute() {
+				addConnectInterface(modelConnection);
+			}
+		});
+
+		// Add diagram connection for business object
+		AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
+		addContext.setNewObject(modelConnection);
+		return (Connection) getFeatureProvider().addIfPossible(addContext);
+	}
+
 	@Override
 	public void endConnecting() {
 		// Turns off highlighting ports for the connection
@@ -230,7 +296,6 @@ public class AbstractConnectInterfacePattern extends AbstractConnectionPattern {
 
 	/**
 	 * Returns the next available connection id
-	 * @param sad SoftwareAssembly
 	 */
 	protected String createConnectionId(Connections< ? > connections) {
 		final List<String> ids = new ArrayList<String>();

@@ -10,13 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
-import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -30,6 +26,7 @@ import gov.redhawk.sca.dcd.validation.ConnectionsConstraint;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.dcd.DcdFactory;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 
 public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern {
 
@@ -133,66 +130,29 @@ public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern 
 		return super.canCreate(context);
 	}
 
-	/**
-	 * Creates a new connection between the selected usesPortStub and ConnectionTarget
-	 */
 	@Override
-	public Connection create(ICreateConnectionContext context) {
+	protected ConnectInterface< ? , ? , ? > createConnectInterface() {
+		return DcdFactory.eINSTANCE.createDcdConnectInterface();
+	}
 
-		Connection newConnection = null;
+	@Override
+	protected String createConnectionId() {
+		DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
+		return createConnectionId(dcd.getConnections());
+	}
 
-		DcdConnectInterface dcdConnectInterface = (DcdConnectInterface) DUtil.assignAnchorObjectsToConnection(DcdFactory.eINSTANCE.createDcdConnectInterface(),
-			context.getSourceAnchor(), context.getTargetAnchor());
-		if (dcdConnectInterface == null) {
-			// switch source/target direction and try again
-			dcdConnectInterface = (DcdConnectInterface) DUtil.assignAnchorObjectsToConnection(DcdFactory.eINSTANCE.createDcdConnectInterface(),
-				context.getTargetAnchor(), context.getSourceAnchor());
+	@Override
+	protected void addConnectInterface(ConnectInterface< ? , ? , ? > connection) {
+		// Get DCD from diagram
+		DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
+
+		// Create connections if necessary
+		if (dcd.getConnections() == null) {
+			dcd.setConnections(DcdFactory.eINSTANCE.createDcdConnections());
 		}
-		if (dcdConnectInterface == null) {
-			// can't make a connection
-			return null;
-		}
 
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		// get sad from diagram
-		final DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
-
-		// create connectionId first check if provided in context (currently used by GraphitiModelMap), otherwise
-		// generate unique connection id
-		final String connectionId = (context.getProperty(OVERRIDE_CONNECTION_ID) != null) ? (String) context.getProperty(OVERRIDE_CONNECTION_ID)
-			: createConnectionId(dcd.getConnections());
-		// set connection id
-		dcdConnectInterface.setId(connectionId);
-
-		// container for new DcdConnectInterface, necessary for reference after command execution
-		final DcdConnectInterface[] dcdConnectInterfaces = new DcdConnectInterface[1];
-		dcdConnectInterfaces[0] = dcdConnectInterface;
-
-		// Create Connect Interface & related objects
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-
-				// create connections if necessary
-				if (dcd.getConnections() == null) {
-					dcd.setConnections(DcdFactory.eINSTANCE.createDcdConnections());
-				}
-
-				// add to connections
-				dcd.getConnections().getConnectInterface().add(dcdConnectInterfaces[0]);
-
-			}
-		});
-
-		// add connection for business object
-		AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
-		addContext.setNewObject(dcdConnectInterfaces[0]);
-		newConnection = (Connection) getFeatureProvider().addIfPossible(addContext);
-
-		return newConnection;
+		// Add to connections
+		dcd.getConnections().getConnectInterface().add((DcdConnectInterface) connection);
 	}
 
 }
