@@ -1699,9 +1699,20 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			} else if (superProvidesPortsRectangleShape != null) {
 				//update super ports shape
 
-				//update Anchor links
+				// Upgrade from 2.0.0 RC1: make the anchor invisible to support highlighting during connection
 				FixPointAnchor fixPointAnchor = (FixPointAnchor) superProvidesPortsRectangleShape.getAnchors().get(0);
+				GraphicsAlgorithm anchorRect = fixPointAnchor.getGraphicsAlgorithm();
+				if (anchorRect.getFilled() || anchorRect.getLineVisible()) {
+					if (performUpdate) {
+						updateStatus = true;
+						anchorRect.setFilled(false);
+						anchorRect.setLineVisible(false);
+					} else {
+						return new Reason(true, "Super Provides Ports requires update");
+					}
+				}
 
+				// Update Anchor links
 				List<EObject> eObjects = new ArrayList<EObject>();
 				Collections.addAll(eObjects, provides.toArray(new ProvidesPortStub[0]));
 				if (externalPorts != null && externalPorts.size() > 0) {
@@ -1779,14 +1790,25 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 					//create super ports
 					addSuperUsesPortContainerShape(pattern.getUses(eObject), pattern.getFeatureProvider(), externalPorts);
 				} else {
-					return new Reason(true, "Super Provides Ports require creation");
+					return new Reason(true, "Super Uses Ports require creation");
 				}
 			} else if (superUsesPortsRectangleShape != null) {
 				//update super ports shape
 
-				//update Anchor links
+				// Upgrade from 2.0.0 RC1: make the anchor invisible to support highlighting during connection
 				FixPointAnchor fixPointAnchor = (FixPointAnchor) superUsesPortsRectangleShape.getAnchors().get(0);
+				GraphicsAlgorithm anchorRect = fixPointAnchor.getGraphicsAlgorithm();
+				if (anchorRect.getFilled() || anchorRect.getLineVisible()) {
+					if (performUpdate) {
+						updateStatus = true;
+						anchorRect.setFilled(false);
+						anchorRect.setLineVisible(false);
+					} else {
+						return new Reason(true, "Super Uses Ports requires update");
+					}
+				}
 
+				// Update Anchor links
 				List<EObject> eObjects = new ArrayList<EObject>();
 				Collections.addAll(eObjects, uses.toArray(new UsesPortStub[0]));
 				if (externalPorts != null && externalPorts.size() > 0) {
