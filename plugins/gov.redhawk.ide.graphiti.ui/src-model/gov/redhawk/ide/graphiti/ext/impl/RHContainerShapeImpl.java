@@ -906,21 +906,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		StyleUtil.setStyle(superUsesPortsRectangle, StyleUtil.SUPER_USES_PORT);
 
 		// fix point anchor
-		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(superUsesPortsRectangleShape);
-		Point point = StylesFactory.eINSTANCE.createPoint();
-		point.setX(0);
-		point.setY((SUPER_PORT_SHAPE_HEIGHT / 2) - 2); // Needs to slide up, or appears layered on rectangle shape
-		fixPointAnchor.setLocation(point);
+		FixPointAnchor fixPointAnchor = createInvisibleAnchor(superUsesPortsRectangleShape, SUPER_PORT_SHAPE_WIDTH);
 		DUtil.addLinks(featureProvider, fixPointAnchor, usesPortStubs);
-		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(false);
-		fixPointAnchor.setReferencedGraphicsAlgorithm(superUsesPortsRectangle);
-		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
-		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
-		StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.SUPER_USES_PORT);
 		if (externalPorts != null && externalPorts.size() > 0) {
 			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
 		}
-		Graphiti.getGaLayoutService().setLocation(fixPointAnchorRectangle, 0, -SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2);
 	}
 
 	/**
@@ -944,29 +934,20 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			INNER_CONTAINER_SHAPE_TOP_PADDING + SUPER_PORT_SHAPE_HEIGHT_MARGIN);
 
 		// fix point anchor
-		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(superProvidesPortsRectangleShape);
-		Point point = StylesFactory.eINSTANCE.createPoint();
-		point.setX(0);
-		point.setY((SUPER_PORT_SHAPE_HEIGHT / 2) - 2); // Needs to slide up, or appears layered on rectangle shape
-		fixPointAnchor.setLocation(point);
+		FixPointAnchor fixPointAnchor = createInvisibleAnchor(superProvidesPortsRectangleShape, 0);
 		DUtil.addLinks(featureProvider, fixPointAnchor, providesPortStubs);
 		DUtil.addLink(featureProvider, fixPointAnchor, interfaceStub);
-		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
-		fixPointAnchor.setReferencedGraphicsAlgorithm(superProvidesPortsRectangle);
-		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
-		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
-		StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.SUPER_PROVIDES_PORT);
 		if (externalPorts != null && externalPorts.size() > 0) {
 			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
 		}
-		Graphiti.getGaLayoutService().setLocation(fixPointAnchorRectangle, 0, -SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2);
 	}
 
-	private FixPointAnchor createInvisibleAnchor(ContainerShape portShape, int x, int y) {
+	private FixPointAnchor createInvisibleAnchor(ContainerShape portShape, int x) {
 		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(portShape);
+		IDimension portSize = Graphiti.getGaLayoutService().calculateSize(portShape.getGraphicsAlgorithm());
 		Point point = StylesFactory.eINSTANCE.createPoint();
 		point.setX(x);
-		point.setY(y);
+		point.setY(portSize.getHeight() / 2);
 		fixPointAnchor.setLocation(point);
 		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
 		fixPointAnchor.setReferencedGraphicsAlgorithm(portShape.getGraphicsAlgorithm());
@@ -974,7 +955,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		fixPointAnchorRectangle.setFilled(false);
 		fixPointAnchorRectangle.setLineVisible(false);
-		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, -x, -y, PORT_SHAPE_WIDTH, PORT_SHAPE_HEIGHT);
+		layoutAnchor(portShape);
 		return fixPointAnchor;
 	}
 
@@ -1007,7 +988,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		featureProvider.link(providesPortShape, p);
 
 		// Port shape anchor
-		FixPointAnchor fixPointAnchor = createInvisibleAnchor(providesPortShape, 0, PORT_SHAPE_HEIGHT / 2);
+		FixPointAnchor fixPointAnchor = createInvisibleAnchor(providesPortShape, 0);
 		DUtil.addLink(featureProvider, fixPointAnchor, p);
 		if (externalPort != null) {
 			DUtil.addLink(featureProvider, fixPointAnchor, externalPort);
@@ -1113,22 +1094,30 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 	}
 
-	private void resizeSuperPort(ContainerShape superPortContainerShape) {
+	private void layoutSuperPort(ContainerShape superPortContainerShape) {
 		// Resize relative to inner shape
 		int height = getInnerContainerShape().getGraphicsAlgorithm().getHeight() - SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2;
 		Graphiti.getGaLayoutService().setSize(superPortContainerShape.getGraphicsAlgorithm(), SUPER_PORT_SHAPE_WIDTH, height);
 
-		// Resize anchor
-		Rectangle fixPointAnchorRectangle = (Rectangle) superPortContainerShape.getAnchors().get(0).getGraphicsAlgorithm();
-		Graphiti.getGaLayoutService().setSize(fixPointAnchorRectangle, SUPER_PORT_SHAPE_WIDTH, height);
+		layoutAnchor(superPortContainerShape);
+	}
+
+	private void layoutAnchor(ContainerShape parentShape) {
+		// Layout and resize anchor
+		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
+		FixPointAnchor portAnchor = (FixPointAnchor) parentShape.getAnchors().get(0);
+		Point anchorLocation = portAnchor.getLocation();
+		anchorLocation.setY(parentSize.getHeight() / 2);
+		Graphiti.getGaLayoutService().setLocationAndSize(portAnchor.getGraphicsAlgorithm(), -anchorLocation.getX(), -anchorLocation.getY(),
+			parentSize.getWidth(), parentSize.getHeight());
 	}
 
 	protected void layoutSuperProvidesPorts(ContainerShape superProvidesPortsContainerShape) {
-		resizeSuperPort(superProvidesPortsContainerShape);
+		layoutSuperPort(superProvidesPortsContainerShape);
 	}
 
 	protected void layoutSuperUsesPorts(ContainerShape superUsesPortsContainerShape) {
-		resizeSuperPort(superUsesPortsContainerShape);
+		layoutSuperPort(superUsesPortsContainerShape);
 
 		// Position at right edge of inner shape
 		GraphicsAlgorithm innerGa = getInnerContainerShape().getGraphicsAlgorithm();
@@ -1197,7 +1186,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		featureProvider.link(usesPortShape, p);
 
 		// Port anchor
-		FixPointAnchor fixPointAnchor = createInvisibleAnchor(usesPortShape, PORT_SHAPE_WIDTH, PORT_SHAPE_HEIGHT / 2);
+		FixPointAnchor fixPointAnchor = createInvisibleAnchor(usesPortShape, PORT_SHAPE_WIDTH);
 		featureProvider.link(fixPointAnchor, p);
 		if (externalPort != null) {
 			fixPointAnchor.getLink().getBusinessObjects().add(externalPort); // link to externalPort so that update fires when it changes
