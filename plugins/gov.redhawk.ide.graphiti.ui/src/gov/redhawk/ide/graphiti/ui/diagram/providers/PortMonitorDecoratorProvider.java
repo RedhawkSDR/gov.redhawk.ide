@@ -11,13 +11,15 @@
  */
 package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.tb.ColorDecorator;
 import org.eclipse.graphiti.tb.IDecorator;
 import org.eclipse.graphiti.util.IColorConstant;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
@@ -26,19 +28,35 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider {
 
 	@Override
 	public IDecorator[] getDecorators(PictogramElement pe) {
-		Object bo = DUtil.getBusinessObject(pe);
-		if (bo instanceof ProvidesPortStub) {
-			ProvidesPortStub portStub = (ProvidesPortStub) bo;
-			RHContainerShape componentShape = ScaEcoreUtils.getEContainerOfType(pe, RHContainerShape.class);
-			if (portStub.getProvides() != null && componentShape != null) {
-				String portName = portStub.getProvides().getName();
-				IDecorator decorator = getMonitoredPortDecorator(componentShape, portName);
-				if (decorator != null) {
-					return new IDecorator[] { decorator };
+		if ((pe instanceof AnchorContainer) && !((AnchorContainer) pe).getAnchors().isEmpty()) {
+			ProvidesPortStub portStub = getProvidesPort(pe);
+			if (portStub != null) {
+				RHContainerShape componentShape = ScaEcoreUtils.getEContainerOfType(pe, RHContainerShape.class);
+				if (portStub.getProvides() != null && componentShape != null) {
+					String portName = portStub.getProvides().getName();
+					IDecorator decorator = getMonitoredPortDecorator(componentShape, portName);
+					if (decorator != null) {
+						return new IDecorator[] { decorator };
+					}
 				}
 			}
 		}
 		return new IDecorator[0];
+	}
+
+	private ProvidesPortStub getProvidesPort(PictogramElement pe) {
+		ProvidesPortStub portStub = null;
+		for (EObject object : Graphiti.getLinkService().getAllBusinessObjectsForLinkedPictogramElement(pe)) {
+			if (object instanceof ProvidesPortStub) {
+				if (portStub == null) {
+					portStub = (ProvidesPortStub) object;
+				} else {
+					// More than one provides port is linked with the PictogramElement, so it must be a super port
+					return null;
+				}
+			}
+		}
+		return portStub;
 	}
 
 	protected IDecorator getMonitoredPortDecorator(RHContainerShape componentShape, String portName) {
