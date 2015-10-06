@@ -70,8 +70,10 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 	 * @param connectionPE
 	 */
 	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram) {
-		// Clear any existing connection decorators
-		connectionPE.getConnectionDecorators().clear();
+		// Clear any existing connection decorators beyond the arrow
+		if (connectionPE.getConnectionDecorators().size() > 1) {
+			connectionPE.getConnectionDecorators().remove(1);
+		}
 
 		// establish source/target for connection
 		UsesPortStub source = connectInterface.getSource();
@@ -96,9 +98,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			if (validationProblem) {
 				AbstractConnectInterfacePattern.addErrorDecorator(diagram, connectionPE);
 			}
-
-			// add graphical arrow to end of the connection
-			AbstractConnectInterfacePattern.addConnectionArrow(diagram, connectionPE);
 		}
 	}
 

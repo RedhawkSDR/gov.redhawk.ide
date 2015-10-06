@@ -130,6 +130,11 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 		Polyline line = gaService.createPlainPolyline(connectionPE);
 		StyleUtil.setStyle(line, StyleUtil.CONNECTION);
 
+		// Add arrow (as a decorator) to the end of the line
+		ConnectionDecorator arrowDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connectionPE, false, 1.0, true);
+		Polygon polyArrow = gaService.createPlainPolygon(arrowDecorator, new int[] { -10, 5, 0, 0, -10, -5 });
+		StyleUtil.setStyle(polyArrow, StyleUtil.CONNECTION);
+
 		// link ports to connection
 		getFeatureProvider().link(connectionPE, new Object[] { context.getNewObject(), source, target });
 
@@ -144,16 +149,6 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 		ConnectionDecorator errorDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, false, 0.5, true);
 		Polyline errPolyline = gaService.createPlainPolyline(errorDecorator, new int[] { -7, 7, 0, 0, -7, -7, 0, 0, 7, -7, 0, 0, 7, 7 });
 		StyleUtil.setStyle(errPolyline, StyleUtil.CONNECTION_ERROR);
-	}
-
-	/**
-	 *  Add a graphical arrow to end of the connection
-	 */
-	protected static void addConnectionArrow(Diagram diagram, Connection connection) {
-		IGaService gaService = Graphiti.getGaService();
-		ConnectionDecorator arrowDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, false, 1.0, true);
-		Polygon polyArrow = gaService.createPlainPolygon(arrowDecorator, new int[] { -10, 5, 0, 0, -10, -5 });
-		StyleUtil.setStyle(polyArrow, StyleUtil.CONNECTION);
 	}
 
 	/**

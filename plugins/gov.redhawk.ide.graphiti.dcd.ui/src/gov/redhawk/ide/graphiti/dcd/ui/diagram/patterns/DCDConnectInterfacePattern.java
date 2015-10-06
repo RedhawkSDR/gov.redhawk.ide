@@ -68,7 +68,9 @@ public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern 
 	 */
 	public static void decorateConnection(Connection connectionPE, DcdConnectInterface connectInterface, Diagram diagram) {
 		// Clear any existing connection decorators
-		connectionPE.getConnectionDecorators().clear();
+		if (connectionPE.getConnectionDecorators().size() > 1) {
+			connectionPE.getConnectionDecorators().remove(1);
+		}
 
 		boolean isFindByConnection = false;
 		if (connectInterface.getProvidesPort() != null && connectInterface.getUsesPort() != null) {
@@ -89,9 +91,6 @@ public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			if (validationProblem) {
 				AbstractConnectInterfacePattern.addErrorDecorator(diagram, connectionPE);
 			}
-
-			// add graphical arrow to end of the connection
-			AbstractConnectInterfacePattern.addConnectionArrow(diagram, connectionPE);
 		}
 	}
 
