@@ -69,6 +69,7 @@ import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
 import org.eclipse.graphiti.tb.IContextMenuEntry;
 import org.eclipse.graphiti.tb.IDecorator;
+import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBehaviorProvider {
@@ -102,7 +103,7 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	 */
 	public AbstractGraphitiToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
-		addDecoratorProvider(new PortMonitorDecoratorProvider());
+		addDecoratorProvider(new PortMonitorDecoratorProvider((DiagramBehavior) diagramTypeProvider.getDiagramBehavior()));
 		addDecoratorProvider(connectionHighlighter);
 	}
 

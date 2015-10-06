@@ -157,7 +157,7 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 		IGaService gaService = Graphiti.getGaService();
 		ConnectionDecorator arrowDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, false, 1.0, true);
 		Polygon polyArrow = gaService.createPlainPolygon(arrowDecorator, new int[] { -10, 5, 0, 0, -10, -5 });
-		StyleUtil.setStyle(polyArrow, styleId);
+		StyleUtil.setStyle(polyArrow, StyleUtil.CONNECTION);
 	}
 
 	/**

@@ -36,7 +36,6 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
-import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -1014,43 +1013,32 @@ public class GraphitiModelMap implements IPortStatListener {
 
 		final float timeSinceLastCall = stats.timeSinceLastCall;
 		final double lastCallWarningLevel = store.getDouble(DiagramPreferenceConstants.PREF_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS);
-		
+
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
-				ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
+				ComponentShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
 				SadConnectInterface connInterface = connectionMap.getProfile();
 				Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
-		
-				Polyline line = (Polyline) connection.getGraphicsAlgorithm();
+
 				if (timeSinceLastCall < lastCallWarningLevel) {
-					updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.CONNECTION_OK);
+					updateConnectionStyle(componentShape, connection, connectionId, StyleUtil.CONNECTION_OK);
 				} else {
-					updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.CONNECTION_WARN);
+					updateConnectionStyle(componentShape, connection, connectionId, StyleUtil.CONNECTION_WARN);
 				}
 			}
 		});
 	}
 
-	private void updateConnectionStyle(final ComponentShapeImpl componentShape, final Connection connection, final SadConnectInterface connInterface,
-		final String connectionId, final Polyline line, final Diagram diagram, final String styleId) {
-		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new NonDirtyingCommand() {
-			@Override
-			public void execute() {
-				if (styleId == null) {
-					componentShape.getConnectionMap().remove(connectionId);
-					StyleUtil.setStyle(line, StyleUtil.CONNECTION);
-					SADConnectInterfacePattern.decorateConnection(connection, connInterface, diagram, StyleUtil.CONNECTION);
-				} else {
-					componentShape.getConnectionMap().put(connectionId, styleId);
-					StyleUtil.setStyle(line, styleId);
-					SADConnectInterfacePattern.decorateConnection(connection, connInterface, diagram, styleId);
-				}
-			}
-		});
+	private void updateConnectionStyle(ComponentShape componentShape, Connection connection, String connectionId, String styleId) {
+		if (styleId == null) {
+			componentShape.getConnectionMap().remove(connectionId);
+		} else {
+			componentShape.getConnectionMap().put(connectionId, styleId);
+		}
+		IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+		provider.getDiagramBehavior().refreshRenderingDecorators(connection);
 	}
 
 	@Override
@@ -1108,8 +1096,7 @@ public class GraphitiModelMap implements IPortStatListener {
 				}
 				SadConnectInterface connInterface = connectionMap.getProfile();
 				Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
-				Polyline line = (Polyline) connection.getGraphicsAlgorithm();
-				updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, null);
+				updateConnectionStyle(componentShape, connection, connectionId, null);
 			}
 		});
 	}
