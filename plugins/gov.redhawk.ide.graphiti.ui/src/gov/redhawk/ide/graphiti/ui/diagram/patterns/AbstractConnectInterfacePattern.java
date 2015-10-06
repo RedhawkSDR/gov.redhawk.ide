@@ -128,11 +128,7 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 		// create line
 		IGaService gaService = Graphiti.getGaService();
 		Polyline line = gaService.createPlainPolyline(connectionPE);
-		String styleId = (String) context.getProperty("LineStyle");
-		if (styleId == null) {
-			styleId = StyleUtil.CONNECTION;
-		}
-		StyleUtil.setStyle(line, styleId);
+		StyleUtil.setStyle(line, StyleUtil.CONNECTION);
 
 		// link ports to connection
 		getFeatureProvider().link(connectionPE, new Object[] { context.getNewObject(), source, target });
@@ -153,7 +149,7 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 	/**
 	 *  Add a graphical arrow to end of the connection
 	 */
-	protected static void addConnectionArrow(Diagram diagram, Connection connection, String styleId) {
+	protected static void addConnectionArrow(Diagram diagram, Connection connection) {
 		IGaService gaService = Graphiti.getGaService();
 		ConnectionDecorator arrowDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, false, 1.0, true);
 		Polygon polyArrow = gaService.createPlainPolygon(arrowDecorator, new int[] { -10, 5, 0, 0, -10, -5 });

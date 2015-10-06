@@ -21,7 +21,6 @@ import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.dcd.validation.ConnectionsConstraint;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.dcd.DcdFactory;
@@ -92,13 +91,7 @@ public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			}
 
 			// add graphical arrow to end of the connection
-			String styleId;
-			if (validationProblem) {
-				styleId = StyleUtil.CONNECTION_ERROR;
-			} else {
-				styleId = StyleUtil.CONNECTION;
-			}
-			AbstractConnectInterfacePattern.addConnectionArrow(diagram, connectionPE, styleId);
+			AbstractConnectInterfacePattern.addConnectionArrow(diagram, connectionPE);
 		}
 	}
 

@@ -11,11 +11,9 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
@@ -54,21 +52,13 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 	 */
 	@Override
 	public PictogramElement add(IAddContext addContext) {
-		IAddConnectionContext context = (IAddConnectionContext) addContext;
 		SadConnectInterface connectInterface = (SadConnectInterface) addContext.getNewObject();
 
 		// check and see if the connection has any special color requirements, such as during a monitor port call
-		UsesPortStub source = getUsesPortStub(context);
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.getPictogramElementForBusinessObject(getDiagram(), source.eContainer(),
-			RHContainerShape.class);
-		String styleId = rhContainerShape.getConnectionMap().get(connectInterface.getId());
-		if (styleId != null) {
-			context.putProperty("LineStyle", styleId);
-		}
 		Connection connectionPE = (Connection) super.add(addContext);
 
 		// add any decorators
-		decorateConnection(connectionPE, connectInterface, getDiagram(), styleId);
+		decorateConnection(connectionPE, connectInterface, getDiagram());
 
 		return connectionPE;
 	}
@@ -80,15 +70,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 	 * @param connectionPE
 	 */
 	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram) {
-		decorateConnection(connectionPE, connectInterface, diagram, null);
-	}
-
-	/**
-	 * Add decorators to connection if applicable
-	 * provides a default color option for decorating connections
-	 * @param connectionPE
-	 */
-	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram, String defaultStyleId) {
 		// Clear any existing connection decorators
 		connectionPE.getConnectionDecorators().clear();
 
@@ -117,15 +98,7 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			}
 
 			// add graphical arrow to end of the connection
-			String styleId;
-			if (validationProblem) {
-				styleId = StyleUtil.CONNECTION_ERROR;
-			} else if (defaultStyleId != null) {
-				styleId = defaultStyleId;
-			} else {
-				styleId = StyleUtil.CONNECTION;
-			}
-			AbstractConnectInterfacePattern.addConnectionArrow(diagram, connectionPE, styleId);
+			AbstractConnectInterfacePattern.addConnectionArrow(diagram, connectionPE);
 		}
 	}
 
