@@ -61,7 +61,6 @@ import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformSandboxEditor;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
@@ -87,7 +86,6 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
-import mil.jpeojtrs.sca.sad.impl.SadComponentInstantiationImpl;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
@@ -170,7 +168,7 @@ public class GraphitiModelMap implements IPortStatListener {
 			}
 		}
 
-		final String implID = ((SadComponentInstantiationImpl) comp).getImplID();
+		final String implID = ((SadComponentInstantiation) comp).getImplID();
 		Job job = new Job("Launching " + comp.getUsageName()) {
 
 			@Override
@@ -534,7 +532,7 @@ public class GraphitiModelMap implements IPortStatListener {
 		final Diagram diagram = provider.getDiagram();
 
 		// get pictogram for component
-		final PictogramElement[] peToRemove = { DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, ComponentShapeImpl.class) };
+		final PictogramElement[] peToRemove = { DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, ComponentShape.class) };
 
 		// Delete Component in transaction
 		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
@@ -1059,7 +1057,7 @@ public class GraphitiModelMap implements IPortStatListener {
 					final Diagram diagram = provider.getDiagram();
 
 					if (port instanceof ScaProvidesPort) {
-						ComponentShape componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
+						ComponentShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
 						updatePortState(componentShape, port.getName(), null);
 					}
 				}
@@ -1087,7 +1085,7 @@ public class GraphitiModelMap implements IPortStatListener {
 			@Override
 			public void run() {
 				SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
-				ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
+				ComponentShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
 		
 				// Get the connection interface
 				ConnectionMapEntry connectionMap = connections.get(connectionId);
