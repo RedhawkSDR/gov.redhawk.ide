@@ -114,11 +114,14 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	 */
 	public AbstractGraphitiToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
-		addDecoratorProvider(new PortMonitorDecoratorProvider());
+		if (DUtil.isDiagramRuntime(diagramTypeProvider.getDiagram())) {
+			addDecoratorProvider(new PortMonitorDecoratorProvider());
+		} else {
+			ConnectionValidationDecoratorProvider validator = new ConnectionValidationDecoratorProvider();
+			addDecoratorProvider(validator);
+			addToolTipDelegate(validator);
+		}
 		addDecoratorProvider(connectionHighlighter);
-		ConnectionValidationDecoratorProvider validator = new ConnectionValidationDecoratorProvider();
-		addDecoratorProvider(validator);
-		addToolTipDelegate(validator);
 	}
 
 	@Override
