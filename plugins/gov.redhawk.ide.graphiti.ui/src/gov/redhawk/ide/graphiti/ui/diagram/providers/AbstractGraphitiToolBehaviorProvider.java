@@ -54,6 +54,7 @@ import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -95,6 +96,7 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	protected List<IPaletteCompartmentEntry> paletteCompartments;
 	private List<SoftPkgRegistry> registries = new ArrayList<SoftPkgRegistry>();
 	private List<IDecoratorProvider> decoratorProviders	= new ArrayList<IDecoratorProvider>();
+	private List<IToolTipDelegate> tooltipDelegates = new ArrayList<IToolTipDelegate>();
 
 	private ConnectionHighlightingDecoratorProvider connectionHighlighter = new ConnectionHighlightingDecoratorProvider();
 
@@ -103,8 +105,12 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	 */
 	public AbstractGraphitiToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
-		addDecoratorProvider(new PortMonitorDecoratorProvider((DiagramBehavior) diagramTypeProvider.getDiagramBehavior()));
+		DiagramBehavior diagramBehavior = (DiagramBehavior) diagramTypeProvider.getDiagramBehavior();
+		addDecoratorProvider(new PortMonitorDecoratorProvider(diagramBehavior));
 		addDecoratorProvider(connectionHighlighter);
+		ConnectionValidationDecoratorProvider validator = new ConnectionValidationDecoratorProvider(diagramBehavior);
+		addDecoratorProvider(validator);
+		addToolTipDelegate(validator);
 	}
 
 	@Override
@@ -162,6 +168,29 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 			decorators.addAll(Arrays.asList(provider.getDecorators(pe)));
 		}
 		return decorators.toArray(new IDecorator[decorators.size()]);
+	}
+
+	public List<IToolTipDelegate> getToolTipDelegates() {
+		return tooltipDelegates;
+	}
+
+	public void addToolTipDelegate(IToolTipDelegate provider) {
+		tooltipDelegates.add(provider);
+	}
+
+	public void removeToolTipDelegate(IToolTipDelegate provider) {
+		tooltipDelegates.remove(provider);
+	}
+
+	@Override
+	public Object getToolTip(GraphicsAlgorithm ga) {
+		for (IToolTipDelegate delegate : getToolTipDelegates()) {
+			Object tooltip = delegate.getToolTip(ga);
+			if (tooltip != null) {
+				return tooltip;
+			}
+		}
+		return null;
 	}
 
 	/**

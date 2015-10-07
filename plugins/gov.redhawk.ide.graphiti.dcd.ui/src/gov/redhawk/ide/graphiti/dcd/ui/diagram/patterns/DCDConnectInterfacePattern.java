@@ -13,15 +13,10 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
-import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
-import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.sca.dcd.validation.ConnectionsConstraint;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.dcd.DcdFactory;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -44,54 +39,6 @@ public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Adds the connection to the diagram and associates the source/target port with the line
-	 */
-	@Override
-	public PictogramElement add(IAddContext addContext) {
-		Connection connectionPE = (Connection) super.add(addContext);
-
-		// add any decorators
-		DcdConnectInterface connectInterface = (DcdConnectInterface) addContext.getNewObject();
-		decorateConnection(connectionPE, connectInterface, getDiagram());
-
-		return connectionPE;
-	}
-
-	/**
-	 * Add decorators to connection if applicable
-	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape
-	 * Decorators (see RHToolBehaviorProvider)
-	 * @param connectionPE
-	 */
-	public static void decorateConnection(Connection connectionPE, DcdConnectInterface connectInterface, Diagram diagram) {
-		// Clear any existing connection decorators
-		if (connectionPE.getConnectionDecorators().size() > 1) {
-			connectionPE.getConnectionDecorators().remove(1);
-		}
-
-		boolean isFindByConnection = false;
-		if (connectInterface.getProvidesPort() != null && connectInterface.getUsesPort() != null) {
-			if (connectInterface.getProvidesPort().getFindBy() != null || connectInterface.getUsesPort().getFindBy() != null) {
-				isFindByConnection = true;
-			}
-		}
-
-		if (connectInterface.getSource() != null && connectInterface.getTarget() != null || isFindByConnection) {
-			// Connection validation (only diagrams which aren't runtime)
-			boolean validationProblem = false;
-			if (!DUtil.isDiagramRuntime(diagram)) {
-				validationProblem = !ConnectionsConstraint.uniqueConnection(connectInterface)
-					|| (!isFindByConnection && !InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget()));
-			}
-
-			// Add error decorator if necessary
-			if (validationProblem) {
-				AbstractConnectInterfacePattern.addErrorDecorator(diagram, connectionPE);
-			}
-		}
 	}
 
 	@Override

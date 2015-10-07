@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect;
 
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
@@ -89,9 +88,6 @@ public class DCDReconnectFeature extends DefaultReconnectionFeature {
 			EList<EObject> connectionBusinessObjects = connectionPE.getLink().getBusinessObjects();
 			connectionBusinessObjects.remove(oldPort);
 			connectionBusinessObjects.add(newPort);
-
-			// Update connection decorators
-			DCDConnectInterfacePattern.decorateConnection(connectionPE, connectInterface, getDiagram());
 		}
 	}
 

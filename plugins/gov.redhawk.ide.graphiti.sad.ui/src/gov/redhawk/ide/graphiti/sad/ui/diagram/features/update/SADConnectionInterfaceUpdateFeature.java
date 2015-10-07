@@ -10,10 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.update;
 
-import gov.redhawk.diagram.util.InterfacesUtil;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
@@ -21,15 +18,11 @@ import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
-import org.eclipse.graphiti.features.IRemoveFeature;
-import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
-import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.impl.AbstractUpdateFeature;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 
 public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 
@@ -90,12 +83,15 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 			return new Reason(false, "No updates required");
 		}
 
-		// imgConnectionDecorator
-		ConnectionDecorator imgConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
-			SADConnectInterfacePattern.SHAPE_IMG_CONNECTION_DECORATOR);
-		// textConnectionDecorator
-		ConnectionDecorator textConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
-			SADConnectInterfacePattern.SHAPE_TEXT_CONNECTION_DECORATOR);
+		// Remove old connection error "X" decorator--we now use color decorators to handle error markings
+		if (connectionPE.getConnectionDecorators().size() > 1) {
+			if (performUpdate) {
+				updateStatus = true;
+				connectionPE.getConnectionDecorators().remove(1);
+			} else {
+				return new Reason(true, "Stale error decorator");
+			}
+		}
 		
 		//establish source/target for connection
 		UsesPortStub source = connectInterface.getSource();
@@ -126,52 +122,6 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 				}
 				return new Reason(true, tmpMsg + " endpoint for connection is null");
 			}
-
-			// check if not compatible draw error/warning decorator
-		} else {
-			// connection validation
-			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
-
-			// don't check compatibility if connection includes FindBy or UsesDevice elements
-			boolean compatibleConnection = InterfacesUtil.areCompatible(source, target);
-
-			if ((!compatibleConnection || !uniqueConnection) && (imgConnectionDecorator == null || textConnectionDecorator == null)) {
-				if (performUpdate) {
-					updateStatus = true;
-					// Incompatible connection without an error decorator! We need to add an error decorator
-					SADConnectInterfacePattern.decorateConnection(connectionPE, connectInterface, getDiagram());
-				} else {
-					if (!uniqueConnection) {
-						return new Reason(true, "Redundant connection");
-					} else if (!compatibleConnection) {
-						return new Reason(true, "Incompatible connection");
-					} else {
-						return new Reason(true, "Connection Error");
-					}
-				}
-			} else if ((compatibleConnection || uniqueConnection) && (imgConnectionDecorator != null || textConnectionDecorator != null)) {
-				if (performUpdate) {
-					updateStatus = true;
-					// Compatible connection with an inappropriate error decorator! We need to remove the error
-					// decorator
-					IRemoveContext rc = new RemoveContext(imgConnectionDecorator);
-					IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
-					if (removeFeature != null) {
-						removeFeature.remove(rc);
-					}
-					rc = new RemoveContext(textConnectionDecorator);
-					removeFeature = featureProvider.getRemoveFeature(rc);
-					if (removeFeature != null) {
-						removeFeature.remove(rc);
-					}
-				} else {
-					return new Reason(true, "Error Decorator needs to be removed from Connection");
-				}
-			}
-
-//			if (connectInterface.getProvidesPort().getFindBy() != null || connectInterface.getUsesPort().getFindBy() != null) {
-//				SADConnectInterfacePattern.decorateConnection(connectionPE, connectInterface, getDiagram());
-//			}
 		}
 
 		if (updateStatus && performUpdate) {

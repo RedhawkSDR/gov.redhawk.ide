@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect;
 
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -89,9 +88,6 @@ public class SADReconnectFeature extends DefaultReconnectionFeature {
 			EList<EObject> connectionBusinessObjects = connectionPE.getLink().getBusinessObjects();
 			connectionBusinessObjects.remove(oldPort);
 			connectionBusinessObjects.add(newPort);
-
-			// Update connection decorators
-			SADConnectInterfacePattern.decorateConnection(connectionPE, connectInterface, getDiagram());
 		}
 	}
 

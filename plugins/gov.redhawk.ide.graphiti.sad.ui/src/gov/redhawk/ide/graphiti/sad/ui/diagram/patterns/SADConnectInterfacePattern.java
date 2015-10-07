@@ -10,14 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
-import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
-import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -25,9 +21,6 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
-import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern {
 
@@ -45,60 +38,6 @@ public class SADConnectInterfacePattern extends AbstractConnectInterfacePattern 
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Adds the connection to the diagram and associates the source/target port with the line
-	 */
-	@Override
-	public PictogramElement add(IAddContext addContext) {
-		SadConnectInterface connectInterface = (SadConnectInterface) addContext.getNewObject();
-
-		// check and see if the connection has any special color requirements, such as during a monitor port call
-		Connection connectionPE = (Connection) super.add(addContext);
-
-		// add any decorators
-		decorateConnection(connectionPE, connectInterface, getDiagram());
-
-		return connectionPE;
-	}
-
-	/**
-	 * Add decorators to connection if applicable
-	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape
-	 * Decorators (see RHToolBehaviorProvider)
-	 * @param connectionPE
-	 */
-	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram) {
-		// Clear any existing connection decorators beyond the arrow
-		if (connectionPE.getConnectionDecorators().size() > 1) {
-			connectionPE.getConnectionDecorators().remove(1);
-		}
-
-		// establish source/target for connection
-		UsesPortStub source = connectInterface.getSource();
-		ConnectionTarget target = connectInterface.getTarget();
-
-		// source and target will be null if findBy or usesDevice is used, in this case pull stubs from diagram
-		if (source == null) {
-			source = DUtil.getBusinessObject(connectionPE.getStart(), UsesPortStub.class);
-		}
-		if (target == null) {
-			target = DUtil.getBusinessObject(connectionPE.getEnd(), ConnectionTarget.class);
-		}
-
-		if (source != null && target != null) {
-			// Connection validation (only diagrams which aren't runtime)
-			boolean validationProblem = false;
-			if (!DUtil.isDiagramRuntime(diagram)) {
-				validationProblem = !ConnectionsConstraint.uniqueConnection(connectInterface) || !InterfacesUtil.areCompatible(source, target);
-			}
-
-			// Add error decorator if necessary
-			if (validationProblem) {
-				AbstractConnectInterfacePattern.addErrorDecorator(diagram, connectionPE);
-			}
-		}
 	}
 
 	@Override

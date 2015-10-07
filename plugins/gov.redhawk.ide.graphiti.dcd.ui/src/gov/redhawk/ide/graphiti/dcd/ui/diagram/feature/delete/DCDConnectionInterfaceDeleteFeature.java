@@ -10,12 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete;
 
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
@@ -25,8 +23,6 @@ import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
-import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
@@ -89,13 +85,6 @@ public class DCDConnectionInterfaceDeleteFeature extends DefaultDeleteFeature {
 		if (removeFeature != null) {
 			removeFeature.remove(rc);
 			setDoneChanges(true);
-		}
-
-		Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
-		EList<Connection> connections = diagram.getConnections();
-		for (Connection connection : connections) {
-			DcdConnectInterface ci = (DcdConnectInterface) getBusinessObjectForPictogramElement(connection);
-			DCDConnectInterfacePattern.decorateConnection(connection, ci, diagram);
 		}
 
 		postDelete(context);
