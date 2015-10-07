@@ -11,24 +11,15 @@
  */
 package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
-import java.util.List;
-
-import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.tb.ColorDecorator;
 import org.eclipse.graphiti.tb.IColorDecorator;
 import org.eclipse.graphiti.tb.IDecorator;
-import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.util.IColorConstant;
-import org.eclipse.swt.graphics.Color;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
@@ -39,11 +30,6 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 public class PortMonitorDecoratorProvider implements IDecoratorProvider {
 
 	private static final IDecorator[] NO_DECORATORS = new IDecorator[0];
-	private final DiagramBehavior diagramBehavior;
-
-	public PortMonitorDecoratorProvider(DiagramBehavior diagramBehavior) {
-		this.diagramBehavior = diagramBehavior;
-	}
 
 	@Override
 	public IDecorator[] getDecorators(PictogramElement pe) {
@@ -68,60 +54,11 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider {
 				if (styleId != null) {
 					IColorConstant color = getMonitorColor(styleId);
 					IColorDecorator decorator = new ColorDecorator(color, color);
-					applyConnectionDecorators(connection, decorator);
 					return new IDecorator[] { decorator };
-				} else {
-					applyConnectionDecorators(connection, null);
 				}
 			}
 		}
 		return NO_DECORATORS;
-	}
-
-	private void applyConnectionDecorators(Connection connection, IColorDecorator decorator) {
-		GraphicalViewer viewer = diagramBehavior.getDiagramContainer().getGraphicalViewer();
-		GraphicalEditPart part = (GraphicalEditPart) viewer.getEditPartRegistry().get(connection);
-
-		Color foreground = null;
-		Color background = null;
-		if (decorator != null) {
-			if (decorator.getForegroundColor() != null) {
-				foreground = getSwtColor(decorator.getForegroundColor());
-			}
-			if (decorator.getBackgroundColor() != null) {
-				background = getSwtColor(decorator.getBackgroundColor());
-			}
-		}
-
-		// Assume that there's a 1:1 mapping between figure children and connection decorators, as there does not
-		// appear to be any other way to reconcile the two
-		List< ? > children = part.getFigure().getChildren();
-		for (int index = 0; index < children.size(); index++) {
-			ConnectionDecorator connectionDecorator = connection.getConnectionDecorators().get(index);
-			if (!connectionDecorator.isActive()) {
-				IFigure figure = (IFigure) children.get(index);
-				refreshColors(figure, connectionDecorator.getGraphicsAlgorithm(), foreground, background);
-			}
-		}
-	}
-
-	private void refreshColors(IFigure figure, GraphicsAlgorithm ga, Color foreground, Color background) {
-		if (foreground == null) {
-			foreground = getSwtColor(Graphiti.getGaService().getForegroundColor(ga, true));
-		}
-		if (background == null) {
-			background = getSwtColor(Graphiti.getGaService().getBackgroundColor(ga, true));
-		}
-		figure.setForegroundColor(foreground);
-		figure.setBackgroundColor(background);
-	}
-
-	private Color getSwtColor(org.eclipse.graphiti.mm.algorithms.styles.Color color) {
-		return new Color(null, color.getRed(), color.getGreen(), color.getBlue());
-	}
-
-	private Color getSwtColor(IColorConstant constant) {
-		return new Color(null, constant.getRed(), constant.getGreen(), constant.getBlue());
 	}
 
 	private ProvidesPortStub getProvidesPort(PictogramElement pe) {

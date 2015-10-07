@@ -41,11 +41,14 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.context.ICustomContext;
@@ -56,6 +59,8 @@ import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
@@ -64,13 +69,17 @@ import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.pattern.CreateFeatureForPattern;
+import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.tb.ContextButtonEntry;
 import org.eclipse.graphiti.tb.ContextMenuEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
+import org.eclipse.graphiti.tb.IColorDecorator;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
 import org.eclipse.graphiti.tb.IContextMenuEntry;
 import org.eclipse.graphiti.tb.IDecorator;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
+import org.eclipse.graphiti.util.IColorConstant;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBehaviorProvider {
@@ -105,10 +114,9 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	 */
 	public AbstractGraphitiToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
-		DiagramBehavior diagramBehavior = (DiagramBehavior) diagramTypeProvider.getDiagramBehavior();
-		addDecoratorProvider(new PortMonitorDecoratorProvider(diagramBehavior));
+		addDecoratorProvider(new PortMonitorDecoratorProvider());
 		addDecoratorProvider(connectionHighlighter);
-		ConnectionValidationDecoratorProvider validator = new ConnectionValidationDecoratorProvider(diagramBehavior);
+		ConnectionValidationDecoratorProvider validator = new ConnectionValidationDecoratorProvider();
 		addDecoratorProvider(validator);
 		addToolTipDelegate(validator);
 	}
@@ -167,7 +175,60 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		for (IDecoratorProvider provider : getDecoratorProviders()) {
 			decorators.addAll(Arrays.asList(provider.getDecorators(pe)));
 		}
+		if (pe instanceof Connection) {
+			applyConnectionDecorators((Connection) pe, decorators);
+		}
 		return decorators.toArray(new IDecorator[decorators.size()]);
+	}
+
+	private void applyConnectionDecorators(Connection connection, List<IDecorator> decorators) {
+		DiagramBehavior diagramBehavior = (DiagramBehavior) getDiagramTypeProvider().getDiagramBehavior();
+		GraphicalViewer viewer = diagramBehavior.getDiagramContainer().getGraphicalViewer();
+		GraphicalEditPart part = (GraphicalEditPart) viewer.getEditPartRegistry().get(connection);
+
+		Color foreground = null;
+		Color background = null;
+		for (IDecorator decorator : decorators) {
+			if (decorator instanceof IColorDecorator) {
+				IColorDecorator colorDecorator = (IColorDecorator) decorator;
+				if (colorDecorator.getForegroundColor() != null) {
+					foreground = getSwtColor(colorDecorator.getForegroundColor());
+				}
+				if (colorDecorator.getBackgroundColor() != null) {
+					background = getSwtColor(colorDecorator.getBackgroundColor());
+				}
+			}
+		}
+
+		// Assume that there's a 1:1 mapping between figure children and connection decorators, as there does not
+		// appear to be any other way to reconcile the two
+		List< ? > children = part.getFigure().getChildren();
+		for (int index = 0; index < children.size(); index++) {
+			ConnectionDecorator connectionDecorator = connection.getConnectionDecorators().get(index);
+			if (!connectionDecorator.isActive()) {
+				IFigure figure = (IFigure) children.get(index);
+				refreshColors(figure, connectionDecorator.getGraphicsAlgorithm(), foreground, background);
+			}
+		}
+	}
+
+	private void refreshColors(IFigure figure, GraphicsAlgorithm ga, Color foreground, Color background) {
+		if (foreground == null) {
+			foreground = getSwtColor(Graphiti.getGaService().getForegroundColor(ga, true));
+		}
+		if (background == null) {
+			background = getSwtColor(Graphiti.getGaService().getBackgroundColor(ga, true));
+		}
+		figure.setForegroundColor(foreground);
+		figure.setBackgroundColor(background);
+	}
+
+	private Color getSwtColor(org.eclipse.graphiti.mm.algorithms.styles.Color color) {
+		return new Color(null, color.getRed(), color.getGreen(), color.getBlue());
+	}
+
+	private Color getSwtColor(IColorConstant constant) {
+		return new Color(null, constant.getRed(), constant.getGreen(), constant.getBlue());
 	}
 
 	public List<IToolTipDelegate> getToolTipDelegates() {
