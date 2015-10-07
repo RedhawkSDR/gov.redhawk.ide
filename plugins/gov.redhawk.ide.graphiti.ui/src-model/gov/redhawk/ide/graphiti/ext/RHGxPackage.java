@@ -354,6 +354,16 @@ public interface RHGxPackage extends EPackage {
 	int MAP = 15;
 
 	/**
+	 * The meta object id for the '<em>Port Statistics Map</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see java.util.Map
+	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getPortStatisticsMap()
+	 * @generated
+	 */
+	int PORT_STATISTICS_MAP = 16;
+
+	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape <em>RH Container Shape</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -617,6 +627,17 @@ public interface RHGxPackage extends EPackage {
 	EDataType getMap();
 
 	/**
+	 * Returns the meta object for data type '{@link java.util.Map <em>Port Statistics Map</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Port Statistics Map</em>'.
+	 * @see java.util.Map
+	 * @model instanceClass="java.util.Map<java.lang.String, BULKIO.PortStatistics>"
+	 * @generated
+	 */
+	EDataType getPortStatisticsMap();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -861,6 +882,16 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType MAP = eINSTANCE.getMap();
+
+		/**
+		 * The meta object literal for the '<em>Port Statistics Map</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see java.util.Map
+		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getPortStatisticsMap()
+		 * @generated
+		 */
+		EDataType PORT_STATISTICS_MAP = eINSTANCE.getPortStatisticsMap();
 
 	}
 

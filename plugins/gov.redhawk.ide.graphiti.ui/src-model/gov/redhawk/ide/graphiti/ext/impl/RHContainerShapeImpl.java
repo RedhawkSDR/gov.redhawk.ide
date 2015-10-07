@@ -12,6 +12,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.ext.impl;
 
+import BULKIO.PortStatistics;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
@@ -160,7 +161,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @generated NOT
 	 * @ordered
 	 */
-	protected Map<String, String> portStates = Collections.synchronizedMap(new HashMap<String, String>());
+	protected Map<String, BULKIO.PortStatistics> portStates = Collections.synchronizedMap(new HashMap<String, BULKIO.PortStatistics>());
 
 	/**
 	 * The default value of the '{@link #isHasSuperPortsContainerShape() <em>Has Super Ports Container Shape</em>}' attribute.
@@ -394,7 +395,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Map<String, String> getPortStates() {
+	public Map<String, PortStatistics> getPortStates() {
 		return portStates;
 	}
 
@@ -403,8 +404,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setPortStates(Map<String, String> newPortStates) {
-		Map<String, String> oldPortStates = portStates;
+	public void setPortStates(Map<String, PortStatistics> newPortStates) {
+		Map<String, PortStatistics> oldPortStates = portStates;
 		portStates = newPortStates;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__PORT_STATES, oldPortStates, portStates));
@@ -712,7 +713,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			setConnectionMap((Map<String, String>) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__PORT_STATES:
-			setPortStates((Map<String, String>) newValue);
+			setPortStates((Map<String, PortStatistics>) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			setHasSuperPortsContainerShape((Boolean) newValue);
@@ -748,7 +749,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			setConnectionMap((Map<String, String>) null);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__PORT_STATES:
-			setPortStates((Map<String, String>) null);
+			setPortStates((Map<String, PortStatistics>) null);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			setHasSuperPortsContainerShape(HAS_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT);

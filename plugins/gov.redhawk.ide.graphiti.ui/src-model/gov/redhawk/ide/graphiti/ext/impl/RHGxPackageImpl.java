@@ -149,6 +149,13 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	private EDataType mapEDataType = null;
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType portStatisticsMapEDataType = null;
+
+	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
 	 * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
 	 * package URI value.
@@ -438,6 +445,15 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EDataType getPortStatisticsMap() {
+		return portStatisticsMapEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public RHGxFactory getRHGxFactory() {
 		return (RHGxFactory) getEFactoryInstance();
 	}
@@ -488,6 +504,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		iUpdateContextEDataType = createEDataType(IUPDATE_CONTEXT);
 		iColorConstantEDataType = createEDataType(ICOLOR_CONSTANT);
 		mapEDataType = createEDataType(MAP);
+		portStatisticsMapEDataType = createEDataType(PORT_STATISTICS_MAP);
 	}
 
 	/**
@@ -536,8 +553,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_ConnectionMap(), this.getMap(), "connectionMap", null, 0, 1, RHContainerShape.class, IS_TRANSIENT, !IS_VOLATILE,
 			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRHContainerShape_PortStates(), this.getMap(), "portStates", null, 0, 1, RHContainerShape.class, IS_TRANSIENT, !IS_VOLATILE,
-			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRHContainerShape_PortStates(), this.getPortStatisticsMap(), "portStates", null, 0, 1, RHContainerShape.class, IS_TRANSIENT,
+			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_HasSuperPortsContainerShape(), theEcorePackage.getEBoolean(), "hasSuperPortsContainerShape", null, 0, 1,
 			RHContainerShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_HasPortsContainerShape(), theEcorePackage.getEBoolean(), "hasPortsContainerShape", null, 0, 1,
@@ -614,6 +631,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		initEDataType(iUpdateContextEDataType, IUpdateContext.class, "IUpdateContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iColorConstantEDataType, IColorConstant.class, "IColorConstant", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(mapEDataType, Map.class, "Map", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS, "java.util.Map<java.lang.String, java.lang.String>");
+		initEDataType(portStatisticsMapEDataType, Map.class, "PortStatisticsMap", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS,
+			"java.util.Map<java.lang.String, BULKIO.PortStatistics>");
 
 		// Create resource
 		createResource(eNS_URI);

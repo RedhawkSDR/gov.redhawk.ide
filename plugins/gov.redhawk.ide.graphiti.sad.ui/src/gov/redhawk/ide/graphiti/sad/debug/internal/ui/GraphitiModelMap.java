@@ -49,7 +49,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.SystemException;
 
 import BULKIO.PortStatistics;
@@ -889,28 +888,6 @@ public class GraphitiModelMap implements IPortStatListener {
 
 	@Override
 	public void newStatistics(final ScaPort< ? , ? > port, final PortStatistics stats) {
-		IPreferenceStore store = GraphitiUIPlugin.getDefault().getPreferenceStore();
-		final float queueDepth = stats.averageQueueDepth;
-		final double queueDepthWarningLevel = store.getDouble(DiagramPreferenceConstants.PREF_PORT_STATISTICS_QUEUE_LEVEL) / 100;
-		final double queueDepthIncrement = (1.0 - queueDepthWarningLevel) / 4;
-		final double lastFlushResetTime = store.getDouble(DiagramPreferenceConstants.PREF_PORT_STATISTICS_QUEUE_FLUSH_DISPLAY);
-
-		Double lastFlushKeyword = null;
-		DataType[] keywords = stats.keywords;
-		if (keywords != null) {
-			for (DataType keyword : keywords) {
-				if ("timeSinceLastFlush".equals(keyword.id)) {
-					try {
-						lastFlushKeyword = keyword.value.extract_double();
-					} catch (BAD_OPERATION e) {
-						StatusManager.getManager().handle(
-							new Status(Status.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Expected double value for timeSinceLastFlush keyword (TCKind was " + keyword.value.type().kind() + ")", e));
-					}
-				}
-			}
-		}
-		final double lastFlush = (lastFlushKeyword != null) ? lastFlushKeyword.doubleValue() : Double.MAX_VALUE; 
-
 		ScaPortContainer container = port.getPortContainer();
 		if (!(container instanceof ScaComponent)) {
 			StatusManager.getManager().handle(new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Received statistics for a port not belonging to a component"),
@@ -933,41 +910,25 @@ public class GraphitiModelMap implements IPortStatListener {
 					return;
 				}
 
-				final String styleId;
-				if (lastFlush < lastFlushResetTime || (lastFlush != Double.MAX_VALUE && lastFlushResetTime < 0)) {
-					// If last flush reset time is set to -1, never reset the color if a flush has occurred
-					styleId = StyleUtil.PORT_STYLE_WARN4;
-				} else if (queueDepth < queueDepthWarningLevel) {
-					styleId = StyleUtil.PORT_STYLE_OK;
-				} else if (queueDepth < (queueDepthWarningLevel + queueDepthIncrement)) {
-					styleId = StyleUtil.PORT_STYLE_WARN1;
-				} else if (queueDepth < (queueDepthWarningLevel + 2 * queueDepthIncrement)) {
-					styleId = StyleUtil.PORT_STYLE_WARN2;
-				} else if (queueDepth < (queueDepthWarningLevel + 3 * queueDepthIncrement)) {
-					styleId = StyleUtil.PORT_STYLE_WARN3;
-				} else {
-					styleId = StyleUtil.PORT_STYLE_WARN4;
-				}
-
 				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 				final Diagram diagram = provider.getDiagram();
 				ComponentShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
-				updatePortState(componentShape, port.getName(), styleId);
+				updatePortState(componentShape, port.getName(), stats);
 			}
 		});
 
 	}
 
-	private void updatePortState(final RHContainerShape componentShape, final String portName, final String styleId) {
+	private void updatePortState(final RHContainerShape componentShape, final String portName, final PortStatistics statistics) {
 		TransactionalEditingDomain editingDomain = getEditingDomain();
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 		stack.execute(new NonDirtyingCommand() {
 			@Override
 			public void execute() {
-				if (styleId == null) {
+				if (statistics == null) {
 					componentShape.getPortStates().remove(portName);
 				} else {
-					componentShape.getPortStates().put(portName, styleId);
+					componentShape.getPortStates().put(portName, statistics);
 				}
 				IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 				for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {

@@ -12,6 +12,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.ext;
 
+import BULKIO.PortStatistics;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import java.util.List;
 import java.util.Map;
@@ -156,15 +157,15 @@ public interface RHContainerShape extends ContainerShape {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * This map is used to store color information for ports based on monitoring
+	 * This map is used to the statistical information provided by the port monitor service
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Port States</em>' attribute.
 	 * @see #setPortStates(Map)
 	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_PortStates()
-	 * @model unique="false" dataType="gov.redhawk.ide.graphiti.ext.Map" transient="true"
+	 * @model unique="false" dataType="gov.redhawk.ide.graphiti.ext.PortStatisticsMap" transient="true"
 	 * @generated
 	 */
-	Map<String, String> getPortStates();
+	Map<String, PortStatistics> getPortStates();
 
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getPortStates <em>Port States</em>}' attribute.
@@ -174,7 +175,7 @@ public interface RHContainerShape extends ContainerShape {
 	 * @see #getPortStates()
 	 * @generated
 	 */
-	void setPortStates(Map<String, String> value);
+	void setPortStates(Map<String, PortStatistics> value);
 
 	/**
 	 * Returns the value of the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
