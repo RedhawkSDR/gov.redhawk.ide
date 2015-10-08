@@ -45,7 +45,6 @@ import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -65,10 +64,7 @@ import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramFeatureProvider;
-import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
-import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
@@ -942,17 +938,12 @@ public class GraphitiModelMap implements IPortStatListener {
 	}
 
 	@Override
-	public void newStatistics(ScaPort< ? , ? > port, final String connectionId, PortStatistics stats) {
-		IPreferenceStore store = GraphitiUIPlugin.getDefault().getPreferenceStore();
-
+	public void newStatistics(final ScaPort< ? , ? > port, final String connectionId, final PortStatistics stats) {
 		if (editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramBehavior() == null) {
 			return;
 		}
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final Diagram diagram = provider.getDiagram();
-		if (this.editor.getDiagramEditor() == null) {
-			return;
-		}
 
 		// Get the component shape
 		ScaPortContainer container = port.getPortContainer();
@@ -970,9 +961,6 @@ public class GraphitiModelMap implements IPortStatListener {
 			return;
 		}
 
-		final float timeSinceLastCall = stats.timeSinceLastCall;
-		final double lastCallWarningLevel = store.getDouble(DiagramPreferenceConstants.PREF_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS);
-
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -980,21 +968,23 @@ public class GraphitiModelMap implements IPortStatListener {
 				ComponentShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
 				SadConnectInterface connInterface = connectionMap.getProfile();
 				Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
-
-				if (timeSinceLastCall < lastCallWarningLevel) {
-					updateConnectionStyle(componentShape, connection, connectionId, StyleUtil.CONNECTION_OK);
-				} else {
-					updateConnectionStyle(componentShape, connection, connectionId, StyleUtil.CONNECTION_WARN);
-				}
+				updateConnectionStyle(componentShape, connection, port.getName(), connectionId, stats);
 			}
 		});
 	}
 
-	private void updateConnectionStyle(ComponentShape componentShape, Connection connection, String connectionId, String styleId) {
-		if (styleId == null) {
-			componentShape.getConnectionMap().remove(connectionId);
+	private void updateConnectionStyle(ComponentShape componentShape, Connection connection, String portName, String connectionId, PortStatistics statistics) {
+		Map<String,PortStatistics> connectionStats = componentShape.getConnectionStates().get(portName);
+		if (statistics == null) {
+			if (connectionStats != null) {
+				connectionStats.remove(connectionId);
+			}
 		} else {
-			componentShape.getConnectionMap().put(connectionId, styleId);
+			if (connectionStats == null) {
+				connectionStats = new HashMap<String,PortStatistics>();
+				componentShape.getConnectionStates().put(portName, connectionStats);
+			}
+			connectionStats.put(connectionId, statistics);
 		}
 		IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		provider.getDiagramBehavior().refreshRenderingDecorators(connection);
@@ -1027,7 +1017,7 @@ public class GraphitiModelMap implements IPortStatListener {
 	}
 
 	@Override
-	public void noStatistics(ScaPort< ? , ? > port, final String connectionId) {
+	public void noStatistics(final ScaPort< ? , ? > port, final String connectionId) {
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final Diagram diagram = provider.getDiagram();
 
@@ -1055,7 +1045,7 @@ public class GraphitiModelMap implements IPortStatListener {
 				}
 				SadConnectInterface connInterface = connectionMap.getProfile();
 				Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
-				updateConnectionStyle(componentShape, connection, connectionId, null);
+				updateConnectionStyle(componentShape, connection, connectionId, port.getName(), null);
 			}
 		});
 	}

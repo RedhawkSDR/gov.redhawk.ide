@@ -11,6 +11,8 @@
  */
 package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
@@ -18,7 +20,6 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.tb.ColorDecorator;
-import org.eclipse.graphiti.tb.IColorDecorator;
 import org.eclipse.graphiti.tb.IDecorator;
 import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
@@ -30,9 +31,9 @@ import CF.DataType;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public class PortMonitorDecoratorProvider implements IDecoratorProvider {
@@ -53,7 +54,7 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider {
 				RHContainerShape componentShape = ScaEcoreUtils.getEContainerOfType(pe, RHContainerShape.class);
 				if (portStub.getProvides() != null && componentShape != null) {
 					String portName = portStub.getProvides().getName();
-					IDecorator decorator = getMonitoredPortDecorator(componentShape, portName);
+					IDecorator decorator = getProvidesPortDecorator(componentShape, portName);
 					if (decorator != null) {
 						return new IDecorator[] { decorator };
 					}
@@ -64,11 +65,13 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider {
 			if (connectInterface != null) {
 				Connection connection = (Connection) pe;
 				RHContainerShape componentShape = ScaEcoreUtils.getEContainerOfType(connection.getStart(), RHContainerShape.class);
-				String styleId = componentShape.getConnectionMap().get(connectInterface.getId());
-				if (styleId != null) {
-					IColorConstant color = getMonitorColor(styleId);
-					IColorDecorator decorator = new ColorDecorator(color, color);
-					return new IDecorator[] { decorator };
+				UsesPortStub portStub = connectInterface.getSource();
+				if (portStub != null && portStub.getUses() != null && componentShape != null) {
+					String portName = portStub.getUses().getName();
+					IDecorator decorator = getConnectionDecorator(componentShape, portName, connectInterface.getId());
+					if (decorator != null) {
+						return new IDecorator[] { decorator };
+					}
 				}
 			}
 		}
@@ -90,20 +93,27 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider {
 		return portStub;
 	}
 
-	protected IColorConstant getMonitorColor(String styleId) {
-		if (styleId != null) {
-			if (StyleUtil.PORT_STYLE_OK.equals(styleId) || StyleUtil.CONNECTION_OK.equals(styleId)) {
-				return StyleUtil.COLOR_OK;
-			} else if (StyleUtil.PORT_STYLE_WARN4.equals(styleId) || StyleUtil.CONNECTION_ERROR.equals(styleId)) {
-				return StyleUtil.COLOR_ERROR;
-			} else {
-				return StyleUtil.COLOR_WARN;
+	protected IDecorator getProvidesPortDecorator(RHContainerShape componentShape, String portName) {
+		BULKIO.PortStatistics statistics = componentShape.getPortStates().get(portName);
+		if (statistics != null) {
+			return new ColorDecorator(null, getProvidesMonitorColor(statistics));
+		}
+		return null;
+	}
+
+	protected IDecorator getConnectionDecorator(RHContainerShape componentShape, String portName, String connectionId) {
+		Map<String, BULKIO.PortStatistics> portStatistics = componentShape.getConnectionStates().get(portName);
+		if (portStatistics != null) {
+			BULKIO.PortStatistics statistics = portStatistics.get(connectionId);
+			if (statistics != null) {
+				IColorConstant color = getConnectionMonitorColor(statistics);
+				return new ColorDecorator(color, color);
 			}
 		}
 		return null;
 	}
 
-	protected IColorConstant getMonitorColor(BULKIO.PortStatistics statistics) {
+	protected IColorConstant getProvidesMonitorColor(BULKIO.PortStatistics statistics) {
 		IPreferenceStore store = GraphitiUIPlugin.getDefault().getPreferenceStore();
 		double queueDepthWarningLevel = store.getDouble(DiagramPreferenceConstants.PREF_PORT_STATISTICS_QUEUE_LEVEL) / 100;
 		double queueDepthIncrement = (1.0 - queueDepthWarningLevel) / 4;
@@ -126,12 +136,14 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider {
 		}
 	}
 
-	protected IDecorator getMonitoredPortDecorator(RHContainerShape componentShape, String portName) {
-		BULKIO.PortStatistics statistics = componentShape.getPortStates().get(portName);
-		if (statistics != null) {
-			return new ColorDecorator(null, getMonitorColor(statistics));
+	protected IColorConstant getConnectionMonitorColor(BULKIO.PortStatistics statistics) {
+		IPreferenceStore store = GraphitiUIPlugin.getDefault().getPreferenceStore();
+		double lastCallWarningLevel = store.getDouble(DiagramPreferenceConstants.PREF_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS);
+		if (statistics.timeSinceLastCall < lastCallWarningLevel) {
+			return COLOR_OK;
+		} else {
+			return COLOR_WARNING_1;
 		}
-		return null;
 	}
 
 	private double getLastFlushTime(DataType[] keywords) {

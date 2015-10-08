@@ -40,7 +40,8 @@ type AbstractContainerPattern wraps AbstractContainerPattern
 type IUpdateContext wraps org.eclipse.graphiti.features.context.IUpdateContext
 type IColorConstant wraps org.eclipse.graphiti.util.IColorConstant
 type Map wraps java.util.Map< String , String >
-type PortStatisticsMap wraps java.util.Map< String , BULKIO.PortStatistics >
+type ProvidesPortStatisticsMap wraps java.util.Map< String , BULKIO.PortStatistics >
+type UsesPortStatisticsMap wraps java.util.Map< String , java.util.Map< String , BULKIO.PortStatistics > >
 
 class RHContainerShape extends ContainerShape {
 
@@ -57,8 +58,11 @@ class RHContainerShape extends ContainerShape {
 	 * when monitor ports is active, where a connection may need to have a specific color set at creation.*/
 	transient Map connectionMap
 
-	/*This map is used to the statistical information provided by the port monitor service*/
-	transient PortStatisticsMap portStates
+	/*This map is used to the statistical information for provides ports provided by the port monitor service*/
+	transient ProvidesPortStatisticsMap portStates
+
+	/*This map is used to the statistical information for uses ports provided by the port monitor service*/
+	transient UsesPortStatisticsMap connectionStates
 
 	boolean hasSuperPortsContainerShape  //creates a single anchor on each side of container to represent ports
 	boolean hasPortsContainerShape //creates a container that displays an anchor per port

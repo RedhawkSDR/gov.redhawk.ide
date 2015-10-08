@@ -127,8 +127,10 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return createIColorConstantFromString(eDataType, initialValue);
 		case RHGxPackage.MAP:
 			return createMapFromString(eDataType, initialValue);
-		case RHGxPackage.PORT_STATISTICS_MAP:
-			return createPortStatisticsMapFromString(eDataType, initialValue);
+		case RHGxPackage.PROVIDES_PORT_STATISTICS_MAP:
+			return createProvidesPortStatisticsMapFromString(eDataType, initialValue);
+		case RHGxPackage.USES_PORT_STATISTICS_MAP:
+			return createUsesPortStatisticsMapFromString(eDataType, initialValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -172,8 +174,10 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return convertIColorConstantToString(eDataType, instanceValue);
 		case RHGxPackage.MAP:
 			return convertMapToString(eDataType, instanceValue);
-		case RHGxPackage.PORT_STATISTICS_MAP:
-			return convertPortStatisticsMapToString(eDataType, instanceValue);
+		case RHGxPackage.PROVIDES_PORT_STATISTICS_MAP:
+			return convertProvidesPortStatisticsMapToString(eDataType, instanceValue);
+		case RHGxPackage.USES_PORT_STATISTICS_MAP:
+			return convertUsesPortStatisticsMapToString(eDataType, instanceValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -466,7 +470,7 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, PortStatistics> createPortStatisticsMapFromString(EDataType eDataType, String initialValue) {
+	public Map<String, PortStatistics> createProvidesPortStatisticsMapFromString(EDataType eDataType, String initialValue) {
 		return (Map<String, PortStatistics>) super.createFromString(initialValue);
 	}
 
@@ -475,7 +479,26 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String convertPortStatisticsMapToString(EDataType eDataType, Object instanceValue) {
+	public String convertProvidesPortStatisticsMapToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Map<String, PortStatistics>> createUsesPortStatisticsMapFromString(EDataType eDataType, String initialValue) {
+		return (Map<String, Map<String, PortStatistics>>) super.createFromString(initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertUsesPortStatisticsMapToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(instanceValue);
 	}
 
