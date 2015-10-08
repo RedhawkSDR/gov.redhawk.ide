@@ -15,13 +15,10 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaDeviceManager;
-import gov.redhawk.model.sca.ScaModelPlugin;
 import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
-
-import java.util.Map;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
@@ -29,15 +26,14 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.scd.AbstractPort;
-import mil.jpeojtrs.sca.util.QueryParser;
-import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.services.Graphiti;
 
 public class PortEditPartAdapterFactory implements IAdapterFactory {
 
@@ -53,14 +49,16 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 				return null;
 			}
 
-			Object port = DUtil.getBusinessObject((PictogramElement) object);
+			PictogramElement pe = (PictogramElement) object;
+			EObject port = DUtil.getBusinessObject(pe);
+			Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pe);
 			ScaPort< ? , ? > scaPort = null;
 			if (port instanceof UsesPortStub) {
 				UsesPortStub uses = (UsesPortStub) port;
-				scaPort = getScaPort(uses, uses.getName());
+				scaPort = getScaPort(diagram, uses, uses.getName());
 			} else if (port instanceof ProvidesPortStub) {
 				ProvidesPortStub provides = (ProvidesPortStub) port;
-				scaPort = getScaPort(provides, provides.getName());
+				scaPort = getScaPort(diagram, provides, provides.getName());
 			}
 
 			if (scaPort != null && AbstractPort.class.isAssignableFrom(adapterType)) {
@@ -72,17 +70,13 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	private ScaPort< ? , ? > getScaPort(EObject port, String name) {
-		if (port.eResource() == null || !(port.eContainer() instanceof ComponentInstantiation)) {
+	private ScaPort< ? , ? > getScaPort(Diagram diagram, EObject port, String name) {
+		if (!(port.eContainer() instanceof ComponentInstantiation)) {
 			return null;
 		}
 
-		final URI uri = port.eResource().getURI();
-		final Map<String, String> query = QueryParser.parseQuery(uri.query());
-		final String wfRef = query.get(ScaFileSystemConstants.QUERY_PARAM_WF);
-
 		if (port.eContainer() instanceof SadComponentInstantiation) {
-			final ScaWaveform waveform = ScaModelPlugin.getDefault().findEObject(ScaWaveform.class, wfRef);
+			ScaWaveform waveform = DUtil.getBusinessObject(diagram, ScaWaveform.class);
 			if (waveform != null) {
 				final String instantiationId = ((ComponentInstantiation) port.eContainer()).getId();
 				final ScaComponent component = GraphitiAdapterUtil.safeFetchComponent(waveform, instantiationId);
@@ -91,7 +85,7 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 				}
 			}
 		} else if (port.eContainer() instanceof DcdComponentInstantiation) {
-			final ScaDeviceManager devMgr = ScaModelPlugin.getDefault().findEObject(ScaDeviceManager.class, wfRef);
+			ScaDeviceManager devMgr = DUtil.getBusinessObject(diagram, ScaDeviceManager.class);
 			if (devMgr != null) {
 				final String deviceId = ((ComponentInstantiation) port.eContainer()).getId();
 				final ScaDevice< ? > device = GraphitiAdapterUtil.safeFetchDevice(devMgr, deviceId);

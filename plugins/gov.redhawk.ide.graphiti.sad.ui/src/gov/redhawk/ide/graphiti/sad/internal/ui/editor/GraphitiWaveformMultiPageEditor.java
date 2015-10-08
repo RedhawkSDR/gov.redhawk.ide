@@ -300,6 +300,7 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 				PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();
 				link.getBusinessObjects().add(sad);
 				diagram.setLink(link);
+				addDiagramLinks(diagram);
 			}
 		});
 
@@ -308,6 +309,12 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 
 	}
 
+	/**
+	 * Subclasses may override to add additional business object to the diagram (e.g., runtime waveform).
+	 * @param diagram
+	 */
+	protected void addDiagramLinks(Diagram diagram) {
+	}
 
 	protected DiagramEditor createDiagramEditor() {
 		GraphitiWaveformDiagramEditor d = new GraphitiWaveformDiagramEditor((TransactionalEditingDomain) getEditingDomain());

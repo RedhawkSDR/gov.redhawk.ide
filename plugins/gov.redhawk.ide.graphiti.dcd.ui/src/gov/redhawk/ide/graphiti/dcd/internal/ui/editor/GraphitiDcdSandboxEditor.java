@@ -46,6 +46,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.ui.util.EditUIUtil;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -354,5 +355,10 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 
 	public void deviceRegistered(DcdComponentInstantiation device) {
 		refreshSelectedObject(device);
+	}
+
+	@Override
+	protected void addDiagramLinks(Diagram diagram) {
+		diagram.getLink().getBusinessObjects().add(deviceManager);
 	}
 }

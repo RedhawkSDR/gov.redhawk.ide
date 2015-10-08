@@ -63,6 +63,7 @@ import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -563,5 +564,9 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 
 	public void componentRegistered(final SadComponentInstantiation component) {
 		refreshSelectedObject(component);
+	}
+
+	protected void addDiagramLinks(Diagram diagram) {
+		diagram.getLink().getBusinessObjects().add(waveform);
 	}
 }

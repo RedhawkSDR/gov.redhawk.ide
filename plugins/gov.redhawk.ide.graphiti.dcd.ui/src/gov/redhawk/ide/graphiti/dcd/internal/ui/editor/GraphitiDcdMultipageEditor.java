@@ -267,11 +267,19 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 				PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();
 				link.getBusinessObjects().add(dcd);
 				diagram.setLink(link);
+				addDiagramLinks(diagram);
 			}
 		});
 
 		// return editor input from diagram with sad diagram type
 		return DiagramEditorInput.createEditorInput(diagram, DCDDiagramTypeProvider.PROVIDER_ID);
+	}
+
+	/**
+	 * Subclasses may override to add additional business object to the diagram (e.g., runtime waveform).
+	 * @param diagram
+	 */
+	protected void addDiagramLinks(Diagram diagram) {
 	}
 
 	protected DiagramEditor createDiagramEditor() {
