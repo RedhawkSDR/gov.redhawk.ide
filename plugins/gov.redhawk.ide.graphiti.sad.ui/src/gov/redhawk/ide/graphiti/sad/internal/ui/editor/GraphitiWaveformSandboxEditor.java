@@ -31,8 +31,6 @@ import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
-import gov.redhawk.monitor.MonitorPlugin;
-import gov.redhawk.monitor.MonitorPortAdapter;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 import gov.redhawk.sca.util.Debug;
 
@@ -82,7 +80,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 	private static final Debug DEBUG = new Debug(SADUIGraphitiPlugin.PLUGIN_ID, "editor");
 	private ScaGraphitiModelAdapter scaListener;
 	private SadGraphitiModelAdapter sadlistener;
-	private MonitorPortAdapter portStatisticsAdapter;
 	private LocalScaWaveform waveform;
 	private boolean isLocalSca;
 	private Resource mainResource;
@@ -415,10 +412,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 		}
 		getEditingDomain().getCommandStack().flush();
 
-		// Add port statistics listener
-		portStatisticsAdapter = new MonitorPortAdapter(modelMap);
-		MonitorPlugin.getDefault().getMonitorRegistry().eAdapters().add(portStatisticsAdapter);
-
 		sad.eAdapters().add(this.sadlistener);
 
 		if (GraphitiWaveformSandboxEditor.DEBUG.enabled) {
@@ -444,7 +437,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 				@Override
 				public void execute() {
 					waveform.eAdapters().remove(GraphitiWaveformSandboxEditor.this.scaListener);
-					MonitorPlugin.getDefault().getMonitorRegistry().eAdapters().remove(portStatisticsAdapter);
 				}
 			});
 			this.scaListener = null;

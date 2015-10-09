@@ -178,21 +178,13 @@ public interface RHGxPackage extends EPackage {
 	 */
 	int RH_CONTAINER_SHAPE__CONNECTION_MAP = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 3;
 	/**
-	 * The feature id for the '<em><b>Connection States</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int RH_CONTAINER_SHAPE__CONNECTION_STATES = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 4;
-	/**
 	 * The feature id for the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 5;
+	int RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 4;
 	/**
 	 * The feature id for the '<em><b>Has Ports Container Shape</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -200,7 +192,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 6;
+	int RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 5;
 	/**
 	 * The feature id for the '<em><b>Hide Unused Ports</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -208,7 +200,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 7;
+	int RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 6;
 	/**
 	 * The number of structural features of the '<em>RH Container Shape</em>' class.
 	 * <!-- begin-user-doc -->
@@ -216,7 +208,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 8;
+	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 7;
 	/**
 	 * The meta object id for the '<em>Component Supported Interface Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -354,16 +346,6 @@ public interface RHGxPackage extends EPackage {
 	int MAP = 15;
 
 	/**
-	 * The meta object id for the '<em>Uses Port Statistics Map</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see java.util.Map
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getUsesPortStatisticsMap()
-	 * @generated
-	 */
-	int USES_PORT_STATISTICS_MAP = 16;
-
-	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape <em>RH Container Shape</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -416,17 +398,6 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getRHContainerShape_ConnectionMap();
-
-	/**
-	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionStates <em>Connection States</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Connection States</em>'.
-	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionStates()
-	 * @see #getRHContainerShape()
-	 * @generated
-	 */
-	EAttribute getRHContainerShape_ConnectionStates();
 
 	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}'.
@@ -627,17 +598,6 @@ public interface RHGxPackage extends EPackage {
 	EDataType getMap();
 
 	/**
-	 * Returns the meta object for data type '{@link java.util.Map <em>Uses Port Statistics Map</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Uses Port Statistics Map</em>'.
-	 * @see java.util.Map
-	 * @model instanceClass="java.util.Map<java.lang.String, java.util.Map<java.lang.String, BULKIO.PortStatistics>>"
-	 * @generated
-	 */
-	EDataType getUsesPortStatisticsMap();
-
-	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -700,14 +660,6 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute RH_CONTAINER_SHAPE__CONNECTION_MAP = eINSTANCE.getRHContainerShape_ConnectionMap();
-
-		/**
-		 * The meta object literal for the '<em><b>Connection States</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute RH_CONTAINER_SHAPE__CONNECTION_STATES = eINSTANCE.getRHContainerShape_ConnectionStates();
 
 		/**
 		 * The meta object literal for the '<em><b>Has Super Ports Container Shape</b></em>' attribute feature.
@@ -882,16 +834,6 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType MAP = eINSTANCE.getMap();
-
-		/**
-		 * The meta object literal for the '<em>Uses Port Statistics Map</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see java.util.Map
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getUsesPortStatisticsMap()
-		 * @generated
-		 */
-		EDataType USES_PORT_STATISTICS_MAP = eINSTANCE.getUsesPortStatisticsMap();
 
 	}
 

@@ -12,7 +12,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.ext.impl;
 
-import BULKIO.PortStatistics;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
@@ -127,8 +126,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return createIColorConstantFromString(eDataType, initialValue);
 		case RHGxPackage.MAP:
 			return createMapFromString(eDataType, initialValue);
-		case RHGxPackage.USES_PORT_STATISTICS_MAP:
-			return createUsesPortStatisticsMapFromString(eDataType, initialValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -172,8 +169,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return convertIColorConstantToString(eDataType, instanceValue);
 		case RHGxPackage.MAP:
 			return convertMapToString(eDataType, instanceValue);
-		case RHGxPackage.USES_PORT_STATISTICS_MAP:
-			return convertUsesPortStatisticsMapToString(eDataType, instanceValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -457,25 +452,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * @generated
 	 */
 	public String convertMapToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@SuppressWarnings("unchecked")
-	public Map<String, Map<String, PortStatistics>> createUsesPortStatisticsMapFromString(EDataType eDataType, String initialValue) {
-		return (Map<String, Map<String, PortStatistics>>) super.createFromString(initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertUsesPortStatisticsMapToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(instanceValue);
 	}
 

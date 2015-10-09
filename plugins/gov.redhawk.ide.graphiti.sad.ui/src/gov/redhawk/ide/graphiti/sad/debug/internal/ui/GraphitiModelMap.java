@@ -44,11 +44,9 @@ import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.progress.UIJob;
 import org.omg.CORBA.SystemException;
 
-import BULKIO.PortStatistics;
 import CF.DataType;
 import CF.LifeCyclePackage.ReleaseError;
 import CF.PortPackage.InvalidPort;
@@ -66,11 +64,9 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
-import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
-import gov.redhawk.monitor.IPortStatListener;
 import gov.redhawk.sca.util.SubMonitor;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
@@ -82,7 +78,7 @@ import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
-public class GraphitiModelMap implements IPortStatListener {
+public class GraphitiModelMap {
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
 		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
@@ -876,102 +872,4 @@ public class GraphitiModelMap implements IPortStatListener {
 		nodes.put(nodeMapEntry.getKey(), nodeMapEntry);
 	}
 
-	/*****************************************************************************************************************/
-	/******* These methods handle changing the color of the Graphiti port shape objects to reflect port status *******/
-	/*****************************************************************************************************************/
-
-	@Override
-	public void newStatistics(ScaPort< ? , ? > port, PortStatistics stats) {
-	}
-
-	@Override
-	public void noStatistics(ScaPort< ? , ? > port) {
-	}
-
-	@Override
-	public void newStatistics(final ScaPort< ? , ? > port, final String connectionId, final PortStatistics stats) {
-		if (editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramBehavior() == null) {
-			return;
-		}
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final Diagram diagram = provider.getDiagram();
-
-		// Get the component shape
-		ScaPortContainer container = port.getPortContainer();
-		ScaComponent component = (ScaComponent) container;
-		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
-
-		// Since the same key(instantiationId) can be used in multiple editors, do an object comparison
-		if (nodeMapEntry == null || container != nodeMapEntry.getLocalScaComponent()) {
-			return;
-		}
-
-		// Get the connection interface
-		final ConnectionMapEntry connectionMap = connections.get(connectionId);
-		if (connectionMap == null) {
-			return;
-		}
-
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
-				ComponentShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
-				SadConnectInterface connInterface = connectionMap.getProfile();
-				Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
-				updateConnectionStyle(componentShape, connection, port.getName(), connectionId, stats);
-			}
-		});
-	}
-
-	private void updateConnectionStyle(ComponentShape componentShape, Connection connection, String portName, String connectionId, PortStatistics statistics) {
-		Map<String,PortStatistics> connectionStats = componentShape.getConnectionStates().get(portName);
-		if (statistics == null) {
-			if (connectionStats != null) {
-				connectionStats.remove(connectionId);
-			}
-		} else {
-			if (connectionStats == null) {
-				connectionStats = new HashMap<String,PortStatistics>();
-				componentShape.getConnectionStates().put(portName, connectionStats);
-			}
-			connectionStats.put(connectionId, statistics);
-		}
-		IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		provider.getDiagramBehavior().refreshRenderingDecorators(connection);
-	}
-
-	@Override
-	public void noStatistics(final ScaPort< ? , ? > port, final String connectionId) {
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final Diagram diagram = provider.getDiagram();
-
-		// Get the component shape
-		ScaPortContainer container = port.getPortContainer();
-		ScaComponent component = (ScaComponent) container;
-		if (component == null) {
-			return;
-		}
-		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
-		if (nodeMapEntry == null) {
-			return;
-		}
-		
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
-				ComponentShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
-		
-				// Get the connection interface
-				ConnectionMapEntry connectionMap = connections.get(connectionId);
-				if (connectionMap == null) {
-					return;
-				}
-				SadConnectInterface connInterface = connectionMap.getProfile();
-				Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
-				updateConnectionStyle(componentShape, connection, connectionId, port.getName(), null);
-			}
-		});
-	}
 }

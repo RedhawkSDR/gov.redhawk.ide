@@ -51,6 +51,8 @@ import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
+import mil.jpeojtrs.sca.sad.SadUsesPort;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
@@ -72,6 +74,11 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 	}
 
 	private Map<String, ColorMap> providesPortColors = new HashMap<String, ColorMap>();
+
+	@SuppressWarnings("serial")
+	private static class ConnectionColorMap extends HashMap<String, ColorMap> {
+	}
+	private Map<String, ConnectionColorMap> connectionColors = new HashMap<String, ConnectionColorMap>();
 
 	public PortMonitorDecoratorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		this.diagramTypeProvider = diagramTypeProvider;
@@ -122,6 +129,32 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 		return null;
 	}
 
+	protected boolean isUsesPortMatch(SadUsesPort usesPort, String componentId, String portName) {
+		return usesPort.getComponentInstantiationRef().getRefid().equals(componentId) && usesPort.getUsesIdentifier().equals(portName);
+	}
+
+	protected SadConnectInterface getSadConnection(SoftwareAssembly sad, String componentId, String portName, String connectionId) {
+		for (SadConnectInterface connectInterface : sad.getConnections().getConnectInterface()) {
+			if (connectInterface.getId().equals(connectionId) && isUsesPortMatch(connectInterface.getUsesPort(), componentId, portName)) {
+				return connectInterface;
+			}
+		}
+		return null;
+	}
+
+	protected PictogramElement getConnectionPictogramElement(ScaComponent component, String portName, String connectionId) {
+		Diagram diagram = diagramTypeProvider.getDiagram();
+		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
+		SadConnectInterface connectInterface = getSadConnection(sad, component.getIdentifier(), portName, connectionId);
+		if (connectInterface != null) {
+			List<PictogramElement> pictograms = Graphiti.getLinkService().getPictogramElements(diagram, connectInterface);
+			if (!pictograms.isEmpty()) {
+				return pictograms.get(0);
+			}
+		}
+		return null;
+	}
+
 	private void putProvidesColor(String instantiationId, String portName, IColorConstant color) {
 		synchronized (providesPortColors) {
 			ColorMap portColors = providesPortColors.get(instantiationId);
@@ -139,8 +172,7 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 			if (portColors == null) {
 				return false;
 			} else {
-				portColors.remove(portName);
-				return true;
+				return portColors.remove(portName) != null;
 			}
 		}
 	}
@@ -153,6 +185,48 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 			} else {
 				return portColors.get(portName);
 			}
+		}
+	}
+
+	private void putConnectionColor(String instantiationId, String portName, String connectionId, IColorConstant color) {
+		synchronized (connectionColors) {
+			ConnectionColorMap portMap = connectionColors.get(instantiationId);
+			if (portMap == null) {
+				portMap = new ConnectionColorMap();
+				connectionColors.put(instantiationId, portMap);
+			}
+			ColorMap connectionMap = portMap.get(portName);
+			if (connectionMap == null) {
+				connectionMap = new ColorMap();
+				portMap.put(portName, connectionMap);
+			}
+			connectionMap.put(connectionId, color);
+		}
+	}
+
+	private boolean removeConnectionColor(String instantiationId, String portName, String connectionId) {
+		synchronized (connectionColors) {
+			ConnectionColorMap portMap = connectionColors.get(instantiationId);
+			if (portMap != null) {
+				ColorMap colorMap = portMap.get(portName);
+				if (colorMap != null) {
+					return colorMap.remove(connectionId) != null;
+				}
+			}
+			return false;
+		}
+	}
+
+	private IColorConstant getConnectionColor(String instantiationId, String portName, String connectionId) {
+		synchronized (connectionColors) {
+			ConnectionColorMap portMap = connectionColors.get(instantiationId);
+			if (portMap != null) {
+				ColorMap colorMap = portMap.get(portName);
+				if (colorMap != null) {
+					return colorMap.get(connectionId);
+				}
+			}
+			return null;
 		}
 	}
 
@@ -181,8 +255,29 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 		});
 	}
 
+	private void refreshConnection(final ScaComponent component, final String portName, final String connectionId) {
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				PictogramElement pe = getConnectionPictogramElement(component, portName, connectionId);
+				if (pe != null) {
+					diagramTypeProvider.getDiagramBehavior().refreshRenderingDecorators(pe);
+				}
+			}
+		});
+	}
+
 	@Override
 	public void newStatistics(ScaPort< ? , ? > port, String connectionId, PortStatistics portStatistics) {
+		ScaPortContainer container = port.getPortContainer();
+		if (container instanceof ScaComponent) {
+			ScaComponent component = (ScaComponent) container;
+			if (isDiagramComponent(component)) {
+				IColorConstant color = getConnectionMonitorColor(portStatistics);
+				putConnectionColor(component.getInstantiationIdentifier(), port.getName(), connectionId, color);
+				refreshConnection(component, port.getName(), connectionId);
+			}
+		}
 	}
 
 	@Override
@@ -200,6 +295,14 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 
 	@Override
 	public void noStatistics(ScaPort< ? , ? > port, String connectionId) {
+		ScaPortContainer container = port.getPortContainer();
+		if (container instanceof ScaComponent) {
+			ScaComponent component = (ScaComponent) container;
+			if (isDiagramComponent(component)) {
+				removeConnectionColor(component.getInstantiationIdentifier(), port.getName(), connectionId);
+				refreshConnection(component, port.getName(), connectionId);
+			}
+		}
 	}
 
 	@Override
@@ -225,8 +328,9 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 				RHContainerShape componentShape = ScaEcoreUtils.getEContainerOfType(connection.getStart(), RHContainerShape.class);
 				UsesPortStub portStub = connectInterface.getSource();
 				if (portStub != null && portStub.getUses() != null && componentShape != null) {
+					ComponentInstantiation componentInstantiation = DUtil.getBusinessObject(componentShape, ComponentInstantiation.class);
 					String portName = portStub.getUses().getName();
-					IDecorator decorator = getConnectionDecorator(componentShape, portName, connectInterface.getId());
+					IDecorator decorator = getConnectionDecorator(componentInstantiation, portName, connectInterface.getId());
 					if (decorator != null) {
 						return new IDecorator[] { decorator };
 					}
@@ -259,14 +363,10 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 		return null;
 	}
 
-	protected IDecorator getConnectionDecorator(RHContainerShape componentShape, String portName, String connectionId) {
-		Map<String, BULKIO.PortStatistics> portStatistics = componentShape.getConnectionStates().get(portName);
-		if (portStatistics != null) {
-			BULKIO.PortStatistics statistics = portStatistics.get(connectionId);
-			if (statistics != null) {
-				IColorConstant color = getConnectionMonitorColor(statistics);
-				return new ColorDecorator(color, color);
-			}
+	protected IDecorator getConnectionDecorator(ComponentInstantiation component, String portName, String connectionId) {
+		IColorConstant color = getConnectionColor(component.getId(), portName, connectionId);
+		if (color != null) {
+			return new ColorDecorator(color, color);
 		}
 		return null;
 	}

@@ -12,7 +12,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.ext;
 
-import BULKIO.PortStatistics;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,6 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusSeverity <em>IStatus Severity</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}</li>
- *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionStates <em>Connection States</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
@@ -151,31 +149,6 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	void setConnectionMap(Map<String, String> value);
-
-	/**
-	 * Returns the value of the '<em><b>Connection States</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * This map is used to the statistical information for uses ports provided by the port monitor service
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Connection States</em>' attribute.
-	 * @see #setConnectionStates(Map)
-	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_ConnectionStates()
-	 * @model unique="false" dataType="gov.redhawk.ide.graphiti.ext.UsesPortStatisticsMap" transient="true"
-	 * @generated
-	 */
-	Map<String, Map<String, PortStatistics>> getConnectionStates();
-
-	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionStates <em>Connection States</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Connection States</em>' attribute.
-	 * @see #getConnectionStates()
-	 * @generated
-	 */
-	void setConnectionStates(Map<String, Map<String, PortStatistics>> value);
 
 	/**
 	 * Returns the value of the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
