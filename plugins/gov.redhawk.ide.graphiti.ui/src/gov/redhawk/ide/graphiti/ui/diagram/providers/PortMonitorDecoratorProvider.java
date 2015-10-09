@@ -12,7 +12,6 @@
 package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Status;
@@ -20,7 +19,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
@@ -93,37 +91,13 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 		return (component.getWaveform() == DUtil.getBusinessObject(diagramTypeProvider.getDiagram(), ScaWaveform.class));
 	}
 
-	protected RHContainerShape getComponentShape(ScaComponent component) {
+	protected ProvidesPortStub getProvidesPortStub(String componentId, String portName) {
 		Diagram diagram = diagramTypeProvider.getDiagram();
-		if (component.getWaveform() == DUtil.getBusinessObject(diagram, ScaWaveform.class)) {
-			SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
-			SadComponentInstantiation inst = sad.getComponentInstantiation(component.getInstantiationIdentifier());
-			List<PictogramElement> pictograms = Graphiti.getLinkService().getPictogramElements(diagram, inst);
-			if (pictograms.size() > 0) {
-				return (RHContainerShape) pictograms.get(0);
-			}
-		}
-		return null;
-	}
-
-	protected ContainerShape getProvidesPortPictogramElement(RHContainerShape component, String portName) {
-		for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(component)) {
-			ProvidesPortStub stub = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
-			if (portName.equals(stub.getName())) {
-				return portShape;
-			}
-		}
-		return null;
-	}
-
-	protected PictogramElement getProvidesPortPictogramElement(ScaComponent component, String portName) {
-		RHContainerShape componentShape = getComponentShape(component);
-		if (componentShape != null) {
-			for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
-				ProvidesPortStub stub = getProvidesPort(portShape);
-				if (stub != null && portName.equals(stub.getName())) {
-					return portShape.getChildren().get(0);
-				}
+		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
+		SadComponentInstantiation inst = sad.getComponentInstantiation(componentId);
+		for (ProvidesPortStub provides : inst.getProvides()) {
+			if (portName.equals(provides.getName())) {
+				return provides;
 			}
 		}
 		return null;
@@ -133,23 +107,12 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 		return usesPort.getComponentInstantiationRef().getRefid().equals(componentId) && usesPort.getUsesIdentifier().equals(portName);
 	}
 
-	protected SadConnectInterface getSadConnection(SoftwareAssembly sad, String componentId, String portName, String connectionId) {
+	protected SadConnectInterface getSadConnection(String componentId, String portName, String connectionId) {
+		Diagram diagram = diagramTypeProvider.getDiagram();
+		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
 		for (SadConnectInterface connectInterface : sad.getConnections().getConnectInterface()) {
 			if (connectInterface.getId().equals(connectionId) && isUsesPortMatch(connectInterface.getUsesPort(), componentId, portName)) {
 				return connectInterface;
-			}
-		}
-		return null;
-	}
-
-	protected PictogramElement getConnectionPictogramElement(ScaComponent component, String portName, String connectionId) {
-		Diagram diagram = diagramTypeProvider.getDiagram();
-		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
-		SadConnectInterface connectInterface = getSadConnection(sad, component.getIdentifier(), portName, connectionId);
-		if (connectInterface != null) {
-			List<PictogramElement> pictograms = Graphiti.getLinkService().getPictogramElements(diagram, connectInterface);
-			if (!pictograms.isEmpty()) {
-				return pictograms.get(0);
 			}
 		}
 		return null;
@@ -237,30 +200,21 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 			ScaComponent component = (ScaComponent) container;
 			if (isDiagramComponent(component)) {
 				IColorConstant color = getProvidesMonitorColor(portStatistics);
-				putProvidesColor(component.getInstantiationIdentifier(), port.getName(), color);
-				refreshPort(component, port.getName());
+				String instantiationId = component.getInstantiationIdentifier();
+				String portName = port.getName();
+				putProvidesColor(instantiationId, portName, color);
+				ProvidesPortStub provides = getProvidesPortStub(instantiationId, portName);
+				refreshDecorators(provides);
 			}
 		}
 	}
 
-	private void refreshPort(final ScaComponent component, final String portName) {
+	private void refreshDecorators(final EObject object) {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				PictogramElement pe = getProvidesPortPictogramElement(component, portName);
-				if (pe != null) {
-					diagramTypeProvider.getDiagramBehavior().refreshRenderingDecorators(pe);
-				}
-			}
-		});
-	}
-
-	private void refreshConnection(final ScaComponent component, final String portName, final String connectionId) {
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				PictogramElement pe = getConnectionPictogramElement(component, portName, connectionId);
-				if (pe != null) {
+				Diagram diagram = diagramTypeProvider.getDiagram();
+				for (PictogramElement pe : Graphiti.getLinkService().getPictogramElements(diagram, object)) {
 					diagramTypeProvider.getDiagramBehavior().refreshRenderingDecorators(pe);
 				}
 			}
@@ -274,8 +228,11 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 			ScaComponent component = (ScaComponent) container;
 			if (isDiagramComponent(component)) {
 				IColorConstant color = getConnectionMonitorColor(portStatistics);
-				putConnectionColor(component.getInstantiationIdentifier(), port.getName(), connectionId, color);
-				refreshConnection(component, port.getName(), connectionId);
+				String instantiationId = component.getInstantiationIdentifier();
+				String portName = port.getName();
+				putConnectionColor(instantiationId, portName, connectionId, color);
+				SadConnectInterface connectInterface = getSadConnection(instantiationId, portName, connectionId);
+				refreshDecorators(connectInterface);
 			}
 		}
 	}
@@ -286,8 +243,11 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 		if (container instanceof ScaComponent) {
 			ScaComponent component = (ScaComponent) container;
 			if (isDiagramComponent(component)) {
-				if (removeProvidesColor(component.getInstantiationIdentifier(), port.getName())) {
-					refreshPort(component, port.getName());
+				String instantiationId = component.getInstantiationIdentifier();
+				String portName = port.getName();
+				if (removeProvidesColor(instantiationId, portName)) {
+					ProvidesPortStub provides = getProvidesPortStub(instantiationId, portName);
+					refreshDecorators(provides);
 				}
 			}
 		}
@@ -299,8 +259,11 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 		if (container instanceof ScaComponent) {
 			ScaComponent component = (ScaComponent) container;
 			if (isDiagramComponent(component)) {
-				removeConnectionColor(component.getInstantiationIdentifier(), port.getName(), connectionId);
-				refreshConnection(component, port.getName(), connectionId);
+				String instantiationId = component.getInstantiationIdentifier();
+				String portName = port.getName();
+				removeConnectionColor(instantiationId, portName, connectionId);
+				SadConnectInterface connectInterface = getSadConnection(instantiationId, portName, connectionId);
+				refreshDecorators(connectInterface);
 			}
 		}
 	}
