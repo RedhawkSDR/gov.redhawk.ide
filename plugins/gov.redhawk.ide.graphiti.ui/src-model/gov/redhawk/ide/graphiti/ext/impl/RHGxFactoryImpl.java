@@ -127,8 +127,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return createIColorConstantFromString(eDataType, initialValue);
 		case RHGxPackage.MAP:
 			return createMapFromString(eDataType, initialValue);
-		case RHGxPackage.PROVIDES_PORT_STATISTICS_MAP:
-			return createProvidesPortStatisticsMapFromString(eDataType, initialValue);
 		case RHGxPackage.USES_PORT_STATISTICS_MAP:
 			return createUsesPortStatisticsMapFromString(eDataType, initialValue);
 		default:
@@ -174,8 +172,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return convertIColorConstantToString(eDataType, instanceValue);
 		case RHGxPackage.MAP:
 			return convertMapToString(eDataType, instanceValue);
-		case RHGxPackage.PROVIDES_PORT_STATISTICS_MAP:
-			return convertProvidesPortStatisticsMapToString(eDataType, instanceValue);
 		case RHGxPackage.USES_PORT_STATISTICS_MAP:
 			return convertUsesPortStatisticsMapToString(eDataType, instanceValue);
 		default:
@@ -461,25 +457,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * @generated
 	 */
 	public String convertMapToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@SuppressWarnings("unchecked")
-	public Map<String, PortStatistics> createProvidesPortStatisticsMapFromString(EDataType eDataType, String initialValue) {
-		return (Map<String, PortStatistics>) super.createFromString(initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertProvidesPortStatisticsMapToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(instanceValue);
 	}
 

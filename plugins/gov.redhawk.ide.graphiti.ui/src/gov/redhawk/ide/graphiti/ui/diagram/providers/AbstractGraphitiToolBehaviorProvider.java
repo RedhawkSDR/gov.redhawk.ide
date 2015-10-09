@@ -107,6 +107,7 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	private List<IDecoratorProvider> decoratorProviders	= new ArrayList<IDecoratorProvider>();
 	private List<IToolTipDelegate> tooltipDelegates = new ArrayList<IToolTipDelegate>();
 
+	private PortMonitorDecoratorProvider portMonitor;
 	private ConnectionHighlightingDecoratorProvider connectionHighlighter = new ConnectionHighlightingDecoratorProvider();
 
 	/**
@@ -115,7 +116,8 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	public AbstractGraphitiToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 		if (DUtil.isDiagramRuntime(diagramTypeProvider.getDiagram())) {
-			addDecoratorProvider(new PortMonitorDecoratorProvider());
+			portMonitor = new PortMonitorDecoratorProvider(diagramTypeProvider);
+			addDecoratorProvider(portMonitor);
 		} else {
 			ConnectionValidationDecoratorProvider validator = new ConnectionValidationDecoratorProvider();
 			addDecoratorProvider(validator);
@@ -131,6 +133,9 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 			registry.eAdapters().remove(sdrListener);
 		}
 		connectionHighlighter.dispose();
+		if (portMonitor != null) {
+			portMonitor.dispose();
+		}
 	}
 
 	@Override

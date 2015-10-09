@@ -38,7 +38,6 @@ import org.eclipse.graphiti.features.context.impl.CreateContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
@@ -47,7 +46,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.omg.CORBA.SystemException;
 
 import BULKIO.PortStatistics;
@@ -883,58 +881,11 @@ public class GraphitiModelMap implements IPortStatListener {
 	/*****************************************************************************************************************/
 
 	@Override
-	public void newStatistics(final ScaPort< ? , ? > port, final PortStatistics stats) {
-		ScaPortContainer container = port.getPortContainer();
-		if (!(container instanceof ScaComponent)) {
-			StatusManager.getManager().handle(new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Received statistics for a port not belonging to a component"),
-				StatusManager.LOG | StatusManager.SHOW);
-			return;
-		}
-		ScaComponent component = (ScaComponent) container;
-		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
-
-		// Since the same key(instantiationId) can be used in multiple editors, do an object comparison
-		if (nodeMapEntry == null || container != nodeMapEntry.getLocalScaComponent()) {
-			return;
-		}
-
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
-				if (GraphitiModelMap.this.editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramBehavior() == null) {
-					return;
-				}
-
-				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-				final Diagram diagram = provider.getDiagram();
-				ComponentShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
-				updatePortState(componentShape, port.getName(), stats);
-			}
-		});
-
+	public void newStatistics(ScaPort< ? , ? > port, PortStatistics stats) {
 	}
 
-	private void updatePortState(final RHContainerShape componentShape, final String portName, final PortStatistics statistics) {
-		TransactionalEditingDomain editingDomain = getEditingDomain();
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new NonDirtyingCommand() {
-			@Override
-			public void execute() {
-				if (statistics == null) {
-					componentShape.getPortStates().remove(portName);
-				} else {
-					componentShape.getPortStates().put(portName, statistics);
-				}
-				IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-				for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
-					ProvidesPortStub portStub = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
-					if (portName.equals(portStub.getName())) {
-						provider.getDiagramBehavior().refreshRenderingDecorators(portShape.getChildren().get(0));
-					}
-				}
-			}
-		});
+	@Override
+	public void noStatistics(ScaPort< ? , ? > port) {
 	}
 
 	@Override
@@ -988,32 +939,6 @@ public class GraphitiModelMap implements IPortStatListener {
 		}
 		IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		provider.getDiagramBehavior().refreshRenderingDecorators(connection);
-	}
-
-	@Override
-	public void noStatistics(final ScaPort< ? , ? > port) {
-		ScaPortContainer container = port.getPortContainer();
-		ScaComponent component = (ScaComponent) container;
-		if (component == null) {
-			return;
-		}
-
-		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
-		if (nodeMapEntry != null) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
-					final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-					final Diagram diagram = provider.getDiagram();
-
-					if (port instanceof ScaProvidesPort) {
-						ComponentShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShape.class);
-						updatePortState(componentShape, port.getName(), null);
-					}
-				}
-			});
-		}
 	}
 
 	@Override

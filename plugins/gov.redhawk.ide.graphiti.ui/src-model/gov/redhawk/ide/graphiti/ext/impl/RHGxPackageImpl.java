@@ -153,13 +153,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType providesPortStatisticsMapEDataType = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EDataType usesPortStatisticsMapEDataType = null;
 
 	/**
@@ -281,7 +274,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getRHContainerShape_PortStates() {
+	public EAttribute getRHContainerShape_ConnectionStates() {
 		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -290,7 +283,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getRHContainerShape_ConnectionStates() {
+	public EAttribute getRHContainerShape_HasSuperPortsContainerShape() {
 		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(5);
 	}
 
@@ -299,7 +292,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getRHContainerShape_HasSuperPortsContainerShape() {
+	public EAttribute getRHContainerShape_HasPortsContainerShape() {
 		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(6);
 	}
 
@@ -308,17 +301,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getRHContainerShape_HasPortsContainerShape() {
-		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(7);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getRHContainerShape_HideUnusedPorts() {
-		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(8);
+		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -461,15 +445,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getProvidesPortStatisticsMap() {
-		return providesPortStatisticsMapEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EDataType getUsesPortStatisticsMap() {
 		return usesPortStatisticsMapEDataType;
 	}
@@ -508,7 +483,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__ENABLED);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__ISTATUS_SEVERITY);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__CONNECTION_MAP);
-		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__PORT_STATES);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__CONNECTION_STATES);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE);
@@ -530,7 +504,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		iUpdateContextEDataType = createEDataType(IUPDATE_CONTEXT);
 		iColorConstantEDataType = createEDataType(ICOLOR_CONSTANT);
 		mapEDataType = createEDataType(MAP);
-		providesPortStatisticsMapEDataType = createEDataType(PROVIDES_PORT_STATISTICS_MAP);
 		usesPortStatisticsMapEDataType = createEDataType(USES_PORT_STATISTICS_MAP);
 	}
 
@@ -580,8 +553,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_ConnectionMap(), this.getMap(), "connectionMap", null, 0, 1, RHContainerShape.class, IS_TRANSIENT, !IS_VOLATILE,
 			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRHContainerShape_PortStates(), this.getProvidesPortStatisticsMap(), "portStates", null, 0, 1, RHContainerShape.class, IS_TRANSIENT,
-			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_ConnectionStates(), this.getUsesPortStatisticsMap(), "connectionStates", null, 0, 1, RHContainerShape.class,
 			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_HasSuperPortsContainerShape(), theEcorePackage.getEBoolean(), "hasSuperPortsContainerShape", null, 0, 1,
@@ -660,8 +631,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		initEDataType(iUpdateContextEDataType, IUpdateContext.class, "IUpdateContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iColorConstantEDataType, IColorConstant.class, "IColorConstant", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(mapEDataType, Map.class, "Map", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS, "java.util.Map<java.lang.String, java.lang.String>");
-		initEDataType(providesPortStatisticsMapEDataType, Map.class, "ProvidesPortStatisticsMap", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS,
-			"java.util.Map<java.lang.String, BULKIO.PortStatistics>");
 		initEDataType(usesPortStatisticsMapEDataType, Map.class, "UsesPortStatisticsMap", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS,
 			"java.util.Map<java.lang.String, java.util.Map<java.lang.String, BULKIO.PortStatistics>>");
 

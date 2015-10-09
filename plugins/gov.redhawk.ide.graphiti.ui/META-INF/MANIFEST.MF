@@ -39,7 +39,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.ui,
  gov.redhawk.logging.ui,
  gov.redhawk.ide.ui,
- gov.redhawk.ide.sdr
+ gov.redhawk.ide.sdr,
+ gov.redhawk.monitor;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: gov.redhawk.ide.graphiti.ext,
  gov.redhawk.ide.graphiti.ext.impl,

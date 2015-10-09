@@ -192,15 +192,6 @@ public interface RHDeviceGxPackage extends EPackage {
 	int DEVICE_SHAPE__CONNECTION_MAP = RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP;
 
 	/**
-	 * The feature id for the '<em><b>Port States</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DEVICE_SHAPE__PORT_STATES = RHGxPackage.RH_CONTAINER_SHAPE__PORT_STATES;
-
-	/**
 	 * The feature id for the '<em><b>Connection States</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -362,15 +353,6 @@ public interface RHDeviceGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int SERVICE_SHAPE__CONNECTION_MAP = RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP;
-
-	/**
-	 * The feature id for the '<em><b>Port States</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SERVICE_SHAPE__PORT_STATES = RHGxPackage.RH_CONTAINER_SHAPE__PORT_STATES;
 
 	/**
 	 * The feature id for the '<em><b>Connection States</b></em>' attribute.
