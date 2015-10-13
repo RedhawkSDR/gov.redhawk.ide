@@ -49,7 +49,7 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 	public static final String SHAPE_TEXT_CONNECTION_DECORATOR = "textConnectionDecorator";
 	public static final String OVERRIDE_CONNECTION_ID = "OverrideConnectionId";
 
-	private Anchor source;
+	private Anchor sourceAnchor;
 
 	@Override
 	public String getCreateName() {
@@ -77,7 +77,7 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 
 		// We must be able to find a UsesPortStub or ConnectionTarget
 		if (getUsesPortStub(context) != null || getConnectionTarget(context) != null) {
-			source = context.getSourceAnchor();
+			sourceAnchor = context.getSourceAnchor();
 			return true;
 		}
 
@@ -91,7 +91,7 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 	@Override
 	public void startConnecting() {
 		// Highlight ports that may be valid for completing the connection
-		getToolBehaviorProvider().startConnectionHighlighting(source);
+		getToolBehaviorProvider().startConnectionHighlighting(sourceAnchor);
 	}
 
 	@Override

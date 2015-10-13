@@ -102,7 +102,7 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		}
 	};
 
-	protected List<IPaletteCompartmentEntry> paletteCompartments;
+	private List<IPaletteCompartmentEntry> paletteCompartments;
 	private List<SoftPkgRegistry> registries = new ArrayList<SoftPkgRegistry>();
 	private List<IDecoratorProvider> decoratorProviders	= new ArrayList<IDecoratorProvider>();
 	private List<IToolTipDelegate> tooltipDelegates = new ArrayList<IToolTipDelegate>();
@@ -142,7 +142,7 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	}
 
 	/**
-	 * Turn on highlighting of potential connection endpoints that are compatible with source. 
+	 * Turn on highlighting of potential connection endpoints that are compatible with source.
 	 * @param source the starting Anchor of the connection
 	 */
 	public void startConnectionHighlighting(Anchor source) {

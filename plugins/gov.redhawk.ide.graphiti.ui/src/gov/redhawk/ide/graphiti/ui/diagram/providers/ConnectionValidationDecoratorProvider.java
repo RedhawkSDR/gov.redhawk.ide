@@ -27,7 +27,7 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 public class ConnectionValidationDecoratorProvider implements IDecoratorProvider, IToolTipDelegate {
 
 	protected static final IDecorator[] NO_DECORATORS = new IDecorator[0];
-	
+
 	@Override
 	public Object getToolTip(GraphicsAlgorithm ga) {
 		PictogramElement pe = ga.getPictogramElement();
@@ -51,11 +51,11 @@ public class ConnectionValidationDecoratorProvider implements IDecoratorProvider
 
 	protected String validate(Connection connection) {
 		ConnectInterface< ? , ? , ? > connectInterface = (ConnectInterface< ? , ? , ? >) DUtil.getBusinessObject(connection);
-	
+
 		//establish source/target for connection
 		UsesPortStub source = connectInterface.getSource();
 		ConnectionTarget target = connectInterface.getTarget();
-		
+
 		//source and target will be null if findBy or usesDevice is used, in this case pull stubs from diagram
 		if (source == null) {
 			source = DUtil.getBusinessObject(connection.getStart(), UsesPortStub.class);
@@ -63,7 +63,7 @@ public class ConnectionValidationDecoratorProvider implements IDecoratorProvider
 		if (target == null) {
 			target = DUtil.getBusinessObject(connection.getEnd(), ConnectionTarget.class);
 		}
-	
+
 		if (!InterfacesUtil.areCompatible(source, target)) {
 			return "Incompatible interface";
 		}

@@ -59,7 +59,7 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider {
 					}
 				}
 			}
-		} else if (pe instanceof Connection){
+		} else if (pe instanceof Connection) {
 			ConnectInterface< ? , ? , ? > connectInterface = (ConnectInterface< ?, ?, ? >) Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(pe);
 			if (connectInterface != null) {
 				Connection connection = (Connection) pe;

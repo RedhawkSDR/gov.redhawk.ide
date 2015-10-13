@@ -34,7 +34,6 @@ public class DCDConnectInterfacePattern extends AbstractConnectInterfacePattern 
 	 */
 	@Override
 	public boolean canAdd(IAddContext context) {
-
 		if (context instanceof IAddConnectionContext && context.getNewObject() instanceof DcdConnectInterface) {
 			return true;
 		}
