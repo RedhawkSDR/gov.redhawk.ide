@@ -67,6 +67,8 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 	private IDiagramTypeProvider diagramTypeProvider;
 	private MonitorPortAdapter adapter = new MonitorPortAdapter(this);
 
+	private boolean enabled = true;
+
 	@SuppressWarnings("serial")
 	private static class ColorMap extends HashMap<String, IColorConstant> {
 	}
@@ -85,6 +87,10 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 
 	public void dispose() {
 		MonitorPlugin.getDefault().getMonitorRegistry().eAdapters().remove(adapter);
+	}
+
+	public void setEnabled(boolean state) {
+		enabled = state;
 	}
 
 	protected boolean isDiagramComponent(ScaComponent component) {
@@ -270,32 +276,34 @@ public class PortMonitorDecoratorProvider implements IDecoratorProvider, IPortSt
 
 	@Override
 	public IDecorator[] getDecorators(PictogramElement pe) {
-		if ((pe instanceof AnchorContainer) && !((AnchorContainer) pe).getAnchors().isEmpty()) {
-			ProvidesPortStub portStub = getProvidesPort(pe);
-			if (portStub != null) {
-				RHContainerShape componentShape = ScaEcoreUtils.getEContainerOfType(pe, RHContainerShape.class);
-				if (portStub.getProvides() != null && componentShape != null) {
-					ComponentInstantiation componentInstantiation = DUtil.getBusinessObject(componentShape, ComponentInstantiation.class);
-					String portName = portStub.getProvides().getName();
-					IDecorator decorator = getProvidesPortDecorator(componentInstantiation, portName);
-					if (decorator != null) {
-						return new IDecorator[] { decorator };
+		if (enabled) {
+			if ((pe instanceof AnchorContainer) && !((AnchorContainer) pe).getAnchors().isEmpty()) {
+				ProvidesPortStub portStub = getProvidesPort(pe);
+				if (portStub != null) {
+					RHContainerShape componentShape = ScaEcoreUtils.getEContainerOfType(pe, RHContainerShape.class);
+					if (portStub.getProvides() != null && componentShape != null) {
+						ComponentInstantiation componentInstantiation = DUtil.getBusinessObject(componentShape, ComponentInstantiation.class);
+						String portName = portStub.getProvides().getName();
+						IDecorator decorator = getProvidesPortDecorator(componentInstantiation, portName);
+						if (decorator != null) {
+							return new IDecorator[] { decorator };
+						}
 					}
 				}
-			}
-		} else if (pe instanceof Connection) {
-			ConnectInterface< ? , ? , ? > connectInterface = (ConnectInterface< ? , ? , ? >) Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(
-				pe);
-			if (connectInterface != null) {
-				Connection connection = (Connection) pe;
-				RHContainerShape componentShape = ScaEcoreUtils.getEContainerOfType(connection.getStart(), RHContainerShape.class);
-				UsesPortStub portStub = connectInterface.getSource();
-				if (portStub != null && portStub.getUses() != null && componentShape != null) {
-					ComponentInstantiation componentInstantiation = DUtil.getBusinessObject(componentShape, ComponentInstantiation.class);
-					String portName = portStub.getUses().getName();
-					IDecorator decorator = getConnectionDecorator(componentInstantiation, portName, connectInterface.getId());
-					if (decorator != null) {
-						return new IDecorator[] { decorator };
+			} else if (pe instanceof Connection) {
+				ConnectInterface< ? , ? , ? > connectInterface = (ConnectInterface< ? , ? , ? >) Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(
+					pe);
+				if (connectInterface != null) {
+					Connection connection = (Connection) pe;
+					RHContainerShape componentShape = ScaEcoreUtils.getEContainerOfType(connection.getStart(), RHContainerShape.class);
+					UsesPortStub portStub = connectInterface.getSource();
+					if (portStub != null && portStub.getUses() != null && componentShape != null) {
+						ComponentInstantiation componentInstantiation = DUtil.getBusinessObject(componentShape, ComponentInstantiation.class);
+						String portName = portStub.getUses().getName();
+						IDecorator decorator = getConnectionDecorator(componentInstantiation, portName, connectInterface.getId());
+						if (decorator != null) {
+							return new IDecorator[] { decorator };
+						}
 					}
 				}
 			}

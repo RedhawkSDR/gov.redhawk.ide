@@ -152,6 +152,9 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	 */
 	public void startConnectionHighlighting(Anchor source) {
 		connectionHighlighter.startHighlighting(source);
+		if (portMonitor != null) {
+			portMonitor.setEnabled(false);
+		}
 		getDiagramTypeProvider().getDiagramBehavior().refreshContent();
 	}
 
@@ -160,6 +163,9 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	 */
 	public void endConnectionHighlighting() {
 		connectionHighlighter.endHighlighting();
+		if (portMonitor != null) {
+			portMonitor.setEnabled(true);
+		}
 		getDiagramTypeProvider().getDiagramBehavior().refreshContent();
 	}
 
