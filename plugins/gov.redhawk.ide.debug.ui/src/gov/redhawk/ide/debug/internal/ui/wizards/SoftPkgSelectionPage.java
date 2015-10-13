@@ -49,8 +49,8 @@ public class SoftPkgSelectionPage extends WizardPage {
 	private DataBindingContext dbc = new DataBindingContext();
 
 	protected SoftPkgSelectionPage(LaunchComponentWizard wizard) {
-		super("spdSelection", "Select Soft Package", null);
-		setDescription("Select the Soft Package (spd) to launch in the sandbox.");
+		super("spdSelection", "Select software package", null);
+		setDescription("Select the software package descriptor (SPD) to launch in the sandbox.");
 		this.wizard = wizard;
 	}
 

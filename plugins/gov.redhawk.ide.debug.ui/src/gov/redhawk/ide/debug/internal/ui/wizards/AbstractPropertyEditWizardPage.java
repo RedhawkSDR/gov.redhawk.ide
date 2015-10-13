@@ -33,14 +33,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-public class AbstractPropertyEditWizardPage<T extends ScaPropertyContainer<?, ?>> extends WizardPage {
+public abstract class AbstractPropertyEditWizardPage<T extends ScaPropertyContainer<?, ?>> extends WizardPage {
 	private final AdapterFactory adapterFactory;
 	private TreeViewer viewer;
 	private T propertyContainer;
 
 	public AbstractPropertyEditWizardPage(final String pageName) {
 		super(pageName, "Assign Initial Properties", null);
-		this.setDescription("Provide the initial configuration");
+		setDescription("Set the initial value of properties.");
 		this.adapterFactory = new ScaPropertiesAdapterFactory();
 	}
 

@@ -29,7 +29,7 @@ public class CommonLaunchConfigurationWizardPage extends WizardPage {
 
 	public CommonLaunchConfigurationWizardPage(boolean withAutoStart) {
 		super("commonConfigPage", "Launch Configuration Options", null);
-		setDescription("Common post launch options.");
+		setDescription("Set common post-launch options.");
 		showAutoStart = withAutoStart;
 	}
 

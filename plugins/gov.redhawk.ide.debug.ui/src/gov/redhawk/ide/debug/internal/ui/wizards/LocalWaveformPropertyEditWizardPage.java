@@ -27,7 +27,6 @@ public class LocalWaveformPropertyEditWizardPage extends AbstractPropertyEditWiz
 
 	public LocalWaveformPropertyEditWizardPage(final String pageName, LaunchLocalWaveformWizard wizard) {
 		super(pageName);
-		this.setDescription("Provide the initial configuration for the Waveform");
 		this.wizard = wizard;
 	}
 

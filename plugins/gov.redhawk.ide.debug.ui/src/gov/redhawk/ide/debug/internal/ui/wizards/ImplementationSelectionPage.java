@@ -41,7 +41,7 @@ public class ImplementationSelectionPage extends WizardPage {
 
 	protected ImplementationSelectionPage(LaunchComponentWizard wizard) {
 		super("implPage", "Select Implementation", null);
-		setDescription("Select the implementation of the component to launch in the sandbox.");
+		setDescription("Select the implementation to launch in the sandbox.");
 		this.wizard = wizard;
 	}
 
