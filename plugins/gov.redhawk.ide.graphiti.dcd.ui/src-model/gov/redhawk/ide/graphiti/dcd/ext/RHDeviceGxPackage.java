@@ -183,15 +183,6 @@ public interface RHDeviceGxPackage extends EPackage {
 	int DEVICE_SHAPE__ISTATUS_SEVERITY = RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY;
 
 	/**
-	 * The feature id for the '<em><b>Connection Map</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DEVICE_SHAPE__CONNECTION_MAP = RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP;
-
-	/**
 	 * The feature id for the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -335,15 +326,6 @@ public interface RHDeviceGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int SERVICE_SHAPE__ISTATUS_SEVERITY = RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY;
-
-	/**
-	 * The feature id for the '<em><b>Connection Map</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SERVICE_SHAPE__CONNECTION_MAP = RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP;
 
 	/**
 	 * The feature id for the '<em><b>Has Super Ports Container Shape</b></em>' attribute.

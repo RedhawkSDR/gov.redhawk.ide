@@ -71,7 +71,6 @@ import org.eclipse.graphiti.services.IGaLayoutService;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isStarted <em>Started</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getIStatusSeverity <em>IStatus Severity</em>}</li>
- *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getConnectionMap <em>Connection Map</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
@@ -362,27 +361,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Map<String, String> getConnectionMap() {
-		return connectionMap;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setConnectionMap(Map<String, String> newConnectionMap) {
-		Map<String, String> oldConnectionMap = connectionMap;
-		connectionMap = newConnectionMap;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP, oldConnectionMap, connectionMap));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public boolean isHasSuperPortsContainerShape() {
 		return hasSuperPortsContainerShape;
 	}
@@ -644,8 +622,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return isEnabled();
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
 			return getIStatusSeverity();
-		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
-			return getConnectionMap();
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			return isHasSuperPortsContainerShape();
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE:
@@ -673,9 +649,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
 			setIStatusSeverity((Integer) newValue);
-			return;
-		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
-			setConnectionMap((Map<String, String>) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			setHasSuperPortsContainerShape((Boolean) newValue);
@@ -707,9 +680,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
 			setIStatusSeverity(ISTATUS_SEVERITY_EDEFAULT);
 			return;
-		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
-			setConnectionMap((Map<String, String>) null);
-			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			setHasSuperPortsContainerShape(HAS_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT);
 			return;
@@ -737,8 +707,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return enabled != ENABLED_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
 			return iStatusSeverity != ISTATUS_SEVERITY_EDEFAULT;
-		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
-			return connectionMap != null;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			return hasSuperPortsContainerShape != HAS_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE:
@@ -766,8 +734,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		result.append(enabled);
 		result.append(", iStatusSeverity: ");
 		result.append(iStatusSeverity);
-		result.append(", connectionMap: ");
-		result.append(connectionMap);
 		result.append(", hasSuperPortsContainerShape: ");
 		result.append(hasSuperPortsContainerShape);
 		result.append(", hasPortsContainerShape: ");

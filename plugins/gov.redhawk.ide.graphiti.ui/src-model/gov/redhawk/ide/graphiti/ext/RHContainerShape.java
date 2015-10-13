@@ -14,7 +14,6 @@ package gov.redhawk.ide.graphiti.ext;
 
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import java.util.List;
-import java.util.Map;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
@@ -36,7 +35,6 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted <em>Started</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusSeverity <em>IStatus Severity</em>}</li>
- *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
@@ -123,32 +121,6 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	void setIStatusSeverity(int value);
-
-	/**
-	 * Returns the value of the '<em><b>Connection Map</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * This map is used to store color information for connections between redraws. This matters for instances such as
-	 * when monitor ports is active, where a connection may need to have a specific color set at creation.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Connection Map</em>' attribute.
-	 * @see #setConnectionMap(Map)
-	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_ConnectionMap()
-	 * @model unique="false" dataType="gov.redhawk.ide.graphiti.ext.Map" transient="true"
-	 * @generated
-	 */
-	Map<String, String> getConnectionMap();
-
-	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Connection Map</em>' attribute.
-	 * @see #getConnectionMap()
-	 * @generated
-	 */
-	void setConnectionMap(Map<String, String> value);
 
 	/**
 	 * Returns the value of the '<em><b>Has Super Ports Container Shape</b></em>' attribute.

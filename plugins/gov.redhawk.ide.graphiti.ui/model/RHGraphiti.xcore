@@ -52,10 +52,6 @@ class RHContainerShape extends ContainerShape {
 	/*The severity of the component's status*/
 	transient int iStatusSeverity
 
-	/*This map is used to store color information for connections between redraws. This matters for instances such as
-	 * when monitor ports is active, where a connection may need to have a specific color set at creation.*/
-	transient Map connectionMap
-
 	boolean hasSuperPortsContainerShape  //creates a single anchor on each side of container to represent ports
 	boolean hasPortsContainerShape //creates a container that displays an anchor per port
 	boolean hideUnusedPorts //hides all ports without connection
