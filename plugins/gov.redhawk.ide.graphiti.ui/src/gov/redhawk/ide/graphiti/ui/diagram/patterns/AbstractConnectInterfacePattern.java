@@ -142,16 +142,6 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 	}
 
 	/**
-	 * Add graphical X to the middle of an erroneous connection
-	 */
-	protected static void addErrorDecorator(Diagram diagram, Connection connection) {
-		IGaService gaService = Graphiti.getGaService();
-		ConnectionDecorator errorDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, false, 0.5, true);
-		Polyline errPolyline = gaService.createPlainPolyline(errorDecorator, new int[] { -7, 7, 0, 0, -7, -7, 0, 0, 7, -7, 0, 0, 7, 7 });
-		StyleUtil.setStyle(errPolyline, StyleUtil.CONNECTION_ERROR);
-	}
-
-	/**
 	 * Override in subclass to return an instance of the specific ConnectInterface type
 	 */
 	protected abstract ConnectInterface< ? , ? , ? > createConnectInterface();

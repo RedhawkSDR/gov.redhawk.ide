@@ -61,18 +61,9 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String PROVIDES_PORT = "gov.redhawk.style.ProvidesPort";
 	public static final String EXTERNAL_PROVIDES_PORT = "gov.redhawk.style.ExternalProvidesPort";
 	public static final String SUPER_PROVIDES_PORT = "gov.redhawk.style.SuperProvidesPort";
-	public static final String PORT_STYLE_COMPATIBLE = "gov.redhawk.style.PortCompatible";
-	public static final String PORT_STYLE_OK = "gov.redhawk.style.PortOK";
-	public static final String PORT_STYLE_WARN1 = "gov.redhawk.style.PortWarning1";
-	public static final String PORT_STYLE_WARN2 = "gov.redhawk.style.PortWarning2";
-	public static final String PORT_STYLE_WARN3 = "gov.redhawk.style.PortWarning3";
-	public static final String PORT_STYLE_WARN4 = "gov.redhawk.style.PortWarning4";
 
 	// Connection style
 	public static final String CONNECTION = "gov.redhawk.style.Connection";
-	public static final String CONNECTION_OK = "gov.redhawk.style.ConnectionOk";
-	public static final String CONNECTION_WARN = "gov.redhawk.style.ConnectionWarn";
-	public static final String CONNECTION_ERROR = "gov.redhawk.style.ConnectionError";
 
 	public static final IColorConstant WHITE = IColorConstant.WHITE;
 	public static final IColorConstant BLACK = IColorConstant.BLACK;
@@ -82,18 +73,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	// Colors for connection state
 	public static final IColorConstant COLOR_OK = IColorConstant.GREEN;
-	public static final IColorConstant COLOR_WARN = IColorConstant.YELLOW;
-	public static final IColorConstant COLOR_ERROR = IColorConstant.RED;
-
-	// Colors for port statistics feature
-	private static final IColorConstant PORT_OK = COLOR_OK;
-	private static final IColorConstant PORT_WARNING_1 = COLOR_WARN;
-	private static final IColorConstant PORT_WARNING_2 = new ColorConstant(255, 170, 0);
-	private static final IColorConstant PORT_WARNING_3 = new ColorConstant(255, 85, 0);
-	private static final IColorConstant PORT_WARNING_4 = IColorConstant.RED;
-
-	// Colors for port connection helpers
-	private static final IColorConstant COMPATIBLE_PORT = COLOR_OK;
 
 	// COMPONENT
 	public static final int DEFAULT_LINE_WIDTH = 2;
@@ -271,30 +250,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 		Style superUsesStyle = gaService.createPlainStyle(baseStyle, SUPER_USES_PORT);
 		superUsesStyle.setBackground(gaService.manageColor(diagram, BLACK));
-
-		// Style for a port which is compatible as the other end of a connection.
-		Style compatibleStyle = gaService.createPlainStyle(baseStyle, PORT_STYLE_COMPATIBLE);
-		compatibleStyle.setBackground(gaService.manageColor(diagram, COMPATIBLE_PORT));
-
-		// Style for port statistics - no errors
-		Style okStyle = gaService.createPlainStyle(baseStyle, PORT_STYLE_OK);
-		okStyle.setBackground(gaService.manageColor(diagram, PORT_OK));
-
-		// Style for port statistics - error level 1
-		Style warn1Style = gaService.createPlainStyle(baseStyle, PORT_STYLE_WARN1);
-		warn1Style.setBackground(gaService.manageColor(diagram, PORT_WARNING_1));
-
-		// Style for port statistics - error level 2
-		Style warn2Style = gaService.createPlainStyle(baseStyle, PORT_STYLE_WARN2);
-		warn2Style.setBackground(gaService.manageColor(diagram, PORT_WARNING_2));
-
-		// Style for port statistics - error level 3
-		Style warn3Style = gaService.createPlainStyle(baseStyle, PORT_STYLE_WARN3);
-		warn3Style.setBackground(gaService.manageColor(diagram, PORT_WARNING_3));
-
-		// Style for port statistics - error level 4
-		Style warn4Style = gaService.createPlainStyle(baseStyle, PORT_STYLE_WARN4);
-		warn4Style.setBackground(gaService.manageColor(diagram, PORT_WARNING_4));
 	}
 
 	// returns style for lollipop ellipse
@@ -329,20 +284,5 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		baseStyle.setLineWidth(2);
 		baseStyle.setBackground(gaService.manageColor(diagram, BLACK));
 		baseStyle.setForeground(gaService.manageColor(diagram, BLACK));
-
-		Style okStyle = gaService.createStyle(diagram, CONNECTION_OK);
-		okStyle.setLineWidth(2);
-		okStyle.setBackground(gaService.manageColor(diagram, COLOR_OK));
-		okStyle.setForeground(gaService.manageColor(diagram, COLOR_OK));
-
-		Style warnStyle = gaService.createStyle(diagram, CONNECTION_WARN);
-		warnStyle.setLineWidth(2);
-		warnStyle.setBackground(gaService.manageColor(diagram, COLOR_WARN));
-		warnStyle.setForeground(gaService.manageColor(diagram, COLOR_WARN));
-
-		Style errorStyle = gaService.createStyle(diagram, CONNECTION_ERROR);
-		errorStyle.setLineWidth(2);
-		errorStyle.setBackground(gaService.manageColor(diagram, COLOR_ERROR));
-		errorStyle.setForeground(gaService.manageColor(diagram, COLOR_ERROR));
-}
+	}
 }
