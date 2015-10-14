@@ -27,7 +27,6 @@
         <version>${tycho-version}</version>
         <configuration>
           <failIfNoTests>false</failIfNoTests>
-          <testFailureIgnore>${testFailureIgnore}</testFailureIgnore>
           <useUIHarness>true</useUIHarness>
           <useUIThread>false</useUIThread>
           <application>org.eclipse.ui.ide.workbench</application>
