@@ -50,7 +50,7 @@ public class PaletteUtils {
 	*/
 
 	/**
-	 * Determines if a tool is present in the palette.
+	 * Determines if a tool is present (i.e. visible) in the palette.
 	 * @param editor
 	 * @param label The tool label (can be namespaced, e.g. 'a.b.foo')
 	 * @return True if present

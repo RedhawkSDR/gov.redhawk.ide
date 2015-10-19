@@ -111,11 +111,14 @@ public class RHTestBotViewer extends SWTBotGefViewer {
 				final List<PaletteEntry> entries = new PaletteFinder(editDomain).findEntries(new NamespacedToolEntryMatcher(labels));
 				if (entries.size() > 0) {
 					final PaletteEntry paletteEntry = entries.get(index);
-					if (paletteEntry instanceof ToolEntry) {
-						editDomain.getPaletteViewer().setActiveTool((ToolEntry) paletteEntry);
-					} else {
+					if (!(paletteEntry instanceof ToolEntry)) {
 						exception[0] = new WidgetNotFoundException(
 							String.format("%s is not a tool entry, it's a %s", Arrays.toString(labels).toString(), paletteEntry.getClass().getName()));
+					} else if (!((ToolEntry) paletteEntry).isVisible()) {
+						exception[0] = new WidgetNotFoundException(
+							String.format("%s was found, but is not visible", Arrays.toString(labels).toString()));
+					} else {
+						editDomain.getPaletteViewer().setActiveTool((ToolEntry) paletteEntry);
 					}
 				} else {
 					exception[0] = new WidgetNotFoundException(Arrays.toString(labels));
