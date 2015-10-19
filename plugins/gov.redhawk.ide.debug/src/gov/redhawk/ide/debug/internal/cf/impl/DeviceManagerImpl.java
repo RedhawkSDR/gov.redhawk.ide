@@ -71,6 +71,7 @@ import CF.DeviceManagerPackage.ServiceType;
 import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.InitializeError;
 import CF.LifeCyclePackage.ReleaseError;
+import CF.PortSetPackage.PortInfoType;
 import CF.PortSupplierPackage.UnknownPort;
 import CF.PropertyEmitterPackage.AlreadyInitialized;
 import CF.PropertySetPackage.InvalidConfiguration;
@@ -159,6 +160,10 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	@Override
 	public org.omg.CORBA.Object getPort(final String name) throws UnknownPort {
 		throw new UnknownPort("No ports");
+	}
+
+	public PortInfoType[] getPortSet() {
+		return new PortInfoType[0];
 	}
 
 	/**
