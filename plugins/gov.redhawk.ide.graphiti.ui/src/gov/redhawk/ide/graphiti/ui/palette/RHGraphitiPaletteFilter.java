@@ -76,7 +76,7 @@ public class RHGraphitiPaletteFilter {
 		if (pattern == null) {
 			return true;
 		}
-		Matcher matcher = pattern.matcher(obj.getLabel());
+		Matcher matcher = pattern.matcher(obj.getId());
 		return matcher.matches();
 	}
 

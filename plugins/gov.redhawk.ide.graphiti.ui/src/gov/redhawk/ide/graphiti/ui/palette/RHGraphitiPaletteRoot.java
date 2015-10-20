@@ -213,6 +213,7 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 			Object template = (DND_FROM_PALETTE) ? cf : null;
 			CombinedTemplateCreationEntry pe = new CombinedTemplateCreationEntry(label, description, template, cf,
 					getImageDescriptor(creationToolEntry, true), getImageDescriptor(creationToolEntry, false));
+			pe.setId(objectCreationToolEntry.getCreateFeature().getName());
 			pe.setToolClass(GFCreationTool.class);
 			return pe;
 		} else if (creationToolEntry instanceof IConnectionCreationToolEntry) {
