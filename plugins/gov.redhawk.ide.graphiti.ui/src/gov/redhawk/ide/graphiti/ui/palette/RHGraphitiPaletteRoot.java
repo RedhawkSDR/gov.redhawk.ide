@@ -42,13 +42,8 @@ import org.eclipse.graphiti.ui.internal.util.gef.MultiCreationFactory;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.jface.resource.ImageDescriptor;
 
-/**
- * 
- */
 @SuppressWarnings("restriction")
 public class RHGraphitiPaletteRoot extends PaletteRoot {
-
-	private static final boolean DND_FROM_PALETTE = true;
 
 	private IDiagramTypeProvider diagramTypeProvider;
 	private PaletteContainer paletteTools = null;
@@ -92,7 +87,6 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 		// create new entries
 		if (paletteTools == null) {
 			paletteTools = createModelIndependentTools();
-//			add(paletteTools);
 			add(new PaletteEntry(null, null) {
 				@Override
 				public Object getType() {
@@ -120,32 +114,6 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 			}
 			List<IToolEntry> toolEntries = compartmentEntry.getToolEntries();
 			fillContainer(drawer, toolEntries);
-//			for (IToolEntry toolEntry : toolEntries) {
-//
-//				if (toolEntry instanceof ICreationToolEntry) {
-//					ICreationToolEntry creationToolEntry = (ICreationToolEntry) toolEntry;
-//
-//					PaletteEntry createTool = createTool(creationToolEntry);
-//					if (createTool != null) {
-//						drawer.add(createTool);
-//					}
-//				} else if (toolEntry instanceof IStackToolEntry) {
-//					IStackToolEntry stackToolEntry = (IStackToolEntry) toolEntry;
-//					PaletteStack stack = new PaletteStack(stackToolEntry.getLabel(), stackToolEntry.getDescription(),
-//							GraphitiUi.getImageService().getImageDescriptorForId(diagramTypeProvider.getProviderId(),
-//									stackToolEntry.getIconId()));
-//					drawer.add(stack);
-//					List<ICreationToolEntry> creationToolEntries = stackToolEntry.getCreationToolEntries();
-//					for (ICreationToolEntry creationToolEntry : creationToolEntries) {
-//						PaletteEntry createTool = createTool(creationToolEntry);
-//						if (createTool != null) {
-//							stack.add(createTool);
-//						}
-//					}
-//				} else if (toolEntry instanceof IPaletteSeparatorEntry) {
-//					drawer.add(new PaletteSeparator());
-//				}
-//			}
 		}
 		
 		// Hide the drawers for which no compartment entry was returned (empty)
@@ -208,10 +176,9 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 		String description = creationToolEntry.getDescription();
 		if (creationToolEntry instanceof IObjectCreationToolEntry) {
 			IObjectCreationToolEntry objectCreationToolEntry = (IObjectCreationToolEntry) creationToolEntry;
-			DefaultCreationFactory cf = new DefaultCreationFactory(objectCreationToolEntry.getCreateFeature(),
+			DefaultCreationFactory factory = new DefaultCreationFactory(objectCreationToolEntry.getCreateFeature(),
 					ICreateFeature.class);
-			Object template = (DND_FROM_PALETTE) ? cf : null;
-			CombinedTemplateCreationEntry pe = new CombinedTemplateCreationEntry(label, description, template, cf,
+			CombinedTemplateCreationEntry pe = new CombinedTemplateCreationEntry(label, description, factory, factory,
 					getImageDescriptor(creationToolEntry, true), getImageDescriptor(creationToolEntry, false));
 			pe.setId(objectCreationToolEntry.getCreateFeature().getName());
 			pe.setToolClass(GFCreationTool.class);

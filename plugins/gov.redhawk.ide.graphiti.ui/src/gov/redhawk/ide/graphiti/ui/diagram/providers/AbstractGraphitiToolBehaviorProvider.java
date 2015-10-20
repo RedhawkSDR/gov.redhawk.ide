@@ -507,7 +507,7 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	 * Creates a new IToolEntry for each implementation in the component description.
 	 * Also assigns the createComponentFeature to the palette entry so that the diagram knows which shape to create.
 	 */
-	protected List<IToolEntry> createPaletteEntries(SoftPkg spd, String iconId) {
+	private List<IToolEntry> createPaletteEntries(SoftPkg spd, String iconId) {
 		String label = getLastSegment(getNameSegments(spd));
 		List<IToolEntry> entries = new ArrayList<IToolEntry>(spd.getImplementation().size());
 		if (spd.getImplementation().size() == 1 || DUtil.isDiagramWorkpace(this.getDiagramTypeProvider().getDiagram())) {

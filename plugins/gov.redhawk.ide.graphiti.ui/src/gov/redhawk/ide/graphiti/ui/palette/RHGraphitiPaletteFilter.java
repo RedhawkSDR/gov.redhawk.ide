@@ -80,14 +80,6 @@ public class RHGraphitiPaletteFilter {
 		return matcher.matches();
 	}
 
-	public boolean matches(String label) {
-		if (pattern == null) {
-			return true;
-		}
-		Matcher matcher = pattern.matcher(label);
-		return matcher.matches();
-	}
-	
 	/**
 	 * @return the filter
 	 */
