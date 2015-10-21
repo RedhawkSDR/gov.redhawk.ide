@@ -26,6 +26,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
@@ -49,6 +50,8 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Assert;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
@@ -291,19 +294,32 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 	 * @return the edit part for the shapes component supported interface, or null if not found
 	 */
 	public static SWTBotGefEditPart getComponentSupportedInterface(SWTBotGefEditor editor, String shapeName) {
+		// Find the component first
 		SWTBotGefEditPart shapeEditPart = editor.getEditPart(shapeName);
 		Assert.assertNotNull(shapeEditPart);
-		for (SWTBotGefEditPart child : shapeEditPart.children()) {
-			ContainerShape containerShape = (ContainerShape) child.part().getModel();
-			Object bo = DUtil.getBusinessObject(containerShape);
 
-			// Only return objects of type UsesPortStub
-			if (bo != null && (bo instanceof ComponentSupportedInterfaceStub)) {
-				return child;
+		// Find the child part whose business object is the CSI
+		List<SWTBotGefEditPart> csiEditParts = shapeEditPart.descendants(new BaseMatcher<EditPart>() {
+
+			@Override
+			public boolean matches(Object item) {
+				if (!(item instanceof GraphitiShapeEditPart)) {
+					return false;
+				}
+				GraphitiShapeEditPart editPart = (GraphitiShapeEditPart) item;
+				Object businessObject = DUtil.getBusinessObject(editPart.getPictogramElement());
+				return businessObject instanceof ComponentSupportedInterfaceStub;
 			}
-		}
-		
-		return null;
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("is component supported interface edit part");
+			}
+		});
+		Assert.assertEquals(1, csiEditParts.size());
+
+		// The anchor is the only child of the part we found
+		return csiEditParts.get(0);
 	}
 
 	/**
