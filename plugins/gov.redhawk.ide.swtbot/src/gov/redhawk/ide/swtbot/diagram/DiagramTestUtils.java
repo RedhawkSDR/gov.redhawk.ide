@@ -205,28 +205,27 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 	 * The editor should be created from an RHTestBot.
 	 *
 	 * @param editor - SWTBotGefEditor
-	 * @param usesEditPart - SWTBotGefEditPart for the uses/source port
-	 * @param providesEditPart - SWTBotGefEditPart for the provides/target port
+	 * @param sourceEditPart - SWTBotGefEditPart for the port to start the connection at
+	 * @param targetEditPart - SWTBotGefEditPart for the port to end the connection at
 	 */
-	public static boolean drawConnectionBetweenPorts(SWTBotGefEditor editor, SWTBotGefEditPart usesEditPart, SWTBotGefEditPart providesEditPart) {
-		final SWTBotGefEditPart usesAnchor = getDiagramPortAnchor(usesEditPart);
-		final SWTBotGefEditPart providesAnchor = getDiagramPortAnchor(providesEditPart);
-		usesAnchor.select();
+	public static boolean drawConnectionBetweenPorts(SWTBotGefEditor editor, SWTBotGefEditPart sourceEditPart, SWTBotGefEditPart targetEditPart) {
+		final SWTBotGefEditPart sourceAnchor = getDiagramPortAnchor(sourceEditPart);
+		final SWTBotGefEditPart targetAnchor = getDiagramPortAnchor(targetEditPart);
 
 		// Count original number of connections on each port for comparison
-		final int numTargetConnections = providesAnchor.targetConnections().size();
-		final int numSourceConnections = usesAnchor.sourceConnections().size();
+		final int numSourceConnections = sourceAnchor.sourceConnections().size();
+		final int numTargetConnections = targetAnchor.targetConnections().size();
 
-		final Point providesPos = getDiagramRelativeCenter(providesAnchor);
-		final Point usesPos = getDiagramRelativeCenter(usesAnchor);
-		editor.drag(providesPos.x, providesPos.y, usesPos.x, usesPos.y);
+		final Point sourcePos = getDiagramRelativeCenter(sourceAnchor);
+		final Point targetPos = getDiagramRelativeCenter(targetAnchor);
+		editor.drag(sourcePos.x, sourcePos.y, targetPos.x, targetPos.y);
 
 		// Wait to see if new connection appears for both ports
 		try {
 			editor.bot().waitWhile(new ICondition() {
 				@Override
 				public boolean test() throws Exception {
-					return providesAnchor.targetConnections().size() <= numTargetConnections || usesAnchor.sourceConnections().size() <= numSourceConnections;
+					return targetAnchor.targetConnections().size() <= numTargetConnections || sourceAnchor.sourceConnections().size() <= numSourceConnections;
 				}
 
 				@Override
