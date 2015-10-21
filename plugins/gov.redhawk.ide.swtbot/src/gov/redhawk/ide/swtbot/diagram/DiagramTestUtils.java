@@ -13,10 +13,11 @@ package gov.redhawk.ide.swtbot.diagram;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -249,15 +250,12 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 	 * @return The center of the part
 	 */
 	public static Point getDiagramRelativeCenter(SWTBotGefEditPart part) {
-		EditPart ep = part.part();
-		if (ep instanceof AbstractGraphicalEditPart) {
-			AbstractGraphicalEditPart agep = (AbstractGraphicalEditPart) part.part();
-			Rectangle bounds = agep.getFigure().getBounds();
-			int posX = bounds.x + bounds.width / 2;
-			int posY = bounds.y + bounds.height / 2;
-			return new Point(posX + 1, posY + 1);
-		}
-		return null;
+		final IFigure figure = ((GraphicalEditPart) part.part()).getFigure();
+		final Rectangle bounds = figure.getBounds().getCopy();
+		figure.translateToAbsolute(bounds);
+		int posX = bounds.x + bounds.width / 2;
+		int posY = bounds.y + bounds.height / 2;
+		return new Point(posX, posY);
 	}
 
 	/**
