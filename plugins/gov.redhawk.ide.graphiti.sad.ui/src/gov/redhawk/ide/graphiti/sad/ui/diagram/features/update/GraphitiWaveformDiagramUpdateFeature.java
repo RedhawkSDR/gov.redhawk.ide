@@ -159,6 +159,18 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		return removedConnections;
 	}
 
+	protected List<EObject> getStubsToRemove(Diagram diagram) {
+		List<EObject> removedStubs = new ArrayList<EObject>();
+		for (EObject object : diagram.eResource().getContents()) {
+			if (!(object instanceof Diagram)) {
+				if (!hasExistingShape(object)) {
+					removedStubs.add(object);
+				}
+			}
+		}
+		return removedStubs;
+	}
+
 	/**
 	 * Updates the Diagram to reflect the underlying business model
 	 * Make sure all elements in sad model (hosts/components/findby) are accounted for as
@@ -191,6 +203,17 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 							removeFeature.execute(removeContext);
 						}
 					}
+					updateStatus = true;
+				}
+			}
+
+			// Prune unused stubs
+			List<EObject> removedStubs = getStubsToRemove(diagram);
+			if (!removedStubs.isEmpty()) {
+				if (!performUpdate) {
+					return new Reason(true, "Diagram resource contents need pruning");
+				} else {
+					diagram.eResource().getContents().removeAll(removedStubs);
 					updateStatus = true;
 				}
 			}
