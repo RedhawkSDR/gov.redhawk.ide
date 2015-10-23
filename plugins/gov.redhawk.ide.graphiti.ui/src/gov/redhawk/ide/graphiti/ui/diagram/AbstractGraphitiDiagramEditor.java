@@ -27,13 +27,10 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.IReason;
-import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
 import org.eclipse.graphiti.ui.editor.DefaultMarkerBehavior;
 import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
@@ -52,11 +49,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ChalkboardContextMenuProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteBehavior;
-import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 
 public abstract class AbstractGraphitiDiagramEditor extends DiagramEditor {
 
@@ -114,35 +109,10 @@ public abstract class AbstractGraphitiDiagramEditor extends DiagramEditor {
 	 * Update the diagram's components and connections
 	 */
 	protected void updateDiagram() {
-		final Diagram diagram = getDiagramTypeProvider().getDiagram();
-		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
-			public void execute() {
-
-				Diagram diagram = getDiagramTypeProvider().getDiagram();
-				IFeatureProvider featureProvider = getDiagramTypeProvider().getFeatureProvider();
-
-				// update all components if necessary
-				for (Shape s : getDiagramTypeProvider().getDiagram().getChildren()) {
-					if (s instanceof RHContainerShape) {
-						if (s != null && featureProvider != null) {
-							final UpdateContext updateContext = new UpdateContext(s);
-							final IUpdateFeature updateFeature = featureProvider.getUpdateFeature(updateContext);
-							final IReason updateNeeded = updateFeature.updateNeeded(updateContext);
-							if (updateNeeded.toBoolean()) {
-								updateFeature.update(updateContext);
-							}
-						}
-					}
-				}
-
-				// update diagram, don't ask if it should update because we want to redraw all connections each time
-				if (diagram != null && featureProvider != null) {
-					final UpdateContext updateContext = new UpdateContext(diagram);
-					final IUpdateFeature updateFeature = featureProvider.getUpdateFeature(updateContext);
-					updateFeature.update(updateContext);
-				}
-			}
-		});
+		Diagram diagram = getDiagramTypeProvider().getDiagram();
+		UpdateContext updateContext = new UpdateContext(diagram);
+		IFeatureProvider featureProvider = getDiagramTypeProvider().getFeatureProvider();
+		featureProvider.updateIfPossibleAndNeeded(updateContext);
 	}
 
 	@Override

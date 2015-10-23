@@ -16,26 +16,27 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IRemoveFeature;
+import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
+import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.services.Graphiti;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
-import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.update.AbstractDiagramUpdateFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -54,6 +55,36 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		super(fp);
 	}
 
+	private IReason internalUpdateChild(PictogramElement pe, boolean performUpdate) {
+		IUpdateContext context = new UpdateContext(pe);
+		IUpdateFeature feature = getFeatureProvider().getUpdateFeature(context);
+		IReason reason = feature.updateNeeded(context);
+		if (reason.toBoolean() && performUpdate) {
+			feature.update(context);
+		}
+		return reason;
+	}
+
+	protected boolean doesBusinessObjectExist(PictogramElement pe) {
+		EObject bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(pe);
+		if (bo.eIsProxy()) {
+			// If it's still a proxy it did not resolve, most likely because the object is gone
+			return false;
+		}
+		return true;
+	}
+
+	protected boolean hasExistingShape(EObject eObject) {
+		return !Graphiti.getLinkService().getPictogramElements(getDiagram(), eObject).isEmpty();
+	}
+
+	protected boolean hasParentChanged(Shape shape) {
+		EObject bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape);
+		// Get the parent business object two ways--from the EObject's container, and from the parent shape's business
+		// object. If they aren't the same, presumably it's been moved.
+		return bo.eContainer() != Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape.getContainer());
+	}
+
 	/**
 	 * Updates the Diagram to reflect the underlying business model
 	 * Make sure all elements in sad model (hosts/components/findby) are accounted for as
@@ -67,41 +98,80 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 	public Reason internalUpdate(IUpdateContext context, boolean performUpdate) throws CoreException {
 
 		boolean updateStatus = false;
+		boolean layoutNeeded = false;
 
 		PictogramElement pe = context.getPictogramElement();
 		if (pe instanceof Diagram) {
-			Diagram d = (Diagram) pe;
+			Diagram diagram = (Diagram) pe;
+
+			// Update or remove children
+			List<Shape> removedChildren = new ArrayList<Shape>();
+			for (Shape shape : diagram.getChildren()) {
+				// Check if the linked business object still exists
+				if (!doesBusinessObjectExist(shape)) {
+					removedChildren.add(shape);
+				} else if (hasParentChanged(shape)){
+					// Parent has changed (e.g., component moved into a host collocation); delete the existing one and
+					// re-add it later
+					removedChildren.add(shape);
+				} else {
+					IReason childReason = internalUpdateChild(shape, performUpdate);
+					if (childReason.toBoolean()) {
+						if (!performUpdate) {
+							return new Reason(true, childReason.getText());
+						} else {
+							updateStatus = true;
+						}
+					}
+				}
+			}
+
+			// If there were any children whose business objects no longer existed, remove them. This has to be done
+			// in a separate step to avoid modifying the diagram's children during iteration.
+			if (!removedChildren.isEmpty()) {
+				if (!performUpdate) {
+					return new Reason(true, "Existing shapes need to be removed");
+				} else {
+					for (Shape shape : removedChildren) {
+						DUtil.fastDeletePictogramElement(shape);
+					}
+					updateStatus = true;
+				}
+			}
 
 			// get sad from diagram
-			final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+			SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+
+			// Find any component instantiations that are in the SAD but do not have an associated shape
+			List<EObject> addedChildren = new ArrayList<EObject>();
+			for (SadComponentPlacement placement : sad.getPartitioning().getComponentPlacement()) {
+				for (SadComponentInstantiation instantiation : placement.getComponentInstantiation()) {
+					if (!hasExistingShape(instantiation)) {
+						addedChildren.add(instantiation);
+					}
+				}
+			}
+			// Likewise, check for host collocations that do not have an associated shape
+			for (HostCollocation collocation : sad.getPartitioning().getHostCollocation()) {
+				if (!hasExistingShape(collocation)) {
+					addedChildren.add(collocation);
+				}
+			}
+
+			if (!addedChildren.isEmpty()) {
+				if (!performUpdate) {
+					return new Reason(true, "Missing component or host collocation shapes");
+				} else {
+					for (EObject object : addedChildren) {
+						DUtil.addShapeViaFeature(getFeatureProvider(), diagram, object);
+					}
+					updateStatus = true;
+					layoutNeeded = true;
+				}
+			}
 
 			// TODO: ensure our SAD has an assembly controller
 			// set one if necessary, why bother the user?
-
-			// model HostCollocation
-			List<HostCollocation> hostCollocations = new ArrayList<HostCollocation>();
-			if (sad != null && sad.getPartitioning() != null && sad.getPartitioning().getHostCollocation() != null) {
-				// Elist -> List
-				Collections.addAll(hostCollocations, sad.getPartitioning().getHostCollocation().toArray(new HostCollocation[0]));
-			}
-			// shape HostCollocation
-			List<ContainerShape> hostCollocationShapes = HostCollocationPattern.getHostCollocationContainerShapes(d);
-
-			// model components
-			List<SadComponentInstantiation> componentInstantiations = new ArrayList<SadComponentInstantiation>();
-			if (sad != null && sad.getPartitioning() != null && sad.getPartitioning().getComponentPlacement() != null) {
-				// Get list of componentInstantiations from model
-				for (SadComponentPlacement p : sad.getPartitioning().getComponentPlacement()) {
-					Collections.addAll(componentInstantiations, p.getComponentInstantiation().toArray(new SadComponentInstantiation[0]));
-				}
-			}
-			// shape components, excluding those found in host collocations
-			List<ComponentShape> componentShapes = ComponentPattern.getAllComponentShapes(d);
-			for (Iterator<ComponentShape> iter = componentShapes.iterator(); iter.hasNext();) {
-				if (!(iter.next().eContainer() instanceof Diagram)) {
-					iter.remove();
-				}
-			}
 
 			// model UsesDevice
 			List<UsesDevice> usesDevices = new ArrayList<UsesDevice>();
@@ -110,7 +180,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 				Collections.addAll(usesDevices, sad.getUsesDeviceDependencies().getUsesdevice().toArray(new UsesDevice[0]));
 			}
 			// shape UsesDeviceStub
-			List<RHContainerShape> usesDeviceStubShapes = AbstractUsesDevicePattern.getAllUsesDeviceStubShapes(d);
+			List<RHContainerShape> usesDeviceStubShapes = AbstractUsesDevicePattern.getAllUsesDeviceStubShapes(diagram);
 			for (Iterator<RHContainerShape> iter = usesDeviceStubShapes.iterator(); iter.hasNext();) {
 				if (!(iter.next().eContainer() instanceof Diagram)) {
 					iter.remove();
@@ -128,31 +198,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 
 			// shape connections
 			List<Connection> connections = new ArrayList<Connection>();
-			Collections.addAll(connections, d.getConnections().toArray(new Connection[0]));
-
-			/**** Check for inconsistencies in Host Collocation and number of components and connections ****/
-			// Check Host Collocations for inconsistencies on text/name values
-			boolean valuesMatch = true;
-			if (hostCollocations.size() == hostCollocationShapes.size()) {
-				for (int i = 0; i < hostCollocations.size(); i++) {
-					valuesMatch = HostCollocationPattern.compareHostCoText(hostCollocationShapes.get(i), hostCollocations.get(i));
-					// IDE-1021: Added condition that was supposed to be here
-					if (!valuesMatch) {
-						break;
-					}
-				}
-			}
-
-			// Check Host Collocations for inconsistencies in contained components
-			boolean numberOfComponentsMatch = true;
-			if (hostCollocations.size() == hostCollocationShapes.size()) {
-				for (int i = 0; i < hostCollocations.size(); i++) {
-					if (hostCollocations.get(i).getComponentPlacement().size() != hostCollocationShapes.get(i).getChildren().size()) {
-						numberOfComponentsMatch = false;
-						break;
-					}
-				}
-			}
+			Collections.addAll(connections, diagram.getConnections().toArray(new Connection[0]));
 
 			// If inconsistencies are found remove all objects of that type and redraw
 			// we must do this because the diagram uses indexed lists to refer to components in the sad file.
@@ -163,17 +209,6 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 				List<Object> objsToAdd = new ArrayList<Object>(); // gather all model object to add
 
 				// If inconsistencies found, redraw diagram elements based on model objects
-				boolean layoutNeeded = false;
-				if (hostCollocations.size() != hostCollocationShapes.size() || !numberOfComponentsMatch || !valuesMatch) {
-					Collections.addAll(pesToRemove, hostCollocationShapes.toArray(new PictogramElement[0]));
-					Collections.addAll(objsToAdd, hostCollocations.toArray(new Object[0]));
-					layoutNeeded = true;
-				}
-				if (componentShapes.size() != componentInstantiations.size() || !componentsResolved(componentShapes)) {
-					Collections.addAll(pesToRemove, componentShapes.toArray(new PictogramElement[0]));
-					Collections.addAll(objsToAdd, componentInstantiations.toArray(new Object[0]));
-					layoutNeeded = true;
-				}
 				if (usesDeviceStubShapes.size() != usesDevices.size() || !usesDeviceStubsResolved(usesDeviceStubShapes)) {
 					Collections.addAll(pesToRemove, usesDeviceStubShapes.toArray(new PictogramElement[0]));
 					List<UsesDeviceStub> usesDeviceStubsToAdd = new ArrayList<UsesDeviceStub>();
@@ -220,13 +255,6 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 					LayoutDiagramFeature layoutFeature = new LayoutDiagramFeature(getFeatureProvider());
 					layoutFeature.execute(null);
 				}
-			} else {
-				if (hostCollocations.size() != hostCollocationShapes.size() || !numberOfComponentsMatch || !valuesMatch) {
-					return new Reason(true, "The sad.xml file and diagram HostCollocation objects do not match.  Reload the diagram from the xml file.");
-				}
-				if (componentShapes.size() != componentInstantiations.size() || !componentsResolved(componentShapes)) {
-					return new Reason(true, "The sad.xml file and diagram component objects do not match.  Reload the diagram from the xml file.");
-				}
 			}
 
 			// Ensure assembly controller is set in case a component was deleted that used to be the assembly controller
@@ -238,34 +266,6 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		}
 
 		return new Reason(false, "No updates required");
-	}
-
-	/**
-	 * Checks if componentShape has lost its reference to the model object
-	 * Very important to also check that component ports are still linked to the correct parent
-	 * Bad things can happen because port links use index based references (0, 1, 2 etc.
-	 */
-	private boolean componentsResolved(List<ComponentShape> componentShapes) {
-		for (ComponentShape componentShape : componentShapes) {
-			SadComponentInstantiation sadComponentInstantiation = DUtil.getBusinessObject(componentShape, SadComponentInstantiation.class);
-			if (sadComponentInstantiation == null || sadComponentInstantiation.getPlacement() == null
-				|| sadComponentInstantiation.getPlacement().getComponentFileRef() == null) {
-				return false;
-			}
-
-			if (!GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS)) {
-				// applies only if we are showing the component shape details (ports)
-				if (componentShape.getProvidesPortStubs().size() > 0
-					&& !componentShape.getProvidesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
-					return false;
-				} else if (componentShape.getUsesPortStubs().size() > 0
-					&& !componentShape.getUsesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
-					return false;
-				}
-			}
-
-		}
-		return true;
 	}
 
 	/** Checks if rhContainerShape has lost its reference to the UsesDeviceStub model object */

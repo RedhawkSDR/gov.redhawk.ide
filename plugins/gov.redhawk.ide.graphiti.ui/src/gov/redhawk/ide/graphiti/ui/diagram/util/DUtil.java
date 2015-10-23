@@ -1482,9 +1482,12 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 			start.getOutgoingConnections().remove(connection);
 		}
 
+		// The diagram may be null, if the connection is no longer part of one
 		Diagram diagram = connection.getParent();
-		diagram.getPictogramLinks().remove(connection.getLink());
-		diagram.getConnections().remove(connection);
+		if (diagram != null) {
+			diagram.getPictogramLinks().remove(connection.getLink());
+			diagram.getConnections().remove(connection);
+		}
 	}
 
 	/**
