@@ -11,14 +11,13 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.update;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IRemoveFeature;
+import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.impl.Reason;
@@ -29,7 +28,6 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
@@ -87,9 +85,9 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		return !connection.getAnchors().contains(source) || !connection.getAnchors().contains(target);
 	}
 
-	protected List<Shape> getShapesToRemove() {
+	protected List<Shape> getShapesToRemove(Diagram diagram) {
 		List<Shape> removedShapes = new ArrayList<Shape>();
-		for (Shape shape : getDiagram().getChildren()) {
+		for (Shape shape : diagram.getChildren()) {
 			// Check if the linked business object still exists
 			if (!doesBusinessObjectExist(shape)) {
 				removedShapes.add(shape);
@@ -102,8 +100,20 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		return removedShapes;
 	}
 
-	protected List<EObject> getObjectsToAdd() {
-		SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+	protected UsesDeviceStub getUsesDeviceStub(UsesDevice usesDevice, Diagram diagram) {
+		for (EObject object : diagram.eResource().getContents()) {
+			if (object instanceof UsesDeviceStub) {
+				UsesDeviceStub stub = (UsesDeviceStub) object;
+				if (stub.getUsesDevice() == usesDevice) {
+					return stub;
+				}
+			}
+		}
+		return null;
+	}
+
+	protected List<EObject> getObjectsToAdd(Diagram diagram) {
+		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
 		// Find any component instantiations that are in the SAD but do not have an associated shape
 		List<EObject> addedChildren = new ArrayList<EObject>();
 		for (SadComponentPlacement placement : sad.getPartitioning().getComponentPlacement()) {
@@ -117,6 +127,21 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		for (HostCollocation collocation : sad.getPartitioning().getHostCollocation()) {
 			if (!hasExistingShape(collocation)) {
 				addedChildren.add(collocation);
+			}
+		}
+
+		// Uses devices do not appear directly in the diagram, but rather via a stub that is embedded in the diagram's
+		// resource; if a matching stub does not exist, or is missing a shape, add the shape.
+		if (sad.getUsesDeviceDependencies() != null) {
+			for (UsesDevice usesDevice : sad.getUsesDeviceDependencies().getUsesdevice()) {
+				UsesDeviceStub stub = getUsesDeviceStub(usesDevice, diagram);
+				if (stub == null) {
+					stub = AbstractUsesDevicePattern.createUsesDeviceStub(usesDevice);
+					addedChildren.add(stub);
+					diagram.eResource().getContents().add(stub);
+				} else if (!hasExistingShape(stub)) {
+					addedChildren.add(stub);
+				}
 			}
 		}
 		return addedChildren;
@@ -154,20 +179,24 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			Diagram diagram = (Diagram) pe;
 
 			// Remove children
-			List<Shape> removedChildren = getShapesToRemove();
+			List<Shape> removedChildren = getShapesToRemove(diagram);
 			if (!removedChildren.isEmpty()) {
 				if (!performUpdate) {
 					return new Reason(true, "Existing shapes need to be removed");
 				} else {
 					for (Shape shape : removedChildren) {
-						DUtil.fastDeletePictogramElement(shape);
+						IRemoveContext removeContext = new RemoveContext(shape);
+						IRemoveFeature removeFeature = getFeatureProvider().getRemoveFeature(removeContext);
+						if (removeFeature != null) {
+							removeFeature.execute(removeContext);
+						}
 					}
 					updateStatus = true;
 				}
 			}
 
 			// Add shapes for SAD objects that do not have them
-			List<EObject> addedChildren = getObjectsToAdd();
+			List<EObject> addedChildren = getObjectsToAdd(diagram);
 			if (!addedChildren.isEmpty()) {
 				if (!performUpdate) {
 					return new Reason(true, "Missing component or host collocation shapes");
@@ -221,68 +250,14 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			// TODO: ensure our SAD has an assembly controller
 			// set one if necessary, why bother the user?
 
-			// model UsesDevice
-			List<UsesDevice> usesDevices = new ArrayList<UsesDevice>();
-			if (sad != null && sad.getUsesDeviceDependencies() != null && sad.getUsesDeviceDependencies().getUsesdevice() != null) {
-				// Get list of UsesDeviceStub from model
-				Collections.addAll(usesDevices, sad.getUsesDeviceDependencies().getUsesdevice().toArray(new UsesDevice[0]));
-			}
-			// shape UsesDeviceStub
-			List<RHContainerShape> usesDeviceStubShapes = AbstractUsesDevicePattern.getAllUsesDeviceStubShapes(diagram);
-			for (Iterator<RHContainerShape> iter = usesDeviceStubShapes.iterator(); iter.hasNext();) {
-				if (!(iter.next().eContainer() instanceof Diagram)) {
-					iter.remove();
-				}
-			}
-
-			// If inconsistencies are found remove all objects of that type and redraw
-			// we must do this because the diagram uses indexed lists to refer to components in the sad file.
 			if (performUpdate) {
-				updateStatus = true;
-
-				List<PictogramElement> pesToRemove = new ArrayList<PictogramElement>(); // gather all shapes to remove
-				List<Object> objsToAdd = new ArrayList<Object>(); // gather all model object to add
-
-				// If inconsistencies found, redraw diagram elements based on model objects
-				if (usesDeviceStubShapes.size() != usesDevices.size() || !usesDeviceStubsResolved(usesDeviceStubShapes)) {
-					Collections.addAll(pesToRemove, usesDeviceStubShapes.toArray(new PictogramElement[0]));
-					List<UsesDeviceStub> usesDeviceStubsToAdd = new ArrayList<UsesDeviceStub>();
-					for (UsesDevice usesDevice : usesDevices) {
-						usesDeviceStubsToAdd.add(AbstractUsesDevicePattern.createUsesDeviceStub(usesDevice));
-					}
-					// add ports to model
-					AbstractUsesDevicePattern.addUsesDeviceStubPorts(sad.getConnections().getConnectInterface(), usesDeviceStubsToAdd);
-					// VERY IMPORTANT, store copy in diagram file
-					getDiagram().eResource().getContents().addAll(usesDeviceStubsToAdd);
-					Collections.addAll(objsToAdd, usesDeviceStubsToAdd.toArray(new Object[0]));
-					layoutNeeded = true;
-				}
-
-				if (!pesToRemove.isEmpty()) {
-					// remove shapes from diagram
-					for (PictogramElement peToRemove : pesToRemove) {
-						// remove shape
-						RemoveContext rc = new RemoveContext(peToRemove);
-						IRemoveFeature removeFeature = getFeatureProvider().getRemoveFeature(rc);
-						if (removeFeature != null) {
-							removeFeature.remove(rc);
-						}
-					}
-				} else {
-					// update components
-					super.update(context);
-				}
-
-				// add shapes to diagram
-				if (!objsToAdd.isEmpty()) {
-					for (Object objToAdd : objsToAdd) {
-						DUtil.addShapeViaFeature(getFeatureProvider(), getDiagram(), objToAdd);
-					}
-				}
+				// Update components
+				updateStatus |= super.update(context);
 
 				if (layoutNeeded) {
 					LayoutDiagramFeature layoutFeature = new LayoutDiagramFeature(getFeatureProvider());
 					layoutFeature.execute(null);
+					updateStatus = true;
 				}
 			}
 
@@ -295,17 +270,6 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		}
 
 		return new Reason(false, "No updates required");
-	}
-
-	/** Checks if rhContainerShape has lost its reference to the UsesDeviceStub model object */
-	private boolean usesDeviceStubsResolved(List<RHContainerShape> usesDeviceStubShapes) {
-		for (RHContainerShape usesDeviceStubShape : usesDeviceStubShapes) {
-			Object obj = DUtil.getBusinessObject(usesDeviceStubShape, UsesDeviceStub.class);
-			if (obj == null) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	@Override
