@@ -18,12 +18,9 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IRemoveFeature;
-import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
-import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
@@ -55,21 +52,16 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		super(fp);
 	}
 
-	private IReason internalUpdateChild(PictogramElement pe, boolean performUpdate) {
-		IUpdateContext context = new UpdateContext(pe);
-		IUpdateFeature feature = getFeatureProvider().getUpdateFeature(context);
-		IReason reason = feature.updateNeeded(context);
-		if (reason.toBoolean() && performUpdate) {
-			feature.update(context);
-		}
-		return reason;
-	}
-
 	protected boolean doesBusinessObjectExist(PictogramElement pe) {
 		EObject bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(pe);
 		if (bo.eIsProxy()) {
 			// If it's still a proxy it did not resolve, most likely because the object is gone
 			return false;
+		} else if (bo instanceof UsesDeviceStub) {
+			UsesDeviceStub stub = (UsesDeviceStub) bo;
+			if (stub.getUsesDevice() == null || stub.getUsesDevice().eIsProxy()) {
+				return false;
+			}
 		}
 		return true;
 	}
@@ -92,7 +84,54 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		if (source == null || target == null) {
 			return true;
 		}
-		return connection.getAnchors().contains(source) && connection.getAnchors().contains(target);
+		return !connection.getAnchors().contains(source) || !connection.getAnchors().contains(target);
+	}
+
+	protected List<Shape> getShapesToRemove() {
+		List<Shape> removedShapes = new ArrayList<Shape>();
+		for (Shape shape : getDiagram().getChildren()) {
+			// Check if the linked business object still exists
+			if (!doesBusinessObjectExist(shape)) {
+				removedShapes.add(shape);
+			} else if (hasParentChanged(shape)){
+				// Parent has changed (e.g., component moved into a host collocation); delete the existing one and
+				// re-add it later
+				removedShapes.add(shape);
+			}
+		}
+		return removedShapes;
+	}
+
+	protected List<EObject> getObjectsToAdd() {
+		SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+		// Find any component instantiations that are in the SAD but do not have an associated shape
+		List<EObject> addedChildren = new ArrayList<EObject>();
+		for (SadComponentPlacement placement : sad.getPartitioning().getComponentPlacement()) {
+			for (SadComponentInstantiation instantiation : placement.getComponentInstantiation()) {
+				if (!hasExistingShape(instantiation)) {
+					addedChildren.add(instantiation);
+				}
+			}
+		}
+		// Likewise, check for host collocations that do not have an associated shape
+		for (HostCollocation collocation : sad.getPartitioning().getHostCollocation()) {
+			if (!hasExistingShape(collocation)) {
+				addedChildren.add(collocation);
+			}
+		}
+		return addedChildren;
+	}
+
+	protected List<Connection> getConnectionsToRemove() {
+		List<Connection> removedConnections = new ArrayList<Connection>();
+		for (Connection connection : getDiagram().getConnections()) {
+			if (!doesBusinessObjectExist(connection)) {
+				removedConnections.add(connection);
+			} else if (haveEndpointsChanged(connection)) {
+				removedConnections.add(connection);
+			}
+		}
+		return removedConnections;
 	}
 
 	/**
@@ -114,30 +153,8 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		if (pe instanceof Diagram) {
 			Diagram diagram = (Diagram) pe;
 
-			// Update or remove children
-			List<Shape> removedChildren = new ArrayList<Shape>();
-			for (Shape shape : diagram.getChildren()) {
-				// Check if the linked business object still exists
-				if (!doesBusinessObjectExist(shape)) {
-					removedChildren.add(shape);
-				} else if (hasParentChanged(shape)){
-					// Parent has changed (e.g., component moved into a host collocation); delete the existing one and
-					// re-add it later
-					removedChildren.add(shape);
-				} else {
-					IReason childReason = internalUpdateChild(shape, performUpdate);
-					if (childReason.toBoolean()) {
-						if (!performUpdate) {
-							return new Reason(true, childReason.getText());
-						} else {
-							updateStatus = true;
-						}
-					}
-				}
-			}
-
-			// If there were any children whose business objects no longer existed, remove them. This has to be done
-			// in a separate step to avoid modifying the diagram's children during iteration.
+			// Remove children
+			List<Shape> removedChildren = getShapesToRemove();
 			if (!removedChildren.isEmpty()) {
 				if (!performUpdate) {
 					return new Reason(true, "Existing shapes need to be removed");
@@ -149,25 +166,8 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 				}
 			}
 
-			// get sad from diagram
-			SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
-
-			// Find any component instantiations that are in the SAD but do not have an associated shape
-			List<EObject> addedChildren = new ArrayList<EObject>();
-			for (SadComponentPlacement placement : sad.getPartitioning().getComponentPlacement()) {
-				for (SadComponentInstantiation instantiation : placement.getComponentInstantiation()) {
-					if (!hasExistingShape(instantiation)) {
-						addedChildren.add(instantiation);
-					}
-				}
-			}
-			// Likewise, check for host collocations that do not have an associated shape
-			for (HostCollocation collocation : sad.getPartitioning().getHostCollocation()) {
-				if (!hasExistingShape(collocation)) {
-					addedChildren.add(collocation);
-				}
-			}
-
+			// Add shapes for SAD objects that do not have them
+			List<EObject> addedChildren = getObjectsToAdd();
 			if (!addedChildren.isEmpty()) {
 				if (!performUpdate) {
 					return new Reason(true, "Missing component or host collocation shapes");
@@ -180,26 +180,8 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 				}
 			}
 
-			// Update or remove connections
-			List<Connection> removedConnections = new ArrayList<Connection>();
-			for (Connection connection : diagram.getConnections()) {
-				if (!doesBusinessObjectExist(connection)) {
-					removedConnections.add(connection);
-				} else if (!haveEndpointsChanged(connection)) {
-					removedConnections.add(connection);
-				} else {
-					IReason childReason = internalUpdateChild(connection, performUpdate);
-					if (childReason.toBoolean()) {
-						if (!performUpdate) {
-							return new Reason(true, childReason.getText());
-						} else {
-							updateStatus = true;
-						}
-					}
-				}
-			}
-
 			// Remove stale connections
+			List<Connection> removedConnections = getConnectionsToRemove();
 			if (!removedConnections.isEmpty()) {
 				if (!performUpdate) {
 					return new Reason(true, "Need to remove " + removedConnections.size() + " connection(s)");
@@ -210,6 +192,9 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 					updateStatus = true;
 				}
 			}
+
+			// get sad from diagram
+			SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 			// Add missing connections
 			for (SadConnectInterface connectInterface : sad.getConnections().getConnectInterface()) {
