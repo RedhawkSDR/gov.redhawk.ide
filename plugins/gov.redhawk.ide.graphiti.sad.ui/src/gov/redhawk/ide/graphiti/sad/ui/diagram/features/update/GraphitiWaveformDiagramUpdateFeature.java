@@ -70,9 +70,14 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 
 	protected boolean hasParentChanged(Shape shape) {
 		EObject bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape);
-		// Get the parent business object two ways--from the EObject's container, and from the parent shape's business
-		// object. If they aren't the same, presumably it's been moved.
-		return bo.eContainer() != Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape.getContainer());
+		EObject parent = bo.eContainer();
+		if (parent instanceof HostCollocation) {
+			// Compare the parent business objects, in case it was previously not collocated or moved from another
+			return parent != Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape.getContainer());
+		} else {
+			// Otherwise, it should be a direct child of the diagram
+			return !(shape.getContainer() instanceof Diagram);
+		}
 	}
 
 	protected boolean haveEndpointsChanged(Connection connection) {
@@ -91,7 +96,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			// Check if the linked business object still exists
 			if (!doesBusinessObjectExist(shape)) {
 				removedShapes.add(shape);
-			} else if (hasParentChanged(shape)){
+			} else if (hasParentChanged(shape)) {
 				// Parent has changed (e.g., component moved into a host collocation); delete the existing one and
 				// re-add it later
 				removedShapes.add(shape);
