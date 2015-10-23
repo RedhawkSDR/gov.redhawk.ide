@@ -85,6 +85,16 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		return bo.eContainer() != Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape.getContainer());
 	}
 
+	protected boolean haveEndpointsChanged(Connection connection) {
+		SadConnectInterface connectInterface = DUtil.getBusinessObject(connection, SadConnectInterface.class);
+		Anchor source = DUtil.getPictogramElementForBusinessObject(getDiagram(), connectInterface.getSource(), Anchor.class);
+		Anchor target = DUtil.getPictogramElementForBusinessObject(getDiagram(), connectInterface.getTarget(), Anchor.class);
+		if (source == null || target == null) {
+			return true;
+		}
+		return connection.getAnchors().contains(source) && connection.getAnchors().contains(target);
+	}
+
 	/**
 	 * Updates the Diagram to reflect the underlying business model
 	 * Make sure all elements in sad model (hosts/components/findby) are accounted for as
@@ -170,6 +180,59 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 				}
 			}
 
+			// Update or remove connections
+			List<Connection> removedConnections = new ArrayList<Connection>();
+			for (Connection connection : diagram.getConnections()) {
+				if (!doesBusinessObjectExist(connection)) {
+					removedConnections.add(connection);
+				} else if (!haveEndpointsChanged(connection)) {
+					removedConnections.add(connection);
+				} else {
+					IReason childReason = internalUpdateChild(connection, performUpdate);
+					if (childReason.toBoolean()) {
+						if (!performUpdate) {
+							return new Reason(true, childReason.getText());
+						} else {
+							updateStatus = true;
+						}
+					}
+				}
+			}
+
+			// Remove stale connections
+			if (!removedConnections.isEmpty()) {
+				if (!performUpdate) {
+					return new Reason(true, "Need to remove " + removedConnections.size() + " connection(s)");
+				} else {
+					for (Connection connection : removedConnections) {
+						DUtil.fastDeleteConnection(connection);
+					}
+					updateStatus = true;
+				}
+			}
+
+			// Add missing connections
+			for (SadConnectInterface connectInterface : sad.getConnections().getConnectInterface()) {
+				if (!hasExistingShape(connectInterface)) {
+					if (!performUpdate) {
+						return new Reason(true, "Need to add connection '" + connectInterface.getId() + "'");
+					} else {
+						Anchor source = DUtil.lookupSourceAnchor(connectInterface, diagram);
+						if (source == null) {
+							source = addSourceAnchor(connectInterface, diagram);
+						}
+						Anchor target = DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getTarget(), Anchor.class);
+						if (target == null) {
+							target = addTargetAnchor(connectInterface, diagram, getFeatureProvider());
+						}
+						if (source != null && target != null) {
+							DUtil.addConnectionViaFeature(getFeatureProvider(), connectInterface, source, target);
+						}
+						updateStatus = true;
+					}
+				}
+			}
+
 			// TODO: ensure our SAD has an assembly controller
 			// set one if necessary, why bother the user?
 
@@ -187,19 +250,6 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 				}
 			}
 
-			// model connections
-			List<SadConnectInterface> sadConnectInterfaces = new ArrayList<SadConnectInterface>();
-			if (sad != null && sad.getConnections() != null && sad.getConnections().getConnectInterface() != null) {
-				// Get list of SadConnectInterfaces from model
-				Collections.addAll(sadConnectInterfaces, sad.getConnections().getConnectInterface().toArray(new SadConnectInterface[0]));
-			}
-			// remove invalid model connections
-			removeInvalidConnections(sadConnectInterfaces);
-
-			// shape connections
-			List<Connection> connections = new ArrayList<Connection>();
-			Collections.addAll(connections, diagram.getConnections().toArray(new Connection[0]));
-
 			// If inconsistencies are found remove all objects of that type and redraw
 			// we must do this because the diagram uses indexed lists to refer to components in the sad file.
 			if (performUpdate) {
@@ -216,15 +266,12 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 						usesDeviceStubsToAdd.add(AbstractUsesDevicePattern.createUsesDeviceStub(usesDevice));
 					}
 					// add ports to model
-					AbstractUsesDevicePattern.addUsesDeviceStubPorts(sadConnectInterfaces, usesDeviceStubsToAdd);
+					AbstractUsesDevicePattern.addUsesDeviceStubPorts(sad.getConnections().getConnectInterface(), usesDeviceStubsToAdd);
 					// VERY IMPORTANT, store copy in diagram file
 					getDiagram().eResource().getContents().addAll(usesDeviceStubsToAdd);
 					Collections.addAll(objsToAdd, usesDeviceStubsToAdd.toArray(new Object[0]));
 					layoutNeeded = true;
 				}
-
-				// Easiest just to remove and redraw connections every time
-				Collections.addAll(pesToRemove, connections.toArray(new PictogramElement[0]));
 
 				if (!pesToRemove.isEmpty()) {
 					// remove shapes from diagram
@@ -247,9 +294,6 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 						DUtil.addShapeViaFeature(getFeatureProvider(), getDiagram(), objToAdd);
 					}
 				}
-
-				// add connections to diagram
-				addConnections(sadConnectInterfaces, getDiagram(), getFeatureProvider());
 
 				if (layoutNeeded) {
 					LayoutDiagramFeature layoutFeature = new LayoutDiagramFeature(getFeatureProvider());
