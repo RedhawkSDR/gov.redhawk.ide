@@ -1835,41 +1835,56 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		//update super provides ports if they exist
 		Reason updateSuperProvidesPortsReason = internalUpdateSuperProvidesPortsContainerShape(pattern, businessObject, externalPorts, provides, interfaceStub,
 			diagram, performUpdate, updateStatus);
-		if (!performUpdate && updateSuperProvidesPortsReason.toBoolean()) {
-			//if updates required return true
-			return updateSuperProvidesPortsReason;
+		if (updateSuperProvidesPortsReason.toBoolean()) {
+			if (!performUpdate) {
+				//if updates required return true
+				return updateSuperProvidesPortsReason;
+			}
+			updateStatus = true;
 		}
 
 		//update super uses ports if they exist
 		Reason updateSuperUsesPortsReason = internalUpdateSuperUsesPortsContainerShape(pattern, businessObject, externalPorts, uses, diagram, performUpdate,
 			updateStatus);
-		if (!performUpdate && updateSuperUsesPortsReason.toBoolean()) {
-			//if updates required return true
-			return updateSuperUsesPortsReason;
+		if (updateSuperUsesPortsReason.toBoolean()) {
+			if (!performUpdate) {
+				//if updates required return true
+				return updateSuperUsesPortsReason;
+			}
+			updateStatus = true;
 		}
 
 		//draw all shape details (only ports)
 		//update provides ports
 		Reason updateProvidesPortsReason = internalUpdateProvidesPortsContainerShape(pattern, businessObject, externalPorts, provides, diagram, performUpdate,
 			updateStatus);
-		if (!performUpdate && updateProvidesPortsReason.toBoolean()) {
-			//if updates required return true
-			return updateProvidesPortsReason;
+		if (updateProvidesPortsReason.toBoolean()) {
+			if (!performUpdate) {
+				//if updates required return true
+				return updateProvidesPortsReason;
+			}
+			updateStatus = true;
 		}
 
 		//update uses ports
 		Reason updateUsesPortsReason = internalUpdateUsesPortsContainerShape(pattern, businessObject, externalPorts, uses, diagram, performUpdate,
 			updateStatus);
-		if (!performUpdate && updateUsesPortsReason.toBoolean()) {
-			//if updates required return true
-			return updateUsesPortsReason;
+		if (updateUsesPortsReason.toBoolean()) {
+			if (!performUpdate) {
+				//if updates required return true
+				return updateUsesPortsReason;
+			}
+			updateStatus = true;
 		}
 
 		//update lollipop
 		Reason updateLollipopReason = internalUpdateLollipop(pattern, diagram, performUpdate, updateStatus);
-		if (!performUpdate && updateLollipopReason.toBoolean()) {
-			//if updates required return true
-			return updateLollipopReason;
+		if (updateLollipopReason.toBoolean()) {
+			if (!performUpdate) {
+				//if updates required return true
+				return updateLollipopReason;
+			}
+			updateStatus = true;
 		}
 
 		if (updateStatus && performUpdate) {
