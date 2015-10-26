@@ -32,10 +32,19 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePatter
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.update.AbstractDiagramUpdateFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterface;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
+import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
+import mil.jpeojtrs.sca.partitioning.FindBy;
+import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.partitioning.ProvidesPort;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
+import mil.jpeojtrs.sca.partitioning.UsesPort;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -190,18 +199,13 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 				updateStatus = true;
 			}
 
-			// Add missing connections
+			// Add missing connection endpoints
 			for (ConnectInterface< ? , ? , ? > connectInterface : getConnectionsToAdd(diagram)) {
-				Anchor source = DUtil.lookupSourceAnchor(connectInterface, diagram);
-				if (source == null) {
-					source = addSourceAnchor(connectInterface, diagram);
+				if (getSourceAnchor(connectInterface, diagram) == null) {
+					addUsesPort(connectInterface, diagram);
 				}
-				Anchor target = DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getTarget(), Anchor.class);
-				if (target == null) {
-					target = addTargetAnchor(connectInterface, diagram, getFeatureProvider());
-				}
-				if (source != null && target != null) {
-					DUtil.addConnectionViaFeature(getFeatureProvider(), connectInterface, source, target);
+				if (getTargetAnchor(connectInterface, diagram) == null) {
+					addConnectionTarget(connectInterface, diagram);
 				}
 				updateStatus = true;
 			}
@@ -211,6 +215,16 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 
 			// Update components
 			if (super.update(context)) {
+				updateStatus = true;
+			}
+
+			// Add missing connections
+			for (ConnectInterface< ? , ? , ? > connectInterface : getConnectionsToAdd(diagram)) {
+				Anchor source = getSourceAnchor(connectInterface, diagram);
+				Anchor target = getTargetAnchor(connectInterface, diagram);
+				if (source != null && target != null) {
+					DUtil.addConnectionViaFeature(getFeatureProvider(), connectInterface, source, target);
+				}
 				updateStatus = true;
 			}
 
@@ -246,67 +260,139 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		return false;
 	}
 
-	@Override
-	protected < E extends ConnectInterface< ? , ? , ? > > Anchor addSourceAnchor(E connectInterface, Diagram diagram) throws CoreException {
-		if (connectInterface.getUsesPort() != null && connectInterface.getUsesPort().getDeviceUsedByApplication() != null) {
-			UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(connectInterface.getUsesPort().getDeviceUsedByApplication(), diagram);
-
-			// determine which usesPortStub we are targeting
-			UsesPortStub usesPortStub = null;
-			for (UsesPortStub p : usesDeviceStub.getUsesPortStubs()) {
-				if (p != null && connectInterface.getUsesPort().getUsesIdentifier() != null
-					&& p.getName().equals(connectInterface.getUsesPort().getUsesIdentifier())) {
-					usesPortStub = p;
-				}
+	protected FindByStub getFindByStub(FindBy findBy, Diagram diagram) {
+		for (FindByStub findByStub : getFindByStubs(diagram)) {
+			if (AbstractFindByPattern.doFindByObjectsMatch(findBy, findByStub)) {
+				return findByStub;
 			}
-
-			// determine port anchor for usesDeviceStub
-			if (usesPortStub != null) {
-				PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, Anchor.class);
-				return (Anchor) pe;
-			}
-			return null;
 		}
-		return super.addSourceAnchor(connectInterface, diagram);
+		return null;
 	}
 
-	@Override
-	protected < E extends ConnectInterface< ? , ? , ? > > Anchor addTargetAnchor(E connectInterface, Diagram diagram, IFeatureProvider featureProvider)
-		throws CoreException {
+	protected Anchor getUsesPortAnchor(UsesPort< ? > usesPort, Diagram diagram) {
+		if (usesPort.getDeviceUsedByApplication() != null) {
+			UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(usesPort.getDeviceUsedByApplication(), diagram);
+
+			if (usesDeviceStub != null) {
+				final String portName = usesPort.getUsesIdentifier();
+				for (UsesPortStub usesPortStub : usesDeviceStub.getUsesPortStubs()) {
+					if (usesPortStub.getName().equals(portName)) {
+						return DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, Anchor.class);
+					}
+				}
+			}
+		} else if (usesPort.getFindBy() != null) {
+			FindByStub findByStub = getFindByStub(usesPort.getFindBy(), diagram);
+			if (findByStub != null) {
+				final String portName = usesPort.getUsesIdentifier();
+				for (UsesPortStub usesPortStub : findByStub.getUses()) {
+					if (usesPortStub.getName().equals(portName)) {
+						return DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, Anchor.class);
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	protected Anchor getSourceAnchor(ConnectInterface< ? , ? , ? > connectInterface, Diagram diagram) {
+		Anchor source = DUtil.lookupSourceAnchor(connectInterface, diagram);
+		if (source == null) {
+			if (connectInterface.getUsesPort() != null && connectInterface.getUsesPort().getDeviceUsedByApplication() != null) {
+				UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(connectInterface.getUsesPort().getDeviceUsedByApplication(), diagram);
+
+				if (usesDeviceStub != null) {
+					// determine which usesPortStub we are targeting
+					final String portName = connectInterface.getUsesPort().getUsesIdentifier();
+					for (UsesPortStub usesPortStub : usesDeviceStub.getUsesPortStubs()) {
+						if (usesPortStub.getName().equals(portName)) {
+							return DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, Anchor.class);
+						}
+					}
+				}
+			}
+		}
+		return source;
+	}
+
+	protected void addUsesPort(ConnectInterface< ? , ? , ? > connectInterface, Diagram diagram) {
+		if (connectInterface.getUsesPort().getDeviceUsedByApplication() != null) {
+			UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(connectInterface.getUsesPort().getDeviceUsedByApplication(), diagram);
+			if (usesDeviceStub != null) {
+				UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
+				usesPortStub.setName(connectInterface.getUsesPort().getUsesIdentifier());
+				usesDeviceStub.getUsesPortStubs().add(usesPortStub);
+			}
+		} else if (connectInterface.getUsesPort().getFindBy() != null) {
+			FindByStub findByStub = getFindByStub(connectInterface.getUsesPort().getFindBy(), diagram);
+			if (findByStub != null) {
+				UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
+				usesPortStub.setName(connectInterface.getUsesPort().getUsesIdentifier());
+				findByStub.getUses().add(usesPortStub);
+			}
+		}
+	}
+
+	protected Anchor getTargetAnchor(ConnectInterface< ? , ? , ? > connectInterface, Diagram diagram) {
+		Anchor targetAnchor = DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getTarget(), Anchor.class);
+		if (targetAnchor == null) {
+			ConnectionTarget target = getConnectionTarget(connectInterface, diagram);
+			if (target != null) {
+				return DUtil.getPictogramElementForBusinessObject(diagram, target, Anchor.class);
+			}
+		}
+		return targetAnchor;
+	}
+
+	protected ComponentSupportedInterfaceStub getComponentSupportedInterface(ComponentSupportedInterface componentSupportedInterface, Diagram diagram) {
+		if (componentSupportedInterface.getDeviceUsedByApplication() != null) {
+			UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(componentSupportedInterface.getDeviceUsedByApplication(), diagram);
+			if (usesDeviceStub != null) {
+				return usesDeviceStub.getInterface();
+			}
+		} else if (componentSupportedInterface.getFindBy() != null) {
+			FindByStub findByStub = getFindByStub(componentSupportedInterface.getFindBy(), diagram);
+			if (findByStub != null) {
+				return findByStub.getInterface();
+			}
+		}
+		return null;
+	}
+
+	protected ProvidesPortStub getProvidesPortStub(ProvidesPort< ? > providesPort, Diagram diagram) {
+		if (providesPort.getDeviceUsedByApplication() != null) {
+			UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(providesPort.getDeviceUsedByApplication(), diagram);
+			if (usesDeviceStub != null) {
+				// determine which usesPortStub we are targeting
+				for (ProvidesPortStub providesPortStub : usesDeviceStub.getProvidesPortStubs()) {
+					if (providesPortStub.getName().equals(providesPort.getProvidesIdentifier())) {
+						return providesPortStub;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	protected ConnectionTarget getConnectionTarget(ConnectInterface< ? , ? , ? > connectInterface, Diagram diagram) {
+		if (connectInterface.getProvidesPort() != null) {
+			return getProvidesPortStub(connectInterface.getProvidesPort(), diagram);
+		} else if (connectInterface.getComponentSupportedInterface() != null) {
+			return getComponentSupportedInterface(connectInterface.getComponentSupportedInterface(), diagram);
+		}
+		return null;
+	}
+
+	protected void addConnectionTarget(ConnectInterface< ? , ? , ? > connectInterface, Diagram diagram) {
 		if (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getDeviceUsedByApplication() != null) {
 			UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(connectInterface.getProvidesPort().getDeviceUsedByApplication(),
 				diagram);
-
-			// determine which providesPortStub we are targeting
-			ProvidesPortStub providesPortStub = null;
-			for (ProvidesPortStub p : usesDeviceStub.getProvidesPortStubs()) {
-				if (p != null && connectInterface.getProvidesPort().getProvidesIdentifier() != null
-					&& p.getName().equals(connectInterface.getProvidesPort().getProvidesIdentifier())) {
-					providesPortStub = p;
-				}
+			if (usesDeviceStub != null) {
+				ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
+				providesPortStub.setName(connectInterface.getProvidesPort().getProvidesIdentifier());
+				usesDeviceStub.getProvidesPortStubs().add(providesPortStub);
 			}
-
-			// determine port anchor for usesDeviceStub
-			if (providesPortStub != null) {
-				PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, providesPortStub, Anchor.class);
-				return (Anchor) pe;
-			}
-		} else
-			if (connectInterface.getComponentSupportedInterface() != null && connectInterface.getComponentSupportedInterface().getSupportedIdentifier() != null
-				&& connectInterface.getComponentSupportedInterface().getDeviceUsedByApplication() != null) {
-
-			UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(
-				connectInterface.getComponentSupportedInterface().getDeviceUsedByApplication(), diagram);
-
-			// determine port anchor for UsesDevice
-			if (usesDeviceStub.getInterface() != null) {
-				PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, usesDeviceStub.getInterface(), Anchor.class);
-				return (Anchor) pe;
-			}
-		} else {
-			return super.addTargetAnchor(connectInterface, diagram, featureProvider);
 		}
-		return null;
 	}
 
 }

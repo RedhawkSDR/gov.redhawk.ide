@@ -52,6 +52,18 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		super(fp);
 	}
 
+	protected List<FindByStub> getFindByStubs(Diagram diagram) {
+		// contains all the findByStubs that should exist in the diagram
+		ArrayList<FindByStub> findByStubs = new ArrayList<FindByStub>();
+
+		// populate list of findByStubs with existing instances from diagram
+		List<RHContainerShape> findByShapes = AbstractFindByPattern.getAllFindByShapes(diagram);
+		for (RHContainerShape findByShape : findByShapes) {
+			findByStubs.add(DUtil.getBusinessObject(findByShape, FindByStub.class));
+		}
+		return findByStubs;
+	}
+
 	/**
 	 * Add necessary FindByShapes based on connections in model
 	 * @return
