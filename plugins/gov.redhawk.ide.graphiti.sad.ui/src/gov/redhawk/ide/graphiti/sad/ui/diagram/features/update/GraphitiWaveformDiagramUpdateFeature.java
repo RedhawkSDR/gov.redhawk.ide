@@ -11,9 +11,7 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.update;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
@@ -42,7 +40,6 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
-import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.UsesDevice;
 
@@ -52,22 +49,15 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		super(fp);
 	}
 
-	protected boolean doesBusinessObjectExist(PictogramElement pe) {
-		EObject bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(pe);
-		if (bo.eIsProxy()) {
-			// If it's still a proxy it did not resolve, most likely because the object is gone
-			return false;
-		} else if (bo instanceof UsesDeviceStub) {
-			UsesDeviceStub stub = (UsesDeviceStub) bo;
+	@Override
+	protected boolean doesModelObjectExist(EObject object) {
+		if (object instanceof UsesDeviceStub) {
+			UsesDeviceStub stub = (UsesDeviceStub) object;
 			if (stub.getUsesDevice() == null || stub.getUsesDevice().eIsProxy()) {
 				return false;
 			}
 		}
-		return true;
-	}
-
-	protected boolean hasExistingShape(EObject eObject) {
-		return !Graphiti.getLinkService().getPictogramElements(getDiagram(), eObject).isEmpty();
+		return super.doesModelObjectExist(object);
 	}
 
 	protected boolean hasParentChanged(Shape shape) {
@@ -82,19 +72,11 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		}
 	}
 
-	protected boolean haveEndpointsChanged(Connection connection) {
-		SadConnectInterface connectInterface = DUtil.getBusinessObject(connection, SadConnectInterface.class);
-		Set<Anchor> anchors = new HashSet<Anchor>();
-		anchors.add(DUtil.getPictogramElementForBusinessObject(getDiagram(), connectInterface.getSource(), Anchor.class));
-		anchors.add(DUtil.getPictogramElementForBusinessObject(getDiagram(), connectInterface.getTarget(), Anchor.class));
-		return !anchors.contains(connection.getStart()) || !anchors.contains(connection.getEnd());
-	}
-
 	protected List<Shape> getShapesToRemove(Diagram diagram) {
 		List<Shape> removedShapes = new ArrayList<Shape>();
 		for (Shape shape : diagram.getChildren()) {
 			// Check if the linked business object still exists
-			if (!doesBusinessObjectExist(shape)) {
+			if (!doesLinkedBusinessObjectExist(shape)) {
 				removedShapes.add(shape);
 			} else if (hasParentChanged(shape)) {
 				// Parent has changed (e.g., component moved into a host collocation); delete the existing one and
@@ -123,14 +105,14 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		List<EObject> addedChildren = new ArrayList<EObject>();
 		for (SadComponentPlacement placement : sad.getPartitioning().getComponentPlacement()) {
 			for (SadComponentInstantiation instantiation : placement.getComponentInstantiation()) {
-				if (!hasExistingShape(instantiation)) {
+				if (!hasExistingShape(diagram, instantiation)) {
 					addedChildren.add(instantiation);
 				}
 			}
 		}
 		// Likewise, check for host collocations that do not have an associated shape
 		for (HostCollocation collocation : sad.getPartitioning().getHostCollocation()) {
-			if (!hasExistingShape(collocation)) {
+			if (!hasExistingShape(diagram, collocation)) {
 				addedChildren.add(collocation);
 			}
 		}
@@ -144,7 +126,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 					stub = AbstractUsesDevicePattern.createUsesDeviceStub(usesDevice);
 					addedChildren.add(stub);
 					diagram.eResource().getContents().add(stub);
-				} else if (!hasExistingShape(stub)) {
+				} else if (!hasExistingShape(diagram, stub)) {
 					addedChildren.add(stub);
 				}
 			}
@@ -152,39 +134,11 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		return addedChildren;
 	}
 
-	protected List<Connection> getConnectionsToRemove() {
-		List<Connection> removedConnections = new ArrayList<Connection>();
-		for (Connection connection : getDiagram().getConnections()) {
-			if (!doesBusinessObjectExist(connection)) {
-				removedConnections.add(connection);
-			} else if (haveEndpointsChanged(connection)) {
-				removedConnections.add(connection);
-			}
-		}
-		return removedConnections;
-	}
-
-	protected List<SadConnectInterface> getConnectionsToAdd(Diagram diagram) {
+	protected List<ConnectInterface< ? , ? , ? >> getModelConnections(Diagram diagram) {
 		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
-		List<SadConnectInterface> addedConnections = new ArrayList<SadConnectInterface>();
-		for (SadConnectInterface connectInterface : sad.getConnections().getConnectInterface()) {
-			if (!hasExistingShape(connectInterface)) {
-				addedConnections.add(connectInterface);
-			}
-		}
-		return addedConnections;
-	}
-
-	protected List<EObject> getStubsToRemove(Diagram diagram) {
-		List<EObject> removedStubs = new ArrayList<EObject>();
-		for (EObject object : diagram.eResource().getContents()) {
-			if (!(object instanceof Diagram)) {
-				if (!hasExistingShape(object)) {
-					removedStubs.add(object);
-				}
-			}
-		}
-		return removedStubs;
+		List<ConnectInterface < ? , ? , ? >> connections = new ArrayList<ConnectInterface< ? , ? , ? >>();
+		connections.addAll(sad.getConnections().getConnectInterface());
+		return connections;
 	}
 
 	/**
@@ -249,7 +203,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			}
 
 			// Remove stale connections
-			List<Connection> removedConnections = getConnectionsToRemove();
+			List<Connection> removedConnections = getConnectionsToRemove(diagram);
 			if (!removedConnections.isEmpty()) {
 				if (!performUpdate) {
 					return new Reason(true, "Need to remove " + removedConnections.size() + " connection(s)");
@@ -262,12 +216,12 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			}
 
 			// Add missing connections
-			List<SadConnectInterface> addedConnections = getConnectionsToAdd(diagram);
+			List< ConnectInterface< ? , ? , ? > > addedConnections = getConnectionsToAdd(diagram);
 			if (!addedConnections.isEmpty()) {
 				if (!performUpdate) {
 					return new Reason(true, "Need to add " + addedConnections.size() + " connection(s)");
 				}
-				for (SadConnectInterface connectInterface : addedConnections) {
+				for (ConnectInterface< ? , ? , ? > connectInterface : addedConnections) {
 					Anchor source = DUtil.lookupSourceAnchor(connectInterface, diagram);
 					if (source == null) {
 						source = addSourceAnchor(connectInterface, diagram);

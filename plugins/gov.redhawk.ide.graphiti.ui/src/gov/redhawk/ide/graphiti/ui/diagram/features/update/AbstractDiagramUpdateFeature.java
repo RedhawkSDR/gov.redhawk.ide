@@ -11,18 +11,24 @@
 package gov.redhawk.ide.graphiti.ui.diagram.features.update;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.impl.DefaultUpdateDiagramFeature;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
@@ -358,4 +364,65 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		return null;
 	}
 
+	protected boolean hasExistingShape(Diagram diagram, EObject eObject) {
+		return !Graphiti.getLinkService().getPictogramElements(diagram, eObject).isEmpty();
+	}
+
+	protected List<EObject> getStubsToRemove(Diagram diagram) {
+		List<EObject> removedStubs = new ArrayList<EObject>();
+		for (EObject object : diagram.eResource().getContents()) {
+			if (!(object instanceof Diagram)) {
+				if (!hasExistingShape(diagram, object)) {
+					removedStubs.add(object);
+				}
+			}
+		}
+		return removedStubs;
+	}
+
+	protected List<ConnectInterface< ? , ? , ? >> getModelConnections(Diagram diagram) {
+		return Collections.emptyList();
+	}
+
+	protected List<ConnectInterface< ? , ? , ? >> getConnectionsToAdd(Diagram diagram) {
+		List<ConnectInterface < ? , ? , ? >> addedConnections = new ArrayList<ConnectInterface< ? , ? , ? >>();
+		for (ConnectInterface< ? , ? , ? > connectInterface : getModelConnections(diagram)) {
+			if (!hasExistingShape(diagram, connectInterface)) {
+				addedConnections.add(connectInterface);
+			}
+		}
+		return addedConnections;
+	}
+
+	protected boolean haveEndpointsChanged(Connection connection, Diagram diagram) {
+		ConnectInterface< ? , ? , ?> connectInterface = DUtil.getBusinessObject(connection, ConnectInterface.class);
+		Set<Anchor> anchors = new HashSet<Anchor>();
+		anchors.add(DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getSource(), Anchor.class));
+		anchors.add(DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getTarget(), Anchor.class));
+		return !anchors.contains(connection.getStart()) || !anchors.contains(connection.getEnd());
+	}
+
+	protected boolean doesModelObjectExist(EObject object) {
+		if (object == null || object.eIsProxy()) {
+			return false;
+		}
+		return true;
+	}
+
+	protected boolean doesLinkedBusinessObjectExist(PictogramElement pe) {
+		EObject bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(pe);
+		return doesModelObjectExist(bo);
+	}
+
+	protected List<Connection> getConnectionsToRemove(Diagram diagram) {
+		List<Connection> removedConnections = new ArrayList<Connection>();
+		for (Connection connection : diagram.getConnections()) {
+			if (!doesLinkedBusinessObjectExist(connection)) {
+				removedConnections.add(connection);
+			} else if (haveEndpointsChanged(connection, diagram)) {
+				removedConnections.add(connection);
+			}
+		}
+		return removedConnections;
+	}
 }
