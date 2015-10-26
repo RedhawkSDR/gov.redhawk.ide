@@ -40,10 +40,16 @@ import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.FindByUtil;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterface;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
+import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.partitioning.ProvidesPort;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPort;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
@@ -177,6 +183,15 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			}
 		}
 		return false;
+	}
+
+	protected FindByStub getFindByStub(FindBy findBy, Diagram diagram) {
+		for (FindByStub findByStub : getFindByStubs(diagram)) {
+			if (AbstractFindByPattern.doFindByObjectsMatch(findBy, findByStub)) {
+				return findByStub;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -503,4 +518,112 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		IReason parentReason = super.updateNeeded(context);
 		return new Reason(parentReason.toBoolean(), parentReason.getText());
 	}
+
+	protected List<UsesPortStub> getUsesPortStubs(UsesPort< ? > usesPort, Diagram diagram) {
+		if (usesPort.getFindBy() != null) {
+			FindByStub findByStub = getFindByStub(usesPort.getFindBy(), diagram);
+			if (findByStub != null) {
+				return findByStub.getUses();
+			}
+		}
+		return Collections.emptyList();
+	}
+
+	protected UsesPortStub getUsesPortStub(UsesPort< ? > usesPort, Diagram diagram) {
+		for (UsesPortStub usesPortStub : getUsesPortStubs(usesPort, diagram)) {
+			if (usesPortStub.getName().equals(usesPort.getUsesIdentifier())) {
+				return usesPortStub;
+			}
+		}
+		return null;
+	}
+
+	protected Anchor getSourceAnchor(ConnectInterface< ? , ? , ? > connectInterface, Diagram diagram) {
+		Anchor source = DUtil.lookupSourceAnchor(connectInterface, diagram);
+		if (source == null && connectInterface.getUsesPort() != null) {
+			UsesPortStub usesPortStub = getUsesPortStub(connectInterface.getUsesPort(), diagram);
+			if (usesPortStub != null) {
+				return DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, Anchor.class);
+			}
+		}
+		return source;
+	}
+
+	protected void addUsesPort(ConnectInterface< ? , ? , ? > connectInterface, Diagram diagram) {
+		if (connectInterface.getUsesPort().getFindBy() != null) {
+			FindByStub findByStub = getFindByStub(connectInterface.getUsesPort().getFindBy(), diagram);
+			if (findByStub != null) {
+				UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
+				usesPortStub.setName(connectInterface.getUsesPort().getUsesIdentifier());
+				findByStub.getUses().add(usesPortStub);
+			}
+		}
+	}
+
+	protected ComponentSupportedInterfaceStub getComponentSupportedInterface(ComponentSupportedInterface componentSupportedInterface, Diagram diagram) {
+		if (componentSupportedInterface.getFindBy() != null) {
+			FindByStub findByStub = getFindByStub(componentSupportedInterface.getFindBy(), diagram);
+			if (findByStub != null) {
+				return findByStub.getInterface();
+			}
+		}
+		return null;
+	}
+
+	protected List<ProvidesPortStub> getProvidesPortStubs(ProvidesPort< ? > providesPort, Diagram diagram) {
+		if (providesPort.getFindBy() != null) {
+			FindByStub findByStub = getFindByStub(providesPort.getFindBy(), diagram);
+			if (findByStub != null) {
+				return findByStub.getProvides();
+			}
+		}
+		return Collections.emptyList();
+	}
+
+	protected void addProvidesPort(ProvidesPort< ? > providesPort, Diagram diagram) {
+		if (providesPort.getFindBy() != null) {
+			FindByStub findByStub = getFindByStub(providesPort.getFindBy(), diagram);
+			if (findByStub != null) {
+				ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
+				providesPortStub.setName(providesPort.getProvidesIdentifier());
+				findByStub.getProvides().add(providesPortStub);
+			}
+		}
+	}
+
+	protected ProvidesPortStub getProvidesPortStub(ProvidesPort< ? > providesPort, Diagram diagram) {
+		for (ProvidesPortStub providesPortStub : getProvidesPortStubs(providesPort, diagram)) {
+			if (providesPortStub.getName().equals(providesPort.getProvidesIdentifier())) {
+				return providesPortStub;
+			}
+		}
+		return null;
+	}
+
+	protected ConnectionTarget getConnectionTarget(ConnectInterface< ? , ? , ? > connectInterface, Diagram diagram) {
+		if (connectInterface.getProvidesPort() != null) {
+			return getProvidesPortStub(connectInterface.getProvidesPort(), diagram);
+		} else if (connectInterface.getComponentSupportedInterface() != null) {
+			return getComponentSupportedInterface(connectInterface.getComponentSupportedInterface(), diagram);
+		}
+		return null;
+	}
+
+	protected Anchor getTargetAnchor(ConnectInterface< ? , ? , ? > connectInterface, Diagram diagram) {
+		Anchor targetAnchor = DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getTarget(), Anchor.class);
+		if (targetAnchor == null) {
+			ConnectionTarget target = getConnectionTarget(connectInterface, diagram);
+			if (target != null) {
+				return DUtil.getPictogramElementForBusinessObject(diagram, target, Anchor.class);
+			}
+		}
+		return targetAnchor;
+	}
+
+	protected void addConnectionTarget(ConnectInterface< ? , ? , ? > connectInterface, Diagram diagram) {
+		if (connectInterface.getProvidesPort() != null) {
+			addProvidesPort(connectInterface.getProvidesPort(), diagram);
+		}
+	}
+
 }
