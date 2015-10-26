@@ -72,19 +72,16 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		}
 	}
 
-	protected List<Shape> getShapesToRemove(Diagram diagram) {
-		List<Shape> removedShapes = new ArrayList<Shape>();
-		for (Shape shape : diagram.getChildren()) {
-			// Check if the linked business object still exists
-			if (!doesLinkedBusinessObjectExist(shape)) {
-				removedShapes.add(shape);
-			} else if (hasParentChanged(shape)) {
-				// Parent has changed (e.g., component moved into a host collocation); delete the existing one and
-				// re-add it later
-				removedShapes.add(shape);
-			}
+	@Override
+	protected boolean shouldRemoveShape(Shape shape) {
+		if (super.shouldRemoveShape(shape)) {
+			return true;
+		} else if (hasParentChanged(shape)) {
+			// Parent has changed (e.g., component moved into a host collocation); delete the existing one and re-add
+			// it later
+			return true;
 		}
-		return removedShapes;
+		return false;
 	}
 
 	protected UsesDeviceStub getUsesDeviceStub(UsesDevice usesDevice, Diagram diagram) {
@@ -152,87 +149,59 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 	 * @throws CoreException
 	 */
 	public Reason internalUpdate(IUpdateContext context, boolean performUpdate) throws CoreException {
-
-		boolean updateStatus = false;
-		boolean layoutNeeded = false;
+		if (!performUpdate) {
+			return updateNeeded(context);
+		}
 
 		PictogramElement pe = context.getPictogramElement();
 		if (pe instanceof Diagram) {
+			boolean updateStatus = false;
+			boolean layoutNeeded = false;
+
 			Diagram diagram = (Diagram) pe;
 
 			// Remove children
-			List<Shape> removedChildren = getShapesToRemove(diagram);
-			if (!removedChildren.isEmpty()) {
-				if (!performUpdate) {
-					return new Reason(true, "Existing shapes need to be removed");
-				} else {
-					for (Shape shape : removedChildren) {
-						IRemoveContext removeContext = new RemoveContext(shape);
-						IRemoveFeature removeFeature = getFeatureProvider().getRemoveFeature(removeContext);
-						if (removeFeature != null) {
-							removeFeature.execute(removeContext);
-						}
-					}
-					updateStatus = true;
+			for (Shape shape : getShapesToRemove(diagram)) {
+				IRemoveContext removeContext = new RemoveContext(shape);
+				IRemoveFeature removeFeature = getFeatureProvider().getRemoveFeature(removeContext);
+				if (removeFeature != null) {
+					removeFeature.execute(removeContext);
 				}
+				updateStatus = true;
 			}
 
 			// Prune unused stubs
 			List<EObject> removedStubs = getStubsToRemove(diagram);
 			if (!removedStubs.isEmpty()) {
-				if (!performUpdate) {
-					return new Reason(true, "Diagram resource contents need pruning");
-				} else {
-					diagram.eResource().getContents().removeAll(removedStubs);
-					updateStatus = true;
-				}
+				diagram.eResource().getContents().removeAll(removedStubs);
+				updateStatus = true;
 			}
 
 			// Add shapes for SAD objects that do not have them
-			List<EObject> addedChildren = getObjectsToAdd(diagram);
-			if (!addedChildren.isEmpty()) {
-				if (!performUpdate) {
-					return new Reason(true, "Missing component or host collocation shapes");
-				} else {
-					for (EObject object : addedChildren) {
-						DUtil.addShapeViaFeature(getFeatureProvider(), diagram, object);
-					}
-					updateStatus = true;
-					layoutNeeded = true;
-				}
+			for (EObject object : getObjectsToAdd(diagram)) {
+				DUtil.addShapeViaFeature(getFeatureProvider(), diagram, object);
+				updateStatus = true;
+				layoutNeeded = true;
 			}
 
 			// Remove stale connections
-			List<Connection> removedConnections = getConnectionsToRemove(diagram);
-			if (!removedConnections.isEmpty()) {
-				if (!performUpdate) {
-					return new Reason(true, "Need to remove " + removedConnections.size() + " connection(s)");
-				} else {
-					for (Connection connection : removedConnections) {
-						DUtil.fastDeleteConnection(connection);
-					}
-					updateStatus = true;
-				}
+			for (Connection connection : getConnectionsToRemove(diagram)) {
+				DUtil.fastDeleteConnection(connection);
+				updateStatus = true;
 			}
 
 			// Add missing connections
-			List< ConnectInterface< ? , ? , ? > > addedConnections = getConnectionsToAdd(diagram);
-			if (!addedConnections.isEmpty()) {
-				if (!performUpdate) {
-					return new Reason(true, "Need to add " + addedConnections.size() + " connection(s)");
+			for (ConnectInterface< ? , ? , ? > connectInterface : getConnectionsToAdd(diagram)) {
+				Anchor source = DUtil.lookupSourceAnchor(connectInterface, diagram);
+				if (source == null) {
+					source = addSourceAnchor(connectInterface, diagram);
 				}
-				for (ConnectInterface< ? , ? , ? > connectInterface : addedConnections) {
-					Anchor source = DUtil.lookupSourceAnchor(connectInterface, diagram);
-					if (source == null) {
-						source = addSourceAnchor(connectInterface, diagram);
-					}
-					Anchor target = DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getTarget(), Anchor.class);
-					if (target == null) {
-						target = addTargetAnchor(connectInterface, diagram, getFeatureProvider());
-					}
-					if (source != null && target != null) {
-						DUtil.addConnectionViaFeature(getFeatureProvider(), connectInterface, source, target);
-					}
+				Anchor target = DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getTarget(), Anchor.class);
+				if (target == null) {
+					target = addTargetAnchor(connectInterface, diagram, getFeatureProvider());
+				}
+				if (source != null && target != null) {
+					DUtil.addConnectionViaFeature(getFeatureProvider(), connectInterface, source, target);
 				}
 				updateStatus = true;
 			}
@@ -240,38 +209,26 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			// TODO: ensure our SAD has an assembly controller
 			// set one if necessary, why bother the user?
 
-			if (performUpdate) {
-				// Update components
-				updateStatus |= super.update(context);
+			// Update components
+			if (super.update(context)) {
+				updateStatus = true;
+			}
 
-				if (layoutNeeded) {
-					LayoutDiagramFeature layoutFeature = new LayoutDiagramFeature(getFeatureProvider());
-					layoutFeature.execute(null);
-					updateStatus = true;
-				}
+			if (layoutNeeded) {
+				LayoutDiagramFeature layoutFeature = new LayoutDiagramFeature(getFeatureProvider());
+				layoutFeature.execute(null);
 			}
 
 			// Ensure assembly controller is set in case a component was deleted that used to be the assembly controller
 			SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
 			ComponentPattern.organizeStartOrder(sad, diagram, getFeatureProvider());
-		}
 
-		if (updateStatus && performUpdate) {
-			return new Reason(true, "Update successful");
+			if (updateStatus) {
+				return new Reason(true, "Update successful");
+			}
 		}
 
 		return new Reason(false, "No updates required");
-	}
-
-	@Override
-	public Reason updateNeeded(IUpdateContext context) {
-		try {
-			return internalUpdate(context, false);
-		} catch (CoreException e) {
-			// PASS
-			// TODO: catch exception
-		}
-		return null;
 	}
 
 	@Override

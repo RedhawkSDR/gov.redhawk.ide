@@ -23,11 +23,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.IReason;
+import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.DefaultUpdateDiagramFeature;
+import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 
@@ -368,6 +372,13 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		return !Graphiti.getLinkService().getPictogramElements(diagram, eObject).isEmpty();
 	}
 
+	protected boolean shouldRemoveShape(Shape shape) {
+		if (!doesLinkedBusinessObjectExist(shape)) {
+			return true;
+		}
+		return false;
+	}
+
 	protected List<EObject> getStubsToRemove(Diagram diagram) {
 		List<EObject> removedStubs = new ArrayList<EObject>();
 		for (EObject object : diagram.eResource().getContents()) {
@@ -380,22 +391,8 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		return removedStubs;
 	}
 
-	protected List<ConnectInterface< ? , ? , ? >> getModelConnections(Diagram diagram) {
-		return Collections.emptyList();
-	}
-
-	protected List<ConnectInterface< ? , ? , ? >> getConnectionsToAdd(Diagram diagram) {
-		List<ConnectInterface < ? , ? , ? >> addedConnections = new ArrayList<ConnectInterface< ? , ? , ? >>();
-		for (ConnectInterface< ? , ? , ? > connectInterface : getModelConnections(diagram)) {
-			if (!hasExistingShape(diagram, connectInterface)) {
-				addedConnections.add(connectInterface);
-			}
-		}
-		return addedConnections;
-	}
-
 	protected boolean haveEndpointsChanged(Connection connection, Diagram diagram) {
-		ConnectInterface< ? , ? , ?> connectInterface = DUtil.getBusinessObject(connection, ConnectInterface.class);
+		ConnectInterface< ? , ? , ? > connectInterface = DUtil.getBusinessObject(connection, ConnectInterface.class);
 		Set<Anchor> anchors = new HashSet<Anchor>();
 		anchors.add(DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getSource(), Anchor.class));
 		anchors.add(DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getTarget(), Anchor.class));
@@ -414,6 +411,20 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		return doesModelObjectExist(bo);
 	}
 
+	protected List<EObject> getObjectsToAdd(Diagram diagram) {
+		return Collections.emptyList();
+	}
+
+	protected List<Shape> getShapesToRemove(Diagram diagram) {
+		List<Shape> removedShapes = new ArrayList<Shape>();
+		for (Shape shape : diagram.getChildren()) {
+			if (shouldRemoveShape(shape)) {
+				removedShapes.add(shape);
+			}
+		}
+		return removedShapes;
+	}
+
 	protected List<Connection> getConnectionsToRemove(Diagram diagram) {
 		List<Connection> removedConnections = new ArrayList<Connection>();
 		for (Connection connection : diagram.getConnections()) {
@@ -424,5 +435,60 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			}
 		}
 		return removedConnections;
+	}
+
+	protected List<ConnectInterface< ? , ? , ? >> getModelConnections(Diagram diagram) {
+		return Collections.emptyList();
+	}
+
+	protected List<ConnectInterface< ? , ? , ? >> getConnectionsToAdd(Diagram diagram) {
+		List<ConnectInterface < ? , ? , ? >> addedConnections = new ArrayList<ConnectInterface< ? , ? , ? >>();
+		for (ConnectInterface< ? , ? , ? > connectInterface : getModelConnections(diagram)) {
+			if (!hasExistingShape(diagram, connectInterface)) {
+				addedConnections.add(connectInterface);
+			}
+		}
+		return addedConnections;
+	}
+
+	@Override
+	public Reason updateNeeded(IUpdateContext context) {
+		PictogramElement pe = context.getPictogramElement();
+		if (pe instanceof Diagram) {
+			Diagram diagram = (Diagram) pe;
+
+			// Check for stale shapes
+			List<Shape> removedChildren = getShapesToRemove(diagram);
+			if (!removedChildren.isEmpty()) {
+				return new Reason(true, "Need to remove " + removedChildren.size() + " shape(s)");
+			}
+
+			// Check for unused stubs
+			List<EObject> removedStubs = getStubsToRemove(diagram);
+			if (!removedStubs.isEmpty()) {
+				return new Reason(true, "Diagram resource contents need pruning");
+			}
+
+			// Check for SAD objects that do not have shapes
+			List<EObject> addedChildren = getObjectsToAdd(diagram);
+			if (!addedChildren.isEmpty()) {
+				return new Reason(true, "Missing " + addedChildren.size() + " shape(s)");
+			}
+
+			// Check for stale connections
+			List<Connection> removedConnections = getConnectionsToRemove(diagram);
+			if (!removedConnections.isEmpty()) {
+				return new Reason(true, "Need to remove " + removedConnections.size() + " connection(s)");
+			}
+
+			// Check for SAD connections that do not have a diagram connection
+			List<ConnectInterface< ? , ? , ? >> addedConnections = getConnectionsToAdd(diagram);
+			if (!addedConnections.isEmpty()) {
+				return new Reason(true, "Need to add " + addedConnections.size() + " connection(s)");
+			}
+		}
+
+		IReason parentReason = super.updateNeeded(context);
+		return new Reason(parentReason.toBoolean(), parentReason.getText());
 	}
 }
