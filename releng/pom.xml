@@ -34,7 +34,6 @@
     <nxm>http://nextmidas.techma.com/p2/nxm/updates/stable</nxm>
     <nxm-rcp>http://download.redhawksdr.org/nxm-rcp/releases/1.0</nxm-rcp>
     <jacorb>http://download.redhawksdr.org/jacorb/updates/stable</jacorb>
-    <logback>http://download.redhawksdr.org/logback/latest</logback>
     <mil.jpeojtrs.sca>http://download.redhawksdr.org/mil.jpeojtrs.sca/releases/1.9</mil.jpeojtrs.sca>
     <gov.redhawk.core>http://download.redhawksdr.org/gov.redhawk.core/releases/1.9</gov.redhawk.core>
     <gov.redhawk.core.rcp>http://download.redhawksdr.org/gov.redhawk.core/rcp/releases/1.9</gov.redhawk.core.rcp>
@@ -102,12 +101,6 @@
       <url>${jacorb}</url>
     </repository>
 
-    <repository>
-      <id>logback</id>
-      <layout>p2</layout>
-      <url>${logback}</url>
-    </repository>
-    
     <repository>
       <id>nebula</id>
       <layout>p2</layout>
