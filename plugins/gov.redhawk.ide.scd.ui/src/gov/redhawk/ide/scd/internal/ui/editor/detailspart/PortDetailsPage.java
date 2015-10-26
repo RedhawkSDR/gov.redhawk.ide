@@ -52,6 +52,7 @@ import gov.redhawk.ui.editor.FormEntryAdapter;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaDetails;
 import gov.redhawk.ui.editor.ScaFormPage;
+import gov.redhawk.ui.util.SCAEditorUtil;
 import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.PortDirection;
 import mil.jpeojtrs.sca.scd.PortType;
@@ -127,6 +128,9 @@ public class PortDetailsPage extends ScaDetails {
 
 	private PortTypeAdapter portTypeAdapter = new PortTypeAdapter();
 
+	private boolean editable;
+
+
 	public PortDetailsPage(ScaFormPage parentPage) {
 		super(parentPage);
 	}
@@ -180,6 +184,7 @@ public class PortDetailsPage extends ScaDetails {
 		bindings.add(dataBindingContext.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(),
 			descriptionEntry.getText()), EMFEditObservables.observeValue(getEditingDomain(), input, ScdPackage.Literals.ABSTRACT_PORT__DESCRIPTION)));
 
+		this.setEditable();
 		return bindings;
 	}
 
@@ -258,6 +263,14 @@ public class PortDetailsPage extends ScaDetails {
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		label.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).create());
 		return label;
+	}
+
+	private void setEditable() {
+		this.editable = SCAEditorUtil.isEditableResource(getPage(), port.eResource());
+		this.nameEntry.setEditable(this.editable);
+		this.directionCombo.getCombo().setEnabled(this.editable);
+		this.typeTable.getTable().setEnabled(this.editable);
+		this.descriptionEntry.setEditable(this.editable);
 	}
 
 }

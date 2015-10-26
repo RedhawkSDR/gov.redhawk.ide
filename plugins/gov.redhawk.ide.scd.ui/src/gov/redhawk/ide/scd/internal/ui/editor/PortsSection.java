@@ -44,6 +44,7 @@ import org.omg.CosEventChannelAdmin.EventChannelHelper;
 
 import gov.redhawk.ide.scd.internal.ui.IndexedColumnLabelProvider;
 import gov.redhawk.ui.editor.TreeSection;
+import gov.redhawk.ui.util.SCAEditorUtil;
 import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.Ports;
 import mil.jpeojtrs.sca.scd.Provides;
@@ -64,6 +65,7 @@ public class PortsSection extends TreeSection {
 	private Ports ports;
 
 	private Disposable disposable;
+	private boolean editable;
 
 	private static class BidirPortFilter extends ViewerFilter {
 
@@ -157,7 +159,8 @@ public class PortsSection extends TreeSection {
 		if (fViewer != null) {
 			fViewer.setInput(ports);
 		}
-	
+
+		this.setEditable();
 		super.refresh(resource);
 
 		IStructuredSelection selection = fViewer.getStructuredSelection();
@@ -173,7 +176,7 @@ public class PortsSection extends TreeSection {
 		if (selection.isEmpty()) {
 			selectDefault();
 		} else {
-			getTreePart().setButtonEnabled(BUTTON_REMOVE, true);
+			getTreePart().setButtonEnabled(BUTTON_REMOVE, this.editable);
 			getPage().setSelection(selection);
 		}
 	}
@@ -185,6 +188,12 @@ public class PortsSection extends TreeSection {
 			return;
 		}
 		fViewer.setSelection(new StructuredSelection(items[0].getData()));
+	}
+
+	private void setEditable() {
+		this.editable = SCAEditorUtil.isEditableResource(getPage(), this.ports.eResource());
+		this.getTreePart().setButtonEnabled(BUTTON_ADD, this.editable);
+		this.getTreePart().setButtonEnabled(BUTTON_REMOVE, this.editable);
 	}
 
 	@Override
