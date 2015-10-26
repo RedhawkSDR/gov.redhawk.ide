@@ -11,7 +11,9 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.update;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
@@ -82,12 +84,10 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 
 	protected boolean haveEndpointsChanged(Connection connection) {
 		SadConnectInterface connectInterface = DUtil.getBusinessObject(connection, SadConnectInterface.class);
-		Anchor source = DUtil.getPictogramElementForBusinessObject(getDiagram(), connectInterface.getSource(), Anchor.class);
-		Anchor target = DUtil.getPictogramElementForBusinessObject(getDiagram(), connectInterface.getTarget(), Anchor.class);
-		if (source == null || target == null) {
-			return true;
-		}
-		return !connection.getAnchors().contains(source) || !connection.getAnchors().contains(target);
+		Set<Anchor> anchors = new HashSet<Anchor>();
+		anchors.add(DUtil.getPictogramElementForBusinessObject(getDiagram(), connectInterface.getSource(), Anchor.class));
+		anchors.add(DUtil.getPictogramElementForBusinessObject(getDiagram(), connectInterface.getTarget(), Anchor.class));
+		return !anchors.contains(connection.getStart()) || !anchors.contains(connection.getEnd());
 	}
 
 	protected List<Shape> getShapesToRemove(Diagram diagram) {
@@ -162,6 +162,17 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			}
 		}
 		return removedConnections;
+	}
+
+	protected List<SadConnectInterface> getConnectionsToAdd(Diagram diagram) {
+		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
+		List<SadConnectInterface> addedConnections = new ArrayList<SadConnectInterface>();
+		for (SadConnectInterface connectInterface : sad.getConnections().getConnectInterface()) {
+			if (!hasExistingShape(connectInterface)) {
+				addedConnections.add(connectInterface);
+			}
+		}
+		return addedConnections;
 	}
 
 	protected List<EObject> getStubsToRemove(Diagram diagram) {
@@ -250,29 +261,26 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 				}
 			}
 
-			// get sad from diagram
-			SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
-
 			// Add missing connections
-			for (SadConnectInterface connectInterface : sad.getConnections().getConnectInterface()) {
-				if (!hasExistingShape(connectInterface)) {
-					if (!performUpdate) {
-						return new Reason(true, "Need to add connection '" + connectInterface.getId() + "'");
-					} else {
-						Anchor source = DUtil.lookupSourceAnchor(connectInterface, diagram);
-						if (source == null) {
-							source = addSourceAnchor(connectInterface, diagram);
-						}
-						Anchor target = DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getTarget(), Anchor.class);
-						if (target == null) {
-							target = addTargetAnchor(connectInterface, diagram, getFeatureProvider());
-						}
-						if (source != null && target != null) {
-							DUtil.addConnectionViaFeature(getFeatureProvider(), connectInterface, source, target);
-						}
-						updateStatus = true;
+			List<SadConnectInterface> addedConnections = getConnectionsToAdd(diagram);
+			if (!addedConnections.isEmpty()) {
+				if (!performUpdate) {
+					return new Reason(true, "Need to add " + addedConnections.size() + " connection(s)");
+				}
+				for (SadConnectInterface connectInterface : addedConnections) {
+					Anchor source = DUtil.lookupSourceAnchor(connectInterface, diagram);
+					if (source == null) {
+						source = addSourceAnchor(connectInterface, diagram);
+					}
+					Anchor target = DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getTarget(), Anchor.class);
+					if (target == null) {
+						target = addTargetAnchor(connectInterface, diagram, getFeatureProvider());
+					}
+					if (source != null && target != null) {
+						DUtil.addConnectionViaFeature(getFeatureProvider(), connectInterface, source, target);
 					}
 				}
+				updateStatus = true;
 			}
 
 			// TODO: ensure our SAD has an assembly controller
@@ -290,7 +298,8 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			}
 
 			// Ensure assembly controller is set in case a component was deleted that used to be the assembly controller
-			ComponentPattern.organizeStartOrder(sad, getDiagram(), getFeatureProvider());
+			SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
+			ComponentPattern.organizeStartOrder(sad, diagram, getFeatureProvider());
 		}
 
 		if (updateStatus && performUpdate) {
