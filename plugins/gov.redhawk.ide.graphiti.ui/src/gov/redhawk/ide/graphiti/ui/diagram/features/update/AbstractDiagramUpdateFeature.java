@@ -24,7 +24,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
+import org.eclipse.graphiti.features.IRemoveFeature;
+import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.impl.DefaultUpdateDiagramFeature;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -37,6 +40,7 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
+import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.FindByUtil;
@@ -479,7 +483,7 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	}
 
 	@Override
-	public Reason updateNeeded(IUpdateContext context) {
+	public IReason updateNeeded(IUpdateContext context) {
 		PictogramElement pe = context.getPictogramElement();
 		if (pe instanceof Diagram) {
 			Diagram diagram = (Diagram) pe;
@@ -487,36 +491,121 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			// Check for stale shapes
 			List<Shape> removedChildren = getShapesToRemove(diagram);
 			if (!removedChildren.isEmpty()) {
-				return new Reason(true, "Need to remove " + removedChildren.size() + " shape(s)");
+				return Reason.createTrueReason("Need to remove " + removedChildren.size() + " shape(s)");
 			}
 
 			// Check for unused stubs
 			List<EObject> removedStubs = getStubsToRemove(diagram);
 			if (!removedStubs.isEmpty()) {
-				return new Reason(true, "Diagram resource contents need pruning");
+				return Reason.createTrueReason("Diagram resource contents need pruning");
 			}
 
 			// Check for SAD objects that do not have shapes
 			List<EObject> addedChildren = getObjectsToAdd(diagram);
 			if (!addedChildren.isEmpty()) {
-				return new Reason(true, "Missing " + addedChildren.size() + " shape(s)");
+				return Reason.createTrueReason("Missing " + addedChildren.size() + " shape(s)");
 			}
 
 			// Check for stale connections
 			List<Connection> removedConnections = getConnectionsToRemove(diagram);
 			if (!removedConnections.isEmpty()) {
-				return new Reason(true, "Need to remove " + removedConnections.size() + " connection(s)");
+				return Reason.createTrueReason("Need to remove " + removedConnections.size() + " connection(s)");
 			}
 
 			// Check for SAD connections that do not have a diagram connection
 			List<ConnectInterface< ? , ? , ? >> addedConnections = getConnectionsToAdd(diagram);
 			if (!addedConnections.isEmpty()) {
-				return new Reason(true, "Need to add " + addedConnections.size() + " connection(s)");
+				return Reason.createTrueReason("Need to add " + addedConnections.size() + " connection(s)");
 			}
 		}
 
-		IReason parentReason = super.updateNeeded(context);
-		return new Reason(parentReason.toBoolean(), parentReason.getText());
+		return super.updateNeeded(context);
+	}
+
+	@Override
+	public boolean update(IUpdateContext context) {
+		PictogramElement pe = context.getPictogramElement();
+		if (pe instanceof Diagram) {
+			boolean updateStatus = false;
+			boolean layoutNeeded = false;
+
+			Diagram diagram = (Diagram) pe;
+
+			// Remove children
+			for (Shape shape : getShapesToRemove(diagram)) {
+				IRemoveContext removeContext = new RemoveContext(shape);
+				IRemoveFeature removeFeature = getFeatureProvider().getRemoveFeature(removeContext);
+				if (removeFeature != null) {
+					removeFeature.execute(removeContext);
+				}
+				updateStatus = true;
+			}
+
+			// Prune unused stubs
+			List<EObject> removedStubs = getStubsToRemove(diagram);
+			if (!removedStubs.isEmpty()) {
+				diagram.eResource().getContents().removeAll(removedStubs);
+				updateStatus = true;
+			}
+
+			// Add shapes for SAD objects that do not have them
+			for (EObject object : getObjectsToAdd(diagram)) {
+				DUtil.addShapeViaFeature(getFeatureProvider(), diagram, object);
+				updateStatus = true;
+				layoutNeeded = true;
+			}
+
+			// Remove stale connections
+			for (Connection connection : getConnectionsToRemove(diagram)) {
+				DUtil.fastDeleteConnection(connection);
+				updateStatus = true;
+			}
+
+			// Add missing connection endpoints
+			List< ConnectInterface< ? , ? , ? > > addedConnections = getConnectionsToAdd(diagram);
+			for (ConnectInterface< ? , ? , ? > connectInterface : addedConnections) {
+				if (getSourceAnchor(connectInterface, diagram) == null) {
+					addUsesPort(connectInterface, diagram);
+				}
+				if (getTargetAnchor(connectInterface, diagram) == null) {
+					addConnectionTarget(connectInterface, diagram);
+				}
+				updateStatus = true;
+			}
+
+			// Check for FindBy stubs stored in the diagram's resource that do not have corresponding shapes, which
+			// were most likely created for the connection endpoints above
+			for (FindByStub findByStub : getDiagramStubs(diagram, FindByStub.class)) {
+				if (!hasExistingShape(diagram, findByStub)) {
+					DUtil.addShapeViaFeature(getFeatureProvider(), diagram, findByStub);
+					updateStatus = true;
+					layoutNeeded = true;
+				}
+			}
+
+			// Update components
+			if (super.update(context)) {
+				updateStatus = true;
+			}
+
+			// Add missing connections
+			for (ConnectInterface< ? , ? , ? > connectInterface : addedConnections) {
+				Anchor source = getSourceAnchor(connectInterface, diagram);
+				Anchor target = getTargetAnchor(connectInterface, diagram);
+				if (source != null && target != null) {
+					DUtil.addConnectionViaFeature(getFeatureProvider(), connectInterface, source, target);
+				}
+				updateStatus = true;
+			}
+
+			if (layoutNeeded) {
+				LayoutDiagramFeature layoutFeature = new LayoutDiagramFeature(getFeatureProvider());
+				layoutFeature.execute(null);
+			}
+
+			return updateStatus;
+		}
+		return false;
 	}
 
 	protected List<UsesPortStub> getUsesPortStubs(UsesPort< ? > usesPort, Diagram diagram) {

@@ -16,13 +16,9 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.IRemoveFeature;
-import org.eclipse.graphiti.features.context.IRemoveContext;
+import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.pictograms.Anchor;
-import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -30,13 +26,11 @@ import org.eclipse.graphiti.services.Graphiti;
 
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.update.AbstractDiagramUpdateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterface;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPort;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -151,117 +145,35 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 	 * @return
 	 * @throws CoreException
 	 */
+	@Deprecated
 	public Reason internalUpdate(IUpdateContext context, boolean performUpdate) throws CoreException {
 		if (!performUpdate) {
-			return updateNeeded(context);
-		}
-
-		PictogramElement pe = context.getPictogramElement();
-		if (pe instanceof Diagram) {
-			boolean updateStatus = false;
-			boolean layoutNeeded = false;
-
-			Diagram diagram = (Diagram) pe;
-
-			// Remove children
-			for (Shape shape : getShapesToRemove(diagram)) {
-				IRemoveContext removeContext = new RemoveContext(shape);
-				IRemoveFeature removeFeature = getFeatureProvider().getRemoveFeature(removeContext);
-				if (removeFeature != null) {
-					removeFeature.execute(removeContext);
-				}
-				updateStatus = true;
-			}
-
-			// Prune unused stubs
-			List<EObject> removedStubs = getStubsToRemove(diagram);
-			if (!removedStubs.isEmpty()) {
-				diagram.eResource().getContents().removeAll(removedStubs);
-				updateStatus = true;
-			}
-
-			// Add shapes for SAD objects that do not have them
-			for (EObject object : getObjectsToAdd(diagram)) {
-				DUtil.addShapeViaFeature(getFeatureProvider(), diagram, object);
-				updateStatus = true;
-				layoutNeeded = true;
-			}
-
-			// Remove stale connections
-			for (Connection connection : getConnectionsToRemove(diagram)) {
-				DUtil.fastDeleteConnection(connection);
-				updateStatus = true;
-			}
-
-			// Add missing connection endpoints
-			List< ConnectInterface< ? , ? , ? > > addedConnections = getConnectionsToAdd(diagram);
-			for (ConnectInterface< ? , ? , ? > connectInterface : addedConnections) {
-				if (getSourceAnchor(connectInterface, diagram) == null) {
-					addUsesPort(connectInterface, diagram);
-				}
-				if (getTargetAnchor(connectInterface, diagram) == null) {
-					addConnectionTarget(connectInterface, diagram);
-				}
-				updateStatus = true;
-			}
-
-			// Check for FindBy stubs stored in the diagram's resource that do not have corresponding shapes, which
-			// were most likely created for the connection endpoints above
-			for (FindByStub findByStub : getDiagramStubs(diagram, FindByStub.class)) {
-				if (!hasExistingShape(diagram, findByStub)) {
-					DUtil.addShapeViaFeature(getFeatureProvider(), diagram, findByStub);
-					updateStatus = true;
-					layoutNeeded = true;
-				}
-			}
-
-			// TODO: ensure our SAD has an assembly controller
-			// set one if necessary, why bother the user?
-
-			// Update components
-			if (super.update(context)) {
-				updateStatus = true;
-			}
-
-			// Add missing connections
-			for (ConnectInterface< ? , ? , ? > connectInterface : addedConnections) {
-				Anchor source = getSourceAnchor(connectInterface, diagram);
-				Anchor target = getTargetAnchor(connectInterface, diagram);
-				if (source != null && target != null) {
-					DUtil.addConnectionViaFeature(getFeatureProvider(), connectInterface, source, target);
-				}
-				updateStatus = true;
-			}
-
-			if (layoutNeeded) {
-				LayoutDiagramFeature layoutFeature = new LayoutDiagramFeature(getFeatureProvider());
-				layoutFeature.execute(null);
-			}
-
-			// Ensure assembly controller is set in case a component was deleted that used to be the assembly controller
-			SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
-			ComponentPattern.organizeStartOrder(sad, diagram, getFeatureProvider());
-
-			if (updateStatus) {
+			// Match return type; this method should return IReason, but does not
+			IReason reason = updateNeeded(context);
+			return new Reason(reason.toBoolean(), reason.getText());
+		} else {
+			if (update(context)) {
 				return new Reason(true, "Update successful");
+			} else {
+				return new Reason(false, "No updates required");
 			}
 		}
-
-		return new Reason(false, "No updates required");
 	}
 
 	@Override
 	public boolean update(IUpdateContext context) {
-		Reason reason;
-		try {
-			reason = internalUpdate(context, true);
-			return reason.toBoolean();
-		} catch (CoreException e) {
-			// PASS
-			// TODO: catch exception
-			e.printStackTrace(); // SUPPRESS CHECKSTYLE INLINE
-		}
+		PictogramElement pe = context.getPictogramElement();
+		if (pe instanceof Diagram) {
+			// Defer to the base class for most updates
+			boolean result = super.update(context);
 
+			// Ensure assembly controller is set in case a component was deleted that used to be the assembly controller
+			Diagram diagram = (Diagram) pe;
+			SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
+			ComponentPattern.organizeStartOrder(sad, diagram, getFeatureProvider());
+
+			return result;
+		}
 		return false;
 	}
 
