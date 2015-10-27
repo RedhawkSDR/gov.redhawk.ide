@@ -44,15 +44,12 @@ public class ServicePattern extends AbstractNodeComponentPattern implements IPat
 	}
 
 	@Override
-	public boolean canAdd(IAddContext context) {
-		if (context.getNewObject() instanceof DcdComponentInstantiation) {
-			DcdComponentInstantiation ci = (DcdComponentInstantiation) context.getNewObject();
-			SoftPkg spd = ci.getPlacement().getComponentFileRef().getFile().getSoftPkg();
-			if (spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.SERVICE.getLiteral())) {
-				return true;
-			}
+	protected boolean isInstantiationApplicable(DcdComponentInstantiation instantiation) {
+		SoftPkg spd = instantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg();
+		if (spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.SERVICE.getLiteral())) {
+			return true;
 		}
-		return super.canAdd(context);
+		return false;
 	}
 
 	/**

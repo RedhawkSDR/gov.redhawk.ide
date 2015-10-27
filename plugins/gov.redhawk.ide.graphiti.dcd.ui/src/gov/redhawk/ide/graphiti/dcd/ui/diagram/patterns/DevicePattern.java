@@ -44,17 +44,14 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 	}
 
 	@Override
-	public boolean canAdd(IAddContext context) {
-		if (context.getNewObject() instanceof DcdComponentInstantiation) {
-			DcdComponentInstantiation ci = (DcdComponentInstantiation) context.getNewObject();
-			SoftPkg spd = ci.getPlacement().getComponentFileRef().getFile().getSoftPkg();
-			String componentType = spd.getDescriptor().getComponent().getComponentType();
+	protected boolean isInstantiationApplicable(DcdComponentInstantiation instantiation) {
+		SoftPkg spd = instantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg();
+		String componentType = spd.getDescriptor().getComponent().getComponentType();
 
-			String[] deviceTypes = { mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral(), "loadabledevice", "executabledevice" };
-			for (String deviceType : deviceTypes) {
-				if (deviceType.equals(componentType)) {
-					return true;
-				}
+		String[] deviceTypes = { mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral(), "loadabledevice", "executabledevice" };
+		for (String deviceType : deviceTypes) {
+			if (deviceType.equals(componentType)) {
+				return true;
 			}
 		}
 		return false;

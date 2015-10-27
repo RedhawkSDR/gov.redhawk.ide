@@ -65,7 +65,10 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 	// THE FOLLOWING THREE METHODS DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
-		return mainBusinessObject instanceof DcdComponentInstantiation;
+		if (mainBusinessObject instanceof DcdComponentInstantiation) {
+			return isInstantiationApplicable((DcdComponentInstantiation) mainBusinessObject);
+		}
+		return false;
 	}
 
 	@Override
@@ -79,6 +82,8 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 		Object domainObject = getBusinessObjectForPictogramElement(pictogramElement);
 		return isMainBusinessObjectApplicable(domainObject);
 	}
+
+	protected abstract boolean isInstantiationApplicable(DcdComponentInstantiation instantiation);
 
 	@Override
 	public boolean canAdd(IAddContext context) {
