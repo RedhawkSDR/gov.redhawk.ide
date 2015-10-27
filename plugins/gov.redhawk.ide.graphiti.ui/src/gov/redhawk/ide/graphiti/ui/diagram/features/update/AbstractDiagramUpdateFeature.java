@@ -552,11 +552,12 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	protected void addUsesPort(ConnectInterface< ? , ? , ? > connectInterface, Diagram diagram) {
 		if (connectInterface.getUsesPort().getFindBy() != null) {
 			FindByStub findByStub = getFindByStub(connectInterface.getUsesPort().getFindBy(), diagram);
-			if (findByStub != null) {
-				UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
-				usesPortStub.setName(connectInterface.getUsesPort().getUsesIdentifier());
-				findByStub.getUses().add(usesPortStub);
+			if (findByStub == null) {
+				findByStub = addFindByStub(connectInterface.getUsesPort().getFindBy(), diagram);
 			}
+			UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
+			usesPortStub.setName(connectInterface.getUsesPort().getUsesIdentifier());
+			findByStub.getUses().add(usesPortStub);
 		}
 	}
 
@@ -580,14 +581,19 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		return Collections.emptyList();
 	}
 
+	protected FindByStub addFindByStub(FindBy findBy, Diagram diagram) {
+		return FindByUtil.createFindByStub(findBy, getFeatureProvider(), diagram);
+	}
+
 	protected void addProvidesPort(ProvidesPort< ? > providesPort, Diagram diagram) {
 		if (providesPort.getFindBy() != null) {
 			FindByStub findByStub = getFindByStub(providesPort.getFindBy(), diagram);
-			if (findByStub != null) {
-				ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
-				providesPortStub.setName(providesPort.getProvidesIdentifier());
-				findByStub.getProvides().add(providesPortStub);
+			if (findByStub == null) {
+				findByStub = addFindByStub(providesPort.getFindBy(), diagram);
 			}
+			ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
+			providesPortStub.setName(providesPort.getProvidesIdentifier());
+			findByStub.getProvides().add(providesPortStub);
 		}
 	}
 
@@ -623,7 +629,21 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	protected void addConnectionTarget(ConnectInterface< ? , ? , ? > connectInterface, Diagram diagram) {
 		if (connectInterface.getProvidesPort() != null) {
 			addProvidesPort(connectInterface.getProvidesPort(), diagram);
+		} else if (connectInterface.getComponentSupportedInterface() != null) {
+			if (connectInterface.getComponentSupportedInterface().getFindBy() != null) {
+				addFindByStub(connectInterface.getComponentSupportedInterface().getFindBy(), diagram);
+			}
 		}
+	}
+
+	protected < E > List<E> getDiagramStubs(Diagram diagram, Class<E> clazz) {
+		List<E> stubs = new ArrayList<E>();
+		for (EObject object : diagram.eResource().getContents()) {
+			if (clazz.isInstance(object)) {
+				stubs.add(clazz.cast(object));
+			}
+		}
+		return stubs;
 	}
 
 }

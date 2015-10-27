@@ -36,6 +36,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterface;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
+import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPort;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -90,12 +91,9 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 	}
 
 	protected UsesDeviceStub getUsesDeviceStub(UsesDevice usesDevice, Diagram diagram) {
-		for (EObject object : diagram.eResource().getContents()) {
-			if (object instanceof UsesDeviceStub) {
-				UsesDeviceStub stub = (UsesDeviceStub) object;
-				if (stub.getUsesDevice() == usesDevice) {
-					return stub;
-				}
+		for (UsesDeviceStub usesDeviceStub : getDiagramStubs(diagram, UsesDeviceStub.class)) {
+			if (usesDeviceStub.getUsesDevice() == usesDevice) {
+				return usesDeviceStub;
 			}
 		}
 		return null;
@@ -196,7 +194,8 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			}
 
 			// Add missing connection endpoints
-			for (ConnectInterface< ? , ? , ? > connectInterface : getConnectionsToAdd(diagram)) {
+			List< ConnectInterface< ? , ? , ? > > addedConnections = getConnectionsToAdd(diagram);
+			for (ConnectInterface< ? , ? , ? > connectInterface : addedConnections) {
 				if (getSourceAnchor(connectInterface, diagram) == null) {
 					addUsesPort(connectInterface, diagram);
 				}
@@ -204,6 +203,16 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 					addConnectionTarget(connectInterface, diagram);
 				}
 				updateStatus = true;
+			}
+
+			// Check for FindBy stubs stored in the diagram's resource that do not have corresponding shapes, which
+			// were most likely created for the connection endpoints above
+			for (FindByStub findByStub : getDiagramStubs(diagram, FindByStub.class)) {
+				if (!hasExistingShape(diagram, findByStub)) {
+					DUtil.addShapeViaFeature(getFeatureProvider(), diagram, findByStub);
+					updateStatus = true;
+					layoutNeeded = true;
+				}
 			}
 
 			// TODO: ensure our SAD has an assembly controller
@@ -215,7 +224,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			}
 
 			// Add missing connections
-			for (ConnectInterface< ? , ? , ? > connectInterface : getConnectionsToAdd(diagram)) {
+			for (ConnectInterface< ? , ? , ? > connectInterface : addedConnections) {
 				Anchor source = getSourceAnchor(connectInterface, diagram);
 				Anchor target = getTargetAnchor(connectInterface, diagram);
 				if (source != null && target != null) {
