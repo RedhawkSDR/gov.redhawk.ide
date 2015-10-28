@@ -42,6 +42,7 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.UsesDevice;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateFeature {
 
@@ -60,14 +61,17 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 
 	protected boolean hasParentChanged(Shape shape) {
 		EObject bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape);
-		EObject parent = bo.eContainer();
-		if (parent instanceof HostCollocation) {
-			// Compare the parent business objects, in case it was previously not collocated or moved from another
-			return parent != Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape.getContainer());
-		} else {
-			// Otherwise, it should be a direct child of the diagram
-			return !(shape.getContainer() instanceof Diagram);
+		if (bo instanceof SadComponentInstantiation) {
+			HostCollocation collocation = ScaEcoreUtils.getEContainerOfType(bo, HostCollocation.class);
+			if (collocation == null) {
+				// Not collocated, should be a child of the diagram
+				return !(shape.getContainer() instanceof Diagram);
+			} else {
+				// Check that the parent shape's business object is the same collocation
+				return collocation != Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape.getContainer());
+			}
 		}
+		return false;
 	}
 
 	@Override
