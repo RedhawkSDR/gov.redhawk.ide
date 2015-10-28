@@ -12,6 +12,7 @@ package gov.redhawk.ide.debug;
 
 import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.IRefreshable;
+import gov.redhawk.model.sca.ProfileObjectWrapper;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
@@ -116,7 +117,7 @@ public final class SpdLauncherUtil {
 		final IProgressMonitor monitor) throws CoreException {
 		final int WORK_FIND_CORBA_OBJ = 10;
 		final int WORK_GENERAL = 1;
-		SubMonitor progress = SubMonitor.convert(monitor, "Post-launch tasks", WORK_FIND_CORBA_OBJ + 6 * WORK_GENERAL);
+		SubMonitor progress = SubMonitor.convert(monitor, "Post-launch tasks", WORK_FIND_CORBA_OBJ + 7 * WORK_GENERAL);
 
 		final ComponentType type;
 		if (spd.getDescriptor() == null || spd.getDescriptor().getComponent() == null) {
@@ -171,6 +172,20 @@ public final class SpdLauncherUtil {
 			}
 		});
 		progress.worked(WORK_GENERAL);
+
+		// Set the profile object, if applicable
+		if (newComponent instanceof ProfileObjectWrapper< ? >) {
+			final ProfileObjectWrapper< ? > obj = (ProfileObjectWrapper< ? >) newComponent;
+			ScaModelCommand.execute(newComponent, new ScaModelCommand() {
+				@Override
+				public void execute() {
+					obj.setProfileURI(spd.eResource().getURI());
+				}
+			});
+			obj.fetchProfileObject(progress.newChild(WORK_GENERAL));
+		} else {
+			progress.notWorked(WORK_GENERAL);
+		}
 
 		// Perform configure for properties as needed
 		if (newComponent instanceof ScaPropertyContainer< ? , ? >) {
