@@ -38,6 +38,7 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IMoveShapeFeature;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IRemoveFeature;
+import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
@@ -47,6 +48,7 @@ import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.MoveShapeContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
+import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.PropertyContainer;
@@ -531,8 +533,55 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	 */
 	@Override
 	public IReason updateNeeded(IUpdateContext context) {
-		// Currently all logic for host collocation update is done in RHDiagramUpdateFeature
-		return new Reason(false);
+		ContainerShape collocationShape = (ContainerShape) context.getPictogramElement();
+		List<Shape> removedShapes = getShapesToRemove(collocationShape);
+		if (!removedShapes.isEmpty()) {
+			return Reason.createTrueReason("Need to remove " + removedShapes.size() + " component shape(s)");
+		}
+
+		for (Shape child : collocationShape.getChildren()) {
+			UpdateContext updateContext = new UpdateContext(child);
+			IUpdateFeature updateFeature = getFeatureProvider().getUpdateFeature(updateContext);
+			if (updateFeature != null) {
+				IReason childReason = updateFeature.updateNeeded(updateContext);
+				if (childReason.toBoolean()) {
+					return childReason;
+				}
+			}
+		}
+
+		HostCollocation collocation = (HostCollocation) getBusinessObjectForPictogramElement(collocationShape);
+		List<EObject> addedShapes = getShapesToAdd(collocation);
+		if (!addedShapes.isEmpty()) {
+			return Reason.createTrueReason("Need to add " + addedShapes.size() + " component shape(s)");
+		}
+		return Reason.createFalseReason();
+	}
+
+	protected List<Shape> getShapesToRemove(ContainerShape collocationShape) {
+		List<Shape> removedShapes = new ArrayList<Shape>();
+		HostCollocation collocation = (HostCollocation) getBusinessObjectForPictogramElement(collocationShape);
+		for (Shape child : collocationShape.getChildren()) {
+			SadComponentInstantiation instantiation = (SadComponentInstantiation) Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(child);
+			if (instantiation == null || instantiation.eIsProxy()) {
+				removedShapes.add(child);
+			} else if (instantiation.eContainer().eContainer() != collocation) {
+				removedShapes.add(child);
+			}
+		}
+		return removedShapes;
+	}
+
+	protected List<EObject> getShapesToAdd(HostCollocation collocation) {
+		List<EObject> addedShapes = new ArrayList<EObject>();
+		for (SadComponentPlacement placement: collocation.getComponentPlacement()) {
+			for (SadComponentInstantiation instantiation : placement.getComponentInstantiation()) {
+				if (Graphiti.getLinkService().getPictogramElements(getDiagram(), instantiation).isEmpty()) {
+					addedShapes.add(instantiation);
+				}
+			}
+		}
+		return addedShapes;
 	}
 
 	/**
@@ -540,8 +589,33 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	 */
 	@Override
 	public boolean update(IUpdateContext context) {
-		// Currently all logic for host collocation update is done in RHDiagramUpdateFeature
-		return false;
+		ContainerShape collocationShape = (ContainerShape) context.getPictogramElement();
+		boolean updatePerformed = false;
+		boolean layoutNeeded = false;
+		for (Shape shape : getShapesToRemove(collocationShape)) {
+			DUtil.removeShapeViaFeature(getFeatureProvider(), shape);
+			updatePerformed = true;
+		}
+
+		for (Shape child : collocationShape.getChildren()) {
+			UpdateContext updateContext = new UpdateContext(child);
+			IUpdateFeature updateFeature = getFeatureProvider().getUpdateFeature(updateContext);
+			if (updateFeature != null) {
+				updatePerformed |= updateFeature.update(updateContext);
+			}
+		}
+
+		HostCollocation collocation = (HostCollocation) getBusinessObjectForPictogramElement(collocationShape);
+		for (EObject object : getShapesToAdd(collocation)) {
+			DUtil.addShapeViaFeature(getFeatureProvider(), collocationShape, object);
+			updatePerformed = true;
+			layoutNeeded = true;
+		}
+
+		if (layoutNeeded) {
+			layoutPictogramElement(collocationShape);
+		}
+		return updatePerformed;
 	}
 
 	/**
