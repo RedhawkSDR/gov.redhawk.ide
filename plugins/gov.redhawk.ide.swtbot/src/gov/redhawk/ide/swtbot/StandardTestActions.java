@@ -506,7 +506,7 @@ public final class StandardTestActions {
 				return "Failed waiting for validation state to change to: " + Arrays.toString(states);
 			}
 
-		}, 5000, 200);
+		}, 5000);
 	}
 
 	/**
