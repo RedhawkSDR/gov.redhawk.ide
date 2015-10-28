@@ -22,6 +22,11 @@ public class WaitForEditorCondition implements ICondition {
 
 	private SWTWorkbenchBot bot;
 
+	/**
+	 * Use this constant with this class when calling {@link SWTBot#waitUntil(ICondition, long)}
+	 */
+	public static final long DEFAULT_WAIT_FOR_EDITOR_TIME = 30000;
+
 	@Override
 	public boolean test() throws Exception {
 		bot.activeEditor();
