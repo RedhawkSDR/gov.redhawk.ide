@@ -52,10 +52,8 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 	@Override
 	protected boolean doesModelObjectExist(EObject object) {
 		if (object instanceof UsesDeviceStub) {
-			UsesDeviceStub stub = (UsesDeviceStub) object;
-			if (stub.getUsesDevice() == null || stub.getUsesDevice().eIsProxy()) {
-				return false;
-			}
+			// Check the uses device reference of the stub
+			object = ((UsesDeviceStub) object).getUsesDevice();
 		}
 		return super.doesModelObjectExist(object);
 	}
@@ -119,7 +117,6 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 				if (stub == null) {
 					stub = AbstractUsesDevicePattern.createUsesDeviceStub(usesDevice);
 					addedChildren.add(stub);
-					diagram.eResource().getContents().add(stub);
 				} else if (!hasExistingShape(diagram, stub)) {
 					addedChildren.add(stub);
 				}

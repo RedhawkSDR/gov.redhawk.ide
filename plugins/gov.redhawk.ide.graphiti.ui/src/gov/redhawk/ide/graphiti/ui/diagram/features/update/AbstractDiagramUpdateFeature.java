@@ -550,6 +550,10 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 
 			// Add shapes for SAD objects that do not have them
 			for (EObject object : getObjectsToAdd(diagram)) {
+				// New stubs will not belong to a resource; store them in the diagram's resource instead
+				if (object.eResource() == null) {
+					diagram.eResource().getContents().add(object);
+				}
 				DUtil.addShapeViaFeature(getFeatureProvider(), diagram, object);
 				updateStatus = true;
 				layoutNeeded = true;
