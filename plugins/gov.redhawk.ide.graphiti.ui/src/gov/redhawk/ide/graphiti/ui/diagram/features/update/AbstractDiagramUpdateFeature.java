@@ -541,6 +541,17 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				updateStatus = true;
 			}
 
+			// Remove stale connections
+			for (Connection connection : getConnectionsToRemove(diagram)) {
+				DUtil.fastDeleteConnection(connection);
+				updateStatus = true;
+			}
+
+			// Update components
+			if (super.update(context)) {
+				updateStatus = true;
+			}
+
 			// Add shapes for SAD objects that do not have them
 			for (EObject object : getObjectsToAdd(diagram)) {
 				// New stubs will not belong to a resource; store them in the diagram's resource instead
@@ -550,12 +561,6 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				DUtil.addShapeViaFeature(getFeatureProvider(), diagram, object);
 				updateStatus = true;
 				layoutNeeded = true;
-			}
-
-			// Remove stale connections
-			for (Connection connection : getConnectionsToRemove(diagram)) {
-				DUtil.fastDeleteConnection(connection);
-				updateStatus = true;
 			}
 
 			// Add missing connection endpoints
@@ -578,11 +583,6 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 					updateStatus = true;
 					layoutNeeded = true;
 				}
-			}
-
-			// Update components
-			if (super.update(context)) {
-				updateStatus = true;
 			}
 
 			// Add missing connections
