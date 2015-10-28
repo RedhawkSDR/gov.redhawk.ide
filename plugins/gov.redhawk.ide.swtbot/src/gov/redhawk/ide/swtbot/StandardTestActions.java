@@ -65,7 +65,6 @@ import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.eclipse.ui.PlatformUI;
@@ -635,57 +634,5 @@ public final class StandardTestActions {
 		for (ILaunch launch : launchManager.getLaunches()) {
 			launch.terminate();
 		}
-	}
-
-	public static SWTBotTreeItem getTreeItemMatches(SWTBotTree tree, String... regexp) {
-		SWTBotTreeItem result = getTreeItemMatches(tree, Arrays.asList(regexp));
-		if (result == null) {
-			throw new WidgetNotFoundException("Could not find TreeItem with text that matches: " + Arrays.toString(regexp)); //$NON-NLS-1$
-		}
-		return result;
-	}
-
-	private static SWTBotTreeItem getTreeItemMatches(SWTBotTree parent, List<String> regexp) {
-		if (regexp.isEmpty()) {
-			return null;
-		}
-		SWTBotTreeItem[] items = parent.getAllItems();
-		for (SWTBotTreeItem item : items) {
-			if (item.getText().matches(regexp.get(0))) {
-				item.expand();
-				SWTBotTreeItem result = getTreeItemMatches(item, regexp.subList(1, regexp.size()));
-				if (result != null) {
-					return result;
-				}
-			}
-		}
-		return null;
-	}
-
-	private static SWTBotTreeItem getTreeItemMatches(SWTBotTreeItem parent, List<String> regexp) {
-		if (regexp.isEmpty()) {
-			return parent;
-		}
-		SWTBotTreeItem[] items = parent.getItems();
-		for (SWTBotTreeItem item : items) {
-			if (item.getText().matches(regexp.get(0))) {
-				item.expand();
-				SWTBotTreeItem result = getTreeItemMatches(item, regexp.subList(1, regexp.size()));
-				if (result != null) {
-					return result;
-				}
-			}
-		}
-		return null;
-	}
-
-	public static SWTBotTreeItem getTreeItemMatches(SWTBotTreeItem tree, String regexp) {
-		List<String> labels = tree.getNodes();
-		for (String l : labels) {
-			if (l.matches(regexp)) {
-				return tree.getNode(l);
-			}
-		}
-		throw new WidgetNotFoundException("Could not find node with text that matches: " + regexp); //$NON-NLS-1$
 	}
 }
