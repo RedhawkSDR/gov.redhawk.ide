@@ -463,6 +463,12 @@ public final class StandardTestActions {
 		bot.sleep(100);
 	}
 
+	/**
+	 * @param bot
+	 * @param page
+	 * @deprecated Use {@link EditorActions#assertEditorTabValid(SWTBotEditor, String)}
+	 */
+	@Deprecated
 	public static void assertFormValid(SWTBot bot, final IFormPage page) {
 		try {
 			waitForValidationState(bot, page, IMessageProvider.NONE, IMessageProvider.INFORMATION, IMessageProvider.WARNING);
@@ -503,6 +509,12 @@ public final class StandardTestActions {
 		}, 5000, 200);
 	}
 
+	/**
+	 * @param bot
+	 * @param page
+	 * @deprecated Use {@link EditorActions#assertEditorTabValid(SWTBotEditor, String)}
+	 */
+	@Deprecated
 	public static void assertFormInvalid(SWTBot bot, final IFormPage page) {
 		try {
 			waitForValidationState(bot, page, IMessageProvider.ERROR);
