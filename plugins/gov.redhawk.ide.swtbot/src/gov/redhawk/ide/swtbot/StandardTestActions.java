@@ -70,7 +70,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
@@ -453,7 +453,7 @@ public final class StandardTestActions {
 		bot.sleep(100);
 	}
 
-	public static void assertFormValid(SWTBot bot, final FormPage page) {
+	public static void assertFormValid(SWTBot bot, final IFormPage page) {
 		try {
 			waitForValidationState(bot, page, IMessageProvider.NONE, IMessageProvider.INFORMATION, IMessageProvider.WARNING);
 		} catch (TimeoutException e) {
@@ -461,12 +461,12 @@ public final class StandardTestActions {
 		}
 	}
 
-	public static int getValidationState(FormPage page) {
+	public static int getValidationState(IFormPage page) {
 		int messageType = page.getManagedForm().getForm().getMessageType();
 		return messageType;
 	}
 
-	public static void waitForValidationState(SWTBot bot, final FormPage page, final int... states) {
+	public static void waitForValidationState(SWTBot bot, final IFormPage page, final int... states) {
 		bot.waitUntil(new ICondition() {
 
 			@Override
@@ -493,7 +493,7 @@ public final class StandardTestActions {
 		}, 5000, 200);
 	}
 
-	public static void assertFormInvalid(SWTBot bot, final FormPage page) {
+	public static void assertFormInvalid(SWTBot bot, final IFormPage page) {
 		try {
 			waitForValidationState(bot, page, IMessageProvider.ERROR);
 		} catch (TimeoutException e) {
