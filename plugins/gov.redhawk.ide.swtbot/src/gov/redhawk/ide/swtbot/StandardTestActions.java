@@ -258,7 +258,17 @@ public final class StandardTestActions {
 		Assert.assertTrue("SDR failed to load: " + root.getLoadStatus(), root.getLoadStatus().isOK());
 	}
 
-	public static void importProject(Bundle bundle, IPath path, Map< String , String > override) throws CoreException {
+	/**
+	 * @param bundle the bundle in which to search
+	 * @param path file path relative to plug-in installation location
+	 * @param override override map of override substitution arguments to be used for any $arg$ path elements. The map
+	 * keys correspond to the substitution arguments (eg. "$nl$" or "$os$"). The resulting values must be of type
+	 * java.lang.String. If the map is null, or does not contain the required substitution argument, the default is
+	 * used.
+	 * @see FileLocator#findEntries(Bundle, IPath, Map)
+	 * @throws CoreException
+	 */
+	public static void importProject(Bundle bundle, IPath path, Map<String, String> override) throws CoreException {
 		if (!".project".equals(path.lastSegment())) {
 			path = path.append(".project");
 		}
