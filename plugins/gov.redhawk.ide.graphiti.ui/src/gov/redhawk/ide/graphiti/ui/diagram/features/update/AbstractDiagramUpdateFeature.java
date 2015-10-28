@@ -24,10 +24,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
-import org.eclipse.graphiti.features.IRemoveFeature;
-import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.impl.DefaultUpdateDiagramFeature;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -533,11 +530,7 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 
 			// Remove children
 			for (Shape shape : getShapesToRemove(diagram)) {
-				IRemoveContext removeContext = new RemoveContext(shape);
-				IRemoveFeature removeFeature = getFeatureProvider().getRemoveFeature(removeContext);
-				if (removeFeature != null) {
-					removeFeature.execute(removeContext);
-				}
+				DUtil.removeShapeViaFeature(getFeatureProvider(), shape);
 				updateStatus = true;
 			}
 

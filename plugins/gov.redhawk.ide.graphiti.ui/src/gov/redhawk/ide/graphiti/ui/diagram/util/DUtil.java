@@ -803,6 +803,19 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
+	 * Remove PictogramElement via feature for the provided object
+	 * @param featureProvider
+	 * @param pe
+	 */
+	public static void removeShapeViaFeature(IFeatureProvider featureProvider, PictogramElement pe) {
+		RemoveContext removeContext = new RemoveContext(pe);
+		IRemoveFeature removeFeature = featureProvider.getRemoveFeature(removeContext);
+		if (removeFeature != null) {
+			removeFeature.remove(removeContext);
+		}
+	}
+
+	/**
 	 * Add PictogramElement Connection via feature for the provided object and anchors.
 	 * Relies on the framework determining which feature should be used and whether it can be added to diagram
 	 * @param featureProvider
