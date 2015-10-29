@@ -12,18 +12,33 @@ package gov.redhawk.ide.swtbot.condition;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class WaitForCellValue extends DefaultCondition {
 
-	private SWTBotTreeItem row;
-	private int column;
+	private SWTBotTable table;
+	private int tableRow;
+	private int tableColumn;
+
+	private SWTBotTreeItem treeItemRow;
+	private int treeItemColumn;
+
 	private String expectedValue;
 	private String cellValue;
 
+	public WaitForCellValue(SWTBotTable table, int row, int column, String expectedValue) {
+		this.table = table;
+		this.tableRow = row;
+		this.tableColumn = column;
+		this.expectedValue = expectedValue;
+		cellValue = null;
+		Assert.isNotNull(expectedValue);
+	}
+
 	public WaitForCellValue(SWTBotTreeItem row, int column, String expectedValue) {
-		this.row = row;
-		this.column = column;
+		this.treeItemRow = row;
+		this.treeItemColumn = column;
 		this.expectedValue = expectedValue;
 		cellValue = null;
 		Assert.isNotNull(expectedValue);
@@ -31,13 +46,18 @@ public class WaitForCellValue extends DefaultCondition {
 
 	@Override
 	public boolean test() throws Exception {
-		cellValue = row.cell(column);
-		return expectedValue.equals(cellValue);
+		if (table != null) {
+			cellValue = table.cell(tableRow, tableColumn);
+			return expectedValue.equals(cellValue);
+		} else {
+			cellValue = treeItemRow.cell(treeItemColumn);
+			return expectedValue.equals(cellValue);
+		}
 	}
 
 	@Override
 	public String getFailureMessage() {
-		return String.format("Expected cell value %s not %s", expectedValue, cellValue);
+		return String.format("Expected cell value is '%s' not '%s'", cellValue, expectedValue);
 	}
 
 }
