@@ -51,6 +51,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.waits.Conditions;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
@@ -381,17 +382,37 @@ public final class StandardTestActions {
 	 * @see gov.redhawk.ide.swtbot.condition.WaitForCellValue#WaitForCellValue(SWTBotTreeItem, int, String)
 	 */
 	public static void writeToCell(SWTBot bot, final SWTBotTreeItem item, final int column, final String text) {
+		item.select();
 		item.click(column);
 
-		// Wait for cell editor to appear
-		bot.sleep(500);
-
+		// Type in the cell editor when it appears
+		RunnableWithResult<Widget> runnable = new RunnableWithResult.Impl<Widget>() {
+			@Override
+			public void run() {
+				setResult(item.widget.getParent());
+			}
+		};
+		item.display.syncExec(runnable);
+		Widget parent = runnable.getResult();
+		final SWTBotText cellEditor = new SWTBot(parent).text();
+		cellEditor.typeText(text);
 		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
-		keyboard.typeText(text);
 		keyboard.pressShortcut(Keystrokes.CR);
 
 		// Wait for cell editor to close
-		bot.sleep(100);
+		bot.waitUntil(new DefaultCondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return !cellEditor.isActive() && !cellEditor.isVisible();
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Cell editor did not disappear";
+			}
+		});
+
 	}
 
 	/**
