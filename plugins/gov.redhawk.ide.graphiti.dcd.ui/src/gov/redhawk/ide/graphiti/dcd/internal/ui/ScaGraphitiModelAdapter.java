@@ -72,13 +72,7 @@ public class ScaGraphitiModelAdapter extends EContentAdapter {
 				break;
 			case ScaPackage.SCA_DEVICE__STATUS:
 				IStatus status = (IStatus) notification.getNewValue();
-				switch (status.getSeverity()) {
-				case IStatus.ERROR:
-					this.modelMap.reflectErrorState(device, status);
-					break;
-				default:
-					break;
-				}
+				this.modelMap.reflectErrorState(device, status);
 				break;
 			case ScaPackage.SCA_DEVICE__DISPOSED:
 				device.eAdapters().remove(this);
