@@ -373,6 +373,13 @@ public final class StandardTestActions {
 		return true;
 	}
 
+	/**
+	 * @param bot
+	 * @param item
+	 * @param column
+	 * @param text
+	 * @see gov.redhawk.ide.swtbot.condition.WaitForCellValue#WaitForCellValue(SWTBotTreeItem, int, String)
+	 */
 	public static void writeToCell(SWTBot bot, final SWTBotTreeItem item, final int column, final String text) {
 		item.click(column);
 
@@ -450,6 +457,14 @@ public final class StandardTestActions {
 		}
 	}
 
+	/**
+	 * @param bot
+	 * @param table
+	 * @param row
+	 * @param column
+	 * @param text
+	 * @see gov.redhawk.ide.swtbot.condition.WaitForCellValue#WaitForCellValue(SWTBotTable, int, int, String)
+	 */
 	public static void writeToCell(SWTBot bot, SWTBotTable table, final int row, final int column, final String text) {
 		table.click(row, column);
 
