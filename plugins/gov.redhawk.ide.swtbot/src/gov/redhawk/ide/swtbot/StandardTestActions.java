@@ -61,9 +61,11 @@ import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
 import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
@@ -451,15 +453,25 @@ public final class StandardTestActions {
 	public static void writeToCell(SWTBot bot, SWTBotTable table, final int row, final int column, final String text) {
 		table.click(row, column);
 
-		// Wait for cell editor to appear
-		bot.sleep(500);
-
+		// Type in the cell editor when it appears
+		final SWTBotText cellEditor = new SWTBot(table.widget).text();
+		cellEditor.typeText(text);
 		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
-		keyboard.typeText(text);
 		keyboard.pressShortcut(Keystrokes.CR);
 
 		// Wait for cell editor to close
-		bot.sleep(100);
+		bot.waitUntil(new DefaultCondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return !cellEditor.isActive() && !cellEditor.isVisible();
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Cell editor did not disappear";
+			}
+		});
 	}
 
 	/**
