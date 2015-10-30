@@ -37,7 +37,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -190,7 +189,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 		@Override
 		public void reconnect(final ScaWaveform waveform) throws InvalidPort, OccupiedPort {
-			for (final ScaComponent comp : waveform.getComponents()) {
+			for (final ScaComponent comp : waveform.getComponentsCopy()) {
 				if (comp.getInstantiationIdentifier().equals(this.targetCompID)) {
 					if (this.targetPort == null) {
 						this.port.connectPort(comp.getCorbaObj(), this.connectionID);
@@ -224,7 +223,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 		@Override
 		public void reconnect(final ScaWaveform waveform) throws InvalidPort, OccupiedPort {
-			for (final ScaComponent comp : waveform.getComponents()) {
+			for (final ScaComponent comp : waveform.getComponentsCopy()) {
 				if (comp.getInstantiationIdentifier().equals(this.sourceCompID)) {
 					final ScaPort< ? , ? > port = comp.getScaPort(this.sourcePort);
 					if (port instanceof ScaUsesPort) {
@@ -537,7 +536,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	protected void releaseAll() {
 		this.streams.getOutStream().println("Releasing components...");
 		// Shutdown each component
-		for (final ScaComponent component : this.waveform.getComponents().toArray(new ScaComponent[this.waveform.getComponents().size()])) {
+		for (final ScaComponent component : this.waveform.getComponentsCopy()) {
 			if (component instanceof LocalScaComponent && ((LocalScaComponent) component).getLaunch() != null) {
 				release(component);
 			}
@@ -563,7 +562,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	protected void disconnectAll() {
 		this.streams.getOutStream().println("Disconnecting connections...");
 		// Disconnect components
-		for (final ScaComponent component : this.waveform.getComponents().toArray(new ScaComponent[waveform.getComponents().size()])) {
+		for (final ScaComponent component : this.waveform.getComponentsCopy()) {
 			if (component instanceof LocalScaComponent && ((LocalScaComponent) component).getLaunch() != null) {
 				disconnect(component);
 			}
@@ -885,15 +884,16 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		} else {
 			delegateValues = new ComponentType[0];
 		}
-		if (waveform.getComponents().isEmpty()) {
+		List<ScaComponent> components = waveform.getComponentsCopy();
+		if (components.isEmpty()) {
 			return delegateValues;
 		}
-		final ComponentType[] types = new ComponentType[this.waveform.getComponents().size()];
+		final ComponentType[] types = new ComponentType[components.size()];
 		for (int i = 0; i < types.length; i++) {
 			types[i] = new ComponentType();
-			types[i].componentObject = this.waveform.getComponents().get(i).getCorbaObj();
-			types[i].identifier = this.waveform.getComponents().get(i).getIdentifier();
-			types[i].softwareProfile = this.waveform.getComponents().get(i).getProfileObj().eResource().getURI().path();
+			types[i].componentObject = components.get(i).getCorbaObj();
+			types[i].identifier = components.get(i).getIdentifier();
+			types[i].softwareProfile = components.get(i).getProfileObj().eResource().getURI().path();
 			types[i].providesPorts = new PortType[0];
 			types[i].type = ComponentEnumType.APPLICATION_COMPONENT;
 
@@ -920,14 +920,15 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		} else {
 			delegateValues = new ComponentElementType[0];
 		}
-		if (waveform.getComponents().isEmpty()) {
+		List<ScaComponent> components = waveform.getComponentsCopy();
+		if (components.isEmpty()) {
 			return delegateValues;
 		}
-		final ComponentElementType[] types = new ComponentElementType[this.waveform.getComponents().size()];
+		final ComponentElementType[] types = new ComponentElementType[components.size()];
 		for (int i = 0; i < types.length; i++) {
 			types[i] = new ComponentElementType();
-			types[i].componentId = this.waveform.getComponents().get(i).getIdentifier();
-			types[i].elementId = this.name + "/" + this.waveform.getComponents().get(i).getName();
+			types[i].componentId = components.get(i).getIdentifier();
+			types[i].elementId = this.name + "/" + components.get(i).getName();
 			for (ComponentElementType delegateValue : delegateValues) {
 				if (delegateValue.componentId.equals(types[i].componentId)) {
 					types[i] = delegateValue;
@@ -967,12 +968,13 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		} else {
 			delegateValues = new ComponentElementType[0];
 		}
-		if (waveform.getComponents().isEmpty()) {
+		List<ScaComponent> components = waveform.getComponentsCopy();
+		if (components.isEmpty()) {
 			return delegateValues;
 		}
-		final ComponentElementType[] types = new ComponentElementType[this.waveform.getComponents().size()];
+		final ComponentElementType[] types = new ComponentElementType[components.size()];
 		for (int i = 0; i < types.length; i++) {
-			final ScaComponent comp = this.waveform.getComponents().get(i);
+			final ScaComponent comp = components.get(i);
 
 			types[i] = new ComponentElementType();
 			types[i].componentId = comp.getIdentifier();
@@ -1074,14 +1076,13 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("Resetting component " + compInstId);
 
 		LocalScaComponent oldComponent = null;
-		for (final Iterator<ScaComponent> iterator = this.waveform.getComponents().iterator(); iterator.hasNext();) {
-			final ScaComponent info = iterator.next();
-			if (compInstId.equals(info.getInstantiationIdentifier())) {
-				if (!(info instanceof LocalScaComponent)) {
+		for (ScaComponent component : waveform.getComponentsCopy()) {
+			if (compInstId.equals(component.getInstantiationIdentifier())) {
+				if (!(component instanceof LocalScaComponent)) {
 					// This should never happen but check for it anyway
 					throw logException(new ReleaseError(new String[] { "Can only reset local components" }));
 				}
-				oldComponent = (LocalScaComponent) info;
+				oldComponent = (LocalScaComponent) component;
 				break;
 			}
 		}
@@ -1160,7 +1161,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		final List<ConnectionInfo> retVal = new ArrayList<ApplicationImpl.ConnectionInfo>();
 
 		// Create list of connections that connect to me
-		for (final ScaComponent comp : this.waveform.getComponents()) {
+		for (final ScaComponent comp : this.waveform.getComponentsCopy()) {
 			if (comp != oldComponent) {
 				for (final ScaPort< ? , ? > port : comp.getPorts()) {
 					if (port instanceof ScaUsesPort) {
@@ -1317,7 +1318,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		LocalScaComponent newComponent = null;
 		final String newCompId = subLaunch.getAttribute(LaunchVariables.COMPONENT_IDENTIFIER);
 		if (newCompId != null) {
-			for (final ScaComponent comp : ApplicationImpl.this.waveform.getComponents()) {
+			for (final ScaComponent comp : ApplicationImpl.this.waveform.getComponentsCopy()) {
 				comp.fetchAttributes(null);
 				final String id = comp.getIdentifier();
 				if (id.equals(newCompId)) {
