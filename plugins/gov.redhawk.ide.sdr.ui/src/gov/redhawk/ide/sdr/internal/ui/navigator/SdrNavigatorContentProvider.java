@@ -92,7 +92,8 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 			for (Object child : children) {
 				if (child instanceof SoftPkg) {
 					SoftPkg component = (SoftPkg) child;
-					if (component.getName().contains(".")) {
+					String name = component.getName();
+					if (name != null && name.contains(".")) {
 						createSubContainers(component, nameSpacedContainers);
 					} else {
 						retList.add(child);
@@ -105,7 +106,8 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 			for (Object child : children) {
 				if (child instanceof SoftwareAssembly) {
 					SoftwareAssembly sad = (SoftwareAssembly) child;
-					if (sad.getName().contains(".")) {
+					String name = sad.getName();
+					if (name != null && name.contains(".")) {
 						createSubContainers(sad, nameSpacedContainers);
 					} else {
 						retList.add(child);
@@ -118,7 +120,8 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 			for (Object child : children) {
 				if (child instanceof DeviceConfiguration) {
 					DeviceConfiguration dcd = (DeviceConfiguration) child;
-					if (dcd.getName().contains(".")) {
+					String name = dcd.getName();
+					if (name != null && name.contains(".")) {
 						createSubContainers(dcd, nameSpacedContainers);
 					} else {
 						retList.add(child);
