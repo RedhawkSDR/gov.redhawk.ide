@@ -223,12 +223,15 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 			if (dcd == null) {
 				return;
 			}
+
+			// Listen for changes on the referenced softpkg of the device manager (if any)
 			final DeviceManagerSoftPkg dmSpd = dcd.getDeviceManagerSoftPkg();
 			if (dmSpd == null || dmSpd.getSoftPkg() == null) {
-				return;
+				this.spdResource = null;
+			} else {
+				this.spdResource = dmSpd.getSoftPkg().eResource();
+				addResourceListener(this.spdResource);
 			}
-			this.spdResource = dmSpd.getSoftPkg().eResource();
-			addResourceListener(this.spdResource);
 
 			if (this.exportingSection != null) {
 				this.exportingSection.refresh(resource);
