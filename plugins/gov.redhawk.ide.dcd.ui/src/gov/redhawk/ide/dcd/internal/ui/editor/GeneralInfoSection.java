@@ -162,11 +162,6 @@ public class GeneralInfoSection extends ScaSection {
 		}
 		this.bindings.clear();
 
-		final SoftPkg model = getSoftPkg();
-		if (model == null) {
-			return;
-		}
-
 		final DataBindingContext context = this.getPage().getEditor().getDataBindingContext();
 
 		this.bindings.add(context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(),
