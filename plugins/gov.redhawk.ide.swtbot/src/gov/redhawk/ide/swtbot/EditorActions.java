@@ -13,12 +13,14 @@ package gov.redhawk.ide.swtbot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.junit.Assert;
 
 public class EditorActions {
 
 	private EditorActions() {
 	}
 
+	public static final String DCD_EDITOR_OVERVIEW_TAB_ID = "nodeOverview";
 	public static final String SPD_EDITOR_PROPERTIES_TAB_ID = "properties";
 
 	/**
@@ -30,6 +32,7 @@ public class EditorActions {
 	public static void assertEditorTabValid(SWTBotEditor editorBot, String tabId) {
 		FormEditor formEditor = (FormEditor) editorBot.getReference().getEditor(false);
 		IFormPage formPage = formEditor.findPage(tabId);
+		Assert.assertNotNull(String.format("Editor tab with ID '%s' not found", tabId), formPage);
 		StandardTestActions.assertFormValid(editorBot.bot(), formPage);
 	}
 
@@ -42,6 +45,7 @@ public class EditorActions {
 	public static void assertEditorTabInvalid(SWTBotEditor editorBot, String tabId) {
 		FormEditor formEditor = (FormEditor) editorBot.getReference().getEditor(false);
 		IFormPage formPage = formEditor.findPage(tabId);
+		Assert.assertNotNull(String.format("Editor tab with ID '%s' not found", tabId), formPage);
 		StandardTestActions.assertFormInvalid(editorBot.bot(), formPage);
 	}
 
