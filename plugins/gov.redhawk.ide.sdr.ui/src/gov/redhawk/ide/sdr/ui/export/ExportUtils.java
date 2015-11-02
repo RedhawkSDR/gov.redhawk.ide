@@ -111,8 +111,15 @@ public class ExportUtils {
 			final Resource resource = resourceSet.getResource(URI.createURI(sadFile.getLocationURI().toString()), true);
 			final SoftwareAssembly sad = ModelUtil.getSoftwareAssembly(resource);
 
+			// Validate name
+			String name = sad.getName();
+			if (name == null || name.isEmpty()) {
+				throw new CoreException(
+					new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Cannot export a project with an empty name. Check the project's SAD file."));
+			}
+
 			// Make directory & copy SAD file
-			final IPath outputFolder = new Path("dom/waveforms").append(sad.getName().replace('.', File.separatorChar));
+			final IPath outputFolder = new Path("dom/waveforms").append(name.replace('.', File.separatorChar));
 			exporter.mkdir(outputFolder, progress.newChild(1));
 			exporter.write(sadFile, outputFolder.append(sadFile.getName()), progress.newChild(1));
 		}
@@ -179,8 +186,15 @@ public class ExportUtils {
 			final Resource resource = resourceSet.getResource(URI.createURI(dcdFile.getLocationURI().toString()), true);
 			final DeviceConfiguration dcd = ModelUtil.getDeviceConfiguration(resource);
 
+			// Validate name
+			String name = dcd.getName();
+			if (name == null || name.isEmpty()) {
+				throw new CoreException(
+					new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Cannot export a project with an empty name. Check the project's DCD file."));
+			}
+
 			// Make directory & copy DCD file
-			final IPath outputFolder = new Path("dev/nodes").append(dcd.getName().replace('.', File.separatorChar));
+			final IPath outputFolder = new Path("dev/nodes").append(name.replace('.', File.separatorChar));
 			exporter.mkdir(outputFolder, progress.newChild(1));
 			exporter.write(dcdFile, outputFolder.append(dcdFile.getName()), progress.newChild(1));
 		}
