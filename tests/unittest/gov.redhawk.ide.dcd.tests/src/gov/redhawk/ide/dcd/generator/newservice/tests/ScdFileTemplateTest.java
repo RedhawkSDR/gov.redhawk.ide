@@ -65,7 +65,6 @@ public class ScdFileTemplateTest {
 		args.setSoftPkgId(DceUuidUtil.createDceUUID());
 		args.setAuthorName("Doe");
 		args.setLibrary(library);
-		args.setLibrary(library);
 		args.setRepId("IDL:FOO/FooService:1.0");
 		final String scdContent = scdTemplate.generate(args);
 

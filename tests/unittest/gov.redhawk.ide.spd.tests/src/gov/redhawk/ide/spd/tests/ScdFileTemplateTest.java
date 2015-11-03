@@ -32,9 +32,9 @@ import org.junit.Test;
  */
 public class ScdFileTemplateTest {
 
-	private static final int SUPPORT_INTERFACE_COUNT = 9;
-	private static final int INTERFACE_COUNT = 9;
-	private static final int INHERITS_INTERFACE_COUNT = 8;
+	private static final int SUPPORT_INTERFACE_COUNT = 10;
+	private static final int INTERFACE_COUNT = 10;
+	private static final int INHERITS_INTERFACE_COUNT = 9;
 
 	/**
 	 * Tests generating an SCD file for a component
