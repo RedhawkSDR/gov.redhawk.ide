@@ -19,7 +19,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.graphiti.mm.PropertyContainer;
-import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -926,41 +926,72 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 	/**
 	 * Waits until Component appears started in ChalkboardDiagram
 	 * @param componentName
+	 * @deprecated Use {@link #waitForComponentState(SWTBot, SWTBotGefEditor, String, ComponentState)}
 	 */
+	@Deprecated
 	public static void waitUntilComponentAppearsStartedInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
-
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return componentName + " Component did not appear started in Diagram";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				RHContainerShapeImpl componentShape = (RHContainerShapeImpl) editor.getEditPart(componentName).part().getModel();
-				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) componentShape.getInnerContainerShape().getGraphicsAlgorithm();
-				return innerRoundedRectangle.getStyle().getId().equals(StyleUtil.COMPONENT_INNER_STARTED);
-			}
-		}, 10000);
+		waitForComponentState(bot, editor, componentName, ComponentState.STARTED);
 	}
 
 	/**
 	 * Waits until Component appears stopped in ChalkboardDiagram
 	 * @param componentName
+	 * @deprecated Use {@link #waitForComponentState(SWTBot, SWTBotGefEditor, String, ComponentState)}
 	 */
+	@Deprecated
 	public static void waitUntilComponentAppearsStoppedInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
+		waitForComponentState(bot, editor, componentName, ComponentState.STOPPED);
+	}
 
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return componentName + " Component did not appear stopped in Diagram";
+	public enum ComponentState {
+		LAUNCHING,
+		STARTED,
+		STOPPED,
+		ERROR;
+
+		public String getStyleId() {
+			switch (this) {
+			case LAUNCHING:
+				return StyleUtil.COMPONENT_INNER_DISABLED;
+			case STARTED:
+				return StyleUtil.COMPONENT_INNER_STARTED;
+			case STOPPED:
+				return StyleUtil.COMPONENT_INNER;
+			case ERROR:
+				return StyleUtil.COMPONENT_INNER_ERROR;
+			default:
+				return null;
 			}
+		}
+
+		public static ComponentState getStateFromStyle(String styleId) {
+			for (ComponentState state : ComponentState.values()) {
+				if (state.getStyleId().equals(styleId)) {
+					return state;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static void waitForComponentState(SWTBot bot, final SWTBotGefEditor editor, final String componentName, final ComponentState state) {
+		waitUntilComponentDisplaysInDiagram(bot, editor, componentName);
+		bot.waitUntil(new DefaultCondition() {
+
+			private String lastStyle = null;
 
 			@Override
 			public boolean test() throws Exception {
 				RHContainerShapeImpl componentShape = (RHContainerShapeImpl) editor.getEditPart(componentName).part().getModel();
-				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) componentShape.getInnerContainerShape().getGraphicsAlgorithm();
-				return innerRoundedRectangle.getStyle().getId().equals(StyleUtil.COMPONENT_INNER);
+				GraphicsAlgorithm ga = componentShape.getInnerContainerShape().getGraphicsAlgorithm();
+				lastStyle = ga.getStyle().getId();
+				return state.getStyleId().equals(lastStyle);
+			}
+
+			@Override
+			public String getFailureMessage() {
+				String styleDesc = (ComponentState.getStateFromStyle(lastStyle) != null) ? ComponentState.getStateFromStyle(lastStyle).toString() : "id: " + lastStyle;
+				return String.format("Resource did not change to state '%s'. Style was '%s'.", state.toString(), styleDesc);
 			}
 		}, 10000);
 	}
@@ -969,11 +1000,11 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 	 * Waits until Component displays in Chalkboard Diagram
 	 * @param componentName
 	 */
-	public static void waitUntilComponentDisplaysInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
+	public static void waitUntilComponentDisplaysInDiagram(SWTBot bot, final SWTBotGefEditor editor, final String componentName) {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return componentName + " Component did not appear in Diagram";
+				return String.format("Resource %s did not appear in the diagram", componentName);
 			}
 
 			@Override
