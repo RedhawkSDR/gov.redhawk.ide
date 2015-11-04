@@ -16,14 +16,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.eclipse.swt.SWTException;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
@@ -77,12 +75,7 @@ public class ScaExplorerTestUtils {
 	 */
 	public static void openDiagramFromScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String treeItemName, DiagramType diagramType) {
 		SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, treeItemName);
-		if (treeItem == null) {
-			throw new WidgetNotFoundException("Tree item " + treeItemName + " not found in REDHAWK Explorer");
-		}
-
-		treeItem.select();
-		treeItem.contextMenu("Open With").menu(diagramType.getDiagramName()).click();
+		treeItem.contextMenu().menu("Open With", diagramType.getDiagramName()).click();
 	}
 
 	/**
@@ -90,6 +83,7 @@ public class ScaExplorerTestUtils {
 	 */
 	public static SWTBotTreeItem getTreeItemFromScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String treeItemName) {
 		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
+		scaExplorerView.setFocus();
 
 		List<String> path = new ArrayList<String>();
 		for (int i = 1; i < parentPath.length; i++) {
@@ -171,9 +165,7 @@ public class ScaExplorerTestUtils {
 	public static void launchDomain(SWTWorkbenchBot bot, String domainName, String deviceName) {
 		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
 		SWTBotTreeItem targetSDRTreeItem = scaExplorerView.bot().tree().getTreeItem("Target SDR");
-		targetSDRTreeItem.select();
-		SWTBotMenu launchDomain = targetSDRTreeItem.contextMenu("Launch Domain ...");
-		launchDomain.click();
+		targetSDRTreeItem.contextMenu("Launch Domain ...").click();
 
 		SWTBotShell wizardShell = bot.shell("Launch Domain Manager");
 		final SWTBot wizardBot = wizardShell.bot();
@@ -221,9 +213,7 @@ public class ScaExplorerTestUtils {
 	public static void deleteDomainInstance(SWTWorkbenchBot bot, String domainName) {
 
 		SWTBotTreeItem domainTreeItem = getDomain(bot, domainName);
-		domainTreeItem.select();
-		SWTBotMenu deleteDomain = domainTreeItem.contextMenu("Delete");
-		deleteDomain.click();
+		domainTreeItem.contextMenu("Delete").click();
 
 		SWTBotShell deletePopup = bot.shell("Delete Domain Connection");
 		final SWTBot deletePopupBot = deletePopup.bot();
@@ -237,9 +227,7 @@ public class ScaExplorerTestUtils {
 
 		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
 		SWTBotTreeItem domainTreeItem = scaExplorerView.bot().tree().getTreeItem(domain + " CONNECTED");
-		domainTreeItem.select();
-		SWTBotMenu launchWaveform = domainTreeItem.contextMenu("Launch Waveform...");
-		launchWaveform.click();
+		domainTreeItem.contextMenu("Launch Waveform...").click();
 
 		SWTBotShell wizardShell = bot.shell("Launch Waveform");
 		final SWTBot wizardBot = wizardShell.bot();
@@ -309,7 +297,6 @@ public class ScaExplorerTestUtils {
 		path.add(sourceComponentName);
 
 		final SWTBotTreeItem sourceComponentPortEntry = getTreeItemFromScaExplorer(bot, path.toArray(new String[path.size()]), sourceComponentPortName);
-		sourceComponentPortEntry.select();
 		sourceComponentPortEntry.contextMenu("Connect").click();
 
 		// Connect wizard
@@ -356,18 +343,14 @@ public class ScaExplorerTestUtils {
 		scaExplorerView.setFocus();
 		SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		SWTBotTreeItem connectionEntry = waveformTreeItem.expandNode(sourceComponentName, sourceComponentPortName, connectionName);
-		connectionEntry.select();
-		SWTBotMenu disconnect = connectionEntry.contextMenu("Disconnect");
-		disconnect.click(); // disconnects connection
+		connectionEntry.contextMenu("Disconnect").click();
 	}
 
 	public static void montiorWaveformPortsFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
 		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
 		scaExplorerView.setFocus();
 		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-		treeItemEntry.select();
-		SWTBotMenu start = treeItemEntry.contextMenu("Monitor Ports");
-		start.click();
+		treeItemEntry.contextMenu("Monitor Ports").click();
 	}
 
 	/**
@@ -384,9 +367,7 @@ public class ScaExplorerTestUtils {
 			waveformEntry.expand();
 		}
 		SWTBotTreeItem componentEntry = waveformEntry.getNode(componentName);
-		componentEntry.select();
-		SWTBotMenu start = componentEntry.contextMenu("Start");
-		start.click();
+		componentEntry.contextMenu("Start").click();
 	}
 
 	/**
@@ -400,7 +381,6 @@ public class ScaExplorerTestUtils {
 		SWTBotView view = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		view.setFocus();
 		SWTBotTreeItem componentEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, nodeName);
-		componentEntry.select();
 		componentEntry.contextMenu(menuText).click();
 	}
 
@@ -440,9 +420,7 @@ public class ScaExplorerTestUtils {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		SWTBotTreeItem waveformEntry = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-		waveformEntry.select();
-		SWTBotMenu terminate = waveformEntry.contextMenu("Terminate");
-		terminate.click();
+		waveformEntry.contextMenu("Terminate").click();
 	}
 
 	/**
@@ -452,7 +430,6 @@ public class ScaExplorerTestUtils {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, node);
-		treeItemEntry.select();
 		treeItemEntry.contextMenu("Release").click();
 	}
 
@@ -463,9 +440,7 @@ public class ScaExplorerTestUtils {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, node);
-		treeItemEntry.select();
-		SWTBotMenu terminate = treeItemEntry.contextMenu("Terminate");
-		terminate.click();
+		treeItemEntry.contextMenu("Terminate").click();
 	}
 
 	/**
@@ -477,9 +452,7 @@ public class ScaExplorerTestUtils {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, node);
-		treeItemEntry.select();
-		SWTBotMenu start = treeItemEntry.contextMenu("Start");
-		start.click();
+		treeItemEntry.contextMenu("Start").click();
 	}
 
 	/**
@@ -863,15 +836,7 @@ public class ScaExplorerTestUtils {
 		scaExplorerView.setFocus();
 		SWTBotTreeItem componentEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Components").expandNode(componentName.split("\\."));
 		componentEntry.select();
-		try {
-			componentEntry.contextMenu("Launch in Sandbox").menu(implementationId).click();
-		} catch (SWTException ex) {
-			// Unclear why, but it seems like every other invocation of the context menu doesn't show Launch in Sandbox
-			// This doesn't appear to happen in normal (user) UI usage
-			if (ex.getCause() instanceof WidgetNotFoundException) {
-				componentEntry.contextMenu("Launch in Sandbox").menu(implementationId).click();
-			}
-		}
+		componentEntry.contextMenu().menu("Launch in Sandbox", implementationId).click();
 	}
 	
 	/**
@@ -881,13 +846,8 @@ public class ScaExplorerTestUtils {
 	 * @param implementationId The implementation ID to be launched
 	 */
 	public static void launchDeviceFromTargetSDR(SWTWorkbenchBot bot, String deviceName, String implementationId) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		SWTBotTreeItem deviceEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Devices", deviceName);
-		deviceEntry.select();
-		SWTBotMenu launchInSandbox = deviceEntry.contextMenu("Launch in Sandbox");
-		SWTBotMenu impl = launchInSandbox.menu(implementationId);
-		impl.click();
+		SWTBotTreeItem deviceEntry = getTreeItemFromScaExplorer(bot, new String[] { "Target SDR", "Devices" }, deviceName);
+		deviceEntry.contextMenu().menu("Launch in Sandbox", implementationId).click();
 	}
 
 	/**
@@ -899,15 +859,7 @@ public class ScaExplorerTestUtils {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		SWTBotTreeItem waveformEntry = getTreeItemFromScaExplorer(bot, new String[] { "Target SDR", "Waveforms" }, waveformName);
-		try {
-			waveformEntry.contextMenu("Launch in Sandbox").menu("Default").click();
-		} catch (SWTException ex) {
-			// Unclear why, but it seems like every other invocation of the context menu doesn't show Launch in Sandbox
-			// This doesn't appear to happen in normal (user) UI usage
-			if (ex.getCause() instanceof WidgetNotFoundException) {
-				waveformEntry.contextMenu("Launch in Sandbox").menu("Default").click();
-			}
-		}
+		waveformEntry.contextMenu().menu("Launch in Sandbox", "Default").click();
 	}
 	
 	/** 
