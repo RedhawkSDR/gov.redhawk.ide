@@ -228,7 +228,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 	private IStatus launchDomainManager(final ExecutionEvent event, final DomainManagerConfiguration domain, final IProgressMonitor monitor) {
 		final String launchConfigName;
-		launchConfigName = getLaunchConfigName(domain);
+		launchConfigName = getLaunchConfigName(model.getDomainName());
 
 		monitor.beginTask("Launching NodeBooter (DomainManager) Process", 2);
 		try {
@@ -318,7 +318,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 		return SdrUiPlugin.getDefault().getPreferenceStore().getInt(SdrUiPreferenceConstants.PREF_AUTO_CONNECT_MAX_CONNECTION_ATTEMPTS);
 	}
 
-	private String getLaunchConfigName(final DomainManagerConfiguration domain) {
-		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DOMAIN_MANAGER_NAME) + " " + domain.getName();
+	private String getLaunchConfigName(final String domainName) {
+		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DOMAIN_MANAGER_NAME) + " " + domainName;
 	}
 }
