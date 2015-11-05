@@ -328,7 +328,7 @@ public class CodegenUtil {
      *  to call done() on the given monitor. Accepts null, indicating that no progress should be reported and that the
      *  operation cannot be canceled.
      * @throws CoreException
-     * @since 10.1
+     * @since 10.2
      */
     public static void removeTopLevelBuildScriptBuilder(final IProject project, final IProgressMonitor progress) throws CoreException {
             if (project.hasNature(ScaComponentProjectNature.ID)) {

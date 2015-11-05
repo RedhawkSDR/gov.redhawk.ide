@@ -31,7 +31,7 @@ import gov.redhawk.ide.sdr.ui.export.IScaExporter;
 import gov.redhawk.sca.util.SubMonitor;
 
 /**
- * @since 3.3
+ * @since 3.4
  */
 public class ExportToSdrRootJob extends Job {
 
