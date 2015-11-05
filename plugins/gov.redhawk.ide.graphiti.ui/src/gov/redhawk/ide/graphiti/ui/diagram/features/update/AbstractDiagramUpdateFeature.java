@@ -41,6 +41,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.FindByUtil;
+import gov.redhawk.sca.util.Debug;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterface;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
@@ -54,6 +55,8 @@ import mil.jpeojtrs.sca.partitioning.UsesPort;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
+
+	private static final Debug DEBUG = new Debug(GraphitiUIPlugin.PLUGIN_ID, "DiagramUpdate");
 
 	public AbstractDiagramUpdateFeature(IFeatureProvider fp) {
 		super(fp);
@@ -422,9 +425,17 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	protected boolean haveEndpointsChanged(Connection connection, Diagram diagram) {
 		ConnectInterface< ? , ? , ? > connectInterface = DUtil.getBusinessObject(connection, ConnectInterface.class);
 		Set<Anchor> anchors = new HashSet<Anchor>();
-		anchors.add(DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getSource(), Anchor.class));
-		anchors.add(DUtil.getPictogramElementForBusinessObject(diagram, connectInterface.getTarget(), Anchor.class));
-		return !anchors.contains(connection.getStart()) || !anchors.contains(connection.getEnd());
+		anchors.add(connection.getStart());
+		anchors.add(connection.getEnd());
+		Anchor source = getSourceAnchor(connectInterface, diagram);
+		if (source == null || !anchors.contains(source)) {
+			return true;
+		}
+		Anchor target = getTargetAnchor(connectInterface, diagram);
+		if (target == null || !anchors.contains(target)) {
+			return true;
+		}
+		return false;
 	}
 
 	protected boolean doesModelObjectExist(EObject object) {
@@ -523,13 +534,16 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	public boolean update(IUpdateContext context) {
 		PictogramElement pe = context.getPictogramElement();
 		if (pe instanceof Diagram) {
+			DEBUG.trace("Updating diagram");
 			boolean updateStatus = false;
 			boolean layoutNeeded = false;
 
 			Diagram diagram = (Diagram) pe;
 
 			// Remove children
-			for (Shape shape : getShapesToRemove(diagram)) {
+			List<Shape> removedShapes = getShapesToRemove(diagram);
+			DEBUG.trace("Removing {0,number} shapes", removedShapes.size());
+			for (Shape shape : removedShapes) {
 				DUtil.removeShapeViaFeature(getFeatureProvider(), shape);
 				updateStatus = true;
 			}
@@ -537,13 +551,30 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			// Prune unused stubs
 			List<EObject> removedStubs = getStubsToRemove(diagram);
 			if (!removedStubs.isEmpty()) {
+				DEBUG.trace("Removing {0,number} diagram stub(s)", removedStubs.size());
 				diagram.eResource().getContents().removeAll(removedStubs);
 				updateStatus = true;
 			}
 
 			// Remove stale connections
+			List<Connection> removedConnections = getConnectionsToRemove(diagram);
+			DEBUG.trace("Removing {0,number} diagram connection(s)", removedConnections.size());
 			for (Connection connection : getConnectionsToRemove(diagram)) {
 				DUtil.fastDeleteConnection(connection);
+				updateStatus = true;
+			}
+
+			// Add missing connection endpoints
+			List< ConnectInterface< ? , ? , ? > > addedConnections = getConnectionsToAdd(diagram);
+			for (ConnectInterface< ? , ? , ? > connectInterface : addedConnections) {
+				if (getUsesPortStub(connectInterface.getUsesPort(), diagram) == null) {
+					DEBUG.trace("Adding uses port for connection {0}", connectInterface.getId());
+					addUsesPort(connectInterface, diagram);
+				}
+				if (getConnectionTarget(connectInterface, diagram) == null) {
+					DEBUG.trace("Adding target for connection {0}", connectInterface.getId());
+					addConnectionTarget(connectInterface, diagram);
+				}
 				updateStatus = true;
 			}
 
@@ -553,7 +584,9 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			}
 
 			// Add shapes for SAD objects that do not have them
-			for (EObject object : getObjectsToAdd(diagram)) {
+			List<EObject> addedObjects = getObjectsToAdd(diagram);
+			DEBUG.trace("Adding {0,number} shape(s)", addedObjects.size());
+			for (EObject object : addedObjects) {
 				// New stubs will not belong to a resource; store them in the diagram's resource instead
 				if (object.eResource() == null) {
 					diagram.eResource().getContents().add(object);
@@ -563,39 +596,44 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				layoutNeeded = true;
 			}
 
-			// Add missing connection endpoints
-			List< ConnectInterface< ? , ? , ? > > addedConnections = getConnectionsToAdd(diagram);
-			for (ConnectInterface< ? , ? , ? > connectInterface : addedConnections) {
-				if (getSourceAnchor(connectInterface, diagram) == null) {
-					addUsesPort(connectInterface, diagram);
-				}
-				if (getTargetAnchor(connectInterface, diagram) == null) {
-					addConnectionTarget(connectInterface, diagram);
-				}
-				updateStatus = true;
-			}
-
 			// Check for FindBy stubs stored in the diagram's resource that do not have corresponding shapes, which
 			// were most likely created for the connection endpoints above
 			for (FindByStub findByStub : getDiagramStubs(diagram, FindByStub.class)) {
 				if (!hasExistingShape(diagram, findByStub)) {
+					DEBUG.trace("Adding FindBy shape");
 					DUtil.addShapeViaFeature(getFeatureProvider(), diagram, findByStub);
 					updateStatus = true;
 					layoutNeeded = true;
 				}
 			}
 
+			// Update components
+			if (super.update(context)) {
+				updateStatus = true;
+			}
+
 			// Add missing connections
+			if (DEBUG.enabled) {
+				DEBUG.trace("Adding " + addedConnections.size() + " connection(s)");
+			}
 			for (ConnectInterface< ? , ? , ? > connectInterface : addedConnections) {
 				Anchor source = getSourceAnchor(connectInterface, diagram);
+				if (source == null) {
+					DEBUG.trace("Failed to get source anchor for connection " + connectInterface.getId());
+				}
 				Anchor target = getTargetAnchor(connectInterface, diagram);
+				if (target == null) {
+					DEBUG.trace("Failed to get target anchor for connection " + connectInterface.getId());
+				}
 				if (source != null && target != null) {
+					DEBUG.trace("Adding connection " + connectInterface.getId());
 					DUtil.addConnectionViaFeature(getFeatureProvider(), connectInterface, source, target);
 				}
 				updateStatus = true;
 			}
 
 			if (layoutNeeded) {
+				DEBUG.trace("Laying out diagram");
 				LayoutDiagramFeature layoutFeature = new LayoutDiagramFeature(getFeatureProvider());
 				layoutFeature.execute(null);
 			}
@@ -611,6 +649,8 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			if (findByStub != null) {
 				return findByStub.getUses();
 			}
+		} else if (usesPort.getComponentInstantiationRef() != null) {
+			return usesPort.getComponentInstantiationRef().getInstantiation().getUses();
 		}
 		return Collections.emptyList();
 	}
@@ -663,6 +703,8 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			if (findByStub != null) {
 				return findByStub.getProvides();
 			}
+		} else if (providesPort.getComponentInstantiationRef() != null) {
+			return providesPort.getComponentInstantiationRef().getInstantiation().getProvides();
 		}
 		return Collections.emptyList();
 	}
