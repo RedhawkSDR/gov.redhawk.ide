@@ -102,7 +102,7 @@ public final class SpdLauncherUtil {
 	/**
 	 * Waits for a {@link SoftPkg} to register with the naming context up to the timeout specified in the launch. Then:
 	 * <ol>
-	 * <li>Performs initial life cycle (initializeProperites, initialize, configure, start)</li>
+	 * <li>Performs initial life cycle (initializeProperties, initialize, configure, start)</li>
 	 * <li>Creates a model object and refreshes it</li>
 	 * <li>Adds the model object to the model</li>
 	 * </ol>
@@ -386,9 +386,13 @@ public final class SpdLauncherUtil {
 		} catch (AlreadyInitialized | InvalidConfiguration | PartialConfiguration e) {
 			ScaDebugPlugin.logError("Error while initializing properties", e);
 		} catch (BAD_OPERATION e) {
-			String msg = "Could not call initializeProperties on component %s in the sandbox. "
-				+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.";
-			ScaDebugPlugin.logWarning(String.format(msg, compID), e);
+			if (initializeProps.size() == 0) {
+				String msg = "Could not call initializeProperties on component %s in the sandbox. "
+					+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.";
+				ScaDebugPlugin.logWarning(String.format(msg, compID), e);
+			} else {
+				ScaDebugPlugin.logError("Component has properties of kind 'property', but does not appear to support REDHAWK 2.0 API", e);
+			}
 		}
 		progress.newChild(WORK_INITIALIZE_PROPS);
 
