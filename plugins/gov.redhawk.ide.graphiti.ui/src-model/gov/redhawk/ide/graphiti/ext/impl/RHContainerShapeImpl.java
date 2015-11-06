@@ -54,7 +54,6 @@ import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.impl.ContainerShapeImpl;
 import org.eclipse.graphiti.services.Graphiti;
@@ -1292,6 +1291,109 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SUPER_USES_PORTS_RECTANGLE);
 	}
 
+	protected List<Shape> getPortsToRemove(ContainerShape containerShape) {
+		List<Shape> removed = new ArrayList<Shape>();
+		EObject containerObject = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(containerShape.getContainer());
+		for (Shape childShape : containerShape.getChildren()) {
+			EObject bo = DUtil.getBusinessObject(childShape);
+			if (bo == null || bo.eIsProxy()) {
+				// wasn't found, deleting this port
+				removed.add(childShape);
+			} else if (bo.eContainer() != containerObject) {
+				// Container changed; most likely, the underlying model indices changed
+				removed.add(childShape);
+			}
+		}
+		return removed;
+	}
+
+	protected Reason internalUpdateProvidesPortShape(ContainerShape providesPortShape, List<Port> externalPorts, boolean performUpdate) {
+		boolean updateStatus = false;
+		ProvidesPortStub providesPortStub = DUtil.getBusinessObject(providesPortShape, ProvidesPortStub.class);
+		Text providesPortText = getPortText(providesPortShape);
+		if (!providesPortStub.getName().equals(providesPortText.getValue())) {
+			if (performUpdate) {
+				updateStatus = true;
+				providesPortText.setValue(providesPortStub.getName());
+			} else {
+				return new Reason(true, "Uses port name requires update");
+			}
+		}
+		FixPointAnchor fixPointAnchor = getPortAnchor(providesPortShape);
+		Rectangle fixPointAnchorRectangle = getPortRectangle(providesPortShape);
+		// ProvidesPortStub
+		if (isExternalPort(providesPortStub, externalPorts)) {
+			// external port
+			if (!StyleUtil.isStyleSet(fixPointAnchorRectangle, StyleUtil.EXTERNAL_PROVIDES_PORT)) {
+				if (performUpdate) {
+					updateStatus = true;
+					// update style
+					StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.EXTERNAL_PROVIDES_PORT);
+					// link to externalPort so that update fires when it changes
+					fixPointAnchor.getLink().getBusinessObjects().add(findExternalPort(providesPortStub, externalPorts));
+				} else {
+					return new Reason(true, "Port style requires update");
+				}
+			}
+		} else {
+			// non-external port
+			if (!StyleUtil.isStyleSet(fixPointAnchorRectangle, StyleUtil.PROVIDES_PORT)) {
+				if (performUpdate) {
+					updateStatus = true;
+					// update style
+					StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.PROVIDES_PORT);
+				} else {
+					return new Reason(true, "Port style requires update");
+				}
+			}
+		}
+		return new Reason(updateStatus);
+	}
+
+	protected Reason internalUpdateUsesPortShape(ContainerShape usesPortShape, List<Port> externalPorts, IFeatureProvider featureProvider, boolean performUpdate) {
+		boolean updateStatus = false;
+		UsesPortStub usesPortStub = DUtil.getBusinessObject(usesPortShape, UsesPortStub.class);
+		Text usesPortText = getPortText(usesPortShape);
+		if (!usesPortStub.getName().equals(usesPortText.getValue())) {
+			if (performUpdate) {
+				usesPortText.setValue(usesPortStub.getName());
+			} else {
+				return new Reason(true, "Uses port name requires update");
+			}
+		}
+		FixPointAnchor fixPointAnchor = getPortAnchor(usesPortShape);
+		Rectangle portRectangle = getPortRectangle(usesPortShape);
+		if (isExternalPort(usesPortStub, externalPorts)) {
+			// external port
+			if (!StyleUtil.isStyleSet(portRectangle, StyleUtil.EXTERNAL_USES_PORT)) {
+				if (performUpdate) {
+					updateStatus = true;
+					// update style
+					StyleUtil.setStyle(portRectangle, StyleUtil.EXTERNAL_USES_PORT);
+					// link to externalPort so that update fires when it changes
+					fixPointAnchor.getLink().getBusinessObjects().add(findExternalPort(usesPortStub, externalPorts));
+				} else {
+					return new Reason(true, "Port style requires update");
+				}
+			}
+		} else {
+			// non-external port
+			if (!StyleUtil.isStyleSet(portRectangle, StyleUtil.USES_PORT)) {
+				if (performUpdate) {
+					updateStatus = true;
+					// update style
+					StyleUtil.setStyle(portRectangle, StyleUtil.USES_PORT);
+					// this line will actually remove existing links (which will include an
+					// external port) and simply add the portObject (which already existed)
+					featureProvider.link(portRectangle.getPictogramElement(), usesPortStub);
+				} else {
+					return new Reason(true, "Port style requires update");
+				}
+			}
+		}
+		return new Reason(updateStatus);
+	}
+
 	//Updates Provides Ports Container Shape
 	protected Reason internalUpdateProvidesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
 		EList<ProvidesPortStub> provides, Diagram diagram, boolean performUpdate, boolean updateStatus) {
@@ -1327,91 +1429,47 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			}
 		} else {
 			//provides ports container exists, update it
-			IFeatureProvider featureProvider = pattern.getFeatureProvider();
-
-			if (providesPortsContainerShape != null && provides != null) {
-				List<Text> providesPortTexts = new ArrayList<Text>();
-
-				// capture all providesPortText values
-				for (Shape providesPortShape : providesPortsContainerShape.getChildren()) {
-					ContainerShape providesPortContainerShape = (ContainerShape) providesPortShape;
-					Text providesPortText = getPortText(providesPortContainerShape);
-					providesPortTexts.add(providesPortText);
-					// search for text in model
-					boolean found = false;
-					for (ProvidesPortStub portStub : provides) {
-						if (portStub.getName().equals(providesPortText.getValue())) {
-							found = true;
-						}
+			List<Shape> removedPorts = getPortsToRemove(providesPortsContainerShape);
+			if (!removedPorts.isEmpty()) {
+				if (performUpdate) {
+					for (Shape providesPortShape : removedPorts) {
+						DUtil.fastDeletePictogramElement(providesPortShape);
 					}
-					if (!found) {
-						// wasn't found, deleting this port
+					updateStatus = true;
+				} else {
+					return new Reason(true, "Provides ports requires update");
+				}
+			}
+
+			// Update remaining ports
+			for (Shape providesPortShape : providesPortsContainerShape.getChildren()) {
+				Reason childReason = internalUpdateProvidesPortShape((ContainerShape) providesPortShape, externalPorts, performUpdate);
+				if (childReason.toBoolean()) {
+					if (!performUpdate) {
+						return childReason;
+					} else {
+						updateStatus = true;
+					}
+				}
+			}
+
+			// Add missing provides ports
+			if (provides != null) {
+				IFeatureProvider featureProvider = pattern.getFeatureProvider();
+				for (ProvidesPortStub providesPortStub : provides) {
+					if (DUtil.getPictogramElementForBusinessObject(diagram, providesPortStub, ContainerShape.class) == null) {
 						if (performUpdate) {
 							updateStatus = true;
-							// delete shape
-							DUtil.fastDeletePictogramElement((PictogramElement) providesPortContainerShape);
+							addProvidesPortContainerShape(providesPortStub, providesPortsContainerShape, featureProvider, findExternalPort(providesPortStub, externalPorts));
 						} else {
-							return new Reason(true, "Provides ports requires update");
-						}
-					} else {
-						FixPointAnchor fixPointAnchor = getPortAnchor(providesPortContainerShape);
-						Object portObject = DUtil.getBusinessObject(fixPointAnchor);
-						if (portObject != null) {
-							Rectangle fixPointAnchorRectangle = getPortRectangle(providesPortContainerShape);
-							// ProvidesPortStub
-							if (isExternalPort(portObject, externalPorts)) {
-								// external port
-								if (!StyleUtil.isStyleSet(fixPointAnchorRectangle, StyleUtil.EXTERNAL_PROVIDES_PORT)) {
-									if (performUpdate) {
-										updateStatus = true;
-										// update style
-										StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.EXTERNAL_PROVIDES_PORT);
-										// link to externalPort so that update fires when it changes
-										fixPointAnchor.getLink().getBusinessObjects().add(findExternalPort(portObject, externalPorts));
-									} else {
-										return new Reason(true, "Port style requires update");
-									}
-								}
-							} else {
-								// non-external port
-								if (!StyleUtil.isStyleSet(fixPointAnchorRectangle, StyleUtil.PROVIDES_PORT)) {
-									if (performUpdate) {
-										updateStatus = true;
-										// update style
-										StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.PROVIDES_PORT);
-									} else {
-										return new Reason(true, "Port style requires update");
-									}
-								}
-							}
+							return new Reason(true, "Need to add missing uses port");
 						}
 					}
 				}
-				// check number provides ports changed
-				if (provides.size() != providesPortTexts.size()) {
-					// add new provides ports
-					for (ProvidesPortStub p : provides) {
-						// search to see if p exists in diagram
-						boolean found = false;
-						for (Text portText : providesPortTexts) {
-							if (p.getName().equals(portText.getValue())) {
-								found = true;
-							}
-						}
-						// add p to diagram
-						if (!found) {
-							if (performUpdate) {
-								updateStatus = true;
-								addProvidesPortContainerShape(p, providesPortsContainerShape, featureProvider, findExternalPort(p, externalPorts));
-							} else {
-								return new Reason(true, "Provides ports requires update");
-							}
-						}
-					}
-					if (performUpdate) {
-						layoutProvidesPorts(providesPortsContainerShape);
-					}
-				}
+			}
+
+			if (performUpdate) {
+				layoutProvidesPorts(providesPortsContainerShape);
 			}
 		}
 
@@ -1507,95 +1565,47 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		} else {
 			//uses ports container exists, update it
 			IFeatureProvider featureProvider = pattern.getFeatureProvider();
-			if (usesPortsContainerShape != null && uses != null && uses.size() > 0) {
 
-				List<Text> usesPortTexts = new ArrayList<Text>();
-
-				// verify uses port quantity and text haven't changed
-				// find THE usesPortContainerShape
-				for (Shape usesPortShape : usesPortsContainerShape.getChildren()) {
-					ContainerShape usesPortContainerShape = (ContainerShape) usesPortShape;
-					Text usesPortText = getPortText(usesPortContainerShape);
-					usesPortTexts.add(usesPortText);
-					// search for text in model
-					boolean found = false;
-					for (UsesPortStub portStub : uses) {
-						if (portStub.getName().equals(usesPortText.getValue())) {
-							found = true;
-							break;
-						}
+			// Remove stale port shapes
+			List<Shape> portsToDelete = getPortsToRemove(usesPortsContainerShape);
+			if (!portsToDelete.isEmpty()) {
+				if (performUpdate) {
+					for (Shape portShape : portsToDelete) {
+						DUtil.fastDeletePictogramElement(portShape);
 					}
-					if (!found) {
+					updateStatus = true;
+				} else {
+					return new Reason(true, "Uses ports require update");
+				}
+			}
+
+			for (Shape usesPortShape : usesPortsContainerShape.getChildren()) {
+				Reason childReason = internalUpdateUsesPortShape((ContainerShape) usesPortShape, externalPorts, featureProvider, performUpdate);
+				if (childReason.toBoolean()) {
+					if (!performUpdate) {
+						return childReason;
+					} else {
+						updateStatus = true;
+					}
+				}
+			}
+
+			// Add any missing uses ports
+			if (uses != null) {
+				for (UsesPortStub usesPortStub : uses) {
+					if (DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, ContainerShape.class) == null) {
 						if (performUpdate) {
 							updateStatus = true;
-							// delete shape
-							DUtil.fastDeletePictogramElement(usesPortContainerShape);
+							addUsesPortContainerShape(usesPortStub, usesPortsContainerShape, featureProvider, findExternalPort(usesPortStub, externalPorts));
 						} else {
-							return new Reason(true, "Uses ports requires update");
-						}
-					} else {
-						FixPointAnchor fixPointAnchor = getPortAnchor(usesPortContainerShape);
-						// get business object linked to fixPointAnchor
-						Object portObject = DUtil.getBusinessObject(fixPointAnchor);
-						if (portObject != null) {
-							Rectangle portRectangle = getPortRectangle(usesPortContainerShape);
-							// usesPortStub
-							if (isExternalPort(portObject, externalPorts)) {
-								// external port
-								if (!StyleUtil.isStyleSet(portRectangle, StyleUtil.EXTERNAL_USES_PORT)) {
-									if (performUpdate) {
-										updateStatus = true;
-										// update style
-										StyleUtil.setStyle(portRectangle, StyleUtil.EXTERNAL_USES_PORT);
-										// link to externalPort so that update fires when it changes
-										fixPointAnchor.getLink().getBusinessObjects().add(findExternalPort(portObject, externalPorts));
-									} else {
-										return new Reason(true, "Port style requires update");
-									}
-								}
-							} else {
-								// non-external port
-								if (!StyleUtil.isStyleSet(portRectangle, StyleUtil.USES_PORT)) {
-									if (performUpdate) {
-										updateStatus = true;
-										// update style
-										StyleUtil.setStyle(portRectangle, StyleUtil.USES_PORT);
-										// this line will actually remove existing links (which will include an
-										// external port) and simply add the portObject (which already existed)
-										featureProvider.link(portRectangle.getPictogramElement(), portObject);
-									} else {
-										return new Reason(true, "Port style requires update");
-									}
-								}
-							}
+							return new Reason(true, "Need to add missing uses port");
 						}
 					}
 				}
-				// check number uses ports changed
-				if (uses.size() != usesPortTexts.size()) {
-					// add new uses ports
-					for (UsesPortStub p : uses) {
-						// search to see if p exists in diagram
-						boolean found = false;
-						for (Text portText : usesPortTexts) {
-							if (p.getName().equals(portText.getValue())) {
-								found = true;
-							}
-						}
-						// add p to diagram
-						if (!found) {
-							if (performUpdate) {
-								updateStatus = true;
-								addUsesPortContainerShape(p, usesPortsContainerShape, featureProvider, findExternalPort(p, externalPorts));
-							} else {
-								return new Reason(true, "Uses ports requires update");
-							}
-						}
-					}
-					if (performUpdate) {
-						layoutUsesPorts(usesPortsContainerShape);
-					}
-				}
+			}
+
+			if (performUpdate && updateStatus) {
+				layoutUsesPorts(usesPortsContainerShape);
 			}
 		}
 
