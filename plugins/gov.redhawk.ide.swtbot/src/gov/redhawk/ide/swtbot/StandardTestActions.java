@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -68,6 +69,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.eclipse.ui.PlatformUI;
@@ -681,6 +683,69 @@ public final class StandardTestActions {
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		for (ILaunch launch : launchManager.getLaunches()) {
 			launch.terminate();
+		}
+	}
+
+	public static SWTBotTreeItem waitForTreeItemToAppear(final SWTBot bot, final SWTBotTree tree, final List<String> path) {
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return String.format("%s was not found in the tree", path.get(path.size() - 1));
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				try {
+					return getTreeItem(tree, path) != null;
+				} catch (WidgetNotFoundException e) {
+					return false;
+				}
+			}
+		});
+		return getTreeItem(tree, path);
+	}
+
+	private static SWTBotTreeItem getTreeItem(SWTBotTree tree, List<String> path) {
+		for (SWTBotTreeItem rootItem : tree.getAllItems()) {
+			if (rootItem.getText().matches(path.get(0))) {
+				if (path.size() == 1) {
+					return rootItem;
+				}
+				return internalGetTreeItem(rootItem, path.subList(1, path.size()));
+			}
+		}
+		throw new WidgetNotFoundException("Cannot find root of tree: " + path.get(0));
+	}
+
+	private static SWTBotTreeItem internalGetTreeItem(SWTBotTreeItem parentItem, List<String> path) {
+		// Expand the current item if necessary
+		boolean isExpanded = parentItem.isExpanded();
+		if (!isExpanded) {
+			parentItem.expand();
+		}
+
+		// Recursively expand child items
+		try {
+			Pattern pattern = Pattern.compile(path.get(0));
+			List<String> nodes = parentItem.getNodes();
+			for (String node : nodes) {
+				if (pattern.matcher(node).matches()) {
+					if (path.size() == 1) {
+						SWTBotTreeItem result = parentItem.getNode(node);
+						result.expand();
+						return result;
+					} else {
+						return internalGetTreeItem(parentItem.getNode(node), path.subList(1, path.size()));
+					}
+				}
+			}
+			throw new WidgetNotFoundException("Unable to find node " + path.get(0));
+		} catch (WidgetNotFoundException ex) {
+			// If we failed to find the item collapse the current tree item if it was initially collapsed
+			if (!isExpanded) {
+				parentItem.collapse();
+			}
+			throw ex;
 		}
 	}
 }
