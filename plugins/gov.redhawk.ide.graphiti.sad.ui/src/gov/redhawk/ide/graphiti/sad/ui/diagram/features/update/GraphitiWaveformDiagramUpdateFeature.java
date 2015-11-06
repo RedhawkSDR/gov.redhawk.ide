@@ -132,7 +132,9 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 	protected List<ConnectInterface< ? , ? , ? >> getModelConnections(Diagram diagram) {
 		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
 		List<ConnectInterface < ? , ? , ? >> connections = new ArrayList<ConnectInterface< ? , ? , ? >>();
-		connections.addAll(sad.getConnections().getConnectInterface());
+		if (sad.getConnections() != null) {
+			connections.addAll(sad.getConnections().getConnectInterface());
+		}
 		return connections;
 	}
 
