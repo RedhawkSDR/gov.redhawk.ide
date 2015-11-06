@@ -16,6 +16,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByServicePattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
@@ -34,6 +35,8 @@ public abstract class AbstractGraphitiFeatureProvider extends DefaultFeatureProv
 		addPattern(new FindByEventChannelPattern());
 		addPattern(new FindByServicePattern());
 		addPattern(new FindByCORBANamePattern());
+
+		addPattern(new UsesPortPattern());
 	}
 
 }
