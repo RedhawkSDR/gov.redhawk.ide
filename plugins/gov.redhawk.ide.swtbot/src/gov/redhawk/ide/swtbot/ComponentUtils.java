@@ -11,64 +11,16 @@
  */
 package gov.redhawk.ide.swtbot;
 
-import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import java.util.Arrays;
+
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
-import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class ComponentUtils {
 
-	public static final String COMPONENT_MENU_NAME = "REDHAWK Component Project";
-
 	/** private to prevent instantiation since all functions are static. */
 	private ComponentUtils() {
-	}
-
-	/**
-	 * Launches the selected component in the REDHAWK Explorer chalkboard
-	 * @returns the SWTBotTreeItem for the component
-	 */
-	public static SWTBotTreeItem launchLocalComponent(final SWTWorkbenchBot bot, final String componentName, final String implementation) {
-		SWTBotView explorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
-		explorerView.show();
-		explorerView.setFocus();
-		SWTBot viewBot = explorerView.bot();
-
-		SWTBotTreeItem waveformNode = viewBot.tree().expandNode("Target SDR", "Components", componentName);
-		waveformNode.contextMenu("Launch in Sandbox").menu(implementation.toLowerCase()).click();
-
-		// Wait for the launched waveform to appear in the Sandbox > Chalkboard
-		final SWTBotTreeItem chalkboard = viewBot.tree().expandNode("Sandbox", "Chalkboard");
-		bot.waitUntil(new DefaultCondition() {
-
-			@Override
-			public boolean test() throws Exception {
-				for (SWTBotTreeItem item : chalkboard.getItems()) {
-					if (item.getText().matches(componentName + ".*")) {
-						return true;
-					}
-				}
-				return false;
-			}
-
-			@Override
-			public String getFailureMessage() {
-				return "Component: " + componentName + " [" + implementation + "] did not launch";
-			}
-		});
-
-		// Return the treeitem for the running waveform
-		for (SWTBotTreeItem item : chalkboard.getItems()) {
-			if (item.getText().matches(componentName + ".*")) {
-				return item;
-			}
-		}
-
-		return null;
 	}
 
 	/** create REDHAWK Component in Workspace using default location */
@@ -79,24 +31,7 @@ public class ComponentUtils {
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
 		final SWTBot wizardBot = wizardShell.bot();
-		wizardBot.waitUntil(new DefaultCondition() {
-
-			@Override
-			public String getFailureMessage() {
-				return "Could not find menu option for: " + COMPONENT_MENU_NAME;
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				try {
-					wizardBot.tree().getTreeItem("REDHAWK").expand().getNode(COMPONENT_MENU_NAME).select();
-					return true;
-				} catch (WidgetNotFoundException e) {
-					return false;
-				}
-			}
-
-		});
+		StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList("REDHAWK", "REDHAWK Component Project")).select();
 		wizardBot.button("Next >").click();
 
 		wizardBot.textWithLabel("Project name:").setText(componentProjectName);
