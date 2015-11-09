@@ -832,10 +832,11 @@ public class ScaExplorerTestUtils {
 	 * @param implementationId The implementation ID to be launched
 	 */
 	public static void launchComponentFromTargetSDR(SWTWorkbenchBot bot, String componentName, String implementationId) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		SWTBotTreeItem componentEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Components").expandNode(componentName.split("\\."));
-		componentEntry.select();
+		List<String> path = new ArrayList<String>();
+		Collections.addAll(path, "Target SDR", "Components");
+		Collections.addAll(path, componentName.split("\\."));
+		int last = path.size() - 1;
+		SWTBotTreeItem componentEntry = getTreeItemFromScaExplorer(bot, path.subList(0, last).toArray(new String[last]), path.get(last));
 		componentEntry.contextMenu().menu("Launch in Sandbox", implementationId).click();
 	}
 	
@@ -846,7 +847,11 @@ public class ScaExplorerTestUtils {
 	 * @param implementationId The implementation ID to be launched
 	 */
 	public static void launchDeviceFromTargetSDR(SWTWorkbenchBot bot, String deviceName, String implementationId) {
-		SWTBotTreeItem deviceEntry = getTreeItemFromScaExplorer(bot, new String[] { "Target SDR", "Devices" }, deviceName);
+		List<String> path = new ArrayList<String>();
+		Collections.addAll(path, "Target SDR", "Devices");
+		Collections.addAll(path, deviceName.split("\\."));
+		int last = path.size() - 1;
+		SWTBotTreeItem deviceEntry = getTreeItemFromScaExplorer(bot, path.subList(0, last).toArray(new String[last]), path.get(last));
 		deviceEntry.contextMenu().menu("Launch in Sandbox", implementationId).click();
 	}
 
@@ -856,10 +861,12 @@ public class ScaExplorerTestUtils {
 	 * @param componentLanguage
 	 */
 	public static void launchWaveformFromTargetSDR(SWTWorkbenchBot bot, String waveformName) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		SWTBotTreeItem waveformEntry = getTreeItemFromScaExplorer(bot, new String[] { "Target SDR", "Waveforms" }, waveformName);
-		waveformEntry.contextMenu().menu("Launch in Sandbox", "Default").click();
+		List<String> path = new ArrayList<String>();
+		Collections.addAll(path, "Target SDR", "Waveforms");
+		Collections.addAll(path, waveformName.split("\\."));
+		int last = path.size() - 1;
+		SWTBotTreeItem deviceEntry = getTreeItemFromScaExplorer(bot, path.subList(0, last).toArray(new String[last]), path.get(last));
+		deviceEntry.contextMenu().menu("Launch in Sandbox", "Default").click();
 	}
 	
 	/** 
