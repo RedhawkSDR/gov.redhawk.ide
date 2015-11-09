@@ -22,7 +22,6 @@ import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.ProvidesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -30,7 +29,6 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public class MarkNonExternalPortFeature extends AbstractCustomFeature {
 
@@ -127,9 +125,7 @@ public class MarkNonExternalPortFeature extends AbstractCustomFeature {
 			}
 		});
 
-		// Update the containing component to reset the port's style
-		RHContainerShape componentShape = ScaEcoreUtils.getEContainerOfType(portShape, RHContainerShape.class);
-		updatePictogramElement(componentShape);
+		updatePictogramElement(portShape);
 	}
 
 }

@@ -20,7 +20,6 @@ import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
@@ -34,7 +33,6 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public class MarkExternalPortFeature extends AbstractCustomFeature {
 
@@ -125,7 +123,6 @@ public class MarkExternalPortFeature extends AbstractCustomFeature {
 		});
 
 		// Update the containing component to reset the port's style
-		RHContainerShape componentShape = ScaEcoreUtils.getEContainerOfType(portShape, RHContainerShape.class);
-		updatePictogramElement(componentShape);
+		updatePictogramElement(portShape);
 	}
 }
