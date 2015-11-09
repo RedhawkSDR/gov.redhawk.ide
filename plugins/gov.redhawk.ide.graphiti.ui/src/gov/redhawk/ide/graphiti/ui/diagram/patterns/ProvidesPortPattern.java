@@ -11,17 +11,9 @@
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.mm.algorithms.Rectangle;
-import org.eclipse.graphiti.mm.algorithms.Text;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
@@ -49,11 +41,6 @@ public class ProvidesPortPattern extends AbstractPortPattern<ProvidesPortStub> {
 		return port.getName();
 	}
 
-	@Override
-	protected boolean isPatternControlled(PictogramElement pictogramElement) {
-		return RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER.equals(Graphiti.getPeService().getPropertyValue(pictogramElement, DUtil.SHAPE_TYPE));
-	}
-
 	protected boolean isExternalPort(ProvidesPortStub providesPortStub) {
 		EObject container = providesPortStub.eContainer();
 		if (container instanceof SadComponentInstantiation) {
@@ -72,43 +59,17 @@ public class ProvidesPortPattern extends AbstractPortPattern<ProvidesPortStub> {
 	}
 
 	@Override
-	public PictogramElement add(IAddContext context) {
-		// Outer invisible container
-		ContainerShape parentShape = context.getTargetContainer();
-		ContainerShape providesPortContainerShape = Graphiti.getCreateService().createContainerShape(parentShape, true);
-		Graphiti.getPeService().setPropertyValue(providesPortContainerShape, DUtil.SHAPE_TYPE, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER);
-		Rectangle providesPortContainerShapeRectangle = Graphiti.getCreateService().createPlainRectangle(providesPortContainerShape);
-		providesPortContainerShapeRectangle.setFilled(false);
-		providesPortContainerShapeRectangle.setLineVisible(false);
-		ProvidesPortStub providesPortStub = (ProvidesPortStub) context.getNewObject();
-		link(providesPortContainerShape, providesPortStub);
-
-		// Port rectangle; this is created as its own shape because Anchors do not support decorators (for things
-		// like highlighting)
-		ContainerShape providesPortShape = Graphiti.getPeService().createContainerShape(providesPortContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(providesPortShape, DUtil.SHAPE_TYPE, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE);
-		Rectangle providesPortRectangle = Graphiti.getCreateService().createPlainRectangle(providesPortShape);
-		String styleId = getStyleId(providesPortStub);
-		StyleUtil.setStyle(providesPortRectangle, styleId);
-		Graphiti.getGaLayoutService().setSize(providesPortRectangle, AbstractPortPattern.PORT_SHAPE_WIDTH, AbstractPortPattern.PORT_SHAPE_HEIGHT);
-		link(providesPortShape, providesPortStub);
-
-		// Port anchor
-		FixPointAnchor fixPointAnchor = createPortAnchor(providesPortShape, 0);
-		link(fixPointAnchor, providesPortStub);
-
-		// Port text
-		Shape providesPortTextShape = Graphiti.getCreateService().createShape(providesPortContainerShape, false);
-		Text providesPortText = Graphiti.getCreateService().createPlainText(providesPortTextShape, providesPortStub.getName());
-		StyleUtil.setStyle(providesPortText, StyleUtil.PORT_TEXT);
-		Graphiti.getGaLayoutService().setLocation(providesPortText, AbstractPortPattern.PORT_SHAPE_WIDTH + RHContainerShapeImpl.PORT_NAME_HORIZONTAL_PADDING,
-			0);
-
-		return providesPortContainerShape;
+	protected String getPortContainerShapeId() {
+		return RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER;
 	}
 
 	@Override
-	public boolean canAdd(IAddContext context) {
-		return true;
+	protected String getPortRectangleShapeId() {
+		return RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE;
+	}
+
+	@Override
+	protected Orientation getPortOrientation() {
+		return Orientation.ALIGNMENT_LEFT;
 	}
 }

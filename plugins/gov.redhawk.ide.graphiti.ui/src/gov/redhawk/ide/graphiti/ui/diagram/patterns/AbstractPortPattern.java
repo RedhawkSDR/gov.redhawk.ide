@@ -12,10 +12,12 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IReason;
+import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -43,6 +45,16 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 	@Override
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
 		return clazz.isInstance(mainBusinessObject);
+	}
+
+	@Override
+	protected boolean isPatternControlled(PictogramElement pictogramElement) {
+		return getPortContainerShapeId().equals(Graphiti.getPeService().getPropertyValue(pictogramElement, DUtil.SHAPE_TYPE));
+	}
+
+	@Override
+	protected boolean isPatternRoot(PictogramElement pictogramElement) {
+		return false;
 	}
 
 	@Override
@@ -81,6 +93,67 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 		}
 		return Reason.createFalseReason();
 	}
+
+	@Override
+	public boolean canAdd(IAddContext context) {
+		return isMainBusinessObjectApplicable(context.getNewObject());
+	}
+
+	@Override
+	public PictogramElement add(IAddContext context) {
+		ContainerShape parentShape = context.getTargetContainer();
+		E portStub = clazz.cast(context.getNewObject());
+
+		// Outer invisible container
+		ContainerShape portContainerShape = Graphiti.getCreateService().createContainerShape(parentShape, true);
+		Graphiti.getPeService().setPropertyValue(portContainerShape, DUtil.SHAPE_TYPE, getPortContainerShapeId());
+		Rectangle providesPortContainerShapeRectangle = Graphiti.getCreateService().createPlainRectangle(portContainerShape);
+		providesPortContainerShapeRectangle.setFilled(false);
+		providesPortContainerShapeRectangle.setLineVisible(false);
+		link(portContainerShape, portStub);
+
+		// Port rectangle; this is created as its own shape because Anchors do not support decorators (for things
+		// like highlighting)
+		ContainerShape portShape = Graphiti.getPeService().createContainerShape(portContainerShape, true);
+		Graphiti.getPeService().setPropertyValue(portShape, DUtil.SHAPE_TYPE, getPortRectangleShapeId());
+		Rectangle providesPortRectangle = Graphiti.getCreateService().createPlainRectangle(portShape);
+		StyleUtil.setStyle(providesPortRectangle, getStyleId(portStub));
+		Graphiti.getGaLayoutService().setSize(providesPortRectangle, AbstractPortPattern.PORT_SHAPE_WIDTH, AbstractPortPattern.PORT_SHAPE_HEIGHT);
+		link(portShape, portStub);
+
+		// Port anchor
+		Orientation orientation = getPortOrientation();
+		int anchorX;
+		if (Orientation.ALIGNMENT_LEFT.equals(orientation)) {
+			anchorX = 0;
+		} else {
+			anchorX = AbstractPortPattern.PORT_SHAPE_WIDTH;
+		}
+		FixPointAnchor fixPointAnchor = createPortAnchor(portShape, anchorX);
+		link(fixPointAnchor, portStub);
+
+		// Port text
+		Shape portTextShape = Graphiti.getPeService().createShape(portContainerShape, false);
+		Text portText = Graphiti.getCreateService().createPlainText(portTextShape, getPortName(portStub));
+		StyleUtil.setStyle(portText, StyleUtil.PORT_TEXT);
+		portText.setHorizontalAlignment(orientation);
+		// Based on orientation, set X position of text relative to port
+		int textX;
+		if (Orientation.ALIGNMENT_LEFT.equals(orientation)) {
+			textX = AbstractPortPattern.PORT_SHAPE_WIDTH + RHContainerShapeImpl.PORT_NAME_HORIZONTAL_PADDING;
+		} else {
+			textX = 0;
+		}
+		Graphiti.getGaLayoutService().setLocation(portText, textX, 0);
+
+		return portContainerShape;
+	}
+
+	protected abstract String getPortContainerShapeId();
+
+	protected abstract String getPortRectangleShapeId();
+
+	protected abstract Orientation getPortOrientation();
 
 	protected abstract String getStyleId(E port);
 
@@ -132,10 +205,5 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 		anchorLocation.setY(parentSize.getHeight() / 2);
 		Graphiti.getGaLayoutService().setLocationAndSize(portAnchor.getGraphicsAlgorithm(), -anchorLocation.getX(), -anchorLocation.getY(),
 			parentSize.getWidth(), parentSize.getHeight());
-	}
-
-	@Override
-	protected boolean isPatternRoot(PictogramElement pictogramElement) {
-		return false;
 	}
 }

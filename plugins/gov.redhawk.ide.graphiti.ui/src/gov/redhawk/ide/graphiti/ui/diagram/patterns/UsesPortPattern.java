@@ -11,18 +11,9 @@
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.mm.algorithms.Rectangle;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.services.Graphiti;
 
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
@@ -34,11 +25,6 @@ public class UsesPortPattern extends AbstractPortPattern<UsesPortStub> {
 
 	public UsesPortPattern() {
 		super(UsesPortStub.class);
-	}
-
-	@Override
-	protected boolean isPatternControlled(PictogramElement pictogramElement) {
-		return RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER.equals(Graphiti.getPeService().getPropertyValue(pictogramElement, DUtil.SHAPE_TYPE));
 	}
 
 	@Override
@@ -73,42 +59,18 @@ public class UsesPortPattern extends AbstractPortPattern<UsesPortStub> {
 	}
 
 	@Override
-	public PictogramElement add(IAddContext context) {
-		// Outer invisible container
-		ContainerShape parentShape = context.getTargetContainer();
-		ContainerShape usesPortContainerShape = Graphiti.getPeService().createContainerShape(parentShape, true);
-		Graphiti.getPeService().setPropertyValue(usesPortContainerShape, DUtil.SHAPE_TYPE, RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER);
-		Rectangle usesPortContainerShapeRectangle = Graphiti.getCreateService().createPlainRectangle(usesPortContainerShape);
-		usesPortContainerShapeRectangle.setFilled(false);
-		usesPortContainerShapeRectangle.setLineVisible(false);
-		UsesPortStub usesPortStub = (UsesPortStub) context.getNewObject();
-		link(usesPortContainerShape, usesPortStub);
-
-		// Port rectangle; this is created as its own shape because Anchors do not support decorators (for things
-		// like highlighting)
-		ContainerShape usesPortShape = Graphiti.getPeService().createContainerShape(usesPortContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(usesPortShape, DUtil.SHAPE_TYPE, RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE);
-		Rectangle usesPortRectangle = Graphiti.getCreateService().createPlainRectangle(usesPortShape);
-		StyleUtil.setStyle(usesPortRectangle, getStyleId(usesPortStub));
-		Graphiti.getGaLayoutService().setSize(usesPortRectangle, AbstractPortPattern.PORT_SHAPE_WIDTH, AbstractPortPattern.PORT_SHAPE_HEIGHT);
-		link(usesPortShape, usesPortStub);
-
-		// Port anchor
-		FixPointAnchor fixPointAnchor = createPortAnchor(usesPortShape, AbstractPortPattern.PORT_SHAPE_WIDTH);
-		link(fixPointAnchor, usesPortStub);
-
-		// Port text
-		Shape usesPortTextShape = Graphiti.getPeService().createShape(usesPortContainerShape, false);
-		Text usesPortText = Graphiti.getCreateService().createPlainText(usesPortTextShape, usesPortStub.getName());
-		StyleUtil.setStyle(usesPortText, StyleUtil.PORT_TEXT);
-		usesPortText.setHorizontalAlignment(Orientation.ALIGNMENT_RIGHT);
-		Graphiti.getGaLayoutService().setLocation(usesPortText, 0, 0);
-
-		return usesPortContainerShape;
+	protected String getPortContainerShapeId() {
+		return RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER;
 	}
 
 	@Override
-	public boolean canAdd(IAddContext context) {
-		return true;
+	protected String getPortRectangleShapeId() {
+		return RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE;
 	}
+
+	@Override
+	protected Orientation getPortOrientation() {
+		return Orientation.ALIGNMENT_RIGHT;
+	}
+
 }
