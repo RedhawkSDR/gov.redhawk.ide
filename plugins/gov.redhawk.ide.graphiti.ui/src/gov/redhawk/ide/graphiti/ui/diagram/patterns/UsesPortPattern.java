@@ -42,11 +42,6 @@ public class UsesPortPattern extends AbstractPortPattern<UsesPortStub> {
 	}
 
 	@Override
-	protected boolean isPatternRoot(PictogramElement pictogramElement) {
-		return false;
-	}
-
-	@Override
 	protected String getStyleId(UsesPortStub usesPortStub) {
 		if (isExternalPort(usesPortStub)) {
 			return StyleUtil.EXTERNAL_USES_PORT;

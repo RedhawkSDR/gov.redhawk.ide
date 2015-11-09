@@ -898,43 +898,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Adds a ProvidesPortStub shape to the providesPortsContainerShape
 	 */
-	private void addProvidesPortContainerShape(ProvidesPortStub p, ContainerShape providesPortsContainerShape, IFeatureProvider featureProvider,
-		Port externalPort) {
-
-		ContainerShape providesPortContainerShape = Graphiti.getCreateService().createContainerShape(providesPortsContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(providesPortContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORT_CONTAINER); // ref
-		// prevent
-		// selection/deletion/removal
-		Rectangle providesPortContainerShapeRectangle = Graphiti.getCreateService().createPlainRectangle(providesPortContainerShape);
-		providesPortContainerShapeRectangle.setFilled(false);
-		providesPortContainerShapeRectangle.setLineVisible(false);
-		featureProvider.link(providesPortContainerShape, p);
-
-		// Port rectangle; this is created as its own shape because Anchors do not support decorators (for things
-		// like highlighting)
-		ContainerShape providesPortShape = Graphiti.getPeService().createContainerShape(providesPortContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(providesPortShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORT_RECTANGLE);
-		Rectangle providesPortRectangle = Graphiti.getCreateService().createPlainRectangle(providesPortShape);
-		if (externalPort != null) {
-			StyleUtil.setStyle(providesPortRectangle, StyleUtil.EXTERNAL_PROVIDES_PORT);
-		} else {
-			StyleUtil.setStyle(providesPortRectangle, StyleUtil.PROVIDES_PORT);
-		}
-		Graphiti.getGaLayoutService().setSize(providesPortRectangle, PORT_SHAPE_WIDTH, PORT_SHAPE_HEIGHT);
-		featureProvider.link(providesPortShape, p);
-
-		// Port shape anchor
-		FixPointAnchor fixPointAnchor = createPortAnchor(providesPortShape, 0);
-		DUtil.addLink(featureProvider, fixPointAnchor, p);
-		if (externalPort != null) {
-			DUtil.addLink(featureProvider, fixPointAnchor, externalPort);
-		}
-
-		// Port text
-		Shape providesPortTextShape = Graphiti.getCreateService().createShape(providesPortContainerShape, false);
-		Text providesPortText = Graphiti.getCreateService().createPlainText(providesPortTextShape, p.getName());
-		StyleUtil.setStyle(providesPortText, StyleUtil.PORT_TEXT);
-		Graphiti.getGaLayoutService().setLocation(providesPortText, PORT_SHAPE_WIDTH + PORT_NAME_HORIZONTAL_PADDING, 0);
+	private void addProvidesPortContainerShape(ProvidesPortStub p, ContainerShape providesPortsContainerShape, IFeatureProvider featureProvider) {
+		DUtil.addShapeViaFeature(featureProvider, providesPortsContainerShape, p);
 	}
 
 	private void resizePortText(Text text) {
@@ -1081,7 +1046,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 			// iterate over all provides ports
 			for (ProvidesPortStub p : providesPortStubs) {
-				addProvidesPortContainerShape(p, providesPortsContainerShape, featureProvider, findExternalPort(p, externalPorts));
+				addProvidesPortContainerShape(p, providesPortsContainerShape, featureProvider);
 			}
 		}
 		layoutProvidesPorts(providesPortsContainerShape);
@@ -1276,49 +1241,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		return removed;
 	}
 
-	protected Reason internalUpdateProvidesPortShape(ContainerShape providesPortShape, List<Port> externalPorts, boolean performUpdate) {
-		boolean updateStatus = false;
-		ProvidesPortStub providesPortStub = DUtil.getBusinessObject(providesPortShape, ProvidesPortStub.class);
-		Text providesPortText = getPortText(providesPortShape);
-		if (!providesPortStub.getName().equals(providesPortText.getValue())) {
-			if (performUpdate) {
-				updateStatus = true;
-				providesPortText.setValue(providesPortStub.getName());
-			} else {
-				return new Reason(true, "Uses port name requires update");
-			}
-		}
-		FixPointAnchor fixPointAnchor = getPortAnchor(providesPortShape);
-		Rectangle fixPointAnchorRectangle = getPortRectangle(providesPortShape);
-		// ProvidesPortStub
-		if (isExternalPort(providesPortStub, externalPorts)) {
-			// external port
-			if (!StyleUtil.isStyleSet(fixPointAnchorRectangle, StyleUtil.EXTERNAL_PROVIDES_PORT)) {
-				if (performUpdate) {
-					updateStatus = true;
-					// update style
-					StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.EXTERNAL_PROVIDES_PORT);
-					// link to externalPort so that update fires when it changes
-					fixPointAnchor.getLink().getBusinessObjects().add(findExternalPort(providesPortStub, externalPorts));
-				} else {
-					return new Reason(true, "Port style requires update");
-				}
-			}
-		} else {
-			// non-external port
-			if (!StyleUtil.isStyleSet(fixPointAnchorRectangle, StyleUtil.PROVIDES_PORT)) {
-				if (performUpdate) {
-					updateStatus = true;
-					// update style
-					StyleUtil.setStyle(fixPointAnchorRectangle, StyleUtil.PROVIDES_PORT);
-				} else {
-					return new Reason(true, "Port style requires update");
-				}
-			}
-		}
-		return new Reason(updateStatus);
-	}
-
 	//Updates Provides Ports Container Shape
 	protected Reason internalUpdateProvidesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
 		EList<ProvidesPortStub> provides, Diagram diagram, boolean performUpdate, boolean updateStatus) {
@@ -1367,25 +1289,29 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			}
 
 			// Update remaining ports
+			IFeatureProvider featureProvider = pattern.getFeatureProvider();
 			for (Shape providesPortShape : providesPortsContainerShape.getChildren()) {
-				Reason childReason = internalUpdateProvidesPortShape((ContainerShape) providesPortShape, externalPorts, performUpdate);
-				if (childReason.toBoolean()) {
-					if (!performUpdate) {
-						return childReason;
-					} else {
-						updateStatus = true;
+				UpdateContext updateContext = new UpdateContext(providesPortShape);
+				IUpdateFeature updateFeature = featureProvider.getUpdateFeature(updateContext);
+				if (updateFeature != null) {
+					IReason childReason = updateFeature.updateNeeded(updateContext);
+					if (childReason.toBoolean()) {
+						if (performUpdate) {
+							updateStatus |= updateFeature.update(updateContext);
+						} else {
+							return new Reason(true, childReason.getText());
+						}
 					}
 				}
 			}
 
 			// Add missing provides ports
 			if (provides != null) {
-				IFeatureProvider featureProvider = pattern.getFeatureProvider();
 				for (ProvidesPortStub providesPortStub : provides) {
 					if (DUtil.getPictogramElementForBusinessObject(diagram, providesPortStub, ContainerShape.class) == null) {
 						if (performUpdate) {
 							updateStatus = true;
-							addProvidesPortContainerShape(providesPortStub, providesPortsContainerShape, featureProvider, findExternalPort(providesPortStub, externalPorts));
+							addProvidesPortContainerShape(providesPortStub, providesPortsContainerShape, featureProvider);
 						} else {
 							return new Reason(true, "Need to add missing uses port");
 						}
@@ -1833,16 +1759,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		return new Reason(false, "No updates required");
 
-	}
-
-	/**
-	 * Returns true if the portObject identifier is listed in the externalPorts list
-	 * @param portObject
-	 * @param externalPorts
-	 * @return
-	 */
-	private static boolean isExternalPort(Object portObject, List<Port> externalPorts) {
-		return findExternalPort(portObject, externalPorts) != null;
 	}
 
 	/**

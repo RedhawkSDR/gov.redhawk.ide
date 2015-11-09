@@ -20,6 +20,7 @@ import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.services.Graphiti;
@@ -131,5 +132,10 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 		anchorLocation.setY(parentSize.getHeight() / 2);
 		Graphiti.getGaLayoutService().setLocationAndSize(portAnchor.getGraphicsAlgorithm(), -anchorLocation.getX(), -anchorLocation.getY(),
 			parentSize.getWidth(), parentSize.getHeight());
+	}
+
+	@Override
+	protected boolean isPatternRoot(PictogramElement pictogramElement) {
+		return false;
 	}
 }
