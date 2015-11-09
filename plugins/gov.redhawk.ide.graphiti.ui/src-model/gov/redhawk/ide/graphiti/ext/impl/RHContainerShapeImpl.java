@@ -519,13 +519,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 			// Layout provides ports
 			ContainerShape providesPortsContainer = getProvidesPortsContainerShape();
-			layoutProvidesPorts(providesPortsContainer);
+			layoutProvidesPorts(providesPortsContainer, featureProvider);
 			int providesHeight = providesPortsContainer.getGraphicsAlgorithm().getHeight();
 			int providesWidth = providesPortsContainer.getGraphicsAlgorithm().getWidth();
 
 			// Layout uses ports
 			ContainerShape usesPortsContainer = getUsesPortsContainerShape();
-			layoutUsesPorts(usesPortsContainer);
+			layoutUsesPorts(usesPortsContainer, featureProvider);
 			adjustUsesPortsPosition(usesPortsContainer);
 			int usesHeight = usesPortsContainer.getGraphicsAlgorithm().getHeight();
 			int usesWidth = usesPortsContainer.getGraphicsAlgorithm().getWidth();
@@ -904,14 +904,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		DUtil.addShapeViaFeature(featureProvider, providesPortsContainerShape, p);
 	}
 
-	private void resizePortText(Text text) {
-		IDimension textSize = DUtil.calculateTextSize(text);
-		// Graphiti appears to underestimate the width for some strings (e.g., those ending in "r"), so add a small
-		// amount of padding to ensure the entire letter is drawn
-		int textWidth = textSize.getWidth() + 2;
-		Graphiti.getGaLayoutService().setSize(text, textWidth, PORT_SHAPE_HEIGHT);
-	}
-
 	protected void layoutInnerShape(ContainerShape innerContainerShape) {
 		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
 		IDimension parentSize = gaLayoutService.calculateSize(innerContainerShape.getContainer().getGraphicsAlgorithm());
@@ -926,64 +918,43 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		getInnerPolyline().getPoints().get(1).setX(width);
 	}
 
-	private void layoutProvidesPorts(ContainerShape providesPortsContainer) {
+	private void layoutProvidesPorts(ContainerShape providesPortsContainer, IFeatureProvider featureProvider) {
 		int currentY = 0;
 		int maxWidth = 0;
-		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
 		for (Shape shape : providesPortsContainer.getChildren()) {
-			ContainerShape providesPort = (ContainerShape) shape;
-
-			// Resize the text
-			Text portText = getPortText(providesPort);
-			resizePortText(portText);
-			int portWidth = portText.getWidth() + PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_WIDTH;
-			gaLayoutService.setSize(providesPort.getGraphicsAlgorithm(), portWidth, PORT_SHAPE_HEIGHT);
+			DUtil.layoutShapeViaFeature(featureProvider, shape);
 
 			// Place the container at the next Y position
-			gaLayoutService.setLocation(providesPort.getGraphicsAlgorithm(), 0, currentY);
-			currentY += providesPort.getGraphicsAlgorithm().getHeight() + PORT_ROW_PADDING_HEIGHT;
-			maxWidth = Math.max(maxWidth, portWidth);
+			DUtil.moveIfNeeded(shape.getGraphicsAlgorithm(), 0, currentY);
+			currentY += shape.getGraphicsAlgorithm().getHeight() + PORT_ROW_PADDING_HEIGHT;
+			maxWidth = Math.max(maxWidth, shape.getGraphicsAlgorithm().getWidth());
 		}
 		// Resize container to contents and adjust position so that ports are aligned to the outer edge
 		currentY = Math.max(currentY - 5, 0); // remove extra spacing, if it was added above
-		gaLayoutService.setSize(providesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
+		DUtil.resizeIfNeeded(providesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
 		// NB: For FindBy shapes and the like, the normal layout was not occurring for the provides port container
-		Graphiti.getGaLayoutService().setLocation(providesPortsContainer.getGraphicsAlgorithm(), PROVIDES_PORTS_LEFT_PADDING,
-			PORTS_CONTAINER_SHAPE_TOP_PADDING);
+		DUtil.moveIfNeeded(providesPortsContainer.getGraphicsAlgorithm(), PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING);
 	}
 
-	private void layoutUsesPorts(ContainerShape usesPortsContainer) {
+	private void layoutUsesPorts(ContainerShape usesPortsContainer, IFeatureProvider featureProvider) {
 		int maxWidth = 0;
-		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
 		// First pass: resize and layout contained ports, remembering max width
 		for (Shape shape : usesPortsContainer.getChildren()) {
-			ContainerShape usesPort = (ContainerShape) shape;
-
-			// Resize the text
-			Text portText = getPortText(usesPort);
-			resizePortText(portText);
-			int portWidth = portText.getWidth() + PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_WIDTH;
-
-			// Move the rectangle
-			Rectangle portRectangle = getPortRectangle(usesPort);
-			gaLayoutService.setLocation(portRectangle, portText.getWidth() + PORT_NAME_HORIZONTAL_PADDING, 0);
-
-			// Resize container
-			gaLayoutService.setSize(usesPort.getGraphicsAlgorithm(), portWidth, PORT_SHAPE_HEIGHT);
-			maxWidth = Math.max(maxWidth, portWidth);
+			DUtil.layoutShapeViaFeature(featureProvider, shape);
+			maxWidth = Math.max(maxWidth, shape.getGraphicsAlgorithm().getWidth());
 		}
 
 		// Second pass: layout vertically and adjust X coordinates so that right edges line up (depends on max width)
 		int currentY = 0;
 		for (Shape shape : usesPortsContainer.getChildren()) {
 			int xOffset = maxWidth - shape.getGraphicsAlgorithm().getWidth();
-			gaLayoutService.setLocation(shape.getGraphicsAlgorithm(), xOffset, currentY);
+			DUtil.moveIfNeeded(shape.getGraphicsAlgorithm(), xOffset, currentY);
 			currentY += shape.getGraphicsAlgorithm().getHeight() + PORT_ROW_PADDING_HEIGHT;
 		}
 
 		// Resize container to contents
 		currentY = Math.max(currentY - 5, 0); // remove extra spacing, if it was added above
-		gaLayoutService.setSize(usesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
+		DUtil.resizeIfNeeded(usesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
 	}
 
 	/**
@@ -1051,7 +1022,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				addProvidesPortContainerShape(p, providesPortsContainerShape, featureProvider);
 			}
 		}
-		layoutProvidesPorts(providesPortsContainerShape);
+		layoutProvidesPorts(providesPortsContainerShape, featureProvider);
 	}
 
 	/**
@@ -1089,7 +1060,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				addUsesPortContainerShape(p, usesPortsContainerShape, featureProvider, findExternalPort(p, externalPorts));
 			}
 		}
-		layoutUsesPorts(usesPortsContainerShape);
+		layoutUsesPorts(usesPortsContainerShape, featureProvider);
 	}
 
 	/**
@@ -1322,7 +1293,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			}
 
 			if (performUpdate) {
-				layoutProvidesPorts(providesPortsContainerShape);
+				layoutProvidesPorts(providesPortsContainerShape, featureProvider);
 			}
 		}
 
@@ -1462,7 +1433,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			}
 
 			if (performUpdate && updateStatus) {
-				layoutUsesPorts(usesPortsContainerShape);
+				layoutUsesPorts(usesPortsContainerShape, featureProvider);
 			}
 		}
 

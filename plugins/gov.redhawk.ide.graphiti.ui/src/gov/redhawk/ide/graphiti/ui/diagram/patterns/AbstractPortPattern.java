@@ -13,6 +13,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
@@ -147,6 +148,39 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 		Graphiti.getGaLayoutService().setLocation(portText, textX, 0);
 
 		return portContainerShape;
+	}
+
+	@Override
+	public boolean layout(ILayoutContext context) {
+		ContainerShape portContainerShape = (ContainerShape) context.getPictogramElement();
+
+		// Resize the text
+		Text portText = getPortText(portContainerShape);
+		IDimension textSize = DUtil.calculateTextSize(portText);
+		// Graphiti appears to underestimate the width for some strings (e.g., those ending in "r"), so add a small
+		// amount of padding to ensure the entire letter is drawn
+		int textWidth = textSize.getWidth() + 2;
+		boolean layoutApplied = DUtil.resizeIfNeeded(portText, textWidth, AbstractPortPattern.PORT_SHAPE_HEIGHT);
+
+		// Move port rectangle
+		int portX;
+		if (Orientation.ALIGNMENT_RIGHT.equals(getPortOrientation())) {
+			portX = portText.getWidth() + RHContainerShapeImpl.PORT_NAME_HORIZONTAL_PADDING;
+		} else {
+			portX = 0;
+		}
+		Rectangle portRectangle = getPortRectangle(portContainerShape);
+		if (DUtil.moveIfNeeded(portRectangle, portX, 0)) {
+			layoutApplied = true;
+		}
+
+		// Resize invisible bounding rectangle
+		int portWidth = textWidth + RHContainerShapeImpl.PORT_NAME_HORIZONTAL_PADDING + AbstractPortPattern.PORT_SHAPE_WIDTH;
+		if (DUtil.resizeIfNeeded(portContainerShape.getGraphicsAlgorithm(), portWidth, AbstractPortPattern.PORT_SHAPE_HEIGHT)) {
+			layoutApplied = true;
+		}
+
+		return layoutApplied;
 	}
 
 	protected abstract String getPortContainerShapeId();

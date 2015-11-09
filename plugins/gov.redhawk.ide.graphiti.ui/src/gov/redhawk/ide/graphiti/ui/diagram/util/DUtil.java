@@ -68,6 +68,7 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.ILayoutFeature;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.ICustomContext;
@@ -77,6 +78,7 @@ import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
 import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
+import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
@@ -816,6 +818,21 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
+	 * Layout PictogramElement via feature
+	 * Relies on the framework determining which feature should be used and whether it lay out the shape
+	 * @param featureProvider
+	 * @param pe
+	 * @return true if layout was applied
+	 */
+	public static boolean layoutShapeViaFeature(IFeatureProvider featureProvider, PictogramElement pe) {
+		LayoutContext updateContext = new LayoutContext(pe);
+		ILayoutFeature layoutFeature = featureProvider.getLayoutFeature(updateContext);
+		if (layoutFeature != null && layoutFeature.canLayout(updateContext)) {
+			return layoutFeature.layout(updateContext);
+		}
+		return false;
+	}
+	/**
 	 * Add PictogramElement Connection via feature for the provided object and anchors.
 	 * Relies on the framework determining which feature should be used and whether it can be added to diagram
 	 * @param featureProvider
@@ -1536,5 +1553,39 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	public static IDimension calculateTextSize(AbstractText text) {
 		return GraphitiUi.getUiLayoutService().calculateTextSize(text.getValue(), Graphiti.getGaService().getFont(text, true));
+	}
+
+	/**
+	 * Resizes a {@link GraphicsAlgorithm} if it does not already match the requested size, returning whether the
+	 * resize occurred or not.
+	 * 
+	 * @param ga target GraphicsAlgorithm
+	 * @param width requested width
+	 * @param height requested height
+	 * @return true if ga was resized, false if it was already the requested sizes
+	 */
+	public static boolean resizeIfNeeded(GraphicsAlgorithm ga, int width, int height) {
+		if ((ga.getWidth() != width) || (ga.getHeight() != height)) {
+			Graphiti.getGaLayoutService().setSize(ga, width, height);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Moves a {@link GraphicsAlgorithm} if it is not already at the requested location, returning whether the move
+	 * occurred or not.
+	 * 
+	 * @param ga target GraphicsAlgorithm
+	 * @param x requested x position
+	 * @param y requested y posizion
+	 * @return true if ga was move, false if it was already at the requested location
+	 */
+	public static boolean moveIfNeeded(GraphicsAlgorithm ga, int x, int y) {
+		if ((ga.getX() != x) || (ga.getY() != y)) {
+			Graphiti.getGaLayoutService().setLocation(ga, x, y);
+			return true;
+		}
+		return false;
 	}
 }
