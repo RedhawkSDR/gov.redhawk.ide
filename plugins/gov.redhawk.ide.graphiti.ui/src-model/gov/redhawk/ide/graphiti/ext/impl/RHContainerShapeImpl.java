@@ -15,7 +15,7 @@ package gov.redhawk.ide.graphiti.ext.impl;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
@@ -233,9 +233,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15, INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING = 60, PROVIDES_PORTS_LEFT_PADDING = 5,
 			INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
 			PORTS_CONTAINER_SHAPE_TOP_PADDING = 60, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8, INNER_ROUNDED_RECTANGLE_LINE_Y = 28,
-			SUPER_PORT_SHAPE_HEIGHT = 25, SUPER_PORT_SHAPE_WIDTH = 10, SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5,
-			LOLLIPOP_ELLIPSE_DIAMETER = 10, INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
-			INTERFACE_SHAPE_HEIGHT = 10, ICON_IMAGE_LENGTH = 16;
+			SUPER_PORT_SHAPE_HEIGHT = 25, SUPER_PORT_SHAPE_WIDTH = 10, SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5, LOLLIPOP_ELLIPSE_DIAMETER = 10,
+			INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING, INTERFACE_SHAPE_HEIGHT = 10, ICON_IMAGE_LENGTH = 16;
 
 	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_WIDTH = 10;
 	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT = 10;
@@ -424,14 +423,14 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 */
-	public void init(IAddContext context, AbstractContainerPattern pattern) {
+	public void init(IAddContext context, AbstractPortSupplierPattern pattern) {
 		init(context, pattern, null);
 	}
 
 	/**
 	 * Creates the inner shapes that make up this container shape
 	 */
-	public void init(final IAddContext context, AbstractContainerPattern pattern, List<Port> externalPorts) {
+	public void init(final IAddContext context, AbstractPortSupplierPattern pattern, List<Port> externalPorts) {
 		EObject newObject = (EObject) context.getNewObject();
 		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
 
@@ -578,14 +577,14 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Updates the shape's contents using the supplied fields. Return true if an update occurred, false otherwise.
 	 */
-	public Reason update(final IUpdateContext context, AbstractContainerPattern pattern, final List<Port> externalPorts) {
+	public Reason update(final IUpdateContext context, AbstractPortSupplierPattern pattern, final List<Port> externalPorts) {
 		return internalUpdate(pattern, (EObject) DUtil.getBusinessObject(context.getPictogramElement()), externalPorts, true);
 	}
 
 	/**
 	 * Updates the shape's contents using the supplied fields. Return true if an update occurred, false otherwise.
 	 */
-	public Reason update(IUpdateContext context, AbstractContainerPattern pattern) {
+	public Reason update(IUpdateContext context, AbstractPortSupplierPattern pattern) {
 		return update(context, pattern, null);
 	}
 
@@ -593,7 +592,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Return true (through Reason) if the shape's contents require an update based on the field supplied.
 	 * Also returns a textual reason why an update is needed. Returns false otherwise.
 	 */
-	public Reason updateNeeded(final IUpdateContext context, final AbstractContainerPattern pattern, final List<Port> externalPorts) {
+	public Reason updateNeeded(final IUpdateContext context, final AbstractPortSupplierPattern pattern, final List<Port> externalPorts) {
 		return internalUpdate(pattern, (EObject) DUtil.getBusinessObject(context.getPictogramElement()), externalPorts, false);
 	}
 
@@ -601,7 +600,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Return true (through Reason) if the shape's contents require an update based on the field supplied.
 	 * Also returns a textual reason why an update is needed. Returns false otherwise.
 	 */
-	public Reason updateNeeded(final IUpdateContext context, AbstractContainerPattern pattern) {
+	public Reason updateNeeded(final IUpdateContext context, AbstractPortSupplierPattern pattern) {
 		return updateNeeded(context, pattern, null);
 	}
 
@@ -1196,7 +1195,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//Updates Provides Ports Container Shape
-	protected Reason internalUpdateProvidesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
+	protected Reason internalUpdateProvidesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, List<Port> externalPorts,
 		EList<ProvidesPortStub> provides, Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		// providesPortsContainerShape
@@ -1286,7 +1285,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//update lollipop
-	protected Reason internalUpdateLollipop(AbstractContainerPattern pattern, Diagram diagram, boolean performUpdate, boolean updateStatus) {
+	protected Reason internalUpdateLollipop(AbstractPortSupplierPattern pattern, Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		if (isHasSuperPortsContainerShape()) {
 			//super ports exist, hide lollipop
@@ -1335,7 +1334,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//Updates Uses Ports Container Shape
-	protected Reason internalUpdateUsesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
+	protected Reason internalUpdateUsesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, List<Port> externalPorts,
 		EList<UsesPortStub> uses, Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		// usesPortsContainerShape
@@ -1426,7 +1425,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//update super provides port container shape
-	protected Reason internalUpdateSuperProvidesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
+	protected Reason internalUpdateSuperProvidesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, List<Port> externalPorts,
 		EList<ProvidesPortStub> provides, ComponentSupportedInterfaceStub interfaceStub, Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		// super port shape
@@ -1523,7 +1522,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//updates super uses ports container shape
-	protected Reason internalUpdateSuperUsesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
+	protected Reason internalUpdateSuperUsesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, List<Port> externalPorts,
 		EList<UsesPortStub> uses, Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		// super port shape
@@ -1619,7 +1618,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * handles both determining whether an update is needed and performing an update for the shape.
 	 * @return
 	 */
-	protected Reason internalUpdate(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts, boolean performUpdate) {
+	protected Reason internalUpdate(AbstractPortSupplierPattern pattern, EObject businessObject, List<Port> externalPorts, boolean performUpdate) {
 
 		boolean updateStatus = false;
 

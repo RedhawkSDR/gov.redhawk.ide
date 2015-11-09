@@ -25,16 +25,13 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
 
-public class FindByServicePattern extends AbstractFindByPattern implements IPattern {
+public class FindByServicePattern extends AbstractFindByPattern {
 
 	public static final String NAME = "Service";
 	public static final String FIND_BY_SERVICE_NAME = "Service Name";
@@ -200,18 +197,6 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 		return null;
 	}
 
-	@Override
-	public boolean update(IUpdateContext context) {
-		// TODO: Catch calls from the edit context wizard
-		return super.update(context);
-	}
-
-	@Override
-	public IReason updateNeeded(IUpdateContext context) {
-		// TODO: Catch calls from the edit context wizard
-		return super.updateNeeded(context);
-	}
-	
 	@Override
 	public String getOuterImageId() {
 		return ImageProvider.IMG_FIND_BY;

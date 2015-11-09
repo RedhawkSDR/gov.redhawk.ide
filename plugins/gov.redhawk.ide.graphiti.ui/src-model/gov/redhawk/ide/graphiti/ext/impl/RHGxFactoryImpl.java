@@ -12,10 +12,10 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.ext.impl;
 
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import java.util.List;
 import java.util.Map;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
@@ -117,8 +117,8 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return createSadComponentInstantiationFromString(eDataType, initialValue);
 		case RHGxPackage.IADD_CONTEXT:
 			return createIAddContextFromString(eDataType, initialValue);
-		case RHGxPackage.ABSTRACT_CONTAINER_PATTERN:
-			return createAbstractContainerPatternFromString(eDataType, initialValue);
+		case RHGxPackage.ABSTRACT_PORT_SUPPLIER_PATTERN:
+			return createAbstractPortSupplierPatternFromString(eDataType, initialValue);
 		case RHGxPackage.IUPDATE_CONTEXT:
 			return createIUpdateContextFromString(eDataType, initialValue);
 		case RHGxPackage.MAP:
@@ -158,8 +158,8 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return convertSadComponentInstantiationToString(eDataType, instanceValue);
 		case RHGxPackage.IADD_CONTEXT:
 			return convertIAddContextToString(eDataType, instanceValue);
-		case RHGxPackage.ABSTRACT_CONTAINER_PATTERN:
-			return convertAbstractContainerPatternToString(eDataType, instanceValue);
+		case RHGxPackage.ABSTRACT_PORT_SUPPLIER_PATTERN:
+			return convertAbstractPortSupplierPatternToString(eDataType, instanceValue);
 		case RHGxPackage.IUPDATE_CONTEXT:
 			return convertIUpdateContextToString(eDataType, instanceValue);
 		case RHGxPackage.MAP:
@@ -382,8 +382,8 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public AbstractContainerPattern createAbstractContainerPatternFromString(EDataType eDataType, String initialValue) {
-		return (AbstractContainerPattern) super.createFromString(eDataType, initialValue);
+	public AbstractPortSupplierPattern createAbstractPortSupplierPatternFromString(EDataType eDataType, String initialValue) {
+		return (AbstractPortSupplierPattern) super.createFromString(eDataType, initialValue);
 	}
 
 	/**
@@ -391,7 +391,7 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String convertAbstractContainerPatternToString(EDataType eDataType, Object instanceValue) {
+	public String convertAbstractPortSupplierPatternToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

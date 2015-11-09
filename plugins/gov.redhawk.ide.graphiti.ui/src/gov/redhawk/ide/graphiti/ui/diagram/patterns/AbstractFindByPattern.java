@@ -43,23 +43,18 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
-import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 
-public abstract class AbstractFindByPattern extends AbstractContainerPattern implements IPattern {
+public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern {
 
 	public AbstractFindByPattern() {
 		super(null);
@@ -216,47 +211,6 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	@Override
 	public boolean canResizeShape(IResizeShapeContext context) {
 		return true;
-	}
-
-	@Override
-	public boolean canLayout(ILayoutContext context) {
-		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
-		Object obj = DUtil.getBusinessObject(containerShape);
-		if (obj instanceof FindByStub) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Layout children of component
-	 */
-	@Override
-	public boolean layout(ILayoutContext context) {
-		((RHContainerShape) context.getPictogramElement()).layout(getFeatureProvider());
-
-		// something is always changing.
-		return true;
-	}
-
-	@Override
-	public boolean update(IUpdateContext context) {
-		Reason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
-
-		// if we updated redraw
-		if (updated.toBoolean()) {
-			layoutPictogramElement(context.getPictogramElement());
-		}
-
-		return updated.toBoolean();
-	}
-
-	/**
-	 * Determines whether we need to update the diagram from the model.
-	 */
-	@Override
-	public IReason updateNeeded(IUpdateContext context) {
-		return ((RHContainerShape) context.getPictogramElement()).updateNeeded(context, this);
 	}
 
 	@Override

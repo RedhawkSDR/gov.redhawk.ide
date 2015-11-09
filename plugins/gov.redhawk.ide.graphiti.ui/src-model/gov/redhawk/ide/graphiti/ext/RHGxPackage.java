@@ -301,14 +301,14 @@ public interface RHGxPackage extends EPackage {
 	 */
 	int IADD_CONTEXT = 11;
 	/**
-	 * The meta object id for the '<em>Abstract Container Pattern</em>' data type.
+	 * The meta object id for the '<em>Abstract Port Supplier Pattern</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAbstractContainerPattern()
+	 * @see gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern
+	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAbstractPortSupplierPattern()
 	 * @generated
 	 */
-	int ABSTRACT_CONTAINER_PATTERN = 12;
+	int ABSTRACT_PORT_SUPPLIER_PATTERN = 12;
 	/**
 	 * The meta object id for the '<em>IUpdate Context</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -526,15 +526,15 @@ public interface RHGxPackage extends EPackage {
 	EDataType getIAddContext();
 
 	/**
-	 * Returns the meta object for data type '{@link gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern <em>Abstract Container Pattern</em>}'.
+	 * Returns the meta object for data type '{@link gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern <em>Abstract Port Supplier Pattern</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Abstract Container Pattern</em>'.
-	 * @see gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern
-	 * @model instanceClass="gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern"
+	 * @return the meta object for data type '<em>Abstract Port Supplier Pattern</em>'.
+	 * @see gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern
+	 * @model instanceClass="gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern"
 	 * @generated
 	 */
-	EDataType getAbstractContainerPattern();
+	EDataType getAbstractPortSupplierPattern();
 
 	/**
 	 * Returns the meta object for data type '{@link org.eclipse.graphiti.features.context.IUpdateContext <em>IUpdate Context</em>}'.
@@ -749,14 +749,14 @@ public interface RHGxPackage extends EPackage {
 		EDataType IADD_CONTEXT = eINSTANCE.getIAddContext();
 
 		/**
-		 * The meta object literal for the '<em>Abstract Container Pattern</em>' data type.
+		 * The meta object literal for the '<em>Abstract Port Supplier Pattern</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAbstractContainerPattern()
+		 * @see gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern
+		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAbstractPortSupplierPattern()
 		 * @generated
 		 */
-		EDataType ABSTRACT_CONTAINER_PATTERN = eINSTANCE.getAbstractContainerPattern();
+		EDataType ABSTRACT_PORT_SUPPLIER_PATTERN = eINSTANCE.getAbstractPortSupplierPattern();
 
 		/**
 		 * The meta object literal for the '<em>IUpdate Context</em>' data type.

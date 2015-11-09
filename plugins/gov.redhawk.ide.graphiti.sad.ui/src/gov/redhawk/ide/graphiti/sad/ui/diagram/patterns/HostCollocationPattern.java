@@ -60,12 +60,11 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaLayoutService;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 
-public class HostCollocationPattern extends AbstractContainerPattern implements IPattern {
+public class HostCollocationPattern extends AbstractContainerPattern {
 
 	public static final String NAME = "Host Collocation";
 

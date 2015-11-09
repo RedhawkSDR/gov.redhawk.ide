@@ -14,7 +14,7 @@ import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxFactory;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
@@ -44,20 +44,16 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
-import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
-import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -65,10 +61,9 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 
-public class ComponentPattern extends AbstractContainerPattern implements IPattern {
+public class ComponentPattern extends AbstractPortSupplierPattern {
 
 	private URI spdUri = null;
 
@@ -340,28 +335,6 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		}
 	}
 
-	@Override
-	public boolean canLayout(ILayoutContext context) {
-		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
-		Object obj = DUtil.getBusinessObject(containerShape);
-		if (obj instanceof SadComponentInstantiation) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Layout children of component
-	 */
-	@Override
-	public boolean layout(ILayoutContext context) {
-
-		((ComponentShape) context.getPictogramElement()).layout(getFeatureProvider());
-
-		// something is always changing.
-		return true;
-	}
-
 	public boolean canMoveShape(IMoveShapeContext context) {
 
 		SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
@@ -607,26 +580,6 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		}
 		return null;
 
-	}
-
-	@Override
-	public boolean update(IUpdateContext context) {
-		Reason updated = ((ComponentShape) context.getPictogramElement()).update(context, this);
-
-		// if we updated redraw
-		if (updated.toBoolean()) {
-			layoutPictogramElement(context.getPictogramElement());
-		}
-
-		return updated.toBoolean();
-	}
-
-	/**
-	 * Determines whether we need to update the diagram from the model.
-	 */
-	@Override
-	public IReason updateNeeded(IUpdateContext context) {
-		return ((ComponentShape) context.getPictogramElement()).updateNeeded(context, this);
 	}
 
 	@Override

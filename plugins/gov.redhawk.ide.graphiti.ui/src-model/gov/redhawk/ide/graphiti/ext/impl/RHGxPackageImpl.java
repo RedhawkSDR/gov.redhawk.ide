@@ -15,7 +15,7 @@ package gov.redhawk.ide.graphiti.ext.impl;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import java.util.List;
 import java.util.Map;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
@@ -127,7 +127,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType abstractContainerPatternEDataType = null;
+	private EDataType abstractPortSupplierPatternEDataType = null;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -377,8 +377,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getAbstractContainerPattern() {
-		return abstractContainerPatternEDataType;
+	public EDataType getAbstractPortSupplierPattern() {
+		return abstractPortSupplierPatternEDataType;
 	}
 
 	/**
@@ -448,7 +448,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		listEDataType = createEDataType(LIST);
 		sadComponentInstantiationEDataType = createEDataType(SAD_COMPONENT_INSTANTIATION);
 		iAddContextEDataType = createEDataType(IADD_CONTEXT);
-		abstractContainerPatternEDataType = createEDataType(ABSTRACT_CONTAINER_PATTERN);
+		abstractPortSupplierPatternEDataType = createEDataType(ABSTRACT_PORT_SUPPLIER_PATTERN);
 		iUpdateContextEDataType = createEDataType(IUPDATE_CONTEXT);
 		mapEDataType = createEDataType(MAP);
 	}
@@ -506,11 +506,11 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 
 		EOperation op = addEOperation(rhContainerShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIAddContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAbstractPortSupplierPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		op = addEOperation(rhContainerShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIAddContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAbstractPortSupplierPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		EGenericType g1 = createEGenericType(this.getList());
 		EGenericType g2 = createEGenericType(this.getPort());
 		g1.getETypeArguments().add(g2);
@@ -533,7 +533,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 
 		op = addEOperation(rhContainerShapeEClass, this.getReason(), "update", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAbstractPortSupplierPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(this.getList());
 		g2 = createEGenericType(this.getPort());
 		g1.getETypeArguments().add(g2);
@@ -541,11 +541,11 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 
 		op = addEOperation(rhContainerShapeEClass, this.getReason(), "update", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAbstractPortSupplierPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		op = addEOperation(rhContainerShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAbstractPortSupplierPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(this.getList());
 		g2 = createEGenericType(this.getPort());
 		g1.getETypeArguments().add(g2);
@@ -553,7 +553,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 
 		op = addEOperation(rhContainerShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAbstractPortSupplierPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(componentSupportedInterfaceStubEDataType, ComponentSupportedInterfaceStub.class, "ComponentSupportedInterfaceStub", IS_SERIALIZABLE,
@@ -569,7 +569,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		initEDataType(sadComponentInstantiationEDataType, SadComponentInstantiation.class, "SadComponentInstantiation", IS_SERIALIZABLE,
 			!IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iAddContextEDataType, IAddContext.class, "IAddContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(abstractContainerPatternEDataType, AbstractContainerPattern.class, "AbstractContainerPattern", IS_SERIALIZABLE,
+		initEDataType(abstractPortSupplierPatternEDataType, AbstractPortSupplierPattern.class, "AbstractPortSupplierPattern", IS_SERIALIZABLE,
 			!IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iUpdateContextEDataType, IUpdateContext.class, "IUpdateContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(mapEDataType, Map.class, "Map", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS, "java.util.Map<java.lang.String, java.lang.String>");

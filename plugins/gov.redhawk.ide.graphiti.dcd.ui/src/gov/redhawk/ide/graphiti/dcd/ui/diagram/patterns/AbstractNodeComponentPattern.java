@@ -13,7 +13,7 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
 import java.util.ArrayList;
@@ -40,13 +40,11 @@ import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
-import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
-import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -54,9 +52,8 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.pattern.IPattern;
 
-public abstract class AbstractNodeComponentPattern extends AbstractContainerPattern implements IPattern {
+public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierPattern {
 
 	public AbstractNodeComponentPattern() {
 		super(null);
@@ -215,26 +212,6 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 		return true;
 	}
 
-	@Override
-	public boolean canLayout(ILayoutContext context) {
-		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
-		Object obj = DUtil.getBusinessObject(containerShape);
-		if (obj instanceof DcdComponentInstantiation) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Layout children of component
-	 */
-	@Override
-	public boolean layout(ILayoutContext context) {
-		// something is always changing.
-		((RHContainerShape) context.getPictogramElement()).layout(getFeatureProvider());
-		return true;
-	}
-
 	public boolean canMoveShape(IMoveShapeContext context) {
 		DcdComponentInstantiation dcdComponentInstantiation = (DcdComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
 		if (dcdComponentInstantiation == null) {
@@ -350,18 +327,6 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 			return ((DcdComponentInstantiation) obj).getInterfaceStub();
 		}
 		return null;
-	}
-
-	@Override
-	public boolean update(IUpdateContext context) {
-		Reason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
-
-		// if we updated redraw
-		if (updated.toBoolean()) {
-			layoutPictogramElement(context.getPictogramElement());
-		}
-
-		return updated.toBoolean();
 	}
 
 	/**

@@ -19,7 +19,7 @@
 
 package gov.redhawk.ide.graphiti.ext
 
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern
 import org.eclipse.emf.ecore.EEList
 import org.eclipse.graphiti.mm.pictograms.ContainerShape
 
@@ -36,7 +36,7 @@ type Reason wraps org.eclipse.graphiti.features.impl.Reason
 type List<Port> wraps java.util.List
 type SadComponentInstantiation wraps mil.jpeojtrs.sca.sad.SadComponentInstantiation
 type IAddContext wraps org.eclipse.graphiti.features.context.IAddContext
-type AbstractContainerPattern wraps AbstractContainerPattern
+type AbstractPortSupplierPattern wraps AbstractPortSupplierPattern
 type IUpdateContext wraps org.eclipse.graphiti.features.context.IUpdateContext
 type Map wraps java.util.Map< String , String >
 
@@ -55,8 +55,8 @@ class RHContainerShape extends ContainerShape {
 	boolean hasPortsContainerShape //creates a container that displays an anchor per port
 	boolean hideUnusedPorts //hides all ports without connection
 	
-	op void init(IAddContext context, AbstractContainerPattern pattern) 
-	op void init(IAddContext context, AbstractContainerPattern pattern, List<Port> externalPorts)
+	op void init(IAddContext context, AbstractPortSupplierPattern pattern)
+	op void init(IAddContext context, AbstractPortSupplierPattern pattern, List<Port> externalPorts)
 	
 	/*Returns providesPortsStubs business object list linked to getProvidesPortsContainerShape()*/
 	op EEList<ProvidesPortStub> getProvidesPortStubs()
@@ -68,21 +68,21 @@ class RHContainerShape extends ContainerShape {
 	op void layout(IFeatureProvider featureProvider)
 	
 	/*Updates the shape with supplied values */
-	op Reason update(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts)
+	op Reason update(IUpdateContext context, AbstractPortSupplierPattern pattern, List<Port> externalPorts)
 	
 	/*Updates the shape with supplied values */
-	op Reason update(IUpdateContext context, AbstractContainerPattern pattern) 
+	op Reason update(IUpdateContext context, AbstractPortSupplierPattern pattern)
 		  
 	/*Checks if shape requires an update.  
 	 * If update required returns Reason with true
 	 * boolean value and message describing what needs to be updated
 	 */
-	op Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts)
+	op Reason updateNeeded(IUpdateContext context, AbstractPortSupplierPattern pattern, List<Port> externalPorts)
 		  
 	/*Checks if shape requires an update.  
 	 * If update required returns Reason with true
 	 * boolean value and message describing what needs to be updated
 	 */
-	op Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern)
+	op Reason updateNeeded(IUpdateContext context, AbstractPortSupplierPattern pattern)
 	
 }

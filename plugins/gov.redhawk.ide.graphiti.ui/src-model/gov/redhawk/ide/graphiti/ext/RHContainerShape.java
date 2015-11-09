@@ -12,7 +12,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.ext;
 
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -204,18 +204,18 @@ public interface RHContainerShape extends ContainerShape {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model contextDataType="gov.redhawk.ide.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractContainerPattern" patternUnique="false"
+	 * @model contextDataType="gov.redhawk.ide.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false"
 	 * @generated
 	 */
-	void init(IAddContext context, AbstractContainerPattern pattern);
+	void init(IAddContext context, AbstractPortSupplierPattern pattern);
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model contextDataType="gov.redhawk.ide.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractContainerPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.graphiti.ext.List<gov.redhawk.ide.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
+	 * @model contextDataType="gov.redhawk.ide.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.graphiti.ext.List<gov.redhawk.ide.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
 	 * @generated
 	 */
-	void init(IAddContext context, AbstractContainerPattern pattern, List<Port> externalPorts);
+	void init(IAddContext context, AbstractPortSupplierPattern pattern, List<Port> externalPorts);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -256,10 +256,10 @@ public interface RHContainerShape extends ContainerShape {
 	 * <!-- begin-model-doc -->
 	 * Updates the shape with supplied values
 	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractContainerPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.graphiti.ext.List<gov.redhawk.ide.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
+	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.graphiti.ext.List<gov.redhawk.ide.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
 	 * @generated
 	 */
-	Reason update(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts);
+	Reason update(IUpdateContext context, AbstractPortSupplierPattern pattern, List<Port> externalPorts);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -267,10 +267,10 @@ public interface RHContainerShape extends ContainerShape {
 	 * <!-- begin-model-doc -->
 	 * Updates the shape with supplied values
 	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractContainerPattern" patternUnique="false"
+	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false"
 	 * @generated
 	 */
-	Reason update(IUpdateContext context, AbstractContainerPattern pattern);
+	Reason update(IUpdateContext context, AbstractPortSupplierPattern pattern);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -280,10 +280,10 @@ public interface RHContainerShape extends ContainerShape {
 	 * If update required returns Reason with true
 	 * boolean value and message describing what needs to be updated
 	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractContainerPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.graphiti.ext.List<gov.redhawk.ide.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
+	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.graphiti.ext.List<gov.redhawk.ide.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
 	 * @generated
 	 */
-	Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts);
+	Reason updateNeeded(IUpdateContext context, AbstractPortSupplierPattern pattern, List<Port> externalPorts);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -293,10 +293,10 @@ public interface RHContainerShape extends ContainerShape {
 	 * If update required returns Reason with true
 	 * boolean value and message describing what needs to be updated
 	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractContainerPattern" patternUnique="false"
+	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false"
 	 * @generated
 	 */
-	Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern);
+	Reason updateNeeded(IUpdateContext context, AbstractPortSupplierPattern pattern);
 
 } // RHContainerShape
 

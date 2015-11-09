@@ -13,10 +13,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.pattern.AbstractPattern;
@@ -84,24 +81,6 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 	 * @return
 	 */
 	public abstract String getInnerTitle(EObject obj);
-
-	/**
-	 * Provides list of UsesPortStubs (if applicable)
-	 * @param obj
-	 * @return
-	 */
-	public EList<UsesPortStub> getUses(EObject obj) {
-		return null;
-	}
-	
-	/**
-	 * Provides list of ProvidesPortStubs (if applicable)
-	 * @param obj
-	 * @return
-	 */
-	public EList<ProvidesPortStub> getProvides(EObject obj) {
-		return null;
-	}
 
 	/**
 	 * Provides interface (if applicable)
