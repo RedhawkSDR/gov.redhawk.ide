@@ -41,7 +41,6 @@ import org.eclipse.graphiti.mm.MmPackage;
 import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesPackage;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
-import org.eclipse.graphiti.util.IColorConstant;
 
 /**
  * <!-- begin-user-doc -->
@@ -135,12 +134,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * @generated
 	 */
 	private EDataType iUpdateContextEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType iColorConstantEDataType = null;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -402,15 +395,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getIColorConstant() {
-		return iColorConstantEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EDataType getMap() {
 		return mapEDataType;
 	}
@@ -466,7 +450,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		iAddContextEDataType = createEDataType(IADD_CONTEXT);
 		abstractContainerPatternEDataType = createEDataType(ABSTRACT_CONTAINER_PATTERN);
 		iUpdateContextEDataType = createEDataType(IUPDATE_CONTEXT);
-		iColorConstantEDataType = createEDataType(ICOLOR_CONSTANT);
 		mapEDataType = createEDataType(MAP);
 	}
 
@@ -545,7 +528,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		g1.getETypeArguments().add(g2);
 		initEOperation(op, g1);
 
-		addEOperation(rhContainerShapeEClass, null, "layout", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		op = addEOperation(rhContainerShapeEClass, null, "layout", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIFeatureProvider(), "featureProvider", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		op = addEOperation(rhContainerShapeEClass, this.getReason(), "update", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
@@ -588,7 +572,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		initEDataType(abstractContainerPatternEDataType, AbstractContainerPattern.class, "AbstractContainerPattern", IS_SERIALIZABLE,
 			!IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iUpdateContextEDataType, IUpdateContext.class, "IUpdateContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(iColorConstantEDataType, IColorConstant.class, "IColorConstant", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(mapEDataType, Map.class, "Map", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS, "java.util.Map<java.lang.String, java.lang.String>");
 
 		// Create resource

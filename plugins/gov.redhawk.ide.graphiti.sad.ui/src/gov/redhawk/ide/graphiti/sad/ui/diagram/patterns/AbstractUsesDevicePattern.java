@@ -188,7 +188,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 	 */
 	@Override
 	public boolean layout(ILayoutContext context) {
-		((RHContainerShape) context.getPictogramElement()).layout();
+		((RHContainerShape) context.getPictogramElement()).layout(getFeatureProvider());
 
 		// something is always changing.
 		return true;
@@ -661,7 +661,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 		updateProvidesPortStubs(featureProvider, usesDeviceStub, usesDeviceShape, providesPortNames);
 		
 		// Update the shape layout to account for any changes
-		usesDeviceShape.layout();
+		usesDeviceShape.layout(featureProvider);
 	}
 	
 	/**

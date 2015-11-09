@@ -356,7 +356,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	@Override
 	public boolean layout(ILayoutContext context) {
 
-		((ComponentShape) context.getPictogramElement()).layout();
+		((ComponentShape) context.getPictogramElement()).layout(getFeatureProvider());
 
 		// something is always changing.
 		return true;

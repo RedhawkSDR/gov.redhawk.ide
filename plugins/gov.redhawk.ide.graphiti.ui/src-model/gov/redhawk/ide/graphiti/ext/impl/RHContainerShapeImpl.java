@@ -507,8 +507,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 	/**
 	 * Performs a layout on the contents of this shape
+	 * @generated NOT
 	 */
-	public void layout() {
+	@Override
+	public void layout(IFeatureProvider featureProvider) {
 		int minimumHeight = 0;
 		int minimumWidth = 0;
 		if (isHasPortsContainerShape()) {
@@ -1753,7 +1755,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 
 		if (updateStatus && performUpdate) {
-			layout();
+			layout(pattern.getFeatureProvider());
 			return new Reason(true, "Update successful");
 		}
 

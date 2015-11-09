@@ -18,6 +18,7 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
@@ -244,10 +245,10 @@ public interface RHContainerShape extends ContainerShape {
 	 * <!-- begin-model-doc -->
 	 * performs a layout on the contents of this shape
 	 * <!-- end-model-doc -->
-	 * @model
+	 * @model featureProviderDataType="gov.redhawk.ide.graphiti.ext.IFeatureProvider" featureProviderUnique="false"
 	 * @generated
 	 */
-	void layout();
+	void layout(IFeatureProvider featureProvider);
 
 	/**
 	 * <!-- begin-user-doc -->

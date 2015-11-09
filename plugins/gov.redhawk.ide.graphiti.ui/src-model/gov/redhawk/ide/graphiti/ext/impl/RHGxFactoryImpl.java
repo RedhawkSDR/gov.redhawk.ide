@@ -35,7 +35,6 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.util.IColorConstant;
 
 /**
  * <!-- begin-user-doc -->
@@ -122,8 +121,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return createAbstractContainerPatternFromString(eDataType, initialValue);
 		case RHGxPackage.IUPDATE_CONTEXT:
 			return createIUpdateContextFromString(eDataType, initialValue);
-		case RHGxPackage.ICOLOR_CONSTANT:
-			return createIColorConstantFromString(eDataType, initialValue);
 		case RHGxPackage.MAP:
 			return createMapFromString(eDataType, initialValue);
 		default:
@@ -165,8 +162,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return convertAbstractContainerPatternToString(eDataType, instanceValue);
 		case RHGxPackage.IUPDATE_CONTEXT:
 			return convertIUpdateContextToString(eDataType, instanceValue);
-		case RHGxPackage.ICOLOR_CONSTANT:
-			return convertIColorConstantToString(eDataType, instanceValue);
 		case RHGxPackage.MAP:
 			return convertMapToString(eDataType, instanceValue);
 		default:
@@ -415,24 +410,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * @generated
 	 */
 	public String convertIUpdateContextToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public IColorConstant createIColorConstantFromString(EDataType eDataType, String initialValue) {
-		return (IColorConstant) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertIColorConstantToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

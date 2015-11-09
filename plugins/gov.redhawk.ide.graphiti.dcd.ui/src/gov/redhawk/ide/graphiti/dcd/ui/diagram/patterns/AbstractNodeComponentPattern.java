@@ -231,7 +231,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 	@Override
 	public boolean layout(ILayoutContext context) {
 		// something is always changing.
-		((RHContainerShape) context.getPictogramElement()).layout();
+		((RHContainerShape) context.getPictogramElement()).layout(getFeatureProvider());
 		return true;
 	}
 

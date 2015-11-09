@@ -347,7 +347,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 		}
 
 		// Update the shape layout to account for any changes
-		findByShape.layout();
+		findByShape.layout(featureProvider);
 	}
 
 

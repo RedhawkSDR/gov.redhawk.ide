@@ -319,15 +319,6 @@ public interface RHGxPackage extends EPackage {
 	 */
 	int IUPDATE_CONTEXT = 13;
 	/**
-	 * The meta object id for the '<em>IColor Constant</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.graphiti.util.IColorConstant
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIColorConstant()
-	 * @generated
-	 */
-	int ICOLOR_CONSTANT = 14;
-	/**
 	 * The meta object id for the '<em>Map</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -335,7 +326,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getMap()
 	 * @generated
 	 */
-	int MAP = 15;
+	int MAP = 14;
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape <em>RH Container Shape</em>}'.
@@ -557,17 +548,6 @@ public interface RHGxPackage extends EPackage {
 	EDataType getIUpdateContext();
 
 	/**
-	 * Returns the meta object for data type '{@link org.eclipse.graphiti.util.IColorConstant <em>IColor Constant</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>IColor Constant</em>'.
-	 * @see org.eclipse.graphiti.util.IColorConstant
-	 * @model instanceClass="org.eclipse.graphiti.util.IColorConstant"
-	 * @generated
-	 */
-	EDataType getIColorConstant();
-
-	/**
 	 * Returns the meta object for data type '{@link java.util.Map <em>Map</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -787,16 +767,6 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType IUPDATE_CONTEXT = eINSTANCE.getIUpdateContext();
-
-		/**
-		 * The meta object literal for the '<em>IColor Constant</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.graphiti.util.IColorConstant
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIColorConstant()
-		 * @generated
-		 */
-		EDataType ICOLOR_CONSTANT = eINSTANCE.getIColorConstant();
 
 		/**
 		 * The meta object literal for the '<em>Map</em>' data type.

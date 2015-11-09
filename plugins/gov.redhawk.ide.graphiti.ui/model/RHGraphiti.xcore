@@ -38,7 +38,6 @@ type SadComponentInstantiation wraps mil.jpeojtrs.sca.sad.SadComponentInstantiat
 type IAddContext wraps org.eclipse.graphiti.features.context.IAddContext
 type AbstractContainerPattern wraps AbstractContainerPattern
 type IUpdateContext wraps org.eclipse.graphiti.features.context.IUpdateContext
-type IColorConstant wraps org.eclipse.graphiti.util.IColorConstant
 type Map wraps java.util.Map< String , String >
 
 class RHContainerShape extends ContainerShape {
@@ -66,7 +65,7 @@ class RHContainerShape extends ContainerShape {
 	op EEList<UsesPortStub> getUsesPortStubs()
 	
 	/*performs a layout on the contents of this shape */
-	op void layout()
+	op void layout(IFeatureProvider featureProvider)
 	
 	/*Updates the shape with supplied values */
 	op Reason update(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts)

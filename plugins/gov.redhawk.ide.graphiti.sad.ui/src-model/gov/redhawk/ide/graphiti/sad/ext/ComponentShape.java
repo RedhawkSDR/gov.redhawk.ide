@@ -40,17 +40,6 @@ public interface ComponentShape extends RHContainerShape {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Performs a layout on the contents of this shape
-	 * <!-- end-model-doc -->
-	 * @model
-	 * @generated
-	 */
-	void layout();
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
 	 * Updates the shape with supplied values
 	 * <!-- end-model-doc -->
 	 * @model dataType="gov.redhawk.ide.graphiti.sad.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.sad.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.sad.ext.ComponentPattern" patternUnique="false"

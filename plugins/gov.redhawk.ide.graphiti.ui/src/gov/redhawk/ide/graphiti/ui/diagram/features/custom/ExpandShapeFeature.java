@@ -93,7 +93,7 @@ public class ExpandShapeFeature extends AbstractCustomFeature {
 				updateFeature.update(updateContext);
 			}
 			
-			rhContainerShape.layout();
+			rhContainerShape.layout(getFeatureProvider());
 		}
 		
 		if (diagram != null && getFeatureProvider() != null) {

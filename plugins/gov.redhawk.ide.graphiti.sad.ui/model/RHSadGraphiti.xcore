@@ -34,9 +34,6 @@ class ComponentShape extends gov.redhawk.ide.graphiti.ext.RHContainerShape{
 	
 	op void init(IAddContext context, ComponentPattern pattern) 
 
-	/*Performs a layout on the contents of this shape */
-	op void layout()
-	
 	/*Updates the shape with supplied values */
 	op Reason update(IUpdateContext context, ComponentPattern pattern) 
 	

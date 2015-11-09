@@ -233,7 +233,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	 */
 	@Override
 	public boolean layout(ILayoutContext context) {
-		((RHContainerShape) context.getPictogramElement()).layout();
+		((RHContainerShape) context.getPictogramElement()).layout(getFeatureProvider());
 
 		// something is always changing.
 		return true;

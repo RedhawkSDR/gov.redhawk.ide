@@ -71,7 +71,7 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 		Graphiti.getGaLayoutService().setLocation(deviceShape.getGraphicsAlgorithm(), context.getX(), context.getY());
 
 		// layout
-		deviceShape.layout();
+		deviceShape.layout(getFeatureProvider());
 
 		// Check for any needed location adjustments, avoids accidentally stacking shapes
 		adjustShapeLocation(deviceShape);
