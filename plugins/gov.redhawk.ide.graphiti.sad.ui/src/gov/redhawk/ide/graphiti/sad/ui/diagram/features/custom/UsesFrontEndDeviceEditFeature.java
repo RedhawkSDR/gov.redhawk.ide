@@ -39,14 +39,11 @@ import ExtendedCF.WKP.DEVICEMODEL;
 
 public class UsesFrontEndDeviceEditFeature extends AbstractCustomFeature {
 
-	private final IFeatureProvider featureProvider;
-	
 	/*
 	 * Constructor
 	 */
 	public UsesFrontEndDeviceEditFeature(IFeatureProvider fp) {
 		super(fp);
-		this.featureProvider = fp;
 	}
 
 	/*
@@ -166,7 +163,7 @@ public class UsesFrontEndDeviceEditFeature extends AbstractCustomFeature {
 				usesDevice.getStructRef().add(allocationStructRef);
 				
 				//update ports
-				AbstractUsesDevicePattern.updatePorts(featureProvider, usesDeviceStub, usesDeviceShape, usesPortNames, providesPortNames);
+				AbstractUsesDevicePattern.updatePorts(getFeatureProvider(), usesDeviceStub, usesDeviceShape, usesPortNames, providesPortNames);
 				
 			}
 		});

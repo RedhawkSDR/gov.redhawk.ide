@@ -33,14 +33,11 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 public class UsesDeviceEditFeature extends AbstractCustomFeature {
 
-	private final IFeatureProvider featureProvider;
-	
 	/*
 	 * Constructor
 	 */
 	public UsesDeviceEditFeature(IFeatureProvider fp) {
 		super(fp);
-		this.featureProvider = fp;
 	}
 
 	/*
@@ -136,7 +133,7 @@ public class UsesDeviceEditFeature extends AbstractCustomFeature {
 				usesDevice.getStructRef().clear();
 				
 				//update ports
-				AbstractUsesDevicePattern.updatePorts(featureProvider, usesDeviceStub, usesDeviceShape, usesPortNames, providesPortNames);
+				AbstractUsesDevicePattern.updatePorts(getFeatureProvider(), usesDeviceStub, usesDeviceShape, usesPortNames, providesPortNames);
 				
 			}
 		});
