@@ -892,13 +892,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		return fixPointAnchor;
 	}
 
-	/**
-	 * Adds a ProvidesPortStub shape to the providesPortsContainerShape
-	 */
-	private void addProvidesPortContainerShape(ProvidesPortStub p, ContainerShape providesPortsContainerShape, IFeatureProvider featureProvider) {
-		DUtil.addShapeViaFeature(featureProvider, providesPortsContainerShape, p);
-	}
-
 	protected void layoutInnerShape(ContainerShape innerContainerShape) {
 		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
 		IDimension parentSize = gaLayoutService.calculateSize(innerContainerShape.getContainer().getGraphicsAlgorithm());
@@ -1014,7 +1007,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 			// iterate over all provides ports
 			for (ProvidesPortStub p : providesPortStubs) {
-				addProvidesPortContainerShape(p, providesPortsContainerShape, featureProvider);
+				DUtil.addShapeViaFeature(featureProvider, providesPortsContainerShape, p);
 			}
 		}
 		layoutProvidesPorts(providesPortsContainerShape, featureProvider);
@@ -1027,13 +1020,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// Manually clean up the provides port parent container. Easier to just rebuild from scratch
 		DUtil.fastDeletePictogramElement(getProvidesPortsContainerShape());
 		addProvidesPorts(providesPortStubs, featureProvider, null);
-	}
-
-	/**
-	 * Adds a UsesPort shape to the usesPortsContainerShape
-	 */
-	private void addUsesPortContainerShape(UsesPortStub p, ContainerShape usesPortsContainerShape, IFeatureProvider featureProvider, Port externalPort) {
-		DUtil.addShapeViaFeature(featureProvider, usesPortsContainerShape, p);
 	}
 
 	/**
@@ -1052,7 +1038,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			featureProvider.link(usesPortsContainerShape, usesPortStubs.toArray());
 			// add uses ports
 			for (UsesPortStub p : usesPortStubs) {
-				addUsesPortContainerShape(p, usesPortsContainerShape, featureProvider, findExternalPort(p, externalPorts));
+				DUtil.addShapeViaFeature(featureProvider, usesPortsContainerShape, p);
 			}
 		}
 		layoutUsesPorts(usesPortsContainerShape, featureProvider);
@@ -1279,7 +1265,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 					if (DUtil.getPictogramElementForBusinessObject(diagram, providesPortStub, ContainerShape.class) == null) {
 						if (performUpdate) {
 							updateStatus = true;
-							addProvidesPortContainerShape(providesPortStub, providesPortsContainerShape, featureProvider);
+							DUtil.addShapeViaFeature(featureProvider, providesPortsContainerShape, providesPortStub);
 						} else {
 							return new Reason(true, "Need to add missing uses port");
 						}
@@ -1419,7 +1405,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 					if (DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, ContainerShape.class) == null) {
 						if (performUpdate) {
 							updateStatus = true;
-							addUsesPortContainerShape(usesPortStub, usesPortsContainerShape, featureProvider, findExternalPort(usesPortStub, externalPorts));
+							DUtil.addShapeViaFeature(featureProvider, usesPortsContainerShape, usesPortStub);
 						} else {
 							return new Reason(true, "Need to add missing uses port");
 						}
