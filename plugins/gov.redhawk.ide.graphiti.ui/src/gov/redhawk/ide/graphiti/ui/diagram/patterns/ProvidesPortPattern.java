@@ -22,8 +22,8 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public class ProvidesPortPattern extends AbstractPortPattern<ProvidesPortStub> {
 
-	private static final String SHAPE_PROVIDES_PORT_RECTANGLE = "providesPortRectangleShape";
 	public static final String SHAPE_PROVIDES_PORT_CONTAINER = "providesPortContainerShape";
+	private static final String SHAPE_PROVIDES_PORT_RECTANGLE = "providesPortRectangleShape";
 
 	public ProvidesPortPattern() {
 		super(ProvidesPortStub.class);

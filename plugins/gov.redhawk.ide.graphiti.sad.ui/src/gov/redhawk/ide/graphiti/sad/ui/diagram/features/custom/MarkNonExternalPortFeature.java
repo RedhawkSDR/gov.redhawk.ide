@@ -21,9 +21,8 @@ import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.ProvidesPortPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -68,15 +67,7 @@ public class MarkNonExternalPortFeature extends AbstractCustomFeature {
 	@Override
 	public void execute(ICustomContext context) {
 		final Anchor anchor = (Anchor) context.getPictogramElements()[0];
-		final Object obj = DUtil.getBusinessObject(anchor);
-		final ContainerShape portShape;
-		if (obj instanceof ProvidesPortStub) {
-			portShape = DUtil.findContainerShapeParentWithProperty(anchor, ProvidesPortPattern.SHAPE_PROVIDES_PORT_CONTAINER);
-		} else if (obj instanceof UsesPortStub) {
-			portShape = DUtil.findContainerShapeParentWithProperty(anchor, UsesPortPattern.SHAPE_USES_PORT_CONTAINER);
-		} else {
-			return;
-		}
+		final Object portStub = DUtil.getBusinessObject(anchor);
 
 		// editing domain for our transaction
 		final Diagram diagram = getDiagram();
@@ -93,17 +84,17 @@ public class MarkNonExternalPortFeature extends AbstractCustomFeature {
 			protected void doExecute() {
 				Port portToRemove = null;
 				// set port identifier
-				if (obj instanceof ProvidesPortStub) {
+				if (portStub instanceof ProvidesPortStub) {
 					for (Port p : externalPortList) {
-						if (((ProvidesPortStub) obj).getName().equals(p.getProvidesIdentifier())
-							&& ((ProvidesPortStub) obj).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
+						if (((ProvidesPortStub) portStub).getName().equals(p.getProvidesIdentifier())
+							&& ((ProvidesPortStub) portStub).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
 							portToRemove = p;
 						}
 					}
-				} else if (obj instanceof UsesPortStub) {
+				} else if (portStub instanceof UsesPortStub) {
 					for (Port p : externalPortList) {
-						if (((UsesPortStub) obj).getName().equals(p.getUsesIdentifier())
-							&& ((UsesPortStub) obj).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
+						if (((UsesPortStub) portStub).getName().equals(p.getUsesIdentifier())
+							&& ((UsesPortStub) portStub).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
 							portToRemove = p;
 						}
 					}
@@ -125,6 +116,8 @@ public class MarkNonExternalPortFeature extends AbstractCustomFeature {
 			}
 		});
 
+		// Update the port's pictogram element, which is the parent's parent
+		ContainerShape portShape = ((Shape) anchor.getParent()).getContainer();
 		updatePictogramElement(portShape);
 	}
 

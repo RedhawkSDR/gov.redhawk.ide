@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -19,12 +20,10 @@ import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.ProvidesPortPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -72,22 +71,13 @@ public class MarkExternalPortFeature extends AbstractCustomFeature {
 	@Override
 	public void execute(ICustomContext context) {
 		final Anchor anchor = (Anchor) context.getPictogramElements()[0];
-		final Object obj = DUtil.getBusinessObject(anchor);
-		final ContainerShape portShape;
-		if (obj instanceof ProvidesPortStub) {
-			portShape = DUtil.findContainerShapeParentWithProperty(anchor, ProvidesPortPattern.SHAPE_PROVIDES_PORT_CONTAINER);
-		} else if (obj instanceof UsesPortStub) {
-			portShape = DUtil.findContainerShapeParentWithProperty(anchor, UsesPortPattern.SHAPE_USES_PORT_CONTAINER);
-		} else {
-			return;
-		}
-		final ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(portShape, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		final EObject portStub = (EObject) getBusinessObjectForPictogramElement(anchor);
 
 		final Diagram diagram = getDiagram();
 		final TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
-		final SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(outerContainerShape);
+		final SadComponentInstantiation ci = (SadComponentInstantiation) portStub.eContainer();
 
 		// Perform business object manipulation in a Command
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
@@ -110,10 +100,10 @@ public class MarkExternalPortFeature extends AbstractCustomFeature {
 				SadComponentInstantiationRef sciRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
 				sciRef.setInstantiation(ci);
 				port.setComponentInstantiationRef(sciRef);
-				if (obj instanceof ProvidesPortStub) {
-					port.setProvidesIdentifier(((ProvidesPortStub) obj).getName());
-				} else if (obj instanceof UsesPortStub) {
-					port.setUsesIdentifier(((UsesPortStub) obj).getName());
+				if (portStub instanceof ProvidesPortStub) {
+					port.setProvidesIdentifier(((ProvidesPortStub) portStub).getName());
+				} else if (portStub instanceof UsesPortStub) {
+					port.setUsesIdentifier(((UsesPortStub) portStub).getName());
 				}
 				sad.getExternalPorts().getPort().add(port);
 
@@ -122,7 +112,8 @@ public class MarkExternalPortFeature extends AbstractCustomFeature {
 			}
 		});
 
-		// Update the containing component to reset the port's style
+		// Update the port's pictogram element, which is the parent's parent
+		ContainerShape portShape = ((Shape) anchor.getParent()).getContainer();
 		updatePictogramElement(portShape);
 	}
 }

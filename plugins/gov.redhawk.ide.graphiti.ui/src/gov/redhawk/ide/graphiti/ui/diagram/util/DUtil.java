@@ -16,8 +16,6 @@ import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.IDiagramUtilHelper;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.ProvidesPortPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.wizards.SuperPortConnectionWizard;
 import gov.redhawk.sca.efs.ScaFileSystemPlugin;
 
@@ -264,49 +262,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	public static DeviceConfiguration getDiagramDCD(Diagram diagram) {
 		return (DeviceConfiguration) DUtil.getBusinessObject(diagram, DeviceConfiguration.class);
-	}
-
-	/**
-	 * @return All ports which are descendants of the specified shape in the diagram
-	 */
-	public static List<ContainerShape> getDiagramPorts(ContainerShape shape) {
-		List<ContainerShape> ports = getDiagramProvidesPorts(shape);
-		ports.addAll(getDiagramUsesPorts(shape));
-		return ports;
-	}
-
-	/**
-	 * @return All provides ports which are descendants of the specified shape in the diagram
-	 */
-	public static List<ContainerShape> getDiagramProvidesPorts(ContainerShape shape) {
-		return getDiagramPorts(shape, ProvidesPortPattern.SHAPE_PROVIDES_PORT_CONTAINER);
-	}
-
-	/**
-	 * @return All uses ports which are descendants of the specified shape in the diagram
-	 */
-	public static List<ContainerShape> getDiagramUsesPorts(ContainerShape shape) {
-		return getDiagramPorts(shape, UsesPortPattern.SHAPE_USES_PORT_CONTAINER);
-	}
-
-	/**
-	 * Finds all ports of the specified type which are descendants of the specified shape in the diagram.
-	 * @param shape - The parent shape that you want to find ports of
-	 * @param portType - property value of the desired port type
-	 * @see {@link RHContainerShapeImpl} static property strings
-	 */
-	private static List<ContainerShape> getDiagramPorts(ContainerShape shape, String portType) {
-		List<ContainerShape> portsList = new ArrayList<ContainerShape>();
-
-		for (Shape child : shape.getChildren()) {
-			String shapeType = Graphiti.getPeService().getPropertyValue(child, DUtil.SHAPE_TYPE);
-			if (shapeType != null && portType.equals(shapeType)) {
-				portsList.add((ContainerShape) child);
-			} else if (child instanceof ContainerShape && !((ContainerShape) child).getChildren().isEmpty()) {
-				portsList.addAll(getDiagramPorts((ContainerShape) child, portType));
-			}
-		}
-		return portsList;
 	}
 
 	/**
