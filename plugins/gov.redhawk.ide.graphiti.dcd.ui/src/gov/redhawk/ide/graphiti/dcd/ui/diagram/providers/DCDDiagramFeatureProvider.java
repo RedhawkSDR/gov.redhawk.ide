@@ -76,6 +76,8 @@ import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StopFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TerminateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.ProvidesPortPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
@@ -193,8 +195,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 		// hide update icon for some pictogram elements
 		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
+			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
 			RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE, RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE})) {
 			return new UpdateNoBoFeature(this) {
 				public boolean isAvailable(IContext context) {
@@ -220,7 +221,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		if (pe instanceof Diagram || pe instanceof FixPointAnchor
 			|| DUtil.doesPictogramContainProperty(context,
 				new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER,
-					RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER,
+					ProvidesPortPattern.SHAPE_PROVIDES_PORT_CONTAINER, UsesPortPattern.SHAPE_USES_PORT_CONTAINER,
 					RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE,
 					RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE })) {
 			return null;
@@ -288,8 +289,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		// Search for shapes that we don't want the user to have resize capability
 		if (context.getPictogramElement() instanceof FixPointAnchor
 			|| DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
-				RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-				RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
+				RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
 				RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE, RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE})) {
 			return new DefaultResizeShapeFeature(this) {
 				public boolean canResizeShape(IResizeShapeContext context) {

@@ -36,6 +36,7 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 
 	protected static final int PORT_SHAPE_HEIGHT = 15;
 	protected static final int PORT_SHAPE_WIDTH = AbstractPortPattern.PORT_SHAPE_HEIGHT;
+	protected static final int PORT_NAME_HORIZONTAL_PADDING = 5;
 
 	private Class<E> clazz;
 
@@ -141,7 +142,7 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 		// Based on orientation, set X position of text relative to port
 		int textX;
 		if (Orientation.ALIGNMENT_LEFT.equals(orientation)) {
-			textX = AbstractPortPattern.PORT_SHAPE_WIDTH + RHContainerShapeImpl.PORT_NAME_HORIZONTAL_PADDING;
+			textX = AbstractPortPattern.PORT_SHAPE_WIDTH + AbstractPortPattern.PORT_NAME_HORIZONTAL_PADDING;
 		} else {
 			textX = 0;
 		}
@@ -165,7 +166,7 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 		// Move port rectangle
 		int portX;
 		if (Orientation.ALIGNMENT_RIGHT.equals(getPortOrientation())) {
-			portX = portText.getWidth() + RHContainerShapeImpl.PORT_NAME_HORIZONTAL_PADDING;
+			portX = portText.getWidth() + AbstractPortPattern.PORT_NAME_HORIZONTAL_PADDING;
 		} else {
 			portX = 0;
 		}
@@ -175,7 +176,7 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 		}
 
 		// Resize invisible bounding rectangle
-		int portWidth = textWidth + RHContainerShapeImpl.PORT_NAME_HORIZONTAL_PADDING + AbstractPortPattern.PORT_SHAPE_WIDTH;
+		int portWidth = textWidth + AbstractPortPattern.PORT_NAME_HORIZONTAL_PADDING + AbstractPortPattern.PORT_SHAPE_WIDTH;
 		if (DUtil.resizeIfNeeded(portContainerShape.getGraphicsAlgorithm(), portWidth, AbstractPortPattern.PORT_SHAPE_HEIGHT)) {
 			layoutApplied = true;
 		}

@@ -225,8 +225,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	// (move, resize, delete, remove, etc.)
 	public static final String SHAPE_OUTER_CONTAINER = "outerContainerShape", SHAPE_INNER_CONTAINER = "innerContainerShape",
 			SHAPE_USES_PORTS_CONTAINER = "usesPortsContainerShape", SHAPE_PROVIDES_PORTS_CONTAINER = "providesPortsContainerShape",
-			SHAPE_USES_PORT_CONTAINER = "usesPortContainerShape", SHAPE_PROVIDES_PORT_CONTAINER = "providesPortContainerShape",
-			SHAPE_USES_PORT_RECTANGLE = "usesPortRectangleShape", SHAPE_PROVIDES_PORT_RECTANGLE = "providesPortRectangleShape",
 			SHAPE_INTERFACE_CONTAINER = "interfaceContainerShape", SUPER_PROVIDES_PORTS_RECTANGLE = "superProvidesPortsContainer",
 			SUPER_USES_PORTS_RECTANGLE = "superUsesPortsContainer";
 
@@ -235,14 +233,12 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15, INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING = 60, PROVIDES_PORTS_LEFT_PADDING = 5,
 			INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
 			PORTS_CONTAINER_SHAPE_TOP_PADDING = 60, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8, INNER_ROUNDED_RECTANGLE_LINE_Y = 28,
-			PORT_NAME_HORIZONTAL_PADDING = 5, SUPER_PORT_SHAPE_HEIGHT = 25, SUPER_PORT_SHAPE_WIDTH = 10, SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5,
+			SUPER_PORT_SHAPE_HEIGHT = 25, SUPER_PORT_SHAPE_WIDTH = 10, SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5,
 			LOLLIPOP_ELLIPSE_DIAMETER = 10, INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
 			INTERFACE_SHAPE_HEIGHT = 10, ICON_IMAGE_LENGTH = 16;
 
 	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_WIDTH = 10;
 	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT = 10;
-	protected static final int PORT_SHAPE_HEIGHT = 15;
-	protected static final int PORT_SHAPE_WIDTH = PORT_SHAPE_HEIGHT;
 	protected static final int PORT_ROW_PADDING_HEIGHT = 5;
 	protected static final int REQ_PADDING_BETWEEN_PORT_TYPES = 10;
 	// BEGIN GENERATED CODE
@@ -640,7 +636,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {

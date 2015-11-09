@@ -24,6 +24,8 @@ import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.ProvidesPortPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -75,9 +77,9 @@ public class MarkExternalPortFeature extends AbstractCustomFeature {
 		final Object obj = DUtil.getBusinessObject(anchor);
 		final ContainerShape portShape;
 		if (obj instanceof ProvidesPortStub) {
-			portShape = DUtil.findContainerShapeParentWithProperty(anchor, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER);
+			portShape = DUtil.findContainerShapeParentWithProperty(anchor, ProvidesPortPattern.SHAPE_PROVIDES_PORT_CONTAINER);
 		} else if (obj instanceof UsesPortStub) {
-			portShape = DUtil.findContainerShapeParentWithProperty(anchor, RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER);
+			portShape = DUtil.findContainerShapeParentWithProperty(anchor, UsesPortPattern.SHAPE_USES_PORT_CONTAINER);
 		} else {
 			return;
 		}

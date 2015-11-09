@@ -13,7 +13,6 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
@@ -22,6 +21,9 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public class UsesPortPattern extends AbstractPortPattern<UsesPortStub> {
+
+	public static final String SHAPE_USES_PORT_CONTAINER = "usesPortContainerShape";
+	private static final String SHAPE_USES_PORT_RECTANGLE = "usesPortRectangleShape";
 
 	public UsesPortPattern() {
 		super(UsesPortStub.class);
@@ -60,12 +62,12 @@ public class UsesPortPattern extends AbstractPortPattern<UsesPortStub> {
 
 	@Override
 	protected String getPortContainerShapeId() {
-		return RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER;
+		return UsesPortPattern.SHAPE_USES_PORT_CONTAINER;
 	}
 
 	@Override
 	protected String getPortRectangleShapeId() {
-		return RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE;
+		return UsesPortPattern.SHAPE_USES_PORT_RECTANGLE;
 	}
 
 	@Override

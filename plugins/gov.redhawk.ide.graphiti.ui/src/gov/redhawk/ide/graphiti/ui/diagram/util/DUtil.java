@@ -16,6 +16,8 @@ import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.IDiagramUtilHelper;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.ProvidesPortPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.wizards.SuperPortConnectionWizard;
 import gov.redhawk.sca.efs.ScaFileSystemPlugin;
 
@@ -277,14 +279,14 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @return All provides ports which are descendants of the specified shape in the diagram
 	 */
 	public static List<ContainerShape> getDiagramProvidesPorts(ContainerShape shape) {
-		return getDiagramPorts(shape, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER);
+		return getDiagramPorts(shape, ProvidesPortPattern.SHAPE_PROVIDES_PORT_CONTAINER);
 	}
 
 	/**
 	 * @return All uses ports which are descendants of the specified shape in the diagram
 	 */
 	public static List<ContainerShape> getDiagramUsesPorts(ContainerShape shape) {
-		return getDiagramPorts(shape, RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER);
+		return getDiagramPorts(shape, UsesPortPattern.SHAPE_USES_PORT_CONTAINER);
 	}
 
 	/**
