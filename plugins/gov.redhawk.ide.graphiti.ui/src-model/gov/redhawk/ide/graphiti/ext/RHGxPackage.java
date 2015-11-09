@@ -202,15 +202,6 @@ public interface RHGxPackage extends EPackage {
 	 */
 	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 6;
 	/**
-	 * The meta object id for the '<em>Component Supported Interface Stub</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getComponentSupportedInterfaceStub()
-	 * @generated
-	 */
-	int COMPONENT_SUPPORTED_INTERFACE_STUB = 1;
-	/**
 	 * The meta object id for the '<em>IFeature Provider</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -218,7 +209,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIFeatureProvider()
 	 * @generated
 	 */
-	int IFEATURE_PROVIDER = 2;
+	int IFEATURE_PROVIDER = 1;
 	/**
 	 * The meta object id for the '<em>Uses Port Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -227,7 +218,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getUsesPortStub()
 	 * @generated
 	 */
-	int USES_PORT_STUB = 3;
+	int USES_PORT_STUB = 2;
 	/**
 	 * The meta object id for the '<em>Provides Port Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -236,34 +227,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getProvidesPortStub()
 	 * @generated
 	 */
-	int PROVIDES_PORT_STUB = 4;
-	/**
-	 * The meta object id for the '<em>Port</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see mil.jpeojtrs.sca.sad.Port
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getPort()
-	 * @generated
-	 */
-	int PORT = 5;
-	/**
-	 * The meta object id for the '<em>Assembly Controller</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see mil.jpeojtrs.sca.sad.AssemblyController
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAssemblyController()
-	 * @generated
-	 */
-	int ASSEMBLY_CONTROLLER = 6;
-	/**
-	 * The meta object id for the '<em>External Ports</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see mil.jpeojtrs.sca.sad.ExternalPorts
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getExternalPorts()
-	 * @generated
-	 */
-	int EXTERNAL_PORTS = 7;
+	int PROVIDES_PORT_STUB = 3;
 	/**
 	 * The meta object id for the '<em>Reason</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -272,25 +236,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getReason()
 	 * @generated
 	 */
-	int REASON = 8;
-	/**
-	 * The meta object id for the '<em>List</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see java.util.List
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getList()
-	 * @generated
-	 */
-	int LIST = 9;
-	/**
-	 * The meta object id for the '<em>Sad Component Instantiation</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see mil.jpeojtrs.sca.sad.SadComponentInstantiation
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getSadComponentInstantiation()
-	 * @generated
-	 */
-	int SAD_COMPONENT_INSTANTIATION = 10;
+	int REASON = 4;
 	/**
 	 * The meta object id for the '<em>IAdd Context</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -299,7 +245,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIAddContext()
 	 * @generated
 	 */
-	int IADD_CONTEXT = 11;
+	int IADD_CONTEXT = 5;
 	/**
 	 * The meta object id for the '<em>Abstract Port Supplier Pattern</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -308,7 +254,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAbstractPortSupplierPattern()
 	 * @generated
 	 */
-	int ABSTRACT_PORT_SUPPLIER_PATTERN = 12;
+	int ABSTRACT_PORT_SUPPLIER_PATTERN = 6;
 	/**
 	 * The meta object id for the '<em>IUpdate Context</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -317,7 +263,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIUpdateContext()
 	 * @generated
 	 */
-	int IUPDATE_CONTEXT = 13;
+	int IUPDATE_CONTEXT = 7;
 	/**
 	 * The meta object id for the '<em>Map</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -326,7 +272,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getMap()
 	 * @generated
 	 */
-	int MAP = 14;
+	int MAP = 8;
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape <em>RH Container Shape</em>}'.
@@ -405,17 +351,6 @@ public interface RHGxPackage extends EPackage {
 	EAttribute getRHContainerShape_HideUnusedPorts();
 
 	/**
-	 * Returns the meta object for data type '{@link mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub <em>Component Supported Interface Stub</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Component Supported Interface Stub</em>'.
-	 * @see mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub
-	 * @model instanceClass="mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub"
-	 * @generated
-	 */
-	EDataType getComponentSupportedInterfaceStub();
-
-	/**
 	 * Returns the meta object for data type '{@link org.eclipse.graphiti.features.IFeatureProvider <em>IFeature Provider</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -449,39 +384,6 @@ public interface RHGxPackage extends EPackage {
 	EDataType getProvidesPortStub();
 
 	/**
-	 * Returns the meta object for data type '{@link mil.jpeojtrs.sca.sad.Port <em>Port</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Port</em>'.
-	 * @see mil.jpeojtrs.sca.sad.Port
-	 * @model instanceClass="mil.jpeojtrs.sca.sad.Port"
-	 * @generated
-	 */
-	EDataType getPort();
-
-	/**
-	 * Returns the meta object for data type '{@link mil.jpeojtrs.sca.sad.AssemblyController <em>Assembly Controller</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Assembly Controller</em>'.
-	 * @see mil.jpeojtrs.sca.sad.AssemblyController
-	 * @model instanceClass="mil.jpeojtrs.sca.sad.AssemblyController"
-	 * @generated
-	 */
-	EDataType getAssemblyController();
-
-	/**
-	 * Returns the meta object for data type '{@link mil.jpeojtrs.sca.sad.ExternalPorts <em>External Ports</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>External Ports</em>'.
-	 * @see mil.jpeojtrs.sca.sad.ExternalPorts
-	 * @model instanceClass="mil.jpeojtrs.sca.sad.ExternalPorts"
-	 * @generated
-	 */
-	EDataType getExternalPorts();
-
-	/**
 	 * Returns the meta object for data type '{@link org.eclipse.graphiti.features.impl.Reason <em>Reason</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -491,28 +393,6 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EDataType getReason();
-
-	/**
-	 * Returns the meta object for data type '{@link java.util.List <em>List</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>List</em>'.
-	 * @see java.util.List
-	 * @model instanceClass="java.util.List" typeParameters="Port"
-	 * @generated
-	 */
-	EDataType getList();
-
-	/**
-	 * Returns the meta object for data type '{@link mil.jpeojtrs.sca.sad.SadComponentInstantiation <em>Sad Component Instantiation</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Sad Component Instantiation</em>'.
-	 * @see mil.jpeojtrs.sca.sad.SadComponentInstantiation
-	 * @model instanceClass="mil.jpeojtrs.sca.sad.SadComponentInstantiation"
-	 * @generated
-	 */
-	EDataType getSadComponentInstantiation();
 
 	/**
 	 * Returns the meta object for data type '{@link org.eclipse.graphiti.features.context.IAddContext <em>IAdd Context</em>}'.
@@ -639,16 +519,6 @@ public interface RHGxPackage extends EPackage {
 		EAttribute RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS = eINSTANCE.getRHContainerShape_HideUnusedPorts();
 
 		/**
-		 * The meta object literal for the '<em>Component Supported Interface Stub</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getComponentSupportedInterfaceStub()
-		 * @generated
-		 */
-		EDataType COMPONENT_SUPPORTED_INTERFACE_STUB = eINSTANCE.getComponentSupportedInterfaceStub();
-
-		/**
 		 * The meta object literal for the '<em>IFeature Provider</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -679,36 +549,6 @@ public interface RHGxPackage extends EPackage {
 		EDataType PROVIDES_PORT_STUB = eINSTANCE.getProvidesPortStub();
 
 		/**
-		 * The meta object literal for the '<em>Port</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see mil.jpeojtrs.sca.sad.Port
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getPort()
-		 * @generated
-		 */
-		EDataType PORT = eINSTANCE.getPort();
-
-		/**
-		 * The meta object literal for the '<em>Assembly Controller</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see mil.jpeojtrs.sca.sad.AssemblyController
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAssemblyController()
-		 * @generated
-		 */
-		EDataType ASSEMBLY_CONTROLLER = eINSTANCE.getAssemblyController();
-
-		/**
-		 * The meta object literal for the '<em>External Ports</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see mil.jpeojtrs.sca.sad.ExternalPorts
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getExternalPorts()
-		 * @generated
-		 */
-		EDataType EXTERNAL_PORTS = eINSTANCE.getExternalPorts();
-
-		/**
 		 * The meta object literal for the '<em>Reason</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -717,26 +557,6 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType REASON = eINSTANCE.getReason();
-
-		/**
-		 * The meta object literal for the '<em>List</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see java.util.List
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getList()
-		 * @generated
-		 */
-		EDataType LIST = eINSTANCE.getList();
-
-		/**
-		 * The meta object literal for the '<em>Sad Component Instantiation</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see mil.jpeojtrs.sca.sad.SadComponentInstantiation
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getSadComponentInstantiation()
-		 * @generated
-		 */
-		EDataType SAD_COMPONENT_INSTANTIATION = eINSTANCE.getSadComponentInstantiation();
 
 		/**
 		 * The meta object literal for the '<em>IAdd Context</em>' data type.

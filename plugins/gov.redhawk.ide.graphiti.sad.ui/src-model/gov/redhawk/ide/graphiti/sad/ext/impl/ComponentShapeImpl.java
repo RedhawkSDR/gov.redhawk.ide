@@ -18,11 +18,8 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
-import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import org.eclipse.emf.ecore.EClass;
@@ -108,14 +105,8 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
 		AssemblyController assemblyController = SoftwareAssembly.Util.isAssemblyController(ci) ? sad.getAssemblyController() : null;
 
-		// get external ports
-		ExternalPorts externalPorts = DUtil.getDiagramSAD(diagram).getExternalPorts();
-
-		// get external ports relevant to component instantiation
-		final List<Port> ciExternalPorts = getComponentExternalPorts(ci, externalPorts);
-
 		// create graphical representation
-		super.init(context, pattern, ciExternalPorts);
+		super.init(context, pattern);
 
 		// add start order ellipse
 		if (sad.getId() != null && !(DUtil.isDiagramRuntime(DUtil.findDiagram(this)))) {
@@ -247,8 +238,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		AssemblyController assemblyController = SoftwareAssembly.Util.isAssemblyController(ci) ? sad.getAssemblyController() : null;
 
 		// get external ports relevant to component instantiation
-		final List<Port> ciExternalPorts = getComponentExternalPorts(ci, externalPorts);
-		Reason superReason = super.internalUpdate(pattern, ci, ciExternalPorts, performUpdate);
+		Reason superReason = super.internalUpdate(pattern, ci, performUpdate);
 
 		boolean updateStatus;
 
@@ -350,19 +340,6 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	protected int getInnerWidth(Text innerTitle) {
 		return super.getInnerWidth(innerTitle) + ComponentShapeImpl.START_ORDER_ELLIPSE_DIAMETER + ComponentShapeImpl.START_ORDER_ELLIPSE_LEFT_PADDING
 			+ ComponentShapeImpl.START_ORDER_ELLIPSE_RIGHT_PADDING;
-	}
-
-	// returns all external ports that belong to the provided Component.
-	private static List<Port> getComponentExternalPorts(SadComponentInstantiation ci, ExternalPorts externalPorts) {
-		List<Port> ciExternalPorts = new ArrayList<Port>();
-		if (externalPorts != null && externalPorts.getPort() != null) {
-			for (Port p : externalPorts.getPort()) {
-				if (p.getComponentInstantiationRef().getRefid().equals(ci.getId())) {
-					ciExternalPorts.add(p);
-				}
-			}
-		}
-		return ciExternalPorts;
 	}
 
 	// BEGIN GENERATED CODE

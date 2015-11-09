@@ -13,10 +13,8 @@
 package gov.redhawk.ide.graphiti.ext;
 
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
-import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.Port;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -212,14 +210,6 @@ public interface RHContainerShape extends ContainerShape {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model contextDataType="gov.redhawk.ide.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.graphiti.ext.List<gov.redhawk.ide.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
-	 * @generated
-	 */
-	void init(IAddContext context, AbstractPortSupplierPattern pattern, List<Port> externalPorts);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * Returns providesPortsStubs business object list linked to getProvidesPortsContainerShape()
 	 * <!-- end-model-doc -->
@@ -256,34 +246,10 @@ public interface RHContainerShape extends ContainerShape {
 	 * <!-- begin-model-doc -->
 	 * Updates the shape with supplied values
 	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.graphiti.ext.List<gov.redhawk.ide.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
-	 * @generated
-	 */
-	Reason update(IUpdateContext context, AbstractPortSupplierPattern pattern, List<Port> externalPorts);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Updates the shape with supplied values
-	 * <!-- end-model-doc -->
 	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false"
 	 * @generated
 	 */
 	Reason update(IUpdateContext context, AbstractPortSupplierPattern pattern);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Checks if shape requires an update.
-	 * If update required returns Reason with true
-	 * boolean value and message describing what needs to be updated
-	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.graphiti.ext.List<gov.redhawk.ide.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
-	 * @generated
-	 */
-	Reason updateNeeded(IUpdateContext context, AbstractPortSupplierPattern pattern, List<Port> externalPorts);
 
 	/**
 	 * <!-- begin-user-doc -->

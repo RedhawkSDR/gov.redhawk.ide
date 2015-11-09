@@ -28,7 +28,6 @@ import java.util.Map;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.Port;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.BasicEList;
@@ -420,17 +419,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	// END GENERATED CODE
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 */
-	public void init(IAddContext context, AbstractPortSupplierPattern pattern) {
-		init(context, pattern, null);
-	}
-
-	/**
 	 * Creates the inner shapes that make up this container shape
 	 */
-	public void init(final IAddContext context, AbstractPortSupplierPattern pattern, List<Port> externalPorts) {
+	@Override
+	public void init(final IAddContext context, AbstractPortSupplierPattern pattern) {
 		EObject newObject = (EObject) context.getNewObject();
 		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
 
@@ -478,18 +470,18 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			//hide shape details (only hides ports for now)
 
 			if (provides != null && provides.size() > 0 || interfaceStub != null) {
-				addSuperProvidesPortContainerShape(provides, interfaceStub, featureProvider, externalPorts);
+				addSuperProvidesPortContainerShape(provides, interfaceStub, featureProvider);
 			}
 			if (uses != null && uses.size() > 0) {
-				addSuperUsesPortContainerShape(uses, featureProvider, externalPorts);
+				addSuperUsesPortContainerShape(uses, featureProvider);
 			}
 		}
 
 		if (isHasPortsContainerShape()) {
 			//draw all shape details (only ports)
 			addLollipop(interfaceStub, featureProvider);
-			addProvidesPorts(provides, featureProvider, externalPorts);
-			addUsesPorts(uses, featureProvider, externalPorts);
+			addProvidesPorts(provides, featureProvider);
+			addUsesPorts(uses, featureProvider);
 		}
 	}
 
@@ -577,31 +569,18 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Updates the shape's contents using the supplied fields. Return true if an update occurred, false otherwise.
 	 */
-	public Reason update(final IUpdateContext context, AbstractPortSupplierPattern pattern, final List<Port> externalPorts) {
-		return internalUpdate(pattern, (EObject) DUtil.getBusinessObject(context.getPictogramElement()), externalPorts, true);
-	}
-
-	/**
-	 * Updates the shape's contents using the supplied fields. Return true if an update occurred, false otherwise.
-	 */
+	@Override
 	public Reason update(IUpdateContext context, AbstractPortSupplierPattern pattern) {
-		return update(context, pattern, null);
+		return internalUpdate(pattern, (EObject) DUtil.getBusinessObject(context.getPictogramElement()), true);
 	}
 
 	/**
 	 * Return true (through Reason) if the shape's contents require an update based on the field supplied.
 	 * Also returns a textual reason why an update is needed. Returns false otherwise.
 	 */
-	public Reason updateNeeded(final IUpdateContext context, final AbstractPortSupplierPattern pattern, final List<Port> externalPorts) {
-		return internalUpdate(pattern, (EObject) DUtil.getBusinessObject(context.getPictogramElement()), externalPorts, false);
-	}
-
-	/**
-	 * Return true (through Reason) if the shape's contents require an update based on the field supplied.
-	 * Also returns a textual reason why an update is needed. Returns false otherwise.
-	 */
-	public Reason updateNeeded(final IUpdateContext context, AbstractPortSupplierPattern pattern) {
-		return updateNeeded(context, pattern, null);
+	@Override
+	public Reason updateNeeded(final IUpdateContext context, final AbstractPortSupplierPattern pattern) {
+		return internalUpdate(pattern, (EObject) DUtil.getBusinessObject(context.getPictogramElement()), false);
 	}
 
 	// BEGIN GENERATED CODE
@@ -813,9 +792,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Adds Super Uses Port to shape
 	 * @param usesPortStubs
 	 * @param featureProvider
-	 * @param externalPorts
 	 */
-	private void addSuperUsesPortContainerShape(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
+	private void addSuperUsesPortContainerShape(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider) {
 		// port shape
 		ContainerShape superUsesPortsRectangleShape = Graphiti.getCreateService().createContainerShape(this, true);
 		// ref prevent move
@@ -827,19 +805,15 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// fix point anchor
 		FixPointAnchor fixPointAnchor = createPortAnchor(superUsesPortsRectangleShape, SUPER_PORT_SHAPE_WIDTH);
 		DUtil.addLinks(featureProvider, fixPointAnchor, usesPortStubs);
-		if (externalPorts != null && externalPorts.size() > 0) {
-			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
-		}
 	}
 
 	/**
 	 * Adds Super Provides Port to shape
 	 * @param providesPortStubs
 	 * @param featureProvider
-	 * @param externalPorts
 	 */
 	private void addSuperProvidesPortContainerShape(EList<ProvidesPortStub> providesPortStubs, ComponentSupportedInterfaceStub interfaceStub,
-		IFeatureProvider featureProvider, List<Port> externalPorts) {
+		IFeatureProvider featureProvider) {
 
 		// port shape
 		ContainerShape superProvidesPortsRectangleShape = Graphiti.getCreateService().createContainerShape(this, true);
@@ -856,9 +830,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		FixPointAnchor fixPointAnchor = createPortAnchor(superProvidesPortsRectangleShape, 0);
 		DUtil.addLinks(featureProvider, fixPointAnchor, providesPortStubs);
 		DUtil.addLink(featureProvider, fixPointAnchor, interfaceStub);
-		if (externalPorts != null && externalPorts.size() > 0) {
-			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
-		}
 	}
 
 	/**
@@ -991,7 +962,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Adds provides port container to provided container shape. Adds a port shape with name and anchor for each
 	 * providesPortStub.
 	 */
-	private void addProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
+	private void addProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider) {
 
 		// provides (input)
 		ContainerShape providesPortsContainerShape = Graphiti.getCreateService().createContainerShape(this, true);
@@ -1018,14 +989,14 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	public void setProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider) {
 		// Manually clean up the provides port parent container. Easier to just rebuild from scratch
 		DUtil.fastDeletePictogramElement(getProvidesPortsContainerShape());
-		addProvidesPorts(providesPortStubs, featureProvider, null);
+		addProvidesPorts(providesPortStubs, featureProvider);
 	}
 
 	/**
 	 * Adds uses port container to provided container shape. Adds a port shape with name and anchor for each
 	 * usesPortStub.
 	 */
-	private void addUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
+	private void addUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider) {
 		// uses (output)
 		ContainerShape usesPortsContainerShape = Graphiti.getPeService().createContainerShape(this, true);
 		Graphiti.getPeService().setPropertyValue(usesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_USES_PORTS_CONTAINER);
@@ -1049,7 +1020,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	public void setUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider) {
 		// Manually clean up the uses port parent container. Easier to just rebuild from scratch
 		DUtil.fastDeletePictogramElement(getUsesPortsContainerShape());
-		addUsesPorts(usesPortStubs, featureProvider, null);
+		addUsesPorts(usesPortStubs, featureProvider);
 	}
 
 	/**
@@ -1195,8 +1166,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//Updates Provides Ports Container Shape
-	protected Reason internalUpdateProvidesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, List<Port> externalPorts,
-		EList<ProvidesPortStub> provides, Diagram diagram, boolean performUpdate, boolean updateStatus) {
+	protected Reason internalUpdateProvidesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, EList<ProvidesPortStub> provides,
+		Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		// providesPortsContainerShape
 		ContainerShape providesPortsContainerShape = getProvidesPortsContainerShape();
@@ -1222,7 +1193,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				EObject eObject = this.getLink().getBusinessObjects().get(0);
 
 				//draw all shape details (only ports)
-				addProvidesPorts(pattern.getProvides(eObject), pattern.getFeatureProvider(), externalPorts);
+				addProvidesPorts(pattern.getProvides(eObject), pattern.getFeatureProvider());
 
 			} else {
 				return new Reason(true, "Provides Ports ContainerShape require creation");
@@ -1334,8 +1305,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//Updates Uses Ports Container Shape
-	protected Reason internalUpdateUsesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, List<Port> externalPorts,
-		EList<UsesPortStub> uses, Diagram diagram, boolean performUpdate, boolean updateStatus) {
+	protected Reason internalUpdateUsesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, EList<UsesPortStub> uses,
+		Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		// usesPortsContainerShape
 		ContainerShape usesPortsContainerShape = getUsesPortsContainerShape();
@@ -1361,8 +1332,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				EObject eObject = this.getLink().getBusinessObjects().get(0);
 
 				//draw all shape details (only ports)
-				addUsesPorts(pattern.getUses(eObject), pattern.getFeatureProvider(), externalPorts);
-
+				addUsesPorts(pattern.getUses(eObject), pattern.getFeatureProvider());
 			} else {
 				return new Reason(true, "Uses Ports ContainerShape require creation");
 			}
@@ -1425,7 +1395,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//update super provides port container shape
-	protected Reason internalUpdateSuperProvidesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, List<Port> externalPorts,
+	protected Reason internalUpdateSuperProvidesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject,
 		EList<ProvidesPortStub> provides, ComponentSupportedInterfaceStub interfaceStub, Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		// super port shape
@@ -1454,8 +1424,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 					updateStatus = true;
 					EObject eObject = this.getLink().getBusinessObjects().get(0);
 					//create super ports
-					addSuperProvidesPortContainerShape(pattern.getProvides(eObject), pattern.getInterface(eObject), pattern.getFeatureProvider(),
-						externalPorts);
+					addSuperProvidesPortContainerShape(pattern.getProvides(eObject), pattern.getInterface(eObject), pattern.getFeatureProvider());
 				} else {
 					return new Reason(true, "Super Provides Ports require creation");
 				}
@@ -1478,9 +1447,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				// Update Anchor links
 				List<EObject> eObjects = new ArrayList<EObject>();
 				Collections.addAll(eObjects, provides.toArray(new ProvidesPortStub[0]));
-				if (externalPorts != null && externalPorts.size() > 0) {
-					Collections.addAll(eObjects, externalPorts.toArray(new Port[0]));
-				}
 				if (interfaceStub != null) {
 					eObjects.add(interfaceStub);
 				}
@@ -1522,8 +1488,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	//updates super uses ports container shape
-	protected Reason internalUpdateSuperUsesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, List<Port> externalPorts,
-		EList<UsesPortStub> uses, Diagram diagram, boolean performUpdate, boolean updateStatus) {
+	protected Reason internalUpdateSuperUsesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, EList<UsesPortStub> uses,
+		Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		// super port shape
 		ContainerShape superUsesPortsRectangleShape = getSuperUsesPortsContainerShape();
@@ -1551,7 +1517,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 					updateStatus = true;
 					EObject eObject = this.getLink().getBusinessObjects().get(0);
 					//create super ports
-					addSuperUsesPortContainerShape(pattern.getUses(eObject), pattern.getFeatureProvider(), externalPorts);
+					addSuperUsesPortContainerShape(pattern.getUses(eObject), pattern.getFeatureProvider());
 				} else {
 					return new Reason(true, "Super Uses Ports require creation");
 				}
@@ -1574,9 +1540,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				// Update Anchor links
 				List<EObject> eObjects = new ArrayList<EObject>();
 				Collections.addAll(eObjects, uses.toArray(new UsesPortStub[0]));
-				if (externalPorts != null && externalPorts.size() > 0) {
-					Collections.addAll(eObjects, externalPorts.toArray(new Port[0]));
-				}
 
 				//add all objects that aren't already there
 				for (EObject o : eObjects) {
@@ -1618,7 +1581,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * handles both determining whether an update is needed and performing an update for the shape.
 	 * @return
 	 */
-	protected Reason internalUpdate(AbstractPortSupplierPattern pattern, EObject businessObject, List<Port> externalPorts, boolean performUpdate) {
+	protected Reason internalUpdate(AbstractPortSupplierPattern pattern, EObject businessObject, boolean performUpdate) {
 
 		boolean updateStatus = false;
 
@@ -1651,8 +1614,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 
 		//update super provides ports if they exist
-		Reason updateSuperProvidesPortsReason = internalUpdateSuperProvidesPortsContainerShape(pattern, businessObject, externalPorts, provides, interfaceStub,
-			diagram, performUpdate, updateStatus);
+		Reason updateSuperProvidesPortsReason = internalUpdateSuperProvidesPortsContainerShape(pattern, businessObject, provides, interfaceStub, diagram,
+			performUpdate, updateStatus);
 		if (updateSuperProvidesPortsReason.toBoolean()) {
 			if (!performUpdate) {
 				//if updates required return true
@@ -1662,8 +1625,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 
 		//update super uses ports if they exist
-		Reason updateSuperUsesPortsReason = internalUpdateSuperUsesPortsContainerShape(pattern, businessObject, externalPorts, uses, diagram, performUpdate,
-			updateStatus);
+		Reason updateSuperUsesPortsReason = internalUpdateSuperUsesPortsContainerShape(pattern, businessObject, uses, diagram, performUpdate, updateStatus);
 		if (updateSuperUsesPortsReason.toBoolean()) {
 			if (!performUpdate) {
 				//if updates required return true
@@ -1674,8 +1636,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		//draw all shape details (only ports)
 		//update provides ports
-		Reason updateProvidesPortsReason = internalUpdateProvidesPortsContainerShape(pattern, businessObject, externalPorts, provides, diagram, performUpdate,
-			updateStatus);
+		Reason updateProvidesPortsReason = internalUpdateProvidesPortsContainerShape(pattern, businessObject, provides, diagram, performUpdate, updateStatus);
 		if (updateProvidesPortsReason.toBoolean()) {
 			if (!performUpdate) {
 				//if updates required return true
@@ -1685,8 +1646,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 
 		//update uses ports
-		Reason updateUsesPortsReason = internalUpdateUsesPortsContainerShape(pattern, businessObject, externalPorts, uses, diagram, performUpdate,
-			updateStatus);
+		Reason updateUsesPortsReason = internalUpdateUsesPortsContainerShape(pattern, businessObject, uses, diagram, performUpdate, updateStatus);
 		if (updateUsesPortsReason.toBoolean()) {
 			if (!performUpdate) {
 				//if updates required return true
@@ -1712,34 +1672,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		return new Reason(false, "No updates required");
 
-	}
-
-	/**
-	 * Returns external port if the portObject identifier is listed in the externalPorts list
-	 * @param portObject
-	 * @param externalPorts
-	 * @return
-	 */
-	public static Port findExternalPort(Object portObject, List<Port> externalPorts) {
-		if (externalPorts != null) {
-			if (portObject instanceof UsesPortStub) {
-				UsesPortStub usesPort = (UsesPortStub) portObject;
-				for (Port p : externalPorts) {
-					if (p.getUsesIdentifier() != null && p.getUsesIdentifier().equals(usesPort.getName())) {
-						return p;
-					}
-				}
-			}
-			if (portObject instanceof ProvidesPortStub) {
-				ProvidesPortStub usesPort = (ProvidesPortStub) portObject;
-				for (Port p : externalPorts) {
-					if (p.getProvidesIdentifier() != null && p.getProvidesIdentifier().equals(usesPort.getName())) {
-						return p;
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 	/**

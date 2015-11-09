@@ -16,15 +16,9 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
-import java.util.List;
 import java.util.Map;
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.AssemblyController;
-import mil.jpeojtrs.sca.sad.ExternalPorts;
-import mil.jpeojtrs.sca.sad.Port;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -95,26 +89,14 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-		case RHGxPackage.COMPONENT_SUPPORTED_INTERFACE_STUB:
-			return createComponentSupportedInterfaceStubFromString(eDataType, initialValue);
 		case RHGxPackage.IFEATURE_PROVIDER:
 			return createIFeatureProviderFromString(eDataType, initialValue);
 		case RHGxPackage.USES_PORT_STUB:
 			return createUsesPortStubFromString(eDataType, initialValue);
 		case RHGxPackage.PROVIDES_PORT_STUB:
 			return createProvidesPortStubFromString(eDataType, initialValue);
-		case RHGxPackage.PORT:
-			return createPortFromString(eDataType, initialValue);
-		case RHGxPackage.ASSEMBLY_CONTROLLER:
-			return createAssemblyControllerFromString(eDataType, initialValue);
-		case RHGxPackage.EXTERNAL_PORTS:
-			return createExternalPortsFromString(eDataType, initialValue);
 		case RHGxPackage.REASON:
 			return createReasonFromString(eDataType, initialValue);
-		case RHGxPackage.LIST:
-			return createListFromString(eDataType, initialValue);
-		case RHGxPackage.SAD_COMPONENT_INSTANTIATION:
-			return createSadComponentInstantiationFromString(eDataType, initialValue);
 		case RHGxPackage.IADD_CONTEXT:
 			return createIAddContextFromString(eDataType, initialValue);
 		case RHGxPackage.ABSTRACT_PORT_SUPPLIER_PATTERN:
@@ -136,26 +118,14 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-		case RHGxPackage.COMPONENT_SUPPORTED_INTERFACE_STUB:
-			return convertComponentSupportedInterfaceStubToString(eDataType, instanceValue);
 		case RHGxPackage.IFEATURE_PROVIDER:
 			return convertIFeatureProviderToString(eDataType, instanceValue);
 		case RHGxPackage.USES_PORT_STUB:
 			return convertUsesPortStubToString(eDataType, instanceValue);
 		case RHGxPackage.PROVIDES_PORT_STUB:
 			return convertProvidesPortStubToString(eDataType, instanceValue);
-		case RHGxPackage.PORT:
-			return convertPortToString(eDataType, instanceValue);
-		case RHGxPackage.ASSEMBLY_CONTROLLER:
-			return convertAssemblyControllerToString(eDataType, instanceValue);
-		case RHGxPackage.EXTERNAL_PORTS:
-			return convertExternalPortsToString(eDataType, instanceValue);
 		case RHGxPackage.REASON:
 			return convertReasonToString(eDataType, instanceValue);
-		case RHGxPackage.LIST:
-			return convertListToString(eDataType, instanceValue);
-		case RHGxPackage.SAD_COMPONENT_INSTANTIATION:
-			return convertSadComponentInstantiationToString(eDataType, instanceValue);
 		case RHGxPackage.IADD_CONTEXT:
 			return convertIAddContextToString(eDataType, instanceValue);
 		case RHGxPackage.ABSTRACT_PORT_SUPPLIER_PATTERN:
@@ -177,24 +147,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	public RHContainerShape createRHContainerShape() {
 		RHContainerShapeImpl rhContainerShape = new RHContainerShapeImpl();
 		return rhContainerShape;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ComponentSupportedInterfaceStub createComponentSupportedInterfaceStubFromString(EDataType eDataType, String initialValue) {
-		return (ComponentSupportedInterfaceStub) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertComponentSupportedInterfaceStubToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
 	}
 
 	/**
@@ -256,60 +208,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Port createPortFromString(EDataType eDataType, String initialValue) {
-		return (Port) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertPortToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public AssemblyController createAssemblyControllerFromString(EDataType eDataType, String initialValue) {
-		return (AssemblyController) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertAssemblyControllerToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ExternalPorts createExternalPortsFromString(EDataType eDataType, String initialValue) {
-		return (ExternalPorts) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertExternalPortsToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public Reason createReasonFromString(EDataType eDataType, String initialValue) {
 		return (Reason) super.createFromString(eDataType, initialValue);
 	}
@@ -320,42 +218,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * @generated
 	 */
 	public String convertReasonToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public List< ? > createListFromString(EDataType eDataType, String initialValue) {
-		return (List< ? >) super.createFromString(initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertListToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public SadComponentInstantiation createSadComponentInstantiationFromString(EDataType eDataType, String initialValue) {
-		return (SadComponentInstantiation) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertSadComponentInstantiationToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 
