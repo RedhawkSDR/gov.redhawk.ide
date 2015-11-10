@@ -14,8 +14,12 @@ package gov.redhawk.ide.graphiti.sad.ext.impl;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxPackage;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 
 /**
  * <!-- begin-user-doc -->
@@ -52,6 +56,25 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	@Override
 	protected EClass eStaticClass() {
 		return RHSadGxPackage.Literals.COMPONENT_SHAPE;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public ContainerShape getStartOrderEllipseShape() {
+		return (ContainerShape) DUtil.findFirstPropertyContainer(this, ComponentPattern.SHAPE_START_ORDER_ELLIPSE_SHAPE);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@Override
+	public Text getStartOrderText() {
+		return (Text) DUtil.findFirstPropertyContainer(this, ComponentPattern.GA_START_ORDER_TEXT);
 	}
 
 	@Override

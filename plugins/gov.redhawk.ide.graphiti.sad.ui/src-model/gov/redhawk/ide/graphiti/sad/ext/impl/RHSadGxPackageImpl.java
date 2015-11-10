@@ -18,6 +18,8 @@ import gov.redhawk.ide.graphiti.sad.ext.RHSadGxPackage;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
+import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -166,6 +168,8 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 
 		// Obtain other dependent packages
 		RHGxPackage theRHGxPackage = (RHGxPackage) EPackage.Registry.INSTANCE.getEPackage(RHGxPackage.eNS_URI);
+		PictogramsPackage thePictogramsPackage = (PictogramsPackage) EPackage.Registry.INSTANCE.getEPackage(PictogramsPackage.eNS_URI);
+		AlgorithmsPackage theAlgorithmsPackage = (AlgorithmsPackage) EPackage.Registry.INSTANCE.getEPackage(AlgorithmsPackage.eNS_URI);
 
 		// Create type parameters
 
@@ -176,6 +180,10 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(componentShapeEClass, ComponentShape.class, "ComponentShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		addEOperation(componentShapeEClass, thePictogramsPackage.getContainerShape(), "getStartOrderEllipseShape", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(componentShapeEClass, theAlgorithmsPackage.getText(), "getStartOrderText", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

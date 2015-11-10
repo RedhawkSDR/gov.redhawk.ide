@@ -903,14 +903,18 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 	/**
 	 * Return the usesPortsContainerShape
+	 * @generated NOT
 	 */
+	@Override
 	public ContainerShape getUsesPortsContainerShape() {
 		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_USES_PORTS_CONTAINER);
 	}
 
 	/**
 	 * Return the providesPortsContainerShape
+	 * @generated NOT
 	 */
+	@Override
 	public ContainerShape getProvidesPortsContainerShape() {
 		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_PROVIDES_PORTS_CONTAINER);
 	}
@@ -963,59 +967,81 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 	/**
 	 * Return the text for outer container
+	 * @generated NOT
 	 */
+	@Override
 	public Text getOuterText() {
 		return (Text) DUtil.findFirstPropertyContainer(this, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 	}
 
 	/**
 	 * Return the image for outer container
+	 * @generated NOT
 	 */
+	@Override
 	public Image getOuterImage() {
 		return (Image) DUtil.findFirstPropertyContainer(this, GA_OUTER_ROUNDED_RECTANGLE_IMAGE);
 	}
 
 	/**
 	 * Return the text for inner container
+	 * @generated NOT
 	 */
+	@Override
 	public Text getInnerText() {
 		return (Text) DUtil.findFirstPropertyContainer(this, GA_INNER_ROUNDED_RECTANGLE_TEXT);
 	}
 
 	/**
-	 * Return the inner container polyline
+	 * Return the image for inner container
+	 * @generated NOT
 	 */
+	@Override
+	public Image getInnerImage() {
+		return (Image) DUtil.findFirstPropertyContainer(this, RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_IMAGE);
+	}
+
+	/**
+	 * Return the inner container polyline
+	 * @generated NOT
+	 */
+	@Override
 	public Polyline getInnerPolyline() {
 		return (Polyline) DUtil.findFirstPropertyContainer(this, GA_INNER_ROUNDED_RECTANGLE_LINE);
 	}
 
 	/**
 	 * Return the innerContainerShape
+	 * @generated NOT
 	 */
+	@Override
 	public ContainerShape getInnerContainerShape() {
 		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_INNER_CONTAINER);
 	}
 
 	/**
 	 * Return the lollipop container shape
-	 * @return
+	 * @generated NOT
 	 */
+	@Override
 	public ContainerShape getLollipop() {
 		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_INTERFACE_CONTAINER);
 	}
 
 	/**
 	 * Return Super Provides Ports ContainerShape
-	 * @return
+	 * @generated NOT
 	 */
+	@Override
 	public ContainerShape getSuperProvidesPortsContainerShape() {
 		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SUPER_PROVIDES_PORTS_RECTANGLE);
 	}
 
 	/**
 	 * Return Super Uses Ports ContainerShape
-	 * @return
+	 * @generated NOT
 	 */
+	@Override
 	public ContainerShape getSuperUsesPortsContainerShape() {
 		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SUPER_USES_PORTS_RECTANGLE);
 	}

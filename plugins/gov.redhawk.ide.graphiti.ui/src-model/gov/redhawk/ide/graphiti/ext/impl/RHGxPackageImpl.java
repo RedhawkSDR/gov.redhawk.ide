@@ -137,8 +137,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		PictogramsPackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
 		EcorePackage.eINSTANCE.eClass();
-		StylesPackage.eINSTANCE.eClass();
 		AlgorithmsPackage.eINSTANCE.eClass();
+		StylesPackage.eINSTANCE.eClass();
 
 		// Create package meta-data objects
 		theRHGxPackage.createPackageContents();
@@ -344,6 +344,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		// Obtain other dependent packages
 		PictogramsPackage thePictogramsPackage = (PictogramsPackage) EPackage.Registry.INSTANCE.getEPackage(PictogramsPackage.eNS_URI);
 		EcorePackage theEcorePackage = (EcorePackage) EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
+		AlgorithmsPackage theAlgorithmsPackage = (AlgorithmsPackage) EPackage.Registry.INSTANCE.getEPackage(AlgorithmsPackage.eNS_URI);
 
 		// Create type parameters
 
@@ -390,6 +391,28 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		op = addEOperation(rhContainerShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getAbstractPortSupplierPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(rhContainerShapeEClass, theAlgorithmsPackage.getText(), "getOuterText", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(rhContainerShapeEClass, theAlgorithmsPackage.getImage(), "getOuterImage", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(rhContainerShapeEClass, theAlgorithmsPackage.getImage(), "getInnerImage", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(rhContainerShapeEClass, theAlgorithmsPackage.getText(), "getInnerText", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(rhContainerShapeEClass, theAlgorithmsPackage.getPolyline(), "getInnerPolyline", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(rhContainerShapeEClass, thePictogramsPackage.getContainerShape(), "getInnerContainerShape", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(rhContainerShapeEClass, thePictogramsPackage.getContainerShape(), "getLollipop", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(rhContainerShapeEClass, thePictogramsPackage.getContainerShape(), "getProvidesPortsContainerShape", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(rhContainerShapeEClass, thePictogramsPackage.getContainerShape(), "getSuperProvidesPortsContainerShape", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(rhContainerShapeEClass, thePictogramsPackage.getContainerShape(), "getUsesPortsContainerShape", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(rhContainerShapeEClass, thePictogramsPackage.getContainerShape(), "getSuperUsesPortsContainerShape", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(usesPortStubEDataType, UsesPortStub.class, "UsesPortStub", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

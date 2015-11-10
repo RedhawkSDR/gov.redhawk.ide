@@ -304,7 +304,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 			SadComponentInstantiation instantiation = (SadComponentInstantiation) context.getNewObject();
 
 			// Create ellipse shape to display component start order
-			ContainerShape startOrderEllipseShape = Graphiti.getCreateService().createContainerShape(getInnerContainerShape(componentShape), false);
+			ContainerShape startOrderEllipseShape = Graphiti.getCreateService().createContainerShape(componentShape.getInnerContainerShape(), false);
 			Graphiti.getPeService().setPropertyValue(startOrderEllipseShape, DUtil.SHAPE_TYPE, ComponentPattern.SHAPE_START_ORDER_ELLIPSE_SHAPE);
 			Ellipse startOrderEllipse = Graphiti.getCreateService().createEllipse(startOrderEllipseShape);
 			StyleUtil.setStyle(startOrderEllipse, getStartOrderStyle(instantiation));
@@ -333,7 +333,8 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		boolean layoutApplied = super.layout(context);
 
 		// Layout the start order ellipse, if any
-		ContainerShape startOrderEllipse = getStartOrderEllipseShape((ComponentShape) context.getPictogramElement());
+		ComponentShape componentShape = (ComponentShape) context.getPictogramElement();
+		ContainerShape startOrderEllipse = componentShape.getStartOrderEllipseShape();
 		if (startOrderEllipse != null) {
 			// Move the ellipse to the upper right corner of its parent
 			int xOffset = startOrderEllipse.getContainer().getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING);
@@ -342,7 +343,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 			}
 
 			// Position the text in the center of the ellipse
-			Text startOrderText = getStartOrderText(startOrderEllipse);
+			Text startOrderText = componentShape.getStartOrderText();
 			IDimension textDimension = DUtil.calculateTextSize(startOrderText);
 			int textX = START_ORDER_ELLIPSE_DIAMETER / 2 - textDimension.getWidth() / 2;
 			if (DUtil.moveIfNeeded(startOrderText, textX, START_ORDER_TOP_TEXT_PADDING)) {
@@ -360,7 +361,8 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		}
 
 		// Check the start order ellipse, if any
-		ContainerShape startOrderEllipse = getStartOrderEllipseShape((ComponentShape) context.getPictogramElement());
+		ComponentShape componentShape = (ComponentShape) context.getPictogramElement();
+		ContainerShape startOrderEllipse = componentShape.getStartOrderEllipseShape();
 		if (startOrderEllipse != null) {
 			// Check the ellipse style
 			SadComponentInstantiation instantiation = (SadComponentInstantiation) getBusinessObjectForPictogramElement(context.getPictogramElement());
@@ -370,7 +372,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 			}
 
 			// Check the text value
-			Text startOrderText = getStartOrderText(startOrderEllipse);
+			Text startOrderText = componentShape.getStartOrderText();
 			if (!startOrderText.getValue().equals(getStartOrderValue(instantiation))) {
 				return Reason.createTrueReason("Start order number needs update");
 			}
@@ -384,7 +386,8 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		boolean updateStatus = super.update(context);
 
 		// Check the start order ellipse, if any
-		ContainerShape startOrderEllipse = getStartOrderEllipseShape((ComponentShape) context.getPictogramElement());
+		ComponentShape componentShape = (ComponentShape) context.getPictogramElement();
+		ContainerShape startOrderEllipse = componentShape.getStartOrderEllipseShape();
 		if (startOrderEllipse != null) {
 			// Check the ellipse style
 			SadComponentInstantiation instantiation = (SadComponentInstantiation) getBusinessObjectForPictogramElement(context.getPictogramElement());
@@ -395,7 +398,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 			}
 
 			// Check the text value
-			Text startOrderText = getStartOrderText(startOrderEllipse);
+			Text startOrderText = componentShape.getStartOrderText();
 			String startOrderValue = getStartOrderValue(instantiation);
 			if (!startOrderText.getValue().equals(startOrderValue)) {
 				startOrderText.setValue(startOrderValue);
@@ -894,17 +897,4 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		return businessObjectsToLink;
 	}
 
-	/**
-	 * Return the startOrderEllipseShape
-	 */
-	protected ContainerShape getStartOrderEllipseShape(ComponentShape shape) {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(shape, ComponentPattern.SHAPE_START_ORDER_ELLIPSE_SHAPE);
-	}
-
-	/**
-	 * Return the startOrderText
-	 */
-	protected Text getStartOrderText(ContainerShape shape) {
-		return (Text) DUtil.findFirstPropertyContainer(shape, ComponentPattern.GA_START_ORDER_TEXT);
-	}
 }
