@@ -616,7 +616,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 		updateProvidesPortStubs(featureProvider, usesDeviceStub, usesDeviceShape, providesPortNames);
 		
 		// Update the shape layout to account for any changes
-		usesDeviceShape.layout(featureProvider);
+		DUtil.layoutShapeViaFeature(featureProvider, usesDeviceShape);
 	}
 	
 	/**

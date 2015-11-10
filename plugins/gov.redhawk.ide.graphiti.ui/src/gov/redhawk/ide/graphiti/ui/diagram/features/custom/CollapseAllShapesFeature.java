@@ -86,7 +86,7 @@ public class CollapseAllShapesFeature extends AbstractCustomFeature {
 			
 			rhContainerShape.getGraphicsAlgorithm().setHeight(0); //forces layout to use min height
 			rhContainerShape.getGraphicsAlgorithm().setWidth(0); //forces layout to use min width
-			rhContainerShape.layout(getFeatureProvider());
+			layoutPictogramElement(rhContainerShape);
 		}
 		
 

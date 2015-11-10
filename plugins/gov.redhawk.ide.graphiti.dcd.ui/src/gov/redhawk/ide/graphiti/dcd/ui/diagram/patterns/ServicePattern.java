@@ -66,7 +66,7 @@ public class ServicePattern extends AbstractNodeComponentPattern implements IPat
 		Graphiti.getGaLayoutService().setLocation(serviceShape.getGraphicsAlgorithm(), context.getX(), context.getY());
 
 		// layout
-		serviceShape.layout(getFeatureProvider());
+		layoutPictogramElement(serviceShape);
 
 		// Check for any needed location adjustments, avoids accidentally stacking shapes
 		adjustShapeLocation(serviceShape);
