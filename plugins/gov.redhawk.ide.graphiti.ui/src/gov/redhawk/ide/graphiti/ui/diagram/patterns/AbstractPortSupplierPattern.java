@@ -17,11 +17,13 @@ import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Image;
+import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
-import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -30,7 +32,10 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaLayoutService;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
@@ -51,6 +56,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	private static final int SUPER_PORT_SHAPE_HEIGHT = 25;
 	private static final int SUPER_PORT_SHAPE_WIDTH = 10;
 	private static final int SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5;
+	private static final int LOLLIPOP_ELLIPSE_DIAMETER = 10;
 
 	protected static final int PORT_ROW_PADDING_HEIGHT = 5;
 	protected static final int REQ_PADDING_BETWEEN_PORT_TYPES = 10;
@@ -137,18 +143,54 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 
 	@Override
 	public boolean update(IUpdateContext context) {
-		Reason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
+		RHContainerShape containerShape = (RHContainerShape) context.getPictogramElement();
+		EObject businessObject = (EObject) getBusinessObjectForPictogramElement(containerShape);
+
+		// Check outer and inner titles
+		boolean updateStatus = UpdateUtil.update(containerShape.getOuterText(), getOuterTitle(businessObject));
+		if (UpdateUtil.update(containerShape.getInnerText(), getInnerTitle(businessObject))) {
+			updateStatus = true;
+		}
+
+		ContainerShape lollipopShape = containerShape.getLollipop();
+		if (containerShape.isHasSuperPortsContainerShape() && (lollipopShape != null)) {
+			DUtil.fastDeletePictogramElement(lollipopShape);
+			updateStatus = true;
+		} else if (containerShape.isHasPortsContainerShape() && (lollipopShape == null)) {
+			addLollipop(containerShape, getInterface(businessObject));
+			updateStatus = true;
+		}
+
+		IReason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
 
 		// if we updated redraw
 		if (updated.toBoolean()) {
 			layoutPictogramElement(context.getPictogramElement());
 		}
 
-		return updated.toBoolean();
+		return updateStatus || updated.toBoolean();
 	}
 
 	@Override
 	public IReason updateNeeded(IUpdateContext context) {
+		RHContainerShape containerShape = (RHContainerShape) context.getPictogramElement();
+		EObject businessObject = (EObject) getBusinessObjectForPictogramElement(containerShape);
+
+		// Check outer and inner titles
+		if (UpdateUtil.updateNeeded(containerShape.getOuterText(), getOuterTitle(businessObject))) {
+			return Reason.createTrueReason("Outer title requires update");
+		}
+		if (UpdateUtil.updateNeeded(containerShape.getInnerText(), getInnerTitle(businessObject))) {
+			return Reason.createTrueReason("Inner title requires update");
+		}
+
+		boolean hasLollipop = containerShape.getLollipop() != null;
+		if (containerShape.isHasSuperPortsContainerShape() && hasLollipop) {
+			return Reason.createTrueReason("Interface lollipop needs to be deleted");
+		} else if (containerShape.isHasPortsContainerShape() && !hasLollipop) {
+			return Reason.createTrueReason("Interface lollipop needs to be created");
+		}
+
 		return ((RHContainerShape) context.getPictogramElement()).updateNeeded(context, this);
 	}
 
@@ -165,6 +207,42 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	 * @return
 	 */
 	public abstract EList<ProvidesPortStub> getProvides(EObject obj);
+
+	/**
+	 * Add lollipop to targetContainerShape. Lollipop anchor will link to the provided business object.T
+	 */
+	public ContainerShape addLollipop(RHContainerShape container, Object anchorBusinessObject) {
+		// Interface container
+		ContainerShape interfaceContainerShape = Graphiti.getCreateService().createContainerShape(container, true);
+		Graphiti.getPeService().setPropertyValue(interfaceContainerShape, DUtil.GA_TYPE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER);
+		Rectangle interfaceRectangle = Graphiti.getCreateService().createPlainRectangle(interfaceContainerShape);
+		interfaceRectangle.setFilled(false);
+		interfaceRectangle.setLineVisible(false);
+		Graphiti.getGaLayoutService().setLocationAndSize(interfaceRectangle, 0, 25, INTERFACE_SHAPE_WIDTH, INTERFACE_SHAPE_HEIGHT);
+
+		// Interface lollipop line
+		Shape lollipopLineShape = Graphiti.getCreateService().createShape(interfaceContainerShape, false);
+		int[] linePoints = new int[] { LOLLIPOP_ELLIPSE_DIAMETER - 1, LOLLIPOP_ELLIPSE_DIAMETER / 2, INTERFACE_SHAPE_WIDTH, LOLLIPOP_ELLIPSE_DIAMETER / 2 };
+		Polyline lollipopLine = Graphiti.getCreateService().createPlainPolyline(lollipopLineShape, linePoints);
+		StyleUtil.setStyle(lollipopLine, StyleUtil.LOLLIPOP);
+
+		// Interface lollipop ellipse
+		Shape lollipopEllipseShape = Graphiti.getPeCreateService().createContainerShape(interfaceContainerShape, true);
+		Ellipse lollipopEllipse = Graphiti.getCreateService().createPlainEllipse(lollipopEllipseShape);
+		StyleUtil.setStyle(lollipopEllipse, StyleUtil.LOLLIPOP);
+		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
+		link(lollipopEllipseShape, anchorBusinessObject);
+
+		// Overlay invisible ellipse
+		FixPointAnchor fixPointAnchor = DUtil.createOverlayAnchor(lollipopEllipseShape, 0);
+		link(fixPointAnchor, anchorBusinessObject);
+		Ellipse anchorEllipse = Graphiti.getCreateService().createPlainEllipse(fixPointAnchor);
+		anchorEllipse.setFilled(false);
+		anchorEllipse.setLineVisible(false);
+		UpdateUtil.layoutOverlayAnchor(lollipopEllipseShape);
+
+		return interfaceContainerShape;
+	}
 
 	protected int getMinimumWidth(RHContainerShape shape) {
 		int innerWidth = getMinimumInnerWidth(shape);
@@ -204,15 +282,15 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	protected boolean layoutOuterShape(RHContainerShape shape) {
 		int containerWidth = shape.getGraphicsAlgorithm().getWidth();
 		Text outerText = shape.getOuterText();
-		boolean layoutApplied = DUtil.moveIfNeeded(outerText, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4, 0);
-		if (DUtil.resizeIfNeeded(outerText, containerWidth - (INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4), 20)) {
+		boolean layoutApplied = UpdateUtil.moveIfNeeded(outerText, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4, 0);
+		if (UpdateUtil.resizeIfNeeded(outerText, containerWidth - (INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4), 20)) {
 			layoutApplied = true;
 		}
 		Image outerImage = shape.getOuterImage();
-		if (DUtil.moveIfNeeded(outerImage, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0)) {
+		if (UpdateUtil.moveIfNeeded(outerImage, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0)) {
 			layoutApplied = true;
 		}
-		if (DUtil.resizeIfNeeded(outerImage, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH)) {
+		if (UpdateUtil.resizeIfNeeded(outerImage, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH)) {
 			layoutApplied = true;
 		}
 		return layoutApplied;
@@ -228,7 +306,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			}
 
 			// Place the container at the next Y position
-			if (DUtil.moveIfNeeded(shape.getGraphicsAlgorithm(), 0, currentY)) {
+			if (UpdateUtil.moveIfNeeded(shape.getGraphicsAlgorithm(), 0, currentY)) {
 				layoutApplied = true;
 			}
 			currentY += shape.getGraphicsAlgorithm().getHeight() + PORT_ROW_PADDING_HEIGHT;
@@ -236,11 +314,11 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		}
 		// Resize container to contents and adjust position so that ports are aligned to the outer edge
 		currentY = Math.max(currentY - 5, 0); // remove extra spacing, if it was added above
-		if (DUtil.resizeIfNeeded(providesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY)) {
+		if (UpdateUtil.resizeIfNeeded(providesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY)) {
 			layoutApplied = true;
 		}
 		// NB: For FindBy shapes and the like, the normal layout was not occurring for the provides port container
-		if (DUtil.moveIfNeeded(providesPortsContainer.getGraphicsAlgorithm(), PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING)) {
+		if (UpdateUtil.moveIfNeeded(providesPortsContainer.getGraphicsAlgorithm(), PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING)) {
 			layoutApplied = true;
 		}
 		return layoutApplied;
@@ -261,7 +339,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		int currentY = 0;
 		for (Shape shape : usesPortsContainer.getChildren()) {
 			int xOffset = maxWidth - shape.getGraphicsAlgorithm().getWidth();
-			if (DUtil.moveIfNeeded(shape.getGraphicsAlgorithm(), xOffset, currentY)) {
+			if (UpdateUtil.moveIfNeeded(shape.getGraphicsAlgorithm(), xOffset, currentY)) {
 				layoutApplied = true;
 			}
 			currentY += shape.getGraphicsAlgorithm().getHeight() + PORT_ROW_PADDING_HEIGHT;
@@ -269,7 +347,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 
 		// Resize container to contents
 		currentY = Math.max(currentY - 5, 0); // remove extra spacing, if it was added above
-		if (DUtil.resizeIfNeeded(usesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY)) {
+		if (UpdateUtil.resizeIfNeeded(usesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY)) {
 			layoutApplied = true;
 		}
 		return layoutApplied;
@@ -282,7 +360,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		if (usesPortsContainer != null) {
 			int parentWidth = usesPortsContainer.getContainer().getGraphicsAlgorithm().getWidth();
 			int xOffset = parentWidth - usesPortsContainer.getGraphicsAlgorithm().getWidth();
-			return DUtil.moveIfNeeded(usesPortsContainer.getGraphicsAlgorithm(), xOffset, PORTS_CONTAINER_SHAPE_TOP_PADDING);
+			return UpdateUtil.moveIfNeeded(usesPortsContainer.getGraphicsAlgorithm(), xOffset, PORTS_CONTAINER_SHAPE_TOP_PADDING);
 		}
 		return false;
 	}
@@ -291,21 +369,11 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		// Resize relative to inner shape
 		RHContainerShape parent = (RHContainerShape) superPortContainerShape.getContainer();
 		int height = parent.getInnerContainerShape().getGraphicsAlgorithm().getHeight() - SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2;
-		if (DUtil.resizeIfNeeded(superPortContainerShape.getGraphicsAlgorithm(), SUPER_PORT_SHAPE_WIDTH, height)) {
-			layoutAnchor(superPortContainerShape);
+		if (UpdateUtil.resizeIfNeeded(superPortContainerShape.getGraphicsAlgorithm(), SUPER_PORT_SHAPE_WIDTH, height)) {
+			UpdateUtil.layoutOverlayAnchor(superPortContainerShape);
 			return true;
 		}
 		return false;
-	}
-
-	private void layoutAnchor(Shape parentShape) {
-		// Layout and resize anchor
-		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
-		FixPointAnchor portAnchor = (FixPointAnchor) parentShape.getAnchors().get(0);
-		Point anchorLocation = portAnchor.getLocation();
-		anchorLocation.setY(parentSize.getHeight() / 2);
-		Graphiti.getGaLayoutService().setLocationAndSize(portAnchor.getGraphicsAlgorithm(), -anchorLocation.getX(), -anchorLocation.getY(),
-			parentSize.getWidth(), parentSize.getHeight());
 	}
 
 	protected void layoutSuperProvidesPorts(ContainerShape superProvidesPortsContainerShape) {

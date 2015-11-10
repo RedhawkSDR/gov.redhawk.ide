@@ -17,6 +17,7 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -338,7 +339,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		if (startOrderEllipse != null) {
 			// Move the ellipse to the upper right corner of its parent
 			int xOffset = startOrderEllipse.getContainer().getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING);
-			if (DUtil.moveIfNeeded(startOrderEllipse.getGraphicsAlgorithm(), xOffset, START_ORDER_ELLIPSE_TOP_PADDING)) {
+			if (UpdateUtil.moveIfNeeded(startOrderEllipse.getGraphicsAlgorithm(), xOffset, START_ORDER_ELLIPSE_TOP_PADDING)) {
 				layoutApplied = true;
 			}
 
@@ -346,7 +347,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 			Text startOrderText = componentShape.getStartOrderText();
 			IDimension textDimension = DUtil.calculateTextSize(startOrderText);
 			int textX = START_ORDER_ELLIPSE_DIAMETER / 2 - textDimension.getWidth() / 2;
-			if (DUtil.moveIfNeeded(startOrderText, textX, START_ORDER_TOP_TEXT_PADDING)) {
+			if (UpdateUtil.moveIfNeeded(startOrderText, textX, START_ORDER_TOP_TEXT_PADDING)) {
 				layoutApplied = true;
 			}
 		}

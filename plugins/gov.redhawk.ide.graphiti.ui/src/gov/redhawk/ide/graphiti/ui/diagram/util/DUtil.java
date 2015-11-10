@@ -88,11 +88,14 @@ import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.AbstractText;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.styles.Point;
+import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -1513,36 +1516,22 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Resizes a {@link GraphicsAlgorithm} if it does not already match the requested size, returning whether the
-	 * resize occurred or not.
-	 * 
-	 * @param ga target GraphicsAlgorithm
-	 * @param width requested width
-	 * @param height requested height
-	 * @return true if ga was resized, false if it was already the requested sizes
+	 * Creates a {@link FixPointAnchor} overlay for a shape, with the anchor point vertically centered at horizontal
+	 * position x. The returned anchor has no graphics algorithm.
+	 *
+	 * @param parentShape shape on which to overlay anchor
+	 * @param x horizontal anchor point
+	 * @return new anchor
 	 */
-	public static boolean resizeIfNeeded(GraphicsAlgorithm ga, int width, int height) {
-		if ((ga.getWidth() != width) || (ga.getHeight() != height)) {
-			Graphiti.getGaLayoutService().setSize(ga, width, height);
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Moves a {@link GraphicsAlgorithm} if it is not already at the requested location, returning whether the move
-	 * occurred or not.
-	 * 
-	 * @param ga target GraphicsAlgorithm
-	 * @param x requested x position
-	 * @param y requested y posizion
-	 * @return true if ga was move, false if it was already at the requested location
-	 */
-	public static boolean moveIfNeeded(GraphicsAlgorithm ga, int x, int y) {
-		if ((ga.getX() != x) || (ga.getY() != y)) {
-			Graphiti.getGaLayoutService().setLocation(ga, x, y);
-			return true;
-		}
-		return false;
+	public static FixPointAnchor createOverlayAnchor(Shape parentShape, int x) {
+		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(parentShape);
+		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
+		Point point = StylesFactory.eINSTANCE.createPoint();
+		point.setX(x);
+		point.setY(parentSize.getHeight() / 2);
+		fixPointAnchor.setLocation(point);
+		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
+		fixPointAnchor.setReferencedGraphicsAlgorithm(parentShape.getGraphicsAlgorithm());
+		return fixPointAnchor;
 	}
 }

@@ -31,6 +31,7 @@ import org.eclipse.graphiti.services.Graphiti;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
 
 abstract class AbstractPortPattern< E > extends AbstractPattern {
 
@@ -61,15 +62,9 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 
 	@Override
 	public boolean update(IUpdateContext context) {
-		boolean updateStatus = false;
 		ContainerShape usesPortShape = (ContainerShape) context.getPictogramElement();
 		E port = clazz.cast(getBusinessObjectForPictogramElement(usesPortShape));
-		Text usesPortText = getPortText(usesPortShape);
-		String name = getPortName(port);
-		if (!name.equals(usesPortText.getValue())) {
-			usesPortText.setValue(name);
-			updateStatus = true;
-		}
+		boolean updateStatus =  UpdateUtil.update(getPortText(usesPortShape), getPortName(port)); 
 		Rectangle portRectangle = getPortRectangle(usesPortShape);
 		String styleId = getStyleId(port);
 		if (!styleId.equals(portRectangle.getStyle().getId())) {
@@ -83,14 +78,10 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 	public IReason updateNeeded(IUpdateContext context) {
 		ContainerShape usesPortShape = (ContainerShape) context.getPictogramElement();
 		E port = clazz.cast(getBusinessObjectForPictogramElement(usesPortShape));
-		Text usesPortText = getPortText(usesPortShape);
-		String name = getPortName(port);
-		if (!name.equals(usesPortText.getValue())) {
+		if (UpdateUtil.updateNeeded(getPortText(usesPortShape), getPortName(port))) {
 			return Reason.createTrueReason("Uses port name needs update");
 		}
-		Rectangle portRectangle = getPortRectangle(usesPortShape);
-		String styleId = getStyleId(port);
-		if (!styleId.equals(portRectangle.getStyle().getId())) {
+		if (!StyleUtil.isStyleSet(getPortRectangle(usesPortShape), getStyleId(port))) {
 			return Reason.createTrueReason("Uses port style needs update");
 		}
 		return Reason.createFalseReason();
@@ -161,7 +152,7 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 		// Graphiti appears to underestimate the width for some strings (e.g., those ending in "r"), so add a small
 		// amount of padding to ensure the entire letter is drawn
 		int textWidth = textSize.getWidth() + 2;
-		boolean layoutApplied = DUtil.resizeIfNeeded(portText, textWidth, AbstractPortPattern.PORT_SHAPE_HEIGHT);
+		boolean layoutApplied = UpdateUtil.resizeIfNeeded(portText, textWidth, AbstractPortPattern.PORT_SHAPE_HEIGHT);
 
 		// Move port rectangle
 		int portX;
@@ -171,13 +162,13 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 			portX = 0;
 		}
 		Rectangle portRectangle = getPortRectangle(portContainerShape);
-		if (DUtil.moveIfNeeded(portRectangle, portX, 0)) {
+		if (UpdateUtil.moveIfNeeded(portRectangle, portX, 0)) {
 			layoutApplied = true;
 		}
 
 		// Resize invisible bounding rectangle
 		int portWidth = textWidth + AbstractPortPattern.PORT_NAME_HORIZONTAL_PADDING + AbstractPortPattern.PORT_SHAPE_WIDTH;
-		if (DUtil.resizeIfNeeded(portContainerShape.getGraphicsAlgorithm(), portWidth, AbstractPortPattern.PORT_SHAPE_HEIGHT)) {
+		if (UpdateUtil.resizeIfNeeded(portContainerShape.getGraphicsAlgorithm(), portWidth, AbstractPortPattern.PORT_SHAPE_HEIGHT)) {
 			layoutApplied = true;
 		}
 

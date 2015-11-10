@@ -19,6 +19,8 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,7 +45,6 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
@@ -478,7 +479,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		if (isHasPortsContainerShape()) {
 			//draw all shape details (only ports)
-			addLollipop(interfaceStub, featureProvider);
+			pattern.addLollipop(this, interfaceStub);
 			addProvidesPorts(provides, featureProvider);
 			addUsesPorts(uses, featureProvider);
 		}
@@ -678,42 +679,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
-	 * Add lollipop to targetContainerShape. Lollipop anchor will link to the provided business object.T
-	 */
-	protected ContainerShape addLollipop(Object anchorBusinessObject, IFeatureProvider featureProvider) {
-		// Interface container
-		ContainerShape interfaceContainerShape = Graphiti.getCreateService().createContainerShape(this, true);
-		Graphiti.getPeService().setPropertyValue(interfaceContainerShape, DUtil.GA_TYPE, SHAPE_INTERFACE_CONTAINER);
-		Rectangle interfaceRectangle = Graphiti.getCreateService().createPlainRectangle(interfaceContainerShape);
-		interfaceRectangle.setFilled(false);
-		interfaceRectangle.setLineVisible(false);
-		Graphiti.getGaLayoutService().setLocationAndSize(interfaceRectangle, 0, 25, INTERFACE_SHAPE_WIDTH, INTERFACE_SHAPE_HEIGHT);
-
-		// Interface lollipop line
-		Shape lollipopLineShape = Graphiti.getCreateService().createShape(interfaceContainerShape, false);
-		int[] linePoints = new int[] { LOLLIPOP_ELLIPSE_DIAMETER - 1, LOLLIPOP_ELLIPSE_DIAMETER / 2, INTERFACE_SHAPE_WIDTH, LOLLIPOP_ELLIPSE_DIAMETER / 2 };
-		Polyline lollipopLine = Graphiti.getCreateService().createPlainPolyline(lollipopLineShape, linePoints);
-		StyleUtil.setStyle(lollipopLine, StyleUtil.LOLLIPOP);
-
-		// Interface lollipop ellipse
-		Shape lollipopEllipseShape = Graphiti.getPeCreateService().createContainerShape(interfaceContainerShape, true);
-		Ellipse lollipopEllipse = Graphiti.getCreateService().createPlainEllipse(lollipopEllipseShape);
-		StyleUtil.setStyle(lollipopEllipse, StyleUtil.LOLLIPOP);
-		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
-		featureProvider.link(lollipopEllipseShape, anchorBusinessObject);
-
-		// Overlay invisible ellipse
-		FixPointAnchor fixPointAnchor = createOverlayAnchor(lollipopEllipseShape, 0);
-		featureProvider.link(fixPointAnchor, anchorBusinessObject);
-		Ellipse anchorEllipse = Graphiti.getCreateService().createPlainEllipse(fixPointAnchor);
-		anchorEllipse.setFilled(false);
-		anchorEllipse.setLineVisible(false);
-		layoutAnchor(lollipopEllipseShape);
-
-		return interfaceContainerShape;
-	}
-
-	/**
 	 * Adds Super Uses Port to shape
 	 * @param usesPortStubs
 	 * @param featureProvider
@@ -794,15 +759,15 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			DUtil.layoutShapeViaFeature(featureProvider, shape);
 
 			// Place the container at the next Y position
-			DUtil.moveIfNeeded(shape.getGraphicsAlgorithm(), 0, currentY);
+			UpdateUtil.moveIfNeeded(shape.getGraphicsAlgorithm(), 0, currentY);
 			currentY += shape.getGraphicsAlgorithm().getHeight() + PORT_ROW_PADDING_HEIGHT;
 			maxWidth = Math.max(maxWidth, shape.getGraphicsAlgorithm().getWidth());
 		}
 		// Resize container to contents and adjust position so that ports are aligned to the outer edge
 		currentY = Math.max(currentY - 5, 0); // remove extra spacing, if it was added above
-		DUtil.resizeIfNeeded(providesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
+		UpdateUtil.resizeIfNeeded(providesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
 		// NB: For FindBy shapes and the like, the normal layout was not occurring for the provides port container
-		DUtil.moveIfNeeded(providesPortsContainer.getGraphicsAlgorithm(), PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING);
+		UpdateUtil.moveIfNeeded(providesPortsContainer.getGraphicsAlgorithm(), PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING);
 	}
 
 	private void layoutUsesPorts(ContainerShape usesPortsContainer, IFeatureProvider featureProvider) {
@@ -817,13 +782,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		int currentY = 0;
 		for (Shape shape : usesPortsContainer.getChildren()) {
 			int xOffset = maxWidth - shape.getGraphicsAlgorithm().getWidth();
-			DUtil.moveIfNeeded(shape.getGraphicsAlgorithm(), xOffset, currentY);
+			UpdateUtil.moveIfNeeded(shape.getGraphicsAlgorithm(), xOffset, currentY);
 			currentY += shape.getGraphicsAlgorithm().getHeight() + PORT_ROW_PADDING_HEIGHT;
 		}
 
 		// Resize container to contents
 		currentY = Math.max(currentY - 5, 0); // remove extra spacing, if it was added above
-		DUtil.resizeIfNeeded(usesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
+		UpdateUtil.resizeIfNeeded(usesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
 	}
 
 	private void layoutAnchor(Shape parentShape) {
@@ -1152,55 +1117,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		return new Reason(false, "No updates required");
 	}
 
-	//update lollipop
-	protected Reason internalUpdateLollipop(AbstractPortSupplierPattern pattern, Diagram diagram, boolean performUpdate, boolean updateStatus) {
-
-		if (isHasSuperPortsContainerShape()) {
-			//super ports exist, hide lollipop
-
-			if (getLollipop() != null) {
-				if (performUpdate) {
-					updateStatus = true;
-					ContainerShape lollipopContainerShape = getLollipop();
-					DUtil.fastDeletePictogramElement(lollipopContainerShape);
-				} else {
-					return new Reason(true, "Lollipop Shape requires deletion");
-				}
-			}
-		}
-		if (isHasPortsContainerShape()) {
-			//individual ports exist, display lollipop
-			ContainerShape lollipop = getLollipop();
-			// Upgrade from 2.0.0 RC1: re-create the lollipop to support highlighting during connection
-			if (lollipop != null && !lollipop.getAnchors().isEmpty()) {
-				if (performUpdate) {
-					updateStatus = true;
-					DUtil.fastDeletePictogramElement(lollipop);
-					lollipop = null;
-				} else {
-					return new Reason(true, "Lollipop Shape requires update");
-				}
-			}
-			if (lollipop == null) {
-				if (performUpdate) {
-					updateStatus = true;
-					EObject eObject = this.getLink().getBusinessObjects().get(0);
-
-					//draw lollipop details
-					addLollipop(pattern.getInterface(eObject), pattern.getFeatureProvider());
-				} else {
-					return new Reason(true, "Lollipop shape requires creation");
-				}
-			}
-		}
-
-		if (updateStatus && performUpdate) {
-			return new Reason(true, "Update Lollipop successful");
-		}
-
-		return new Reason(false, "No updates required");
-	}
-
 	//Updates Uses Ports Container Shape
 	protected Reason internalUpdateUsesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, EList<UsesPortStub> uses,
 		Diagram diagram, boolean performUpdate, boolean updateStatus) {
@@ -1488,28 +1404,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		ComponentSupportedInterfaceStub interfaceStub = pattern.getInterface(businessObject);
 		EList<UsesPortStub> uses = pattern.getUses(businessObject);
 
-		// outerText
-		Text outerTextGA = getOuterText();
-		String outerText = pattern.getOuterTitle(businessObject);
-		if (outerTextGA != null && !outerTextGA.getValue().equals(outerText)) {
-			if (performUpdate) {
-				updateStatus = true;
-				outerTextGA.setValue(outerText);
-			}
-			return new Reason(true, "Outer title requires update");
-		}
-
-		// innerText
-		Text innerTextGA = getInnerText();
-		String innerText = pattern.getInnerTitle(businessObject);
-		if (innerTextGA != null && innerTextGA.getValue() != null && !innerTextGA.getValue().equals(innerText)) {
-			if (performUpdate) {
-				updateStatus = true;
-				innerTextGA.setValue(innerText);
-			}
-			return new Reason(true, "Inner title requires update");
-		}
-
 		//update super provides ports if they exist
 		Reason updateSuperProvidesPortsReason = internalUpdateSuperProvidesPortsContainerShape(pattern, businessObject, provides, interfaceStub, diagram,
 			performUpdate, updateStatus);
@@ -1552,18 +1446,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			updateStatus = true;
 		}
 
-		//update lollipop
-		Reason updateLollipopReason = internalUpdateLollipop(pattern, diagram, performUpdate, updateStatus);
-		if (updateLollipopReason.toBoolean()) {
-			if (!performUpdate) {
-				//if updates required return true
-				return updateLollipopReason;
-			}
-			updateStatus = true;
-		}
-
 		if (updateStatus && performUpdate) {
-			DUtil.layoutShapeViaFeature(pattern.getFeatureProvider(), this);
 			return new Reason(true, "Update successful");
 		}
 
