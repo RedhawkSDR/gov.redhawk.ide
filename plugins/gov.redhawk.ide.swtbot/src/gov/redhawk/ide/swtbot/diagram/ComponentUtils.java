@@ -10,6 +10,15 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.diagram;
 
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -18,12 +27,6 @@ import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 
 public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 
@@ -43,7 +46,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 
 	public static boolean isAssemblyController(SWTGefBot bot, SWTBotGefEditor editor, String component) {
 		ComponentShape assemblyController = (ComponentShape) editor.getEditPart(component).part().getModel();
-		return isAssemblyController(assemblyController);
+		return ComponentUtils.isAssemblyController(assemblyController);
 	}
 
 	/**
@@ -53,7 +56,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	public static boolean isAssemblyController(ComponentShape componentShape) {
 		Diagram diagram = DUtil.findDiagram(componentShape);
-		final SoftwareAssembly sad = (SoftwareAssembly) DUtil.getBusinessObject(diagram, SoftwareAssembly.class);
+		final SoftwareAssembly sad = DUtil.getBusinessObject(diagram, SoftwareAssembly.class);
 		AssemblyController ac = sad.getAssemblyController();
 		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		if (ac != null && ac.getComponentInstantiationRef() != null) {
@@ -61,9 +64,9 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return false;
 	}
-	
+
 	public static boolean isAssemblyController(SWTBotGefEditPart gefEditPart) {
-		return isAssemblyController((ComponentShape) gefEditPart.part().getModel());
+		return ComponentUtils.isAssemblyController((ComponentShape) gefEditPart.part().getModel());
 	}
 
 	/**
@@ -82,7 +85,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 * @return - True if component start order text matches expected value
 	 */
 	public static boolean correctStartOrderValue(ComponentShape componentShape, String expectedValue) {
-		return PluginUtil.equals(((ComponentShapeImpl) componentShape).getStartOrderText().getValue(), expectedValue);
+		return PluginUtil.equals(ComponentUtils.getStartOrderText(componentShape).getValue(), expectedValue);
 	}
 
 	/**
@@ -92,11 +95,56 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 * @return - True if component styling is set correctly
 	 */
 	public static boolean correctStartOrderStyling(ComponentShape componentShape, boolean isAssemblyController) {
-		GraphicsAlgorithm ga = ((ComponentShapeImpl) componentShape).getStartOrderEllipseShape().getGraphicsAlgorithm();
+		GraphicsAlgorithm ga = ComponentUtils.getStartOrderEllipseShape(componentShape).getGraphicsAlgorithm();
 		if (isAssemblyController) {
 			return !StyleUtil.isStyleSet(ga, StyleUtil.ASSEMBLY_CONTROLLER_ELLIPSE);
 		}
 		return !StyleUtil.isStyleSet(ga, StyleUtil.START_ORDER_ELLIPSE);
+	}
+
+	/**
+	 * Gets the interface lollipop shape for the given component
+	 * @param componentShape - Component from which to get interface lollipop shape
+	 * @return - the interface lollipop shape, if the Component has one, or null otherwise
+	 */
+	public static ContainerShape getLollipop(ComponentShape componentShape) {
+		return (ContainerShape) DUtil.findFirstPropertyContainer(componentShape, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER);
+	}
+
+	/**
+	 * Gets the text from the outer shape (i.e., the component type) for the given component
+	 * @param componentShape - Component from which to get outer text
+	 * @return - the Component's outer text
+	 */
+	public static Text getOuterText(ComponentShape componentShape) {
+		return (Text) DUtil.findFirstPropertyContainer(componentShape, RHContainerShapeImpl.GA_OUTER_ROUNDED_RECTANGLE_TEXT);
+	}
+
+	/**
+	 * Gets the text from the inner shape (i.e., the instance name) for the given component
+	 * @param componentShape - Component from which to get inner text
+	 * @return - the Component's inner text
+	 */
+	public static Text getInnerText(ComponentShape componentShape) {
+		return (Text) DUtil.findFirstPropertyContainer(componentShape, RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT);
+	}
+
+	/**
+	 * Gets the start order Text shape for the given component
+	 * @param componentShape - Component from which to get start order Text
+	 * @return - the start order Text, if the Component has one, or null otherwise
+	 */
+	public static Text getStartOrderText(ComponentShape componentShape) {
+		return (Text) DUtil.findFirstPropertyContainer(componentShape, ComponentShapeImpl.GA_START_ORDER_TEXT);
+	}
+
+	/**
+	 * Gets the start order ContainerShape (i.e., the ellipse) for the given component
+	 * @param componentShape - Component from which to get start order shape
+	 * @return - the start order shape, if the Component has one, or null otherwise
+	 */
+	public static ContainerShape getStartOrderEllipseShape(ComponentShape componentShape) {
+		return (ContainerShape) DUtil.findFirstPropertyContainer(componentShape, ComponentShapeImpl.SHAPE_START_ORDER_ELLIPSE_SHAPE);
 	}
 
 	/**
@@ -109,7 +157,8 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	public static boolean correctStylingAndValue(SWTBotGefEditor editor, String component, String expectedValue, boolean isAssemblyController) {
 		ComponentShape componentShape = (ComponentShape) editor.getEditPart(component).part().getModel();
-		return correctStartOrderValue(componentShape, expectedValue) && correctStartOrderStyling(componentShape, isAssemblyController);
+		return ComponentUtils.correctStartOrderValue(componentShape, expectedValue)
+			&& ComponentUtils.correctStartOrderStyling(componentShape, isAssemblyController);
 	}
 
 }
