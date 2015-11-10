@@ -16,7 +16,6 @@ import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
-import java.util.Map;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import org.eclipse.emf.ecore.EAttribute;
@@ -27,7 +26,6 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
@@ -50,12 +48,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * @generated
 	 */
 	private EClass rhContainerShapeEClass = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType iFeatureProviderEDataType = null;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -92,12 +84,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * @generated
 	 */
 	private EDataType iUpdateContextEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType mapEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -236,15 +222,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getIFeatureProvider() {
-		return iFeatureProviderEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EDataType getUsesPortStub() {
 		return usesPortStubEDataType;
 	}
@@ -299,15 +276,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getMap() {
-		return mapEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public RHGxFactory getRHGxFactory() {
 		return (RHGxFactory) getEFactoryInstance();
 	}
@@ -341,14 +309,12 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS);
 
 		// Create data types
-		iFeatureProviderEDataType = createEDataType(IFEATURE_PROVIDER);
 		usesPortStubEDataType = createEDataType(USES_PORT_STUB);
 		providesPortStubEDataType = createEDataType(PROVIDES_PORT_STUB);
 		reasonEDataType = createEDataType(REASON);
 		iAddContextEDataType = createEDataType(IADD_CONTEXT);
 		abstractPortSupplierPatternEDataType = createEDataType(ABSTRACT_PORT_SUPPLIER_PATTERN);
 		iUpdateContextEDataType = createEDataType(IUPDATE_CONTEXT);
-		mapEDataType = createEDataType(MAP);
 	}
 
 	/**
@@ -417,9 +383,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		g1.getETypeArguments().add(g2);
 		initEOperation(op, g1);
 
-		op = addEOperation(rhContainerShapeEClass, null, "layout", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIFeatureProvider(), "featureProvider", 0, 1, !IS_UNIQUE, IS_ORDERED);
-
 		op = addEOperation(rhContainerShapeEClass, this.getReason(), "update", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getAbstractPortSupplierPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
@@ -429,7 +392,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		addEParameter(op, this.getAbstractPortSupplierPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		// Initialize data types
-		initEDataType(iFeatureProviderEDataType, IFeatureProvider.class, "IFeatureProvider", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(usesPortStubEDataType, UsesPortStub.class, "UsesPortStub", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(providesPortStubEDataType, ProvidesPortStub.class, "ProvidesPortStub", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(reasonEDataType, Reason.class, "Reason", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
@@ -437,7 +399,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		initEDataType(abstractPortSupplierPatternEDataType, AbstractPortSupplierPattern.class, "AbstractPortSupplierPattern", IS_SERIALIZABLE,
 			!IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iUpdateContextEDataType, IUpdateContext.class, "IUpdateContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(mapEDataType, Map.class, "Map", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS, "java.util.Map<java.lang.String, java.lang.String>");
 
 		// Create resource
 		createResource(eNS_URI);

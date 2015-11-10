@@ -202,15 +202,6 @@ public interface RHGxPackage extends EPackage {
 	 */
 	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 6;
 	/**
-	 * The meta object id for the '<em>IFeature Provider</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.graphiti.features.IFeatureProvider
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIFeatureProvider()
-	 * @generated
-	 */
-	int IFEATURE_PROVIDER = 1;
-	/**
 	 * The meta object id for the '<em>Uses Port Stub</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -218,7 +209,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getUsesPortStub()
 	 * @generated
 	 */
-	int USES_PORT_STUB = 2;
+	int USES_PORT_STUB = 1;
 	/**
 	 * The meta object id for the '<em>Provides Port Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -227,7 +218,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getProvidesPortStub()
 	 * @generated
 	 */
-	int PROVIDES_PORT_STUB = 3;
+	int PROVIDES_PORT_STUB = 2;
 	/**
 	 * The meta object id for the '<em>Reason</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -236,7 +227,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getReason()
 	 * @generated
 	 */
-	int REASON = 4;
+	int REASON = 3;
 	/**
 	 * The meta object id for the '<em>IAdd Context</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -245,7 +236,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIAddContext()
 	 * @generated
 	 */
-	int IADD_CONTEXT = 5;
+	int IADD_CONTEXT = 4;
 	/**
 	 * The meta object id for the '<em>Abstract Port Supplier Pattern</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -254,7 +245,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAbstractPortSupplierPattern()
 	 * @generated
 	 */
-	int ABSTRACT_PORT_SUPPLIER_PATTERN = 6;
+	int ABSTRACT_PORT_SUPPLIER_PATTERN = 5;
 	/**
 	 * The meta object id for the '<em>IUpdate Context</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -263,16 +254,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIUpdateContext()
 	 * @generated
 	 */
-	int IUPDATE_CONTEXT = 7;
-	/**
-	 * The meta object id for the '<em>Map</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see java.util.Map
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getMap()
-	 * @generated
-	 */
-	int MAP = 8;
+	int IUPDATE_CONTEXT = 6;
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape <em>RH Container Shape</em>}'.
@@ -351,17 +333,6 @@ public interface RHGxPackage extends EPackage {
 	EAttribute getRHContainerShape_HideUnusedPorts();
 
 	/**
-	 * Returns the meta object for data type '{@link org.eclipse.graphiti.features.IFeatureProvider <em>IFeature Provider</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>IFeature Provider</em>'.
-	 * @see org.eclipse.graphiti.features.IFeatureProvider
-	 * @model instanceClass="org.eclipse.graphiti.features.IFeatureProvider"
-	 * @generated
-	 */
-	EDataType getIFeatureProvider();
-
-	/**
 	 * Returns the meta object for data type '{@link mil.jpeojtrs.sca.partitioning.UsesPortStub <em>Uses Port Stub</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -426,17 +397,6 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EDataType getIUpdateContext();
-
-	/**
-	 * Returns the meta object for data type '{@link java.util.Map <em>Map</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Map</em>'.
-	 * @see java.util.Map
-	 * @model instanceClass="java.util.Map<java.lang.String, java.lang.String>"
-	 * @generated
-	 */
-	EDataType getMap();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -519,16 +479,6 @@ public interface RHGxPackage extends EPackage {
 		EAttribute RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS = eINSTANCE.getRHContainerShape_HideUnusedPorts();
 
 		/**
-		 * The meta object literal for the '<em>IFeature Provider</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.graphiti.features.IFeatureProvider
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIFeatureProvider()
-		 * @generated
-		 */
-		EDataType IFEATURE_PROVIDER = eINSTANCE.getIFeatureProvider();
-
-		/**
 		 * The meta object literal for the '<em>Uses Port Stub</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -587,16 +537,6 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType IUPDATE_CONTEXT = eINSTANCE.getIUpdateContext();
-
-		/**
-		 * The meta object literal for the '<em>Map</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see java.util.Map
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getMap()
-		 * @generated
-		 */
-		EDataType MAP = eINSTANCE.getMap();
 
 	}
 

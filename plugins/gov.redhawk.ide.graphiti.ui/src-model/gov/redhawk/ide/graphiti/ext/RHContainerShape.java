@@ -16,7 +16,6 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
@@ -228,17 +227,6 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	EList<UsesPortStub> getUsesPortStubs();
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * performs a layout on the contents of this shape
-	 * <!-- end-model-doc -->
-	 * @model featureProviderDataType="gov.redhawk.ide.graphiti.ext.IFeatureProvider" featureProviderUnique="false"
-	 * @generated
-	 */
-	void layout(IFeatureProvider featureProvider);
 
 	/**
 	 * <!-- begin-user-doc -->

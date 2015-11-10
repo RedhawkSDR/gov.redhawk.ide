@@ -16,7 +16,6 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
-import java.util.Map;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import org.eclipse.emf.ecore.EClass;
@@ -25,7 +24,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
@@ -89,8 +87,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-		case RHGxPackage.IFEATURE_PROVIDER:
-			return createIFeatureProviderFromString(eDataType, initialValue);
 		case RHGxPackage.USES_PORT_STUB:
 			return createUsesPortStubFromString(eDataType, initialValue);
 		case RHGxPackage.PROVIDES_PORT_STUB:
@@ -103,8 +99,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return createAbstractPortSupplierPatternFromString(eDataType, initialValue);
 		case RHGxPackage.IUPDATE_CONTEXT:
 			return createIUpdateContextFromString(eDataType, initialValue);
-		case RHGxPackage.MAP:
-			return createMapFromString(eDataType, initialValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -118,8 +112,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-		case RHGxPackage.IFEATURE_PROVIDER:
-			return convertIFeatureProviderToString(eDataType, instanceValue);
 		case RHGxPackage.USES_PORT_STUB:
 			return convertUsesPortStubToString(eDataType, instanceValue);
 		case RHGxPackage.PROVIDES_PORT_STUB:
@@ -132,8 +124,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return convertAbstractPortSupplierPatternToString(eDataType, instanceValue);
 		case RHGxPackage.IUPDATE_CONTEXT:
 			return convertIUpdateContextToString(eDataType, instanceValue);
-		case RHGxPackage.MAP:
-			return convertMapToString(eDataType, instanceValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -147,24 +137,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	public RHContainerShape createRHContainerShape() {
 		RHContainerShapeImpl rhContainerShape = new RHContainerShapeImpl();
 		return rhContainerShape;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public IFeatureProvider createIFeatureProviderFromString(EDataType eDataType, String initialValue) {
-		return (IFeatureProvider) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertIFeatureProviderToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
 	}
 
 	/**
@@ -273,25 +245,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 */
 	public String convertIUpdateContextToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@SuppressWarnings("unchecked")
-	public Map<String, String> createMapFromString(EDataType eDataType, String initialValue) {
-		return (Map<String, String>) super.createFromString(initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertMapToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(instanceValue);
 	}
 
 	/**

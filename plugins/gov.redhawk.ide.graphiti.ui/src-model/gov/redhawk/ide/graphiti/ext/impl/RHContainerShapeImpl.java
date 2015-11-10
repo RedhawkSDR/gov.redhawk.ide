@@ -58,7 +58,6 @@ import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.impl.ContainerShapeImpl;
 import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.services.IGaLayoutService;
 
 /**
  * <!-- begin-user-doc -->
@@ -493,76 +492,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
-	 * Performs a layout on the contents of this shape
-	 * @generated NOT
-	 */
-	@Override
-	public void layout(IFeatureProvider featureProvider) {
-		int minimumHeight = 0;
-		int minimumWidth = 0;
-		if (isHasPortsContainerShape()) {
-			// Show inner line
-			getInnerPolyline().setLineVisible(true);
-
-			// Layout provides ports
-			ContainerShape providesPortsContainer = getProvidesPortsContainerShape();
-			layoutProvidesPorts(providesPortsContainer, featureProvider);
-			int providesHeight = providesPortsContainer.getGraphicsAlgorithm().getHeight();
-			int providesWidth = providesPortsContainer.getGraphicsAlgorithm().getWidth();
-
-			// Layout uses ports
-			ContainerShape usesPortsContainer = getUsesPortsContainerShape();
-			layoutUsesPorts(usesPortsContainer, featureProvider);
-			adjustUsesPortsPosition(usesPortsContainer);
-			int usesHeight = usesPortsContainer.getGraphicsAlgorithm().getHeight();
-			int usesWidth = usesPortsContainer.getGraphicsAlgorithm().getWidth();
-
-			// Account for port containers in outer sizing
-			minimumHeight = Math.max(providesHeight, usesHeight) + 10;
-			minimumWidth = providesWidth + usesWidth + REQ_PADDING_BETWEEN_PORT_TYPES;
-		}
-
-		// Resize height if necessary to accommodate contents (always requires padding)
-		RoundedRectangle outerRoundedRectangle = (RoundedRectangle) this.getGraphicsAlgorithm();
-		minimumHeight += PORTS_CONTAINER_SHAPE_TOP_PADDING;
-		if (outerRoundedRectangle.getHeight() < minimumHeight) {
-			outerRoundedRectangle.setHeight(minimumHeight);
-		}
-
-		// width
-		minimumWidth = Math.max(minimumWidth, getMinimumWidth(getOuterText(), getInnerText()));
-		if (outerRoundedRectangle.getWidth() < minimumWidth) {
-			outerRoundedRectangle.setWidth(minimumWidth);
-
-			// If the width changes, move the uses ports container
-			adjustUsesPortsPosition(getUsesPortsContainerShape());
-		}
-
-		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
-
-		// outerRoundedRectangle
-		int containerWidth = outerRoundedRectangle.getWidth();
-		gaLayoutService.setLocationAndSize(getOuterText(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4, 0,
-			containerWidth - (INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4), 20);
-		gaLayoutService.setLocationAndSize(getOuterImage(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
-
-		if (isHasSuperPortsContainerShape()) {
-			ContainerShape superProvidesPortsContainerShape = getSuperProvidesPortsContainerShape();
-			if (superProvidesPortsContainerShape != null) {
-				layoutSuperProvidesPorts(superProvidesPortsContainerShape);
-			}
-
-			ContainerShape superUsesPortsContainerShape = getSuperUsesPortsContainerShape();
-			if (superUsesPortsContainerShape != null) {
-				layoutSuperUsesPorts(superUsesPortsContainerShape);
-			}
-
-			// Hide inner line
-			getInnerPolyline().setLineVisible(false);
-		}
-	}
-
-	/**
 	 * Updates the shape's contents using the supplied fields. Return true if an update occurred, false otherwise.
 	 */
 	@Override
@@ -897,25 +826,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		DUtil.resizeIfNeeded(usesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
 	}
 
-	/**
-	 * Adjusts the position of the uses ports container so that ports are aligned to the outer edge
-	 */
-	private void adjustUsesPortsPosition(ContainerShape usesPortsContainer) {
-		if (usesPortsContainer != null) {
-			int parentWidth = usesPortsContainer.getContainer().getGraphicsAlgorithm().getWidth();
-			int xOffset = parentWidth - usesPortsContainer.getGraphicsAlgorithm().getWidth();
-			Graphiti.getGaLayoutService().setLocation(usesPortsContainer.getGraphicsAlgorithm(), xOffset, PORTS_CONTAINER_SHAPE_TOP_PADDING);
-		}
-	}
-
-	private void layoutSuperPort(ContainerShape superPortContainerShape) {
-		// Resize relative to inner shape
-		int height = getInnerContainerShape().getGraphicsAlgorithm().getHeight() - SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2;
-		Graphiti.getGaLayoutService().setSize(superPortContainerShape.getGraphicsAlgorithm(), SUPER_PORT_SHAPE_WIDTH, height);
-
-		layoutAnchor(superPortContainerShape);
-	}
-
 	private void layoutAnchor(Shape parentShape) {
 		// Layout and resize anchor
 		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
@@ -924,20 +834,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		anchorLocation.setY(parentSize.getHeight() / 2);
 		Graphiti.getGaLayoutService().setLocationAndSize(portAnchor.getGraphicsAlgorithm(), -anchorLocation.getX(), -anchorLocation.getY(),
 			parentSize.getWidth(), parentSize.getHeight());
-	}
-
-	protected void layoutSuperProvidesPorts(ContainerShape superProvidesPortsContainerShape) {
-		layoutSuperPort(superProvidesPortsContainerShape);
-	}
-
-	protected void layoutSuperUsesPorts(ContainerShape superUsesPortsContainerShape) {
-		layoutSuperPort(superUsesPortsContainerShape);
-
-		// Position at right edge of inner shape
-		GraphicsAlgorithm innerGa = getInnerContainerShape().getGraphicsAlgorithm();
-		int y = innerGa.getY() + SUPER_PORT_SHAPE_HEIGHT_MARGIN;
-		int x = innerGa.getX() + innerGa.getWidth();
-		Graphiti.getGaLayoutService().setLocation(superUsesPortsContainerShape.getGraphicsAlgorithm(), x, y);
 	}
 
 	/**
@@ -1641,7 +1537,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 
 		if (updateStatus && performUpdate) {
-			layout(pattern.getFeatureProvider());
+			DUtil.layoutShapeViaFeature(pattern.getFeatureProvider(), this);
 			return new Reason(true, "Update successful");
 		}
 
