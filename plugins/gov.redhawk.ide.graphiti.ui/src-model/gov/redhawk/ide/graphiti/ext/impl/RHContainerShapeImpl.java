@@ -546,10 +546,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			containerWidth - (INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4), 20);
 		gaLayoutService.setLocationAndSize(getOuterImage(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
 
-		// innerRoundedRectangle
-		ContainerShape innerShape = getInnerContainerShape();
-		layoutInnerShape(innerShape);
-
 		if (isHasSuperPortsContainerShape()) {
 			ContainerShape superProvidesPortsContainerShape = getSuperProvidesPortsContainerShape();
 			if (superProvidesPortsContainerShape != null) {
@@ -862,20 +858,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		return fixPointAnchor;
 	}
 
-	protected void layoutInnerShape(ContainerShape innerContainerShape) {
-		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
-		IDimension parentSize = gaLayoutService.calculateSize(innerContainerShape.getContainer().getGraphicsAlgorithm());
-		int width = parentSize.getWidth() - INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING * 2 - PROVIDES_PORTS_LEFT_PADDING;
-		int height = parentSize.getHeight() - INNER_CONTAINER_SHAPE_TOP_PADDING;
-		gaLayoutService.setSize(innerContainerShape.getGraphicsAlgorithm(), width, height);
-		IDimension innerRoundedRectangleTextSize = DUtil.calculateTextSize(getInnerText());
-		int xForImage = (innerContainerShape.getGraphicsAlgorithm().getWidth() - (innerRoundedRectangleTextSize.getWidth() + ICON_IMAGE_LENGTH + 5)) / 2;
-		gaLayoutService.setLocationAndSize(getInnerImage(), xForImage, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
-		gaLayoutService.setLocationAndSize(getInnerText(), xForImage + ICON_IMAGE_LENGTH + 5, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING,
-			innerRoundedRectangleTextSize.getWidth() + 10, innerRoundedRectangleTextSize.getHeight());
-		getInnerPolyline().getPoints().get(1).setX(width);
-	}
-
 	private void layoutProvidesPorts(ContainerShape providesPortsContainer, IFeatureProvider featureProvider) {
 		int currentY = 0;
 		int maxWidth = 0;
@@ -1102,13 +1084,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	public Text getInnerText() {
 		return (Text) DUtil.findFirstPropertyContainer(this, GA_INNER_ROUNDED_RECTANGLE_TEXT);
-	}
-
-	/**
-	 * Return the image for inner container
-	 */
-	public Image getInnerImage() {
-		return (Image) DUtil.findFirstPropertyContainer(this, GA_INNER_ROUNDED_RECTANGLE_IMAGE);
 	}
 
 	/**

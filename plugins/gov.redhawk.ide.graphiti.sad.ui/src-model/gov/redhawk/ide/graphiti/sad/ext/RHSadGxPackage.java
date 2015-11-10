@@ -13,7 +13,6 @@ package gov.redhawk.ide.graphiti.sad.ext;
 
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EPackage;
 
 /**
@@ -199,51 +198,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE_FEATURE_COUNT = RHGxPackage.RH_CONTAINER_SHAPE_FEATURE_COUNT + 0;
-	/**
-	 * The meta object id for the '<em>IFeature Provider</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.graphiti.features.IFeatureProvider
-	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getIFeatureProvider()
-	 * @generated
-	 */
-	int IFEATURE_PROVIDER = 4;
-	/**
-	 * The meta object id for the '<em>Reason</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.graphiti.features.impl.Reason
-	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getReason()
-	 * @generated
-	 */
-	int REASON = 5;
-	/**
-	 * The meta object id for the '<em>IAdd Context</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.graphiti.features.context.IAddContext
-	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getIAddContext()
-	 * @generated
-	 */
-	int IADD_CONTEXT = 2;
-	/**
-	 * The meta object id for the '<em>Component Pattern</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern
-	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getComponentPattern()
-	 * @generated
-	 */
-	int COMPONENT_PATTERN = 1;
-	/**
-	 * The meta object id for the '<em>IUpdate Context</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.graphiti.features.context.IUpdateContext
-	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getIUpdateContext()
-	 * @generated
-	 */
-	int IUPDATE_CONTEXT = 3;
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.graphiti.sad.ext.ComponentShape <em>Component Shape</em>}'.
@@ -254,61 +208,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getComponentShape();
-
-	/**
-	 * Returns the meta object for data type '{@link org.eclipse.graphiti.features.IFeatureProvider <em>IFeature Provider</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>IFeature Provider</em>'.
-	 * @see org.eclipse.graphiti.features.IFeatureProvider
-	 * @model instanceClass="org.eclipse.graphiti.features.IFeatureProvider"
-	 * @generated
-	 */
-	EDataType getIFeatureProvider();
-
-	/**
-	 * Returns the meta object for data type '{@link org.eclipse.graphiti.features.impl.Reason <em>Reason</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Reason</em>'.
-	 * @see org.eclipse.graphiti.features.impl.Reason
-	 * @model instanceClass="org.eclipse.graphiti.features.impl.Reason"
-	 * @generated
-	 */
-	EDataType getReason();
-
-	/**
-	 * Returns the meta object for data type '{@link org.eclipse.graphiti.features.context.IAddContext <em>IAdd Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>IAdd Context</em>'.
-	 * @see org.eclipse.graphiti.features.context.IAddContext
-	 * @model instanceClass="org.eclipse.graphiti.features.context.IAddContext"
-	 * @generated
-	 */
-	EDataType getIAddContext();
-
-	/**
-	 * Returns the meta object for data type '{@link gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern <em>Component Pattern</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Component Pattern</em>'.
-	 * @see gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern
-	 * @model instanceClass="gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern"
-	 * @generated
-	 */
-	EDataType getComponentPattern();
-
-	/**
-	 * Returns the meta object for data type '{@link org.eclipse.graphiti.features.context.IUpdateContext <em>IUpdate Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>IUpdate Context</em>'.
-	 * @see org.eclipse.graphiti.features.context.IUpdateContext
-	 * @model instanceClass="org.eclipse.graphiti.features.context.IUpdateContext"
-	 * @generated
-	 */
-	EDataType getIUpdateContext();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -341,56 +240,6 @@ public interface RHSadGxPackage extends EPackage {
 		 * @generated
 		 */
 		EClass COMPONENT_SHAPE = eINSTANCE.getComponentShape();
-
-		/**
-		 * The meta object literal for the '<em>IFeature Provider</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.graphiti.features.IFeatureProvider
-		 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getIFeatureProvider()
-		 * @generated
-		 */
-		EDataType IFEATURE_PROVIDER = eINSTANCE.getIFeatureProvider();
-
-		/**
-		 * The meta object literal for the '<em>Reason</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.graphiti.features.impl.Reason
-		 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getReason()
-		 * @generated
-		 */
-		EDataType REASON = eINSTANCE.getReason();
-
-		/**
-		 * The meta object literal for the '<em>IAdd Context</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.graphiti.features.context.IAddContext
-		 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getIAddContext()
-		 * @generated
-		 */
-		EDataType IADD_CONTEXT = eINSTANCE.getIAddContext();
-
-		/**
-		 * The meta object literal for the '<em>Component Pattern</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern
-		 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getComponentPattern()
-		 * @generated
-		 */
-		EDataType COMPONENT_PATTERN = eINSTANCE.getComponentPattern();
-
-		/**
-		 * The meta object literal for the '<em>IUpdate Context</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.graphiti.features.context.IUpdateContext
-		 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getIUpdateContext()
-		 * @generated
-		 */
-		EDataType IUPDATE_CONTEXT = eINSTANCE.getIUpdateContext();
 
 	}
 

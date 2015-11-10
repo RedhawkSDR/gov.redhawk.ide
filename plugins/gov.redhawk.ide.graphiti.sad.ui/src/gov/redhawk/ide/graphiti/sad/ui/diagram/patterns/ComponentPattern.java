@@ -43,18 +43,24 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
+import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
+import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -64,6 +70,25 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 
 public class ComponentPattern extends AbstractPortSupplierPattern {
+
+	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove
+	// etc.)
+	public static final String SHAPE_START_ORDER_ELLIPSE_SHAPE = "startOrderEllipseShape";
+
+	// These are property key/value pairs that help us resize an existing shape by properly identifying
+	// graphicsAlgorithms
+	public static final String GA_START_ORDER_TEXT = "startOrderText";
+	public static final String GA_START_ORDER_ELLIPSE = "startOrderEllipse";
+
+	// Shape size constants
+	private static final int START_ORDER_ELLIPSE_DIAMETER = 17;
+	private static final int START_ORDER_TOP_TEXT_PADDING = 0;
+	private static final int START_ORDER_ELLIPSE_LEFT_PADDING = 20;
+	private static final int START_ORDER_ELLIPSE_RIGHT_PADDING = 5;
+	private static final int START_ORDER_ELLIPSE_TOP_PADDING = 5;
+
+	// Default start order text value for components that do not have a start order declared
+	private static final String NO_START_ORDER_STRING = "";
 
 	private URI spdUri = null;
 
@@ -275,8 +300,24 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		// set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(componentShape.getGraphicsAlgorithm(), context.getX(), context.getY());
 
-		// add runtime listeners
-		// ((ComponentShapeImpl) componentShape).runtimeAdapter.addRuntimeListeners();
+		if (!DUtil.isDiagramRuntime(getDiagram())) {
+			SadComponentInstantiation instantiation = (SadComponentInstantiation) context.getNewObject();
+
+			// Create ellipse shape to display component start order
+			ContainerShape startOrderEllipseShape = Graphiti.getCreateService().createContainerShape(getInnerContainerShape(componentShape), false);
+			Graphiti.getPeService().setPropertyValue(startOrderEllipseShape, DUtil.SHAPE_TYPE, ComponentPattern.SHAPE_START_ORDER_ELLIPSE_SHAPE);
+			Ellipse startOrderEllipse = Graphiti.getCreateService().createEllipse(startOrderEllipseShape);
+			StyleUtil.setStyle(startOrderEllipse, getStartOrderStyle(instantiation));
+			Graphiti.getPeService().setPropertyValue(startOrderEllipse, DUtil.GA_TYPE, ComponentPattern.GA_START_ORDER_ELLIPSE);
+			Graphiti.getGaLayoutService().setSize(startOrderEllipse, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
+
+			// Create text shape to display start order
+			Shape startOrderTextShape = Graphiti.getPeCreateService().createShape(startOrderEllipseShape, false);
+			Text startOrderText = Graphiti.getCreateService().createText(startOrderTextShape, getStartOrderValue(instantiation));
+			Graphiti.getPeService().setPropertyValue(startOrderText, DUtil.GA_TYPE, ComponentPattern.GA_START_ORDER_TEXT);
+			StyleUtil.setStyle(startOrderText, StyleUtil.START_ORDER);
+			Graphiti.getGaLayoutService().setSize(startOrderText, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
+		}
 
 		// layout
 		layoutPictogramElement(componentShape);
@@ -285,7 +326,84 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		adjustComponentLocation(componentShape);
 
 		return componentShape;
+	}
 
+	@Override
+	public boolean layout(ILayoutContext context) {
+		boolean layoutApplied = super.layout(context);
+
+		// Layout the start order ellipse, if any
+		ContainerShape startOrderEllipse = getStartOrderEllipseShape((ComponentShape) context.getPictogramElement());
+		if (startOrderEllipse != null) {
+			// Move the ellipse to the upper right corner of its parent
+			int xOffset = startOrderEllipse.getContainer().getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING);
+			if (DUtil.moveIfNeeded(startOrderEllipse.getGraphicsAlgorithm(), xOffset, START_ORDER_ELLIPSE_TOP_PADDING)) {
+				layoutApplied = true;
+			}
+
+			// Position the text in the center of the ellipse
+			Text startOrderText = getStartOrderText(startOrderEllipse);
+			IDimension textDimension = DUtil.calculateTextSize(startOrderText);
+			int textX = START_ORDER_ELLIPSE_DIAMETER / 2 - textDimension.getWidth() / 2;
+			if (DUtil.moveIfNeeded(startOrderText, textX, START_ORDER_TOP_TEXT_PADDING)) {
+				layoutApplied = true;
+			}
+		}
+		return layoutApplied;
+	}
+
+	@Override
+	public IReason updateNeeded(IUpdateContext context) {
+		IReason reason = super.updateNeeded(context);
+		if (reason.toBoolean()) {
+			return reason;
+		}
+
+		// Check the start order ellipse, if any
+		ContainerShape startOrderEllipse = getStartOrderEllipseShape((ComponentShape) context.getPictogramElement());
+		if (startOrderEllipse != null) {
+			// Check the ellipse style
+			SadComponentInstantiation instantiation = (SadComponentInstantiation) getBusinessObjectForPictogramElement(context.getPictogramElement());
+			String startOrderStyle = getStartOrderStyle(instantiation);
+			if (!StyleUtil.isStyleSet(startOrderEllipse.getGraphicsAlgorithm(), startOrderStyle)) {
+				return Reason.createTrueReason("Start order ellipse needs update");
+			}
+
+			// Check the text value
+			Text startOrderText = getStartOrderText(startOrderEllipse);
+			if (!startOrderText.getValue().equals(getStartOrderValue(instantiation))) {
+				return Reason.createTrueReason("Start order number needs update");
+			}
+		}
+
+		return Reason.createFalseReason();
+	}
+
+	@Override
+	public boolean update(IUpdateContext context) {
+		boolean updateStatus = super.update(context);
+
+		// Check the start order ellipse, if any
+		ContainerShape startOrderEllipse = getStartOrderEllipseShape((ComponentShape) context.getPictogramElement());
+		if (startOrderEllipse != null) {
+			// Check the ellipse style
+			SadComponentInstantiation instantiation = (SadComponentInstantiation) getBusinessObjectForPictogramElement(context.getPictogramElement());
+			String startOrderStyle = getStartOrderStyle(instantiation);
+			if (!StyleUtil.isStyleSet(startOrderEllipse.getGraphicsAlgorithm(), startOrderStyle)) {
+				StyleUtil.setStyle(startOrderEllipse.getGraphicsAlgorithm(), startOrderStyle);
+				updateStatus = true;
+			}
+
+			// Check the text value
+			Text startOrderText = getStartOrderText(startOrderEllipse);
+			String startOrderValue = getStartOrderValue(instantiation);
+			if (!startOrderText.getValue().equals(startOrderValue)) {
+				startOrderText.setValue(startOrderValue);
+				updateStatus = true;
+			}
+		}
+
+		return updateStatus;
 	}
 
 	/**
@@ -739,6 +857,22 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		return StyleUtil.COMPONENT_INNER;
 	}
 
+	protected String getStartOrderStyle(SadComponentInstantiation instantiation) {
+		if (SoftwareAssembly.Util.isAssemblyController(instantiation)) {
+			return StyleUtil.ASSEMBLY_CONTROLLER_ELLIPSE;
+		} else {
+			return StyleUtil.START_ORDER_ELLIPSE;
+		}
+	}
+
+	protected String getStartOrderValue(SadComponentInstantiation instantiation) {
+		if (instantiation.getStartOrder() == null) {
+			return ComponentPattern.NO_START_ORDER_STRING;
+		} else {
+			return instantiation.getStartOrder().toString();
+		}
+	}
+
 	/**
 	 * Returns component, sad, and external ports. Order does matter.
 	 */
@@ -758,5 +892,19 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		}
 
 		return businessObjectsToLink;
+	}
+
+	/**
+	 * Return the startOrderEllipseShape
+	 */
+	protected ContainerShape getStartOrderEllipseShape(ComponentShape shape) {
+		return (ContainerShape) DUtil.findFirstPropertyContainer(shape, ComponentPattern.SHAPE_START_ORDER_ELLIPSE_SHAPE);
+	}
+
+	/**
+	 * Return the startOrderText
+	 */
+	protected Text getStartOrderText(ContainerShape shape) {
+		return (Text) DUtil.findFirstPropertyContainer(shape, ComponentPattern.GA_START_ORDER_TEXT);
 	}
 }

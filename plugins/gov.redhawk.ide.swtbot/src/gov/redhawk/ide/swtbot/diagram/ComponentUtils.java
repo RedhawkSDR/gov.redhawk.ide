@@ -20,7 +20,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.util.PluginUtil;
@@ -135,7 +135,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 * @return - the start order Text, if the Component has one, or null otherwise
 	 */
 	public static Text getStartOrderText(ComponentShape componentShape) {
-		return (Text) DUtil.findFirstPropertyContainer(componentShape, ComponentShapeImpl.GA_START_ORDER_TEXT);
+		return (Text) DUtil.findFirstPropertyContainer(componentShape, ComponentPattern.GA_START_ORDER_TEXT);
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 * @return - the start order shape, if the Component has one, or null otherwise
 	 */
 	public static ContainerShape getStartOrderEllipseShape(ComponentShape componentShape) {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(componentShape, ComponentShapeImpl.SHAPE_START_ORDER_ELLIPSE_SHAPE);
+		return (ContainerShape) DUtil.findFirstPropertyContainer(componentShape, ComponentPattern.SHAPE_START_ORDER_ELLIPSE_SHAPE);
 	}
 
 	/**
