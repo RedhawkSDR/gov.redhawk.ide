@@ -68,14 +68,15 @@ public class ScaExplorerTestUtils {
 	/**
 	 * Open the specified Graphiti Diagram from the REDHAWK Explorer.
 	 * @param bot
-	 * @param editor
-	 * @param componentName
-	 * @param diagramType - enum stating which context menu option to choose when opening the diagram (chalkboard,
-	 * explorer, etc)
+	 * @param parentPath
+	 * @param treeItemName
+	 * @param diagramType
+	 * @return The text of the item in the explorer view (useful to find a waveform's runtime name)
 	 */
-	public static void openDiagramFromScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String treeItemName, DiagramType diagramType) {
+	public static String openDiagramFromScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String treeItemName, DiagramType diagramType) {
 		SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, treeItemName);
 		treeItem.contextMenu().menu("Open With", diagramType.getDiagramName()).click();
+		return treeItem.getText();
 	}
 
 	/**
