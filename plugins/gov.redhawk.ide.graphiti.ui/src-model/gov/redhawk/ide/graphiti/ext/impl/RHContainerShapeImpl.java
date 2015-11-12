@@ -1216,20 +1216,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// super port shape
 		ContainerShape superProvidesPortsRectangleShape = getSuperProvidesPortsContainerShape();
 
-		if (!isHasSuperPortsContainerShape()) {
-			//Do NOT show super ports
-
-			if (superProvidesPortsRectangleShape != null) {
-				//super ports exist, delete them
-				if (performUpdate) {
-					updateStatus = true;
-					DUtil.fastDeletePictogramElement(superProvidesPortsRectangleShape);
-				} else {
-					return new Reason(true, "Super Provides Ports Shape requires deletion");
-				}
-			}
-		} else {
-
+		if (isHasSuperPortsContainerShape()) {
 			IFeatureProvider featureProvider = pattern.getFeatureProvider();
 
 			if (superProvidesPortsRectangleShape == null && ((provides != null && provides.size() > 0) || interfaceStub != null)) {
@@ -1309,20 +1296,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// super port shape
 		ContainerShape superUsesPortsRectangleShape = getSuperUsesPortsContainerShape();
 
-		if (!isHasSuperPortsContainerShape()) {
-			//Do NOT show super ports
-
-			if (superUsesPortsRectangleShape != null) {
-				//super ports exist, delete them
-				if (performUpdate) {
-					updateStatus = true;
-					DUtil.fastDeletePictogramElement(superUsesPortsRectangleShape);
-				} else {
-					return new Reason(true, "Super Uses Ports Shape requires deletion");
-				}
-			}
-		} else {
-
+		if (isHasSuperPortsContainerShape()) {
 			IFeatureProvider featureProvider = pattern.getFeatureProvider();
 
 			if (superUsesPortsRectangleShape == null && uses != null && uses.size() > 0) {

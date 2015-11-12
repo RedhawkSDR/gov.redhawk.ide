@@ -83,7 +83,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			ContainerShape providesPortsContainer = portSupplierShape.getProvidesPortsContainerShape();
 			layoutProvidesPorts(providesPortsContainer);
 			int providesHeight = providesPortsContainer.getGraphicsAlgorithm().getHeight();
-			int providesWidth = providesPortsContainer.getGraphicsAlgorithm().getWidth();
+			int providesWidth = Math.max(providesPortsContainer.getGraphicsAlgorithm().getWidth(), INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING);
 
 			// Layout uses ports
 			ContainerShape usesPortsContainer = portSupplierShape.getUsesPortsContainerShape();
@@ -153,12 +153,30 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		}
 
 		ContainerShape lollipopShape = containerShape.getLollipop();
-		if (containerShape.isHasSuperPortsContainerShape() && (lollipopShape != null)) {
-			DUtil.fastDeletePictogramElement(lollipopShape);
-			updateStatus = true;
-		} else if (containerShape.isHasPortsContainerShape() && (lollipopShape == null)) {
-			addLollipop(containerShape, getInterface(businessObject));
-			updateStatus = true;
+		ContainerShape superProvidesPortsShape = containerShape.getSuperProvidesPortsContainerShape();
+		ContainerShape superUsesPortsShape = containerShape.getSuperUsesPortsContainerShape();
+		if (containerShape.isHasSuperPortsContainerShape()) {
+			if (UpdateUtil.deleteIfNeeded(lollipopShape)) {
+				updateStatus = true;
+			}
+
+			if (superProvidesPortsShape == null) {
+			}
+			if (superUsesPortsShape == null) {
+			}
+		} else if (containerShape.isHasPortsContainerShape()) {
+			// Add lollipop shape
+			if (lollipopShape == null) {
+				addLollipop(containerShape, getInterface(businessObject));
+				updateStatus = true;
+			}
+
+			if (UpdateUtil.deleteIfNeeded(superProvidesPortsShape)) {
+				updateStatus = true;
+			}
+			if (UpdateUtil.deleteIfNeeded(superUsesPortsShape)) {
+				updateStatus = true;
+			}
 		}
 
 		IReason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
@@ -185,10 +203,25 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		}
 
 		boolean hasLollipop = containerShape.getLollipop() != null;
-		if (containerShape.isHasSuperPortsContainerShape() && hasLollipop) {
-			return Reason.createTrueReason("Interface lollipop needs to be deleted");
-		} else if (containerShape.isHasPortsContainerShape() && !hasLollipop) {
-			return Reason.createTrueReason("Interface lollipop needs to be created");
+		boolean hasSuperProvides = containerShape.getSuperProvidesPortsContainerShape() != null;
+		boolean hasSuperUses = containerShape.getSuperUsesPortsContainerShape() != null;
+		if (containerShape.isHasSuperPortsContainerShape()) {
+			if (hasLollipop) {
+				return Reason.createTrueReason("Interface lollipop needs to be deleted");
+			}
+			if (!hasSuperProvides) {
+				return Reason.createTrueReason("Super provides port shape needs to be created");
+			} else if (!hasSuperUses) {
+				return Reason.createTrueReason("Super uses port shape needs to be created");
+			}
+		} else if (containerShape.isHasPortsContainerShape()) {
+			if (!hasLollipop) {
+				return Reason.createTrueReason("Interface lollipop needs to be created");
+			} else if (hasSuperProvides) {
+				return Reason.createTrueReason("Super provides port shape needs to be created");
+			} else if (hasSuperUses) {
+				return Reason.createTrueReason("Super uses port shape needs to be created");
+			}
 		}
 
 		return ((RHContainerShape) context.getPictogramElement()).updateNeeded(context, this);

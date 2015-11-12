@@ -15,6 +15,7 @@ import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 
@@ -128,6 +129,19 @@ public class UpdateUtil {
 	public static boolean moveIfNeeded(GraphicsAlgorithm ga, int x, int y) {
 		if ((ga.getX() != x) || (ga.getY() != y)) {
 			Graphiti.getGaLayoutService().setLocation(ga, x, y);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Deletes a {@link PictogramElement} if it is non-null.
+	 * @param pe PictogramElement to delete
+	 * @return true if pe was non-null and deleted, false if it was null.
+	 */
+	public static boolean deleteIfNeeded(PictogramElement pe) {
+		if (pe != null) {
+			DUtil.fastDeletePictogramElement(pe);
 			return true;
 		}
 		return false;
