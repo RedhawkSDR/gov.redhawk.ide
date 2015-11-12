@@ -303,22 +303,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		Graphiti.getGaLayoutService().setLocation(componentShape.getGraphicsAlgorithm(), context.getX(), context.getY());
 
 		if (!DUtil.isDiagramRuntime(getDiagram())) {
-			SadComponentInstantiation instantiation = (SadComponentInstantiation) context.getNewObject();
-
-			// Create ellipse shape to display component start order
-			ContainerShape startOrderEllipseShape = Graphiti.getCreateService().createContainerShape(componentShape.getInnerContainerShape(), false);
-			Graphiti.getPeService().setPropertyValue(startOrderEllipseShape, DUtil.SHAPE_TYPE, ComponentPattern.SHAPE_START_ORDER_ELLIPSE_SHAPE);
-			Ellipse startOrderEllipse = Graphiti.getCreateService().createEllipse(startOrderEllipseShape);
-			StyleUtil.setStyle(startOrderEllipse, getStartOrderStyle(instantiation));
-			Graphiti.getPeService().setPropertyValue(startOrderEllipse, DUtil.GA_TYPE, ComponentPattern.GA_START_ORDER_ELLIPSE);
-			Graphiti.getGaLayoutService().setSize(startOrderEllipse, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
-
-			// Create text shape to display start order
-			Shape startOrderTextShape = Graphiti.getPeCreateService().createShape(startOrderEllipseShape, false);
-			Text startOrderText = Graphiti.getCreateService().createText(startOrderTextShape, getStartOrderValue(instantiation));
-			Graphiti.getPeService().setPropertyValue(startOrderText, DUtil.GA_TYPE, ComponentPattern.GA_START_ORDER_TEXT);
-			StyleUtil.setStyle(startOrderText, StyleUtil.START_ORDER);
-			Graphiti.getGaLayoutService().setSize(startOrderText, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
+			createStartOrderEllipse(componentShape.getInnerContainerShape(), (SadComponentInstantiation) context.getNewObject());
 		}
 
 		// layout
@@ -328,6 +313,25 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		adjustComponentLocation(componentShape);
 
 		return componentShape;
+	}
+
+	protected ContainerShape createStartOrderEllipse(ContainerShape parentShape, SadComponentInstantiation instantiation) {
+		// Create ellipse shape to display component start order
+		ContainerShape startOrderEllipseShape = Graphiti.getCreateService().createContainerShape(parentShape, false);
+		Graphiti.getPeService().setPropertyValue(startOrderEllipseShape, DUtil.SHAPE_TYPE, ComponentPattern.SHAPE_START_ORDER_ELLIPSE_SHAPE);
+		Ellipse startOrderEllipse = Graphiti.getCreateService().createEllipse(startOrderEllipseShape);
+		StyleUtil.setStyle(startOrderEllipse, getStartOrderStyle(instantiation));
+		Graphiti.getPeService().setPropertyValue(startOrderEllipse, DUtil.GA_TYPE, ComponentPattern.GA_START_ORDER_ELLIPSE);
+		Graphiti.getGaLayoutService().setSize(startOrderEllipse, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
+
+		// Create text shape to display start order
+		Shape startOrderTextShape = Graphiti.getPeCreateService().createShape(startOrderEllipseShape, false);
+		Text startOrderText = Graphiti.getCreateService().createText(startOrderTextShape, getStartOrderValue(instantiation));
+		Graphiti.getPeService().setPropertyValue(startOrderText, DUtil.GA_TYPE, ComponentPattern.GA_START_ORDER_TEXT);
+		StyleUtil.setStyle(startOrderText, StyleUtil.START_ORDER);
+		Graphiti.getGaLayoutService().setSize(startOrderText, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
+
+		return startOrderEllipseShape;
 	}
 
 	@Override
