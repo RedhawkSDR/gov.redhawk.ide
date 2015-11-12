@@ -39,6 +39,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.utils.SWTUtils;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
@@ -966,8 +967,15 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 		}
 	}
 
-	public static void waitForComponentState(SWTBot bot, final SWTBotGefEditor editor, final String componentName, final ComponentState state) {
-		waitUntilComponentDisplaysInDiagram(bot, editor, componentName);
+	/**
+	 * See {@link #waitForComponentState(SWTBot, SWTBotGefEditor, String, ComponentState, long)}
+	 */
+	public static void waitForComponentState(SWTBot bot, SWTBotGefEditor editor, String componentName, ComponentState state) {
+		waitForComponentState(bot, editor, componentName, state, 10000);
+	}
+
+	public static void waitForComponentState(SWTBot bot, final SWTBotGefEditor editor, final String componentName, final ComponentState state, long timeout) {
+		waitUntilComponentDisplaysInDiagram(bot, editor, componentName, timeout);
 		bot.waitUntil(new DefaultCondition() {
 
 			private String lastStyle = null;
@@ -985,14 +993,14 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 				String styleDesc = (ComponentState.getStateFromStyle(lastStyle) != null) ? ComponentState.getStateFromStyle(lastStyle).toString() : "id: " + lastStyle;
 				return String.format("Resource did not change to state '%s'. Style was '%s'.", state.toString(), styleDesc);
 			}
-		}, 10000);
+		}, timeout);
 	}
 
-	/**
-	 * Waits until Component displays in Chalkboard Diagram
-	 * @param componentName
-	 */
 	public static void waitUntilComponentDisplaysInDiagram(SWTBot bot, final SWTBotGefEditor editor, final String componentName) {
+		waitUntilComponentDisplaysInDiagram(bot, editor, componentName, SWTBotPreferences.TIMEOUT);
+	}
+
+	public static void waitUntilComponentDisplaysInDiagram(SWTBot bot, final SWTBotGefEditor editor, final String componentName, long timeout) {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
@@ -1003,7 +1011,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 			public boolean test() throws Exception {
 				return editor.getEditPart(componentName) != null;
 			}
-		});
+		}, timeout);
 	}
 
 	/**
