@@ -30,15 +30,6 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
  */
 public class ComponentShapeImpl extends RHContainerShapeImpl implements ComponentShape {
 
-	// END GENERATED CODE
-
-	// Shape size constants
-	public static final int START_ORDER_ELLIPSE_DIAMETER = 17;
-	public static final int START_ORDER_ELLIPSE_LEFT_PADDING = 20;
-	public static final int START_ORDER_ELLIPSE_RIGHT_PADDING = 5;
-
-	// BEGIN GENERATED CODE
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -76,13 +67,5 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	public Text getStartOrderText() {
 		return (Text) DUtil.findFirstPropertyContainer(this, ComponentPattern.GA_START_ORDER_TEXT);
 	}
-
-	@Override
-	protected int getInnerWidth(Text innerTitle) {
-		return super.getInnerWidth(innerTitle) + ComponentShapeImpl.START_ORDER_ELLIPSE_DIAMETER + ComponentShapeImpl.START_ORDER_ELLIPSE_LEFT_PADDING
-			+ ComponentShapeImpl.START_ORDER_ELLIPSE_RIGHT_PADDING;
-	}
-
-	// BEGIN GENERATED CODE
 
 } // ComponentShapeImpl

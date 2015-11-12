@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxFactory;
@@ -875,6 +876,19 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		} else {
 			return instantiation.getStartOrder().toString();
 		}
+	}
+
+	@Override
+	protected int getMinimumInnerWidth(RHContainerShape shape) {
+		int minimumWidth = super.getMinimumInnerWidth(shape);
+
+		// If the component shape has a start order ellipse, take the required size and padding into account
+		ContainerShape ellipseShape = ((ComponentShape) shape).getStartOrderEllipseShape();
+		if (ellipseShape != null) {
+			minimumWidth += ComponentPattern.START_ORDER_ELLIPSE_LEFT_PADDING + ellipseShape.getGraphicsAlgorithm().getWidth()
+				+ ComponentPattern.START_ORDER_ELLIPSE_RIGHT_PADDING;
+		}
+		return minimumWidth;
 	}
 
 	/**
