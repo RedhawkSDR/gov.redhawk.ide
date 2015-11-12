@@ -901,12 +901,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 		editorBot.waitUntil(Conditions.shellCloses(shell));
 	}
 
-	/**
-	 * Waits until Component displays in Chalkboard Diagram
-	 * @param componentName
-	 */
-	public static void waitUntilComponentDisappearsInChalkboardDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
-
+	public static void waitUntilComponentDisappearsInDiagram(SWTBot bot, final SWTBotGefEditor editor, final String componentName) {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
@@ -915,10 +910,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 
 			@Override
 			public boolean test() throws Exception {
-				if (editor.getEditPart(componentName) == null) {
-					return true;
-				}
-				return false;
+				return editor.getEditPart(componentName) == null;
 			}
 		});
 	}
