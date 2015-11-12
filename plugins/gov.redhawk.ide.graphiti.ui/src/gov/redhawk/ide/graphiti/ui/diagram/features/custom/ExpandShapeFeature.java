@@ -13,10 +13,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.IReason;
-import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.ICustomContext;
-import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -60,7 +57,7 @@ public class ExpandShapeFeature extends AbstractCustomFeature {
 			for (PictogramElement p: pes) {
 				if (!(p instanceof RHContainerShape)) {
 					return false;
-				} else if (((RHContainerShape) p).isHasPortsContainerShape()) {
+				} else if (!((RHContainerShape) p).isCollapsed()) {
 					return false;
 				} else {
 					foundRHContainerShape = true;
@@ -83,24 +80,12 @@ public class ExpandShapeFeature extends AbstractCustomFeature {
 		//expand all selected shapes
 		for (PictogramElement p: context.getPictogramElements()) {
 			RHContainerShape rhContainerShape = (RHContainerShape) p;
-			rhContainerShape.setHasSuperPortsContainerShape(false);
-			rhContainerShape.setHasPortsContainerShape(true);
-			
-			final UpdateContext updateContext = new UpdateContext(rhContainerShape);
-			final IUpdateFeature updateFeature = getFeatureProvider().getUpdateFeature(updateContext);
-			final IReason updateNeeded = updateFeature.updateNeeded(updateContext);
-			if (updateNeeded.toBoolean()) {
-				updateFeature.update(updateContext);
-			}
-			
+			rhContainerShape.setCollapsed(false);
+			updatePictogramElement(rhContainerShape);
 			layoutPictogramElement(rhContainerShape);
 		}
-		
-		if (diagram != null && getFeatureProvider() != null) {
-			final UpdateContext updateContext = new UpdateContext(diagram);
-			final IUpdateFeature updateFeature = getFeatureProvider().getUpdateFeature(updateContext);
-			updateFeature.update(updateContext);
-		}
+
+		updatePictogramElement(diagram);
 	}
 	
 	@Override

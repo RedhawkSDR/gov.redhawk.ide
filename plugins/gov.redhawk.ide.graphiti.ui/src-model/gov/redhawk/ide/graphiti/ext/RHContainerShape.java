@@ -36,6 +36,7 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted <em>Started</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusSeverity <em>IStatus Severity</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isCollapsed <em>Collapsed</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
@@ -122,6 +123,35 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	void setIStatusSeverity(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Collapsed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Collapsed</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Flag for whether ports are expanded or not
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Collapsed</em>' attribute.
+	 * @see #setCollapsed(boolean)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_Collapsed()
+	 * @model unique="false" transient="true" volatile="true" derived="true"
+	 * @generated
+	 */
+	boolean isCollapsed();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isCollapsed <em>Collapsed</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Collapsed</em>' attribute.
+	 * @see #isCollapsed()
+	 * @generated
+	 */
+	void setCollapsed(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Has Super Ports Container Shape</b></em>' attribute.

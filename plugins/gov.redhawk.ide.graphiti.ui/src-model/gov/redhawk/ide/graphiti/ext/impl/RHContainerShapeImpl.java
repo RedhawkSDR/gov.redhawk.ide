@@ -71,6 +71,7 @@ import org.eclipse.graphiti.services.Graphiti;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isStarted <em>Started</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getIStatusSeverity <em>IStatus Severity</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isCollapsed <em>Collapsed</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
@@ -149,6 +150,16 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @ordered
 	 */
 	protected Map<String, String> connectionMap = Collections.synchronizedMap(new HashMap<String, String>());
+
+	/**
+	 * The default value of the '{@link #isCollapsed() <em>Collapsed</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isCollapsed()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean COLLAPSED_EDEFAULT = false;
 
 	/**
 	 * The default value of the '{@link #isHasSuperPortsContainerShape() <em>Has Super Ports Container Shape</em>}' attribute.
@@ -354,6 +365,30 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public boolean isCollapsed() {
+		return isHasSuperPortsContainerShape();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public void setCollapsed(boolean newCollapsed) {
+		if (newCollapsed) {
+			setHasSuperPortsContainerShape(true);
+			setHasPortsContainerShape(false);
+		} else {
+			setHasSuperPortsContainerShape(false);
+			setHasPortsContainerShape(true);
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	public boolean isHasSuperPortsContainerShape() {
@@ -433,8 +468,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		//configure preferences
 		boolean hideDetailsPref = GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS);
 		boolean hidePortsPref = GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_UNUSED_PORTS);
-		setHasSuperPortsContainerShape(hideDetailsPref);
-		setHasPortsContainerShape(!hideDetailsPref);
+		setCollapsed(hideDetailsPref);
 		setHideUnusedPorts(hidePortsPref);
 
 		// add property for this shape
@@ -466,7 +500,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		EList<UsesPortStub> uses = pattern.getUses(newObject);
 		ComponentSupportedInterfaceStub interfaceStub = pattern.getInterface(newObject);
 
-		if (isHasSuperPortsContainerShape()) {
+		if (isCollapsed()) {
 			//hide shape details (only hides ports for now)
 
 			if (provides != null && provides.size() > 0 || interfaceStub != null) {
@@ -475,9 +509,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			if (uses != null && uses.size() > 0) {
 				addSuperUsesPortContainerShape(uses, featureProvider);
 			}
-		}
-
-		if (isHasPortsContainerShape()) {
+		} else {
 			//draw all shape details (only ports)
 			pattern.addLollipop(this, interfaceStub);
 			addProvidesPorts(provides, featureProvider);
@@ -525,6 +557,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return isEnabled();
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
 			return getIStatusSeverity();
+		case RHGxPackage.RH_CONTAINER_SHAPE__COLLAPSED:
+			return isCollapsed();
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			return isHasSuperPortsContainerShape();
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE:
@@ -551,6 +585,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
 			setIStatusSeverity((Integer) newValue);
+			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__COLLAPSED:
+			setCollapsed((Boolean) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			setHasSuperPortsContainerShape((Boolean) newValue);
@@ -582,6 +619,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
 			setIStatusSeverity(ISTATUS_SEVERITY_EDEFAULT);
 			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__COLLAPSED:
+			setCollapsed(COLLAPSED_EDEFAULT);
+			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			setHasSuperPortsContainerShape(HAS_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT);
 			return;
@@ -609,6 +649,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return enabled != ENABLED_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_SEVERITY:
 			return iStatusSeverity != ISTATUS_SEVERITY_EDEFAULT;
+		case RHGxPackage.RH_CONTAINER_SHAPE__COLLAPSED:
+			return isCollapsed() != COLLAPSED_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			return hasSuperPortsContainerShape != HAS_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE:
@@ -889,12 +931,12 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@SuppressWarnings("unchecked")
 	public EList<UsesPortStub> getUsesPortStubs() {
-		if (isHasSuperPortsContainerShape()) {
+		if (isCollapsed()) {
 			ContainerShape usesSuperPortsContainerShape = getSuperUsesPortsContainerShape();
 			if (usesSuperPortsContainerShape != null && usesSuperPortsContainerShape.getLink() != null) {
 				return (EList<UsesPortStub>) (EList< ? >) usesSuperPortsContainerShape.getLink().getBusinessObjects();
 			}
-		} else if (isHasPortsContainerShape()) {
+		} else {
 			ContainerShape usesPortsContainerShape = getUsesPortsContainerShape();
 			if (usesPortsContainerShape != null && usesPortsContainerShape.getLink() != null) {
 				return (EList<UsesPortStub>) (EList< ? >) usesPortsContainerShape.getLink().getBusinessObjects();
@@ -908,7 +950,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@SuppressWarnings("unchecked")
 	public EList<ProvidesPortStub> getInternalProvidesPortStubs() {
-		if (isHasSuperPortsContainerShape()) {
+		if (isCollapsed()) {
 			ContainerShape providesSuperPortsContainerShape = getSuperProvidesPortsContainerShape();
 			if (providesSuperPortsContainerShape != null && providesSuperPortsContainerShape.getLink() != null) {
 				EList<ProvidesPortStub> returnList = new BasicEList<ProvidesPortStub>();
@@ -921,7 +963,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 				return returnList;
 			}
-		} else if (isHasPortsContainerShape()) {
+		} else {
 			ContainerShape providesPortsContainerShape = getProvidesPortsContainerShape();
 			if (providesPortsContainerShape != null && providesPortsContainerShape.getLink() != null) {
 				return (EList<ProvidesPortStub>) (EList< ? >) providesPortsContainerShape.getLink().getBusinessObjects();
@@ -1036,7 +1078,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// providesPortsContainerShape
 		ContainerShape providesPortsContainerShape = getProvidesPortsContainerShape();
 
-		if (!isHasPortsContainerShape()) {
+		if (isCollapsed()) {
 			//Do NOT show ports container
 
 			if (providesPortsContainerShape != null) {
@@ -1126,7 +1168,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// usesPortsContainerShape
 		ContainerShape usesPortsContainerShape = getUsesPortsContainerShape();
 
-		if (!isHasPortsContainerShape()) {
+		if (isCollapsed()) {
 			//Do NOT show ports container
 
 			if (usesPortsContainerShape != null) {
@@ -1216,7 +1258,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// super port shape
 		ContainerShape superProvidesPortsRectangleShape = getSuperProvidesPortsContainerShape();
 
-		if (isHasSuperPortsContainerShape()) {
+		if (isCollapsed()) {
 			IFeatureProvider featureProvider = pattern.getFeatureProvider();
 
 			if (superProvidesPortsRectangleShape == null && ((provides != null && provides.size() > 0) || interfaceStub != null)) {
@@ -1296,7 +1338,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// super port shape
 		ContainerShape superUsesPortsRectangleShape = getSuperUsesPortsContainerShape();
 
-		if (isHasSuperPortsContainerShape()) {
+		if (isCollapsed()) {
 			IFeatureProvider featureProvider = pattern.getFeatureProvider();
 
 			if (superUsesPortsRectangleShape == null && uses != null && uses.size() > 0) {

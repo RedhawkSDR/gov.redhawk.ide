@@ -46,6 +46,8 @@ class RHContainerShape extends ContainerShape {
 	/*The severity of the component's status*/
 	transient int iStatusSeverity
 
+	/*Flag for whether ports are expanded or not*/
+	transient volatile derived boolean collapsed // replaces hasSuperPortsContainerShape and hasPortsContainerShape
 	boolean hasSuperPortsContainerShape  //creates a single anchor on each side of container to represent ports
 	boolean hasPortsContainerShape //creates a container that displays an anchor per port
 	boolean hideUnusedPorts //hides all ports without connection

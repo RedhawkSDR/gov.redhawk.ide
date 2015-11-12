@@ -75,7 +75,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		RHContainerShape portSupplierShape = (RHContainerShape) context.getPictogramElement();
 		int minimumHeight = 0;
 		int minimumWidth = 0;
-		if (portSupplierShape.isHasPortsContainerShape()) {
+		if (!portSupplierShape.isCollapsed()) {
 			// Show inner line
 			portSupplierShape.getInnerPolyline().setLineVisible(true);
 
@@ -123,7 +123,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			layoutApplied = true;
 		}
 
-		if (portSupplierShape.isHasSuperPortsContainerShape()) {
+		if (portSupplierShape.isCollapsed()) {
 			ContainerShape superProvidesPortsContainerShape = portSupplierShape.getSuperProvidesPortsContainerShape();
 			if (superProvidesPortsContainerShape != null) {
 				layoutSuperProvidesPorts(superProvidesPortsContainerShape);
@@ -155,7 +155,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		ContainerShape lollipopShape = containerShape.getLollipop();
 		ContainerShape superProvidesPortsShape = containerShape.getSuperProvidesPortsContainerShape();
 		ContainerShape superUsesPortsShape = containerShape.getSuperUsesPortsContainerShape();
-		if (containerShape.isHasSuperPortsContainerShape()) {
+		if (containerShape.isCollapsed()) {
 			if (UpdateUtil.deleteIfNeeded(lollipopShape)) {
 				updateStatus = true;
 			}
@@ -164,7 +164,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			}
 			if (superUsesPortsShape == null) {
 			}
-		} else if (containerShape.isHasPortsContainerShape()) {
+		} else {
 			// Add lollipop shape
 			if (lollipopShape == null) {
 				addLollipop(containerShape, getInterface(businessObject));
@@ -205,7 +205,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		boolean hasLollipop = containerShape.getLollipop() != null;
 		boolean hasSuperProvides = containerShape.getSuperProvidesPortsContainerShape() != null;
 		boolean hasSuperUses = containerShape.getSuperUsesPortsContainerShape() != null;
-		if (containerShape.isHasSuperPortsContainerShape()) {
+		if (containerShape.isCollapsed()) {
 			if (hasLollipop) {
 				return Reason.createTrueReason("Interface lollipop needs to be deleted");
 			}
@@ -214,7 +214,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			} else if (!hasSuperUses) {
 				return Reason.createTrueReason("Super uses port shape needs to be created");
 			}
-		} else if (containerShape.isHasPortsContainerShape()) {
+		} else {
 			if (!hasLollipop) {
 				return Reason.createTrueReason("Interface lollipop needs to be created");
 			} else if (hasSuperProvides) {
