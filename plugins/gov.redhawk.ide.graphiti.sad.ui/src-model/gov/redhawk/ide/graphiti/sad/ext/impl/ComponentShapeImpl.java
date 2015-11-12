@@ -55,7 +55,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * @generated NOT
 	 */
 	public ContainerShape getStartOrderEllipseShape() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, ComponentPattern.SHAPE_START_ORDER_ELLIPSE_SHAPE);
+		return (ContainerShape) DUtil.findChildShapeByProperty(getInnerContainerShape(), DUtil.SHAPE_TYPE, ComponentPattern.SHAPE_START_ORDER_ELLIPSE_SHAPE);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 */
 	@Override
 	public Text getStartOrderText() {
-		return (Text) DUtil.findFirstPropertyContainer(this, ComponentPattern.GA_START_ORDER_TEXT);
+		return (Text) DUtil.findFirstPropertyContainer(getStartOrderEllipseShape(), ComponentPattern.GA_START_ORDER_TEXT);
 	}
 
 } // ComponentShapeImpl

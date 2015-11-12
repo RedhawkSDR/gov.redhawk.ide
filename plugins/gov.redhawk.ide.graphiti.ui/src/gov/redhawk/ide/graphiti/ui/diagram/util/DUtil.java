@@ -419,6 +419,25 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
+	 * Finds a child shape with the given property key/value pair non-recursively.
+	 *
+	 * @param containerShape
+	 * @param propertyName
+	 * @param propertyValue
+	 * @return
+	 */
+	public static Shape findChildShapeByProperty(ContainerShape containerShape, String propertyName, String propertyValue) {
+		if (containerShape != null) {
+			for (Shape child : containerShape.getChildren()) {
+				if (propertyValue.equals(Graphiti.getPeService().getPropertyValue(child, propertyName))) {
+					return child;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Return first matched child with property value
 	 * @param diagramElement
 	 * @return

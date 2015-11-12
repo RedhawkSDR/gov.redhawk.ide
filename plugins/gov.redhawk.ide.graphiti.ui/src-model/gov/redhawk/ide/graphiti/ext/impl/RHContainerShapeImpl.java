@@ -872,7 +872,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@Override
 	public ContainerShape getUsesPortsContainerShape() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_USES_PORTS_CONTAINER);
+		return (ContainerShape) DUtil.findChildShapeByProperty(this, DUtil.SHAPE_TYPE, SHAPE_USES_PORTS_CONTAINER);
 	}
 
 	/**
@@ -881,7 +881,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@Override
 	public ContainerShape getProvidesPortsContainerShape() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_PROVIDES_PORTS_CONTAINER);
+		return (ContainerShape) DUtil.findChildShapeByProperty(this, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORTS_CONTAINER);
 	}
 
 	/**
@@ -981,7 +981,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@Override
 	public ContainerShape getInnerContainerShape() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_INNER_CONTAINER);
+		// Note: the inner shape is tagged with the GA_TYPE instead of the SHAPE_TYPE property
+		return (ContainerShape) DUtil.findChildShapeByProperty(this, DUtil.GA_TYPE, SHAPE_INNER_CONTAINER);
 	}
 
 	/**
@@ -990,7 +991,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@Override
 	public ContainerShape getLollipop() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_INTERFACE_CONTAINER);
+		// Note: the lollipop shape is tagged with the GA_TYPE instead of the SHAPE_TYPE property
+		return (ContainerShape) DUtil.findChildShapeByProperty(this, DUtil.GA_TYPE, SHAPE_INTERFACE_CONTAINER);
 	}
 
 	/**
@@ -999,7 +1001,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@Override
 	public ContainerShape getSuperProvidesPortsContainerShape() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SUPER_PROVIDES_PORTS_RECTANGLE);
+		return (ContainerShape) DUtil.findChildShapeByProperty(this, DUtil.SHAPE_TYPE, SUPER_PROVIDES_PORTS_RECTANGLE);
 	}
 
 	/**
@@ -1008,7 +1010,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@Override
 	public ContainerShape getSuperUsesPortsContainerShape() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SUPER_USES_PORTS_RECTANGLE);
+		return (ContainerShape) DUtil.findChildShapeByProperty(this, DUtil.SHAPE_TYPE, SUPER_USES_PORTS_RECTANGLE);
 	}
 
 	protected List<Shape> getPortsToRemove(ContainerShape containerShape) {
