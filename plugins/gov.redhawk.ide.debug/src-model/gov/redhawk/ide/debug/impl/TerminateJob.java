@@ -19,32 +19,44 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
 
-/**
- * 
- */
 public class TerminateJob extends Job {
 
-	private final LocalLaunch launch;
+	private final ILaunch launch;
 
-	public TerminateJob(final LocalLaunch launch, final String name) {
+	/**
+	 * @since 5.0
+	 */
+	public TerminateJob(final ILaunch launch, final String name) {
 		super("Terminating " + name);
 		this.launch = launch;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @deprecated Use {@link #TerminateJob(ILaunch, String)}
 	 */
+	@Deprecated
+	public TerminateJob(final LocalLaunch launch, final String name) {
+		this(launch.getLaunch(), name);
+	}
+
+	@Override
+	public boolean belongsTo(Object family) {
+		// Make jobs of this class part of a family so they can be found from the job manager
+		return family.equals(TerminateJob.class);
+	}
+
 	@Override
 	public boolean shouldRun() {
-		return super.shouldRun() && this.launch.getLaunch().canTerminate();
+		return super.shouldRun() && this.launch.canTerminate();
 	}
 
 	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
-		if (this.launch.getLaunch().canTerminate()) {
+		if (this.launch.canTerminate()) {
 			try {
-				this.launch.getLaunch().terminate();
+				this.launch.terminate();
 			} catch (final DebugException e) {
 				return new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to terminate.", e);
 			}

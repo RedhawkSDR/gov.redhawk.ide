@@ -11,11 +11,15 @@
 package gov.redhawk.ide.debug;
 
 import gov.redhawk.ExtendedCF.Sandbox;
+import gov.redhawk.ide.debug.impl.TerminateJob;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
 import org.jacorb.JacorbActivator;
 import org.osgi.framework.BundleContext;
 
@@ -23,7 +27,13 @@ import org.osgi.framework.BundleContext;
  * 
  */
 public class ScaDebugPlugin extends Plugin {
+
 	public static final String ID = "gov.redhawk.ide.debug";
+
+	/**
+	 * Time to wait for jobs to complete that are terminating local launches. The wait occurs when the plugin is stopped.
+	 */
+	private static final long TERMINATE_JOB_WAIT_TIME_MS = 5000;
 
 	private static ScaDebugPlugin instance;
 
@@ -37,8 +47,34 @@ public class ScaDebugPlugin extends Plugin {
 	@Override
 	public void stop(final BundleContext context) throws Exception {
 		super.stop(context);
-		ScaDebugInstance.INSTANCE.getLocalSca().dispose();
+
+		// Dispose the local model
+		ScaModelCommand.execute(getLocalSca(), new ScaModelCommand() {
+			public void execute() {
+				getLocalSca().dispose();
+			}
+		});
 		ScaDebugPlugin.instance = null;
+
+		// Wait for termination jobs to complete
+		IJobManager jobManager = Job.getJobManager();
+		Job[] terminateJobs = jobManager.find(TerminateJob.class);
+		long endTime = System.currentTimeMillis() + TERMINATE_JOB_WAIT_TIME_MS;
+		boolean alldone = false;
+		while (!alldone && endTime > System.currentTimeMillis()) {
+			alldone = true;
+			for (Job terminateJob : terminateJobs) {
+				if (terminateJob.getResult() == null) {
+					alldone = false;
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException ex) {
+						// PASS
+					}
+					break;
+				}
+			}
+		}
 	}
 
 	public LocalSca getLocalSca() {

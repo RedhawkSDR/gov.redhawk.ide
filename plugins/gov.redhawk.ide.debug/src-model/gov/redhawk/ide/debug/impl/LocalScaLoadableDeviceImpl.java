@@ -387,22 +387,33 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 
 	@Override
 	public void releaseObject() throws ReleaseError {
-		final String tmpName = getLabel();
-	    super.releaseObject();
-	    if (this.launch != null) {
-	    	final Job terminateJob = new TerminateJob(this, tmpName);
+		// END GENERATED CODE
+		final String tmpLabel = getLabel();
+		final ILaunch tmpLaunch = getLaunch();
+
+		super.releaseObject();
+
+		// If it's a local launch, schedule termination after a few seconds to ensure it cleans up
+		if (tmpLaunch != null) {
+			final Job terminateJob = new TerminateJob(tmpLaunch, tmpLabel);
 			terminateJob.schedule(5000);
-	    }
+		}
+		// BEGIN GENERATED CODE
 	}
 	
 	@Override
 	public void dispose() {
-		try {
-	        releaseObject();
-        } catch (final ReleaseError e) {
-	        // PASS
-        }
-	    super.dispose();
+		// END GENERATED CODE
+		// If we have a launch object (i.e. this IDE launched the object locally)
+		if (getLaunch() != null) {
+			Job terminateJob = new TerminateJob(getLaunch(), getLabel());
+			terminateJob.setUser(false);
+			terminateJob.setSystem(true);
+			terminateJob.schedule();
+		}
+
+		super.dispose();
+		// BEGIN GENERATED CODE
 	}
 	
 	
