@@ -402,53 +402,6 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		return updateStatus;
 	}
 
-	/**
-	 * Checks to make sure the new component is not being stacked on top of an existing component
-	 * @param componentShape
-	 */
-	protected void adjustShapeLocation(RHContainerShape componentShape) {
-		final int BUFFER_WIDTH = 20;
-
-		// if any overlap occurs (can happen when launching using the REDHAWK Explorer) adjust x/y-coords
-		Diagram diagram = getFeatureProvider().getDiagramTypeProvider().getDiagram();
-		EList<Shape> children = diagram.getChildren();
-		for (Shape child : children) {
-			boolean xAdjusted = false;
-			int xAdjustment = 0;
-
-			// Avoid infinite loop by checking a shape against itself
-			if (child.equals(componentShape)) {
-				continue;
-			}
-
-			// Don't adjust if the target shape is in a Host Collocation
-			if (child instanceof ContainerShape && DUtil.getHostCollocation((ContainerShape) child) != null) {
-				continue;
-			}
-			GraphicsAlgorithm childGa = child.getGraphicsAlgorithm();
-			int componentWidth = componentShape.getGraphicsAlgorithm().getWidth();
-			int componentHeight = componentShape.getGraphicsAlgorithm().getHeight();
-
-			int componentX = componentShape.getGraphicsAlgorithm().getX();
-			int componentY = componentShape.getGraphicsAlgorithm().getY();
-
-			boolean xOverlapped = componentX >= childGa.getX() && componentX <= (childGa.getX() + childGa.getWidth()) || childGa.getX() >= componentX
-				&& childGa.getX() <= componentX + componentWidth;
-			boolean yOverlapped = componentY >= childGa.getY() && componentY <= (childGa.getY() + childGa.getHeight()) || childGa.getY() >= componentY
-				&& childGa.getY() <= componentY + componentHeight;
-			// If there is any overlap, then move new component all the way to the right of the old component.
-			if (xOverlapped && yOverlapped) {
-				xAdjustment += childGa.getX() + childGa.getWidth() + BUFFER_WIDTH;
-				xAdjusted = true;
-			}
-			if (xAdjusted) {
-				componentShape.getGraphicsAlgorithm().setX(xAdjustment);
-				// If we've made any adjustments, make a recursive call to make sure we do not create a new collision
-				adjustShapeLocation(componentShape);
-			}
-		}
-	}
-
 	public boolean canMoveShape(IMoveShapeContext context) {
 
 		SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());

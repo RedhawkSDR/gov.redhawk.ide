@@ -267,7 +267,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		Graphiti.getGaLayoutService().setLocation(containerShape.getGraphicsAlgorithm(), context.getX(), context.getY());
 
 		// Check for any needed location adjustments, avoids accidentally stacking shapes
-		adjustShapeLocation(containerShape);
+		adjustShapeLocation(containerShape, context.getTargetContainer());
 
 		return containerShape;
 	}
@@ -290,11 +290,44 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	}
 
 	/**
-	 * Adjusts the initial position of the shape. Default implementation does nothing, but subclasses may override
-	 * if needed.
+	 * Checks to make sure the new shape is not being stacked on top of an existing one.
 	 * @param shape
 	 */
-	protected void adjustShapeLocation(RHContainerShape shape) {
+	protected void adjustShapeLocation(RHContainerShape shape, ContainerShape container) {
+		final int BUFFER_WIDTH = 20;
+
+		// if any overlap occurs (can happen when launching using the REDHAWK Explorer) adjust x/y-coords
+		for (Shape child : container.getChildren()) {
+			// Avoid infinite loop by checking a shape against itself
+			if (child.equals(shape)) {
+				continue;
+			}
+
+			boolean xAdjusted = false;
+			int xAdjustment = 0;
+
+			GraphicsAlgorithm childGa = child.getGraphicsAlgorithm();
+			int componentWidth = shape.getGraphicsAlgorithm().getWidth();
+			int componentHeight = shape.getGraphicsAlgorithm().getHeight();
+
+			int componentX = shape.getGraphicsAlgorithm().getX();
+			int componentY = shape.getGraphicsAlgorithm().getY();
+
+			boolean xOverlapped = componentX >= childGa.getX() && componentX <= (childGa.getX() + childGa.getWidth()) || childGa.getX() >= componentX
+				&& childGa.getX() <= componentX + componentWidth;
+			boolean yOverlapped = componentY >= childGa.getY() && componentY <= (childGa.getY() + childGa.getHeight()) || childGa.getY() >= componentY
+				&& childGa.getY() <= componentY + componentHeight;
+			// If there is any overlap, then move new component all the way to the right of the old component.
+			if (xOverlapped && yOverlapped) {
+				xAdjustment += childGa.getX() + childGa.getWidth() + BUFFER_WIDTH;
+				xAdjusted = true;
+			}
+			if (xAdjusted) {
+				shape.getGraphicsAlgorithm().setX(xAdjustment);
+				// If we've made any adjustments, make a recursive call to make sure we do not create a new collision
+				adjustShapeLocation(shape, container);
+			}
+		}
 	}
 
 	/**
