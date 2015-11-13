@@ -13,6 +13,7 @@
 package gov.redhawk.ide.debug.impl;
 
 import gov.redhawk.ide.debug.LocalLaunch;
+import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
@@ -21,13 +22,18 @@ import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.impl.commands.LocalScaWaveformMergeComponentsCommand;
 import gov.redhawk.model.sca.RefreshDepth;
+import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.impl.ScaWaveformImpl;
 import gov.redhawk.sca.util.SilentJob;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -651,17 +657,28 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	
 	@Override
 	public void releaseObject() throws ReleaseError {
-		if (this == ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform()) {
-			ScaModelCommand.execute(this, new ScaModelCommand() {
-				
-				public void execute() {
-					getComponents().clear();
+		LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+
+		if (localSca != null && this == localSca.getSandboxWaveform()) {
+			List<String> errorMessages = new ArrayList<String>();
+			for (ScaComponent component : getComponents().toArray(new ScaComponent[0])) {
+				String name = component.getName();
+				try {
+					component.releaseObject();
+				} catch (ReleaseError e) {
+					String msg = String.format("ReleaseError for component '%s': %s", name, e.getMessage());
+					errorMessages.add(msg);
+				} catch (SystemException e) {
+					String msg = String.format("CORBA exception for component '%s': %s", name, e.toString());
+					errorMessages.add(msg);
 				}
-			});
+			}
+			if (errorMessages.size() > 0) {
+				throw new ReleaseError("Errors occurred releasing component(s)", errorMessages.toArray(new String[errorMessages.size()]));
+			}
 		} else {
-		    super.releaseObject();
-		}
-	}
+			super.releaseObject();
+		}	}
 	
 	@Override
 	public void dispose() {
