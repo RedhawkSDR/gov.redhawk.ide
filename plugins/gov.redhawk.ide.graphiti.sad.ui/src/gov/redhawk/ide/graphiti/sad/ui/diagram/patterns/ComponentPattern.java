@@ -651,8 +651,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 
 	@Override
 	public boolean canDirectEdit(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		ComponentShape componentShape = (ComponentShape) getRootContainerShape(context.getPictogramElement());
 		Object obj = getBusinessObjectForPictogramElement(componentShape);
 		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
 
@@ -675,16 +674,14 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 
 	@Override
 	public String getInitialValue(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		ComponentShape componentShape = (ComponentShape) getRootContainerShape(context.getPictogramElement());
 		SadComponentInstantiation ci = (SadComponentInstantiation) getBusinessObjectForPictogramElement(componentShape);
 		return ci.getUsageName();
 	}
 
 	@Override
 	public void setValue(final String value, IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		ComponentShape componentShape = (ComponentShape) getRootContainerShape(context.getPictogramElement());
 		final SadComponentInstantiation ci = (SadComponentInstantiation) getBusinessObjectForPictogramElement(componentShape);
 
 		// editing domain for our transaction

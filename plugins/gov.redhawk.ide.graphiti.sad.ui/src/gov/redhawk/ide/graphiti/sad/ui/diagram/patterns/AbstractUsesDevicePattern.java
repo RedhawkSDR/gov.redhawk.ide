@@ -252,16 +252,14 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 
 	@Override
 	public String getInitialValue(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		RHContainerShape rhContainerShape = getRootContainerShape(context.getPictogramElement());
 		UsesDeviceStub usesDeviceStub = (UsesDeviceStub) getBusinessObjectForPictogramElement(rhContainerShape);
 		return getInnerTitle(usesDeviceStub);
 	}
 
 	@Override
 	public void setValue(final String value, IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		RHContainerShape rhContainerShape = getRootContainerShape(context.getPictogramElement());
 		final UsesDeviceStub usesDeviceStub = (UsesDeviceStub) getBusinessObjectForPictogramElement(rhContainerShape);
 
 		// editing domain for our transaction
@@ -286,8 +284,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	
 	@Override
 	public boolean canDirectEdit(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape containerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		RHContainerShape containerShape = getRootContainerShape(context.getPictogramElement());
 		Object obj = getBusinessObjectForPictogramElement(containerShape);
 		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
 

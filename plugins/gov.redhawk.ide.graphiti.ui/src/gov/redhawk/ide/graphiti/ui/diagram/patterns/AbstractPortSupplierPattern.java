@@ -533,4 +533,8 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		int x = innerGa.getX() + innerGa.getWidth();
 		Graphiti.getGaLayoutService().setLocation(superUsesPortsContainerShape.getGraphicsAlgorithm(), x, y);
 	}
+
+	protected RHContainerShape getRootContainerShape(PictogramElement pictogramElement) {
+		return (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pictogramElement, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+	}
 }

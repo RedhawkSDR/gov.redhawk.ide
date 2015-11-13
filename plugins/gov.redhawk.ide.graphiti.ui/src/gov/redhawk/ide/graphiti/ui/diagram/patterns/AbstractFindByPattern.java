@@ -310,16 +310,14 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 
 	@Override
 	public String getInitialValue(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		RHContainerShape rhContainerShape = getRootContainerShape(context.getPictogramElement());
 		FindByStub findBy = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
 		return getInnerTitle(findBy);
 	}
 
 	@Override
 	public void setValue(final String value, IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		RHContainerShape rhContainerShape = getRootContainerShape(context.getPictogramElement());
 		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
 
 		// editing domain for our transaction

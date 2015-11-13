@@ -230,8 +230,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierP
 
 	@Override
 	public boolean canDirectEdit(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape containerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		RHContainerShape containerShape = getRootContainerShape(context.getPictogramElement());
 		Object obj = getBusinessObjectForPictogramElement(containerShape);
 		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
 
@@ -254,16 +253,14 @@ public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierP
 
 	@Override
 	public String getInitialValue(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape containerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		RHContainerShape containerShape = getRootContainerShape(context.getPictogramElement());
 		DcdComponentInstantiation ci = (DcdComponentInstantiation) getBusinessObjectForPictogramElement(containerShape);
 		return ci.getUsageName();
 	}
 
 	@Override
 	public void setValue(final String value, IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape containerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		RHContainerShape containerShape = getRootContainerShape(context.getPictogramElement());
 		final DcdComponentInstantiation ci = (DcdComponentInstantiation) getBusinessObjectForPictogramElement(containerShape);
 
 		// editing domain for our transaction
