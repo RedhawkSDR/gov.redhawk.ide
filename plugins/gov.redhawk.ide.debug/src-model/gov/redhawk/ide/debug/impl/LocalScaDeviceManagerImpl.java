@@ -458,16 +458,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	@Override
 	public void shutdown() {
-		if (this == ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager()) {
-			ScaModelCommand.execute(this, new ScaModelCommand() {
-				
-				public void execute() {
-					getDevices().clear();
-				}
-			});
-		} else {
-			super.shutdown();
-		}
+		getDevices().clear();
 	}
 	
 	@Override
