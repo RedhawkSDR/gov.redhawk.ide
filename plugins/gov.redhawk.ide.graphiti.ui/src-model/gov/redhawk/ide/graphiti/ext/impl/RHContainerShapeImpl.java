@@ -848,14 +848,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * providesPortStub.
 	 */
 	private void addProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider) {
-
 		// provides (input)
-		ContainerShape providesPortsContainerShape = Graphiti.getCreateService().createContainerShape(this, true);
-		Graphiti.getPeService().setPropertyValue(providesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORTS_CONTAINER);
-		Rectangle providesPortsRectangle = Graphiti.getCreateService().createRectangle(providesPortsContainerShape);
-		providesPortsRectangle.setTransparency(1d);
-		Graphiti.getPeService().setPropertyValue(providesPortsRectangle, DUtil.GA_TYPE, GA_PROVIDES_PORT_RECTANGLE);
-		Graphiti.getGaLayoutService().setLocation(providesPortsRectangle, PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING);
+		ContainerShape providesPortsContainerShape = getProvidesPortsContainerShape();
+		if (providesPortsContainerShape == null) {
+			providesPortsContainerShape = addProvidesPortsContainerShape();
+		}
 
 		if (providesPortStubs != null) {
 			featureProvider.link(providesPortsContainerShape, providesPortStubs.toArray());
@@ -883,12 +880,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	private void addUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider) {
 		// uses (output)
-		ContainerShape usesPortsContainerShape = Graphiti.getPeService().createContainerShape(this, true);
-		Graphiti.getPeService().setPropertyValue(usesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_USES_PORTS_CONTAINER);
-		Rectangle usesPortsRectangle = Graphiti.getCreateService().createRectangle(usesPortsContainerShape);
-		usesPortsRectangle.setTransparency(1d);
-		Graphiti.getPeService().setPropertyValue(usesPortsRectangle, DUtil.GA_TYPE, GA_USES_PORTS_RECTANGLE);
-
+		ContainerShape usesPortsContainerShape = getProvidesPortsContainerShape();
+		if (usesPortsContainerShape == null) {
+			usesPortsContainerShape = addUsesPortsContainerShape();
+		}
 		if (usesPortStubs != null) {
 			featureProvider.link(usesPortsContainerShape, usesPortStubs.toArray());
 			// add uses ports
@@ -909,12 +904,38 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
+	 * Adds an empty uses port container to provided container shape.
+	 */
+	private ContainerShape addUsesPortsContainerShape() {
+		ContainerShape usesPortsContainerShape = Graphiti.getPeService().createContainerShape(this, true);
+		Graphiti.getPeService().setPropertyValue(usesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_USES_PORTS_CONTAINER);
+		Rectangle usesPortsRectangle = Graphiti.getCreateService().createRectangle(usesPortsContainerShape);
+		usesPortsRectangle.setTransparency(1d);
+		Graphiti.getPeService().setPropertyValue(usesPortsRectangle, DUtil.GA_TYPE, GA_USES_PORTS_RECTANGLE);
+		return usesPortsContainerShape;
+	}
+
+	/**
 	 * Return the usesPortsContainerShape
 	 * @generated NOT
 	 */
 	@Override
 	public ContainerShape getUsesPortsContainerShape() {
 		return (ContainerShape) DUtil.findChildShapeByProperty(this, DUtil.SHAPE_TYPE, SHAPE_USES_PORTS_CONTAINER);
+	}
+
+	/**
+	 * Adds an empty provides port container to provided container shape.
+	 */
+	private ContainerShape addProvidesPortsContainerShape() {
+		// provides (input)
+		ContainerShape providesPortsContainerShape = Graphiti.getCreateService().createContainerShape(this, true);
+		Graphiti.getPeService().setPropertyValue(providesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORTS_CONTAINER);
+		Rectangle providesPortsRectangle = Graphiti.getCreateService().createRectangle(providesPortsContainerShape);
+		providesPortsRectangle.setTransparency(1d);
+		Graphiti.getPeService().setPropertyValue(providesPortsRectangle, DUtil.GA_TYPE, GA_PROVIDES_PORT_RECTANGLE);
+		Graphiti.getGaLayoutService().setLocation(providesPortsRectangle, PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING);
+		return providesPortsContainerShape;
 	}
 
 	/**
@@ -1079,18 +1100,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		ContainerShape providesPortsContainerShape = getProvidesPortsContainerShape();
 
 		if (isCollapsed()) {
-			//Do NOT show ports container
-
-			if (providesPortsContainerShape != null) {
-				//port container exists, delete it
-
-				if (performUpdate) {
-					updateStatus = true;
-					DUtil.fastDeletePictogramElement(providesPortsContainerShape);
-				} else {
-					return new Reason(true, "Provides Ports Shape requires deletion");
-				}
-			}
 		} else if (providesPortsContainerShape == null) {
 			//ports container does NOT exist, create it
 
@@ -1169,18 +1178,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		ContainerShape usesPortsContainerShape = getUsesPortsContainerShape();
 
 		if (isCollapsed()) {
-			//Do NOT show ports container
-
-			if (usesPortsContainerShape != null) {
-				//port container exists, delete it
-
-				if (performUpdate) {
-					updateStatus = true;
-					DUtil.fastDeletePictogramElement(usesPortsContainerShape);
-				} else {
-					return new Reason(true, "Uses Ports Shape requires deletion");
-				}
-			}
 		} else if (usesPortsContainerShape == null) {
 			//ports container does NOT exist, create it
 
