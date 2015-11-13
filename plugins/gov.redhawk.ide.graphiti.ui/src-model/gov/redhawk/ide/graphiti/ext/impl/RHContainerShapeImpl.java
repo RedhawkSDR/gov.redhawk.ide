@@ -871,7 +871,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	private void addUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider) {
 		// uses (output)
-		ContainerShape usesPortsContainerShape = getProvidesPortsContainerShape();
+		ContainerShape usesPortsContainerShape = getUsesPortsContainerShape();
 		if (usesPortsContainerShape == null) {
 			usesPortsContainerShape = addUsesPortsContainerShape();
 		}
