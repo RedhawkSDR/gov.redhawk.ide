@@ -76,9 +76,6 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		int minimumHeight = 0;
 		int minimumWidth = 0;
 		if (!portSupplierShape.isCollapsed()) {
-			// Show inner line
-			portSupplierShape.getInnerPolyline().setLineVisible(true);
-
 			// Layout provides ports
 			ContainerShape providesPortsContainer = portSupplierShape.getProvidesPortsContainerShape();
 			layoutProvidesPorts(providesPortsContainer);
@@ -133,9 +130,6 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			if (superUsesPortsContainerShape != null) {
 				layoutSuperUsesPorts(superUsesPortsContainerShape);
 			}
-
-			// Hide inner line
-			portSupplierShape.getInnerPolyline().setLineVisible(false);
 		}
 
 		return layoutApplied;
@@ -179,6 +173,14 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			}
 		}
 
+		// Show/hide inner line
+		Polyline innerLine = containerShape.getInnerPolyline();
+		boolean innerLineVisible = !containerShape.isCollapsed();
+		if (innerLine.getLineVisible() != innerLineVisible) {
+			innerLine.setLineVisible(innerLineVisible);
+			updateStatus = true;
+		}
+
 		IReason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
 
 		// if we updated redraw
@@ -202,20 +204,24 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			return Reason.createTrueReason("Inner title requires update");
 		}
 
+		boolean innerLineVisible = containerShape.getInnerPolyline().getLineVisible();
 		boolean hasLollipop = containerShape.getLollipop() != null;
 		boolean hasSuperProvides = containerShape.getSuperProvidesPortsContainerShape() != null;
 		boolean hasSuperUses = containerShape.getSuperUsesPortsContainerShape() != null;
 		if (containerShape.isCollapsed()) {
-			if (hasLollipop) {
+			if (innerLineVisible) {
+				return Reason.createTrueReason("Inner line should be invisible");
+			} else if (hasLollipop) {
 				return Reason.createTrueReason("Interface lollipop needs to be deleted");
-			}
-			if (!hasSuperProvides) {
+			} if (!hasSuperProvides) {
 				return Reason.createTrueReason("Super provides port shape needs to be created");
 			} else if (!hasSuperUses) {
 				return Reason.createTrueReason("Super uses port shape needs to be created");
 			}
 		} else {
-			if (!hasLollipop) {
+			if (!innerLineVisible) {
+				return Reason.createTrueReason("Inner line should be visible");
+			} else if (!hasLollipop) {
 				return Reason.createTrueReason("Interface lollipop needs to be created");
 			} else if (hasSuperProvides) {
 				return Reason.createTrueReason("Super provides port shape needs to be created");
