@@ -11,7 +11,6 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
@@ -34,14 +33,12 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -219,11 +216,6 @@ public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierP
 	}
 
 	@Override
-	public IReason updateNeeded(IUpdateContext context) {
-		return ((RHContainerShape) context.getPictogramElement()).updateNeeded(context, this);
-	}
-
-	@Override
 	public String getOuterTitle(EObject obj) {
 		if (obj instanceof DcdComponentInstantiation) {
 			try {
@@ -244,7 +236,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierP
 	}
 
 	@Override
-	public void setInnerTitle(EObject businessObject, String value) {
+	protected void setInnerTitle(EObject businessObject, String value) {
 		((DcdComponentInstantiation) businessObject).setUsageName(value);
 	}
 
