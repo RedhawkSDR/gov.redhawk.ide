@@ -36,6 +36,8 @@ import org.eclipse.graphiti.services.IGaLayoutService;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
+import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
@@ -252,10 +254,29 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 
 	@Override
 	public PictogramElement add(IAddContext context) {
+		// Create the basic shape, and set attributes that may not get set by directly constructing a shape (versus
+		// using Graphiti's PeCreateService)
 		RHContainerShape containerShape = createContainerShape();
+		containerShape.setVisible(true);
+		containerShape.setActive(true);
+		containerShape.setContainer(context.getTargetContainer());
+
+		// Set default configuration preferences
+		boolean hideDetailsPref = GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS);
+		boolean hidePortsPref = GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_UNUSED_PORTS);
+		containerShape.setCollapsed(hideDetailsPref);
+		containerShape.setHideUnusedPorts(hidePortsPref);
+
+		// Link all top-level business objects
+		EObject newObject = (EObject) context.getNewObject();
+		link(containerShape, getBusinessObjectsToLink(newObject).toArray());
 
 		// Initialize shape contents
 		containerShape.init(context, this);
+
+		if (!containerShape.isCollapsed()) {
+			addLollipop(containerShape, getInterface(newObject));
+		}
 
 		// Allow subclasses to do additional initialization
 		initializeShape(containerShape, context);
@@ -331,9 +352,9 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	}
 
 	/**
-	 * Add lollipop to targetContainerShape. Lollipop anchor will link to the provided business object.T
+	 * Adds interface lollipop to a ContainerShape. Its anchor will link to the provided business object.
 	 */
-	public ContainerShape addLollipop(RHContainerShape container, Object anchorBusinessObject) {
+	protected ContainerShape addLollipop(RHContainerShape container, Object anchorBusinessObject) {
 		// Interface container
 		ContainerShape interfaceContainerShape = Graphiti.getCreateService().createContainerShape(container, true);
 		Graphiti.getPeService().setPropertyValue(interfaceContainerShape, DUtil.GA_TYPE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER);

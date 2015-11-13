@@ -14,9 +14,7 @@ package gov.redhawk.ide.graphiti.ext.impl;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
-import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
@@ -459,17 +457,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	@Override
 	public void init(final IAddContext context, AbstractPortSupplierPattern pattern) {
 		EObject newObject = (EObject) context.getNewObject();
-		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
-
-		setVisible(true);
-		setActive(true);
-		setContainer(targetContainerShape);
-
-		//configure preferences
-		boolean hideDetailsPref = GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS);
-		boolean hidePortsPref = GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_UNUSED_PORTS);
-		setCollapsed(hideDetailsPref);
-		setHideUnusedPorts(hidePortsPref);
 
 		// add property for this shape
 		Graphiti.getPeService().setPropertyValue(this, DUtil.GA_TYPE, SHAPE_OUTER_CONTAINER);
@@ -491,9 +478,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		IFeatureProvider featureProvider = pattern.getFeatureProvider();
 
-		// link objects
-		featureProvider.link(this, pattern.getBusinessObjectsToLink(newObject).toArray());
-
 		addInnerContainer(pattern.getInnerTitle(newObject), pattern.getInnerImageId(), pattern.getStyleForInner());
 
 		EList<ProvidesPortStub> provides = pattern.getProvides(newObject);
@@ -511,7 +495,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			}
 		} else {
 			//draw all shape details (only ports)
-			pattern.addLollipop(this, interfaceStub);
 			addProvidesPorts(provides, featureProvider);
 			addUsesPorts(uses, featureProvider);
 		}
