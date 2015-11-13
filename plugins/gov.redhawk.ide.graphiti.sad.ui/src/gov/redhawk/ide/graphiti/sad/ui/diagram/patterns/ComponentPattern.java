@@ -290,29 +290,16 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		return true;
 	}
 
-	/**
-	 * Adds a Component to the diagram. Immediately calls resize at the end to keep sizing and location in one place.
-	 */
-	public PictogramElement add(IAddContext context) {
+	@Override
+	protected RHContainerShape createContainerShape() {
+		return RHSadGxFactory.eINSTANCE.createComponentShape();
+	}
 
-		// create shape
-		ComponentShape componentShape = RHSadGxFactory.eINSTANCE.createComponentShape();
-		componentShape.init(context, this);
-
-		// set shape location to user's selection
-		Graphiti.getGaLayoutService().setLocation(componentShape.getGraphicsAlgorithm(), context.getX(), context.getY());
-
+	@Override
+	protected void initializeShape(RHContainerShape shape, IAddContext context) {
 		if (!DUtil.isDiagramRuntime(getDiagram())) {
-			createStartOrderEllipse(componentShape.getInnerContainerShape(), (SadComponentInstantiation) context.getNewObject());
+			createStartOrderEllipse(shape.getInnerContainerShape(), (SadComponentInstantiation) context.getNewObject());
 		}
-
-		// layout
-		layoutPictogramElement(componentShape);
-
-		// Check for any needed location adjustments
-		adjustComponentLocation(componentShape);
-
-		return componentShape;
 	}
 
 	protected ContainerShape createStartOrderEllipse(ContainerShape parentShape, SadComponentInstantiation instantiation) {
@@ -419,7 +406,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 	 * Checks to make sure the new component is not being stacked on top of an existing component
 	 * @param componentShape
 	 */
-	private void adjustComponentLocation(ComponentShape componentShape) {
+	protected void adjustShapeLocation(RHContainerShape componentShape) {
 		final int BUFFER_WIDTH = 20;
 
 		// if any overlap occurs (can happen when launching using the REDHAWK Explorer) adjust x/y-coords
@@ -457,7 +444,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 			if (xAdjusted) {
 				componentShape.getGraphicsAlgorithm().setX(xAdjustment);
 				// If we've made any adjustments, make a recursive call to make sure we do not create a new collision
-				adjustComponentLocation(componentShape);
+				adjustShapeLocation(componentShape);
 			}
 		}
 	}

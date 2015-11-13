@@ -11,7 +11,6 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
@@ -66,7 +65,6 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.IPattern;
-import org.eclipse.graphiti.services.Graphiti;
 
 import ExtendedCF.WKP.DEVICEKIND;
 import FRONTEND.FE_TUNER_DEVICE_KIND;
@@ -136,24 +134,6 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	
 	public void setInnerTitle(UsesDeviceStub usesDeviceStub, String value) {
 		usesDeviceStub.getUsesDevice().setId(value);
-	}
-
-
-	@Override
-	public PictogramElement add(IAddContext context) {
-		// create shape
-		RHContainerShape rhContainerShape = RHGxFactory.eINSTANCE.createRHContainerShape();
-
-		// initialize shape contents
-		rhContainerShape.init(context, this);
-
-		// set shape location to user's selection
-		Graphiti.getGaLayoutService().setLocation(rhContainerShape.getGraphicsAlgorithm(), context.getX(), context.getY());
-
-		// layout
-		layoutPictogramElement(rhContainerShape);
-
-		return rhContainerShape;
 	}
 
 	@Override

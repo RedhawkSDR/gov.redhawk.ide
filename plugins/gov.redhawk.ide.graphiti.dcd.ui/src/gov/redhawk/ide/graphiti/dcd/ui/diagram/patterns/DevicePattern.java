@@ -25,12 +25,9 @@ import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.IPattern;
-import org.eclipse.graphiti.services.Graphiti;
 
 public class DevicePattern extends AbstractNodeComponentPattern implements IPattern {
 
@@ -57,26 +54,9 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 		return false;
 	}
 
-	/**
-	 * Adds a Device to the diagram. Immediately calls resize at the end to keep sizing and location in one place.
-	 */
 	@Override
-	public PictogramElement add(IAddContext context) {
-
-		// creates shape
-		DeviceShape deviceShape = RHDeviceGxFactory.eINSTANCE.createDeviceShape();
-		deviceShape.init(context, this);
-
-		// set shape location to user's selection
-		Graphiti.getGaLayoutService().setLocation(deviceShape.getGraphicsAlgorithm(), context.getX(), context.getY());
-
-		// layout
-		layoutPictogramElement(deviceShape);
-
-		// Check for any needed location adjustments, avoids accidentally stacking shapes
-		adjustShapeLocation(deviceShape);
-
-		return deviceShape;
+	protected DeviceShape createContainerShape() {
+		return RHDeviceGxFactory.eINSTANCE.createDeviceShape();
 	}
 
 	/**

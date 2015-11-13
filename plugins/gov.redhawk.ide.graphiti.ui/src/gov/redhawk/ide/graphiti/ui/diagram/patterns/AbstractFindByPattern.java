@@ -11,7 +11,6 @@
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
@@ -140,23 +139,6 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 	 * @return
 	 */
 	protected void setInnerTitle(FindByStub findByStub, List<FindBy> findBys, String value) {
-	}
-
-	@Override
-	public PictogramElement add(IAddContext context) {
-		// create shape
-		RHContainerShape rhContainerShape = RHGxFactory.eINSTANCE.createRHContainerShape();
-
-		// initialize shape contents
-		rhContainerShape.init(context, this);
-
-		// set shape location to user's selection
-		Graphiti.getGaLayoutService().setLocation(rhContainerShape.getGraphicsAlgorithm(), context.getX(), context.getY());
-
-		// layout
-		layoutPictogramElement(rhContainerShape);
-
-		return rhContainerShape;
 	}
 
 	@Override

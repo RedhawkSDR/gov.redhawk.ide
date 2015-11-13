@@ -14,6 +14,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IReason;
+import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
@@ -26,12 +27,14 @@ import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.config.IPatternConfiguration;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaLayoutService;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
@@ -246,6 +249,53 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	 * @return
 	 */
 	public abstract EList<ProvidesPortStub> getProvides(EObject obj);
+
+	@Override
+	public PictogramElement add(IAddContext context) {
+		RHContainerShape containerShape = createContainerShape();
+
+		// Initialize shape contents
+		containerShape.init(context, this);
+
+		// Allow subclasses to do additional initialization
+		initializeShape(containerShape, context);
+
+		// Layout the shape
+		layoutPictogramElement(containerShape);
+
+		// Set shape location to user's selection
+		Graphiti.getGaLayoutService().setLocation(containerShape.getGraphicsAlgorithm(), context.getX(), context.getY());
+
+		// Check for any needed location adjustments, avoids accidentally stacking shapes
+		adjustShapeLocation(containerShape);
+
+		return containerShape;
+	}
+
+	/**
+	 * Creates an instance of the pattern's container shape. Subclasses may override to return a more specific type.
+	 * @return new container shape instance
+	 */
+	protected RHContainerShape createContainerShape() {
+		return RHGxFactory.eINSTANCE.createRHContainerShape();
+	}
+
+	/**
+	 * Performs additional initialization of the shape. Default implementation does nothing, but subclasses may
+	 * override if needed.
+	 * @param shape
+	 * @param context
+	 */
+	protected void initializeShape(RHContainerShape shape, IAddContext context) {
+	}
+
+	/**
+	 * Adjusts the initial position of the shape. Default implementation does nothing, but subclasses may override
+	 * if needed.
+	 * @param shape
+	 */
+	protected void adjustShapeLocation(RHContainerShape shape) {
+	}
 
 	/**
 	 * Add lollipop to targetContainerShape. Lollipop anchor will link to the provided business object.T
