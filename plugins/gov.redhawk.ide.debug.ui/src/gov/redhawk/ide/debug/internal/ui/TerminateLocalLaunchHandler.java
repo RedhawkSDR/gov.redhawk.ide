@@ -18,7 +18,7 @@ import gov.redhawk.sca.util.PluginUtil;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -85,8 +85,8 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 	@Override
 	public void setEnabled(final Object evaluationContext) {
 		super.setEnabled(evaluationContext);
-		if (evaluationContext instanceof EvaluationContext) {
-			final EvaluationContext context = (EvaluationContext) evaluationContext;
+		if (evaluationContext instanceof IEvaluationContext) {
+			final IEvaluationContext context = (IEvaluationContext) evaluationContext;
 			final Object sel = context.getVariable("selection");
 			if (sel instanceof IStructuredSelection) {
 				final IStructuredSelection ss = (IStructuredSelection) sel;
