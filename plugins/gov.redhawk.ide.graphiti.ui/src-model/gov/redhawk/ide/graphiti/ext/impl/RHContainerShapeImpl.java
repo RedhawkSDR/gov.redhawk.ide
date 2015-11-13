@@ -748,27 +748,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
-	 * Create an anchor overlay for a shape, with the anchor point vertically centered at horizontal position x.
-	 * The returned anchor has no graphics algorithm.
-	 */
-	private FixPointAnchor createOverlayAnchor(Shape parentShape, int x) {
-		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(parentShape);
-		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
-		Point point = StylesFactory.eINSTANCE.createPoint();
-		point.setX(x);
-		point.setY(parentSize.getHeight() / 2);
-		fixPointAnchor.setLocation(point);
-		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
-		fixPointAnchor.setReferencedGraphicsAlgorithm(parentShape.getGraphicsAlgorithm());
-		return fixPointAnchor;
-	}
-
-	/**
 	 * Create an anchor overlay for a port, with the anchor point vertically centered at horizontal position x.
 	 * The returned anchor has an invisible rectangle for its graphics algorithm.
 	 */
 	private FixPointAnchor createPortAnchor(ContainerShape portShape, int x) {
-		FixPointAnchor fixPointAnchor = createOverlayAnchor(portShape, x);
+		FixPointAnchor fixPointAnchor = DUtil.createOverlayAnchor(portShape, x);
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createPlainRectangle(fixPointAnchor);
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		fixPointAnchorRectangle.setFilled(false);
@@ -1435,32 +1419,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
-	 * Returns minimum width for Shape with provides and uses port stubs and name text
-	 * @param ci
-	 * @return
-	 */
-	protected int getMinimumWidth(Text outerTitle, Text innerTitle) {
-		// inner title (potentially including start order)
-		int innerTitleWidth = getInnerWidth(innerTitle);
-
-		// outer title
-		int outerTitleWidth = getOuterWidth(outerTitle);
-
-		// Return the largest, plus the lollipop width
-		return Math.max(innerTitleWidth, outerTitleWidth) + INTERFACE_SHAPE_WIDTH;
-	}
-
-	protected int getInnerWidth(Text innerTitle) {
-		IDimension innerTitleDimension = DUtil.calculateTextSize(innerTitle);
-		return innerTitleDimension.getWidth() + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING;
-	}
-
-	protected int getOuterWidth(Text outerTitle) {
-		IDimension outerTitleDimension = DUtil.calculateTextSize(outerTitle);
-		return INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + outerTitleDimension.getWidth() + OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING + 4;
-	}
-
-	/**
 	 * Updates the style of the component's inner rounded rectangle based on the current state.
 	 */
 	protected void updateStyleForComponentInner() {
@@ -1478,15 +1436,4 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		StyleUtil.setStyle(getInnerPolyline(), styleId);
 	}
 
-	protected Text getPortText(ContainerShape portContainerShape) {
-		return (Text) portContainerShape.getChildren().get(1).getGraphicsAlgorithm();
-	}
-
-	protected Rectangle getPortRectangle(ContainerShape portContainerShape) {
-		return (Rectangle) portContainerShape.getChildren().get(0).getGraphicsAlgorithm();
-	}
-
-	protected FixPointAnchor getPortAnchor(ContainerShape portContainerShape) {
-		return (FixPointAnchor) portContainerShape.getChildren().get(0).getAnchors().get(0);
-	}
 } // RHContainerShapeImpl
