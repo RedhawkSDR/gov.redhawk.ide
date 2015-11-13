@@ -11,7 +11,6 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -55,9 +54,6 @@ import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
-import org.eclipse.graphiti.mm.Property;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -126,13 +122,12 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 		return null;
 	}
 	
-	
 	public String getInnerTitle(UsesDeviceStub usesDeviceStub) {
 		return usesDeviceStub.getUsesDevice().getId();
 	}
 
-	
-	public void setInnerTitle(UsesDeviceStub usesDeviceStub, String value) {
+	protected void setInnerTitle(EObject businessObject, String value) {
+		UsesDeviceStub usesDeviceStub = (UsesDeviceStub) businessObject;
 		usesDeviceStub.getUsesDevice().setId(value);
 	}
 
@@ -239,67 +234,10 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 		}
 	}
 
-
-	@Override
-	public int getEditingType() {
-		return TYPE_TEXT;
-	}
-
 	@Override
 	public String checkValueValid(String value, IDirectEditingContext context) {
 		return super.checkValueValid(value, context);
 	}
-
-	@Override
-	public String getInitialValue(IDirectEditingContext context) {
-		RHContainerShape rhContainerShape = getRootContainerShape(context.getPictogramElement());
-		UsesDeviceStub usesDeviceStub = (UsesDeviceStub) getBusinessObjectForPictogramElement(rhContainerShape);
-		return getInnerTitle(usesDeviceStub);
-	}
-
-	@Override
-	public void setValue(final String value, IDirectEditingContext context) {
-		RHContainerShape rhContainerShape = getRootContainerShape(context.getPictogramElement());
-		final UsesDeviceStub usesDeviceStub = (UsesDeviceStub) getBusinessObjectForPictogramElement(rhContainerShape);
-
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		// Perform business object manipulation in a Command
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				// set usage name
-				setInnerTitle(usesDeviceStub, value);
-			}
-		});
-
-		// perform update, redraw
-		updatePictogramElement(rhContainerShape);
-	}
-	
-
-	
-	
-	@Override
-	public boolean canDirectEdit(IDirectEditingContext context) {
-		RHContainerShape containerShape = getRootContainerShape(context.getPictogramElement());
-		Object obj = getBusinessObjectForPictogramElement(containerShape);
-		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-
-		// allow if we've selected the inner Text for the component
-		if (obj instanceof UsesDeviceStub && ga instanceof Text) {
-			Text text = (Text) ga;
-			for (Property prop : text.getProperties()) {
-				if (prop.getValue().equals(RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 
 	/**
 	 * Returns the {@link Diagram} this pattern lives for.

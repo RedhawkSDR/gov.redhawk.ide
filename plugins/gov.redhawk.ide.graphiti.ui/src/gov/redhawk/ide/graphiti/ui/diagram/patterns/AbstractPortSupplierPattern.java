@@ -12,9 +12,12 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
@@ -534,7 +537,62 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		Graphiti.getGaLayoutService().setLocation(superUsesPortsContainerShape.getGraphicsAlgorithm(), x, y);
 	}
 
+	/**
+	 * Returns the root container shape for the given {@link PictogramElement}.
+	 * @param pictogramElement
+	 * @return
+	 */
 	protected RHContainerShape getRootContainerShape(PictogramElement pictogramElement) {
 		return (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pictogramElement, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 	}
+
+	@Override
+	public boolean canDirectEdit(IDirectEditingContext context) {
+		RHContainerShape containerShape = getRootContainerShape(context.getPictogramElement());
+		Object obj = getBusinessObjectForPictogramElement(containerShape);
+		if (isMainBusinessObjectApplicable(obj)) {
+			// Allow editing only on the inner title
+			return context.getGraphicsAlgorithm() == containerShape.getInnerText();
+		}
+		return false;
+	}
+
+	@Override
+	public int getEditingType() {
+		return TYPE_TEXT;
+	}
+
+	@Override
+	public String getInitialValue(IDirectEditingContext context) {
+		RHContainerShape containerShape = getRootContainerShape(context.getPictogramElement());
+		return getInnerTitle((EObject) getBusinessObjectForPictogramElement(containerShape));
+	}
+
+	@Override
+	public void setValue(final String value, IDirectEditingContext context) {
+		RHContainerShape containerShape = getRootContainerShape(context.getPictogramElement());
+		final EObject businessObject = (EObject) getBusinessObjectForPictogramElement(containerShape);
+
+		// Editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
+
+		// Perform business object manipulation in a Command
+		editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+				// set usage name
+				setInnerTitle(businessObject, value);
+			}
+		});
+
+		// perform update, redraw
+		updatePictogramElement(containerShape);
+	}
+
+	/**
+	 * Sets a new inner title on the underlying business object.
+	 * @param businessObject
+	 * @param value
+	 */
+	protected abstract void setInnerTitle(EObject businessObject, String value);
 }

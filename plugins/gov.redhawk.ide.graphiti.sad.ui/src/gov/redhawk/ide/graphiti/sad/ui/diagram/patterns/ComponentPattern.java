@@ -11,7 +11,6 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxFactory;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
@@ -52,7 +51,6 @@ import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
-import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
@@ -61,9 +59,7 @@ import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -649,58 +645,6 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 
 	}
 
-	@Override
-	public boolean canDirectEdit(IDirectEditingContext context) {
-		ComponentShape componentShape = (ComponentShape) getRootContainerShape(context.getPictogramElement());
-		Object obj = getBusinessObjectForPictogramElement(componentShape);
-		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-
-		// allow if we've selected the inner Text for the component
-		if (obj instanceof SadComponentInstantiation && ga instanceof Text) {
-			Text text = (Text) ga;
-			for (Property prop : text.getProperties()) {
-				if (prop.getValue().equals(RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public int getEditingType() {
-		return TYPE_TEXT;
-	}
-
-	@Override
-	public String getInitialValue(IDirectEditingContext context) {
-		ComponentShape componentShape = (ComponentShape) getRootContainerShape(context.getPictogramElement());
-		SadComponentInstantiation ci = (SadComponentInstantiation) getBusinessObjectForPictogramElement(componentShape);
-		return ci.getUsageName();
-	}
-
-	@Override
-	public void setValue(final String value, IDirectEditingContext context) {
-		ComponentShape componentShape = (ComponentShape) getRootContainerShape(context.getPictogramElement());
-		final SadComponentInstantiation ci = (SadComponentInstantiation) getBusinessObjectForPictogramElement(componentShape);
-
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		// Perform business object manipulation in a Command
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				// set usage name
-				ci.setUsageName(value);
-			}
-		});
-
-		// perform update, redraw
-		updatePictogramElement(componentShape);
-	}
-
 	/**
 	 * Return all ComponentShape in Diagram (recursively)
 	 * @param containerShape
@@ -757,6 +701,11 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 	public String getInnerTitle(SadComponentInstantiation ci) {
 		String usageName = ci.getUsageName();
 		return (usageName != null) ? usageName : ci.getId();
+	}
+
+	@Override
+	protected void setInnerTitle(EObject businessObject, String value) {
+		((SadComponentInstantiation) businessObject).setUsageName(value);
 	}
 
 	@Override

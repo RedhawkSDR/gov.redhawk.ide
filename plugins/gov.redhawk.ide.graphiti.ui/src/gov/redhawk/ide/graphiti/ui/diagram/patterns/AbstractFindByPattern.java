@@ -11,7 +11,6 @@
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
@@ -51,7 +50,6 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.services.Graphiti;
 
 public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern {
 
@@ -103,12 +101,6 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 		return null;
 	}
 
-	@Override
-	public boolean canDirectEdit(IDirectEditingContext context) {
-		String gaType = Graphiti.getPeService().getPropertyValue(context.getGraphicsAlgorithm(), DUtil.GA_TYPE);
-		return RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT.equals(gaType);
-	}
-
 	/**
 	 * Provides the title of the outer shape
 	 * @param findByStub
@@ -132,6 +124,12 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 	 * @return
 	 */
 	public abstract String getInnerTitle(FindByStub findByStub);
+
+	@Override
+	protected void setInnerTitle(EObject businessObject, String value) {
+		FindByStub findByStub = (FindByStub) businessObject;
+		setInnerTitle((FindByStub) businessObject, getModelFindBys(findByStub), value);
+	}
 
 	/**
 	 * Sets the title of the inner shape
@@ -299,42 +297,8 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 	}
 
 	@Override
-	public int getEditingType() {
-		return TYPE_TEXT;
-	}
-
-	@Override
 	public String checkValueValid(String value, IDirectEditingContext context) {
 		return super.checkValueValid(value, context);
-	}
-
-	@Override
-	public String getInitialValue(IDirectEditingContext context) {
-		RHContainerShape rhContainerShape = getRootContainerShape(context.getPictogramElement());
-		FindByStub findBy = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
-		return getInnerTitle(findBy);
-	}
-
-	@Override
-	public void setValue(final String value, IDirectEditingContext context) {
-		RHContainerShape rhContainerShape = getRootContainerShape(context.getPictogramElement());
-		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
-
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		// Perform business object manipulation in a Command
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				// set usage name
-				setInnerTitle(findByStub, getModelFindBys(findByStub), value);
-			}
-		});
-
-		// perform update, redraw
-		updatePictogramElement(rhContainerShape);
 	}
 
 	/**

@@ -12,7 +12,6 @@
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
@@ -39,15 +38,11 @@ import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
-import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
-import org.eclipse.graphiti.mm.Property;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
@@ -229,58 +224,6 @@ public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierP
 	}
 
 	@Override
-	public boolean canDirectEdit(IDirectEditingContext context) {
-		RHContainerShape containerShape = getRootContainerShape(context.getPictogramElement());
-		Object obj = getBusinessObjectForPictogramElement(containerShape);
-		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-
-		// allow if we've selected the inner Text for the component
-		if (obj instanceof DcdComponentInstantiation && ga instanceof Text) {
-			Text text = (Text) ga;
-			for (Property prop : text.getProperties()) {
-				if (prop.getValue().equals(RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public int getEditingType() {
-		return TYPE_TEXT;
-	}
-
-	@Override
-	public String getInitialValue(IDirectEditingContext context) {
-		RHContainerShape containerShape = getRootContainerShape(context.getPictogramElement());
-		DcdComponentInstantiation ci = (DcdComponentInstantiation) getBusinessObjectForPictogramElement(containerShape);
-		return ci.getUsageName();
-	}
-
-	@Override
-	public void setValue(final String value, IDirectEditingContext context) {
-		RHContainerShape containerShape = getRootContainerShape(context.getPictogramElement());
-		final DcdComponentInstantiation ci = (DcdComponentInstantiation) getBusinessObjectForPictogramElement(containerShape);
-
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		// Perform business object manipulation in a Command
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				// set usage name
-				ci.setUsageName(value);
-			}
-		});
-
-		// perform update, redraw
-		updatePictogramElement(containerShape);
-	}
-
-	@Override
 	public String getOuterTitle(EObject obj) {
 		if (obj instanceof DcdComponentInstantiation) {
 			try {
@@ -298,6 +241,11 @@ public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierP
 			return ((DcdComponentInstantiation) obj).getUsageName();
 		}
 		return null;
+	}
+
+	@Override
+	public void setInnerTitle(EObject businessObject, String value) {
+		((DcdComponentInstantiation) businessObject).setUsageName(value);
 	}
 
 	@Override
