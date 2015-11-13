@@ -18,6 +18,7 @@ import gov.redhawk.ide.debug.LocalScaService;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.model.sca.impl.ScaServiceImpl;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
@@ -388,8 +389,17 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 
 	@Override
 	public void dispose() {
-	    super.dispose();
-	    new TerminateJob(this, getName()).schedule();
+		// END GENERATED CODE
+		// If we have a launch object (i.e. this IDE launched the object locally)
+		if (getLaunch() != null) {
+			Job terminateJob = new TerminateJob(getLaunch(), getName());
+			terminateJob.setUser(false);
+			terminateJob.setSystem(true);
+			terminateJob.schedule();
+		}
+
+		super.dispose();
+		// BEGIN GENERATED CODE
 	}
 	
 	/**
