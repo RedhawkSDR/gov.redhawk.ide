@@ -866,15 +866,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
-	 * Adds provides ports if an RHContainerShape is edited after initial creation
-	 */
-	public void setProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider) {
-		// Manually clean up the provides port parent container. Easier to just rebuild from scratch
-		DUtil.fastDeletePictogramElement(getProvidesPortsContainerShape());
-		addProvidesPorts(providesPortStubs, featureProvider);
-	}
-
-	/**
 	 * Adds uses port container to provided container shape. Adds a port shape with name and anchor for each
 	 * usesPortStub.
 	 */
@@ -892,15 +883,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			}
 		}
 		layoutUsesPorts(usesPortsContainerShape, featureProvider);
-	}
-
-	/**
-	 * Adds uses ports if an RHContainerShape is edited after initial creation
-	 */
-	public void setUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider) {
-		// Manually clean up the uses port parent container. Easier to just rebuild from scratch
-		DUtil.fastDeletePictogramElement(getUsesPortsContainerShape());
-		addUsesPorts(usesPortStubs, featureProvider);
 	}
 
 	/**

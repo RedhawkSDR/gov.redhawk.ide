@@ -608,7 +608,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	 * @param usesDeviceShape
 	 * @param usesPortNames
 	 */
-	public static void updatePorts(final IFeatureProvider featureProvider, final UsesDeviceStub usesDeviceStub, final RHContainerShapeImpl usesDeviceShape, final List<String> usesPortNames,
+	public static void updatePorts(final IFeatureProvider featureProvider, final UsesDeviceStub usesDeviceStub, final RHContainerShape usesDeviceShape, final List<String> usesPortNames,
 		final List<String> providesPortNames) {
 		
 		updateUsesPortStubs(featureProvider, usesDeviceStub, usesDeviceShape, usesPortNames);
@@ -627,7 +627,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	 * @param usesPortNames
 	 */
 	public static void updateUsesPortStubs(final IFeatureProvider featureProvider, final UsesDeviceStub usesDeviceStub, 
-		final RHContainerShapeImpl usesDeviceShape, final List<String> usesPortNames) {
+		final RHContainerShape usesDeviceShape, final List<String> usesPortNames) {
 
 		final Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
 		
@@ -659,8 +659,8 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 		}
 
 		// Add the new ports to the Diagram model
-		usesDeviceShape.setUsesPorts(usesPortStubs, featureProvider);
 		usesDeviceStub.getUsesPortStubs().addAll(usesPortStubs);
+		DUtil.updateShapeViaFeature(featureProvider, diagram, usesDeviceShape);
 
 		// Build the new connections using the reconnect feature
 		for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {
@@ -697,7 +697,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	 * @param usesPortNames
 	 */
 	public static void updateProvidesPortStubs(final IFeatureProvider featureProvider, final UsesDeviceStub usesDeviceStub, 
-		final RHContainerShapeImpl usesDeviceShape, final List<String> providesPortNames) {
+		final RHContainerShape usesDeviceShape, final List<String> providesPortNames) {
 		
 		final Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
 		
@@ -729,8 +729,8 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 		}
 
 		// Add the new ports to the Diagram model
-		usesDeviceShape.setProvidesPorts(providesPortStubs, featureProvider);
 		usesDeviceStub.getProvidesPortStubs().addAll(providesPortStubs);
+		DUtil.updateShapeViaFeature(featureProvider, diagram, usesDeviceShape);
 
 		// Build the new connections using the reconnect feature
 		for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {

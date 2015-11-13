@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
@@ -104,7 +104,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 	 */
 	@Override
 	public void execute(ICustomContext context) {
-		RHContainerShapeImpl findByShape = (RHContainerShapeImpl) context.getPictogramElements()[0];
+		RHContainerShape findByShape = (RHContainerShape) context.getPictogramElements()[0];
 		final FindByStub findByStub = (FindByStub) DUtil.getBusinessObject(findByShape);
 		if (findByStub.getNamingService() != null) {
 			editFindByCorbaName(findByStub, findByShape);
@@ -130,7 +130,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 		};
 	}
 
-	private void editFindByCorbaName(final FindByStub findByStub, final RHContainerShapeImpl findByShape) {
+	private void editFindByCorbaName(final FindByStub findByStub, final RHContainerShape findByShape) {
 		// Find By CORBA Name
 		FindByCORBANameWizardPage page = FindByCORBANamePattern.openWizard(findByStub, getEditWizard());
 		if (page == null) {
@@ -159,7 +159,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 	}
 
 	// ports
-	private void editFindByService(final FindByStub findByStub, final RHContainerShapeImpl findByShape) {
+	private void editFindByService(final FindByStub findByStub, final RHContainerShape findByShape) {
 		// Find By Service
 		FindByServiceWizardPage page = FindByServicePattern.getWizardPage(findByStub, getEditWizard());
 		if (page == null) {
@@ -219,7 +219,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 		});
 	}
 
-	private void updatePorts(final FindByStub findByStub, final RHContainerShapeImpl findByShape, final List<String> usesPortNames,
+	private void updatePorts(final FindByStub findByStub, final RHContainerShape findByShape, final List<String> usesPortNames,
 		final List<String> providesPortNames) {
 		Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
 
@@ -254,7 +254,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 			}
 
 			// Add the new ports to the Diagram model
-			findByShape.setUsesPorts((EList<UsesPortStub>) usesPortStubs, featureProvider);
+			updatePictogramElement(findByShape);
 
 			// Build the new connections using the reconnect feature
 			for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {
@@ -316,7 +316,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 			}
 
 			// Add the new ports to the Diagram model
-			findByShape.setProvidesPorts((EList<ProvidesPortStub>) providesPortStubs, featureProvider);
+			updatePictogramElement(findByShape);
 
 			// Build the new connections using the reconnect feature
 			for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {
