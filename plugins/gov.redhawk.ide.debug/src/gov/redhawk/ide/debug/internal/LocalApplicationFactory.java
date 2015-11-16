@@ -173,11 +173,15 @@ public class LocalApplicationFactory {
 			progress.worked(1);
 
 			URI uri = sad.eResource().getURI();
-			Map<String, String> query = new HashMap<String, String>(QueryParser.parseQuery(uri.query()));
-			query.put(ScaFileSystemConstants.QUERY_PARAM_WF, waveform.getIor());
-			String queryStr = QueryParser.createQuery(query);
-			URI sadUri = URI.createHierarchicalURI(uri.scheme(), uri.authority(), uri.device(), uri.segments(), queryStr, uri.fragment());
-			waveform.setProfileURI(sadUri);
+			if (uri.isFile()) {
+				waveform.setProfileURI(uri);
+			} else {
+				Map<String, String> query = new HashMap<String, String>(QueryParser.parseQuery(uri.query()));
+				query.put(ScaFileSystemConstants.QUERY_PARAM_WF, waveform.getIor());
+				String queryStr = QueryParser.createQuery(query);
+				URI sadUri = URI.createHierarchicalURI(uri.scheme(), uri.authority(), uri.device(), uri.segments(), queryStr, uri.fragment());
+				waveform.setProfileURI(sadUri);
+			}
 			waveform.fetchProfileObject(null);
 
 			final ScaWaveform tmpWaveform = waveform;
