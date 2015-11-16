@@ -16,9 +16,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -233,6 +231,14 @@ public interface RHContainerShape extends ContainerShape {
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model businessObjectUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false"
+	 * @generated
+	 */
+	void init(EObject businessObject, AbstractPortSupplierPattern pattern);
+
+	/**
+	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Outer Text</em>' reference isn't clear,
 	 * there really should be more of a description here...
@@ -359,14 +365,6 @@ public interface RHContainerShape extends ContainerShape {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model contextDataType="gov.redhawk.ide.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false"
-	 * @generated
-	 */
-	void init(IAddContext context, AbstractPortSupplierPattern pattern);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * Returns providesPortsStubs business object list linked to getProvidesPortsContainerShape()
 	 * <!-- end-model-doc -->
@@ -392,23 +390,10 @@ public interface RHContainerShape extends ContainerShape {
 	 * <!-- begin-model-doc -->
 	 * Updates the shape with supplied values
 	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false"
+	 * @model unique="false"
 	 * @generated
 	 */
-	Reason update(IUpdateContext context, AbstractPortSupplierPattern pattern);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Checks if shape requires an update.
-	 * If update required returns Reason with true
-	 * boolean value and message describing what needs to be updated
-	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false"
-	 * @generated
-	 */
-	Reason updateNeeded(IUpdateContext context, AbstractPortSupplierPattern pattern);
+	boolean update();
 
 } // RHContainerShape
 

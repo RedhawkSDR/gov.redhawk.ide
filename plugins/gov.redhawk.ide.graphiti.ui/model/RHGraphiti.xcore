@@ -21,6 +21,7 @@ package gov.redhawk.ide.graphiti.ext
 
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern
 import org.eclipse.emf.ecore.EEList
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.graphiti.mm.pictograms.ContainerShape
 import org.eclipse.graphiti.mm.algorithms.Text
 import org.eclipse.graphiti.mm.algorithms.Image
@@ -30,10 +31,7 @@ annotation "http://www.eclipse.org/emf/2002/GenModel" as GenModel
 annotation "http://www.eclipse.org/emf/2002/Ecore" as Ecore
 type UsesPortStub wraps mil.jpeojtrs.sca.partitioning.UsesPortStub
 type ProvidesPortStub wraps mil.jpeojtrs.sca.partitioning.ProvidesPortStub
-type Reason wraps org.eclipse.graphiti.features.impl.Reason
-type IAddContext wraps org.eclipse.graphiti.features.context.IAddContext
 type AbstractPortSupplierPattern wraps AbstractPortSupplierPattern
-type IUpdateContext wraps org.eclipse.graphiti.features.context.IUpdateContext
 
 class RHContainerShape extends ContainerShape {
 
@@ -52,7 +50,7 @@ class RHContainerShape extends ContainerShape {
 	boolean hasPortsContainerShape //creates a container that displays an anchor per port
 	boolean hideUnusedPorts //hides all ports without connection
 
-	op void init(IAddContext context, AbstractPortSupplierPattern pattern)
+	op void init(EObject businessObject, AbstractPortSupplierPattern pattern)
 
 	/*Returns providesPortsStubs business object list linked to getProvidesPortsContainerShape()*/
 	op EEList<ProvidesPortStub> getProvidesPortStubs()
@@ -61,13 +59,7 @@ class RHContainerShape extends ContainerShape {
 	op EEList<UsesPortStub> getUsesPortStubs()
 
 	/*Updates the shape with supplied values */
-	op Reason update(IUpdateContext context, AbstractPortSupplierPattern pattern)
-
-	/*Checks if shape requires an update.  
-	 * If update required returns Reason with true
-	 * boolean value and message describing what needs to be updated
-	 */
-	op Reason updateNeeded(IUpdateContext context, AbstractPortSupplierPattern pattern)
+	op boolean update()
 
 	/*Return the text for outer container*/
 	op Text getOuterText()

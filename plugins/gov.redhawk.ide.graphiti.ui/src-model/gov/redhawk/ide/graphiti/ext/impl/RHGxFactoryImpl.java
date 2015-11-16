@@ -24,9 +24,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.impl.Reason;
 
 /**
  * <!-- begin-user-doc -->
@@ -91,14 +88,8 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return createUsesPortStubFromString(eDataType, initialValue);
 		case RHGxPackage.PROVIDES_PORT_STUB:
 			return createProvidesPortStubFromString(eDataType, initialValue);
-		case RHGxPackage.REASON:
-			return createReasonFromString(eDataType, initialValue);
-		case RHGxPackage.IADD_CONTEXT:
-			return createIAddContextFromString(eDataType, initialValue);
 		case RHGxPackage.ABSTRACT_PORT_SUPPLIER_PATTERN:
 			return createAbstractPortSupplierPatternFromString(eDataType, initialValue);
-		case RHGxPackage.IUPDATE_CONTEXT:
-			return createIUpdateContextFromString(eDataType, initialValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -116,14 +107,8 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return convertUsesPortStubToString(eDataType, instanceValue);
 		case RHGxPackage.PROVIDES_PORT_STUB:
 			return convertProvidesPortStubToString(eDataType, instanceValue);
-		case RHGxPackage.REASON:
-			return convertReasonToString(eDataType, instanceValue);
-		case RHGxPackage.IADD_CONTEXT:
-			return convertIAddContextToString(eDataType, instanceValue);
 		case RHGxPackage.ABSTRACT_PORT_SUPPLIER_PATTERN:
 			return convertAbstractPortSupplierPatternToString(eDataType, instanceValue);
-		case RHGxPackage.IUPDATE_CONTEXT:
-			return convertIUpdateContextToString(eDataType, instanceValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -180,42 +165,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Reason createReasonFromString(EDataType eDataType, String initialValue) {
-		return (Reason) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertReasonToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public IAddContext createIAddContextFromString(EDataType eDataType, String initialValue) {
-		return (IAddContext) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertIAddContextToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public AbstractPortSupplierPattern createAbstractPortSupplierPatternFromString(EDataType eDataType, String initialValue) {
 		return (AbstractPortSupplierPattern) super.createFromString(eDataType, initialValue);
 	}
@@ -226,24 +175,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * @generated
 	 */
 	public String convertAbstractPortSupplierPatternToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public IUpdateContext createIUpdateContextFromString(EDataType eDataType, String initialValue) {
-		return (IUpdateContext) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertIUpdateContextToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

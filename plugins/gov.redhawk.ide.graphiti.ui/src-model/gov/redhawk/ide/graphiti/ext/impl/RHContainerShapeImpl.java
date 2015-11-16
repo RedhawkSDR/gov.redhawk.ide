@@ -31,9 +31,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.graphiti.datatypes.IDimension;
-import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
@@ -437,15 +434,14 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS, oldHideUnusedPorts, hideUnusedPorts));
 	}
 
-	// END GENERATED CODE
-
 	/**
+	 * <!-- begin-user-doc -->
 	 * Creates the inner shapes that make up this container shape
+	 * <!-- end-user-doc -->
+	 * @generated NOT
 	 */
 	@Override
-	public void init(final IAddContext context, AbstractPortSupplierPattern pattern) {
-		EObject newObject = (EObject) context.getNewObject();
-
+	public void init(EObject businessObject, AbstractPortSupplierPattern pattern) {
 		// add property for this shape
 		Graphiti.getPeService().setPropertyValue(this, DUtil.GA_TYPE, SHAPE_OUTER_CONTAINER);
 
@@ -460,11 +456,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_IMAGE);
 
 		// text
-		Text cText = Graphiti.getCreateService().createPlainText(outerRoundedRectangle, pattern.getOuterTitle(newObject));
+		Text cText = Graphiti.getCreateService().createPlainText(outerRoundedRectangle, pattern.getOuterTitle(businessObject));
 		StyleUtil.setStyle(cText, StyleUtil.OUTER_TEXT);
 		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 
-		addInnerContainer(pattern.getInnerTitle(newObject), pattern.getInnerImageId(), pattern.getStyleForInner());
+		addInnerContainer(pattern.getInnerTitle(businessObject), pattern.getInnerImageId(), pattern.getStyleForInner());
 	}
 
 	/**
@@ -475,10 +471,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
 	 * Updates the shape's contents using the supplied fields. Return true if an update occurred, false otherwise.
+	 * <!-- end-user-doc -->
+	 * @generated NOT
 	 */
 	@Override
-	public Reason update(IUpdateContext context, AbstractPortSupplierPattern pattern) {
+	public boolean update() {
 		boolean updateStatus = false;
 
 		if (isCollapsed()) {
@@ -500,16 +499,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				updateStatus = true;
 			}
 		}
-		return new Reason(updateStatus);
-	}
-
-	/**
-	 * Return true (through Reason) if the shape's contents require an update based on the field supplied.
-	 * Also returns a textual reason why an update is needed. Returns false otherwise.
-	 */
-	@Override
-	public Reason updateNeeded(final IUpdateContext context, final AbstractPortSupplierPattern pattern) {
-		return new Reason(false);
+		return updateStatus;
 	}
 
 	// BEGIN GENERATED CODE

@@ -164,7 +164,9 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		}
 
 		// Use legacy update method to ensure ports containers are created
-		IReason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
+		if (((RHContainerShape) context.getPictogramElement()).update()) {
+			updateStatus = true;
+		}
 
 		ContainerShape lollipopShape = containerShape.getLollipop();
 		ContainerShape superProvidesPortsShape = containerShape.getSuperProvidesPortsContainerShape();
@@ -207,11 +209,11 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		}
 
 		// if we updated redraw
-		if (updated.toBoolean()) {
-			layoutPictogramElement(context.getPictogramElement());
+		if (updateStatus) {
+			layoutPictogramElement(containerShape);
 		}
 
-		return updateStatus || updated.toBoolean();
+		return updateStatus;
 	}
 
 	@Override
@@ -402,7 +404,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		link(containerShape, getBusinessObjectsToLink(newObject).toArray());
 
 		// Initialize shape contents
-		containerShape.init(context, this);
+		containerShape.init(newObject, this);
 
 		if (!containerShape.isCollapsed()) {
 			addLollipop(containerShape, getInterface(newObject));

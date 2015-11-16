@@ -228,24 +228,6 @@ public interface RHGxPackage extends EPackage {
 	 */
 	int PROVIDES_PORT_STUB = 2;
 	/**
-	 * The meta object id for the '<em>Reason</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.graphiti.features.impl.Reason
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getReason()
-	 * @generated
-	 */
-	int REASON = 3;
-	/**
-	 * The meta object id for the '<em>IAdd Context</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.graphiti.features.context.IAddContext
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIAddContext()
-	 * @generated
-	 */
-	int IADD_CONTEXT = 4;
-	/**
 	 * The meta object id for the '<em>Abstract Port Supplier Pattern</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -253,16 +235,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAbstractPortSupplierPattern()
 	 * @generated
 	 */
-	int ABSTRACT_PORT_SUPPLIER_PATTERN = 5;
-	/**
-	 * The meta object id for the '<em>IUpdate Context</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.graphiti.features.context.IUpdateContext
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIUpdateContext()
-	 * @generated
-	 */
-	int IUPDATE_CONTEXT = 6;
+	int ABSTRACT_PORT_SUPPLIER_PATTERN = 3;
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape <em>RH Container Shape</em>}'.
@@ -374,28 +347,6 @@ public interface RHGxPackage extends EPackage {
 	EDataType getProvidesPortStub();
 
 	/**
-	 * Returns the meta object for data type '{@link org.eclipse.graphiti.features.impl.Reason <em>Reason</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Reason</em>'.
-	 * @see org.eclipse.graphiti.features.impl.Reason
-	 * @model instanceClass="org.eclipse.graphiti.features.impl.Reason"
-	 * @generated
-	 */
-	EDataType getReason();
-
-	/**
-	 * Returns the meta object for data type '{@link org.eclipse.graphiti.features.context.IAddContext <em>IAdd Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>IAdd Context</em>'.
-	 * @see org.eclipse.graphiti.features.context.IAddContext
-	 * @model instanceClass="org.eclipse.graphiti.features.context.IAddContext"
-	 * @generated
-	 */
-	EDataType getIAddContext();
-
-	/**
 	 * Returns the meta object for data type '{@link gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern <em>Abstract Port Supplier Pattern</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -405,17 +356,6 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EDataType getAbstractPortSupplierPattern();
-
-	/**
-	 * Returns the meta object for data type '{@link org.eclipse.graphiti.features.context.IUpdateContext <em>IUpdate Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>IUpdate Context</em>'.
-	 * @see org.eclipse.graphiti.features.context.IUpdateContext
-	 * @model instanceClass="org.eclipse.graphiti.features.context.IUpdateContext"
-	 * @generated
-	 */
-	EDataType getIUpdateContext();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -526,26 +466,6 @@ public interface RHGxPackage extends EPackage {
 		EDataType PROVIDES_PORT_STUB = eINSTANCE.getProvidesPortStub();
 
 		/**
-		 * The meta object literal for the '<em>Reason</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.graphiti.features.impl.Reason
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getReason()
-		 * @generated
-		 */
-		EDataType REASON = eINSTANCE.getReason();
-
-		/**
-		 * The meta object literal for the '<em>IAdd Context</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.graphiti.features.context.IAddContext
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIAddContext()
-		 * @generated
-		 */
-		EDataType IADD_CONTEXT = eINSTANCE.getIAddContext();
-
-		/**
 		 * The meta object literal for the '<em>Abstract Port Supplier Pattern</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -554,16 +474,6 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType ABSTRACT_PORT_SUPPLIER_PATTERN = eINSTANCE.getAbstractPortSupplierPattern();
-
-		/**
-		 * The meta object literal for the '<em>IUpdate Context</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.graphiti.features.context.IUpdateContext
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIUpdateContext()
-		 * @generated
-		 */
-		EDataType IUPDATE_CONTEXT = eINSTANCE.getIUpdateContext();
 
 	}
 
