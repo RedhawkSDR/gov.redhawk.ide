@@ -146,4 +146,20 @@ public class UpdateUtil {
 		}
 		return false;
 	}
+
+	/**
+	 * Deletes any non-null {@link PictogramElement}s.
+	 * @param pictogramList PictogramElements to delete
+	 * @return true if any PictogramElement was non-null and deleted, false if none were deleted
+	 */
+	public static boolean deleteIfNeeded(PictogramElement... pictogramList) {
+		boolean deleted = false;
+		for (PictogramElement pictogramElement : pictogramList) {
+			if (pictogramElement != null) {
+				DUtil.fastDeletePictogramElement(pictogramElement);
+				deleted = true;
+			}
+		}
+		return deleted;
+	}
 }

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
@@ -20,6 +23,7 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
@@ -154,17 +158,17 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			updateStatus = true;
 		}
 
+		// Use legacy update method to ensure ports containers are created
+		IReason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
+
 		ContainerShape lollipopShape = containerShape.getLollipop();
 		ContainerShape superProvidesPortsShape = containerShape.getSuperProvidesPortsContainerShape();
 		ContainerShape superUsesPortsShape = containerShape.getSuperUsesPortsContainerShape();
+		ContainerShape providesPortsShape = containerShape.getProvidesPortsContainerShape();
+		ContainerShape usesPortsShape = containerShape.getUsesPortsContainerShape();
 		if (containerShape.isCollapsed()) {
-			if (UpdateUtil.deleteIfNeeded(lollipopShape)) {
+			if (UpdateUtil.deleteIfNeeded(lollipopShape, providesPortsShape, usesPortsShape)) {
 				updateStatus = true;
-			}
-
-			if (superProvidesPortsShape == null) {
-			}
-			if (superUsesPortsShape == null) {
 			}
 		} else {
 			// Add lollipop shape
@@ -173,10 +177,10 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 				updateStatus = true;
 			}
 
-			if (UpdateUtil.deleteIfNeeded(superProvidesPortsShape)) {
-				updateStatus = true;
-			}
-			if (UpdateUtil.deleteIfNeeded(superUsesPortsShape)) {
+			updatePorts(providesPortsShape, getProvides(businessObject));
+			updatePorts(usesPortsShape, getUses(businessObject));
+
+			if (UpdateUtil.deleteIfNeeded(superProvidesPortsShape, superUsesPortsShape)) {
 				updateStatus = true;
 			}
 		}
@@ -188,8 +192,6 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			innerLine.setLineVisible(innerLineVisible);
 			updateStatus = true;
 		}
-
-		IReason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
 
 		// if we updated redraw
 		if (updated.toBoolean()) {
@@ -212,10 +214,17 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			return Reason.createTrueReason("Inner title requires update");
 		}
 
+		IReason shapeReason = ((RHContainerShape) context.getPictogramElement()).updateNeeded(context, this);
+		if (shapeReason.toBoolean()) {
+			return shapeReason;
+		}
+
 		boolean innerLineVisible = containerShape.getInnerPolyline().getLineVisible();
 		boolean hasLollipop = containerShape.getLollipop() != null;
 		boolean hasSuperProvides = containerShape.getSuperProvidesPortsContainerShape() != null;
 		boolean hasSuperUses = containerShape.getSuperUsesPortsContainerShape() != null;
+		ContainerShape providesPortsContainer = containerShape.getProvidesPortsContainerShape();
+		ContainerShape usesPortsContainer = containerShape.getUsesPortsContainerShape();
 		if (containerShape.isCollapsed()) {
 			if (innerLineVisible) {
 				return Reason.createTrueReason("Inner line should be invisible");
@@ -225,6 +234,8 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 				return Reason.createTrueReason("Super provides port shape needs to be created");
 			} else if (!hasSuperUses) {
 				return Reason.createTrueReason("Super uses port shape needs to be created");
+			} else if (providesPortsContainer != null || usesPortsContainer != null) {
+				return Reason.createTrueReason("Port containers need to be deleted");
 			}
 		} else {
 			if (!innerLineVisible) {
@@ -235,10 +246,93 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 				return Reason.createTrueReason("Super provides port shape needs to be created");
 			} else if (hasSuperUses) {
 				return Reason.createTrueReason("Super uses port shape needs to be created");
+			} else if (updatePortsNeeded(providesPortsContainer, getProvides(businessObject))) {
+				return Reason.createTrueReason("Provides ports need update");
+			} else if (updatePortsNeeded(usesPortsContainer, getUses(businessObject))) {
+				return Reason.createTrueReason("Uses ports need update");
+			}
+		}
+		return Reason.createFalseReason();
+	}
+
+	protected List<Shape> getPortsToRemove(ContainerShape containerShape, List< ? extends EObject> modelPorts) {
+		List<Shape> removedPorts = new ArrayList<Shape>();
+		for (Shape childShape : containerShape.getChildren()) {
+			EObject bo = DUtil.getBusinessObject(childShape);
+			if (bo == null || !modelPorts.contains(bo)) {
+				// Delete non-existent or stale (no longer contained in model) port
+				removedPorts.add(childShape);
+			}
+		}
+		return removedPorts;
+	}
+
+	protected boolean portShapeExists(ContainerShape containerShape, EObject businessObject) {
+		for (Shape portShape : containerShape.getChildren()) {
+			if (getBusinessObjectForPictogramElement(portShape) == businessObject) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected List<EObject> getPortsToAdd(ContainerShape containerShape, List< ? extends EObject > modelPorts) {
+		List<EObject> addedPorts = new ArrayList<EObject>();
+		if (modelPorts != null) {
+			for (EObject portStub : modelPorts) {
+				if (!portShapeExists(containerShape, portStub)) {
+					addedPorts.add(portStub);
+				}
+			}
+		}
+		return addedPorts;
+	}
+
+	protected boolean updatePorts(ContainerShape portsContainer, List< ? extends EObject > modelPorts) {
+		boolean updateStatus = false;
+
+		// Remove ports
+		for (Shape providesPortShape : getPortsToRemove(portsContainer, modelPorts)) {
+			DUtil.fastDeletePictogramElement(providesPortShape);
+			updateStatus = true;
+		}
+
+		// Update remaining ports
+		for (Shape providesPortShape : portsContainer.getChildren()) {
+			UpdateContext updateContext = new UpdateContext(providesPortShape);
+			IReason portReason = getFeatureProvider().updateIfPossibleAndNeeded(updateContext);
+			if (portReason.toBoolean()) {
+				updateStatus = true;
 			}
 		}
 
-		return ((RHContainerShape) context.getPictogramElement()).updateNeeded(context, this);
+		// Add missing provides ports
+		for (EObject portStub : getPortsToAdd(portsContainer, modelPorts)) {
+			DUtil.addShapeViaFeature(getFeatureProvider(), portsContainer, portStub);
+			updateStatus = true;
+		}
+
+		return updateStatus;
+	}
+
+	protected boolean updatePortsNeeded(ContainerShape portsContainer, List< ? extends EObject > modelPorts) {
+		if (!getPortsToRemove(portsContainer, modelPorts).isEmpty()) {
+			return true;
+		}
+
+		for (Shape providesPortShape : portsContainer.getChildren()) {
+			UpdateContext updateContext = new UpdateContext(providesPortShape);
+			IReason portReason = getFeatureProvider().updateNeeded(updateContext);
+			if (portReason.toBoolean()) {
+				return true;
+			}
+		}
+
+		if (!getPortsToAdd(portsContainer, modelPorts).isEmpty()) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -283,6 +377,9 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 
 		// Allow subclasses to do additional initialization
 		initializeShape(containerShape, context);
+
+		// Defer to update to handle child object setup
+		updatePictogramElement(containerShape);
 
 		// Layout the shape
 		layoutPictogramElement(containerShape);

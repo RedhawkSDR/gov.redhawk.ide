@@ -17,7 +17,6 @@ import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,11 +36,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.IReason;
-import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Image;
@@ -50,7 +46,6 @@ import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
-import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
@@ -493,10 +488,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			if (uses != null && uses.size() > 0) {
 				addSuperUsesPortContainerShape(uses, featureProvider);
 			}
-		} else {
-			//draw all shape details (only ports)
-			addProvidesPorts(provides, featureProvider);
-			addUsesPorts(uses, featureProvider);
 		}
 	}
 
@@ -761,45 +752,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		return fixPointAnchor;
 	}
 
-	private void layoutProvidesPorts(ContainerShape providesPortsContainer, IFeatureProvider featureProvider) {
-		int currentY = 0;
-		int maxWidth = 0;
-		for (Shape shape : providesPortsContainer.getChildren()) {
-			DUtil.layoutShapeViaFeature(featureProvider, shape);
-
-			// Place the container at the next Y position
-			UpdateUtil.moveIfNeeded(shape.getGraphicsAlgorithm(), 0, currentY);
-			currentY += shape.getGraphicsAlgorithm().getHeight() + PORT_ROW_PADDING_HEIGHT;
-			maxWidth = Math.max(maxWidth, shape.getGraphicsAlgorithm().getWidth());
-		}
-		// Resize container to contents and adjust position so that ports are aligned to the outer edge
-		currentY = Math.max(currentY - 5, 0); // remove extra spacing, if it was added above
-		UpdateUtil.resizeIfNeeded(providesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
-		// NB: For FindBy shapes and the like, the normal layout was not occurring for the provides port container
-		UpdateUtil.moveIfNeeded(providesPortsContainer.getGraphicsAlgorithm(), PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING);
-	}
-
-	private void layoutUsesPorts(ContainerShape usesPortsContainer, IFeatureProvider featureProvider) {
-		int maxWidth = 0;
-		// First pass: resize and layout contained ports, remembering max width
-		for (Shape shape : usesPortsContainer.getChildren()) {
-			DUtil.layoutShapeViaFeature(featureProvider, shape);
-			maxWidth = Math.max(maxWidth, shape.getGraphicsAlgorithm().getWidth());
-		}
-
-		// Second pass: layout vertically and adjust X coordinates so that right edges line up (depends on max width)
-		int currentY = 0;
-		for (Shape shape : usesPortsContainer.getChildren()) {
-			int xOffset = maxWidth - shape.getGraphicsAlgorithm().getWidth();
-			UpdateUtil.moveIfNeeded(shape.getGraphicsAlgorithm(), xOffset, currentY);
-			currentY += shape.getGraphicsAlgorithm().getHeight() + PORT_ROW_PADDING_HEIGHT;
-		}
-
-		// Resize container to contents
-		currentY = Math.max(currentY - 5, 0); // remove extra spacing, if it was added above
-		UpdateUtil.resizeIfNeeded(usesPortsContainer.getGraphicsAlgorithm(), maxWidth, currentY);
-	}
-
 	private void layoutAnchor(Shape parentShape) {
 		// Layout and resize anchor
 		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
@@ -808,48 +760,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		anchorLocation.setY(parentSize.getHeight() / 2);
 		Graphiti.getGaLayoutService().setLocationAndSize(portAnchor.getGraphicsAlgorithm(), -anchorLocation.getX(), -anchorLocation.getY(),
 			parentSize.getWidth(), parentSize.getHeight());
-	}
-
-	/**
-	 * Adds provides port container to provided container shape. Adds a port shape with name and anchor for each
-	 * providesPortStub.
-	 */
-	private void addProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider) {
-		// provides (input)
-		ContainerShape providesPortsContainerShape = getProvidesPortsContainerShape();
-		if (providesPortsContainerShape == null) {
-			providesPortsContainerShape = addProvidesPortsContainerShape();
-		}
-
-		if (providesPortStubs != null) {
-			featureProvider.link(providesPortsContainerShape, providesPortStubs.toArray());
-
-			// iterate over all provides ports
-			for (ProvidesPortStub p : providesPortStubs) {
-				DUtil.addShapeViaFeature(featureProvider, providesPortsContainerShape, p);
-			}
-		}
-		layoutProvidesPorts(providesPortsContainerShape, featureProvider);
-	}
-
-	/**
-	 * Adds uses port container to provided container shape. Adds a port shape with name and anchor for each
-	 * usesPortStub.
-	 */
-	private void addUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider) {
-		// uses (output)
-		ContainerShape usesPortsContainerShape = getUsesPortsContainerShape();
-		if (usesPortsContainerShape == null) {
-			usesPortsContainerShape = addUsesPortsContainerShape();
-		}
-		if (usesPortStubs != null) {
-			featureProvider.link(usesPortsContainerShape, usesPortStubs.toArray());
-			// add uses ports
-			for (UsesPortStub p : usesPortStubs) {
-				DUtil.addShapeViaFeature(featureProvider, usesPortsContainerShape, p);
-			}
-		}
-		layoutUsesPorts(usesPortsContainerShape, featureProvider);
 	}
 
 	/**
@@ -1051,65 +961,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		if (isCollapsed()) {
 		} else if (providesPortsContainerShape == null) {
 			//ports container does NOT exist, create it
-
 			if (performUpdate) {
-				updateStatus = true;
-				EObject eObject = this.getLink().getBusinessObjects().get(0);
-
-				//draw all shape details (only ports)
-				addProvidesPorts(pattern.getProvides(eObject), pattern.getFeatureProvider());
-
-			} else {
-				return new Reason(true, "Provides Ports ContainerShape require creation");
+				providesPortsContainerShape = addProvidesPortsContainerShape();
 			}
-		} else {
-			//provides ports container exists, update it
-			List<Shape> removedPorts = getPortsToRemove(providesPortsContainerShape);
-			if (!removedPorts.isEmpty()) {
-				if (performUpdate) {
-					for (Shape providesPortShape : removedPorts) {
-						DUtil.fastDeletePictogramElement(providesPortShape);
-					}
-					updateStatus = true;
-				} else {
-					return new Reason(true, "Provides ports requires update");
-				}
-			}
-
-			// Update remaining ports
-			IFeatureProvider featureProvider = pattern.getFeatureProvider();
-			for (Shape providesPortShape : providesPortsContainerShape.getChildren()) {
-				UpdateContext updateContext = new UpdateContext(providesPortShape);
-				IUpdateFeature updateFeature = featureProvider.getUpdateFeature(updateContext);
-				if (updateFeature != null) {
-					IReason childReason = updateFeature.updateNeeded(updateContext);
-					if (childReason.toBoolean()) {
-						if (performUpdate) {
-							updateStatus |= updateFeature.update(updateContext);
-						} else {
-							return new Reason(true, childReason.getText());
-						}
-					}
-				}
-			}
-
-			// Add missing provides ports
-			if (provides != null) {
-				for (ProvidesPortStub providesPortStub : provides) {
-					if (DUtil.getPictogramElementForBusinessObject(diagram, providesPortStub, ContainerShape.class) == null) {
-						if (performUpdate) {
-							updateStatus = true;
-							DUtil.addShapeViaFeature(featureProvider, providesPortsContainerShape, providesPortStub);
-						} else {
-							return new Reason(true, "Need to add missing uses port");
-						}
-					}
-				}
-			}
-
-			if (performUpdate) {
-				layoutProvidesPorts(providesPortsContainerShape, featureProvider);
-			}
+			return new Reason(true, "Provides Ports ContainerShape require creation");
 		}
 
 		if (updateStatus && performUpdate) {
@@ -1131,63 +986,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			//ports container does NOT exist, create it
 
 			if (performUpdate) {
-				updateStatus = true;
-				EObject eObject = this.getLink().getBusinessObjects().get(0);
-
-				//draw all shape details (only ports)
-				addUsesPorts(pattern.getUses(eObject), pattern.getFeatureProvider());
-			} else {
-				return new Reason(true, "Uses Ports ContainerShape require creation");
+				usesPortsContainerShape = addUsesPortsContainerShape();
 			}
-		} else {
-			//uses ports container exists, update it
-			IFeatureProvider featureProvider = pattern.getFeatureProvider();
-
-			// Remove stale port shapes
-			List<Shape> portsToDelete = getPortsToRemove(usesPortsContainerShape);
-			if (!portsToDelete.isEmpty()) {
-				if (performUpdate) {
-					for (Shape portShape : portsToDelete) {
-						DUtil.fastDeletePictogramElement(portShape);
-					}
-					updateStatus = true;
-				} else {
-					return new Reason(true, "Uses ports require update");
-				}
-			}
-
-			for (Shape usesPortShape : usesPortsContainerShape.getChildren()) {
-				UpdateContext updateContext = new UpdateContext(usesPortShape);
-				IUpdateFeature updateFeature = featureProvider.getUpdateFeature(updateContext);
-				if (updateFeature != null) {
-					IReason childReason = updateFeature.updateNeeded(updateContext);
-					if (childReason.toBoolean()) {
-						if (performUpdate) {
-							updateStatus |= updateFeature.update(updateContext);
-						} else {
-							return new Reason(true, childReason.getText());
-						}
-					}
-				}
-			}
-
-			// Add any missing uses ports
-			if (uses != null) {
-				for (UsesPortStub usesPortStub : uses) {
-					if (DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, ContainerShape.class) == null) {
-						if (performUpdate) {
-							updateStatus = true;
-							DUtil.addShapeViaFeature(featureProvider, usesPortsContainerShape, usesPortStub);
-						} else {
-							return new Reason(true, "Need to add missing uses port");
-						}
-					}
-				}
-			}
-
-			if (performUpdate && updateStatus) {
-				layoutUsesPorts(usesPortsContainerShape, featureProvider);
-			}
+			return new Reason(true, "Uses Ports ContainerShape require creation");
 		}
 
 		if (updateStatus && performUpdate) {
