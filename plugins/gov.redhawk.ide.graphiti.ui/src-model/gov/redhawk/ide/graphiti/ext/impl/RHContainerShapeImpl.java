@@ -18,13 +18,9 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import org.eclipse.core.runtime.IStatus;
@@ -35,11 +31,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.graphiti.datatypes.IDimension;
-import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
@@ -485,7 +479,28 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@Override
 	public Reason update(IUpdateContext context, AbstractPortSupplierPattern pattern) {
-		return internalUpdate(pattern, (EObject) DUtil.getBusinessObject(context.getPictogramElement()), true);
+		boolean updateStatus = false;
+
+		if (isCollapsed()) {
+			if (getSuperProvidesPortsContainerShape() == null) {
+				addSuperProvidesPortContainerShape();
+				updateStatus = true;
+			}
+			if (getSuperUsesPortsContainerShape() == null) {
+				addSuperUsesPortContainerShape();
+				updateStatus = true;
+			}
+		} else {
+			if (getProvidesPortsContainerShape() == null) {
+				addProvidesPortsContainerShape();
+				updateStatus = true;
+			}
+			if (getUsesPortsContainerShape() == null) {
+				addUsesPortsContainerShape();
+				updateStatus = true;
+			}
+		}
+		return new Reason(updateStatus);
 	}
 
 	/**
@@ -494,7 +509,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@Override
 	public Reason updateNeeded(final IUpdateContext context, final AbstractPortSupplierPattern pattern) {
-		return internalUpdate(pattern, (EObject) DUtil.getBusinessObject(context.getPictogramElement()), false);
+		return new Reason(false);
 	}
 
 	// BEGIN GENERATED CODE
@@ -681,18 +696,16 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @param usesPortStubs
 	 * @param featureProvider
 	 */
-	private void addSuperUsesPortContainerShape(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider) {
+	private void addSuperUsesPortContainerShape() {
 		// port shape
 		ContainerShape superUsesPortsRectangleShape = Graphiti.getCreateService().createContainerShape(this, true);
 		// ref prevent move
 		Graphiti.getPeService().setPropertyValue(superUsesPortsRectangleShape, DUtil.SHAPE_TYPE, SUPER_USES_PORTS_RECTANGLE);
 		Rectangle superUsesPortsRectangle = Graphiti.getCreateService().createRectangle(superUsesPortsRectangleShape);
-		DUtil.addLinks(featureProvider, superUsesPortsRectangleShape, usesPortStubs);
 		StyleUtil.setStyle(superUsesPortsRectangle, StyleUtil.SUPER_USES_PORT);
 
 		// fix point anchor
-		FixPointAnchor fixPointAnchor = createPortAnchor(superUsesPortsRectangleShape, SUPER_PORT_SHAPE_WIDTH);
-		DUtil.addLinks(featureProvider, fixPointAnchor, usesPortStubs);
+		createPortAnchor(superUsesPortsRectangleShape, SUPER_PORT_SHAPE_WIDTH);
 	}
 
 	/**
@@ -700,24 +713,19 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @param providesPortStubs
 	 * @param featureProvider
 	 */
-	private void addSuperProvidesPortContainerShape(EList<ProvidesPortStub> providesPortStubs, ComponentSupportedInterfaceStub interfaceStub,
-		IFeatureProvider featureProvider) {
+	private void addSuperProvidesPortContainerShape() {
 
 		// port shape
 		ContainerShape superProvidesPortsRectangleShape = Graphiti.getCreateService().createContainerShape(this, true);
 		Graphiti.getPeService().setPropertyValue(superProvidesPortsRectangleShape, DUtil.SHAPE_TYPE, SUPER_PROVIDES_PORTS_RECTANGLE); // ref
 
 		Rectangle superProvidesPortsRectangle = Graphiti.getCreateService().createRectangle(superProvidesPortsRectangleShape);
-		DUtil.addLinks(featureProvider, superProvidesPortsRectangleShape, providesPortStubs);
-		DUtil.addLink(featureProvider, superProvidesPortsRectangleShape, interfaceStub);
 		StyleUtil.setStyle(superProvidesPortsRectangle, StyleUtil.SUPER_PROVIDES_PORT);
 		Graphiti.getGaLayoutService().setLocation(superProvidesPortsRectangle, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING - SUPER_PORT_SHAPE_WIDTH,
 			INNER_CONTAINER_SHAPE_TOP_PADDING + SUPER_PORT_SHAPE_HEIGHT_MARGIN);
 
 		// fix point anchor
-		FixPointAnchor fixPointAnchor = createPortAnchor(superProvidesPortsRectangleShape, 0);
-		DUtil.addLinks(featureProvider, fixPointAnchor, providesPortStubs);
-		DUtil.addLink(featureProvider, fixPointAnchor, interfaceStub);
+		createPortAnchor(superProvidesPortsRectangleShape, 0);
 	}
 
 	/**
@@ -915,263 +923,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	@Override
 	public ContainerShape getSuperUsesPortsContainerShape() {
 		return (ContainerShape) DUtil.findChildShapeByProperty(this, DUtil.SHAPE_TYPE, SUPER_USES_PORTS_RECTANGLE);
-	}
-
-	//Updates Provides Ports Container Shape
-	protected Reason internalUpdateProvidesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, EList<ProvidesPortStub> provides,
-		boolean performUpdate) {
-
-		// providesPortsContainerShape
-		ContainerShape providesPortsContainerShape = getProvidesPortsContainerShape();
-
-		if (!isCollapsed() && providesPortsContainerShape == null) {
-			//ports container does NOT exist, create it
-			if (performUpdate) {
-				providesPortsContainerShape = addProvidesPortsContainerShape();
-			}
-			return new Reason(true, "Provides Ports ContainerShape require creation");
-		}
-
-		return new Reason(false, "No updates required");
-	}
-
-	//Updates Uses Ports Container Shape
-	protected Reason internalUpdateUsesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, EList<UsesPortStub> uses,
-		boolean performUpdate) {
-
-		// usesPortsContainerShape
-		ContainerShape usesPortsContainerShape = getUsesPortsContainerShape();
-
-		if (!isCollapsed() && usesPortsContainerShape == null) {
-			//ports container does NOT exist, create it
-
-			if (performUpdate) {
-				usesPortsContainerShape = addUsesPortsContainerShape();
-			}
-			return new Reason(true, "Uses Ports ContainerShape require creation");
-		}
-
-		return new Reason(false, "No updates required");
-	}
-
-	//update super provides port container shape
-	protected Reason internalUpdateSuperProvidesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject,
-		EList<ProvidesPortStub> provides, ComponentSupportedInterfaceStub interfaceStub, boolean performUpdate) {
-
-		boolean updateStatus = false;
-		// super port shape
-		ContainerShape superProvidesPortsRectangleShape = getSuperProvidesPortsContainerShape();
-
-		if (isCollapsed()) {
-			IFeatureProvider featureProvider = pattern.getFeatureProvider();
-
-			if (superProvidesPortsRectangleShape == null && ((provides != null && provides.size() > 0) || interfaceStub != null)) {
-				//add super ports shape
-
-				if (performUpdate) {
-					updateStatus = true;
-					EObject eObject = this.getLink().getBusinessObjects().get(0);
-					//create super ports
-					addSuperProvidesPortContainerShape(pattern.getProvides(eObject), pattern.getInterface(eObject), pattern.getFeatureProvider());
-				} else {
-					return new Reason(true, "Super Provides Ports require creation");
-				}
-			} else if (superProvidesPortsRectangleShape != null) {
-				//update super ports shape
-
-				// Upgrade from 2.0.0 RC1: make the anchor invisible to support highlighting during connection
-				FixPointAnchor fixPointAnchor = (FixPointAnchor) superProvidesPortsRectangleShape.getAnchors().get(0);
-				GraphicsAlgorithm anchorRect = fixPointAnchor.getGraphicsAlgorithm();
-				if (anchorRect.getFilled() || anchorRect.getLineVisible()) {
-					if (performUpdate) {
-						updateStatus = true;
-						anchorRect.setFilled(false);
-						anchorRect.setLineVisible(false);
-					} else {
-						return new Reason(true, "Super Provides Ports requires update");
-					}
-				}
-
-				// Update Anchor links
-				List<EObject> eObjects = new ArrayList<EObject>();
-				Collections.addAll(eObjects, provides.toArray(new ProvidesPortStub[0]));
-				if (interfaceStub != null) {
-					eObjects.add(interfaceStub);
-				}
-
-				//add all objects that aren't already there
-				for (EObject o : eObjects) {
-					if (fixPointAnchor.getLink() == null || !fixPointAnchor.getLink().getBusinessObjects().contains(o)) {
-						if (performUpdate) {
-							updateStatus = true;
-							DUtil.addLink(featureProvider, fixPointAnchor, o);
-						} else {
-							return new Reason(true, "Super Provides Ports requires update");
-						}
-					}
-				}
-
-				//remove any out-dated objects
-				if (fixPointAnchor.getLink() != null) {
-					for (Iterator<EObject> iter = fixPointAnchor.getLink().getBusinessObjects().iterator(); iter.hasNext();) {
-						if (!eObjects.contains(iter.next())) {
-							if (performUpdate) {
-								updateStatus = true;
-								iter.remove();
-							} else {
-								return new Reason(true, "Super Provides Ports requires update");
-							}
-						}
-					}
-				}
-			}
-		}
-
-		if (updateStatus && performUpdate) {
-			return new Reason(true, "Update Super Provides Ports successful");
-		}
-
-		return new Reason(false, "No updates required");
-
-	}
-
-	//updates super uses ports container shape
-	protected Reason internalUpdateSuperUsesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, EList<UsesPortStub> uses,
-		boolean performUpdate) {
-		boolean updateStatus = false;
-		// super port shape
-		ContainerShape superUsesPortsRectangleShape = getSuperUsesPortsContainerShape();
-
-		if (isCollapsed()) {
-			IFeatureProvider featureProvider = pattern.getFeatureProvider();
-
-			if (superUsesPortsRectangleShape == null && uses != null && uses.size() > 0) {
-				//add super ports shape
-
-				if (performUpdate) {
-					updateStatus = true;
-					EObject eObject = this.getLink().getBusinessObjects().get(0);
-					//create super ports
-					addSuperUsesPortContainerShape(pattern.getUses(eObject), pattern.getFeatureProvider());
-				} else {
-					return new Reason(true, "Super Uses Ports require creation");
-				}
-			} else if (superUsesPortsRectangleShape != null) {
-				//update super ports shape
-
-				// Upgrade from 2.0.0 RC1: make the anchor invisible to support highlighting during connection
-				FixPointAnchor fixPointAnchor = (FixPointAnchor) superUsesPortsRectangleShape.getAnchors().get(0);
-				GraphicsAlgorithm anchorRect = fixPointAnchor.getGraphicsAlgorithm();
-				if (anchorRect.getFilled() || anchorRect.getLineVisible()) {
-					if (performUpdate) {
-						updateStatus = true;
-						anchorRect.setFilled(false);
-						anchorRect.setLineVisible(false);
-					} else {
-						return new Reason(true, "Super Uses Ports requires update");
-					}
-				}
-
-				// Update Anchor links
-				List<EObject> eObjects = new ArrayList<EObject>();
-				Collections.addAll(eObjects, uses.toArray(new UsesPortStub[0]));
-
-				//add all objects that aren't already there
-				for (EObject o : eObjects) {
-					if (fixPointAnchor.getLink() == null || !fixPointAnchor.getLink().getBusinessObjects().contains(o)) {
-						if (performUpdate) {
-							updateStatus = true;
-							DUtil.addLink(featureProvider, fixPointAnchor, o);
-						} else {
-							return new Reason(true, "Super Uses Ports requires update");
-						}
-					}
-				}
-
-				//remove any out-dated objects
-				if (fixPointAnchor.getLink() != null) {
-					for (Iterator<EObject> iter = fixPointAnchor.getLink().getBusinessObjects().iterator(); iter.hasNext();) {
-						if (!eObjects.contains(iter.next())) {
-							if (performUpdate) {
-								updateStatus = true;
-								iter.remove();
-							} else {
-								return new Reason(true, "Super Uses Ports requires update");
-							}
-						}
-					}
-				}
-			}
-		}
-
-		if (updateStatus && performUpdate) {
-			return new Reason(true, "Update Super Uses Ports successful");
-		}
-
-		return new Reason(false, "No updates required");
-
-	}
-
-	/**
-	 * handles both determining whether an update is needed and performing an update for the shape.
-	 * @return
-	 */
-	protected Reason internalUpdate(AbstractPortSupplierPattern pattern, EObject businessObject, boolean performUpdate) {
-
-		boolean updateStatus = false;
-
-		EList<ProvidesPortStub> provides = pattern.getProvides(businessObject);
-		ComponentSupportedInterfaceStub interfaceStub = pattern.getInterface(businessObject);
-		EList<UsesPortStub> uses = pattern.getUses(businessObject);
-
-		//update super provides ports if they exist
-		Reason updateSuperProvidesPortsReason = internalUpdateSuperProvidesPortsContainerShape(pattern, businessObject, provides, interfaceStub,
-			performUpdate);
-		if (updateSuperProvidesPortsReason.toBoolean()) {
-			if (!performUpdate) {
-				//if updates required return true
-				return updateSuperProvidesPortsReason;
-			}
-			updateStatus = true;
-		}
-
-		//update super uses ports if they exist
-		Reason updateSuperUsesPortsReason = internalUpdateSuperUsesPortsContainerShape(pattern, businessObject, uses, performUpdate);
-		if (updateSuperUsesPortsReason.toBoolean()) {
-			if (!performUpdate) {
-				//if updates required return true
-				return updateSuperUsesPortsReason;
-			}
-			updateStatus = true;
-		}
-
-		//draw all shape details (only ports)
-		//update provides ports
-		Reason updateProvidesPortsReason = internalUpdateProvidesPortsContainerShape(pattern, businessObject, provides, performUpdate);
-		if (updateProvidesPortsReason.toBoolean()) {
-			if (!performUpdate) {
-				//if updates required return true
-				return updateProvidesPortsReason;
-			}
-			updateStatus = true;
-		}
-
-		//update uses ports
-		Reason updateUsesPortsReason = internalUpdateUsesPortsContainerShape(pattern, businessObject, uses, performUpdate);
-		if (updateUsesPortsReason.toBoolean()) {
-			if (!performUpdate) {
-				//if updates required return true
-				return updateUsesPortsReason;
-			}
-			updateStatus = true;
-		}
-
-		if (updateStatus && performUpdate) {
-			return new Reason(true, "Update successful");
-		}
-
-		return new Reason(false, "No updates required");
-
 	}
 
 	/**

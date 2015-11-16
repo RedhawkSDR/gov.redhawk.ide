@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -174,6 +175,14 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			if (UpdateUtil.deleteIfNeeded(lollipopShape, providesPortsShape, usesPortsShape)) {
 				updateStatus = true;
 			}
+
+			if (updateSuperProvidesPorts(superProvidesPortsShape, getInterface(businessObject), getProvides(businessObject))) {
+				updateStatus = true;
+			}
+
+			if (updateSuperUsesPorts(superUsesPortsShape, getUses(businessObject))) {
+				updateStatus = true;
+			}
 		} else {
 			// Add lollipop shape
 			if (lollipopShape == null) {
@@ -218,15 +227,10 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			return Reason.createTrueReason("Inner title requires update");
 		}
 
-		IReason shapeReason = ((RHContainerShape) context.getPictogramElement()).updateNeeded(context, this);
-		if (shapeReason.toBoolean()) {
-			return shapeReason;
-		}
-
 		boolean innerLineVisible = containerShape.getInnerPolyline().getLineVisible();
 		boolean hasLollipop = containerShape.getLollipop() != null;
-		boolean hasSuperProvides = containerShape.getSuperProvidesPortsContainerShape() != null;
-		boolean hasSuperUses = containerShape.getSuperUsesPortsContainerShape() != null;
+		ContainerShape superProvidesShape = containerShape.getSuperProvidesPortsContainerShape();
+		ContainerShape superUsesShape = containerShape.getSuperUsesPortsContainerShape();
 		ContainerShape providesPortsContainer = containerShape.getProvidesPortsContainerShape();
 		ContainerShape usesPortsContainer = containerShape.getUsesPortsContainerShape();
 		if (containerShape.isCollapsed()) {
@@ -234,10 +238,11 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 				return Reason.createTrueReason("Inner line should be invisible");
 			} else if (hasLollipop) {
 				return Reason.createTrueReason("Interface lollipop needs to be deleted");
-			} if (!hasSuperProvides) {
-				return Reason.createTrueReason("Super provides port shape needs to be created");
-			} else if (!hasSuperUses) {
-				return Reason.createTrueReason("Super uses port shape needs to be created");
+			}
+			if (updateSuperProvidesPortsNeeded(superProvidesShape, getInterface(businessObject), getProvides(businessObject))) {
+				return Reason.createTrueReason("Super provides port shape needs to be updated");
+			} else if (updateSuperUsesPortsNeeded(superUsesShape, getUses(businessObject))) {
+				return Reason.createTrueReason("Super uses port shape needs to be updated");
 			} else if (providesPortsContainer != null || usesPortsContainer != null) {
 				return Reason.createTrueReason("Port containers need to be deleted");
 			}
@@ -246,10 +251,8 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 				return Reason.createTrueReason("Inner line should be visible");
 			} else if (!hasLollipop) {
 				return Reason.createTrueReason("Interface lollipop needs to be created");
-			} else if (hasSuperProvides) {
-				return Reason.createTrueReason("Super provides port shape needs to be created");
-			} else if (hasSuperUses) {
-				return Reason.createTrueReason("Super uses port shape needs to be created");
+			} else if (superUsesShape != null || superProvidesShape != null) {
+				return Reason.createTrueReason("Super port shapes need to be deleted");
 			} else if (updatePortsNeeded(providesPortsContainer, getProvides(businessObject))) {
 				return Reason.createTrueReason("Provides ports need update");
 			} else if (updatePortsNeeded(usesPortsContainer, getUses(businessObject))) {
@@ -312,8 +315,57 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	}
 
 	protected boolean updatePortsNeeded(ContainerShape portsContainer, List< ? extends EObject > modelPorts) {
+		if (portsContainer == null) {
+			return true;
+		}
 		Map< EObject, UpdateAction > portActions = getPortsToUpdate(portsContainer, modelPorts);
 		return !portActions.isEmpty();
+	}
+
+	protected boolean updateSuperUsesPortsNeeded(ContainerShape superPort, List< ? extends EObject > modelStubs) {
+		if (superPort == null) {
+			return true;
+		}
+		List<Object> businessObjects = Arrays.asList(getMappingProvider().getAllBusinessObjectsForPictogramElement(superPort));
+		if (businessObjects.size() != modelStubs.size()) {
+			return true;
+		}
+		return !businessObjects.containsAll(modelStubs);
+	}
+
+	protected boolean updateSuperUsesPorts(ContainerShape superPort, List< ? extends EObject > modelStubs) {
+		link(superPort, modelStubs.toArray());
+		link(superPort.getAnchors().get(0), modelStubs.toArray());
+		if (modelStubs.isEmpty()) {
+			superPort.getGraphicsAlgorithm().setLineVisible(false);
+			superPort.getGraphicsAlgorithm().setFilled(false);
+		} else {
+			superPort.getGraphicsAlgorithm().setLineVisible(true);
+			superPort.getGraphicsAlgorithm().setFilled(true);
+		}
+		return false;
+	}
+
+	protected boolean updateSuperProvidesPorts(ContainerShape superPort, EObject interfaceStub, List< ? extends EObject > modelStubs) {
+		link(superPort, modelStubs.toArray());
+		link(superPort, interfaceStub);
+		link(superPort.getAnchors().get(0), modelStubs.toArray());
+		link(superPort.getAnchors().get(0), interfaceStub);
+		return false;
+	}
+
+	protected boolean updateSuperProvidesPortsNeeded(ContainerShape superPort, EObject interfaceStub, List< ? extends EObject > modelStubs) {
+		if (superPort == null || superPort.getLink() == null) {
+			return true;
+		}
+		List<Object> businessObjects = Arrays.asList(getMappingProvider().getAllBusinessObjectsForPictogramElement(superPort));
+		if (!businessObjects.contains(interfaceStub)) {
+			return true;
+		}
+		if (businessObjects.size() != (modelStubs.size() + 1)) {
+			return true;
+		}
+		return !businessObjects.containsAll(modelStubs);
 	}
 
 	/**
