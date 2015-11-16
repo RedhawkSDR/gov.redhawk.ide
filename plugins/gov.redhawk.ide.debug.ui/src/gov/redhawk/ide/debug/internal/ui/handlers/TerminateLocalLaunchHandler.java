@@ -63,25 +63,20 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 				List<ScaComponent> components = localSca.getSandboxWaveform().getComponentsCopy();
 				for (ScaComponent component : components) {
 					if (component instanceof LocalLaunch) {
-						terminate((LocalLaunch) component);
+						SpdLauncherUtil.terminate((LocalLaunch) component);
 					}
 				}
 			} else if (localLaunch == localSca.getSandboxDeviceManager()) {
 				List<ScaDevice< ? >> devices = localSca.getSandboxDeviceManager().getAllDevices();
 				for (Object device : devices.toArray()) {
 					if (device instanceof LocalLaunch) {
-						terminate((LocalLaunch) device);
+						SpdLauncherUtil.terminate((LocalLaunch) device);
 					}
 				}
 			} else {
-				terminate(localLaunch);
+				SpdLauncherUtil.terminate(localLaunch);
 			}
 		}
-	}
-
-	private void terminate(final LocalLaunch localLaunch) {
-		// Terminate logic moved to utility class to be visible to other classes
-		SpdLauncherUtil.terminate(localLaunch);
 	}
 
 	@Override
