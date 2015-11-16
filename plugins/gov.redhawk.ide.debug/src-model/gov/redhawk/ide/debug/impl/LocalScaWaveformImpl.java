@@ -678,8 +678,9 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			}
 		} else {
 			super.releaseObject();
-		}	}
-	
+		}
+	}
+
 	@Override
 	public void dispose() {
 		// If we have a launch object (i.e. this IDE launched the object locally)
