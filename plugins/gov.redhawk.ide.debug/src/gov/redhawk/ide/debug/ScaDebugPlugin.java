@@ -29,10 +29,6 @@ import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.jobs.TerminateJob;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 
-
-/**
- * 
- */
 public class ScaDebugPlugin extends Plugin {
 
 	public static final String ID = "gov.redhawk.ide.debug";
@@ -64,7 +60,6 @@ public class ScaDebugPlugin extends Plugin {
 
 		// Dispose the local model
 		ScaModelCommand.execute(getLocalSca(), new ScaModelCommand() {
-			
 			@Override
 			public void execute() {
 				getLocalSca().dispose();

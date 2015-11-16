@@ -10,24 +10,26 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.handlers;
 
-import gov.redhawk.ide.debug.LocalLaunch;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.debug.SpdLauncherUtil;
-import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaDevice;
-import gov.redhawk.sca.util.PluginUtil;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import gov.redhawk.ide.debug.LocalLaunch;
+import gov.redhawk.ide.debug.LocalSca;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.SpdLauncherUtil;
+import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
+import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaDevice;
+import gov.redhawk.sca.util.PluginUtil;
 
 /**
  * Handles the "Terminate" action for anything launched locally in the sandbox.
@@ -56,18 +58,19 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 	private void handleTerminate(final Object obj, final ExecutionEvent event) throws CoreException {
 		final LocalLaunch localLaunch = PluginUtil.adapt(LocalLaunch.class, obj);
 		if (localLaunch != null) {
-			if (localLaunch == ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform()) {
-				EList<ScaComponent> components = ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform().getComponents();
-				for (Object c : components.toArray()) {
-					if (c instanceof LocalLaunch) {
-						terminate((LocalLaunch) c);
+			LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+			if (localLaunch == localSca.getSandboxWaveform()) {
+				List<ScaComponent> components = localSca.getSandboxWaveform().getComponentsCopy();
+				for (ScaComponent component : components) {
+					if (component instanceof LocalLaunch) {
+						terminate((LocalLaunch) component);
 					}
 				}
-			} else if (localLaunch == ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager()) {
-				EList<ScaDevice< ? >> devices = ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager().getAllDevices();
-				for (ScaDevice< ? > c : devices) {
-					if (c instanceof LocalLaunch) {
-						terminate((LocalLaunch) c);
+			} else if (localLaunch == localSca.getSandboxDeviceManager()) {
+				List<ScaDevice< ? >> devices = localSca.getSandboxDeviceManager().getAllDevices();
+				for (Object device : devices.toArray()) {
+					if (device instanceof LocalLaunch) {
+						terminate((LocalLaunch) device);
 					}
 				}
 			} else {
@@ -83,7 +86,6 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 
 	@Override
 	public void setEnabled(final Object evaluationContext) {
-		super.setEnabled(evaluationContext);
 		if (evaluationContext instanceof IEvaluationContext) {
 			final IEvaluationContext context = (IEvaluationContext) evaluationContext;
 			final Object sel = context.getVariable("selection");
@@ -92,8 +94,11 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 				for (final Object obj : ss.toList()) {
 					final LocalLaunch ll = PluginUtil.adapt(LocalLaunch.class, obj);
 					if (ll != null) {
-						setBaseEnabled(true);
-						return;
+						LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+						if (ll == localSca.getSandboxWaveform() || ll == localSca.getSandboxDeviceManager() || ll.getLaunch() != null) {
+							setBaseEnabled(true);
+							return;
+						}
 					}
 				}
 			}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
+import gov.redhawk.ide.debug.internal.jobs.TerminateJob;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.IRefreshable;
 import gov.redhawk.model.sca.ProfileObjectWrapper;
@@ -31,7 +32,6 @@ import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SubMonitor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -60,13 +60,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TCKind;
@@ -79,7 +77,6 @@ import CF.Resource;
 import CF.ResourceHelper;
 import CF.ResourceOperations;
 import CF.LifeCyclePackage.InitializeError;
-import CF.LifeCyclePackage.ReleaseError;
 import CF.PropertyEmitterPackage.AlreadyInitialized;
 import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
@@ -807,40 +804,10 @@ public final class SpdLauncherUtil {
 	 * @since 8.0
 	 */
 	public static void terminate(final LocalLaunch localLaunch) {
-		ScaModelCommand.execute(localLaunch, new ScaModelCommand() {
-
-			@Override
-			public void execute() {
-				EcoreUtil.delete(localLaunch);
-			}
-		});
-		if (localLaunch instanceof LocalScaWaveform) {
-			final Job job = new Job("Terminating") {
-
-				@Override
-				protected IStatus run(final IProgressMonitor monitor) {
-					LocalScaWaveform localScaWaveform = (LocalScaWaveform) localLaunch;
-					try {
-						for (ScaComponent comp : localScaWaveform.getComponents()) {
-							if (comp instanceof LocalScaComponent) {
-								LocalScaComponent localScaComponent = (LocalScaComponent) comp;
-								if (localScaComponent.getLaunch() != null) {
-									localScaComponent.getLaunch().terminate();
-								}
-							}
-						}
-						localScaWaveform.releaseObject();
-					} catch (final DebugException e) {
-						return new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to terminate " + localScaWaveform.getName(), e);
-					} catch (ReleaseError e) {
-						return new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-							"Failed to terminate: " + localScaWaveform.getName() + " " + Arrays.toString(e.errorMessages), e);
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-		}
+		ILaunch launch = localLaunch.getLaunch();
+		Job job = new TerminateJob(launch, launch.getLaunchConfiguration().getName());
+		job.setUser(true);
+		job.schedule();
 	}
 
 }
