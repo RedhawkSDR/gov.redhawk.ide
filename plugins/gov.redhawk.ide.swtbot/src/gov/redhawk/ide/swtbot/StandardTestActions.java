@@ -207,7 +207,7 @@ public final class StandardTestActions {
 
 		try {
 			SWTBotShell genShell = bot.shell("Generating...");
-			bot.waitUntil(Conditions.shellCloses(genShell));
+			bot.waitUntil(Conditions.shellCloses(genShell), 10000);
 		} catch (WidgetNotFoundException e) {
 			// PASS
 		}
