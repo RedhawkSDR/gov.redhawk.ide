@@ -200,6 +200,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		this.domain = domain;
 		this.setTitle("Launch Domain Manager");
 		setComparator(new ViewerComparator());
+		setEmptyListMessage("No nodes found");
 		setStatusLineAboveButtons(true);
 	}
 
@@ -274,13 +275,13 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		final GridDataFactory textFactory = GridDataFactory.fillDefaults().grab(true, false).span(2, 1);
 		final GridData data;
 
-		final Group domainManagerGroup = new Group(composite, SWT.NULL);
+		final Group domainManagerGroup = new Group(composite, SWT.NONE);
 
 		domainManagerGroup.setText("Domain Manager");
 		domainManagerGroup.setLayout(gridLayout);
 		domainManagerGroup.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 
-		this.label = new Label(domainManagerGroup, SWT.NULL);
+		this.label = new Label(domainManagerGroup, SWT.NONE);
 		this.label.setText("Domain Name: ");
 		this.text = new Text(domainManagerGroup, SWT.BORDER);
 		data = textFactory.create();
@@ -299,7 +300,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 		ControlDecorationSupport.create(this.nameBinding, SWT.TOP | SWT.LEFT);
 
-		this.label = new Label(domainManagerGroup, SWT.NULL);
+		this.label = new Label(domainManagerGroup, SWT.NONE);
 		this.label.setText("Debug Level: ");
 		this.debugViewer = new ComboViewer(domainManagerGroup, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN | SWT.BORDER);
 		this.debugViewer.setContentProvider(new ArrayContentProvider());
@@ -308,7 +309,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		this.context.bindValue(SWTObservables.observeSelection(this.debugViewer.getControl()), PojoObservables.observeValue(this.model, "debugLevel"), null,
 			null);
 
-		final Group deviceManagerGroup = new Group(composite, SWT.NULL);
+		final Group deviceManagerGroup = new Group(composite, SWT.NONE);
 
 		deviceManagerGroup.setText("Device Manager");
 		deviceManagerGroup.setLayout(GridLayoutFactory.fillDefaults().create());
@@ -363,11 +364,6 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		return new ProgressMonitorPart(composite, pmlayout, true) {
 			String currentTask = null;
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#setBlocked(org.eclipse.core.runtime.IStatus)
-			 */
 			@Override
 			public void setBlocked(final IStatus reason) {
 				super.setBlocked(reason);
@@ -376,11 +372,6 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 				}
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#clearBlocked()
-			 */
 			@Override
 			public void clearBlocked() {
 				super.clearBlocked();
@@ -389,34 +380,18 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 				}
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#beginTask(java.lang.String,
-			 *      int)
-			 */
 			@Override
 			public void beginTask(final String name, final int totalWork) {
 				super.beginTask(name, totalWork);
 				this.currentTask = name;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#setTaskName(java.lang.String)
-			 */
 			@Override
 			public void setTaskName(final String name) {
 				super.setTaskName(name);
 				this.currentTask = name;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#subTask(java.lang.String)
-			 */
 			@Override
 			public void subTask(final String name) {
 				super.subTask(name);
@@ -437,7 +412,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 	@Override
 	protected Composite createSelectionButtons(final Composite parent) {
-		final Composite root = new Composite(parent, SWT.NULL);
+		final Composite root = new Composite(parent, SWT.NONE);
 		root.setLayout(new GridLayout(2, true));
 		final Control controls = super.createSelectionButtons(root);
 		controls.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -447,7 +422,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 		subContainer.setLayout(gridLayout);
 
-		this.label = new Label(subContainer, SWT.NULL);
+		this.label = new Label(subContainer, SWT.NONE);
 		this.label.setText("Debug Level: ");
 
 		this.debugViewer = new ComboViewer(subContainer, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN | SWT.BORDER);
@@ -516,11 +491,6 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	@Override
 	public Object[] getResult() {
 		return new Object[] { LaunchDomainManagerWithOptionsDialog.debugMap };
-	}
-
-	@Override
-	public void setEmptyListMessage(final String message) {
-		super.setEmptyListMessage("No entries found.");
 	}
 
 	protected int getDebugLevel() {
