@@ -16,11 +16,7 @@ import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.model.sca.impl.ScaComponentImpl;
-import gov.redhawk.sca.util.SilentJob;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.notify.Notification;
@@ -407,38 +403,30 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 
 	@Override
 	public void dispose() {
+		// END GENERATED CODE
 		// If we have a launch object (i.e. this IDE launched the object locally)
 		if (getLaunch() != null) {
-			// Call releaseObject() in a job. The dispose method may be called by UI / model threads, and thus cannot
-			// block.
-			Job job = new SilentJob("Local Component Release job") {
-
-				@Override
-				protected IStatus runSilent(IProgressMonitor monitor) {
-					try {
-						releaseObject();
-					} catch (final ReleaseError e) {
-						// PASS
-					}
-					return Status.OK_STATUS;
-				}
-
-			};
-			job.setUser(false);
-			job.setSystem(true);
-			job.schedule();
+			Job terminateJob = new TerminateJob(getLaunch(), getName());
+			terminateJob.setUser(false);
+			terminateJob.setSystem(true);
+			terminateJob.schedule();
 		}
 
 		super.dispose();
+		// BEGIN GENERATED CODE
 	}
 
 	@Override
 	public void releaseObject() throws ReleaseError {
 		// END GENERATED CODE
 		final String tmpName = getName();
+		final ILaunch tmpLaunch = getLaunch();
+
 		super.releaseObject();
-		if (this.launch != null) {
-			final Job terminateJob = new TerminateJob(this, tmpName);
+
+		// If it's a local launch, schedule termination after a few seconds to ensure it cleans up
+		if (tmpLaunch != null) {
+			final Job terminateJob = new TerminateJob(tmpLaunch, tmpName);
 			terminateJob.schedule(5000);
 		}
 		// BEGIN GENERATED CODE
