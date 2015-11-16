@@ -47,7 +47,6 @@ import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.impl.ContainerShapeImpl;
@@ -471,24 +470,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		StyleUtil.setStyle(cText, StyleUtil.OUTER_TEXT);
 		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 
-		IFeatureProvider featureProvider = pattern.getFeatureProvider();
-
 		addInnerContainer(pattern.getInnerTitle(newObject), pattern.getInnerImageId(), pattern.getStyleForInner());
-
-		EList<ProvidesPortStub> provides = pattern.getProvides(newObject);
-		EList<UsesPortStub> uses = pattern.getUses(newObject);
-		ComponentSupportedInterfaceStub interfaceStub = pattern.getInterface(newObject);
-
-		if (isCollapsed()) {
-			//hide shape details (only hides ports for now)
-
-			if (provides != null && provides.size() > 0 || interfaceStub != null) {
-				addSuperProvidesPortContainerShape(provides, interfaceStub, featureProvider);
-			}
-			if (uses != null && uses.size() > 0) {
-				addSuperUsesPortContainerShape(uses, featureProvider);
-			}
-		}
 	}
 
 	/**
@@ -935,31 +917,14 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		return (ContainerShape) DUtil.findChildShapeByProperty(this, DUtil.SHAPE_TYPE, SUPER_USES_PORTS_RECTANGLE);
 	}
 
-	protected List<Shape> getPortsToRemove(ContainerShape containerShape) {
-		List<Shape> removed = new ArrayList<Shape>();
-		EObject containerObject = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(containerShape.getContainer());
-		for (Shape childShape : containerShape.getChildren()) {
-			EObject bo = DUtil.getBusinessObject(childShape);
-			if (bo == null || bo.eIsProxy()) {
-				// wasn't found, deleting this port
-				removed.add(childShape);
-			} else if (bo.eContainer() != containerObject) {
-				// Container changed; most likely, the underlying model indices changed
-				removed.add(childShape);
-			}
-		}
-		return removed;
-	}
-
 	//Updates Provides Ports Container Shape
 	protected Reason internalUpdateProvidesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, EList<ProvidesPortStub> provides,
-		Diagram diagram, boolean performUpdate, boolean updateStatus) {
+		boolean performUpdate) {
 
 		// providesPortsContainerShape
 		ContainerShape providesPortsContainerShape = getProvidesPortsContainerShape();
 
-		if (isCollapsed()) {
-		} else if (providesPortsContainerShape == null) {
+		if (!isCollapsed() && providesPortsContainerShape == null) {
 			//ports container does NOT exist, create it
 			if (performUpdate) {
 				providesPortsContainerShape = addProvidesPortsContainerShape();
@@ -967,22 +932,17 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return new Reason(true, "Provides Ports ContainerShape require creation");
 		}
 
-		if (updateStatus && performUpdate) {
-			return new Reason(true, "Update Provides Ports successful");
-		}
-
 		return new Reason(false, "No updates required");
 	}
 
 	//Updates Uses Ports Container Shape
 	protected Reason internalUpdateUsesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, EList<UsesPortStub> uses,
-		Diagram diagram, boolean performUpdate, boolean updateStatus) {
+		boolean performUpdate) {
 
 		// usesPortsContainerShape
 		ContainerShape usesPortsContainerShape = getUsesPortsContainerShape();
 
-		if (isCollapsed()) {
-		} else if (usesPortsContainerShape == null) {
+		if (!isCollapsed() && usesPortsContainerShape == null) {
 			//ports container does NOT exist, create it
 
 			if (performUpdate) {
@@ -991,17 +951,14 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return new Reason(true, "Uses Ports ContainerShape require creation");
 		}
 
-		if (updateStatus && performUpdate) {
-			return new Reason(true, "Update Uses Ports successful");
-		}
-
 		return new Reason(false, "No updates required");
 	}
 
 	//update super provides port container shape
 	protected Reason internalUpdateSuperProvidesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject,
-		EList<ProvidesPortStub> provides, ComponentSupportedInterfaceStub interfaceStub, Diagram diagram, boolean performUpdate, boolean updateStatus) {
+		EList<ProvidesPortStub> provides, ComponentSupportedInterfaceStub interfaceStub, boolean performUpdate) {
 
+		boolean updateStatus = false;
 		// super port shape
 		ContainerShape superProvidesPortsRectangleShape = getSuperProvidesPortsContainerShape();
 
@@ -1080,8 +1037,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 	//updates super uses ports container shape
 	protected Reason internalUpdateSuperUsesPortsContainerShape(AbstractPortSupplierPattern pattern, EObject businessObject, EList<UsesPortStub> uses,
-		Diagram diagram, boolean performUpdate, boolean updateStatus) {
-
+		boolean performUpdate) {
+		boolean updateStatus = false;
 		// super port shape
 		ContainerShape superUsesPortsRectangleShape = getSuperUsesPortsContainerShape();
 
@@ -1163,15 +1120,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		boolean updateStatus = false;
 
-		Diagram diagram = DUtil.findDiagram(this);
-
 		EList<ProvidesPortStub> provides = pattern.getProvides(businessObject);
 		ComponentSupportedInterfaceStub interfaceStub = pattern.getInterface(businessObject);
 		EList<UsesPortStub> uses = pattern.getUses(businessObject);
 
 		//update super provides ports if they exist
-		Reason updateSuperProvidesPortsReason = internalUpdateSuperProvidesPortsContainerShape(pattern, businessObject, provides, interfaceStub, diagram,
-			performUpdate, updateStatus);
+		Reason updateSuperProvidesPortsReason = internalUpdateSuperProvidesPortsContainerShape(pattern, businessObject, provides, interfaceStub,
+			performUpdate);
 		if (updateSuperProvidesPortsReason.toBoolean()) {
 			if (!performUpdate) {
 				//if updates required return true
@@ -1181,7 +1136,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 
 		//update super uses ports if they exist
-		Reason updateSuperUsesPortsReason = internalUpdateSuperUsesPortsContainerShape(pattern, businessObject, uses, diagram, performUpdate, updateStatus);
+		Reason updateSuperUsesPortsReason = internalUpdateSuperUsesPortsContainerShape(pattern, businessObject, uses, performUpdate);
 		if (updateSuperUsesPortsReason.toBoolean()) {
 			if (!performUpdate) {
 				//if updates required return true
@@ -1192,7 +1147,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		//draw all shape details (only ports)
 		//update provides ports
-		Reason updateProvidesPortsReason = internalUpdateProvidesPortsContainerShape(pattern, businessObject, provides, diagram, performUpdate, updateStatus);
+		Reason updateProvidesPortsReason = internalUpdateProvidesPortsContainerShape(pattern, businessObject, provides, performUpdate);
 		if (updateProvidesPortsReason.toBoolean()) {
 			if (!performUpdate) {
 				//if updates required return true
@@ -1202,7 +1157,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 
 		//update uses ports
-		Reason updateUsesPortsReason = internalUpdateUsesPortsContainerShape(pattern, businessObject, uses, diagram, performUpdate, updateStatus);
+		Reason updateUsesPortsReason = internalUpdateUsesPortsContainerShape(pattern, businessObject, uses, performUpdate);
 		if (updateUsesPortsReason.toBoolean()) {
 			if (!performUpdate) {
 				//if updates required return true
