@@ -559,13 +559,13 @@ public final class SpdLauncherUtil {
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.NAMING_CONTEXT_IOR, null));
 		retVal.append(" ");
-		retVal.append(LaunchVariables.NAME_BINDING);
-		retVal.append(" ");
-		retVal.append(manager.generateVariableExpression(LaunchVariables.NAME_BINDING, null));
-		retVal.append(" ");
 		retVal.append(LaunchVariables.COMPONENT_IDENTIFIER);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.COMPONENT_IDENTIFIER, null));
+		retVal.append(" ");
+		retVal.append(LaunchVariables.NAME_BINDING);
+		retVal.append(" ");
+		retVal.append(manager.generateVariableExpression(LaunchVariables.NAME_BINDING, null));
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.DEBUG_LEVEL, null));
 		return retVal.toString();
