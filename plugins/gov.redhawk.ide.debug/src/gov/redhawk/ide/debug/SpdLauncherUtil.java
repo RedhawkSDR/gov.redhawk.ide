@@ -658,10 +658,6 @@ public final class SpdLauncherUtil {
 		final StringBuilder retVal = new StringBuilder();
 		retVal.append(manager.generateVariableExpression(LaunchVariables.EXEC_PARAMS, null));
 		retVal.append(" ");
-		retVal.append(LaunchVariables.NAMING_CONTEXT_IOR);
-		retVal.append(" ");
-		retVal.append(manager.generateVariableExpression(LaunchVariables.NAMING_CONTEXT_IOR, null));
-		retVal.append(" ");
 		retVal.append(LaunchVariables.COMPONENT_IDENTIFIER);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.COMPONENT_IDENTIFIER, null));
@@ -675,6 +671,10 @@ public final class SpdLauncherUtil {
 		retVal.append(manager.generateVariableExpression(LaunchVariables.PROFILE_NAME, null));
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.DEBUG_LEVEL, null));
+		retVal.append(" ");
+		retVal.append(LaunchVariables.NAMING_CONTEXT_IOR);
+		retVal.append(" ");
+		retVal.append(manager.generateVariableExpression(LaunchVariables.NAMING_CONTEXT_IOR, null));
 		return retVal.toString();
 	}
 
@@ -689,15 +689,15 @@ public final class SpdLauncherUtil {
 		final StringBuilder retVal = new StringBuilder();
 		retVal.append(manager.generateVariableExpression(LaunchVariables.EXEC_PARAMS, null));
 		retVal.append(" ");
-		retVal.append(LaunchVariables.DEVICE_MGR_IOR);
-		retVal.append(" ");
-		retVal.append(manager.generateVariableExpression(LaunchVariables.DEVICE_MGR_IOR, null));
-		retVal.append(" ");
 		retVal.append(LaunchVariables.SERVICE_NAME);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.SERVICE_NAME, null));
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.DEBUG_LEVEL, null));
+		retVal.append(" ");
+		retVal.append(LaunchVariables.DEVICE_MGR_IOR);
+		retVal.append(" ");
+		retVal.append(manager.generateVariableExpression(LaunchVariables.DEVICE_MGR_IOR, null));
 		return retVal.toString();
 	}
 
@@ -711,11 +711,6 @@ public final class SpdLauncherUtil {
 		final IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		final StringBuilder retVal = new StringBuilder();
 		retVal.append(manager.generateVariableExpression(LaunchVariables.EXEC_PARAMS, null));
-		retVal.append(" ");
-
-		retVal.append(LaunchVariables.DEVICE_MGR_IOR);
-		retVal.append(" ");
-		retVal.append(manager.generateVariableExpression(LaunchVariables.DEVICE_MGR_IOR, null));
 		retVal.append(" ");
 
 		retVal.append(LaunchVariables.PROFILE_NAME);
@@ -734,6 +729,12 @@ public final class SpdLauncherUtil {
 		retVal.append(" ");
 
 		retVal.append(manager.generateVariableExpression(LaunchVariables.DEBUG_LEVEL, null));
+		retVal.append(" ");
+
+		retVal.append(LaunchVariables.DEVICE_MGR_IOR);
+		retVal.append(" ");
+		retVal.append(manager.generateVariableExpression(LaunchVariables.DEVICE_MGR_IOR, null));
+
 		return retVal.toString();
 	}
 
