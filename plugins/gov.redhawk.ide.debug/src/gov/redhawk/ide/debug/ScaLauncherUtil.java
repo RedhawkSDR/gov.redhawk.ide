@@ -500,10 +500,7 @@ public final class ScaLauncherUtil {
 	private static String getComponentArgs(final ILaunch launch, final Map<String, String> override, final SoftPkg spd) throws CoreException {
 		final StringBuilder builder = new StringBuilder();
 
-		String namingContextIOR = null;
-
-		builder.append(ScaDebugLaunchConstants.ARG_NAMING_CONTEXT_IOR);
-		builder.append(" ");
+		String namingContextIOR;
 		if (override.containsKey(ScaDebugLaunchConstants.ARG_NAMING_CONTEXT_IOR)) {
 			namingContextIOR = override.get(ScaDebugLaunchConstants.ARG_NAMING_CONTEXT_IOR);
 		} else {
@@ -516,12 +513,8 @@ public final class ScaLauncherUtil {
 		if (launch != null) {
 			launch.setAttribute(ScaLauncherUtil.LAUNCH_ATT_NAMING_CONTEXT_IOR, namingContextIOR);
 		}
-		builder.append(namingContextIOR);
-		builder.append(" ");
 
 		String name = null;
-		builder.append(ScaDebugLaunchConstants.ARG_NAME_BINDING);
-		builder.append(" ");
 		if (override.containsKey(ScaDebugLaunchConstants.ARG_NAME_BINDING)) {
 			name = override.get(ScaDebugLaunchConstants.ARG_NAME_BINDING);
 		} else {
@@ -530,7 +523,10 @@ public final class ScaLauncherUtil {
 		if (launch != null) {
 			launch.setAttribute(ScaLauncherUtil.LAUNCH_ATT_NAME_BINDING, name);
 		}
-		builder.append(name);
+
+		builder.append(ScaDebugLaunchConstants.ARG_NAMING_CONTEXT_IOR);
+		builder.append(" ");
+		builder.append(namingContextIOR);
 		builder.append(" ");
 
 		builder.append(ScaDebugLaunchConstants.ARG_COMPONENT_IDENTIFIER);
@@ -538,13 +534,16 @@ public final class ScaLauncherUtil {
 		if (override.containsKey(ScaDebugLaunchConstants.ARG_COMPONENT_IDENTIFIER)) {
 			builder.append(override.get(ScaDebugLaunchConstants.ARG_COMPONENT_IDENTIFIER));
 		} else {
-			final String compIdentifier;
 			// We would like this to be sandbox:name but
 			// but whenever usagename != compIdentifer connections
 			// don't work per ticket #2165
-			compIdentifier = name;
-			builder.append(compIdentifier);
+			builder.append(name);
 		}
+		builder.append(" ");
+
+		builder.append(ScaDebugLaunchConstants.ARG_NAME_BINDING);
+		builder.append(" ");
+		builder.append(name);
 
 		return builder.toString();
 	}
