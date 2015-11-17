@@ -50,7 +50,6 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Assert;
@@ -70,7 +69,6 @@ import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
-@SuppressWarnings("restriction")
 public class DiagramTestUtils extends AbstractGraphitiTest {
 
 	/** hide constructor, since all functions are static. */
@@ -769,7 +767,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 	 * Maximizes active window
 	 */
 	public static void maximizeActiveWindow(SWTGefBot gefBot) {
-		gefBot.menu(IDEWorkbenchMessages.Workbench_window).menu("Maximize Active View or Editor").click();
+		gefBot.menu().menu("Window", "Navigation", "Maximize Active View or Editor").click();
 	}
 
 	/**

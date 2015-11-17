@@ -14,10 +14,6 @@ import gov.redhawk.ide.swtbot.UITest;
 
 import org.junit.Before;
 
-/**
- * 
- */
-@SuppressWarnings("restriction")
 public abstract class AbstractGraphitiTest extends UITest {
 
 	protected RHSWTGefBot gefBot; // SUPPRESS CHECKSTYLE VisibilityModifier
