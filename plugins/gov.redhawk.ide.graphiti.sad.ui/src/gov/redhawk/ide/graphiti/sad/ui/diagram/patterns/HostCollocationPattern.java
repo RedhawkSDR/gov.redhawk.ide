@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
@@ -78,6 +77,9 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 	public static final String GA_OUTER_ROUNDED_RECTANGLE_TEXT = "outerRoundedRectangleText";
 	public static final String GA_OUTER_ROUNDED_RECTANGLE_IMAGE = "outerRoundedRectangleImage";
 
+	private static final int INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15;
+	private static final int PROVIDES_PORTS_LEFT_PADDING = 5;
+	private static final int INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING;
 	private static final int ICON_IMAGE_LENGTH = 16;
 
 	public HostCollocationPattern() {
@@ -176,10 +178,10 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		int minHeight = (context.getHeight() > 300) ? context.getHeight() : 300;
 		// outerRoundedRectangle
 		gaLayoutService.setLocationAndSize(outerRoundedRectangle, context.getX(), context.getY(), minWidth, minHeight);
-		gaLayoutService.setLocationAndSize(outerRoundedRectangleText, RHContainerShapeImpl.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING
+		gaLayoutService.setLocationAndSize(outerRoundedRectangleText, HostCollocationPattern.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING
 			+ HostCollocationPattern.ICON_IMAGE_LENGTH + 4, 0, minWidth
-			- (RHContainerShapeImpl.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + HostCollocationPattern.ICON_IMAGE_LENGTH + 4), 20);
-		gaLayoutService.setLocationAndSize(outerRoundedRectangleImage, RHContainerShapeImpl.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0,
+			- (HostCollocationPattern.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + HostCollocationPattern.ICON_IMAGE_LENGTH + 4), 20);
+		gaLayoutService.setLocationAndSize(outerRoundedRectangleImage, HostCollocationPattern.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0,
 			HostCollocationPattern.ICON_IMAGE_LENGTH, HostCollocationPattern.ICON_IMAGE_LENGTH);
 
 		// move all SadComponentInstantiation shapes into new HostCollocation shape

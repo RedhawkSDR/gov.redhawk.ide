@@ -226,11 +226,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	public static final String SUPER_USES_PORTS_RECTANGLE = "superUsesPortsContainer";
 
 	// Shape size constants
-	private static final int INNER_CONTAINER_SHAPE_TOP_PADDING = 20;
-	private static final int INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15;
-	private static final int PROVIDES_PORTS_LEFT_PADDING = 5;
-	public static final int INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING;
-
 	private static final int INNER_ROUNDED_RECTANGLE_CORNER_WIDTH = 10;
 	private static final int INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT = 10;
 	// BEGIN GENERATED CODE
@@ -465,7 +460,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createPlainRoundedRectangle(innerContainerShape,
 			INNER_ROUNDED_RECTANGLE_CORNER_WIDTH, INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT);
 		Graphiti.getPeService().setPropertyValue(innerRoundedRectangle, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE);
-		Graphiti.getGaLayoutService().setLocation(innerRoundedRectangle, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, INNER_CONTAINER_SHAPE_TOP_PADDING);
 
 		// Inner image
 		Image innerImage = Graphiti.getGaCreateService().createImage(innerRoundedRectangle, null);
