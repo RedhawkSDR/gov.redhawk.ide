@@ -60,6 +60,32 @@ public class PortUtils {
 		});
 	}
 
+	/**
+	 * Returns bots for each uses port's container edit part. All edit parts which are descendants of the provided
+	 * bot edit part are checked.
+	 * @param editPart A bot for an ancestor edit part
+	 * @return Bots for all found uses port edit parts
+	 */
+	public static List<SWTBotGefEditPart> getUsesPortContainerBots(SWTBotGefEditPart editPart) {
+		return editPart.descendants(new BaseMatcher<EditPart>() {
+			@Override
+			public boolean matches(Object item) {
+				if (!(item instanceof GraphitiShapeEditPart)) {
+					return false;
+				}
+				GraphitiShapeEditPart editPart = (GraphitiShapeEditPart) item;
+				PictogramElement pe = editPart.getPictogramElement();
+				String propValue = Graphiti.getPeService().getPropertyValue(pe, DUtil.SHAPE_TYPE);
+				return RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER.equals(propValue);
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("provides port edit parts");
+			}
+		});
+	}
+
 	public enum PortState {
 		NORMAL_PROVIDES,
 		NORMAL_USES,
