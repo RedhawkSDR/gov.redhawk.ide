@@ -160,7 +160,7 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IPa
 	}
 
 	@Override
-	public String getOuterImageId() {
+	protected String getOuterImageId() {
 		return ImageProvider.IMG_FIND_BY;
 	}
 }

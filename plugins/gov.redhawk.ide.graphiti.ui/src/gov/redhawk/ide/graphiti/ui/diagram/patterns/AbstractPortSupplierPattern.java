@@ -53,6 +53,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstant
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
@@ -66,11 +67,9 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	private static final int INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING;
 	private static final int PORTS_CONTAINER_SHAPE_TOP_PADDING = 60;
 	private static final int INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8;
-	private static final int INNER_ROUNDED_RECTANGLE_LINE_Y = 28;
 	private static final int INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING;
 	private static final int INTERFACE_SHAPE_HEIGHT = 10;
 	private static final int ICON_IMAGE_LENGTH = 16;
-	private static final int SUPER_PORT_SHAPE_HEIGHT = 25;
 	private static final int SUPER_PORT_SHAPE_WIDTH = 10;
 	private static final int SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5;
 	private static final int LOLLIPOP_ELLIPSE_DIAMETER = 10;
@@ -264,6 +263,11 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		return Reason.createFalseReason();
 	}
 
+	/**
+	 * Returns business objects that should be linked to shape
+	 */
+	protected abstract List<EObject> getBusinessObjectsToLink(EObject obj);
+
 	protected Map<EObject, UpdateAction> getPortsToUpdate(ContainerShape containerShape, List< ? extends EObject > modelPorts) {
 		// Put the model's port stubs into a set for tracking
 		Set<EObject> expectedPorts = new HashSet<EObject>(modelPorts);
@@ -375,14 +379,68 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	 * @param obj
 	 * @return
 	 */
-	public abstract EList<UsesPortStub> getUses(EObject obj);
+	protected abstract EList<UsesPortStub> getUses(EObject obj);
 
 	/**
 	 * Provides list of ProvidesPortStubs (if applicable)
 	 * @param obj
 	 * @return
 	 */
-	public abstract EList<ProvidesPortStub> getProvides(EObject obj);
+	protected abstract EList<ProvidesPortStub> getProvides(EObject obj);
+
+	/**
+	 * Provides interface (if applicable)
+	 * @param obj
+	 * @return
+	 */
+	protected abstract ComponentSupportedInterfaceStub getInterface(EObject obj);
+
+	/**
+	 * Provides the title of the outer shape
+	 * @param findByStub
+	 * @return
+	 */
+	protected abstract String getOuterTitle(EObject obj);
+
+	/**
+	 * Provides outer image ID for graphical representation
+	 * @return
+	 */
+	protected abstract String getOuterImageId();
+
+	/**
+	 * Provides outer container style for graphical representation
+	 * @return
+	 */
+	protected abstract String getStyleForOuter();
+
+	/**
+	 * Provides the title of the inner shape
+	 * @param findByStub
+	 * @return
+	 */
+	protected abstract String getInnerTitle(EObject obj);
+
+	/**
+	 * Provides inner image ID for graphical representation
+	 * @param
+	 * @return
+	 */
+	protected abstract String getInnerImageId();
+
+	/**
+	 * Provides inner container style for graphical representation
+	 * @param
+	 * @return
+	 */
+	protected abstract String getStyleForInner();
+
+	/**
+	 * Sets a new inner title on the underlying business object.
+	 * @param businessObject
+	 * @param value
+	 */
+	protected abstract void setInnerTitle(EObject businessObject, String value);
 
 	@Override
 	public PictogramElement add(IAddContext context) {
@@ -730,11 +788,4 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		// perform update, redraw
 		updatePictogramElement(containerShape);
 	}
-
-	/**
-	 * Sets a new inner title on the underlying business object.
-	 * @param businessObject
-	 * @param value
-	 */
-	protected abstract void setInnerTitle(EObject businessObject, String value);
 }

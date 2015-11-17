@@ -216,7 +216,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierP
 	}
 
 	@Override
-	public String getOuterTitle(EObject obj) {
+	protected String getOuterTitle(EObject obj) {
 		if (obj instanceof DcdComponentInstantiation) {
 			try {
 				return ((DcdComponentInstantiation) obj).getPlacement().getComponentFileRef().getFile().getSoftPkg().getName();
@@ -228,7 +228,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierP
 	}
 
 	@Override
-	public String getInnerTitle(EObject obj) {
+	protected String getInnerTitle(EObject obj) {
 		if (obj instanceof DcdComponentInstantiation) {
 			return ((DcdComponentInstantiation) obj).getUsageName();
 		}
@@ -241,7 +241,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierP
 	}
 
 	@Override
-	public EList<UsesPortStub> getUses(EObject obj) {
+	protected EList<UsesPortStub> getUses(EObject obj) {
 		if (obj instanceof DcdComponentInstantiation) {
 			return ((DcdComponentInstantiation) obj).getUses();
 		}
@@ -249,7 +249,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierP
 	}
 
 	@Override
-	public EList<ProvidesPortStub> getProvides(EObject obj) {
+	protected EList<ProvidesPortStub> getProvides(EObject obj) {
 		if (obj instanceof DcdComponentInstantiation) {
 			return ((DcdComponentInstantiation) obj).getProvides();
 		}
@@ -257,7 +257,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierP
 	}
 
 	@Override
-	public ComponentSupportedInterfaceStub getInterface(EObject obj) {
+	protected ComponentSupportedInterfaceStub getInterface(EObject obj) {
 		if (obj instanceof DcdComponentInstantiation) {
 			return ((DcdComponentInstantiation) obj).getInterfaceStub();
 		}

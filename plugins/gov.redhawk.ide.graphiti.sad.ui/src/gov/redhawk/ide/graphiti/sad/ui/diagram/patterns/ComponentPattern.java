@@ -665,7 +665,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 	}
 
 	@Override
-	public String getOuterTitle(EObject obj) {
+	protected String getOuterTitle(EObject obj) {
 		if (obj instanceof SadComponentInstantiation) {
 			return getOuterTitle((SadComponentInstantiation) obj);
 		}
@@ -673,7 +673,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 	}
 
 	@Override
-	public String getInnerTitle(EObject obj) {
+	protected String getInnerTitle(EObject obj) {
 		if (obj instanceof SadComponentInstantiation) {
 			return getInnerTitle((SadComponentInstantiation) obj);
 		}
@@ -709,7 +709,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 	}
 
 	@Override
-	public EList<UsesPortStub> getUses(EObject obj) {
+	protected EList<UsesPortStub> getUses(EObject obj) {
 		if (obj instanceof SadComponentInstantiation) {
 			return ((SadComponentInstantiation) obj).getUses();
 		}
@@ -717,7 +717,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 	}
 
 	@Override
-	public EList<ProvidesPortStub> getProvides(EObject obj) {
+	protected EList<ProvidesPortStub> getProvides(EObject obj) {
 		if (obj instanceof SadComponentInstantiation) {
 			return ((SadComponentInstantiation) obj).getProvides();
 		}
@@ -725,7 +725,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 	}
 
 	@Override
-	public ComponentSupportedInterfaceStub getInterface(EObject obj) {
+	protected ComponentSupportedInterfaceStub getInterface(EObject obj) {
 		if (obj instanceof SadComponentInstantiation) {
 			return ((SadComponentInstantiation) obj).getInterfaceStub();
 		}
@@ -733,22 +733,22 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 	}
 
 	@Override
-	public String getOuterImageId() {
+	protected String getOuterImageId() {
 		return WaveformImageProvider.IMG_COMPONENT_PLACEMENT;
 	}
 
 	@Override
-	public String getInnerImageId() {
+	protected String getInnerImageId() {
 		return WaveformImageProvider.IMG_COMPONENT_INSTANCE;
 	}
 
 	@Override
-	public String getStyleForOuter() {
+	protected String getStyleForOuter() {
 		return StyleUtil.OUTER_SHAPE;
 	}
 
 	@Override
-	public String getStyleForInner() {
+	protected String getStyleForInner() {
 		return StyleUtil.COMPONENT_INNER;
 	}
 
@@ -784,7 +784,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 	/**
 	 * Returns component, sad, and external ports. Order does matter.
 	 */
-	public List<EObject> getBusinessObjectsToLink(EObject componentInstantiation) {
+	protected List<EObject> getBusinessObjectsToLink(EObject componentInstantiation) {
 		// get external ports
 		ExternalPorts externalPorts = DUtil.getDiagramSAD(getDiagram()).getExternalPorts();
 

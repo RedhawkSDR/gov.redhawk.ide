@@ -94,7 +94,7 @@ public class FindByDomainManagerPattern extends AbstractFindByPattern implements
 	}
 
 	@Override
-	public String getOuterImageId() {
+	protected String getOuterImageId() {
 		return ImageProvider.IMG_FIND_BY;
 	}
 }

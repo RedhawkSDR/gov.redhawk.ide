@@ -10,11 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
-import java.util.List;
-
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.config.IPatternConfiguration;
@@ -42,9 +37,6 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 		return getCreateName();
 	}
 	
-	@Override
-	public abstract void setValue(final String value, IDirectEditingContext context);
-	
 	/**
 	 * Checks to see if the given String <code>value</code> is valid. Returns an error
 	 * message if invalid and <code>null</code> if valid. 
@@ -63,74 +55,6 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 			return valueType + " Name must not include line breaks";
 		}
 		// null means, that the value is valid
-		return null;
-	}
-
-	/**
-	 * Provides the title of the outer shape
-	 * @param findByStub
-	 * @return
-	 */
-	public String getOuterTitle(EObject obj) {
-		return null;
-	}
-	
-	/**
-	 * Provides the title of the inner shape
-	 * @param findByStub
-	 * @return
-	 */
-	public abstract String getInnerTitle(EObject obj);
-
-	/**
-	 * Provides interface (if applicable)
-	 * @param obj
-	 * @return
-	 */
-	public ComponentSupportedInterfaceStub getInterface(EObject obj) {
-		return null;
-	}
-	
-	/**
-	 * Provides outer image ID for graphical representation
-	 * @param
-	 * @return
-	 */
-	public String getOuterImageId() {
-		return null;
-	}
-	
-	/**
-	 * Provides inner image ID for graphical representation
-	 * @param
-	 * @return
-	 */
-	public String getInnerImageId() {
-		return null;
-	}
-	
-	/**
-	 * Provides outer container style for graphical representation
-	 * @param
-	 * @return
-	 */
-	public String getStyleForOuter() {
-		return null;
-	}
-	
-	/**
-	 * Provides inner container style for graphical representation
-	 * @param
-	 * @return
-	 */
-	public String getStyleForInner() {
-		return null;
-	}
-	
-	/**
-	 * Returns business objects that should be linked to shape
-	 */
-	public List<EObject> getBusinessObjectsToLink(EObject obj) {
 		return null;
 	}
 	

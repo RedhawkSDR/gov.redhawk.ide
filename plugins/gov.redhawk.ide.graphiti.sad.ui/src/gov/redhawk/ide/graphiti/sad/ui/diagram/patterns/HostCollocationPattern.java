@@ -661,12 +661,8 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		return dialog.getInput();
 	}
 
-	@Override
-	public String getInnerTitle(EObject obj) {
-		if (obj instanceof HostCollocation) {
-			return ((HostCollocation) obj).getName();
-		}
-		return null;
+	protected String getName(EObject obj) {
+		return ((HostCollocation) obj).getName();
 	}
 
 	@Override
@@ -689,7 +685,7 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 	@Override
 	public String getInitialValue(IDirectEditingContext context) {
 		EObject hc = (EObject) DUtil.getBusinessObject(context.getPictogramElement());
-		return getInnerTitle(hc);
+		return getName(hc);
 	}
 
 	@Override
@@ -713,10 +709,4 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		updatePictogramElement(context.getPictogramElement());
 	}
 	
-	@Override
-	public List<EObject> getBusinessObjectsToLink(EObject obj) {
-		List<EObject> businessObjectsToLink = new ArrayList<EObject>();
-		businessObjectsToLink.add(obj);
-		return businessObjectsToLink;
-	}
 }

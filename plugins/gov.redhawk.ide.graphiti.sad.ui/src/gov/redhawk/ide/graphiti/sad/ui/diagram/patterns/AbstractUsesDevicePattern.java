@@ -98,7 +98,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	}
 
 	@Override
-	public String getOuterTitle(EObject obj) {
+	protected String getOuterTitle(EObject obj) {
 		if (obj instanceof UsesDeviceStub) {
 			return getOuterTitle((UsesDeviceStub) obj);
 		}
@@ -115,7 +115,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	}
 	
 	@Override
-	public String getInnerTitle(EObject obj) {
+	protected String getInnerTitle(EObject obj) {
 		if (obj instanceof UsesDeviceStub) {
 			return getInnerTitle((UsesDeviceStub) obj);
 		}
@@ -250,34 +250,34 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 
 
 	@Override
-	public String getOuterImageId() {
+	protected String getOuterImageId() {
 		return ImageProvider.IMG_FIND_BY;
 	}
 
 	@Override
-	public String getInnerImageId() {
+	protected String getInnerImageId() {
 		return ImageProvider.IMG_USES_DEVICE_FRONTEND_TUNER;
 	}
 
 	@Override
-	public String getStyleForOuter() {
+	protected String getStyleForOuter() {
 		return StyleUtil.OUTER_SHAPE;
 	}
 
 	@Override
-	public String getStyleForInner() {
+	protected String getStyleForInner() {
 		return StyleUtil.USES_DEVICE_INNER;
 	}
 
 	@Override
-	public List<EObject> getBusinessObjectsToLink(EObject obj) {
+	protected List<EObject> getBusinessObjectsToLink(EObject obj) {
 		List<EObject> businessObjectsToLink = new ArrayList<EObject>();
 		businessObjectsToLink.add(obj);
 		return businessObjectsToLink;
 	}
 	
 	@Override
-	public EList<UsesPortStub> getUses(EObject obj) {
+	protected EList<UsesPortStub> getUses(EObject obj) {
 		if (obj instanceof UsesDeviceStub) {
 			return ((UsesDeviceStub) obj).getUsesPortStubs();
 		}
@@ -285,7 +285,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	}
 
 	@Override
-	public EList<ProvidesPortStub> getProvides(EObject obj) {
+	protected EList<ProvidesPortStub> getProvides(EObject obj) {
 		if (obj instanceof UsesDeviceStub) {
 			return ((UsesDeviceStub) obj).getProvidesPortStubs();
 		}
@@ -293,7 +293,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	}
 	
 	@Override
-	public ComponentSupportedInterfaceStub getInterface(EObject obj) {
+	protected ComponentSupportedInterfaceStub getInterface(EObject obj) {
 		if (obj instanceof UsesDeviceStub) {
 			return ((UsesDeviceStub) obj).getInterface();
 		}

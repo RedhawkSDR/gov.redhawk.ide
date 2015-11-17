@@ -94,7 +94,7 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 	}
 
 	@Override
-	public String getOuterTitle(EObject obj) {
+	protected String getOuterTitle(EObject obj) {
 		if (obj instanceof FindByStub) {
 			return getOuterTitle((FindByStub) obj);
 		}
@@ -111,7 +111,7 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 	}
 
 	@Override
-	public String getInnerTitle(EObject obj) {
+	protected String getInnerTitle(EObject obj) {
 		if (obj instanceof FindByStub) {
 			return getInnerTitle((FindByStub) obj);
 		}
@@ -437,7 +437,7 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 	}
 
 	@Override
-	public EList<UsesPortStub> getUses(EObject obj) {
+	protected EList<UsesPortStub> getUses(EObject obj) {
 		if (obj instanceof FindByStub) {
 			return ((FindByStub) obj).getUses();
 		}
@@ -445,7 +445,7 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 	}
 
 	@Override
-	public EList<ProvidesPortStub> getProvides(EObject obj) {
+	protected EList<ProvidesPortStub> getProvides(EObject obj) {
 		if (obj instanceof FindByStub) {
 			return ((FindByStub) obj).getProvides();
 		}
@@ -453,7 +453,7 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 	}
 
 	@Override
-	public ComponentSupportedInterfaceStub getInterface(EObject obj) {
+	protected ComponentSupportedInterfaceStub getInterface(EObject obj) {
 		if (obj instanceof FindByStub) {
 			return ((FindByStub) obj).getInterface();
 		}
@@ -461,25 +461,26 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 	}
 
 	@Override
-	public abstract String getOuterImageId();
+	protected
+	abstract String getOuterImageId();
 
 	@Override
-	public String getInnerImageId() {
+	protected String getInnerImageId() {
 		return getCreateImageId();
 	}
 
 	@Override
-	public String getStyleForOuter() {
+	protected String getStyleForOuter() {
 		return StyleUtil.OUTER_SHAPE;
 	}
 
 	@Override
-	public String getStyleForInner() {
+	protected String getStyleForInner() {
 		return StyleUtil.FIND_BY_INNER;
 	}
 
 	@Override
-	public List<EObject> getBusinessObjectsToLink(EObject obj) {
+	protected List<EObject> getBusinessObjectsToLink(EObject obj) {
 		List<EObject> businessObjectsToLink = new ArrayList<EObject>();
 		businessObjectsToLink.add(obj);
 		return businessObjectsToLink;

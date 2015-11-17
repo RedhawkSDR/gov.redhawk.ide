@@ -93,7 +93,7 @@ public class FindByFileManagerPattern extends AbstractFindByPattern implements I
 	}
 	
 	@Override
-	public String getOuterImageId() {
+	protected String getOuterImageId() {
 		return ImageProvider.IMG_FIND_BY;
 	}
 }

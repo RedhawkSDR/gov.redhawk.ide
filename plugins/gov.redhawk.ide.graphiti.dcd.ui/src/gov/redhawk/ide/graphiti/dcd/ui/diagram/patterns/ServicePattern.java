@@ -74,29 +74,29 @@ public class ServicePattern extends AbstractNodeComponentPattern implements IPat
 	}
 
 	@Override
-	public String getOuterImageId() {
+	protected String getOuterImageId() {
 		return NodeImageProvider.IMG_COMPONENT_PLACEMENT;
 	}
 
 	@Override
-	public String getInnerImageId() {
+	protected String getInnerImageId() {
 		return NodeImageProvider.IMG_SCA_SERVICE;
 	}
 
 	@Override
-	public String getStyleForOuter() {
+	protected String getStyleForOuter() {
 		return StyleUtil.OUTER_SHAPE;
 	}
 
 	@Override
-	public String getStyleForInner() {
+	protected String getStyleForInner() {
 		return StyleUtil.COMPONENT_INNER;
 	}
 
 	/**
 	 * Returns service, dcd, ports. Order does matter.
 	 */
-	public List<EObject> getBusinessObjectsToLink(EObject componentInstantiation) {
+	protected List<EObject> getBusinessObjectsToLink(EObject componentInstantiation) {
 		// get dcd from diagram, we need to link it to all shapes so the diagram will update when changes occur
 		List<EObject> businessObjectsToLink = new ArrayList<EObject>();
 		DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());

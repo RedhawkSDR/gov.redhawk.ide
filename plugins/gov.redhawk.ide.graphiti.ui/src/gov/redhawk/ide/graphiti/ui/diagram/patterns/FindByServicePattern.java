@@ -198,7 +198,7 @@ public class FindByServicePattern extends AbstractFindByPattern {
 	}
 
 	@Override
-	public String getOuterImageId() {
+	protected String getOuterImageId() {
 		return ImageProvider.IMG_FIND_BY;
 	}
 }
