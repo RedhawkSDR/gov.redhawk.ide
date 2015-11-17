@@ -207,31 +207,38 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
-	public static final String GA_OUTER_ROUNDED_RECTANGLE = "outerRoundedRectangle", GA_INNER_ROUNDED_RECTANGLE = "innerRoundedRectangle",
-			GA_OUTER_ROUNDED_RECTANGLE_TEXT = "outerRoundedRectangleText", GA_INNER_ROUNDED_RECTANGLE_TEXT = "innerRoundedRectangleText",
-			GA_OUTER_ROUNDED_RECTANGLE_IMAGE = "outerRoundedRectangleImage", GA_INNER_ROUNDED_RECTANGLE_IMAGE = "innerRoundedRectangleImage",
-			GA_INNER_ROUNDED_RECTANGLE_LINE = "innerRoundedRectangleLine", GA_PROVIDES_PORT_RECTANGLE = "providesPortsRectangle",
-			GA_FIX_POINT_ANCHOR_RECTANGLE = "fixPointAnchorRectangle", GA_USES_PORTS_RECTANGLE = "usesPortsRectangle";
+	private static final String GA_OUTER_ROUNDED_RECTANGLE = "outerRoundedRectangle";
+	private static final String GA_INNER_ROUNDED_RECTANGLE = "innerRoundedRectangle";
+	private static final String GA_OUTER_ROUNDED_RECTANGLE_TEXT = "outerRoundedRectangleText";
+	private static final String GA_INNER_ROUNDED_RECTANGLE_TEXT = "innerRoundedRectangleText";
+	private static final String GA_OUTER_ROUNDED_RECTANGLE_IMAGE = "outerRoundedRectangleImage";
+	private static final String GA_INNER_ROUNDED_RECTANGLE_IMAGE = "innerRoundedRectangleImage";
+	private static final String GA_INNER_ROUNDED_RECTANGLE_LINE = "innerRoundedRectangleLine";
+	private static final String GA_PROVIDES_PORT_RECTANGLE = "providesPortsRectangle";
+	private static final String GA_USES_PORTS_RECTANGLE = "usesPortsRectangle";
+	public static final String GA_FIX_POINT_ANCHOR_RECTANGLE = "fixPointAnchorRectangle";
 
 	// Property key/value pairs help us identify Shapes to enable/disable user actions
 	// (move, resize, delete, remove, etc.)
-	public static final String SHAPE_OUTER_CONTAINER = "outerContainerShape", SHAPE_INNER_CONTAINER = "innerContainerShape",
-			SHAPE_USES_PORTS_CONTAINER = "usesPortsContainerShape", SHAPE_PROVIDES_PORTS_CONTAINER = "providesPortsContainerShape",
-			SHAPE_INTERFACE_CONTAINER = "interfaceContainerShape", SUPER_PROVIDES_PORTS_RECTANGLE = "superProvidesPortsContainer",
-			SUPER_USES_PORTS_RECTANGLE = "superUsesPortsContainer";
+	public static final String SHAPE_OUTER_CONTAINER = "outerContainerShape";
+	private static final String SHAPE_INNER_CONTAINER = "innerContainerShape";
+	public static final String SHAPE_USES_PORTS_CONTAINER = "usesPortsContainerShape";
+	public static final String SHAPE_PROVIDES_PORTS_CONTAINER = "providesPortsContainerShape";
+	public static final String SHAPE_INTERFACE_CONTAINER = "interfaceContainerShape";
+	public static final String SUPER_PROVIDES_PORTS_RECTANGLE = "superProvidesPortsContainer";
+	public static final String SUPER_USES_PORTS_RECTANGLE = "superUsesPortsContainer";
 
 	// Shape size constants
-	public static final int OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING = 10, INNER_CONTAINER_SHAPE_TOP_PADDING = 20,
-			INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15, INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING = 60, PROVIDES_PORTS_LEFT_PADDING = 5,
-			INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
-			PORTS_CONTAINER_SHAPE_TOP_PADDING = 60, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8, INNER_ROUNDED_RECTANGLE_LINE_Y = 28,
-			SUPER_PORT_SHAPE_HEIGHT = 25, SUPER_PORT_SHAPE_WIDTH = 10, SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5, LOLLIPOP_ELLIPSE_DIAMETER = 10,
-			INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING, INTERFACE_SHAPE_HEIGHT = 10, ICON_IMAGE_LENGTH = 16;
+	private static final int INNER_CONTAINER_SHAPE_TOP_PADDING = 20;
+	private static final int INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15;
+	private static final int PROVIDES_PORTS_LEFT_PADDING = 5;
+	public static final int INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING;
+	private static final int INNER_ROUNDED_RECTANGLE_LINE_Y = 28;
+	private static final int SUPER_PORT_SHAPE_WIDTH = 10;
+	private static final int SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5;
 
-	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_WIDTH = 10;
-	protected static final int INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT = 10;
-	protected static final int PORT_ROW_PADDING_HEIGHT = 5;
-	protected static final int REQ_PADDING_BETWEEN_PORT_TYPES = 10;
+	private static final int INNER_ROUNDED_RECTANGLE_CORNER_WIDTH = 10;
+	private static final int INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT = 10;
 	// BEGIN GENERATED CODE
 
 	/**
@@ -761,7 +768,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Rectangle providesPortsRectangle = Graphiti.getCreateService().createRectangle(providesPortsContainerShape);
 		providesPortsRectangle.setTransparency(1d);
 		Graphiti.getPeService().setPropertyValue(providesPortsRectangle, DUtil.GA_TYPE, GA_PROVIDES_PORT_RECTANGLE);
-		Graphiti.getGaLayoutService().setLocation(providesPortsRectangle, PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING);
 		return providesPortsContainerShape;
 	}
 

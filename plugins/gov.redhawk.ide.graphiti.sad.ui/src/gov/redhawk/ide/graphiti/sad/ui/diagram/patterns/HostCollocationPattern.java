@@ -78,6 +78,8 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 	public static final String GA_OUTER_ROUNDED_RECTANGLE_TEXT = "outerRoundedRectangleText";
 	public static final String GA_OUTER_ROUNDED_RECTANGLE_IMAGE = "outerRoundedRectangleImage";
 
+	private static final int ICON_IMAGE_LENGTH = 16;
+
 	public HostCollocationPattern() {
 		super(null);
 	}
@@ -175,10 +177,10 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		// outerRoundedRectangle
 		gaLayoutService.setLocationAndSize(outerRoundedRectangle, context.getX(), context.getY(), minWidth, minHeight);
 		gaLayoutService.setLocationAndSize(outerRoundedRectangleText, RHContainerShapeImpl.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING
-			+ RHContainerShapeImpl.ICON_IMAGE_LENGTH + 4, 0, minWidth
-			- (RHContainerShapeImpl.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + RHContainerShapeImpl.ICON_IMAGE_LENGTH + 4), 20);
+			+ HostCollocationPattern.ICON_IMAGE_LENGTH + 4, 0, minWidth
+			- (RHContainerShapeImpl.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + HostCollocationPattern.ICON_IMAGE_LENGTH + 4), 20);
 		gaLayoutService.setLocationAndSize(outerRoundedRectangleImage, RHContainerShapeImpl.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0,
-			RHContainerShapeImpl.ICON_IMAGE_LENGTH, RHContainerShapeImpl.ICON_IMAGE_LENGTH);
+			HostCollocationPattern.ICON_IMAGE_LENGTH, HostCollocationPattern.ICON_IMAGE_LENGTH);
 
 		// move all SadComponentInstantiation shapes into new HostCollocation shape
 		// find all SadComponentInstantiation shapes
