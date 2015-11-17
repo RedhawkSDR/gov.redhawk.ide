@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -353,10 +354,10 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	}
 
 	protected boolean updateSuperProvidesPorts(ContainerShape superPort, EObject interfaceStub, List< ? extends EObject > modelStubs) {
-		link(superPort, modelStubs.toArray());
-		link(superPort, interfaceStub);
-		link(superPort.getAnchors().get(0), modelStubs.toArray());
-		link(superPort.getAnchors().get(0), interfaceStub);
+		List<Object> businessObjects = new ArrayList<Object>(modelStubs);
+		businessObjects.add(interfaceStub);
+		link(superPort, businessObjects.toArray());
+		link(superPort.getAnchors().get(0), businessObjects.toArray());
 		return false;
 	}
 
