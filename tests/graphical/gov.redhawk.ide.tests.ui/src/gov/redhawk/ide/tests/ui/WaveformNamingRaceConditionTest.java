@@ -11,7 +11,11 @@
  */
 package gov.redhawk.ide.tests.ui;
 
+import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.UITest;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
@@ -33,7 +37,8 @@ public class WaveformNamingRaceConditionTest extends UITest {
 
 		SWTBotShell wizardShell = bot.shell("New");
 		wizardShell.activate();
-		bot.tree().getTreeItem("REDHAWK").expand().getNode("REDHAWK Waveform Project").select();
+		List<String> path = Arrays.asList("REDHAWK", "REDHAWK Waveform Project");
+		StandardTestActions.waitForTreeItemToAppear(bot, bot.tree(), path).select();
 		bot.button("Next >").click();
 
 		SWTBotText projectNameField = bot.textWithLabel("Project name:");
