@@ -1378,4 +1378,30 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		fixPointAnchor.setReferencedGraphicsAlgorithm(parentShape.getGraphicsAlgorithm());
 		return fixPointAnchor;
 	}
+
+	/**
+	 * Checks whether a @{link GraphicsAlgorithm} is visible (i.e, will draw something).
+	 *
+	 * @param ga GraphicsAlgorithm to check
+	 * @return true if ga is visible, false if it is not
+	 */
+	public static boolean isVisible(GraphicsAlgorithm ga) {
+		return ga.getLineVisible() || ga.getFilled();
+	}
+
+	/**
+	 * Updates whether a @{link GraphicsAlgorithm} is visible (i.e, will draw something).
+	 *
+	 * @param ga GraphicsAlgorithm to modify
+	 * @param visible new visibility of ga
+	 * @return true if the visibility changed, false if it was already set
+	 */
+	public static boolean setVisible(GraphicsAlgorithm ga, boolean visible) {
+		if (DUtil.isVisible(ga) != visible) {
+			ga.setFilled(visible);
+			ga.setLineVisible(visible);
+			return true;
+		}
+		return false;
+	}
 }

@@ -343,14 +343,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	protected boolean updateSuperUsesPorts(ContainerShape superPort, List< ? extends EObject > modelStubs) {
 		link(superPort, modelStubs.toArray());
 		link(superPort.getAnchors().get(0), modelStubs.toArray());
-		if (modelStubs.isEmpty()) {
-			superPort.getGraphicsAlgorithm().setLineVisible(false);
-			superPort.getGraphicsAlgorithm().setFilled(false);
-		} else {
-			superPort.getGraphicsAlgorithm().setLineVisible(true);
-			superPort.getGraphicsAlgorithm().setFilled(true);
-		}
-		return false;
+		return DUtil.setVisible(superPort.getGraphicsAlgorithm(), !modelStubs.isEmpty());
 	}
 
 	protected boolean updateSuperProvidesPorts(ContainerShape superPort, EObject interfaceStub, List< ? extends EObject > modelStubs) {
