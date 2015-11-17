@@ -12,7 +12,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.ext.impl;
 
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
@@ -88,8 +87,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return createUsesPortStubFromString(eDataType, initialValue);
 		case RHGxPackage.PROVIDES_PORT_STUB:
 			return createProvidesPortStubFromString(eDataType, initialValue);
-		case RHGxPackage.ABSTRACT_PORT_SUPPLIER_PATTERN:
-			return createAbstractPortSupplierPatternFromString(eDataType, initialValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -107,8 +104,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return convertUsesPortStubToString(eDataType, instanceValue);
 		case RHGxPackage.PROVIDES_PORT_STUB:
 			return convertProvidesPortStubToString(eDataType, instanceValue);
-		case RHGxPackage.ABSTRACT_PORT_SUPPLIER_PATTERN:
-			return convertAbstractPortSupplierPatternToString(eDataType, instanceValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -157,24 +152,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * @generated
 	 */
 	public String convertProvidesPortStubToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public AbstractPortSupplierPattern createAbstractPortSupplierPatternFromString(EDataType eDataType, String initialValue) {
-		return (AbstractPortSupplierPattern) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertAbstractPortSupplierPatternToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

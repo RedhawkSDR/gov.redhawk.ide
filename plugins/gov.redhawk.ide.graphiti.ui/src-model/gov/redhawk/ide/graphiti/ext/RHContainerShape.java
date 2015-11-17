@@ -12,11 +12,9 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.ext;
 
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -232,10 +230,10 @@ public interface RHContainerShape extends ContainerShape {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model businessObjectUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractPortSupplierPattern" patternUnique="false"
+	 * @model
 	 * @generated
 	 */
-	void init(EObject businessObject, AbstractPortSupplierPattern pattern);
+	void init();
 
 	/**
 	 * <!-- begin-user-doc -->

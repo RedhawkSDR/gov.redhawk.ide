@@ -14,7 +14,6 @@ package gov.redhawk.ide.graphiti.ext.impl;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
@@ -441,26 +440,45 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @generated NOT
 	 */
 	@Override
-	public void init(EObject businessObject, AbstractPortSupplierPattern pattern) {
-		// add property for this shape
+	public void init() {
+		// Add property for this shape
 		Graphiti.getPeService().setPropertyValue(this, DUtil.GA_TYPE, SHAPE_OUTER_CONTAINER);
 
-		// graphic
+		// Outer rectangle
 		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createPlainRoundedRectangle(this, 5, 5);
 		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE);
-		StyleUtil.setStyle(outerRoundedRectangle, pattern.getStyleForOuter());
 		outerRoundedRectangle.setTransparency(null); // inherit from style
 
-		// image
-		Image imgIcon = Graphiti.getGaCreateService().createImage(outerRoundedRectangle, pattern.getOuterImageId());
-		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_IMAGE);
+		// Outer image
+		Image outerImage = Graphiti.getGaCreateService().createImage(outerRoundedRectangle, null);
+		Graphiti.getPeService().setPropertyValue(outerImage, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_IMAGE);
 
-		// text
-		Text cText = Graphiti.getCreateService().createPlainText(outerRoundedRectangle, pattern.getOuterTitle(businessObject));
-		StyleUtil.setStyle(cText, StyleUtil.OUTER_TEXT);
-		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
+		// Outer label
+		Text outerText = Graphiti.getCreateService().createPlainText(outerRoundedRectangle);
+		StyleUtil.setStyle(outerText, StyleUtil.OUTER_TEXT);
+		Graphiti.getPeService().setPropertyValue(outerText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 
-		addInnerContainer(pattern.getInnerTitle(businessObject), pattern.getInnerImageId(), pattern.getStyleForInner());
+		// Inner container shape
+		ContainerShape innerContainerShape = Graphiti.getCreateService().createContainerShape(this, false);
+		Graphiti.getPeService().setPropertyValue(innerContainerShape, DUtil.GA_TYPE, SHAPE_INNER_CONTAINER);
+		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createPlainRoundedRectangle(innerContainerShape,
+			INNER_ROUNDED_RECTANGLE_CORNER_WIDTH, INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT);
+		Graphiti.getPeService().setPropertyValue(innerRoundedRectangle, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE);
+		Graphiti.getGaLayoutService().setLocation(innerRoundedRectangle, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, INNER_CONTAINER_SHAPE_TOP_PADDING);
+
+		// Inner image
+		Image innerImage = Graphiti.getGaCreateService().createImage(innerRoundedRectangle, null);
+		Graphiti.getPeService().setPropertyValue(innerImage, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_IMAGE);
+
+		// Inner label
+		Text innerText = Graphiti.getCreateService().createPlainText(innerRoundedRectangle);
+		StyleUtil.setStyle(innerText, StyleUtil.INNER_TEXT);
+		Graphiti.getPeService().setPropertyValue(innerText, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_TEXT);
+
+		// Inner separator line
+		Polyline polyline = Graphiti.getGaCreateService().createPlainPolyline(innerRoundedRectangle,
+			new int[] { 0, INNER_ROUNDED_RECTANGLE_LINE_Y, innerRoundedRectangle.getWidth(), INNER_ROUNDED_RECTANGLE_LINE_Y });
+		Graphiti.getPeService().setPropertyValue(polyline, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_LINE);
 	}
 
 	/**
@@ -650,36 +668,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	// END GENERATED CODE
-
-	/**
-	 * add inner container
-	 */
-	protected ContainerShape addInnerContainer(String text, String imageId, String styleId) {
-		ContainerShape innerContainerShape = Graphiti.getCreateService().createContainerShape(this, false);
-		Graphiti.getPeService().setPropertyValue(innerContainerShape, DUtil.GA_TYPE, SHAPE_INNER_CONTAINER);
-		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createPlainRoundedRectangle(innerContainerShape,
-			INNER_ROUNDED_RECTANGLE_CORNER_WIDTH, INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT);
-		StyleUtil.setStyle(innerRoundedRectangle, styleId);
-		Graphiti.getPeService().setPropertyValue(innerRoundedRectangle, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE);
-		Graphiti.getGaLayoutService().setLocation(innerRoundedRectangle, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, INNER_CONTAINER_SHAPE_TOP_PADDING);
-
-		// image
-		Image imgIcon = Graphiti.getGaCreateService().createImage(innerRoundedRectangle, imageId);
-		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_IMAGE);
-
-		// text
-		Text ciText = Graphiti.getCreateService().createPlainText(innerRoundedRectangle, text);
-		StyleUtil.setStyle(ciText, StyleUtil.INNER_TEXT);
-		Graphiti.getPeService().setPropertyValue(ciText, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_TEXT);
-
-		// draw line if showing shape details (ports)
-		Polyline polyline = Graphiti.getGaCreateService().createPlainPolyline(innerRoundedRectangle,
-			new int[] { 0, INNER_ROUNDED_RECTANGLE_LINE_Y, innerRoundedRectangle.getWidth(), INNER_ROUNDED_RECTANGLE_LINE_Y });
-		StyleUtil.setStyle(polyline, styleId);
-		Graphiti.getPeService().setPropertyValue(polyline, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_LINE);
-
-		return innerContainerShape;
-	}
 
 	/**
 	 * Adds Super Uses Port to shape

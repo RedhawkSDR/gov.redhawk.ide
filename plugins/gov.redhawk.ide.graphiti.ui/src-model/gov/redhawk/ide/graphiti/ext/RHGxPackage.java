@@ -227,15 +227,6 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	int PROVIDES_PORT_STUB = 2;
-	/**
-	 * The meta object id for the '<em>Abstract Port Supplier Pattern</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern
-	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAbstractPortSupplierPattern()
-	 * @generated
-	 */
-	int ABSTRACT_PORT_SUPPLIER_PATTERN = 3;
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape <em>RH Container Shape</em>}'.
@@ -347,17 +338,6 @@ public interface RHGxPackage extends EPackage {
 	EDataType getProvidesPortStub();
 
 	/**
-	 * Returns the meta object for data type '{@link gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern <em>Abstract Port Supplier Pattern</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Abstract Port Supplier Pattern</em>'.
-	 * @see gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern
-	 * @model instanceClass="gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern"
-	 * @generated
-	 */
-	EDataType getAbstractPortSupplierPattern();
-
-	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -464,16 +444,6 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType PROVIDES_PORT_STUB = eINSTANCE.getProvidesPortStub();
-
-		/**
-		 * The meta object literal for the '<em>Abstract Port Supplier Pattern</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern
-		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAbstractPortSupplierPattern()
-		 * @generated
-		 */
-		EDataType ABSTRACT_PORT_SUPPLIER_PATTERN = eINSTANCE.getAbstractPortSupplierPattern();
 
 	}
 

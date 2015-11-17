@@ -15,7 +15,6 @@ package gov.redhawk.ide.graphiti.ext.impl;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import org.eclipse.emf.ecore.EAttribute;
@@ -57,12 +56,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * @generated
 	 */
 	private EDataType providesPortStubEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType abstractPortSupplierPatternEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -228,15 +221,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getAbstractPortSupplierPattern() {
-		return abstractPortSupplierPatternEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public RHGxFactory getRHGxFactory() {
 		return (RHGxFactory) getEFactoryInstance();
 	}
@@ -273,7 +257,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		// Create data types
 		usesPortStubEDataType = createEDataType(USES_PORT_STUB);
 		providesPortStubEDataType = createEDataType(PROVIDES_PORT_STUB);
-		abstractPortSupplierPatternEDataType = createEDataType(ABSTRACT_PORT_SUPPLIER_PATTERN);
 	}
 
 	/**
@@ -329,11 +312,9 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		initEAttribute(getRHContainerShape_HideUnusedPorts(), theEcorePackage.getEBoolean(), "hideUnusedPorts", null, 0, 1, RHContainerShape.class,
 			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		EOperation op = addEOperation(rhContainerShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEObject(), "businessObject", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractPortSupplierPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEOperation(rhContainerShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
-		op = addEOperation(rhContainerShapeEClass, null, "getProvidesPortStubs", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		EOperation op = addEOperation(rhContainerShapeEClass, null, "getProvidesPortStubs", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		EGenericType g1 = createEGenericType(theEcorePackage.getEEList());
 		EGenericType g2 = createEGenericType(this.getProvidesPortStub());
 		g1.getETypeArguments().add(g2);
@@ -372,8 +353,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		// Initialize data types
 		initEDataType(usesPortStubEDataType, UsesPortStub.class, "UsesPortStub", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(providesPortStubEDataType, ProvidesPortStub.class, "ProvidesPortStub", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(abstractPortSupplierPatternEDataType, AbstractPortSupplierPattern.class, "AbstractPortSupplierPattern", IS_SERIALIZABLE,
-			!IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

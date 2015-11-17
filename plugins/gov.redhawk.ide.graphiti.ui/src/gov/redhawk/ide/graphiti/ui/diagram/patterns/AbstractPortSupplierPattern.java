@@ -404,7 +404,17 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		link(containerShape, getBusinessObjectsToLink(newObject).toArray());
 
 		// Initialize shape contents
-		containerShape.init(newObject, this);
+		containerShape.init();
+
+		// Initialize elements that only require a one-time setup
+		StyleUtil.setStyle(containerShape.getGraphicsAlgorithm(), getStyleForOuter());
+		containerShape.getOuterImage().setId(getOuterImageId());
+		containerShape.getInnerImage().setId(getInnerImageId());
+
+		// Set default inner style
+		String innerStyle = getStyleForInner();
+		StyleUtil.setStyle(containerShape.getInnerContainerShape().getGraphicsAlgorithm(), innerStyle);
+		StyleUtil.setStyle(containerShape.getInnerPolyline(), innerStyle);
 
 		if (!containerShape.isCollapsed()) {
 			addLollipop(containerShape, getInterface(newObject));
