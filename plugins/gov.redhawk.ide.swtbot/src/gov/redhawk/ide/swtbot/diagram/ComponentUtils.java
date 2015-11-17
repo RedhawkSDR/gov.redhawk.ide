@@ -108,7 +108,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 * @return - the interface lollipop shape, if the Component has one, or null otherwise
 	 */
 	public static ContainerShape getLollipop(ComponentShape componentShape) {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(componentShape, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER);
+		return componentShape.getLollipop();
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 * @return - the Component's outer text
 	 */
 	public static Text getOuterText(ComponentShape componentShape) {
-		return (Text) DUtil.findFirstPropertyContainer(componentShape, RHContainerShapeImpl.GA_OUTER_ROUNDED_RECTANGLE_TEXT);
+		return componentShape.getOuterText();
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 * @return - the Component's inner text
 	 */
 	public static Text getInnerText(ComponentShape componentShape) {
-		return (Text) DUtil.findFirstPropertyContainer(componentShape, RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT);
+		return componentShape.getInnerText();
 	}
 
 	/**
