@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -33,7 +34,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
 
-abstract class AbstractPortPattern< E > extends AbstractPattern {
+abstract class AbstractPortPattern< E extends EObject > extends AbstractPattern {
 
 	protected static final int PORT_SHAPE_HEIGHT = 15;
 	protected static final int PORT_SHAPE_WIDTH = AbstractPortPattern.PORT_SHAPE_HEIGHT;
@@ -63,7 +64,7 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 	@Override
 	public boolean update(IUpdateContext context) {
 		ContainerShape usesPortShape = (ContainerShape) context.getPictogramElement();
-		E port = clazz.cast(getBusinessObjectForPictogramElement(usesPortShape));
+		E port = getPortForPictogramElement(usesPortShape);
 		boolean updateStatus =  UpdateUtil.update(getPortText(usesPortShape), getPortName(port)); 
 		Rectangle portRectangle = getPortRectangle(usesPortShape);
 		String styleId = getStyleId(port);
@@ -77,7 +78,7 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 	@Override
 	public IReason updateNeeded(IUpdateContext context) {
 		ContainerShape usesPortShape = (ContainerShape) context.getPictogramElement();
-		E port = clazz.cast(getBusinessObjectForPictogramElement(usesPortShape));
+		E port = getPortForPictogramElement(usesPortShape);
 		if (UpdateUtil.updateNeeded(getPortText(usesPortShape), getPortName(port))) {
 			return Reason.createTrueReason("Uses port name needs update");
 		}
@@ -173,6 +174,10 @@ abstract class AbstractPortPattern< E > extends AbstractPattern {
 		}
 
 		return layoutApplied;
+	}
+
+	protected E getPortForPictogramElement(PictogramElement pictogramElement) {
+		return clazz.cast(getBusinessObjectForPictogramElement(pictogramElement));
 	}
 
 	protected abstract String getPortContainerShapeId();
