@@ -596,7 +596,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 			Object bo = DUtil.getBusinessObject(containerShape);
 
 			// Only return objects of type ProvidesPortStub
-			if (bo == null || !(bo instanceof ProvidesPortStub)) {
+			if (bo == null || !(bo instanceof ProvidesPortStub || bo instanceof ComponentSupportedInterfaceStub)) {
 				continue;
 			}
 
