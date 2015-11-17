@@ -37,6 +37,7 @@ import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -63,14 +64,16 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	private static final int OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING = 10;
 	private static final int INNER_CONTAINER_SHAPE_TOP_PADDING = 20;
 	private static final int INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15;
-	private static final int INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING = 60;
 	private static final int PROVIDES_PORTS_LEFT_PADDING = 5;
 	private static final int INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING;
+	private static final int OUTER_IMAGE_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING;
 	private static final int PORTS_CONTAINER_SHAPE_TOP_PADDING = 60;
 	private static final int INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8;
 	private static final int INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING;
 	private static final int INTERFACE_SHAPE_HEIGHT = 10;
-	private static final int ICON_IMAGE_LENGTH = 16;
+	private static final int ICON_IMAGE_WIDTH = 16;
+	private static final int ICON_IMAGE_HEIGHT = ICON_IMAGE_WIDTH;
+	private static final int INNER_TITLE_IMAGE_PADDING = 5;
 	private static final int SUPER_PORT_SHAPE_WIDTH = 10;
 	private static final int SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5;
 	private static final int LOLLIPOP_ELLIPSE_DIAMETER = 10;
@@ -579,7 +582,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		Ellipse anchorEllipse = Graphiti.getCreateService().createPlainEllipse(fixPointAnchor);
 		anchorEllipse.setFilled(false);
 		anchorEllipse.setLineVisible(false);
-		UpdateUtil.layoutOverlayAnchor(lollipopEllipseShape);
+		UpdateUtil.layoutOverlayAnchor(lollipopEllipseShape, Orientation.ALIGNMENT_LEFT);
 
 		return interfaceContainerShape;
 	}
@@ -592,45 +595,63 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 
 	protected int getMinimumInnerWidth(RHContainerShape shape) {
 		Text innerTitle = shape.getInnerText();
+		Image innerImage = shape.getInnerImage();
 		IDimension innerTitleDimension = DUtil.calculateTextSize(innerTitle);
-		return innerTitleDimension.getWidth() + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING;
+		return innerImage.getWidth() + INNER_TITLE_IMAGE_PADDING + innerTitleDimension.getWidth() + 2 * INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING;
 	}
 
 	protected int getMinimumOuterWidth(RHContainerShape shape) {
 		Text outerTitle = shape.getOuterText();
 		IDimension outerTitleDimension = DUtil.calculateTextSize(outerTitle);
-		return INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + outerTitleDimension.getWidth() + OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING + 4;
+		return OUTER_IMAGE_LEFT_PADDING + outerTitleDimension.getWidth() + OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING + 4;
 	}
 
 	protected boolean layoutInnerShape(RHContainerShape shape) {
+		// Resize the inner shape relative to the outer
 		ContainerShape innerContainerShape = shape.getInnerContainerShape();
 		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
 		IDimension parentSize = gaLayoutService.calculateSize(innerContainerShape.getContainer().getGraphicsAlgorithm());
 		int width = parentSize.getWidth() - INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING * 2 - PROVIDES_PORTS_LEFT_PADDING;
 		int height = parentSize.getHeight() - INNER_CONTAINER_SHAPE_TOP_PADDING;
-		gaLayoutService.setSize(innerContainerShape.getGraphicsAlgorithm(), width, height);
-		IDimension innerRoundedRectangleTextSize = DUtil.calculateTextSize(shape.getInnerText());
-		int xForImage = (innerContainerShape.getGraphicsAlgorithm().getWidth() - (innerRoundedRectangleTextSize.getWidth() + ICON_IMAGE_LENGTH + 5)) / 2;
-		gaLayoutService.setLocationAndSize(shape.getInnerImage(), xForImage, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
-		gaLayoutService.setLocationAndSize(shape.getInnerText(), xForImage + ICON_IMAGE_LENGTH + 5, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING,
-			innerRoundedRectangleTextSize.getWidth() + 10, innerRoundedRectangleTextSize.getHeight());
-		shape.getInnerPolyline().getPoints().get(1).setX(width);
+		boolean layoutApplied = UpdateUtil.resizeIfNeeded(innerContainerShape.getGraphicsAlgorithm(), width, height);
 
-		return true;
+		// Ensure image is correctly sized
+		Image innerImage = shape.getInnerImage();
+		if (UpdateUtil.resizeIfNeeded(innerImage, ICON_IMAGE_WIDTH, ICON_IMAGE_HEIGHT)) {
+			layoutApplied = true;
+		}
+		// Layout image and text so that they are roughly centered
+		Text innerText = shape.getInnerText();
+		IDimension innerTextSize = DUtil.calculateTextSize(innerText);
+		int imageX = (innerContainerShape.getGraphicsAlgorithm().getWidth() - (innerTextSize.getWidth() + innerImage.getWidth() + 5)) / 2;
+		if (UpdateUtil.moveIfNeeded(innerImage, imageX, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING)) {
+			layoutApplied = true;
+		}
+		int textX = imageX + innerImage.getWidth() + INNER_TITLE_IMAGE_PADDING;
+		int textWidth = innerTextSize.getWidth() + 10;
+		if (UpdateUtil.moveAndResizeIfNeeded(innerText, textX, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING, textWidth, innerTextSize.getHeight())) {
+			layoutApplied = true;
+		}
+
+		// Layout the inner separator under the image and text, to go across the entire inner shape
+		int lineY = Math.max(innerImage.getY() + innerImage.getHeight(), innerText.getY() + innerText.getHeight()) + 2;
+		if (UpdateUtil.movePoints(shape.getInnerPolyline().getPoints(), 0, lineY, width, lineY)) {
+			layoutApplied = true;
+		}
+
+		return layoutApplied;
 	}
 
 	protected boolean layoutOuterShape(RHContainerShape shape) {
-		int containerWidth = shape.getGraphicsAlgorithm().getWidth();
-		Text outerText = shape.getOuterText();
-		boolean layoutApplied = UpdateUtil.moveIfNeeded(outerText, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4, 0);
-		if (UpdateUtil.resizeIfNeeded(outerText, containerWidth - (INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + ICON_IMAGE_LENGTH + 4), 20)) {
-			layoutApplied = true;
-		}
+		// Layout image in upper left
 		Image outerImage = shape.getOuterImage();
-		if (UpdateUtil.moveIfNeeded(outerImage, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0)) {
-			layoutApplied = true;
-		}
-		if (UpdateUtil.resizeIfNeeded(outerImage, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH)) {
+		boolean layoutApplied = UpdateUtil.moveAndResizeIfNeeded(outerImage, OUTER_IMAGE_LEFT_PADDING, 0, ICON_IMAGE_WIDTH, ICON_IMAGE_HEIGHT);
+
+		// Layout text to the right of image, taking up the remaining horizontal space
+		Text outerText = shape.getOuterText();
+		int textX = outerImage.getX() + outerImage.getWidth() + 4;
+		int textWidth = shape.getGraphicsAlgorithm().getWidth() - textX;
+		if (UpdateUtil.moveAndResizeIfNeeded(outerText, textX, 0, textWidth, 20)) {
 			layoutApplied = true;
 		}
 		return layoutApplied;
@@ -705,30 +726,37 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		return false;
 	}
 
-	private boolean layoutSuperPort(ContainerShape superPortContainerShape) {
+	private boolean layoutSuperPort(ContainerShape superPortContainerShape, Orientation hAlign) {
+		boolean layoutApplied = false;
 		// Resize relative to inner shape
 		RHContainerShape parent = (RHContainerShape) superPortContainerShape.getContainer();
-		int height = parent.getInnerContainerShape().getGraphicsAlgorithm().getHeight() - SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2;
+		GraphicsAlgorithm innerGa = parent.getInnerContainerShape().getGraphicsAlgorithm();
+		int height = innerGa.getHeight() - SUPER_PORT_SHAPE_HEIGHT_MARGIN * 2;
 		if (UpdateUtil.resizeIfNeeded(superPortContainerShape.getGraphicsAlgorithm(), SUPER_PORT_SHAPE_WIDTH, height)) {
-			UpdateUtil.layoutOverlayAnchor(superPortContainerShape);
-			return true;
+			UpdateUtil.layoutOverlayAnchor(superPortContainerShape, hAlign);
+			layoutApplied = true;
 		}
-		return false;
+
+		// Position at edge of inner shape
+		int portX = innerGa.getX();
+		if (Orientation.ALIGNMENT_LEFT.equals(hAlign)) {
+			portX -= superPortContainerShape.getGraphicsAlgorithm().getWidth();
+		} else {
+			portX = innerGa.getX() + innerGa.getWidth();
+		}
+		int portY = innerGa.getY() + SUPER_PORT_SHAPE_HEIGHT_MARGIN;
+		if (UpdateUtil.moveIfNeeded(superPortContainerShape.getGraphicsAlgorithm(), portX, portY)) {
+			layoutApplied = true;
+		}
+		return layoutApplied;
 	}
 
 	protected void layoutSuperProvidesPorts(ContainerShape superProvidesPortsContainerShape) {
-		layoutSuperPort(superProvidesPortsContainerShape);
+		layoutSuperPort(superProvidesPortsContainerShape, Orientation.ALIGNMENT_LEFT);
 	}
 
 	protected void layoutSuperUsesPorts(ContainerShape superUsesPortsContainerShape) {
-		layoutSuperPort(superUsesPortsContainerShape);
-
-		// Position at right edge of inner shape
-		RHContainerShape parent = (RHContainerShape) superUsesPortsContainerShape.getContainer();
-		GraphicsAlgorithm innerGa = parent.getInnerContainerShape().getGraphicsAlgorithm();
-		int y = innerGa.getY() + SUPER_PORT_SHAPE_HEIGHT_MARGIN;
-		int x = innerGa.getX() + innerGa.getWidth();
-		Graphiti.getGaLayoutService().setLocation(superUsesPortsContainerShape.getGraphicsAlgorithm(), x, y);
+		layoutSuperPort(superUsesPortsContainerShape, Orientation.ALIGNMENT_RIGHT);
 	}
 
 	/**

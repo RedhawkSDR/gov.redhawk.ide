@@ -10,9 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.util;
 
+import java.util.List;
+
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -58,23 +61,28 @@ public class UpdateUtil {
 
 	/**
 	 * Performs a layout on the overlaid {@link FixPointAnchor} for a shape so that it has the same dimensions.
-	 * 
-	 * @param parentShape
-	 * @return true if the anchor was update, false if it already matched the shape
+	 * If necessary, the anchor point will be moved to maintain the horizontal alignment.
+	 *
+	 * @param parentShape shape containing the anchor
+	 * @param hAlign horizontal alignment of anchor
+	 * @return true if the anchor was updated, false if it already matched the shape
 	 */
-	public static boolean layoutOverlayAnchor(Shape parentShape) {
+	public static boolean layoutOverlayAnchor(Shape parentShape, Orientation hAlign) {
 		// Layout and resize anchor
 		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
 		FixPointAnchor portAnchor = (FixPointAnchor) parentShape.getAnchors().get(0);
 		Point anchorLocation = portAnchor.getLocation();
+
+		// Adjust the anchor location
 		int anchorY = parentSize.getHeight() / 2;
-		boolean modified = false;
-		if (anchorLocation.getY() != anchorY) {
-			anchorLocation.setY(anchorY);
-			modified = true;
+		int anchorX = 0;
+		if (Orientation.ALIGNMENT_RIGHT.equals(hAlign)) {
+			anchorX = parentSize.getWidth();
 		}
-		if (UpdateUtil.moveAndResizeIfNeeded(portAnchor.getGraphicsAlgorithm(), -anchorLocation.getX(), -anchorLocation.getY(),
-			parentSize.getWidth(), parentSize.getHeight())) {
+		boolean modified = UpdateUtil.movePoint(anchorLocation, anchorX, anchorY);
+
+		// Move the anchor to maintain position on top of parent
+		if (UpdateUtil.moveAndResizeIfNeeded(portAnchor.getGraphicsAlgorithm(), -anchorX, -anchorY,	parentSize.getWidth(), parentSize.getHeight())) {
 			modified = true;
 		}
 		return modified;
@@ -124,7 +132,7 @@ public class UpdateUtil {
 	 * @param ga target GraphicsAlgorithm
 	 * @param x requested x position
 	 * @param y requested y position
-	 * @return true if ga was move, false if it was already at the requested location
+	 * @return true if ga was moved, false if it was already at the requested location
 	 */
 	public static boolean moveIfNeeded(GraphicsAlgorithm ga, int x, int y) {
 		if ((ga.getX() != x) || (ga.getY() != y)) {
@@ -132,6 +140,48 @@ public class UpdateUtil {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Repositions a {@link Point} to the given coordinates, if necessary.
+	 *
+	 * @param point the Point to move
+	 * @param x requested x position
+	 * @param y requested y position
+	 * @return true if point was moved, false if it was already at the requested location
+	 */
+	public static boolean movePoint(Point point, int x, int y) {
+		if ((point.getX() != x) || (point.getY() != y)) {
+			point.setX(x);
+			point.setY(y);
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * Repositions a list of {@link Point}s to the given coordinates, if necessary.
+	 *
+	 * @param points list of points to move
+	 * @param xy list of interleaved x/y coordinates, must be exactly twice the size of points
+	 * @return true if any point was repositioned, false otherwise
+	 * @throws IllegalArgumentException
+	 */
+	public static boolean movePoints(List<Point> points, int... xy) {
+		if ((xy.length % 2) == 1) {
+			throw new IllegalArgumentException("Coordinate list must have even size");
+		} else if ((xy.length / 2) != points.size()) {
+			throw new IllegalArgumentException("Coordinate list must match points size");
+		}
+		int offset = 0;
+		boolean moved = false;
+		for (Point point : points) {
+			int pointX = xy[offset++];
+			int pointY = xy[offset++];
+			if (UpdateUtil.movePoint(point, pointX, pointY)) {
+				moved = true;
+			}
+		}
+		return moved;
 	}
 
 	/**

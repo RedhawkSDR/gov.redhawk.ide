@@ -29,16 +29,13 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
-import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
-import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.impl.ContainerShapeImpl;
 import org.eclipse.graphiti.services.Graphiti;
 
@@ -233,9 +230,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	private static final int INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15;
 	private static final int PROVIDES_PORTS_LEFT_PADDING = 5;
 	public static final int INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING;
-	private static final int INNER_ROUNDED_RECTANGLE_LINE_Y = 28;
-	private static final int SUPER_PORT_SHAPE_WIDTH = 10;
-	private static final int SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5;
 
 	private static final int INNER_ROUNDED_RECTANGLE_CORNER_WIDTH = 10;
 	private static final int INNER_ROUNDED_RECTANGLE_CORNER_HEIGHT = 10;
@@ -482,9 +476,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		StyleUtil.setStyle(innerText, StyleUtil.INNER_TEXT);
 		Graphiti.getPeService().setPropertyValue(innerText, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_TEXT);
 
-		// Inner separator line
+		// Inner separator line; points are created here, but will be positioned in a subsequent layout
 		Polyline polyline = Graphiti.getGaCreateService().createPlainPolyline(innerRoundedRectangle,
-			new int[] { 0, INNER_ROUNDED_RECTANGLE_LINE_Y, innerRoundedRectangle.getWidth(), INNER_ROUNDED_RECTANGLE_LINE_Y });
+			new int[] { 0, 0, innerRoundedRectangle.getWidth(), 0 });
 		Graphiti.getPeService().setPropertyValue(polyline, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_LINE);
 	}
 
@@ -690,7 +684,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		StyleUtil.setStyle(superUsesPortsRectangle, StyleUtil.SUPER_USES_PORT);
 
 		// fix point anchor
-		createPortAnchor(superUsesPortsRectangleShape, SUPER_PORT_SHAPE_WIDTH);
+		createPortAnchor(superUsesPortsRectangleShape, 0);
 	}
 
 	/**
@@ -706,8 +700,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		Rectangle superProvidesPortsRectangle = Graphiti.getCreateService().createRectangle(superProvidesPortsRectangleShape);
 		StyleUtil.setStyle(superProvidesPortsRectangle, StyleUtil.SUPER_PROVIDES_PORT);
-		Graphiti.getGaLayoutService().setLocation(superProvidesPortsRectangle, INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING - SUPER_PORT_SHAPE_WIDTH,
-			INNER_CONTAINER_SHAPE_TOP_PADDING + SUPER_PORT_SHAPE_HEIGHT_MARGIN);
 
 		// fix point anchor
 		createPortAnchor(superProvidesPortsRectangleShape, 0);
@@ -723,18 +715,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		fixPointAnchorRectangle.setFilled(false);
 		fixPointAnchorRectangle.setLineVisible(false);
-		layoutAnchor(portShape);
 		return fixPointAnchor;
-	}
-
-	private void layoutAnchor(Shape parentShape) {
-		// Layout and resize anchor
-		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
-		FixPointAnchor portAnchor = (FixPointAnchor) parentShape.getAnchors().get(0);
-		Point anchorLocation = portAnchor.getLocation();
-		anchorLocation.setY(parentSize.getHeight() / 2);
-		Graphiti.getGaLayoutService().setLocationAndSize(portAnchor.getGraphicsAlgorithm(), -anchorLocation.getX(), -anchorLocation.getY(),
-			parentSize.getWidth(), parentSize.getHeight());
 	}
 
 	/**
