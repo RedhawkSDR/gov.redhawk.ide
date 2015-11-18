@@ -16,7 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -48,7 +47,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.transaction.RunnableWithResult;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -64,17 +62,14 @@ import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
 import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
-import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
-import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
@@ -510,66 +505,6 @@ public final class StandardTestActions {
 				return "Cell editor did not disappear";
 			}
 		});
-	}
-
-	/**
-	 * @param bot
-	 * @param page
-	 * @deprecated Use {@link EditorActions#assertEditorTabValid(SWTBotEditor, String)}
-	 */
-	@Deprecated
-	public static void assertFormValid(SWTBot bot, final IFormPage page) {
-		try {
-			waitForValidationState(bot, page, IMessageProvider.NONE, IMessageProvider.INFORMATION, IMessageProvider.WARNING);
-		} catch (TimeoutException e) {
-			Assert.fail("Form should be valid");
-		}
-	}
-
-	public static int getValidationState(IFormPage page) {
-		int messageType = page.getManagedForm().getForm().getMessageType();
-		return messageType;
-	}
-
-	public static void waitForValidationState(SWTBot bot, final IFormPage page, final int... states) {
-		bot.waitUntil(new ICondition() {
-
-			@Override
-			public boolean test() throws Exception {
-				int current = getValidationState(page);
-				for (int i : states) {
-					if (i == current) {
-						return true;
-					}
-				}
-				return false;
-			}
-
-			@Override
-			public void init(SWTBot bot) {
-
-			}
-
-			@Override
-			public String getFailureMessage() {
-				return "Failed waiting for validation state to change to: " + Arrays.toString(states);
-			}
-
-		}, 5000);
-	}
-
-	/**
-	 * @param bot
-	 * @param page
-	 * @deprecated Use {@link EditorActions#assertEditorTabValid(SWTBotEditor, String)}
-	 */
-	@Deprecated
-	public static void assertFormInvalid(SWTBot bot, final IFormPage page) {
-		try {
-			waitForValidationState(bot, page, IMessageProvider.ERROR);
-		} catch (TimeoutException e) {
-			Assert.fail("Form should be invalid");
-		}
 	}
 
 	private static Boolean supportsRuntime = null;
