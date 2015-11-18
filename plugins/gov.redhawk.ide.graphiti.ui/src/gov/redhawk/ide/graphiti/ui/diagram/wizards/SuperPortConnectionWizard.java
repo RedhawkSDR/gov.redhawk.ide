@@ -16,11 +16,11 @@ import gov.redhawk.diagram.util.InterfacesUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.wizard.Wizard;
@@ -61,7 +61,7 @@ public class SuperPortConnectionWizard extends Wizard {
 			
 			/** Source Group **/
 			Group sourceGroup = new Group(composite, SWT.None);
-			String sourceParentName = ((SadComponentInstantiation) sourcePorts.get(0).eContainer()).getId();
+			String sourceParentName = ((ComponentInstantiation) sourcePorts.get(0).eContainer()).getId();
 			sourceGroup.setText(sourceParentName + " (Source)");
 			sourceGroup.setLayout(new FillLayout());
 			sourceGroup.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).hint(SWT.DEFAULT, 200).create());
@@ -95,7 +95,7 @@ public class SuperPortConnectionWizard extends Wizard {
 			
 			/** Target Group **/
 			Group targetGroup = new Group(composite, SWT.None);
-			String targetParentName = ((SadComponentInstantiation) targetPorts.get(0).eContainer()).getId();
+			String targetParentName = ((ComponentInstantiation) targetPorts.get(0).eContainer()).getId();
 			targetGroup.setText(targetParentName + " (Target)");
 			targetGroup.setLayout(new FillLayout());
 			targetGroup.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).hint(SWT.DEFAULT, 200).create());
