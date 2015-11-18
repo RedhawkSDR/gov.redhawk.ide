@@ -12,11 +12,8 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -28,7 +25,6 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
@@ -272,55 +268,9 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	 */
 	protected abstract List<EObject> getBusinessObjectsToLink(EObject obj);
 
-	protected Map<EObject, UpdateAction> getPortsToUpdate(ContainerShape containerShape, List< ? extends EObject > modelPorts) {
-		// Put the model's port stubs into a set for tracking
-		Set<EObject> expectedPorts = new HashSet<EObject>(modelPorts);
-
-		// Record the actions for each port shape or model stub
-		Map<EObject, UpdateAction> actions = new HashMap<EObject, UpdateAction>();
-
-		// First, check the existing shapes for removal or update
-		for (Shape childShape : containerShape.getChildren()) {
-			EObject bo = (EObject) getBusinessObjectForPictogramElement(childShape);
-			// Check the existence of the port's business object, and try to remove it from the set of expected ports.
-			// This lets us know if the port should exist (remove returns true), and any port stubs still left in the
-			// set after checking need to be added
-			if (bo == null || !expectedPorts.remove(bo)) {
-				// Delete non-existent or stale (no longer contained in model) port
-				actions.put(childShape, UpdateAction.REMOVE);
-			} else {
-				// Ask the feature provider if the port needs an update
-				IReason updateNeeded = getFeatureProvider().updateNeeded(new UpdateContext(childShape));
-				if (updateNeeded.toBoolean()) {
-					actions.put(childShape, UpdateAction.UPDATE);
-				}
-			}
-		}
-
-		// Add missing ports
-		for (EObject portStub : expectedPorts) {
-			actions.put(portStub, UpdateAction.ADD);
-		}
-		return actions;
-	}
-
 	protected boolean updatePorts(ContainerShape portsContainer, List< ? extends EObject > modelPorts) {
-		Map< EObject, UpdateAction > portActions = getPortsToUpdate(portsContainer, modelPorts);
-		for (Map.Entry<EObject, UpdateAction> entry : portActions.entrySet()) {
-			switch (entry.getValue()) {
-			case ADD:
-				DUtil.addShapeViaFeature(getFeatureProvider(), portsContainer, entry.getKey());
-				break;
-			case REMOVE:
-				DUtil.fastDeletePictogramElement((PictogramElement) entry.getKey());
-				break;
-			case UPDATE:
-				updatePictogramElement((PictogramElement) entry.getKey());
-				break;
-			default:
-				break;
-			}
-		}
+		Map< EObject, UpdateAction > portActions = getChildrenToUpdate(portsContainer, modelPorts);
+		updateChildren(portsContainer, portActions);
 		return !portActions.isEmpty();
 	}
 
@@ -328,7 +278,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		if (portsContainer == null) {
 			return true;
 		}
-		Map< EObject, UpdateAction > portActions = getPortsToUpdate(portsContainer, modelPorts);
+		Map< EObject, UpdateAction > portActions = getChildrenToUpdate(portsContainer, modelPorts);
 		return !portActions.isEmpty();
 	}
 

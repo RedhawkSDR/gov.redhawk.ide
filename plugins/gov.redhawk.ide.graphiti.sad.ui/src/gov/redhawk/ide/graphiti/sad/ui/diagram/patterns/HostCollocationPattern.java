@@ -20,11 +20,8 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
@@ -52,7 +49,6 @@ import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.MoveShapeContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
-import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.func.IDirectEditing;
 import org.eclipse.graphiti.mm.PropertyContainer;
@@ -538,40 +534,13 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 			return Reason.createTrueReason("Need to update name");
 		}
 
-		Map<EObject,UpdateAction> actions = getObjectsToUpdate(collocationShape, collocation);
+		List<SadComponentInstantiation> expectedComponents = getComponentInstantiations(collocation);
+		Map<EObject,UpdateAction> actions = getChildrenToUpdate(collocationShape, expectedComponents);
 		if (!actions.isEmpty()) {
 			return Reason.createTrueReason("Need to update component shape(s)");
 		}
 
 		return Reason.createFalseReason();
-	}
-
-	protected Map<EObject,UpdateAction> getObjectsToUpdate(ContainerShape collocationShape, HostCollocation collocation) {
-		Set<SadComponentInstantiation> expectedComponents = new HashSet<SadComponentInstantiation>();
-		for (SadComponentPlacement placement : collocation.getComponentPlacement()) {
-			expectedComponents.addAll(placement.getComponentInstantiation());
-		}
-
-		Map<EObject,UpdateAction> actions = new HashMap<EObject,UpdateAction>();
-		for (Shape child : collocationShape.getChildren()) {
-			// Check the existence of the child business object, and try to remove it from the set of expected
-			// components. This lets us know if the shape should exist (remove returns true), and any components still
-			// left in the set after checking need to be added
-			SadComponentInstantiation instantiation = (SadComponentInstantiation) getBusinessObjectForPictogramElement(child);
-			if (instantiation == null || !expectedComponents.remove(instantiation)) {
-				actions.put(child, UpdateAction.REMOVE);
-			} else {
-				IReason reason = getFeatureProvider().updateNeeded(new UpdateContext(child));
-				if (reason.toBoolean()) {
-					actions.put(child, UpdateAction.UPDATE);
-				}
-			}
-		}
-
-		for (SadComponentInstantiation instantiation : expectedComponents) {
-			actions.put(instantiation, UpdateAction.ADD);
-		}
-		return actions;
 	}
 
 	protected Text getOuterText(ContainerShape containerShape) {
@@ -589,28 +558,23 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		// Update collocation name
 		boolean updatePerformed = UpdateUtil.update(getOuterText(collocationShape), collocation.getName());
 
-		Map<EObject,UpdateAction> actions = getObjectsToUpdate(collocationShape, collocation);
-		for (Map.Entry<EObject,UpdateAction> entry : actions.entrySet()) {
-			switch (entry.getValue()) {
-			case ADD:
-				DUtil.addShapeViaFeature(getFeatureProvider(), collocationShape, entry.getKey());
-				break;
-			case REMOVE:
-				DUtil.removeShapeViaFeature(getFeatureProvider(), (Shape) entry.getKey());
-				break;
-			case UPDATE:
-				updatePictogramElement((PictogramElement) entry.getKey());
-				break;
-			default:
-				break;
-			}
-		}
+		List<SadComponentInstantiation> expectedComponents = getComponentInstantiations(collocation);
+		Map<EObject,UpdateAction> actions = getChildrenToUpdate(collocationShape, expectedComponents);
+		updateChildren(collocationShape, actions);
 
 		if (updatePerformed || !actions.isEmpty()) {
 			layoutPictogramElement(collocationShape);
 			return true;
 		}
 		return false;
+	}
+
+	protected List<SadComponentInstantiation> getComponentInstantiations(HostCollocation collocation) {
+		List<SadComponentInstantiation> instantiations = new ArrayList<SadComponentInstantiation>();
+		for (SadComponentPlacement placement : collocation.getComponentPlacement()) {
+			instantiations.addAll(placement.getComponentInstantiation());
+		}
+		return instantiations;
 	}
 
 	/**

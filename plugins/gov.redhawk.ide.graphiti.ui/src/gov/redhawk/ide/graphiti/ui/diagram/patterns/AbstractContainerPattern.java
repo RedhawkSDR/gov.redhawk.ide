@@ -10,9 +10,24 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.features.context.impl.UpdateContext;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.config.IPatternConfiguration;
+
+import gov.redhawk.ide.graphiti.ui.diagram.features.update.UpdateAction;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
 public abstract class AbstractContainerPattern extends AbstractPattern {
 	
@@ -37,6 +52,55 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 		return getCreateName();
 	}
 	
+	protected Map<EObject,UpdateAction> getChildrenToUpdate(ContainerShape containerShape, List< ? extends EObject > modelChildren) {
+		// Put the model children into a set for tracking
+		Set<EObject> expectedChildren = new HashSet<EObject>(modelChildren);
+
+		// Record the actions for each port shape or model stub
+		Map<EObject,UpdateAction> actions = new HashMap<EObject,UpdateAction>();
+
+		// First, check the existing shapes for removal or update
+		for (Shape child : containerShape.getChildren()) {
+			// Check the existence of the child business object, and try to remove it from the set of expected
+			// children. This lets us know if the shape should exist (remove returns true), and any objects still
+			// left in the set after checking need to be added
+			EObject bo = (EObject) getBusinessObjectForPictogramElement(child);
+			if (bo == null || !expectedChildren.remove(bo)) {
+				// Delete non-existent or stale (no longer contained in model) child
+				actions.put(child, UpdateAction.REMOVE);
+			} else {
+				// Ask the feature provider if the child needs an update
+				IReason reason = getFeatureProvider().updateNeeded(new UpdateContext(child));
+				if (reason.toBoolean()) {
+					actions.put(child, UpdateAction.UPDATE);
+				}
+			}
+		}
+
+		// Add shapes for missing children
+		for (EObject instantiation : expectedChildren) {
+			actions.put(instantiation, UpdateAction.ADD);
+		}
+		return actions;
+	}
+
+	protected void updateChildren(ContainerShape containerShape, Map<EObject,UpdateAction> actions) {
+		for (Map.Entry<EObject,UpdateAction> entry : actions.entrySet()) {
+			switch (entry.getValue()) {
+			case ADD:
+				DUtil.addShapeViaFeature(getFeatureProvider(), containerShape, entry.getKey());
+				break;
+			case REMOVE:
+				DUtil.removeShapeViaFeature(getFeatureProvider(), (Shape) entry.getKey());
+				break;
+			case UPDATE:
+				updatePictogramElement((PictogramElement) entry.getKey());
+				break;
+			default:
+				break;
+			}
+		}
+	}
 	/**
 	 * Checks to see if the given String <code>value</code> is valid. Returns an error
 	 * message if invalid and <code>null</code> if valid. 
