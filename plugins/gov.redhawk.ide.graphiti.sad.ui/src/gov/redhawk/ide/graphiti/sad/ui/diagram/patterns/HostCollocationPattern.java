@@ -13,13 +13,18 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
+import gov.redhawk.ide.graphiti.ui.diagram.features.update.UpdateAction;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
@@ -38,7 +43,6 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IMoveShapeFeature;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IRemoveFeature;
-import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
@@ -52,7 +56,6 @@ import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.func.IDirectEditing;
 import org.eclipse.graphiti.mm.PropertyContainer;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -132,15 +135,6 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Returns all ContainerShapes associated with HostCollocation
-	 * @param diagram
-	 * @return
-	 */
-	public static List<ContainerShape> getHostCollocationContainerShapes(Diagram diagram) {
-		return DUtil.getAllContainerShapes(diagram, HOST_COLLOCATION_OUTER_CONTAINER_SHAPE);
 	}
 
 	/**
@@ -544,53 +538,40 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 			return Reason.createTrueReason("Need to update name");
 		}
 
-		List<Shape> removedShapes = getShapesToRemove(collocationShape);
-		if (!removedShapes.isEmpty()) {
-			return Reason.createTrueReason("Need to remove " + removedShapes.size() + " component shape(s)");
+		Map<EObject,UpdateAction> actions = getObjectsToUpdate(collocationShape, collocation);
+		if (!actions.isEmpty()) {
+			return Reason.createTrueReason("Need to update component shape(s)");
 		}
 
-		for (Shape child : collocationShape.getChildren()) {
-			UpdateContext updateContext = new UpdateContext(child);
-			IUpdateFeature updateFeature = getFeatureProvider().getUpdateFeature(updateContext);
-			if (updateFeature != null) {
-				IReason childReason = updateFeature.updateNeeded(updateContext);
-				if (childReason.toBoolean()) {
-					return childReason;
-				}
-			}
-		}
-
-		List<EObject> addedShapes = getShapesToAdd(collocation);
-		if (!addedShapes.isEmpty()) {
-			return Reason.createTrueReason("Need to add " + addedShapes.size() + " component shape(s)");
-		}
 		return Reason.createFalseReason();
 	}
 
-	protected List<Shape> getShapesToRemove(ContainerShape collocationShape) {
-		List<Shape> removedShapes = new ArrayList<Shape>();
-		HostCollocation collocation = (HostCollocation) getBusinessObjectForPictogramElement(collocationShape);
-		for (Shape child : collocationShape.getChildren()) {
-			SadComponentInstantiation instantiation = (SadComponentInstantiation) Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(child);
-			if (instantiation == null || instantiation.eIsProxy()) {
-				removedShapes.add(child);
-			} else if (instantiation.eContainer().eContainer() != collocation) {
-				removedShapes.add(child);
-			}
+	protected Map<EObject,UpdateAction> getObjectsToUpdate(ContainerShape collocationShape, HostCollocation collocation) {
+		Set<SadComponentInstantiation> expectedComponents = new HashSet<SadComponentInstantiation>();
+		for (SadComponentPlacement placement : collocation.getComponentPlacement()) {
+			expectedComponents.addAll(placement.getComponentInstantiation());
 		}
-		return removedShapes;
-	}
 
-	protected List<EObject> getShapesToAdd(HostCollocation collocation) {
-		List<EObject> addedShapes = new ArrayList<EObject>();
-		for (SadComponentPlacement placement: collocation.getComponentPlacement()) {
-			for (SadComponentInstantiation instantiation : placement.getComponentInstantiation()) {
-				if (Graphiti.getLinkService().getPictogramElements(getDiagram(), instantiation).isEmpty()) {
-					addedShapes.add(instantiation);
+		Map<EObject,UpdateAction> actions = new HashMap<EObject,UpdateAction>();
+		for (Shape child : collocationShape.getChildren()) {
+			// Check the existence of the child business object, and try to remove it from the set of expected
+			// components. This lets us know if the shape should exist (remove returns true), and any components still
+			// left in the set after checking need to be added
+			SadComponentInstantiation instantiation = (SadComponentInstantiation) getBusinessObjectForPictogramElement(child);
+			if (instantiation == null || !expectedComponents.remove(instantiation)) {
+				actions.put(child, UpdateAction.REMOVE);
+			} else {
+				IReason reason = getFeatureProvider().updateNeeded(new UpdateContext(child));
+				if (reason.toBoolean()) {
+					actions.put(child, UpdateAction.UPDATE);
 				}
 			}
 		}
-		return addedShapes;
+
+		for (SadComponentInstantiation instantiation : expectedComponents) {
+			actions.put(instantiation, UpdateAction.ADD);
+		}
+		return actions;
 	}
 
 	protected Text getOuterText(ContainerShape containerShape) {
@@ -607,56 +588,29 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 
 		// Update collocation name
 		boolean updatePerformed = UpdateUtil.update(getOuterText(collocationShape), collocation.getName());
-		boolean layoutNeeded = updatePerformed;
 
-		for (Shape shape : getShapesToRemove(collocationShape)) {
-			DUtil.removeShapeViaFeature(getFeatureProvider(), shape);
-			updatePerformed = true;
-		}
-
-		for (Shape child : collocationShape.getChildren()) {
-			UpdateContext updateContext = new UpdateContext(child);
-			IUpdateFeature updateFeature = getFeatureProvider().getUpdateFeature(updateContext);
-			if (updateFeature != null) {
-				updatePerformed |= updateFeature.update(updateContext);
+		Map<EObject,UpdateAction> actions = getObjectsToUpdate(collocationShape, collocation);
+		for (Map.Entry<EObject,UpdateAction> entry : actions.entrySet()) {
+			switch (entry.getValue()) {
+			case ADD:
+				DUtil.addShapeViaFeature(getFeatureProvider(), collocationShape, entry.getKey());
+				break;
+			case REMOVE:
+				DUtil.removeShapeViaFeature(getFeatureProvider(), (Shape) entry.getKey());
+				break;
+			case UPDATE:
+				updatePictogramElement((PictogramElement) entry.getKey());
+				break;
+			default:
+				break;
 			}
 		}
 
-		for (EObject object : getShapesToAdd(collocation)) {
-			DUtil.addShapeViaFeature(getFeatureProvider(), collocationShape, object);
-			updatePerformed = true;
-			layoutNeeded = true;
-		}
-
-		if (layoutNeeded) {
+		if (updatePerformed || !actions.isEmpty()) {
 			layoutPictogramElement(collocationShape);
+			return true;
 		}
-		return updatePerformed;
-	}
-
-	/**
-	 * Checks for inconsistencies in text value between model and diagram elements
-	 * returns false if values don't match
-	 */
-	public static boolean compareHostCoText(PictogramElement hostCoPE, HostCollocation hostCo) {
-		GraphicsAlgorithm hostCoGA = hostCoPE.getGraphicsAlgorithm();
-		for (GraphicsAlgorithm childGA : hostCoGA.getGraphicsAlgorithmChildren()) {
-			if (childGA instanceof Text) {
-				Text text = (Text) childGA;
-				if (!text.getValue().equals(hostCo.getName())) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	public static boolean compareHostCoContents(PictogramElement pe, HostCollocation hostCo) {
-		ContainerShape hostCoPE = (ContainerShape) pe;
-		if (hostCoPE.getChildren().size() != hostCo.getComponentPlacement().size()) {
-			return false;
-		}
-		return true;
+		return false;
 	}
 
 	/**
