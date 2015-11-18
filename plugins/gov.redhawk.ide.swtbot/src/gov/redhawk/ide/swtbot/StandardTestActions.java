@@ -401,7 +401,7 @@ public final class StandardTestActions {
 
 			@Override
 			public boolean test() throws Exception {
-				return !cellEditor.isActive() && !cellEditor.isVisible();
+				return cellEditor.widget.isDisposed() || !(cellEditor.isActive() || cellEditor.isVisible());
 			}
 
 			@Override
@@ -497,7 +497,7 @@ public final class StandardTestActions {
 
 			@Override
 			public boolean test() throws Exception {
-				return !cellEditor.isActive() && !cellEditor.isVisible();
+				return cellEditor.widget.isDisposed() || !(cellEditor.isActive() || cellEditor.isVisible());
 			}
 
 			@Override
