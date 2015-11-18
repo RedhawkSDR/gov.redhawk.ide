@@ -43,7 +43,6 @@ import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.DecrementStartOrderFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.IncrementStartOrderFeature;
@@ -105,10 +104,12 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		if (context == null) {
 			throw new IllegalArgumentException("Argument context must not be null."); //$NON-NLS-1$
 		}
+		// For component shapes, the editable text is a child of the inner rectangle, which does not have a business
+		// object link, so search for a reasonable parent.
+		Object businessObject = getNonNullBusinessObjectForPictogramElement(context.getPictogramElement());
 		IDirectEditingFeature ret = null;
 		for (IPattern pattern : this.getPatterns()) {
-			if (checkPattern(pattern, getBusinessObjectForPictogramElement(DUtil.findContainerShapeParentWithProperty(context.getPictogramElement(),
-				RHContainerShapeImpl.SHAPE_OUTER_CONTAINER)))) {
+			if (checkPattern(pattern, businessObject)) {
 				IPattern chosenPattern = null;
 				IDirectEditingFeature f = new DirectEditingFeatureForPattern(this, pattern);
 				if (checkFeatureAndContext(f, context)) {
@@ -127,6 +128,20 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		}
 
 		return ret;
+	}
+
+	/**
+	 * Search for a non-null business object by traversing up a PictogramElement's parents.
+	 * @param pictogramElement
+	 * @return
+	 */
+	protected Object getNonNullBusinessObjectForPictogramElement(PictogramElement pictogramElement) {
+		Object businessObject = getBusinessObjectForPictogramElement(pictogramElement);
+		while (businessObject == null && pictogramElement != null) {
+			pictogramElement = (PictogramElement) pictogramElement.eContainer();
+			businessObject = getBusinessObjectForPictogramElement(pictogramElement);
+		}
+		return businessObject;
 	}
 
 	@Override

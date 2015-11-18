@@ -16,6 +16,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ import org.eclipse.graphiti.features.context.impl.MoveShapeContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.Property;
+import org.eclipse.graphiti.func.IDirectEditing;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Image;
@@ -537,6 +538,12 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 	@Override
 	public IReason updateNeeded(IUpdateContext context) {
 		ContainerShape collocationShape = (ContainerShape) context.getPictogramElement();
+		HostCollocation collocation = (HostCollocation) getBusinessObjectForPictogramElement(collocationShape);
+
+		if (UpdateUtil.updateNeeded(getOuterText(collocationShape), collocation.getName())) {
+			return Reason.createTrueReason("Need to update name");
+		}
+
 		List<Shape> removedShapes = getShapesToRemove(collocationShape);
 		if (!removedShapes.isEmpty()) {
 			return Reason.createTrueReason("Need to remove " + removedShapes.size() + " component shape(s)");
@@ -553,7 +560,6 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 			}
 		}
 
-		HostCollocation collocation = (HostCollocation) getBusinessObjectForPictogramElement(collocationShape);
 		List<EObject> addedShapes = getShapesToAdd(collocation);
 		if (!addedShapes.isEmpty()) {
 			return Reason.createTrueReason("Need to add " + addedShapes.size() + " component shape(s)");
@@ -587,14 +593,22 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		return addedShapes;
 	}
 
+	protected Text getOuterText(ContainerShape containerShape) {
+		return (Text) DUtil.findChildGraphicsAlgorithmByProperty(containerShape.getGraphicsAlgorithm(), DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
+	}
+
 	/**
 	 * Updates the host collocation if needed
 	 */
 	@Override
 	public boolean update(IUpdateContext context) {
 		ContainerShape collocationShape = (ContainerShape) context.getPictogramElement();
-		boolean updatePerformed = false;
-		boolean layoutNeeded = false;
+		HostCollocation collocation = (HostCollocation) getBusinessObjectForPictogramElement(collocationShape);
+
+		// Update collocation name
+		boolean updatePerformed = UpdateUtil.update(getOuterText(collocationShape), collocation.getName());
+		boolean layoutNeeded = updatePerformed;
+
 		for (Shape shape : getShapesToRemove(collocationShape)) {
 			DUtil.removeShapeViaFeature(getFeatureProvider(), shape);
 			updatePerformed = true;
@@ -608,7 +622,6 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 			}
 		}
 
-		HostCollocation collocation = (HostCollocation) getBusinessObjectForPictogramElement(collocationShape);
 		for (EObject object : getShapesToAdd(collocation)) {
 			DUtil.addShapeViaFeature(getFeatureProvider(), collocationShape, object);
 			updatePerformed = true;
@@ -663,43 +676,33 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		return dialog.getInput();
 	}
 
-	protected String getName(EObject obj) {
-		return ((HostCollocation) obj).getName();
+	@Override
+	public int getEditingType() {
+		return IDirectEditing.TYPE_TEXT;
 	}
 
 	@Override
 	public boolean canDirectEdit(IDirectEditingContext context) {
-		Object obj = DUtil.getBusinessObject(context.getPictogramElement());
-		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-
-		// allow if we've selected the inner Text for the component
-		if (obj instanceof HostCollocation && ga instanceof Text) {
-			Text text = (Text) ga;
-			for (Property prop : text.getProperties()) {
-				if (prop.getValue().equals(GA_OUTER_ROUNDED_RECTANGLE_TEXT)) {
-					return true;
-				}
-			}
-		}
-		return false;
+		String gaType = Graphiti.getPeService().getPropertyValue(context.getGraphicsAlgorithm(), DUtil.GA_TYPE);
+		return GA_OUTER_ROUNDED_RECTANGLE_TEXT.equals(gaType);
 	}
 
 	@Override
 	public String getInitialValue(IDirectEditingContext context) {
-		EObject hc = (EObject) DUtil.getBusinessObject(context.getPictogramElement());
-		return getName(hc);
+		HostCollocation hc = (HostCollocation) getBusinessObjectForPictogramElement(context.getPictogramElement());
+		return hc.getName();
 	}
 
 	@Override
 	public void setValue(final String value, IDirectEditingContext context) {
-		final HostCollocation hc = (HostCollocation) DUtil.getBusinessObject(context.getPictogramElement());
+		ContainerShape collocationShape = (ContainerShape) context.getPictogramElement();
+		final HostCollocation hc = (HostCollocation) getBusinessObjectForPictogramElement(collocationShape);
 
 		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
 
 		// Perform business object manipulation in a Command
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
+		editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
 				// set usage name
@@ -707,8 +710,8 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 			}
 		});
 
-		// perform update, redraw
-		updatePictogramElement(context.getPictogramElement());
+		// Perform update, redraw
+		updatePictogramElement(collocationShape);
 	}
 	
 }

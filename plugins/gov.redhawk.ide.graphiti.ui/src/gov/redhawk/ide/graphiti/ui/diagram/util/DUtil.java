@@ -438,6 +438,25 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
+	 * Finds a child graphics algorithm with the given property key/value pair non-recursively.
+	 *
+	 * @param ga
+	 * @param propertyName
+	 * @param propertyValue
+	 * @return
+	 */
+	public static GraphicsAlgorithm findChildGraphicsAlgorithmByProperty(GraphicsAlgorithm ga, String propertyName, String propertyValue) {
+		if (ga != null) {
+			for (GraphicsAlgorithm child : ga.getGraphicsAlgorithmChildren()) {
+				if (propertyValue.equals(Graphiti.getPeService().getPropertyValue(child, propertyName))) {
+					return child;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Return first matched child with property value
 	 * @param diagramElement
 	 * @return
