@@ -44,8 +44,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mil.jpeojtrs.sca.prf.AbstractProperty;
-import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
@@ -367,8 +365,7 @@ public final class SpdLauncherUtil {
 		// Collect non-null properties of type 'property' (but not type 'execparam')
 		List<DataType> initializeProps = new ArrayList<DataType>();
 		for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
-			AbstractProperty propDef = prop.getDefinition();
-			if (propDef.isKind(PropertyConfigurationType.PROPERTY) && !propDef.isKind(PropertyConfigurationType.EXECPARAM)) {
+			if (PropertiesUtil.canInitialize(prop.getDefinition())) {
 				DataType dt = prop.getProperty();
 				if (dt.value != null && dt.value.type().kind() != TCKind.tk_null) {
 					initializeProps.add(dt);
