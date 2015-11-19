@@ -238,6 +238,7 @@ public class ScaExplorerTestUtils {
 		SWTBotShell wizardShell = bot.shell("Launch Waveform");
 		SWTBot wizardBot = wizardShell.bot();
 		SWTBotTreeItem treeItem = StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList(waveform));
+		bot.waitUntil(Conditions.widgetIsEnabled(wizardBot.tree()));
 		treeItem.select();
 		wizardBot.button("Finish").click();
 		bot.waitUntil(Conditions.shellCloses(wizardShell), 30000);
