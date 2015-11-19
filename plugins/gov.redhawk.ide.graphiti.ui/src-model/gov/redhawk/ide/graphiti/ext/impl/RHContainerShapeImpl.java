@@ -820,12 +820,20 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
+	 * Returns the inner container's rounded rectangle
+	 * @return
+	 */
+	protected RoundedRectangle getInnerRoundedRectangle() {
+		return (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
+	}
+
+	/**
 	 * Return the text for inner container
 	 * @generated NOT
 	 */
 	@Override
 	public Text getInnerText() {
-		return (Text) DUtil.findFirstPropertyContainer(this, GA_INNER_ROUNDED_RECTANGLE_TEXT);
+		return (Text) DUtil.findChildGraphicsAlgorithmByProperty(getInnerRoundedRectangle(), DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_TEXT);
 	}
 
 	/**
@@ -834,7 +842,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@Override
 	public Image getInnerImage() {
-		return (Image) DUtil.findFirstPropertyContainer(this, RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_IMAGE);
+		return (Image) DUtil.findChildGraphicsAlgorithmByProperty(getInnerRoundedRectangle(), DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_IMAGE);
 	}
 
 	/**
@@ -843,7 +851,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@Override
 	public Polyline getInnerPolyline() {
-		return (Polyline) DUtil.findFirstPropertyContainer(this, GA_INNER_ROUNDED_RECTANGLE_LINE);
+		return (Polyline) DUtil.findChildGraphicsAlgorithmByProperty(getInnerRoundedRectangle(), DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_LINE);
 	}
 
 	/**
