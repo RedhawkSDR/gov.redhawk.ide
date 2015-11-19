@@ -545,9 +545,8 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 
 	protected int getMinimumInnerWidth(RHContainerShape shape) {
 		Text innerTitle = shape.getInnerText();
-		Image innerImage = shape.getInnerImage();
 		IDimension innerTitleDimension = DUtil.calculateTextSize(innerTitle);
-		return innerImage.getWidth() + INNER_TITLE_IMAGE_PADDING + innerTitleDimension.getWidth() + 2 * INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING;
+		return ICON_IMAGE_WIDTH + INNER_TITLE_IMAGE_PADDING + innerTitleDimension.getWidth() + 2 * INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING;
 	}
 
 	protected int getMinimumOuterWidth(RHContainerShape shape) {
@@ -557,23 +556,18 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	}
 
 	protected boolean layoutInnerShape(RHContainerShape shape) {
-		// Resize the inner shape relative to the outer
+		// Inner shape has already been resized to fit outer shape
 		ContainerShape innerContainerShape = shape.getInnerContainerShape();
-		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
-		IDimension parentSize = gaLayoutService.calculateSize(innerContainerShape.getContainer().getGraphicsAlgorithm());
-		int width = parentSize.getWidth() - INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING * 2 - PROVIDES_PORTS_LEFT_PADDING;
-		int height = parentSize.getHeight() - INNER_CONTAINER_SHAPE_TOP_PADDING;
-		boolean layoutApplied = UpdateUtil.resizeIfNeeded(innerContainerShape.getGraphicsAlgorithm(), width, height);
+		int innerWidth = innerContainerShape.getGraphicsAlgorithm().getWidth();
 
 		// Ensure image is correctly sized
 		Image innerImage = shape.getInnerImage();
-		if (UpdateUtil.resizeIfNeeded(innerImage, ICON_IMAGE_WIDTH, ICON_IMAGE_HEIGHT)) {
-			layoutApplied = true;
-		}
+		boolean layoutApplied = UpdateUtil.resizeIfNeeded(innerImage, ICON_IMAGE_WIDTH, ICON_IMAGE_HEIGHT);
+
 		// Layout image and text so that they are roughly centered
 		Text innerText = shape.getInnerText();
 		IDimension innerTextSize = DUtil.calculateTextSize(innerText);
-		int imageX = (innerContainerShape.getGraphicsAlgorithm().getWidth() - (innerTextSize.getWidth() + innerImage.getWidth() + 5)) / 2;
+		int imageX = (innerWidth - (innerTextSize.getWidth() + innerImage.getWidth() + 5)) / 2;
 		if (UpdateUtil.moveIfNeeded(innerImage, imageX, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING)) {
 			layoutApplied = true;
 		}
@@ -585,7 +579,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 
 		// Layout the inner separator under the image and text, to go across the entire inner shape
 		int lineY = Math.max(innerImage.getY() + innerImage.getHeight(), innerText.getY() + innerText.getHeight()) + 2;
-		if (UpdateUtil.movePoints(shape.getInnerPolyline().getPoints(), 0, lineY, width, lineY)) {
+		if (UpdateUtil.movePoints(shape.getInnerPolyline().getPoints(), 0, lineY, innerWidth, lineY)) {
 			layoutApplied = true;
 		}
 
@@ -602,6 +596,18 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		int textX = outerImage.getX() + outerImage.getWidth() + 4;
 		int textWidth = shape.getGraphicsAlgorithm().getWidth() - textX;
 		if (UpdateUtil.moveAndResizeIfNeeded(outerText, textX, 0, textWidth, 20)) {
+			layoutApplied = true;
+		}
+
+		// Resize the inner shape relative to the outer, positioned just under the text
+		ContainerShape innerContainerShape = shape.getInnerContainerShape();
+		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
+		IDimension parentSize = gaLayoutService.calculateSize(shape.getGraphicsAlgorithm());
+		int width = parentSize.getWidth() - INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING * 2 - PROVIDES_PORTS_LEFT_PADDING;
+		int height = parentSize.getHeight() - INNER_CONTAINER_SHAPE_TOP_PADDING;
+		int rectX = INTERFACE_SHAPE_WIDTH;
+		int rectY = outerText.getHeight();
+		if (UpdateUtil.moveAndResizeIfNeeded(innerContainerShape.getGraphicsAlgorithm(), rectX, rectY, width, height)) {
 			layoutApplied = true;
 		}
 		return layoutApplied;
