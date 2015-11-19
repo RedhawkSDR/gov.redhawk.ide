@@ -312,7 +312,8 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		if (element instanceof SadComponentInstantiation) {
 			return ((SadComponentInstantiation) element).getUsageName();
 		} else if (element instanceof SadProperty) {
-			return ((SadProperty) element).getDefinition().getName();
+			AbstractProperty prop = ((SadProperty) element).getDefinition();
+			return (prop.getName() != null) ? prop.getName() : prop.getId();
 		}
 		return "";
 	}

@@ -24,7 +24,7 @@ public final class PropertiesDefaultCustomizations {
 
 	}
 
-	private static final List<XViewerColumn> DEFAULT_COLUMNS = Arrays.asList(new XViewerColumn[] { PropertiesViewerFactory.ID, PropertiesViewerFactory.EXTERNAL,
+	private static final List<XViewerColumn> DEFAULT_COLUMNS = Arrays.asList(new XViewerColumn[] { PropertiesViewerFactory.NAME, PropertiesViewerFactory.EXTERNAL,
 		PropertiesViewerFactory.PRF_VALUE, PropertiesViewerFactory.SAD_VALUE });
 
 	public static CustomizeData getConfigurableProperitesCustomization() {

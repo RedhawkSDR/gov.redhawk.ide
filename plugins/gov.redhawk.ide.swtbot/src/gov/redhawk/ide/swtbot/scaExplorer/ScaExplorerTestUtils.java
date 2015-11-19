@@ -418,8 +418,6 @@ public class ScaExplorerTestUtils {
 	 * Terminate components in Diagram via REDHAWK Explorer.
 	 */
 	public static void terminateWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
 		SWTBotTreeItem waveformEntry = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		waveformEntry.contextMenu("Terminate").click();
 	}
@@ -428,8 +426,6 @@ public class ScaExplorerTestUtils {
 	 * Release node via REDHAWK Explorer.
 	 */
 	public static void releaseFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
 		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, node);
 		treeItemEntry.contextMenu("Release").click();
 	}
@@ -438,8 +434,6 @@ public class ScaExplorerTestUtils {
 	 * Release node via REDHAWK Explorer.
 	 */
 	public static void terminateFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
 		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, node);
 		treeItemEntry.contextMenu("Terminate").click();
 	}
@@ -450,8 +444,6 @@ public class ScaExplorerTestUtils {
 	 */
 	@Deprecated
 	public static void startWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
 		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, node);
 		treeItemEntry.contextMenu("Start").click();
 	}
