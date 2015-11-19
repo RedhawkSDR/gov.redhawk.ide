@@ -20,11 +20,14 @@ import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+
+import gov.redhawk.ide.swtbot.StandardTestActions;
 
 public class ScaExplorerTestUtils {
 
@@ -95,7 +98,11 @@ public class ScaExplorerTestUtils {
 		// Find the root item in the tree. Allow for suffixing from the started decorator.
 		for (SWTBotTreeItem rootItem : scaExplorerView.bot().tree().getAllItems()) {
 			if (rootItem.getText().matches(parentPath[0] + "( CONNECTED)?")) {
-				return internalGetTreeItem(rootItem, path);
+				if (parentPath.length == 1 && treeItemName == null) {
+					return rootItem;
+				} else {
+					return internalGetTreeItem(rootItem, path);
+				}
 			}
 		}
 		throw new WidgetNotFoundException("Cannot find root of tree: " + parentPath[0]);
@@ -225,29 +232,15 @@ public class ScaExplorerTestUtils {
 	}
 
 	public static void launchWaveformFromDomain(SWTWorkbenchBot bot, String domain, String waveform) {
-
-		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
-		SWTBotTreeItem domainTreeItem = scaExplorerView.bot().tree().getTreeItem(domain + " CONNECTED");
+		SWTBotTreeItem domainTreeItem = getTreeItemFromScaExplorer(bot, new String[] { domain }, null);
 		domainTreeItem.contextMenu("Launch Waveform...").click();
 
 		SWTBotShell wizardShell = bot.shell("Launch Waveform");
-		final SWTBot wizardBot = wizardShell.bot();
-		wizardShell.activate();
-
-		bot.sleep(1000);
-
-		// select waveform to launch
-		for (SWTBotTreeItem treeItem : wizardBot.tree().getAllItems()) {
-			if (waveform.equalsIgnoreCase(treeItem.getText())) {
-				treeItem.select();
-				break;
-			}
-		}
-
-		// Close wizard
-		SWTBotButton finishButton = wizardBot.button("Finish");
-		finishButton.click();
-
+		SWTBot wizardBot = wizardShell.bot();
+		SWTBotTreeItem treeItem = StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList(waveform));
+		treeItem.select();
+		wizardBot.button("Finish").click();
+		bot.waitUntil(Conditions.shellCloses(wizardShell), 30000);
 	}
 
 	/**
