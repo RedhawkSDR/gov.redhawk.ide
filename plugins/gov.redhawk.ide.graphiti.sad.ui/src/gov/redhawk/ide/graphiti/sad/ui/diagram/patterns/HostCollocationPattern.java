@@ -12,7 +12,6 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
 import gov.redhawk.ide.graphiti.ui.diagram.features.update.UpdateAction;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -20,8 +19,10 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
@@ -217,18 +218,14 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 	 */
 	@Override
 	public Object[] create(ICreateContext context) {
-		final String hostCollocationName = getUserInput();
-		if (hostCollocationName == null) {
-			return null;
-		}
+		// get sad from diagram
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+		final String hostCollocationName = getUniqueCollocationName(sad);
 
 		final HostCollocation[] hostCollocations = new HostCollocation[1];
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		// find all SadComponentInstantiation
 		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context.getWidth(), context.getHeight(), context.getX(), context.getY(),
@@ -583,15 +580,17 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 	 * 'Cancel' or otherwise.
 	 * @return host collocation name
 	 */
-	private String getUserInput() {
-		// prompt user for Host Collocation name
-		AbstractInputValidationDialog dialog = new AbstractInputValidationDialog(NAME, "Enter a name for this host collocation", "Name") {
-			@Override
-			public String inputValidity(String value) {
-				return checkValueValid(value, null);
+	private String getUniqueCollocationName(SoftwareAssembly sad) {
+		Set<String> existingNames = new HashSet<String>();
+		for (HostCollocation collocation : sad.getPartitioning().getHostCollocation()) {
+			existingNames.add(collocation.getName());
+		}
+		for (int index = 1; ; index++) {
+			String name = "collocation_" + index;
+			if (!existingNames.contains(name)) {
+				return name;
 			}
-		};
-		return dialog.getInput();
+		}
 	}
 
 	@Override
