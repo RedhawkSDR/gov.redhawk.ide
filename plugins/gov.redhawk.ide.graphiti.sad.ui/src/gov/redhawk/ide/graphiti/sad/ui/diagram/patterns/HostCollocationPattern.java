@@ -48,6 +48,7 @@ import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.context.impl.AddContext;
 import org.eclipse.graphiti.features.context.impl.MoveShapeContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.impl.Reason;
@@ -166,8 +167,8 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		}
 
 		// resize outerRoundedRectangle
-		int minWidth = (context.getWidth() > 300) ? context.getWidth() : 300;
-		int minHeight = (context.getHeight() > 300) ? context.getHeight() : 300;
+		int minWidth = Math.max(context.getWidth(),  300);
+		int minHeight = Math.max(context.getHeight(), 300);
 		// outerRoundedRectangle
 		gaLayoutService.setLocationAndSize(outerRoundedRectangle, context.getX(), context.getY(), minWidth, minHeight);
 		gaLayoutService.setLocationAndSize(outerRoundedRectangleText, HostCollocationPattern.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING
@@ -176,32 +177,8 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		gaLayoutService.setLocationAndSize(outerRoundedRectangleImage, HostCollocationPattern.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0,
 			HostCollocationPattern.ICON_IMAGE_LENGTH, HostCollocationPattern.ICON_IMAGE_LENGTH);
 
-		// move all SadComponentInstantiation shapes into new HostCollocation shape
-		// find all SadComponentInstantiation shapes
-		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context.getWidth(), context.getHeight(), context.getX(), context.getY(),
-			GA_OUTER_ROUNDED_RECTANGLE);
-		for (Shape shape : containedShapes) {
-			for (EObject obj : shape.getLink().getBusinessObjects()) {
-				if (obj instanceof SadComponentInstantiation) {
-					// reparent
-					shape.setContainer(outerContainerShape);
-					// reposition shape inside host shape
-					int newX = shape.getGraphicsAlgorithm().getX() - context.getX();
-					int newY = shape.getGraphicsAlgorithm().getY() - context.getY();
-					gaLayoutService.setLocation(shape.getGraphicsAlgorithm(), newX, newY);
-				}
-			}
-		}
-
-		// Add component's inside host collocation model into the newly added shape
-		for (SadComponentPlacement componentPlacement : hostCollocation.getComponentPlacement()) {
-			for (SadComponentInstantiation componentInstantiation : componentPlacement.getComponentInstantiation()) {
-				DUtil.addShapeViaFeature(getFeatureProvider(), outerContainerShape, componentInstantiation);
-			}
-		}
-
-		// layout
-		layoutPictogramElement(outerContainerShape);
+		// Add components inside host collocation model into the newly added shape
+		updatePictogramElement(outerContainerShape);
 
 		return outerContainerShape;
 	}
@@ -220,9 +197,12 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 	public Object[] create(ICreateContext context) {
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
-		final String hostCollocationName = getUniqueCollocationName(sad);
 
-		final HostCollocation[] hostCollocations = new HostCollocation[1];
+		String hostCollocationName = getUniqueCollocationName(sad);
+		final HostCollocation hostCollocation = SadFactory.eINSTANCE.createHostCollocation();
+		hostCollocation.setName(hostCollocationName);
+
+		ContainerShape collocationShape = (ContainerShape) add(new AddContext(context, hostCollocation));
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -232,38 +212,36 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 			GA_OUTER_ROUNDED_RECTANGLE);
 		final List<SadComponentInstantiation> sadComponentInstantiations = new ArrayList<SadComponentInstantiation>();
 		for (Shape shape : containedShapes) {
-			for (EObject obj : shape.getLink().getBusinessObjects()) {
-				if (obj instanceof SadComponentInstantiation) {
-					sadComponentInstantiations.add((SadComponentInstantiation) obj);
-				}
+			EObject bo = (EObject) getBusinessObjectForPictogramElement(shape);
+			if (bo instanceof SadComponentInstantiation) {
+				sadComponentInstantiations.add((SadComponentInstantiation) bo);
+
+				// Reparent shape and position inside of host collocation
+				shape.setContainer(collocationShape);
+				int newX = shape.getGraphicsAlgorithm().getX() - context.getX();
+				int newY = shape.getGraphicsAlgorithm().getY() - context.getY();
+				Graphiti.getGaLayoutService().setLocation(shape.getGraphicsAlgorithm(), newX, newY);
 			}
 		}
 
 		// Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
+		editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				// create hostCollocation
-				hostCollocations[0] = SadFactory.eINSTANCE.createHostCollocation();
-				hostCollocations[0].setName(hostCollocationName);
-
 				// move components to hostCollocation
 				// remove from sad partitioning
 				sad.getPartitioning().getComponentPlacement().removeAll(sadComponentInstantiations);
 				// add to hostCollocation
 				for (SadComponentInstantiation ci : sadComponentInstantiations) {
-					hostCollocations[0].getComponentPlacement().add((SadComponentPlacement) ci.getPlacement());
+					hostCollocation.getComponentPlacement().add((SadComponentPlacement) ci.getPlacement());
 				}
 
 				// add to sad partitioning
-				sad.getPartitioning().getHostCollocation().add(hostCollocations[0]);
+				sad.getPartitioning().getHostCollocation().add(hostCollocation);
 			}
 		});
 
-		addGraphicalRepresentation(context, hostCollocations[0]);
-
-		return new Object[] { hostCollocations[0] };
+		return new Object[] { hostCollocation };
 	}
 
 	/**
