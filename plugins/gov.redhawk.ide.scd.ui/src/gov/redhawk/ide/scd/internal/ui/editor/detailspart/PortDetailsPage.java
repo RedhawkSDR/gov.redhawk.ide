@@ -270,6 +270,8 @@ public class PortDetailsPage extends ScaDetails {
 		this.nameEntry.setEditable(this.editable);
 		this.directionCombo.getCombo().setEnabled(this.editable);
 		this.typeTable.getTable().setEnabled(this.editable);
+		this.idlEntry.setEditable(this.editable);
+		idlEntry.getText().setEditable(false);
 		this.descriptionEntry.setEditable(this.editable);
 	}
 
