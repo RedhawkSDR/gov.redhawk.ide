@@ -26,16 +26,13 @@ import org.eclipse.nebula.widgets.xviewer.edit.ExtendedViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 
-/**
- * 
- */
 public class PropertiesViewerFactory extends XViewerFactory {
 
 	public static final String NAMESPACE = SadEditor.ID + ".propertiesViewer";
 
-	public static final XViewerColumn NAME = new XViewerColumn(NAMESPACE + ".name", "Name", 140, SWT.LEFT, false, SortDataType.String, false,
+	public static final XViewerColumn NAME = new XViewerColumn(NAMESPACE + ".name", "Name", 140, SWT.LEFT, true, SortDataType.String, false,
 		"Name of the property or component");
-	public static final XViewerColumn ID = new XViewerColumn(NAMESPACE + ".id", "ID", 140, SWT.LEFT, true, SortDataType.String, false,
+	public static final XViewerColumn ID = new XViewerColumn(NAMESPACE + ".id", "ID", 140, SWT.LEFT, false, SortDataType.String, false,
 		"ID of the property or component");
 	public static final ExtendedViewerColumn EXTERNAL = new ExtendedViewerColumn(NAMESPACE + ".external", "External ID", 140, SWT.LEFT, true, SortDataType.String,
 		false, "External name of the property");
