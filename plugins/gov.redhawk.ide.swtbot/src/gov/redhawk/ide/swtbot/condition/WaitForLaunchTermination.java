@@ -14,17 +14,17 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.waits.ICondition;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.junit.Assert;
 
 /**
  * Waits for any/all launches to terminated
  */
-public class WaitForLaunchTermination implements ICondition {
+public class WaitForLaunchTermination extends DefaultCondition {
 
 	private final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 	private boolean forceTerminate;
+	private String failureDetail = null;
 
 	public WaitForLaunchTermination() {
 		this(false);
@@ -54,6 +54,7 @@ public class WaitForLaunchTermination implements ICondition {
 
 		for (ILaunch launch : launchManager.getLaunches()) {
 			if (!launch.isTerminated()) {
+				failureDetail = launch.getLaunchConfiguration().getName();
 				return false;
 			}
 		}
@@ -61,12 +62,12 @@ public class WaitForLaunchTermination implements ICondition {
 	}
 
 	@Override
-	public void init(SWTBot bot) {
-	}
-
-	@Override
 	public String getFailureMessage() {
-		return "One or more ILaunches are still running";
+		String msg = "One or more ILaunches are still running";
+		if (failureDetail != null) {
+			msg = msg + ". Launch still running: " + failureDetail;
+		}
+		return msg;
 	}
 
 }
