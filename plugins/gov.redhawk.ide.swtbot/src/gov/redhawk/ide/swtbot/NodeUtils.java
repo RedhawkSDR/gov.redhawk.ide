@@ -15,7 +15,6 @@ import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
@@ -71,21 +70,16 @@ public class NodeUtils {
 	 * @param nodeName
 	 */
 	public static void launchNodeInDomain(final SWTWorkbenchBot bot, String domainName, String nodeName) {
-		SWTBotView explorerView = bot.viewById(ScaExplorerTestUtils.SCA_EXPLORER_VIEW_ID);
-		explorerView.show();
-		explorerView.setFocus();
-		SWTBot viewBot = explorerView.bot();
+		SWTBotTreeItem nodeTreeItem = ScaExplorerTestUtils.waitUntilNodeAppearsInScaExplorer(bot, new String[] { "Target SDR", "Nodes" }, nodeName);
+		nodeTreeItem.contextMenu("Launch Device Manager").click();
 
-		SWTBotTreeItem nodeScaTreeItem = viewBot.tree().expandNode("Target SDR", "Nodes", nodeName);
-		nodeScaTreeItem.contextMenu("Launch Device Manager").click();
-		
 		SWTBotShell wizard = bot.shell("Launch Device Manager");
 		wizard.bot().table().select(domainName);
 		wizard.bot().button("OK").click();
-		
-		SWTBotTreeItem nodeDomainTreeItem = viewBot.tree().expandNode(domainName + " CONNECTED", "Device Managers", nodeName);
-		nodeDomainTreeItem.contextMenu("Open With").menu("Node Explorer").click();
-		
+		bot.waitUntil(Conditions.shellCloses(wizard));
+
+		SWTBotTreeItem devMgrTreeItem = ScaExplorerTestUtils.waitUntilNodeAppearsInScaExplorer(bot, new String[] { domainName, "Device Managers" }, nodeName);
+		devMgrTreeItem.contextMenu("Open With").menu("Node Explorer").click();
 	}
 
 }
