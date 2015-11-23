@@ -62,6 +62,7 @@ import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
 import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotList;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
@@ -382,7 +383,7 @@ public final class StandardTestActions {
 		item.select();
 		item.click(column);
 
-		// Type in the cell editor when it appears
+		// Get parent
 		RunnableWithResult<Widget> runnable = new RunnableWithResult.Impl<Widget>() {
 			@Override
 			public void run() {
@@ -391,6 +392,8 @@ public final class StandardTestActions {
 		};
 		item.display.syncExec(runnable);
 		Widget parent = runnable.getResult();
+
+		// Type in the cell editor text box when it appears
 		final SWTBotText cellEditor = new SWTBot(parent).text();
 		cellEditor.typeText(text);
 		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
@@ -409,7 +412,66 @@ public final class StandardTestActions {
 				return "Cell editor did not disappear";
 			}
 		});
+	}
 
+	/**
+	 * Select's an XViewer's pop-up list from editing a cell
+	 * @param bot
+	 * @param item
+	 * @param column
+	 * @param text
+	 */
+	public static void selectXViewerListFromCell(SWTWorkbenchBot bot, final SWTBotTreeItem item, final int column, final String text) {
+		final SWTBotShell[] oldShells = bot.shells();
+		item.select();
+		item.click(column);
+
+		// Wait for the new shell to open
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public boolean test() throws Exception {
+				return bot.shells().length > oldShells.length;
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Shell did not become inactive";
+			}
+		});
+		SWTBotShell[] newShells = bot.shells();
+		SWTBotShell popup = null;
+		for (SWTBotShell newShell : newShells) {
+			boolean found = false;
+			for (SWTBotShell oldBotShell : oldShells) {
+				if (newShell.widget == oldBotShell.widget) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				popup = newShell;
+				break;
+			}
+		}
+		Assert.assertNotNull("Didn't find popup shell", popup);
+
+		// Select from the cell editor list when when it appears
+		final SWTBotList cellEditor = popup.bot().list();
+		cellEditor.select(text);
+
+		// Wait for cell editor to close
+		bot.waitUntil(new DefaultCondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return cellEditor.widget.isDisposed() || !(cellEditor.isActive() || cellEditor.isVisible());
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Cell editor did not disappear";
+			}
+		});
 	}
 
 	/**
