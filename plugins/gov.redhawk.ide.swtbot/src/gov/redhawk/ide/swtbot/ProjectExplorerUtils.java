@@ -11,6 +11,8 @@
  */
 package gov.redhawk.ide.swtbot;
 
+import java.util.Arrays;
+
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
@@ -39,7 +41,7 @@ public class ProjectExplorerUtils {
 	public static SWTBotTreeItem selectNode(SWTWorkbenchBot bot, String... nodes) {
 		SWTBotView view = bot.viewById(PROJECT_EXPLORER_VIEW_ID);
 		view.setFocus();
-		SWTBotTreeItem node = view.bot().tree().expandNode(nodes);
+		SWTBotTreeItem node = StandardTestActions.waitForTreeItemToAppear(view.bot(), view.bot().tree(), Arrays.asList(nodes));
 		node.select();
 		return node;
 	}
