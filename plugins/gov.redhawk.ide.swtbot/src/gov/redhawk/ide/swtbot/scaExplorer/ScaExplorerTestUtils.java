@@ -179,7 +179,7 @@ public class ScaExplorerTestUtils {
 	 * @param bot
 	 * @param domainName
 	 */
-	public static void launchDomain(SWTWorkbenchBot bot, String domainName, String deviceName) {
+	public static void launchDomain(SWTWorkbenchBot bot, String domainName, final String deviceMgrName) {
 		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
 		SWTBotTreeItem targetSDRTreeItem = scaExplorerView.bot().tree().getTreeItem("Target SDR");
 		targetSDRTreeItem.contextMenu("Launch Domain ...").click();
@@ -192,8 +192,24 @@ public class ScaExplorerTestUtils {
 		wizardBot.text(0).setText(domainName);
 
 		// select waveform to launch
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public boolean test() throws Exception {
+				for (SWTBotTreeItem treeItem : wizardBot.tree().getAllItems()) {
+					if (treeItem.getText().startsWith(deviceMgrName)) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Couldn't find device manager " + deviceMgrName;
+			}
+		});
 		for (SWTBotTreeItem treeItem : wizardBot.tree().getAllItems()) {
-			if (treeItem.getText().startsWith(deviceName)) {
+			if (treeItem.getText().startsWith(deviceMgrName)) {
 				treeItem.check();
 				break;
 			}
