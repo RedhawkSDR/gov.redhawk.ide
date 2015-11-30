@@ -580,7 +580,7 @@ public class ScaExplorerTestUtils {
 	 * @param parentPath - The domain or local path (e.g {"REDHAWK_DEV", "Device Managers"} or {"Sandbox"}
 	 * @param parent - The direct parent of the node (e.g. the waveform or device manager name) 
 	 * @param nodeName - The full name of the node to be checked
-	 * @deprecated Use {@link #waitUntilNodeStartedInScaExplorer(SWTWorkbenchBot, String[], String)}
+	 * @deprecated Use {@link #waitUntilResourceStartedInExplorer(SWTWorkbenchBot, String[], String)
 	 */
 	@Deprecated
 	public static void waitUntilNodeStartedInScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String parent,
