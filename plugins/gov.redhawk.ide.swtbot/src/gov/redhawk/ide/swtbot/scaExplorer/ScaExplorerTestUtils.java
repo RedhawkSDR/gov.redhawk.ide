@@ -78,6 +78,7 @@ public class ScaExplorerTestUtils {
 	 */
 	public static String openDiagramFromScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String treeItemName, DiagramType diagramType) {
 		SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, treeItemName);
+		treeItem.select();
 		treeItem.contextMenu().menu("Open With", diagramType.getDiagramName()).click();
 		return treeItem.getText();
 	}
@@ -243,8 +244,8 @@ public class ScaExplorerTestUtils {
 		final SWTBot deletePopupBot = deletePopup.bot();
 		deletePopup.activate();
 
-		SWTBotButton okButton = deletePopupBot.button("OK");
-		okButton.click();
+		deletePopupBot.button("OK").click();
+		bot.waitUntil(Conditions.shellCloses(deletePopup));
 	}
 
 	public static void launchWaveformFromDomain(SWTWorkbenchBot bot, String domain, String waveform) {
