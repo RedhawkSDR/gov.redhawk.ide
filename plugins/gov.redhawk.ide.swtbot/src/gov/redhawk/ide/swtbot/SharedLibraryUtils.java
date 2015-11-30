@@ -10,12 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import java.util.Arrays;
+
 import org.eclipse.swtbot.eclipse.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
-import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 /**
  * 
@@ -31,35 +31,18 @@ public class SharedLibraryUtils {
 	public static void createSharedLibraryProject(SWTBot bot, String sharedLibraryProjectName, String projectType) {
 		StandardTestActions.configurePyDev(bot);
 
-		bot.menu("File").menu("New").menu("Project...").click();
+		bot.menu().menu("File", "New", "Project...").click();
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
 		final SWTBot wizardBot = wizardShell.bot();
-		wizardBot.waitUntil(new DefaultCondition() {
 
-			@Override
-			public String getFailureMessage() {
-				return "Could not find menu option for: " + SHARED_LIBRARY_MENU_NAME;
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				try {
-					wizardBot.tree().getTreeItem("REDHAWK").expand().getNode(SHARED_LIBRARY_MENU_NAME).select();
-					return true;
-				} catch (WidgetNotFoundException e) {
-					return false;
-				}
-			}
-
-		});
+		SWTBotTreeItem treeItem = StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList("REDHAWK", SHARED_LIBRARY_MENU_NAME));
+		treeItem.select();
 		wizardBot.button("Next >").click();
 
 		wizardBot.textWithLabel("Project name:").setText(sharedLibraryProjectName);
 		wizardBot.comboBoxWithLabel("Type:").setSelection(projectType);
-		SWTBotButton finishButton = wizardBot.button("Finish");
-		wizardBot.waitUntil(Conditions.widgetIsEnabled(finishButton));
-		finishButton.click();
+		wizardBot.button("Finish").click();
 
 		bot.waitUntil(Conditions.shellCloses(wizardShell));
 	}

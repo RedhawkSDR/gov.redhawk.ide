@@ -10,14 +10,14 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import java.util.Arrays;
+
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
@@ -35,14 +35,13 @@ public class WaveformUtils {
 	 */
 	public static void createNewWaveform(SWTBot bot, String waveformName, String assemblyController) {
 		// Open the new waveform project wizard
-		SWTBotMenu fileMenu = bot.menu("File");
-		SWTBotMenu newMenu = fileMenu.menu("New");
-		SWTBotMenu otherMenu = newMenu.menu("Other...");
-		otherMenu.click();
+		bot.menu().menu("File", "New", "Other...").click();
 		SWTBotShell wizardShell = bot.shell("New");
 		SWTBot wizardBot = wizardShell.bot();
 		wizardShell.activate();
-		wizardBot.tree().getTreeItem("REDHAWK").expand().getNode("REDHAWK Waveform Project").select();
+
+		SWTBotTreeItem treeItem = StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList("REDHAWK", "REDHAWK Waveform Project"));
+		treeItem.select();
 		wizardBot.button("Next >").click();
 
 		// Enter the name for the new waveform
@@ -70,9 +69,7 @@ public class WaveformUtils {
 		}
 
 		// Close wizard
-		SWTBotButton finishButton = wizardBot.button("Finish");
-		finishButton.click();
-
+		wizardBot.button("Finish").click();
 		bot.waitUntil(Conditions.shellCloses(wizardShell));
 	}
 
