@@ -20,7 +20,12 @@ import org.eclipse.swtbot.swt.finder.waits.ICondition;
  * Waits for any currently running Eclipse auto-builds to complete
  */
 public class WaitForBuild implements ICondition {
-	
+
+	/**
+	 * The recommended timeout when using this condition
+	 */
+	public static final long TIMEOUT = 30000;
+
 	private Thread waitForAutoBuild;
 
 	@Override
