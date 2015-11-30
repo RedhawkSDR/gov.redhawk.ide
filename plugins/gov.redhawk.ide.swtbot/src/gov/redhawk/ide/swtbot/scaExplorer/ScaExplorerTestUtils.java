@@ -167,11 +167,8 @@ public class ScaExplorerTestUtils {
 	 * @param treeItemName
 	 */
 	public static String getFullNameFromScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String treeItemName) {
-		SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, treeItemName);
-		if (treeItem == null) {
-			throw new WidgetNotFoundException("Tree item not found in Sandbox");
-		}
-
+		// TODO: This isn't doing what's expected by the code. Need to fix or eliminate.
+		SWTBotTreeItem treeItem = waitUntilNodeAppearsInScaExplorer(bot, parentPath, treeItemName);
 		return treeItem.getText();
 	}
 
