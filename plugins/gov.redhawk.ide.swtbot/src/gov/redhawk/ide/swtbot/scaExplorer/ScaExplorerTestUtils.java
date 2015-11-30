@@ -227,15 +227,7 @@ public class ScaExplorerTestUtils {
 	 * @return
 	 */
 	public static SWTBotTreeItem getDomain(SWTWorkbenchBot bot, String domainName) {
-		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
-
-		SWTBotTreeItem[] items = scaExplorerView.bot().tree().getAllItems();
-		for (SWTBotTreeItem item : items) {
-			if (item.getText().startsWith(domainName)) {
-				return item;
-			}
-		}
-		return null;
+		return getTreeItemFromScaExplorer(bot, new String[] { domainName }, null);
 	}
 
 	/**
@@ -244,7 +236,6 @@ public class ScaExplorerTestUtils {
 	 * @param domainName
 	 */
 	public static void deleteDomainInstance(SWTWorkbenchBot bot, String domainName) {
-
 		SWTBotTreeItem domainTreeItem = getDomain(bot, domainName);
 		domainTreeItem.contextMenu("Delete").click();
 
@@ -721,11 +712,8 @@ public class ScaExplorerTestUtils {
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem domainTreeItem = scaExplorerView.bot().tree().getTreeItem(domain + " CONNECTED");
-				if (domainTreeItem != null) {
-					return true;
-				}
-				return false;
+				scaExplorerView.bot().tree().getTreeItem(domain + " CONNECTED");
+				return true;
 			}
 		});
 	}
@@ -882,16 +870,14 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/** 
-	 * Type agnostic check to find if a node exists in the REDHAWK Explorer.  Can be used for anything, Sandbox, Target SDR, etc. 
+	 * Waits for a TreeItem to exist in the REDHAWK Explorer.
+	 * @see #getTreeItemFromScaExplorer(SWTWorkbenchBot, String[], String).
 	 * @param bot
 	 * @param nodeParentPath
 	 * @param nodeName
 	 * @return 
 	 */
 	public static SWTBotTreeItem waitUntilNodeAppearsInScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		
 		// 30 second wait, since projects build when exported
 		bot.waitUntil(new DefaultCondition() {
 			@Override
@@ -901,8 +887,8 @@ public class ScaExplorerTestUtils {
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem treeItem = getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
-				return treeItem != null;
+				getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
+				return true;
 			}
 		}, 30000);
 		
