@@ -83,7 +83,16 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Returns the Tree item from REDHAWK Explorer
+	 * Returns a <code>TreeItem</code> from the explorer view. The code will find items even with the following
+	 * suffixes appended:
+	 * <ul>
+	 * <li>Domain 'CONNECTED'</li>
+	 * <li>Resource 'STARTED'</li>
+	 * <li>Waveform instance numeric suffix</li>
+	 * </ul>
+	 * @param bot
+	 * @param parentPath The parent item labels
+	 * @param treeItemName The label of the desired item (suffix not required)
 	 */
 	public static SWTBotTreeItem getTreeItemFromScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String treeItemName) {
 		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
@@ -109,9 +118,8 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Expands a tree item by item until the last element of the desired path is found and returned. Any nodes expanded
-	 * in the search are collapsed if the desired path is not found.
-	 *
+	 * Expands a <code>Tree</code>, item by item until the last element of the desired path is found and returned. Any
+	 * nodes expanded in the search are collapsed if the desired path is not found.
 	 * @param parentItem The tree item to begin the search at
 	 * @param path The path to the tree item under the specified starting item
 	 * @return
@@ -123,10 +131,11 @@ public class ScaExplorerTestUtils {
 			parentItem.expand();
 		}
 
-		// Recursively expand child items
+		// Recursively find and expand child items
 		try {
-			// This pattern accounts for suffixes on waveform names, as well as decorations on objects that are started
-			Pattern pattern = Pattern.compile(path.get(0) + "(_\\d+_\\d+)?( STARTED)?");
+			final String WAVEFORM_INSTANCE_SUFFIX = "(_\\d+_\\d+)?";
+			final String RESOURCE_STARTED_SUFFIX = "( STARTED)?";
+			Pattern pattern = Pattern.compile(path.get(0) + WAVEFORM_INSTANCE_SUFFIX + RESOURCE_STARTED_SUFFIX);
 			List<String> nodes = parentItem.getNodes();
 			for (String node : nodes) {
 				if (pattern.matcher(node).matches()) {
@@ -474,7 +483,7 @@ public class ScaExplorerTestUtils {
 	 * @param parentPath - The domain or local path (e.g {"REDHAWK_DEV", "Device Managers"} or {"Sandbox"}
 	 * @param parent - The direct parent of the node (e.g. the waveform or device manager name) 
 	 * @param nodeName - The full name of the node to be checked
-	 * @deprecated Use {@link #waitUntilNodeStoppedInScaExplorer(SWTWorkbenchBot, String[], String)}
+	 * @deprecated Use {@link #waitUntilResourceStoppedInExplorer(SWTWorkbenchBot, String[], String)}
 	 */
 	@Deprecated
 	public static void waitUntilNodeStoppedInScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String parent,
