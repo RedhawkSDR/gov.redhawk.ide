@@ -27,6 +27,7 @@ public class EditorActions {
 	}
 
 	public static final String DCD_EDITOR_OVERVIEW_TAB_ID = "nodeOverview";
+	public static final String SAD_EDITOR_OVERVIEW_TAB_ID = "sadEditorOverviewPage";
 	public static final String SPD_EDITOR_OVERVIEW_TAB_ID = "componentOverview";
 	public static final String SPD_EDITOR_PROPERTIES_TAB_ID = "properties";
 	public static final String SPD_EDITOR_PORTS_TAB_ID = "ports";
