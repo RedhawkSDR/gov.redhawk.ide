@@ -23,10 +23,7 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPort;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.partitioning.provider.PartitioningItemProviderAdapterFactory;
-import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentPlacement;
-import mil.jpeojtrs.sca.sad.SadPartitioning;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
 
@@ -50,10 +47,9 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
@@ -72,39 +68,34 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 		private TableViewer portViewer;
 		private final AdapterFactory adapterFactory = new ComposedAdapterFactory(new AdapterFactory[] { new SadItemProviderAdapterFactory(),
 		        new PartitioningItemProviderAdapterFactory() });
-		protected String portDescription;
+		private String portDescription;
 
 		protected ExternalPortWizardPage(final String pageName, final ImageDescriptor titleImage) {
 			super(pageName, "External Port", titleImage);
 			this.setDescription("Select the component and then the port of the component you wish to be marked as an "
-			        + "external port.\n\nOptionally you may also give the external port a description.");
+			        + "external port.");
 		}
 
 		@Override
 		public void createControl(final Composite parent) {
-			final Composite main = new Composite(parent, SWT.None);
-			main.setLayout(new GridLayout());
+			final Composite composite = new Composite(parent, SWT.None);
+			composite.setLayout(new GridLayout());
 
-			createSelectComponentGroup(main);
-			createSelectPortGroup(main);
-			createDescriptionGroup(main);
+			createSelectComponent(composite);
+			createSelectPort(composite);
+			createDescription(composite);
 
 			setPageComplete(false);
 
-			setControl(main);
+			setControl(composite);
 		}
 
-		private void createDescriptionGroup(final Composite main) {
-			final Group group = new Group(main, SWT.None);
-			group.setText("Description");
-			createDescriptionText(group);
-			group.setLayout(new FillLayout());
-			group.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
-			group.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 150).create()); // SUPPRESS CHECKSTYLE MagicNumber
-		}
+		private void createDescription(final Composite composite) {
+			Label label = new Label(composite, SWT.NONE);
+			label.setText("Description (Optional):");
 
-		private void createDescriptionText(final Composite parent) {
-			final Text text = new Text(parent, SWT.MULTI | SWT.BORDER);
+			final Text text = new Text(composite, SWT.MULTI | SWT.BORDER);
+			text.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 150).create());
 			text.addModifyListener(new ModifyListener() {
 
 				@Override
@@ -115,33 +106,26 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 
 		}
 
-		private void createSelectPortGroup(final Composite main) {
-			final Group group = new Group(main, SWT.None);
-			group.setText("Select Port:");
-			createPortList(group);
-			group.setLayout(new FillLayout());
-			group.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 150).create()); // SUPPRESS CHECKSTYLE MagicNumber
-		}
+		private void createSelectPort(final Composite composite) {
+			Label label = new Label(composite, SWT.None);
+			label.setText("Select Port:");
 
-		private void createPortList(final Composite parent) {
-			this.portViewer = new TableViewer(parent, SWT.SINGLE);
+			this.portViewer = new TableViewer(composite, SWT.SINGLE | SWT.BORDER);
 			final TableLayout tableLayout = new TableLayout();
 			tableLayout.addColumnData(new ColumnWeightData(100, 10, false)); // SUPPRESS CHECKSTYLE MagicNumber
 			this.portViewer.getTable().setLayout(tableLayout);
+			this.portViewer.getTable().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 150).create());
+
 			final TableViewerColumn column = new TableViewerColumn(this.portViewer, SWT.LEFT);
 			column.setLabelProvider(new AdapterFactoryCellLabelProvider(this.adapterFactory));
 			this.portViewer.setContentProvider(new IStructuredContentProvider() {
 
 				@Override
 				public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-					// TODO Auto-generated method stub
-
 				}
 
 				@Override
 				public void dispose() {
-					// TODO Auto-generated method stub
-
 				}
 
 				@Override
@@ -175,24 +159,18 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 					}
 					return super.category(element);
 				}
-
 			});
 		}
 
-		private void createSelectComponentGroup(final Composite main) {
-			final Group group = new Group(main, SWT.None);
-			group.setText("Select Component:");
-			createComponentList(group);
-			group.setLayout(new FillLayout());
-			group.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 150).create()); // SUPPRESS CHECKSTYLE MagicNumber
+		private void createSelectComponent(final Composite parent) {
+			Label label = new Label(parent, SWT.NONE);
+			label.setText("Select Component:");
 
-		}
-
-		private void createComponentList(final Composite parent) {
-			this.componentViewer = new TableViewer(parent, SWT.SINGLE);
+			this.componentViewer = new TableViewer(parent, SWT.SINGLE | SWT.BORDER);
 			final TableLayout tableLayout = new TableLayout();
 			tableLayout.addColumnData(new ColumnWeightData(100, 10, false)); // SUPPRESS CHECKSTYLE MagicNumber
 			this.componentViewer.getTable().setLayout(tableLayout);
+			this.componentViewer.getTable().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 150).create());
 
 			final TableViewerColumn column = new TableViewerColumn(this.componentViewer, SWT.LEFT);
 			column.setLabelProvider(new AdapterFactoryCellLabelProvider(this.adapterFactory));
@@ -200,29 +178,16 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 
 				@Override
 				public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-					// TODO Auto-generated method stub
-
 				}
 
 				@Override
 				public void dispose() {
-					// TODO Auto-generated method stub
-
 				}
 
 				@Override
 				public Object[] getElements(final Object inputElement) {
-					final List<ComponentInstantiation> components = new ArrayList<ComponentInstantiation>();
-					final SadPartitioning partitioning = ((SoftwareAssembly) inputElement).getPartitioning();
-					for (final SadComponentPlacement cp : partitioning.getComponentPlacement()) {
-						components.addAll(cp.getComponentInstantiation());
-					}
-					for (final HostCollocation hc : partitioning.getHostCollocation()) {
-						for (final SadComponentPlacement cp : hc.getComponentPlacement()) {
-							components.addAll(cp.getComponentInstantiation());
-						}
-					}
-					return components.toArray();
+					List<SadComponentInstantiation> instantiations = ((SoftwareAssembly) inputElement).getAllComponentInstantiations();
+					return instantiations.toArray();
 				}
 			});
 			this.componentViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -244,7 +209,6 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 	}
 
 	private ExternalPortWizardPage page;
-	private IWorkbench workbench;
 	private IStructuredSelection selection;
 	private SoftwareAssembly softwareAssembly;
 
@@ -272,13 +236,8 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 		return this.page.portDescription;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean performFinish() {
-		// TODO Auto-generated method stub
-
 		return true;
 	}
 
@@ -292,7 +251,6 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 
 	@Override
 	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
-		this.workbench = workbench;
 		this.selection = selection;
 		if (this.selection.getFirstElement() instanceof SoftwareAssembly) {
 			setSoftwareAssembly((SoftwareAssembly) this.selection.getFirstElement());
