@@ -30,6 +30,7 @@ import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.provider.Disposable;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -64,16 +65,19 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 		private SadComponentInstantiation componentSelection;
 		private EObject portSelection;
 
+		private Disposable disposable;
+		private AdapterFactory adapterFactory;
+
 		private TableViewer componentViewer;
 		private TableViewer portViewer;
-		private final AdapterFactory adapterFactory = new ComposedAdapterFactory(new AdapterFactory[] { new SadItemProviderAdapterFactory(),
-		        new PartitioningItemProviderAdapterFactory() });
 		private String portDescription;
 
 		protected ExternalPortWizardPage(final String pageName, final ImageDescriptor titleImage) {
 			super(pageName, "External Port", titleImage);
 			this.setDescription("Select the component and then the port of the component you wish to be marked as an "
 			        + "external port.");
+			this.disposable = new Disposable();
+			this.adapterFactory = createAdapterFactory();
 		}
 
 		public void createControl(final Composite parent) {
@@ -87,6 +91,18 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 			setPageComplete(false);
 
 			setControl(composite);
+		}
+
+		@Override
+		public void dispose() {
+			disposable.dispose();
+			super.dispose();
+		}
+
+		private AdapterFactory createAdapterFactory() {
+			AdapterFactory factory = new ComposedAdapterFactory(new AdapterFactory[] { new SadItemProviderAdapterFactory(), new PartitioningItemProviderAdapterFactory() });
+			disposable.add(factory);
+			return factory;
 		}
 
 		private void createDescription(final Composite composite) {
@@ -114,8 +130,8 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 			this.portViewer.getTable().setLayout(tableLayout);
 			this.portViewer.getTable().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 150).create());
 
-			final TableViewerColumn column = new TableViewerColumn(this.portViewer, SWT.LEFT);
-			column.setLabelProvider(new AdapterFactoryCellLabelProvider(this.adapterFactory));
+			new TableViewerColumn(this.portViewer, SWT.LEFT);
+			this.portViewer.setLabelProvider(new AdapterFactoryCellLabelProvider(this.adapterFactory));
 			this.portViewer.setContentProvider(new IStructuredContentProvider() {
 
 				public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
@@ -166,8 +182,9 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 			this.componentViewer.getTable().setLayout(tableLayout);
 			this.componentViewer.getTable().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 150).create());
 
-			final TableViewerColumn column = new TableViewerColumn(this.componentViewer, SWT.LEFT);
-			column.setLabelProvider(new AdapterFactoryCellLabelProvider(this.adapterFactory));
+			new TableViewerColumn(this.componentViewer, SWT.LEFT);
+			this.componentViewer.setLabelProvider(new AdapterFactoryCellLabelProvider(this.adapterFactory));
+			this.componentViewer.setComparator(new ViewerComparator());
 			this.componentViewer.setContentProvider(new IStructuredContentProvider() {
 
 				public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
