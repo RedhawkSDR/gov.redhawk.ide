@@ -50,7 +50,6 @@ import mil.jpeojtrs.sca.spd.ProgrammingLanguage;
 import mil.jpeojtrs.sca.spd.Runtime;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdFactory;
-import mil.jpeojtrs.sca.spd.SpdPackage;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -648,21 +647,17 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 						BasicNewProjectResourceWizard.updatePerspective(getfConfig());
 
 						// If we're creating a new component (vs importing one)
+						String baseName = getBaseFileName(projectName);
+						IFile spdFile;
 						if (isCreateNewResource) {
 							// Create the XML files
-							// IDE-1111: only use part of project name after last dot, if any, for file names
-							String spdName = getBaseFileName(projectName);
-							setOpenEditorOn(createComponentFiles(project, spdName, getSoftPkg().getId(), null, progress.newChild(1)));
-
-							ProjectCreator.addImplementation(project, spdName, pageImpl, settings, progress.newChild(1));
+							spdFile = createComponentFiles(project, baseName, getSoftPkg().getId(), null, progress.newChild(1));
+							ProjectCreator.addImplementation(project, baseName, pageImpl, settings, progress.newChild(1));
 						} else {
-							setOpenEditorOn(ProjectCreator.importFiles(project, existingResourceLocation, getImplList(), getImportedSettingsMap(),
-								progress.newChild(2), getSoftPkg().getId()));
+							spdFile = ProjectCreator.importFiles(project, existingResourceLocation, getImplList(), getImportedSettingsMap(),
+								progress.newChild(2), getSoftPkg().getId());
 						}
-
-						String spdFileName = project.getName() + SpdPackage.FILE_EXTENSION; // SUPPRESS CHECKSTYLE
-																							// AvoidInLine
-						final IFile spdFile = project.getFile(spdFileName);
+						setOpenEditorOn(spdFile);
 
 						// Allows for subclasses to modify the project
 						modifyResult(project, spdFile, progress.newChild(1));
@@ -777,6 +772,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	}
 
 	/**
+	 * Creates the SPD, PRF and SCD files, and returns an {@link IFile} for the SPD file.
 	 * @since 8.0
 	 */
 	protected abstract IFile createComponentFiles(IProject project, String spdName, String id, String author, IProgressMonitor monitor) throws CoreException;
