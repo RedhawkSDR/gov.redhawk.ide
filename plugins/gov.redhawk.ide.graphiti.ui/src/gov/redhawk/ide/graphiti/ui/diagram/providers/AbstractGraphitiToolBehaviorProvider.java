@@ -18,7 +18,6 @@ import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.PaletteTreeEntry;
-import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 
@@ -93,10 +92,10 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		}
 	};
 
-	protected final Adapter sdrListener = new AdapterImpl() {
+	private final Adapter sdrListener = new AdapterImpl() {
 		@Override
 		public void notifyChanged(final Notification msg) {
-			if (msg.getFeatureID(ComponentsContainer.class) == SdrPackage.COMPONENTS_CONTAINER__COMPONENTS) {
+			if (msg.getFeatureID(SoftPkgRegistry.class) == SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS) {
 				refreshPaletteJob.schedule(1000); // SUPPRESS CHECKSTYLE MagicNumber
 			}
 		}
