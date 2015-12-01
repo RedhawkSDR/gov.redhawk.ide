@@ -20,6 +20,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.PaletteTreeEntry;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +47,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.transaction.RunnableWithResult;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
@@ -575,10 +577,21 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		return fullName.split("\\.");
 	}
 
-	protected void refreshCompartmentEntry(PaletteCompartmentEntry compartmentEntry, SoftPkgRegistry container, String iconId) {
+	protected void refreshCompartmentEntry(PaletteCompartmentEntry compartmentEntry, final SoftPkgRegistry container, String iconId) {
 		compartmentEntry.getToolEntries().clear();
 
-		for (SoftPkg spd : container.getComponents()) {
+		List<SoftPkg> spds;
+		try {
+			spds = ScaModelCommand.runExclusive(container, new RunnableWithResult.Impl<List<SoftPkg>>() {
+				@Override
+				public void run() {
+					setResult(new ArrayList<SoftPkg>(container.getComponents()));
+				}
+			});
+		} catch (InterruptedException e) {
+			spds = new ArrayList<SoftPkg>();
+		}
+		for (SoftPkg spd : spds) {
 			if (isExecutable(spd)) {
 				addToolToCompartment(compartmentEntry, spd, iconId);
 			}
