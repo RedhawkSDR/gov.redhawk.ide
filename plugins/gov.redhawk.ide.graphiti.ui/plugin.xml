@@ -159,13 +159,6 @@
                type="mil.jpeojtrs.sca.scd.AbstractPort">
          </adapter>
       </factory>
-      <factory
-            adaptableType="org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart"
-            class="gov.redhawk.ide.graphiti.ui.adapters.GraphitiEditPartToIPropertySourceAdapterFactory">
-         <adapter
-               type="org.eclipse.ui.views.properties.IPropertySource">
-         </adapter>
-      </factory>
    </extension>
    <extension
          point="org.eclipse.emf.ecore.content_parser">
