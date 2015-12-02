@@ -21,6 +21,6 @@ public class DeviceFilter extends ComponentFilter {
 
 	@Override
 	protected boolean accept(PictogramElement pictogramElement) {
-		return super.accept(pictogramElement) && pictogramElement instanceof DeviceShape;
+		return (pictogramElement instanceof DeviceShape) && super.accept(pictogramElement);
 	}
 }
