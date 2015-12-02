@@ -405,8 +405,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 	 * @param findByName
 	 * @return
 	 */
-	private static RHContainerShape getRHContainerShape(SWTBotGefEditor editor, String objectName) {
-
+	public static RHContainerShape getRHContainerShape(SWTBotGefEditor editor, String objectName) {
 		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(objectName);
 		if (swtBotGefEditPart == null) {
 			return null;
