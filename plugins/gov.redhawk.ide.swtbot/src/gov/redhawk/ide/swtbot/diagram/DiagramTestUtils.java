@@ -271,8 +271,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 		if (componentShape == null) {
 			return null;
 		}
-		SadComponentInstantiation businessObject = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
-		return businessObject;
+		return DUtil.getBusinessObject(componentShape, SadComponentInstantiation.class);
 	}
 
 	/**
