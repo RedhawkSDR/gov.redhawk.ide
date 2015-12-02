@@ -17,29 +17,19 @@ import java.util.List;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
-import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.IDeleteFeature;
-import org.eclipse.graphiti.features.IFeature;
-import org.eclipse.graphiti.features.IMoveShapeFeature;
 import org.eclipse.graphiti.features.IReconnectionFeature;
 import org.eclipse.graphiti.features.IRemoveFeature;
-import org.eclipse.graphiti.features.IResizeShapeFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
-import org.eclipse.graphiti.features.context.IMoveShapeContext;
-import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IReconnectionContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
-import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
-import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
 import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
-import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
-import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
@@ -60,7 +50,6 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePatte
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseAllShapesFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseShapeFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DisabledDeleteFeatureWrapper;
@@ -166,37 +155,11 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 	}
 
 	@Override
-	public IMoveShapeFeature getMoveShapeFeature(IMoveShapeContext context) {
-		// Search for shapes that we don't want the user to have move capability
-		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
-			RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE, RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE})) {
-			return new DefaultMoveShapeFeature(this) {
-				public boolean canMoveShape(IMoveShapeContext context) {
-					return false;
-				}
-			};
-		}
-
-		return super.getMoveShapeFeature(context);
-	}
-
-	@Override
 	public IUpdateFeature getUpdateFeature(IUpdateContext context) {
 		if (context.getPictogramElement() instanceof Connection) {
 			return new DCDConnectionInterfaceUpdateFeature(this);
 		} else if (context.getPictogramElement() instanceof Diagram) {
 			return new GraphitiDcdDiagramUpdateFeature(this);
-		}
-
-		// hide update icon for some pictogram elements
-		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
-			RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE, RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE})) {
-			return new UpdateNoBoFeature(this) {
-				public boolean isAvailable(IContext context) {
-					return false;
-				}
-			};
 		}
 
 		return super.getUpdateFeature(context);
@@ -210,14 +173,10 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			return null;
 		}
 
-		// Search for shapes for which we don't want the user to have the delete capability, including the diagram as a
-		// whole
+		// Check for shapes for which we don't want the user to have the delete capability,
+		// including the diagram as a whole
 		final PictogramElement pe = context.getPictogramElement();
-		if (pe instanceof Diagram || pe instanceof FixPointAnchor
-			|| DUtil.doesPictogramContainProperty(context,
-				new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER,
-					RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE,
-					RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE })) {
+		if (pe instanceof Diagram || pe instanceof FixPointAnchor) {
 			return null;
 		}
 
@@ -240,29 +199,6 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			deleteFeature = new DisabledDeleteFeatureWrapper(deleteFeature);
 		}
 		return deleteFeature;
-	}
-
-	@Override
-	public IFeature[] getDragAndDropFeatures(IPictogramElementContext context) {
-		ICreateConnectionFeature[] connectionFeatures = getCreateConnectionFeatures();
-		return connectionFeatures;
-	}
-
-	@Override
-	public IResizeShapeFeature getResizeShapeFeature(IResizeShapeContext context) {
-		// Search for shapes that we don't want the user to have resize capability
-		if (context.getPictogramElement() instanceof FixPointAnchor
-			|| DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
-				RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
-				RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE, RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE})) {
-			return new DefaultResizeShapeFeature(this) {
-				public boolean canResizeShape(IResizeShapeContext context) {
-					return false;
-				}
-			};
-		}
-
-		return super.getResizeShapeFeature(context);
 	}
 
 	@Override

@@ -219,8 +219,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	// (move, resize, delete, remove, etc.)
 	public static final String SHAPE_OUTER_CONTAINER = "outerContainerShape";
 	private static final String SHAPE_INNER_CONTAINER = "innerContainerShape";
-	public static final String SHAPE_USES_PORTS_CONTAINER = "usesPortsContainerShape";
-	public static final String SHAPE_PROVIDES_PORTS_CONTAINER = "providesPortsContainerShape";
+	private static final String SHAPE_USES_PORTS_CONTAINER = "usesPortsContainerShape";
+	private static final String SHAPE_PROVIDES_PORTS_CONTAINER = "providesPortsContainerShape";
 	public static final String SHAPE_INTERFACE_CONTAINER = "interfaceContainerShape";
 	public static final String SUPER_PROVIDES_PORTS_RECTANGLE = "superProvidesPortsContainer";
 	public static final String SUPER_USES_PORTS_RECTANGLE = "superUsesPortsContainer";

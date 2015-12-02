@@ -20,8 +20,11 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.ProvidesPortPattern;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
+import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.IDirectEditingFeature;
+import org.eclipse.graphiti.features.IFeature;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
 import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
@@ -89,6 +92,12 @@ public abstract class AbstractGraphitiFeatureProvider extends DefaultFeatureProv
 		}
 
 		return ret;
+	}
+
+	@Override
+	public IFeature[] getDragAndDropFeatures(IPictogramElementContext context) {
+		ICreateConnectionFeature[] connectionFeatures = getCreateConnectionFeatures();
+		return connectionFeatures;
 	}
 
 }
