@@ -36,6 +36,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.datatypes.ILocation;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IMoveShapeFeature;
@@ -45,6 +46,7 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
@@ -53,7 +55,6 @@ import org.eclipse.graphiti.features.context.impl.MoveShapeContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.func.IDirectEditing;
-import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -62,7 +63,6 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.services.IGaLayoutService;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 public class HostCollocationPattern extends AbstractContainerPattern {
@@ -79,10 +79,10 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 	public static final String GA_OUTER_ROUNDED_RECTANGLE_TEXT = "outerRoundedRectangleText";
 	public static final String GA_OUTER_ROUNDED_RECTANGLE_IMAGE = "outerRoundedRectangleImage";
 
-	private static final int INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15;
-	private static final int PROVIDES_PORTS_LEFT_PADDING = 5;
-	private static final int INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING;
-	private static final int ICON_IMAGE_LENGTH = 16;
+	private static final int OUTER_IMAGE_LEFT_PADDING = 20;
+	private static final int OUTER_TITLE_IMAGE_PADDING = 4;
+	private static final int ICON_IMAGE_WIDTH = 16;
+	private static final int ICON_IMAGE_HEIGHT = ICON_IMAGE_WIDTH;
 
 	public HostCollocationPattern() {
 		super(null);
@@ -143,39 +143,15 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 	@Override
 	public PictogramElement add(IAddContext context) {
 		HostCollocation hostCollocation = (HostCollocation) context.getNewObject();
-		Diagram diagram = (Diagram) context.getTargetContainer();
-		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
 
-		// OUTER RECTANGLE
-		ContainerShape outerContainerShape = addOuterRectangle(diagram, hostCollocation.getName(), hostCollocation, getFeatureProvider(), getCreateImageId(),
-			StyleUtil.HOST_COLLOCATION);
+		// Create and link shape
+		ContainerShape outerContainerShape = addOuterRectangle(context.getTargetContainer(), hostCollocation.getName(), getCreateImageId());
+		link(outerContainerShape, hostCollocation);
 
-		RoundedRectangle outerRoundedRectangle = null;
-		Text outerRoundedRectangleText = null;
-		Image outerRoundedRectangleImage = null;
-
-		// find all of our diagram elements
-		List<PropertyContainer> children = DUtil.collectPropertyContainerChildren(outerContainerShape);
-		for (PropertyContainer pc : children) {
-			if (DUtil.isPropertyElementType(pc, GA_OUTER_ROUNDED_RECTANGLE)) {
-				outerRoundedRectangle = (RoundedRectangle) pc;
-			} else if (DUtil.isPropertyElementType(pc, GA_OUTER_ROUNDED_RECTANGLE_TEXT)) {
-				outerRoundedRectangleText = (Text) pc;
-			} else if (DUtil.isPropertyElementType(pc, GA_OUTER_ROUNDED_RECTANGLE_IMAGE)) {
-				outerRoundedRectangleImage = (Image) pc;
-			}
-		}
-
-		// resize outerRoundedRectangle
+		// Resize outer rounded rectangle
 		int minWidth = Math.max(context.getWidth(),  300);
 		int minHeight = Math.max(context.getHeight(), 300);
-		// outerRoundedRectangle
-		gaLayoutService.setLocationAndSize(outerRoundedRectangle, context.getX(), context.getY(), minWidth, minHeight);
-		gaLayoutService.setLocationAndSize(outerRoundedRectangleText, HostCollocationPattern.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING
-			+ HostCollocationPattern.ICON_IMAGE_LENGTH + 4, 0, minWidth
-			- (HostCollocationPattern.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + HostCollocationPattern.ICON_IMAGE_LENGTH + 4), 20);
-		gaLayoutService.setLocationAndSize(outerRoundedRectangleImage, HostCollocationPattern.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0,
-			HostCollocationPattern.ICON_IMAGE_LENGTH, HostCollocationPattern.ICON_IMAGE_LENGTH);
+		Graphiti.getGaLayoutService().setLocationAndSize(outerContainerShape.getGraphicsAlgorithm(), context.getX(), context.getY(), minWidth, minHeight);
 
 		// Add components inside host collocation model into the newly added shape
 		updatePictogramElement(outerContainerShape);
@@ -469,30 +445,25 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 	}
 
 	/**
-	 * Creates a large rectangle intended to be an outside container and links the provided business object to it.
+	 * Creates the shape to represent a host collocation
 	 * @param targetContainerShape
 	 * @param text
-	 * @param businessObject
-	 * @param featureProvider
+	 * @param imageId
 	 * @return
 	 */
-	private ContainerShape addOuterRectangle(ContainerShape targetContainerShape, String text, Object businessObject, IFeatureProvider featureProvider,
-		String imageId, String styleId) {
+	private ContainerShape addOuterRectangle(ContainerShape targetContainerShape, String text, String imageId) {
 		ContainerShape outerContainerShape = Graphiti.getCreateService().createContainerShape(targetContainerShape, true);
 		Graphiti.getPeService().setPropertyValue(outerContainerShape, DUtil.SHAPE_TYPE, HOST_COLLOCATION_OUTER_CONTAINER_SHAPE);
 		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(outerContainerShape, 5, 5);
-		StyleUtil.setStyle(outerRoundedRectangle, styleId);
+		StyleUtil.setStyle(outerRoundedRectangle, StyleUtil.HOST_COLLOCATION);
 		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE);
 		// image
 		Image imgIcon = Graphiti.getGaCreateService().createImage(outerRoundedRectangle, imageId);
 		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_IMAGE); // ref helps
-		// with
-		// resize
 		// text
-		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, text);
-		StyleUtil.setStyle(cText, StyleUtil.OUTER_TEXT);
-		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
-		featureProvider.link(outerContainerShape, businessObject); // link container and business object
+		Text outerText = Graphiti.getCreateService().createText(outerRoundedRectangle, text);
+		StyleUtil.setStyle(outerText, StyleUtil.OUTER_TEXT);
+		Graphiti.getPeService().setPropertyValue(outerText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 
 		return outerContainerShape;
 	}
@@ -542,6 +513,28 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public boolean layout(ILayoutContext context) {
+		ContainerShape collocationShape = (ContainerShape) context.getPictogramElement();
+
+		// Lay out the icon in the upper left
+		Image outerImage = (Image) DUtil.findChildGraphicsAlgorithmByProperty(collocationShape.getGraphicsAlgorithm(), DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_IMAGE);
+		boolean layoutApplied = UpdateUtil.moveAndResizeIfNeeded(outerImage, HostCollocationPattern.OUTER_IMAGE_LEFT_PADDING, 0,
+			HostCollocationPattern.ICON_IMAGE_WIDTH, HostCollocationPattern.ICON_IMAGE_HEIGHT);
+
+		// Lay out the text following the image
+		IDimension outerSize = Graphiti.getLayoutService().calculateSize(collocationShape.getGraphicsAlgorithm());
+		Text outerText = getOuterText(collocationShape);
+		int textX = outerImage.getX() + outerImage.getWidth() + OUTER_TITLE_IMAGE_PADDING;
+		int textWidth = outerSize.getWidth() - textX;
+		int textHeight = DUtil.calculateTextSize(outerText).getHeight();
+		if (UpdateUtil.moveAndResizeIfNeeded(outerText, textX, 0, textWidth, textHeight)) {
+			layoutApplied = true;
+		}
+
+		return layoutApplied;
 	}
 
 	protected List<SadComponentInstantiation> getComponentInstantiations(HostCollocation collocation) {
