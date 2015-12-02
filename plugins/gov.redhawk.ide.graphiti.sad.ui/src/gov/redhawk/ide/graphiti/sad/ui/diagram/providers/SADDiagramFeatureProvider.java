@@ -19,7 +19,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.IDeleteFeature;
-import org.eclipse.graphiti.features.IDirectEditingFeature;
 import org.eclipse.graphiti.features.IFeature;
 import org.eclipse.graphiti.features.ILayoutFeature;
 import org.eclipse.graphiti.features.IReconnectionFeature;
@@ -28,7 +27,6 @@ import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
-import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IReconnectionContext;
@@ -39,8 +37,6 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
-import org.eclipse.graphiti.pattern.IPattern;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
@@ -96,52 +92,6 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		addPattern(new HostCollocationPattern());
 		addPattern(new UsesDeviceFrontEndTunerPattern());
 		addPattern(new UsesDevicePattern());
-	}
-
-	// the text we double click is nested inside of the pictogram element that links to our business object
-	@Override
-	public IDirectEditingFeature getDirectEditingFeature(IDirectEditingContext context) {
-		if (context == null) {
-			throw new IllegalArgumentException("Argument context must not be null."); //$NON-NLS-1$
-		}
-		// For component shapes, the editable text is a child of the inner rectangle, which does not have a business
-		// object link, so search for a reasonable parent.
-		Object businessObject = getNonNullBusinessObjectForPictogramElement(context.getPictogramElement());
-		IDirectEditingFeature ret = null;
-		for (IPattern pattern : this.getPatterns()) {
-			if (checkPattern(pattern, businessObject)) {
-				IPattern chosenPattern = null;
-				IDirectEditingFeature f = new DirectEditingFeatureForPattern(this, pattern);
-				if (checkFeatureAndContext(f, context)) {
-					if (ret == null) {
-						ret = f;
-						chosenPattern = pattern;
-					} else {
-						traceWarning("getDirectEditingFeature", pattern, chosenPattern); //$NON-NLS-1$
-					}
-				}
-			}
-		}
-
-		if (ret == null) {
-			ret = getDirectEditingFeatureAdditional(context);
-		}
-
-		return ret;
-	}
-
-	/**
-	 * Search for a non-null business object by traversing up a PictogramElement's parents.
-	 * @param pictogramElement
-	 * @return
-	 */
-	protected Object getNonNullBusinessObjectForPictogramElement(PictogramElement pictogramElement) {
-		Object businessObject = getBusinessObjectForPictogramElement(pictogramElement);
-		while (businessObject == null && pictogramElement != null) {
-			pictogramElement = (PictogramElement) pictogramElement.eContainer();
-			businessObject = getBusinessObjectForPictogramElement(pictogramElement);
-		}
-		return businessObject;
 	}
 
 	@Override
