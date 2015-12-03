@@ -856,11 +856,9 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @return
 	 */
 	public static < T > T getBusinessObject(PictogramElement pe, Class<T> cls) {
-		if (pe != null && pe.getLink() != null) {
-			for (EObject eObj : pe.getLink().getBusinessObjects()) {
-				if (cls.isInstance(eObj)) {
-					return cls.cast(eObj);
-				}
+		for (EObject eObj : Graphiti.getLinkService().getAllBusinessObjectsForLinkedPictogramElement(pe)) {
+			if (cls.isInstance(eObj)) {
+				return cls.cast(eObj);
 			}
 		}
 		return null;
