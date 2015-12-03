@@ -21,9 +21,9 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.junit.Assert;
 
-public class EditorActions {
+public class EditorUtils {
 
-	private EditorActions() {
+	private EditorUtils() {
 	}
 
 	public static final String DCD_EDITOR_OVERVIEW_TAB_ID = "nodeOverview";
@@ -33,9 +33,22 @@ public class EditorActions {
 	public static final String SPD_EDITOR_PORTS_TAB_ID = "ports";
 
 	/**
+	 * Asserts that a tab in a form editor does not have validation warnings or errors
+	 * @param editorBot
+	 * @param tabId See constants in {@link EditorUtils}
+	 */
+	public static void assertEditorTabOkay(SWTBotEditor editorBot, String tabId) {
+		try {
+			waitForValidationState(editorBot, tabId, IMessageProvider.NONE, IMessageProvider.INFORMATION);
+		} catch (TimeoutException e) {
+			Assert.fail("Form should have no warnings or errors: " + e.toString());
+		}
+	}
+
+	/**
 	 * Asserts that a tab in a form editor does not have validation errors (warnings are okay)
 	 * @param editorBot
-	 * @param tabId See constants in {@link EditorActions}
+	 * @param tabId See constants in {@link EditorUtils}
 	 */
 	public static void assertEditorTabValid(SWTBotEditor editorBot, String tabId) {
 		try {
@@ -48,7 +61,7 @@ public class EditorActions {
 	/**
 	 * Asserts that a tab in a form editor has validation errors
 	 * @param editorBot
-	 * @param tabId See constants in {@link EditorActions}
+	 * @param tabId See constants in {@link EditorUtils}
 	 */
 	public static void assertEditorTabInvalid(SWTBotEditor editorBot, String tabId) {
 		try {
