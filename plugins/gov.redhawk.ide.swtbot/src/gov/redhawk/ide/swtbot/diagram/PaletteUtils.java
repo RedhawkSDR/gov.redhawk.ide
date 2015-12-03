@@ -78,7 +78,7 @@ public class PaletteUtils {
 		try {
 			editor.activateNamespacedTool(label.split("\\."), 1);
 			return true;
-		} catch (WidgetNotFoundException e) {
+		} catch (IndexOutOfBoundsException e) {
 			return false;
 		}
 	}

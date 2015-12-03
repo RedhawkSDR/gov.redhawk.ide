@@ -28,6 +28,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.finders.UIThreadRunnable;
+import org.eclipse.swtbot.swt.finder.results.ListResult;
 import org.eclipse.swtbot.swt.finder.results.VoidResult;
 import org.hamcrest.Matcher;
 
@@ -104,30 +105,30 @@ public class RHTestBotViewer extends SWTBotGefViewer {
 	}
 
 	public RHTestBotViewer activateNamespacedTool(final String[] labels, final int index) {
-		final WidgetNotFoundException[] exception = new WidgetNotFoundException[1];
-		UIThreadRunnable.syncExec(new VoidResult() {
-			public void run() {
+		List<PaletteEntry> entries = UIThreadRunnable.syncExec(new ListResult<PaletteEntry>() {
+			@Override
+			public List<PaletteEntry> run() {
 				final EditDomain editDomain = getEditDomain();
-				final List<PaletteEntry> entries = new PaletteFinder(editDomain).findEntries(new NamespacedToolEntryMatcher(labels));
-				if (entries.size() > 0) {
-					final PaletteEntry paletteEntry = entries.get(index);
-					if (!(paletteEntry instanceof ToolEntry)) {
-						exception[0] = new WidgetNotFoundException(
-							String.format("%s is not a tool entry, it's a %s", Arrays.toString(labels).toString(), paletteEntry.getClass().getName()));
-					} else if (!((ToolEntry) paletteEntry).isVisible()) {
-						exception[0] = new WidgetNotFoundException(
-							String.format("%s was found, but is not visible", Arrays.toString(labels).toString()));
-					} else {
-						editDomain.getPaletteViewer().setActiveTool((ToolEntry) paletteEntry);
-					}
-				} else {
-					exception[0] = new WidgetNotFoundException(Arrays.toString(labels));
-				}
+				return new PaletteFinder(editDomain).findEntries(new NamespacedToolEntryMatcher(labels));
 			}
 		});
-		if (exception[0] != null) {
-			throw exception[0];
+
+		final PaletteEntry paletteEntry = entries.get(index);
+		if (!(paletteEntry instanceof ToolEntry)) {
+			String errorMsg = String.format("%s is not a tool entry, it's a %s", Arrays.toString(labels).toString(), paletteEntry.getClass().getName());
+			throw new WidgetNotFoundException(errorMsg);
+		} else if (!paletteEntry.isVisible()) {
+			String errorMsg = String.format("%s was found, but is not visible", Arrays.toString(labels).toString());
+			throw new WidgetNotFoundException(errorMsg);
+		} else {
+			UIThreadRunnable.syncExec(new VoidResult() {
+				@Override
+				public void run() {
+					editDomain.getPaletteViewer().setActiveTool((ToolEntry) paletteEntry);
+				}
+			});
 		}
+
 		return this;
 	}
 }
