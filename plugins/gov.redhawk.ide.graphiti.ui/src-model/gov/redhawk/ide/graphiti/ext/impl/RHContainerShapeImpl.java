@@ -17,9 +17,6 @@ import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import org.eclipse.core.runtime.IStatus;
@@ -119,16 +116,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @ordered
 	 */
 	protected int iStatusSeverity = ISTATUS_SEVERITY_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getConnectionMap() <em>Connection Map</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getConnectionMap()
-	 * @generated NOT
-	 * @ordered
-	 */
-	protected Map<String, String> connectionMap = Collections.synchronizedMap(new HashMap<String, String>());
 
 	/**
 	 * The default value of the '{@link #isCollapsed() <em>Collapsed</em>}' attribute.
