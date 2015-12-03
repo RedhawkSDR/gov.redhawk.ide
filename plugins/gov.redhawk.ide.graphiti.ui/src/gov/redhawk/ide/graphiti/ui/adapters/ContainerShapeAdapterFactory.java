@@ -15,7 +15,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.transaction.RunnableWithResult;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
@@ -36,7 +36,7 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 /**
  * Can adapt either:
  * <ul>
- * <li>{@link AbstractGraphicalEditPart} (Graphiti UI part)</li>
+ * <li>{@link GraphitiShapeEditPart} (Graphiti UI part)</li>
  * <li>{@link RHContainerShape} (our Graphiti model object)</li>
  * </ul>
  * from the diagrams to the following types (and a few of their super types):
@@ -54,8 +54,8 @@ public class ContainerShapeAdapterFactory implements IAdapterFactory {
 	public < T > T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		// We convert the Graphiti UI part -> Graphiti model object, if not already done for us
 		Object model;
-		if (adaptableObject instanceof AbstractGraphicalEditPart) {
-			model = ((AbstractGraphicalEditPart) adaptableObject).getModel();
+		if (adaptableObject instanceof GraphitiShapeEditPart) {
+			model = ((GraphitiShapeEditPart) adaptableObject).getPictogramElement();
 		} else {
 			model = adaptableObject;
 		}
