@@ -54,6 +54,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public abstract class AbstractPortSupplierPattern extends AbstractContainerPattern {
 	// Shape size constants
@@ -721,7 +722,10 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	 * @return
 	 */
 	protected RHContainerShape getRootContainerShape(PictogramElement pictogramElement) {
-		return (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pictogramElement, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		if (pictogramElement instanceof RHContainerShape) {
+			return (RHContainerShape) pictogramElement;
+		}
+		return ScaEcoreUtils.getEContainerOfType(pictogramElement, RHContainerShape.class);
 	}
 
 	@Override

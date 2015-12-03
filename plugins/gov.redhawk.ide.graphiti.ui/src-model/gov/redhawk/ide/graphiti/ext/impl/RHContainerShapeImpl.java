@@ -217,7 +217,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 	// Property key/value pairs help us identify Shapes to enable/disable user actions
 	// (move, resize, delete, remove, etc.)
-	public static final String SHAPE_OUTER_CONTAINER = "outerContainerShape";
+	private static final String SHAPE_OUTER_CONTAINER = "outerContainerShape";
 	private static final String SHAPE_INNER_CONTAINER = "innerContainerShape";
 	private static final String SHAPE_USES_PORTS_CONTAINER = "usesPortsContainerShape";
 	private static final String SHAPE_PROVIDES_PORTS_CONTAINER = "providesPortsContainerShape";
@@ -471,8 +471,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getPeService().setPropertyValue(innerText, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_TEXT);
 
 		// Inner separator line; points are created here, but will be positioned in a subsequent layout
-		Polyline polyline = Graphiti.getGaCreateService().createPlainPolyline(innerRoundedRectangle,
-			new int[] { 0, 0, innerRoundedRectangle.getWidth(), 0 });
+		Polyline polyline = Graphiti.getGaCreateService().createPlainPolyline(innerRoundedRectangle, new int[] { 0, 0, innerRoundedRectangle.getWidth(), 0 });
 		Graphiti.getPeService().setPropertyValue(polyline, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_LINE);
 	}
 
