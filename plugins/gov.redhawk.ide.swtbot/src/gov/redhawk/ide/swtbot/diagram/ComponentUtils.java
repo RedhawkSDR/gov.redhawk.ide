@@ -97,9 +97,9 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	public static boolean correctStartOrderStyling(ComponentShape componentShape, boolean isAssemblyController) {
 		GraphicsAlgorithm ga = ComponentUtils.getStartOrderEllipseShape(componentShape).getGraphicsAlgorithm();
 		if (isAssemblyController) {
-			return !StyleUtil.isStyleSet(ga, StyleUtil.ASSEMBLY_CONTROLLER_ELLIPSE);
+			return StyleUtil.isStyleSet(ga, StyleUtil.ASSEMBLY_CONTROLLER_ELLIPSE);
 		}
-		return !StyleUtil.isStyleSet(ga, StyleUtil.START_ORDER_ELLIPSE);
+		return StyleUtil.isStyleSet(ga, StyleUtil.START_ORDER_ELLIPSE);
 	}
 
 	/**
