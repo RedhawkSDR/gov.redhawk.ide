@@ -55,19 +55,22 @@ public class ConsoleUtils {
 		view.show();
 
 		// We could already be on the correct console
-		String text = view.bot().label().getText();
-		if (text.contains(processName)) {
+		String consoleText = view.bot().label().getText();
+		if (consoleText.contains(processName)) {
 			return view;
 		}
 
-		// Switch consoles until we hit the right one
 		SWTBotToolbarDropDownButton consoleButton = (SWTBotToolbarDropDownButton) view.toolbarButton("Display Selected Console");
-		int consoles = consoleButton.menuItems(new AnyMenuItemMatcher<MenuItem>()).size();
-		for (int i = 0; i < consoles; i++) {
-			if (view.bot().label(0).getText().contains(processName)) {
+		if (!consoleButton.isEnabled()) {
+			throw new WidgetNotFoundException(String.format("Can't find console for %s", processName));
+		}
+
+		// Switch consoles until we hit the right one
+		consoleButton.click();
+		for (String newConsoleText = view.bot().label().getText(); !consoleText.equals(newConsoleText); consoleButton.click()) {
+			if (newConsoleText.contains(processName)) {
 				return view;
 			}
-			consoleButton.click();
 		}
 		throw new WidgetNotFoundException(String.format("Can't find console for %s", processName));
 	}
