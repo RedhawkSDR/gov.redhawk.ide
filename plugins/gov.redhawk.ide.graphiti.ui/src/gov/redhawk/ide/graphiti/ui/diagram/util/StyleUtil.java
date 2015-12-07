@@ -108,6 +108,26 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
+	 * Checks whether a GraphicsAlgorithm's style is set to one the desired styleIds.
+	 *
+	 * @param ga the GraphicsAlgorithm to check
+	 * @param styleIdList variable argument list of style ids to look for
+	 * @return true if ga's style has one of the desired ids
+	 */
+	public static boolean isStyleSet(GraphicsAlgorithm ga, String... styleIdList) {
+		if (ga.getStyle() == null) {
+			return false;
+		}
+		String gaStyleId = ga.getStyle().getId();
+		for (String styleId : styleIdList) {
+			if (styleId.equals(gaStyleId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Sets the style for a GraphicsAlgorithm to the style associated with the given id.
 	 * If no style can be found, sets the style to null.
 	 *

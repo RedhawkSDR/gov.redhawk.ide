@@ -18,13 +18,11 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 import org.eclipse.jdt.annotation.NonNull;
@@ -66,7 +64,6 @@ import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
-import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 public class DiagramTestUtils extends AbstractGraphitiTest {
@@ -1016,17 +1013,14 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 	 * @return
 	 */
 	public static void assertExternalPort(SWTBotGefEditPart portEditPart, boolean external) {
-		ContainerShape portContainerShape = (ContainerShape) portEditPart.part().getModel();
-		for (PropertyContainer portChild : DUtil.collectPropertyContainerChildren(portContainerShape)) {
-			if (DUtil.isPropertyElementType(portChild, RHContainerShapeImpl.GA_FIX_POINT_ANCHOR_RECTANGLE)) {
-				Object obj = DUtil.getBusinessObject((PictogramElement) portChild.eContainer(), Port.class);
-				if (external) {
-					Assert.assertTrue("Not an external port", obj != null);
-				} else {
-					Assert.assertTrue("Port is external", obj == null);
-				}
-				break;
-			}
+		// Get the edit part for the visible port rectangle, then get its graphics algorithm and check that its style
+		// reflects the expected external state
+		SWTBotGefEditPart portRectPart = portEditPart.children().get(0);
+		GraphicsAlgorithm portRect = ((Shape) portRectPart.part().getModel()).getGraphicsAlgorithm();
+		if (external) {
+			Assert.assertTrue("Port style is not external", StyleUtil.isStyleSet(portRect, StyleUtil.EXTERNAL_PROVIDES_PORT,  StyleUtil.EXTERNAL_USES_PORT));
+		} else {
+			Assert.assertFalse("Port style is external", StyleUtil.isStyleSet(portRect, StyleUtil.EXTERNAL_PROVIDES_PORT,  StyleUtil.EXTERNAL_USES_PORT));
 		}
 	}
 
