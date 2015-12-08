@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
@@ -20,6 +23,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.junit.Assert;
 
 import gov.redhawk.ide.swtbot.condition.WaitForWidgetEnablement;
 
@@ -42,6 +46,40 @@ public class ConsoleUtils {
 		protected boolean doMatch(Object item) {
 			return true;
 		}
+	}
+
+	public static String[] getConsoleTitles(SWTWorkbenchBot bot) {
+		SWTBotView view = ViewUtils.getConsoleView(bot);
+		view.show();
+
+		// Get the displayed console title
+		String consoleText = view.bot().label().getText();
+		List<String> consoleTitles = new ArrayList<String>();
+		consoleTitles.add(consoleText);
+
+		SWTBotToolbarDropDownButton consoleButton = (SWTBotToolbarDropDownButton) view.toolbarButton("Display Selected Console");
+		if (!consoleButton.isEnabled()) {
+			return consoleTitles.toArray(new String[1]);
+		}
+
+		// Cycle through the consoles
+		consoleButton.click();
+		for (String newConsoleText = view.bot().label().getText(); !consoleText.equals(newConsoleText); newConsoleText = view.bot().label().getText()) {
+			consoleTitles.add(newConsoleText);
+			consoleButton.click();
+		}
+		return consoleTitles.toArray(new String[consoleTitles.size()]);
+	}
+
+	public static void assertConsoleTitleExists(SWTWorkbenchBot bot, String titleRegex) {
+		String[] titles = getConsoleTitles(bot);
+		for (String title : titles) {
+			if (title.matches(titleRegex)) {
+				return;
+			}
+		}
+		String errorMsg = String.format("Couldn't find a console title matching regex '%s'", titleRegex);
+		Assert.fail(errorMsg);
 	}
 
 	/**
@@ -67,10 +105,11 @@ public class ConsoleUtils {
 
 		// Switch consoles until we hit the right one
 		consoleButton.click();
-		for (String newConsoleText = view.bot().label().getText(); !consoleText.equals(newConsoleText); consoleButton.click()) {
+		for (String newConsoleText = view.bot().label().getText(); !consoleText.equals(newConsoleText); newConsoleText = view.bot().label().getText()) {
 			if (newConsoleText.contains(processName)) {
 				return view;
 			}
+			consoleButton.click();
 		}
 		throw new WidgetNotFoundException(String.format("Can't find console for %s", processName));
 	}
