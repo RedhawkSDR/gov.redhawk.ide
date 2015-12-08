@@ -25,7 +25,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -704,7 +703,7 @@ public final class StandardTestActions {
 
 	private static SWTBotTreeItem getTreeItem(SWTBotTree tree, List<String> path) {
 		for (SWTBotTreeItem rootItem : tree.getAllItems()) {
-			if (rootItem.getText().matches(path.get(0))) {
+			if (rootItem.getText().equals(path.get(0))) {
 				if (path.size() == 1) {
 					return rootItem;
 				}
@@ -723,10 +722,10 @@ public final class StandardTestActions {
 
 		// Recursively expand child items
 		try {
-			Pattern pattern = Pattern.compile(path.get(0));
+			String currentNode = path.get(0);
 			List<String> nodes = parentItem.getNodes();
 			for (String node : nodes) {
-				if (pattern.matcher(node).matches()) {
+				if (currentNode.equals(node)) {
 					if (path.size() == 1) {
 						SWTBotTreeItem result = parentItem.getNode(node);
 						result.expand();

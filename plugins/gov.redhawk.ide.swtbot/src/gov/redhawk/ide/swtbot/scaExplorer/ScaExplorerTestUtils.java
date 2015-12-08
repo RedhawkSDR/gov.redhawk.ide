@@ -107,7 +107,7 @@ public class ScaExplorerTestUtils {
 
 		// Find the root item in the tree. Allow for suffixing from the started decorator.
 		for (SWTBotTreeItem rootItem : scaExplorerView.bot().tree().getAllItems()) {
-			if (rootItem.getText().matches(parentPath[0] + "( CONNECTED)?")) {
+			if (rootItem.getText().matches(Pattern.quote(parentPath[0]) + "( CONNECTED)?")) {
 				if (parentPath.length == 1 && treeItemName == null) {
 					return rootItem;
 				} else {
@@ -136,7 +136,7 @@ public class ScaExplorerTestUtils {
 		try {
 			final String WAVEFORM_INSTANCE_SUFFIX = "(_\\d+_\\d+)?";
 			final String RESOURCE_STARTED_SUFFIX = "( STARTED)?";
-			Pattern pattern = Pattern.compile(path.get(0) + WAVEFORM_INSTANCE_SUFFIX + RESOURCE_STARTED_SUFFIX);
+			Pattern pattern = Pattern.compile(Pattern.quote(path.get(0)) + WAVEFORM_INSTANCE_SUFFIX + RESOURCE_STARTED_SUFFIX);
 			List<String> nodes = parentItem.getNodes();
 			for (String node : nodes) {
 				if (pattern.matcher(node).matches()) {
