@@ -11,7 +11,7 @@
 package gov.redhawk.ide.sdr.ui.internal.handlers;
 
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
+import gov.redhawk.sca.util.AllJobsDone;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,51 +29,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-/**
- * 
- */
 public class DeleteHandler extends AbstractHandler {
 
-	private static class WorkerSchedulingRule implements ISchedulingRule {
-
-		@Override
-		public boolean contains(final ISchedulingRule rule) {
-			return rule == this;
-		}
-
-		@Override
-		public boolean isConflicting(final ISchedulingRule rule) {
-			return contains(rule);
-		}
-
-	}
-
-	private static class LastSchedulingRule implements ISchedulingRule {
-
-		@Override
-		public boolean contains(final ISchedulingRule rule) {
-			return rule == this;
-		}
-
-		@Override
-		public boolean isConflicting(final ISchedulingRule rule) {
-			return contains(rule) || rule instanceof WorkerSchedulingRule;
-		}
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getCurrentSelection(event);
@@ -97,22 +61,21 @@ public class DeleteHandler extends AbstractHandler {
 			}
 			if (!jobs.isEmpty()) {
 				final IProgressMonitor progressGroupMonitor = Job.getJobManager().createProgressGroup();
-				progressGroupMonitor.beginTask("Deleting...", jobs.size() + 1);
+				final AllJobsDone allJobsDone = new AllJobsDone() {
+					@Override
+					protected void allDone() {
+						progressGroupMonitor.done();
+						SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
+					}
+				};
+				allJobsDone.addAllJobs(jobs);
+				progressGroupMonitor.beginTask("Deleting...", jobs.size());
 				for (final Job j : jobs) {
 					j.setProgressGroup(progressGroupMonitor, 1);
 					j.schedule();
 				}
-				progressGroupMonitor.done();
-
-				final RefreshSdrJob refreshJob = new RefreshSdrJob(SdrUiPlugin.getDefault().getTargetSdrRoot());
-				final ISchedulingRule rule = MultiRule.combine(refreshJob.getRule(), new LastSchedulingRule());
-				refreshJob.setRule(rule);
-				refreshJob.setUser(false);
-				refreshJob.setProgressGroup(progressGroupMonitor, 1);
-				refreshJob.schedule();
 			}
 		}
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -152,7 +115,6 @@ public class DeleteHandler extends AbstractHandler {
 
 		};
 		job.setUser(false);
-		job.setRule(new WorkerSchedulingRule());
 		return job;
 	}
 }

@@ -16,11 +16,11 @@ import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @since 3.1
- * 
  */
 public class RefreshSdrJob extends Job {
 
@@ -32,23 +32,22 @@ public class RefreshSdrJob extends Job {
 		setUser(true);
 		this.sdrRoot = sdrRoot;
 	}
-	
+
 	/**
 	 * Refreshes the Target SDR
 	 * @since 3.3
+	 * @deprecated Use {@link SdrUiPlugin#scheduleSdrRootRefresh()}
 	 */
+	@Deprecated
 	public RefreshSdrJob() {
-		this(null);
+		this(SdrUiPlugin.getDefault().getTargetSdrRoot());
 	}
 
 	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
-		if (this.sdrRoot == null) {
-			this.sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
-		}
-		if (this.sdrRoot != null) {
-			this.sdrRoot.reload(monitor);
-		}
+		SubMonitor progress = SubMonitor.convert(monitor);
+		this.sdrRoot.reload(progress);
+		progress.done();
 		return Status.OK_STATUS;
 	}
 
