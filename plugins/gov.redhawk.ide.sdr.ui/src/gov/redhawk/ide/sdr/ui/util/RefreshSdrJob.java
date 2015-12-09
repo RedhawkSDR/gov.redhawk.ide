@@ -15,11 +15,11 @@ import gov.redhawk.ide.sdr.SdrRoot;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @since 3.1
- * 
  */
 public class RefreshSdrJob extends Job {
 
@@ -33,13 +33,10 @@ public class RefreshSdrJob extends Job {
 	}
 
 	@Override
-	public boolean shouldSchedule() {
-		return this.sdrRoot != null;
-	}
-
-	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
-		this.sdrRoot.reload(monitor);
+		SubMonitor progress = SubMonitor.convert(monitor);
+		this.sdrRoot.reload(progress);
+		progress.done();
 		return Status.OK_STATUS;
 	}
 

@@ -19,7 +19,6 @@ import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.export.ExportUtils;
 import gov.redhawk.ide.sdr.ui.export.FileStoreExporter;
 import gov.redhawk.ide.sdr.ui.export.IScaExporter;
-import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
 import gov.redhawk.sca.util.PluginUtil;
 
 import java.io.File;
@@ -169,9 +168,7 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 					exporter.finished();
 
-					final RefreshSdrJob refreshJob = new RefreshSdrJob(root);
-					refreshJob.schedule();
-
+					SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
 				} catch (final CoreException e) {
 					return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Error exporting project to SDR root", e);
 				} catch (final URISyntaxException e) {
