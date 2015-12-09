@@ -10,37 +10,20 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.internal.handlers;
 
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.handlers.HandlerUtil;
+
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
 /**
  * The Class InitHandler.
  */
 public class RefreshSdrRootHandler extends AbstractHandler implements IHandler {
 
-	/**
-	 * {@inheritDoc}
-	 */
-
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		final ISelection selection = HandlerUtil.getCurrentSelection(event);
-		if (selection instanceof IStructuredSelection) {
-			final IStructuredSelection ss = (IStructuredSelection) selection;
-			for (final Object obj : ss.toArray()) {
-				if (obj instanceof SdrRoot) {
-					final RefreshSdrJob job = new RefreshSdrJob((SdrRoot) obj);
-					job.schedule();
-				}
-			}
-		}
+		SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
 		return null;
 	}
 

@@ -66,7 +66,7 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 			if (event.getProperty().equals(SdrUiPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE)
 			        || event.getProperty().equals(SdrUiPreferenceConstants.TARGET_SDR_DEV_PATH)
 			        || event.getProperty().equals(SdrUiPreferenceConstants.TARGET_SDR_DOM_PATH)) {
-				reloadSdr();
+				setSdrRootPaths();
 				SdrUiPlugin.this.reloadSdrJob.schedule();
 			}
 		}
@@ -80,7 +80,7 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	public SdrUiPlugin() {
 	}
 
-	private void reloadSdr() {
+	private void setSdrRootPaths() {
 		final IPath targetSdrPath = getTargetSdrPath();
 		URI sdrRoot = null;
 		if (targetSdrPath != null) {
@@ -129,6 +129,7 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 		SdrUiPlugin.plugin = null;
 
 		getPreferenceStore().removePropertyChangeListener(this.sdrRootPrefListener);
+		this.reloadSdrJob.cancel();
 		this.targetSdrRoot = null;
 
 		super.stop(context);
@@ -158,7 +159,7 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
-				reloadSdr();
+				setSdrRootPaths();
 				SdrUiPlugin.this.reloadSdrJob.schedule();
 				return Status.OK_STATUS;
 			}
@@ -175,6 +176,13 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	 */
 	public SdrRoot getTargetSdrRoot() {
 		return this.targetSdrRoot;
+	}
+
+	/**
+	 * @since 3.3
+	 */
+	public void scheduleSdrRootRefresh() {
+		SdrUiPlugin.this.reloadSdrJob.schedule();
 	}
 
 	/**
