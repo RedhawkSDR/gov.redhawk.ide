@@ -54,23 +54,16 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseAllShapesFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseShapeFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DisabledDeleteFeatureWrapper;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandAllShapesFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandShapeFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StopFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TerminateFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.remove.FastRemoveFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -103,20 +96,8 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		}
 		Object businessObject = DUtil.getBusinessObject(pes[0]);
 
-		if (pes[0] instanceof Diagram) {
-			// Diagram features
-			retList.add(new LayoutDiagramFeature(this));
-			retList.add(new ExpandAllShapesFeature(this));
-			retList.add(new CollapseAllShapesFeature(this));
-		} else if (pes[0] instanceof RHContainerShape) {
-			// Our standard shape features
-			retList.add(new ExpandShapeFeature(this));
-			retList.add(new CollapseShapeFeature(this));
-
-			if (businessObject instanceof FindByStub) {
-				// findby features
-				retList.add(new FindByEditFeature(this));
-			} else if (businessObject instanceof UsesDeviceStub) {
+		if (pes[0] instanceof RHContainerShape) {
+			if (businessObject instanceof UsesDeviceStub) {
 				// usesdevice features
 				if (UsesDeviceFrontEndTunerPattern.isFrontEndDevice(((UsesDeviceStub) businessObject).getUsesDevice())) {
 					retList.add(new UsesFrontEndDeviceEditFeature(this));
