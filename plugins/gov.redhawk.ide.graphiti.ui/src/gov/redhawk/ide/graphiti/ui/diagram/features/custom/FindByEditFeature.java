@@ -49,7 +49,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.jface.wizard.Wizard;
 
-public class FindByEditFeature extends AbstractCustomFeature {
+public class FindByEditFeature extends AbstractCustomFeature implements IDialogEditingFeature {
 
 	private final IFeatureProvider featureProvider;
 
@@ -84,7 +84,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 	 * @see org.eclipse.graphiti.features.custom.AbstractCustomFeature#canExecute(org.eclipse.graphiti.features.context.ICustomContext)
 	 */
 	@Override
-	public boolean canExecute(ICustomContext context) {
+	public boolean canDialogEdit(ICustomContext context) {
 
 		// We only want the edit context to show up for certain objects
 		PictogramElement[] pes = context.getPictogramElements();
@@ -103,7 +103,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 	 * @see org.eclipse.graphiti.features.custom.ICustomFeature#execute(org.eclipse.graphiti.features.context.ICustomContext)
 	 */
 	@Override
-	public void execute(ICustomContext context) {
+	public void dialogEdit(ICustomContext context) {
 		RHContainerShape findByShape = (RHContainerShape) context.getPictogramElements()[0];
 		final FindByStub findByStub = (FindByStub) DUtil.getBusinessObject(findByShape);
 		if (findByStub.getNamingService() != null) {
@@ -119,6 +119,16 @@ public class FindByEditFeature extends AbstractCustomFeature {
 		}
 		updatePictogramElement(findByShape);
 		layoutPictogramElement(findByShape);
+	}
+
+	@Override
+	public void execute(ICustomContext context) {
+		dialogEdit(context);
+	}
+
+	@Override
+	public boolean canExecute(ICustomContext context) {
+		return canDialogEdit(context);
 	}
 
 	// Create the edit wizard to be used

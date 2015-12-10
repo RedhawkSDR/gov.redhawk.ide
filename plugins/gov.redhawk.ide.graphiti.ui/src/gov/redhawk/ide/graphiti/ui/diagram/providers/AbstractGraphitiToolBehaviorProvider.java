@@ -13,7 +13,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -407,9 +407,11 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	
 	@Override
 	public ICustomFeature getDoubleClickFeature(IDoubleClickContext context) {
-		ICustomFeature customFeature = new FindByEditFeature(getFeatureProvider());
-		if (customFeature.canExecute(context)) {
-			return customFeature;
+		// Check for a feature that supports dialog editing
+		for (ICustomFeature feature : getFeatureProvider().getCustomFeatures(context)) {
+			if (feature instanceof IDialogEditingFeature && feature.canExecute(context)) {
+				return feature;
+			}
 		}
 
 		return super.getDoubleClickFeature(context);
