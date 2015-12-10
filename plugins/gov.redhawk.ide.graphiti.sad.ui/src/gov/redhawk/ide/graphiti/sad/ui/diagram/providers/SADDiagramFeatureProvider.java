@@ -42,8 +42,6 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.IncrementStartOrd
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkExternalPortFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkNonExternalPortFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.ComponentReleaseFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect.SADReconnectFeature;
@@ -65,7 +63,6 @@ import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProv
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -97,14 +94,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		Object businessObject = DUtil.getBusinessObject(pes[0]);
 
 		if (pes[0] instanceof RHContainerShape) {
-			if (businessObject instanceof UsesDeviceStub) {
-				// usesdevice features
-				if (UsesDeviceFrontEndTunerPattern.isFrontEndDevice(((UsesDeviceStub) businessObject).getUsesDevice())) {
-					retList.add(new UsesFrontEndDeviceEditFeature(this));
-				} else {
-					retList.add(new UsesDeviceEditFeature(this));
-				}
-			} else if (businessObject instanceof SadComponentInstantiation) {
+			if (businessObject instanceof SadComponentInstantiation) {
 				// Component features
 				if (DUtil.isDiagramRuntime(diagram)) {
 					// Runtime-only component features

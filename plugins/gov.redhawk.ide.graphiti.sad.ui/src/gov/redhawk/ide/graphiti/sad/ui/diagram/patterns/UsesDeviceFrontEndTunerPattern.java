@@ -10,7 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.UsesDeviceFrontEndTunerWizard;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaStructProperty;
@@ -31,20 +33,17 @@ import mil.jpeojtrs.sca.spd.SpdFactory;
 import mil.jpeojtrs.sca.spd.UsesDevice;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.ICreateContext;
-import org.eclipse.graphiti.pattern.IPattern;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.ui.PlatformUI;
 
 import ExtendedCF.WKP.DEVICEKIND;
 import ExtendedCF.WKP.DEVICEMODEL;
 import FRONTEND.FE_TUNER_DEVICE_KIND;
 
-public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern implements IPattern {
+public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern implements IDialogEditingPattern {
 
 	public static final String NAME = "Use FrontEnd Tuner Device";
 
@@ -180,14 +179,6 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 		return new Object[] { usesDeviceStubs[0] };
 	}
 
-	public static Wizard openWizard(Wizard wizard) {
-		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
-		if (dialog.open() == WizardDialog.CANCEL) {
-			return null;
-		}
-		return wizard;
-	}
-	
 	/**
 	 * Gets FrontEnd Uses Device Tuner Allocation Property
 	 * @param usesDevice
@@ -203,6 +194,76 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 		return null;
 	}
 
-	
+	@Override
+	public String getEditName() {
+		return NAME;
+	}
+
+	/**
+	 * Open Wizard allowing edit of FrontEnd Tuner Allocation
+	 * Persist selections in UsesDevice
+	 * @param usesDevice
+	 * @param usesDeviceShape
+	 */
+	protected void editUsesDevice(final UsesDeviceStub usesDeviceStub, final RHContainerShape usesDeviceShape) {
+		// get sad from diagram
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+
+		// prompt user for
+		final UsesDeviceFrontEndTunerWizard wizard = openWizard(new UsesDeviceFrontEndTunerWizard(sad, usesDeviceStub));
+		if (wizard == null) {
+			return;
+		}
+
+		//extract values from wizard
+		final String usesDeviceId = wizard.getNamePage().getModel().getUsesDeviceId();
+		final String deviceModel = wizard.getNamePage().getModel().getDeviceModel();
+		ScaStructProperty allocationStruct = wizard.getAllocationPage().getAllocationStruct();
+		final StructRef allocationStructRef = allocationStruct.createPropertyRef();
+		final List<String> usesPortNames = wizard.getPortsWizardPage().getModel().getUsesPortNames();
+		final List<String> providesPortNames = wizard.getPortsWizardPage().getModel().getProvidesPortNames();
+
+		// editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+
+			@Override
+			protected void doExecute() {
+				UsesDevice usesDevice = usesDeviceStub.getUsesDevice();
+
+				//uses device id
+				usesDevice.setId(usesDeviceId);
+
+				//device model
+				PropertyRef deviceModelPropertyRef = null;
+				for (PropertyRef propRef: usesDevice.getPropertyRef()) {
+					if (DEVICEMODEL.value.equals(propRef.getRefId())) {
+						deviceModelPropertyRef = propRef;
+					}
+				}
+				if (deviceModel == null || deviceModel.isEmpty()) {
+					if (deviceModelPropertyRef != null) {
+						//delete PropertyRef containing deviceModel
+						EcoreUtil.delete(deviceModelPropertyRef);
+					}
+				} else if (deviceModelPropertyRef == null) {
+					deviceModelPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
+					usesDevice.getPropertyRef().add(deviceModelPropertyRef);
+					deviceModelPropertyRef.setRefId(DEVICEMODEL.value);
+					deviceModelPropertyRef.setValue(deviceModel);
+				} else {
+					deviceModelPropertyRef.setValue(deviceModel);
+				}
+
+				//replace existing structs
+				usesDevice.getStructRef().clear();
+				usesDevice.getStructRef().add(allocationStructRef);
+
+				//update ports
+				updatePorts(usesDeviceStub, usesDeviceShape, usesPortNames, providesPortNames);
+			}
+		});
+	}
 
 }

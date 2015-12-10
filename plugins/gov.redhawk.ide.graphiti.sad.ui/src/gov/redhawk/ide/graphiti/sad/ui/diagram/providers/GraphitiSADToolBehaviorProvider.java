@@ -16,8 +16,6 @@ import java.util.List;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
-import org.eclipse.graphiti.features.context.IDoubleClickContext;
-import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
@@ -27,8 +25,6 @@ import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
@@ -141,23 +137,6 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		super.dispose();
 	}
 	
-	@Override
-	public ICustomFeature getDoubleClickFeature(IDoubleClickContext context) {
-		//UsesFrontEndDeviceEditFeature
-		ICustomFeature usesFrontEndDeviceEditFeature = new UsesFrontEndDeviceEditFeature(getFeatureProvider());
-		if (usesFrontEndDeviceEditFeature.canExecute(context)) {
-			return usesFrontEndDeviceEditFeature;
-		}
-		
-		//UsesDeviceEditFeature
-		ICustomFeature usesDeviceEditFeature = new UsesDeviceEditFeature(getFeatureProvider());
-		if (usesDeviceEditFeature.canExecute(context)) {
-			return usesDeviceEditFeature;
-		}
-
-		return super.getDoubleClickFeature(context);
-	}
-
 	@Override
 	protected ICreateFeature getCreateFeature(SoftPkg spd, String implId, String iconId) {
 		return new ComponentCreateFeature(getFeatureProvider(), spd, implId);

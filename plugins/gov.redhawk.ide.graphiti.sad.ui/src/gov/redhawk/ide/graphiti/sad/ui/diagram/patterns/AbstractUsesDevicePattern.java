@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -46,9 +47,9 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
-import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
+import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
@@ -60,12 +61,14 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.pattern.IPattern;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.ui.PlatformUI;
 
 import ExtendedCF.WKP.DEVICEKIND;
 import FRONTEND.FE_TUNER_DEVICE_KIND;
 
-public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPattern implements IPattern {
+public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPattern implements IDialogEditingPattern {
 
 	public AbstractUsesDevicePattern() {
 		super(null);
@@ -300,6 +303,34 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 		return null;
 	}
 	
+	@Override
+	public boolean canDialogEdit(ICustomContext context) {
+		PictogramElement[] pes = context.getPictogramElements();
+		if (pes != null && pes.length == 1) {
+			return isMainBusinessObjectApplicable(getBusinessObjectForPictogramElement(pes[0]));
+		}
+		return false;
+	}
+
+	@Override
+	public void dialogEdit(ICustomContext context) {
+		RHContainerShape usesDeviceShape = (RHContainerShape) context.getPictogramElements()[0];
+		final UsesDeviceStub usesDevice = (UsesDeviceStub) getBusinessObjectForPictogramElement(usesDeviceShape);
+		editUsesDevice(usesDevice, usesDeviceShape);
+		updatePictogramElement(usesDeviceShape);
+		layoutPictogramElement(usesDeviceShape);
+	}
+
+	protected abstract void editUsesDevice(UsesDeviceStub usesDevice, RHContainerShape usesDeviceShape);
+
+	protected <E extends Wizard> E openWizard(E wizard) {
+		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+		if (dialog.open() == WizardDialog.CANCEL) {
+			return null;
+		}
+		return wizard;
+	}
+
 	/**
 	 * Return true if containerShape is linked to UsesDeviceStub
 	 * @param containerShape
@@ -523,15 +554,14 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	 * @param usesDeviceShape
 	 * @param usesPortNames
 	 */
-	public static void updatePorts(final IFeatureProvider featureProvider, final UsesDeviceStub usesDeviceStub, final RHContainerShape usesDeviceShape, final List<String> usesPortNames,
-		final List<String> providesPortNames) {
+	protected void updatePorts(final UsesDeviceStub usesDeviceStub, final RHContainerShape usesDeviceShape, final List<String> usesPortNames, final List<String> providesPortNames) {
 		
-		updateUsesPortStubs(featureProvider, usesDeviceStub, usesDeviceShape, usesPortNames);
+		updateUsesPortStubs(usesDeviceStub, usesDeviceShape, usesPortNames);
 		
-		updateProvidesPortStubs(featureProvider, usesDeviceStub, usesDeviceShape, providesPortNames);
+		updateProvidesPortStubs(usesDeviceStub, usesDeviceShape, providesPortNames);
 		
 		// Update the shape layout to account for any changes
-		DUtil.layoutShapeViaFeature(featureProvider, usesDeviceShape);
+		layoutPictogramElement(usesDeviceShape);
 	}
 	
 	/**
@@ -541,10 +571,8 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	 * @param usesDeviceShape
 	 * @param usesPortNames
 	 */
-	public static void updateUsesPortStubs(final IFeatureProvider featureProvider, final UsesDeviceStub usesDeviceStub, 
-		final RHContainerShape usesDeviceShape, final List<String> usesPortNames) {
-
-		final Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
+	protected void updateUsesPortStubs(UsesDeviceStub usesDeviceStub, RHContainerShape usesDeviceShape, List<String> usesPortNames) {
+		Diagram diagram = getDiagram();
 		
 		// Mark the ports to delete
 		List<UsesPortStub> portsToDelete = new ArrayList<UsesPortStub>();
@@ -575,7 +603,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 
 		// Add the new ports to the Diagram model
 		usesDeviceStub.getUsesPortStubs().addAll(usesPortStubs);
-		DUtil.updateShapeViaFeature(featureProvider, diagram, usesDeviceShape);
+		updatePictogramElement(usesDeviceShape);
 
 		// Build the new connections using the reconnect feature
 		for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {
@@ -586,7 +614,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 				createContext.setSourceAnchor(sourceAnchor);
 				createContext.setTargetAnchor(cursor.getKey().getEnd());
 
-				ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
+				ICreateConnectionFeature[] createConnectionFeatures = getFeatureProvider().getCreateConnectionFeatures();
 				for (ICreateConnectionFeature createConnectionFeature : createConnectionFeatures) {
 					if (createConnectionFeature.canCreate(createContext)) {
 						createConnectionFeature.create(createContext);
@@ -597,7 +625,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 			// Delete the old connection
 			for (int i = 0; i < oldConnectionMap.size(); i++) {
 				DeleteContext deleteContext = new DeleteContext(cursor.getKey());
-				featureProvider.getDeleteFeature(deleteContext).delete(deleteContext);
+				getFeatureProvider().getDeleteFeature(deleteContext).delete(deleteContext);
 			}
 		}
 		// Delete all ports and rebuild from the list provided by the wizard
@@ -611,10 +639,8 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	 * @param usesDeviceShape
 	 * @param usesPortNames
 	 */
-	public static void updateProvidesPortStubs(final IFeatureProvider featureProvider, final UsesDeviceStub usesDeviceStub, 
-		final RHContainerShape usesDeviceShape, final List<String> providesPortNames) {
-		
-		final Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
+	protected void updateProvidesPortStubs(UsesDeviceStub usesDeviceStub, RHContainerShape usesDeviceShape, List<String> providesPortNames) {
+		Diagram diagram = getDiagram();
 		
 		// Mark the ports to delete
 		List<ProvidesPortStub> portsToDelete = new ArrayList<ProvidesPortStub>();
@@ -645,7 +671,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 
 		// Add the new ports to the Diagram model
 		usesDeviceStub.getProvidesPortStubs().addAll(providesPortStubs);
-		DUtil.updateShapeViaFeature(featureProvider, diagram, usesDeviceShape);
+		updatePictogramElement(usesDeviceShape);
 
 		// Build the new connections using the reconnect feature
 		for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {
@@ -656,7 +682,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 				createContext.setSourceAnchor(cursor.getKey().getStart());
 				createContext.setTargetAnchor(targetAnchor);
 
-				ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
+				ICreateConnectionFeature[] createConnectionFeatures = getFeatureProvider().getCreateConnectionFeatures();
 				for (ICreateConnectionFeature createConnectionFeature : createConnectionFeatures) {
 					if (createConnectionFeature.canCreate(createContext)) {
 						createConnectionFeature.create(createContext);
@@ -667,7 +693,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 			// Delete the old connection
 			for (int i = 0; i < oldConnectionMap.size(); i++) {
 				DeleteContext deleteContext = new DeleteContext(cursor.getKey());
-				featureProvider.getDeleteFeature(deleteContext).delete(deleteContext);
+				getFeatureProvider().getDeleteFeature(deleteContext).delete(deleteContext);
 			}
 		}
 		// Delete all ports and rebuild from the list provided by the wizard
