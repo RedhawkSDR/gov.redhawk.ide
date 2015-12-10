@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- This file is protected by Copyright. Please refer to the COPYRIGHT file 
-  distributed with this source distribution. This file is part of REDHAWK IDE. 
-  All rights reserved. This program and the accompanying materials are made 
-  available under the terms of the Eclipse Public License v1.0 which accompanies 
+<!-- This file is protected by Copyright. Please refer to the COPYRIGHT file
+  distributed with this source distribution. This file is part of REDHAWK IDE.
+  All rights reserved. This program and the accompanying materials are made
+  available under the terms of the Eclipse Public License v1.0 which accompanies
   this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html. -->
 <project
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
@@ -11,12 +11,13 @@
   <groupId>gov.redhawk.ide</groupId>
   <artifactId>releng-swtbot-development</artifactId>
   <packaging>pom</packaging>
+  <version>2.0.1-SNAPSHOT</version>
 
   <parent>
     <groupId>gov.redhawk.ide</groupId>
-    <relativePath>../../</relativePath>
-    <artifactId>releng</artifactId>
-    <version>1.11.0-SNAPSHOT</version>
+    <relativePath>../../..</relativePath>
+    <artifactId>gov.redhawk.ide.parent</artifactId>
+    <version>2.0.1-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -46,92 +47,101 @@
               <autoStart>true</autoStart>
             </bundle>
           </bundleStartLevel>
-          <dependencies>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>org.jacorb</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>org.eclipse.wst.xml_core.feature</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>org.eclipse.wst.xml_ui.feature</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>org.eclipse.xsd.sdk</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>org.eclipse.epp.package.committers.feature</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>gov.redhawk.ide.ui.feature</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>gov.redhawk.ide.feature</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>gov.redhawk.core</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>gov.redhawk.core.ui</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>mil.jpeojtrs.sca</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>org.eclipse.swtbot.forms</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>org.eclipse.swtbot.eclipse.gef</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>org.eclipse.swtbot</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>slf4j.api</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>ch.qos.logback.classic</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>ch.qos.logback.core</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-          </dependencies>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <version>${tycho-version}</version>
+        <configuration>
+          <dependency-resolution>
+             <extraRequirements>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>org.jacorb</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>org.eclipse.wst.xml_core.feature</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>org.eclipse.wst.xml_ui.feature</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>org.eclipse.xsd.sdk</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>org.eclipse.epp.package.committers.feature</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>gov.redhawk.ide.ui.feature</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>gov.redhawk.ide.feature</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>gov.redhawk.core</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>gov.redhawk.core.ui</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>mil.jpeojtrs.sca</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>org.eclipse.swtbot.forms</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>org.eclipse.swtbot.eclipse.gef</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-feature</type>
+                 <id>org.eclipse.swtbot</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-plugin</type>
+                 <id>slf4j.api</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-plugin</type>
+                 <id>ch.qos.logback.classic</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+               <requirement>
+                 <type>eclipse-plugin</type>
+                 <id>ch.qos.logback.core</id>
+                 <versionRange>0.0.0</versionRange>
+               </requirement>
+             </extraRequirements>
+          </dependency-resolution>
+       </configuration>
       </plugin>
     </plugins>
   </build>
 
-  <version>1.11.0-SNAPSHOT</version>
 </project>
