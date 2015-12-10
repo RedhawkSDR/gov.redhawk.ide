@@ -12,6 +12,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.diagram.util.FindByStubUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
@@ -21,11 +22,15 @@ import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 
 import java.util.List;
 
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalCommandStack;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.ICreateContext;
+import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.pattern.IPattern;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
-public class FindByEventChannelPattern extends AbstractFindByPattern implements IPattern {
+public class FindByEventChannelPattern extends AbstractFindByPattern implements IDialogEditingPattern {
 
 	public static final String NAME = "Event Channel";
 
@@ -135,4 +140,43 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 		return ImageProvider.IMG_FIND_BY;
 	}
 
+	@Override
+	public boolean canDialogEdit(ICustomContext context) {
+		PictogramElement[] pes = context.getPictogramElements();
+		if (pes != null && pes.length == 1) {
+			return isMainBusinessObjectApplicable(getBusinessObjectForPictogramElement(pes[0]));
+		}
+		return false;
+	}
+
+	@Override
+	public void dialogEdit(ICustomContext context) {
+		PictogramElement pictogramElement = context.getPictogramElements()[0];
+		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(pictogramElement);
+
+		AbstractInputValidationDialog dialog = (new FindByEventChannelPattern()).getDialog();
+		final String eventChannelName = dialog.getInput(findByStub.getDomainFinder().getName());
+
+		if (eventChannelName == null) {
+			return;
+		}
+
+		// editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+
+		// Perform business object manipulation in a Command
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+				// set event name
+				findByStub.getDomainFinder().setName(eventChannelName);
+			}
+		});
+	}
+
+	@Override
+	public String getEditName() {
+		return NAME;
+	}
 }

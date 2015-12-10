@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.diagram.util.FindByStubUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.wizards.FindByServiceWizardPage;
 
@@ -25,13 +26,18 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalCommandStack;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.ICreateContext;
+import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
 
-public class FindByServicePattern extends AbstractFindByPattern {
+public class FindByServicePattern extends AbstractFindByPattern implements IDialogEditingPattern {
 
 	public static final String NAME = "Service";
 	public static final String FIND_BY_SERVICE_NAME = "Service Name";
@@ -200,5 +206,60 @@ public class FindByServicePattern extends AbstractFindByPattern {
 	@Override
 	protected String getOuterImageId() {
 		return ImageProvider.IMG_FIND_BY;
+	}
+
+	@Override
+	public boolean canDialogEdit(ICustomContext context) {
+		PictogramElement[] pes = context.getPictogramElements();
+		if (pes != null && pes.length == 1) {
+			return isMainBusinessObjectApplicable(getBusinessObjectForPictogramElement(pes[0]));
+		}
+		return false;
+	}
+
+	@Override
+	public void dialogEdit(ICustomContext context) {
+		PictogramElement pictogramElement = context.getPictogramElements()[0];
+		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(pictogramElement);
+
+		// Find By Service
+		FindByServiceWizardPage page = FindByServicePattern.getWizardPage(findByStub, getEditWizard());
+		if (page == null) {
+			return;
+		}
+
+		// Push any new values to the FindByStub object
+		final String serviceNameText = page.getModel().getEnableServiceName() ? page.getModel().getServiceName() : null;
+		final String serviceTypeText = page.getModel().getEnableServiceType() ? page.getModel().getServiceType() : null;
+//		final List<String> usesPortNames = (page.getModel().getUsesPortNames() != null) ? page.getModel().getUsesPortNames() : null;
+//		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null) ? page.getModel().getProvidesPortNames() : null;
+
+		// editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+
+		// Create Component Related objects in SAD model
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+
+			@Override
+			protected void doExecute() {
+				final DomainFinder domainFinder = findByStub.getDomainFinder();
+				if (serviceNameText != null && !serviceNameText.isEmpty() && !serviceNameText.equals(domainFinder.getName())) {
+					domainFinder.setType(DomainFinderType.SERVICENAME);
+					domainFinder.setName(serviceNameText);
+				} else if (serviceTypeText != null && !serviceTypeText.isEmpty()) {
+					domainFinder.setType(DomainFinderType.SERVICETYPE);
+					domainFinder.setName(serviceTypeText);
+				}
+
+				// if applicable, add uses and provides port stub(s)
+				//updatePorts(findByStub, findByShape, usesPortNames, providesPortNames);
+			}
+		});
+	}
+
+	@Override
+	public String getEditName() {
+		return NAME;
 	}
 }

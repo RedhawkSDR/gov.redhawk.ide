@@ -50,6 +50,7 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.jface.wizard.Wizard;
 
 public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern {
 
@@ -425,6 +426,14 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 		}
 
 		return false;
+	}
+
+	protected static Wizard getEditWizard() {
+		return new Wizard() {
+			public boolean performFinish() {
+				return true;
+			}
+		};
 	}
 
 	/**

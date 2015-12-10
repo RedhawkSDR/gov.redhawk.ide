@@ -16,7 +16,8 @@ import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseAllShapesFeat
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseShapeFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandAllShapesFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandShapeFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DialogEditingFeatureForPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
@@ -24,7 +25,6 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.ProvidesPortPattern;
 
 import java.util.ArrayList;
@@ -133,10 +133,12 @@ public abstract class AbstractGraphitiFeatureProvider extends DefaultFeatureProv
 				features.add(new ExpandShapeFeature(this));
 				features.add(new CollapseShapeFeature(this));
 
-				Object businessObject = getBusinessObjectForPictogramElement(pictogramElement);
-				if (businessObject instanceof FindByStub) {
-					// findby features
-					features.add(new FindByEditFeature(this));
+				IPattern pattern = getPatternForPictogramElement(pictogramElement);
+				if (pattern instanceof IDialogEditingPattern) {
+					IDialogEditingPattern dialogEditing = (IDialogEditingPattern) pattern;
+					if (dialogEditing.canDialogEdit(context)) {
+						features.add(new DialogEditingFeatureForPattern(this, dialogEditing));
+					}
 				}
 			}
 		}
