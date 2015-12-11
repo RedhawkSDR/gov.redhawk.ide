@@ -160,7 +160,7 @@ public class UsesDevicePattern extends AbstractUsesDevicePattern {
 	 * @param usesDevice
 	 * @param usesDeviceShape
 	 */
-	protected void editUsesDevice(final UsesDeviceStub usesDeviceStub, final RHContainerShape usesDeviceShape) {
+	protected boolean editUsesDevice(final UsesDeviceStub usesDeviceStub, final RHContainerShape usesDeviceShape) {
 
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
@@ -168,7 +168,7 @@ public class UsesDevicePattern extends AbstractUsesDevicePattern {
 		// prompt user for
 		final UsesDeviceWizard wizard = openWizard(new UsesDeviceWizard(sad, usesDeviceStub));
 		if (wizard == null) {
-			return;
+			return false;
 		}
 
 		//extract values from wizard
@@ -197,6 +197,8 @@ public class UsesDevicePattern extends AbstractUsesDevicePattern {
 				updateProvidesPortStubs(usesDeviceStub, providesPortNames);
 			}
 		});
+
+		return true;
 	}
 
 }

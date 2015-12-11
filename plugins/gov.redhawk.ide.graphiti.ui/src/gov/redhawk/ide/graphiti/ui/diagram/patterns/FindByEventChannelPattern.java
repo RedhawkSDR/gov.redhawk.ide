@@ -149,7 +149,7 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	}
 
 	@Override
-	public void dialogEdit(ICustomContext context) {
+	public boolean dialogEdit(ICustomContext context) {
 		PictogramElement pictogramElement = context.getPictogramElements()[0];
 		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(pictogramElement);
 
@@ -157,7 +157,7 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 		final String eventChannelName = getDialog().getInput(oldName);
 
 		if (eventChannelName == null || eventChannelName.equals(oldName)) {
-			return;
+			return false;
 		}
 
 		// editing domain for our transaction
@@ -173,6 +173,7 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 		});
 		updatePictogramElement(pictogramElement);
 		layoutPictogramElement(pictogramElement);
+		return true;
 	}
 
 	@Override

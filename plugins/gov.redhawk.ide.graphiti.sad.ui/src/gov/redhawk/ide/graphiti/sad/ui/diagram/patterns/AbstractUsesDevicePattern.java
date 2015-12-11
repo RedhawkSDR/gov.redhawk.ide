@@ -295,15 +295,19 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	}
 
 	@Override
-	public void dialogEdit(ICustomContext context) {
+	public boolean dialogEdit(ICustomContext context) {
 		RHContainerShape usesDeviceShape = (RHContainerShape) context.getPictogramElements()[0];
 		final UsesDeviceStub usesDevice = (UsesDeviceStub) getBusinessObjectForPictogramElement(usesDeviceShape);
-		editUsesDevice(usesDevice, usesDeviceShape);
-		updatePictogramElement(usesDeviceShape);
-		layoutPictogramElement(usesDeviceShape);
+		if (editUsesDevice(usesDevice, usesDeviceShape)) {
+			updatePictogramElement(usesDeviceShape);
+			layoutPictogramElement(usesDeviceShape);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	protected abstract void editUsesDevice(UsesDeviceStub usesDevice, RHContainerShape usesDeviceShape);
+	protected abstract boolean editUsesDevice(UsesDeviceStub usesDevice, RHContainerShape usesDeviceShape);
 
 	protected <E extends Wizard> E openWizard(E wizard) {
 		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);

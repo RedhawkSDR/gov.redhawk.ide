@@ -10,6 +10,14 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 
+/**
+ * Mix-in interface for patterns that support dialog editing.
+ */
 public interface IDialogEditingPattern extends IDialogEditing {
+	/**
+	 * Gets the edit name.
+	 *
+	 * @return name for UI representation
+	 */
 	public String getEditName();
 }

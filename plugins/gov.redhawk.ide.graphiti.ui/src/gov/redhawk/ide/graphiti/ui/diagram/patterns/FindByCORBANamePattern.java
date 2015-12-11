@@ -171,13 +171,13 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 	}
 
 	@Override
-	public void dialogEdit(ICustomContext context) {
+	public boolean dialogEdit(ICustomContext context) {
 		PictogramElement pictogramElement = context.getPictogramElements()[0];
 		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(pictogramElement);
 
 		FindByCORBANameWizardPage page = openWizard(findByStub, getEditWizard());
 		if (page == null) {
-			return;
+			return false;
 		}
 
 		// get user selections
@@ -202,6 +202,8 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 		});
 		updatePictogramElement(pictogramElement);
 		layoutPictogramElement(pictogramElement);
+
+		return true;
 	}
 
 	@Override

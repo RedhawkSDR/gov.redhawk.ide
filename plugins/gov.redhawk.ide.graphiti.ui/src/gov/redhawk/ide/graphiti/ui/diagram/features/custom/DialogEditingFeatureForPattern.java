@@ -17,6 +17,7 @@ import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 public class DialogEditingFeatureForPattern extends AbstractCustomFeature implements IDialogEditingFeature {
 
 	private final IDialogEditingPattern pattern;
+	private boolean changesApplied = false;
 
 	/*
 	 * Constructor
@@ -58,18 +59,23 @@ public class DialogEditingFeatureForPattern extends AbstractCustomFeature implem
 	 * @see org.eclipse.graphiti.features.custom.ICustomFeature#execute(org.eclipse.graphiti.features.context.ICustomContext)
 	 */
 	@Override
-	public void dialogEdit(ICustomContext context) {
-		pattern.dialogEdit(context);
+	public boolean dialogEdit(ICustomContext context) {
+		return pattern.dialogEdit(context);
 	}
 
 	@Override
 	public void execute(ICustomContext context) {
-		dialogEdit(context);
+		changesApplied = dialogEdit(context);
 	}
 
 	@Override
 	public boolean canExecute(ICustomContext context) {
 		return canDialogEdit(context);
+	}
+
+	@Override
+	public boolean hasDoneChanges() {
+		return changesApplied;
 	}
 
 }

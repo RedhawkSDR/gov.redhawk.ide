@@ -205,14 +205,14 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 	 * @param usesDevice
 	 * @param usesDeviceShape
 	 */
-	protected void editUsesDevice(final UsesDeviceStub usesDeviceStub, final RHContainerShape usesDeviceShape) {
+	protected boolean editUsesDevice(final UsesDeviceStub usesDeviceStub, final RHContainerShape usesDeviceShape) {
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		// prompt user for
 		final UsesDeviceFrontEndTunerWizard wizard = openWizard(new UsesDeviceFrontEndTunerWizard(sad, usesDeviceStub));
 		if (wizard == null) {
-			return;
+			return false;
 		}
 
 		//extract values from wizard
@@ -265,6 +265,7 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 				updateProvidesPortStubs(usesDeviceStub, providesPortNames);
 			}
 		});
+		return true;
 	}
 
 }

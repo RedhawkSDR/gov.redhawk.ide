@@ -226,14 +226,14 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 	}
 
 	@Override
-	public void dialogEdit(ICustomContext context) {
+	public boolean dialogEdit(ICustomContext context) {
 		PictogramElement pictogramElement = context.getPictogramElements()[0];
 		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(pictogramElement);
 
 		// Find By Service
 		FindByServiceWizardPage page = FindByServicePattern.getWizardPage(findByStub, getEditWizard());
 		if (page == null) {
-			return;
+			return false;
 		}
 
 		// Push any new values to the FindByStub object
@@ -246,7 +246,7 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 			type = DomainFinderType.SERVICETYPE;
 			name = page.getModel().getServiceType();
 		} else {
-			return;
+			return false;
 		}
 
 		final List<String> usesPortNames = page.getModel().getUsesPortNames();
@@ -270,6 +270,7 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 
 		updatePictogramElement(pictogramElement);
 		layoutPictogramElement(pictogramElement);
+		return true;
 	}
 
 	@Override

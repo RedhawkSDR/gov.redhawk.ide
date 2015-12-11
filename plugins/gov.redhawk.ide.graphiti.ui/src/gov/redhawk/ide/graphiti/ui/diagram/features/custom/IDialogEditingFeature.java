@@ -12,6 +12,9 @@ package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 
 import org.eclipse.graphiti.features.IFeature;
 
+/**
+ * Feature for displaying an editing dialog for a selected pictogram element.
+ */
 public interface IDialogEditingFeature extends IDialogEditing, IFeature {
 
 }
