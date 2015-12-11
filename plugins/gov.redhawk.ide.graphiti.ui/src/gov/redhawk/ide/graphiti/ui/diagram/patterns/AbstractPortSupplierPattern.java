@@ -12,11 +12,14 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.datatypes.IDimension;
@@ -34,6 +37,8 @@ import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -52,8 +57,10 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public abstract class AbstractPortSupplierPattern extends AbstractContainerPattern {
@@ -769,5 +776,81 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 
 		// perform update, redraw
 		updatePictogramElement(containerShape);
+	}
+
+	/**
+	 * Updates the set of UsesPortStub objects to match the provided names
+	 * @param portSupplier
+	 * @param usesPortNames
+	 */
+	protected void updateUsesPortStubs(EObject portSupplier, List<String> usesPortNames) {
+		// Mark the ports to delete
+		List<UsesPortStub> portsToDelete = new ArrayList<UsesPortStub>();
+		Set<String> portsToAdd = new HashSet<String>(usesPortNames);
+		for (UsesPortStub uses : getUses(portSupplier)) {
+			if (!portsToAdd.remove(uses.getName())) {
+				portsToDelete.add(uses);
+			}
+		}
+
+		// Capture the existing connection information and delete the connection
+		for (UsesPortStub portStub : portsToDelete) {
+			Anchor portStubPe = (Anchor) DUtil.getPictogramElementForBusinessObject(getDiagram(), portStub, Anchor.class);
+			for (Connection connection : portStubPe.getOutgoingConnections()) {
+				Object connectionObject = getBusinessObjectForPictogramElement(connection);
+				if (connectionObject instanceof SadConnectInterface) {
+					EcoreUtil.delete((SadConnectInterface) connectionObject);
+				}
+			}
+		}
+
+		// Remove deleted ports
+		getUses(portSupplier).removeAll(portsToDelete);
+
+		// Add new ports to the element
+		for (String usesPortName : portsToAdd) {
+			// Add the new port to the Domain model
+			UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
+			usesPortStub.setName(usesPortName);
+			getUses(portSupplier).add(usesPortStub);
+		}
+	}
+
+	/**
+	 * Updates the set of ProvidesPortStub objects to match the provides names
+	 * @param portSupplier
+	 * @param providesPortNames
+	 */
+	protected void updateProvidesPortStubs(EObject portSupplier, List<String> providesPortNames) {
+		// Mark the ports to delete
+		List<ProvidesPortStub> portsToDelete = new ArrayList<ProvidesPortStub>();
+		Set<String> portsToAdd = new HashSet<String>(providesPortNames);
+		for (ProvidesPortStub provides : getProvides(portSupplier)) {
+			if (!portsToAdd.remove(provides.getName())) {
+				portsToDelete.add(provides);
+			}
+		}
+
+		// Capture the existing connection information and delete the connection
+		for (ProvidesPortStub portStub : portsToDelete) {
+			Anchor portStubPe = (Anchor) DUtil.getPictogramElementForBusinessObject(getDiagram(), portStub, Anchor.class);
+			for (Connection connection : portStubPe.getIncomingConnections()) {
+				Object connectionObject = getBusinessObjectForPictogramElement(connection);
+				if (connectionObject instanceof SadConnectInterface) {
+					EcoreUtil.delete((SadConnectInterface) connectionObject);
+				}
+			}
+		}
+
+		// Remove deleted ports
+		getProvides(portSupplier).removeAll(portsToDelete);
+
+		// Add new ports to the element
+		for (String providesPortName : portsToAdd) {
+			// Add the new port to the Domain model
+			ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
+			providesPortStub.setName(providesPortName);
+			getProvides(portSupplier).add(providesPortStub);
+		}
 	}
 }

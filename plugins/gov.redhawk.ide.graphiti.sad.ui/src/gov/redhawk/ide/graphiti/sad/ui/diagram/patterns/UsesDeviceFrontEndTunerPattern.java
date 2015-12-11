@@ -261,7 +261,8 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 				usesDevice.getStructRef().add(allocationStructRef);
 
 				//update ports
-				updatePorts(usesDeviceStub, usesDeviceShape, usesPortNames, providesPortNames);
+				updateUsesPortStubs(usesDeviceStub, usesPortNames);
+				updateProvidesPortStubs(usesDeviceStub, providesPortNames);
 			}
 		});
 	}

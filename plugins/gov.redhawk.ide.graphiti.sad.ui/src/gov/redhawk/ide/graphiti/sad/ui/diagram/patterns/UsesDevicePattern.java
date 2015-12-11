@@ -193,7 +193,8 @@ public class UsesDevicePattern extends AbstractUsesDevicePattern {
 				usesDevice.getStructRef().clear();
 
 				//update ports
-				updatePorts(usesDeviceStub, usesDeviceShape, usesPortNames, providesPortNames);
+				updateUsesPortStubs(usesDeviceStub, usesPortNames);
+				updateProvidesPortStubs(usesDeviceStub, providesPortNames);
 			}
 		});
 	}

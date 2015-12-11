@@ -231,8 +231,8 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 		// Push any new values to the FindByStub object
 		final String serviceNameText = page.getModel().getEnableServiceName() ? page.getModel().getServiceName() : null;
 		final String serviceTypeText = page.getModel().getEnableServiceType() ? page.getModel().getServiceType() : null;
-//		final List<String> usesPortNames = (page.getModel().getUsesPortNames() != null) ? page.getModel().getUsesPortNames() : null;
-//		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null) ? page.getModel().getProvidesPortNames() : null;
+		final List<String> usesPortNames = (page.getModel().getUsesPortNames() != null) ? page.getModel().getUsesPortNames() : null;
+		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null) ? page.getModel().getProvidesPortNames() : null;
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -253,9 +253,13 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 				}
 
 				// if applicable, add uses and provides port stub(s)
-				//updatePorts(findByStub, findByShape, usesPortNames, providesPortNames);
+				updateUsesPortStubs(findByStub, usesPortNames);
+				updateProvidesPortStubs(findByStub, providesPortNames);
 			}
 		});
+
+		updatePictogramElement(pictogramElement);
+		layoutPictogramElement(pictogramElement);
 	}
 
 	@Override

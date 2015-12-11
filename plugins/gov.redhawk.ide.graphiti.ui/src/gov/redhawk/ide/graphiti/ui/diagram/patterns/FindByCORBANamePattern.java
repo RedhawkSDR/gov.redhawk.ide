@@ -123,45 +123,37 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 		return "CORBA";
 	}
 
-	protected static FindByCORBANameWizardPage openWizard() {
-		return openWizard(null, new Wizard() {
-			public boolean performFinish() {
-				return true;
-			}
-		});
+	private FindByCORBANameWizardPage openWizard() {
+		return openWizard(null, getEditWizard());
 	}
 
-	public static FindByCORBANameWizardPage openWizard(FindByStub existingFindByStub, Wizard wizard) {
+	private FindByCORBANameWizardPage openWizard(FindByStub existingFindByStub, Wizard wizard) {
 		FindByCORBANameWizardPage page = new FindByCORBANameWizardPage();
 		wizard.addPage(page);
 		if (existingFindByStub != null) {
-			fillWizardFieldsWithExistingProperties(page, existingFindByStub);
+			// Grab existing properties from findByStub
+			String corbaName = existingFindByStub.getNamingService().getName();
+			EList<UsesPortStub> usesPorts = existingFindByStub.getUses();
+			EList<ProvidesPortStub> providesPorts = existingFindByStub.getProvides();
+
+			// Fill wizard fields with existing properties
+			page.getModel().setCorbaName(corbaName);
+			if (usesPorts != null && !usesPorts.isEmpty()) {
+				for (UsesPortStub port : usesPorts) {
+					page.getModel().getUsesPortNames().add(port.getName());
+				}
+			}
+			if (providesPorts != null && !providesPorts.isEmpty()) {
+				for (ProvidesPortStub port : providesPorts) {
+					page.getModel().getProvidesPortNames().add(port.getName());
+				}
+			}
 		}
 		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 		if (dialog.open() == WizardDialog.CANCEL) {
 			return null;
 		}
 		return page;
-	}
-
-	private static void fillWizardFieldsWithExistingProperties(FindByCORBANameWizardPage page, FindByStub findByStub) {
-		// Grab existing properties from findByStub
-		String corbaName = findByStub.getNamingService().getName();
-		EList<UsesPortStub> usesPorts = findByStub.getUses();
-		EList<ProvidesPortStub> providesPorts = findByStub.getProvides();
-
-		// Fill wizard fields with existing properties
-		page.getModel().setCorbaName(corbaName);
-		if (usesPorts != null && !usesPorts.isEmpty()) {
-			for (UsesPortStub port : usesPorts) {
-				page.getModel().getUsesPortNames().add(port.getName());
-			}
-		}
-		if (providesPorts != null && !providesPorts.isEmpty()) {
-			for (ProvidesPortStub port : providesPorts) {
-				page.getModel().getProvidesPortNames().add(port.getName());
-			}
-		}
 	}
 
 	@Override
@@ -183,15 +175,15 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 		PictogramElement pictogramElement = context.getPictogramElements()[0];
 		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(pictogramElement);
 
-		FindByCORBANameWizardPage page = FindByCORBANamePattern.openWizard(findByStub, getEditWizard());
+		FindByCORBANameWizardPage page = openWizard(findByStub, getEditWizard());
 		if (page == null) {
 			return;
 		}
 
 		// get user selections
 		final String corbaNameText = page.getModel().getCorbaName();
-		//final List<String> usesPortNames = (page.getModel().getUsesPortNames() != null) ? page.getModel().getUsesPortNames() : null;
-		//final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null) ? page.getModel().getProvidesPortNames() : null;
+		final List<String> usesPortNames = (page.getModel().getUsesPortNames() != null) ? page.getModel().getUsesPortNames() : null;
+		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null) ? page.getModel().getProvidesPortNames() : null;
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -204,9 +196,12 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 			protected void doExecute() {
 				findByStub.getNamingService().setName(corbaNameText);
 				// if applicable, add uses and provides port stub(s)
-				//updatePorts(findByStub, findByShape, usesPortNames, providesPortNames);
+				updateUsesPortStubs(findByStub, usesPortNames);
+				updateProvidesPortStubs(findByStub, providesPortNames);
 			}
 		});
+		updatePictogramElement(pictogramElement);
+		layoutPictogramElement(pictogramElement);
 	}
 
 	@Override
