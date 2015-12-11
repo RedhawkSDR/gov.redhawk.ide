@@ -75,10 +75,10 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 		FindByStub findByStub = FindByCORBANamePattern.create(page.getModel().getCorbaName());
 
 		// if applicable add uses port stub(s)
-		addUsesPortStubs(findByStub, page.getModel().getUsesPortNames());
+		updateUsesPortStubs(findByStub, page.getModel().getUsesPortNames());
 
 		// if applicable add provides port stub(s)
-		addProvidesPortStubs(findByStub, page.getModel().getProvidesPortNames());
+		updateProvidesPortStubs(findByStub, page.getModel().getProvidesPortNames());
 
 		return findByStub;
 	}

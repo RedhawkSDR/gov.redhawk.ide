@@ -155,26 +155,6 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 
 	protected abstract FindByStub createFindByStub(ICreateContext context);
 
-	protected void addUsesPortStubs(FindByStub findByStub, List<String> usesPortNames) {
-		if (usesPortNames != null) {
-			for (String usesPortName : usesPortNames) {
-				UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
-				usesPortStub.setName(usesPortName);
-				findByStub.getUses().add(usesPortStub);
-			}
-		}
-	}
-
-	protected void addProvidesPortStubs(FindByStub findByStub, List<String> providesPortNames) {
-		if (providesPortNames != null) {
-			for (String providesPortName : providesPortNames) {
-				ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
-				providesPortStub.setName(providesPortName);
-				findByStub.getProvides().add(providesPortStub);
-			}
-		}
-	}
-
 	public static void addFindByToDiagram(final Diagram diagram, IFeatureProvider featureProvider, final FindByStub findByStub) {
 		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 

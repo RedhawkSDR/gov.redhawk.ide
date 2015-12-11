@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
@@ -85,10 +84,10 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 		}
 
 		// if applicable add uses port stub(s)
-		addUsesPortStubs(findByStub, page.getModel().getUsesPortNames());
+		updateUsesPortStubs(findByStub, page.getModel().getUsesPortNames());
 
 		// if applicable add provides port stub(s)
-		addProvidesPortStubs(findByStub, page.getModel().getProvidesPortNames());
+		updateProvidesPortStubs(findByStub, page.getModel().getProvidesPortNames());
 
 		return findByStub;
 	}
@@ -198,6 +197,15 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 		}
 	}
 
+	private void setNameAndType(FindByStub findByStub, List<FindBy> findBys, String name, DomainFinderType type) {
+		findByStub.getDomainFinder().setType(type);
+		findByStub.getDomainFinder().setName(name);
+		for (FindBy findBy : findBys) {
+			findBy.getDomainFinder().setType(type);
+			findBy.getDomainFinder().setName(name);
+		}
+	}
+
 	@Override
 	public String checkValueValid(String value, IDirectEditingContext context) {
 		return null;
@@ -229,28 +237,30 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 		}
 
 		// Push any new values to the FindByStub object
-		final String serviceNameText = page.getModel().getEnableServiceName() ? page.getModel().getServiceName() : null;
-		final String serviceTypeText = page.getModel().getEnableServiceType() ? page.getModel().getServiceType() : null;
-		final List<String> usesPortNames = (page.getModel().getUsesPortNames() != null) ? page.getModel().getUsesPortNames() : null;
-		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null) ? page.getModel().getProvidesPortNames() : null;
+		final DomainFinderType type;
+		final String name;
+		if (page.getModel().getEnableServiceName()) {
+			type = DomainFinderType.SERVICENAME;
+			name = page.getModel().getServiceName();
+		} else if (page.getModel().getEnableServiceType()) {
+			type = DomainFinderType.SERVICETYPE;
+			name = page.getModel().getServiceType();
+		} else {
+			return;
+		}
+
+		final List<String> usesPortNames = page.getModel().getUsesPortNames();
+		final List<String> providesPortNames = page.getModel().getProvidesPortNames();
 
 		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
 
 		// Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
+		editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
 
 			@Override
 			protected void doExecute() {
-				final DomainFinder domainFinder = findByStub.getDomainFinder();
-				if (serviceNameText != null && !serviceNameText.isEmpty() && !serviceNameText.equals(domainFinder.getName())) {
-					domainFinder.setType(DomainFinderType.SERVICENAME);
-					domainFinder.setName(serviceNameText);
-				} else if (serviceTypeText != null && !serviceTypeText.isEmpty()) {
-					domainFinder.setType(DomainFinderType.SERVICETYPE);
-					domainFinder.setName(serviceTypeText);
-				}
+				setNameAndType(findByStub, getModelFindBys(findByStub), name, type);
 
 				// if applicable, add uses and provides port stub(s)
 				updateUsesPortStubs(findByStub, usesPortNames);
