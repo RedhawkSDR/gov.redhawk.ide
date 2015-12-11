@@ -23,7 +23,6 @@ import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import java.util.List;
 
 import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
@@ -125,7 +124,7 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 		return getDialog().getInput();
 	}
 	
-	public AbstractInputValidationDialog getDialog() {
+	private AbstractInputValidationDialog getDialog() {
 		return new AbstractInputValidationDialog(
 			NAME, "Enter the name of the event channel to find", "Name") {
 			@Override
@@ -154,25 +153,26 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 		PictogramElement pictogramElement = context.getPictogramElements()[0];
 		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(pictogramElement);
 
-		AbstractInputValidationDialog dialog = (new FindByEventChannelPattern()).getDialog();
-		final String eventChannelName = dialog.getInput(findByStub.getDomainFinder().getName());
+		String oldName = findByStub.getDomainFinder().getName();
+		final String eventChannelName = getDialog().getInput(oldName);
 
-		if (eventChannelName == null) {
+		if (eventChannelName == null || eventChannelName.equals(oldName)) {
 			return;
 		}
 
 		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
 
 		// Perform business object manipulation in a Command
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
+		editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
 				// set event name
 				findByStub.getDomainFinder().setName(eventChannelName);
 			}
 		});
+		updatePictogramElement(pictogramElement);
+		layoutPictogramElement(pictogramElement);
 	}
 
 	@Override
