@@ -14,7 +14,8 @@
   <packaging>eclipse-repository</packaging>
   <parent>
   	<groupId>gov.redhawk.ide</groupId>
-  	<artifactId>releng</artifactId>
+  	<artifactId>gov.redhawk.ide.parent</artifactId>
   	<version>1.9.1-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
   </parent>
 </project>
