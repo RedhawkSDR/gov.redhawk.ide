@@ -14,7 +14,7 @@
   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>gov.redhawk.ide</groupId>
-  <artifactId>releng</artifactId>
+  <artifactId>gov.redhawk.ide.parent</artifactId>
   <version>1.10.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -140,53 +140,53 @@
   </distributionManagement>
 
   <modules>
-    <module>../features/gov.redhawk.ide.all.sdk</module>
-    <module>../features/gov.redhawk.ide.feature</module>
-    <module>../features/gov.redhawk.ide.sdk</module>
-    <module>../features/gov.redhawk.ide.ui.feature</module>
-    <module>../features/gov.redhawk.ide.tools</module>
-    <module>../features/gov.redhawk.ide.ui.sdk</module>
-    <module>../plugins/gov.redhawk.codegen.validation</module>
-    <module>../plugins/gov.redhawk.eclipsecorba.library.ui</module>
-    <module>../plugins/gov.redhawk.ide</module>
-    <module>../plugins/gov.redhawk.ide.codegen</module>
-    <module>../plugins/gov.redhawk.ide.codegen.edit</module>
-    <module>../plugins/gov.redhawk.ide.codegen.ui</module>
-    <module>../plugins/gov.redhawk.ide.dcd</module>
-    <module>../plugins/gov.redhawk.ide.dcd.ui</module>
-    <module>../plugins/gov.redhawk.ide.debug</module>
-    <module>../plugins/gov.redhawk.ide.debug.linux</module>
-    <module>../plugins/gov.redhawk.ide.debug.edit</module>
-    <module>../plugins/gov.redhawk.ide.debug.ui</module>
-    <module>../plugins/gov.redhawk.ide.debug.ui.diagram</module>
-    <module>../plugins/gov.redhawk.ide.prf</module>
-    <module>../plugins/gov.redhawk.ide.prf.ui</module>
-    <module>../plugins/gov.redhawk.ide.sad</module>
-    <module>../plugins/gov.redhawk.ide.sad.ui</module>
-    <module>../plugins/gov.redhawk.ide.sdr</module>
-    <module>../plugins/gov.redhawk.ide.sdr.edit</module>
-    <module>../plugins/gov.redhawk.ide.sdr.ui</module>
-    <module>../plugins/gov.redhawk.ide.spd</module>
-    <module>../plugins/gov.redhawk.ide.spd.ui</module>
-    <module>../plugins/gov.redhawk.ide.ui</module>
-    <module>../plugins/gov.redhawk.ide.ui.templates</module>
-    <module>../plugins/gov.redhawk.ide.help</module>
-    <module>../plugins/gov.redhawk.sca.efs.ui</module>
-    <module>../plugins/gov.redhawk.datareader.ui</module>
-    <module>../plugins/gov.redhawk.ide.snapshot.ui</module>
-    <module>../plugins/gov.redhawk.datalist.ui</module>
-    <module>../plugins/gov.redhawk.statistics.ui</module>
-    <module>../plugins/gov.redhawk.mfile.parser</module>
-    <module>../tests/gov.redhawk.codegen.validation.tests</module>
-    <module>../tests/gov.redhawk.ide.dcd.tests</module>
-    <module>../tests/gov.redhawk.ide.debug.tests</module>
-    <module>../tests/gov.redhawk.ide.prf.tests</module>
-    <module>../tests/gov.redhawk.ide.sad.tests</module>
-    <module>../tests/gov.redhawk.ide.sdr.tests</module>
-    <module>../tests/gov.redhawk.ide.spd.tests</module>
-    <module>../tests/gov.redhawk.ide.spd.ui.tests</module>
-    <module>../tests/gov.redhawk.spd.validation.tests</module>
-    <module>../tests/gov.redhawk.mfile.parser.tests</module>
-    <module>p2</module>
+    <module>features/gov.redhawk.ide.all.sdk</module>
+    <module>features/gov.redhawk.ide.feature</module>
+    <module>features/gov.redhawk.ide.sdk</module>
+    <module>features/gov.redhawk.ide.ui.feature</module>
+    <module>features/gov.redhawk.ide.tools</module>
+    <module>features/gov.redhawk.ide.ui.sdk</module>
+    <module>plugins/gov.redhawk.codegen.validation</module>
+    <module>plugins/gov.redhawk.eclipsecorba.library.ui</module>
+    <module>plugins/gov.redhawk.ide</module>
+    <module>plugins/gov.redhawk.ide.codegen</module>
+    <module>plugins/gov.redhawk.ide.codegen.edit</module>
+    <module>plugins/gov.redhawk.ide.codegen.ui</module>
+    <module>plugins/gov.redhawk.ide.dcd</module>
+    <module>plugins/gov.redhawk.ide.dcd.ui</module>
+    <module>plugins/gov.redhawk.ide.debug</module>
+    <module>plugins/gov.redhawk.ide.debug.linux</module>
+    <module>plugins/gov.redhawk.ide.debug.edit</module>
+    <module>plugins/gov.redhawk.ide.debug.ui</module>
+    <module>plugins/gov.redhawk.ide.debug.ui.diagram</module>
+    <module>plugins/gov.redhawk.ide.prf</module>
+    <module>plugins/gov.redhawk.ide.prf.ui</module>
+    <module>plugins/gov.redhawk.ide.sad</module>
+    <module>plugins/gov.redhawk.ide.sad.ui</module>
+    <module>plugins/gov.redhawk.ide.sdr</module>
+    <module>plugins/gov.redhawk.ide.sdr.edit</module>
+    <module>plugins/gov.redhawk.ide.sdr.ui</module>
+    <module>plugins/gov.redhawk.ide.spd</module>
+    <module>plugins/gov.redhawk.ide.spd.ui</module>
+    <module>plugins/gov.redhawk.ide.ui</module>
+    <module>plugins/gov.redhawk.ide.ui.templates</module>
+    <module>plugins/gov.redhawk.ide.help</module>
+    <module>plugins/gov.redhawk.sca.efs.ui</module>
+    <module>plugins/gov.redhawk.datareader.ui</module>
+    <module>plugins/gov.redhawk.ide.snapshot.ui</module>
+    <module>plugins/gov.redhawk.datalist.ui</module>
+    <module>plugins/gov.redhawk.statistics.ui</module>
+    <module>plugins/gov.redhawk.mfile.parser</module>
+    <module>tests/gov.redhawk.codegen.validation.tests</module>
+    <module>tests/gov.redhawk.ide.dcd.tests</module>
+    <module>tests/gov.redhawk.ide.debug.tests</module>
+    <module>tests/gov.redhawk.ide.prf.tests</module>
+    <module>tests/gov.redhawk.ide.sad.tests</module>
+    <module>tests/gov.redhawk.ide.sdr.tests</module>
+    <module>tests/gov.redhawk.ide.spd.tests</module>
+    <module>tests/gov.redhawk.ide.spd.ui.tests</module>
+    <module>tests/gov.redhawk.spd.validation.tests</module>
+    <module>tests/gov.redhawk.mfile.parser.tests</module>
+    <module>releng/p2</module>
   </modules>
 </project>
