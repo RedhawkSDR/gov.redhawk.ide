@@ -14,9 +14,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>gov.redhawk.ide</groupId>
-    <artifactId>releng</artifactId>
+    <artifactId>gov.redhawk.ide.parent</artifactId>
     <version>1.10.2-SNAPSHOT</version>
-    <relativePath>../../releng/</relativePath>
+    <relativePath>../..</relativePath>
   </parent>
   <groupId>gov.redhawk.ide</groupId>
   <artifactId>gov.redhawk.ide.spd.ui</artifactId>
