@@ -18,11 +18,9 @@ import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.matchers.AbstractMatcher;
-import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Assert;
 
 import gov.redhawk.ide.swtbot.condition.WaitForWidgetEnablement;
@@ -128,44 +126,28 @@ public class ConsoleUtils {
 		bot.waitUntil(new WaitForWidgetEnablement(terminateButton, false));
 	}
 
-	/**
-	 * Terminate all processes in the console
-	 * @param bot
-	 */
-	public static void terminateAllProcesses(SWTWorkbenchBot bot) {
-		final SWTBotView view = ViewUtils.getConsoleView(bot);
+	public static void removeTerminatedLaunches(SWTWorkbenchBot bot) {
+		SWTBotView view = ViewUtils.getConsoleView(bot);
 		view.show();
 
-		final Matcher<MenuItem> matcher = new AnyMenuItemMatcher<MenuItem>();
+		SWTBotToolbarButton consoleButton = view.toolbarButton("Display Selected Console");
+		String consoleText = view.bot().label().getText();
+		String newConsoleText;
 
-		// Cycle through each process, terminating it and removing it from the view
-		SWTBotToolbarDropDownButton consoleButton = (SWTBotToolbarDropDownButton) view.toolbarButton("Display Selected Console");
-		while (consoleButton.isEnabled()) {
-			int consoles = consoleButton.menuItems(matcher).size();
-			if (consoles <= 0) {
-				break;
+		do {
+			try {
+				SWTBotToolbarButton button = view.toolbarButton("Remove All Terminated Launches");
+				if (button.isEnabled()) {
+					button.click();
+					return;
+				}
+			} catch (WidgetNotFoundException ex) {
+				// PASS
 			}
-
-			final SWTBotToolbarButton terminateButton = view.toolbarButton("Terminate");
-			terminateButton.click();
-
-			bot.waitUntil(new DefaultCondition() {
-
-				@Override
-				public boolean test() throws Exception {
-					SWTBotToolbarButton removeTerminatedButton = view.toolbarButton("Remove All Terminated Launches");
-					if (removeTerminatedButton.isEnabled()) {
-						removeTerminatedButton.click();
-						return true;
-					}
-					return false;
-				}
-
-				@Override
-				public String getFailureMessage() {
-					return "Remove all terminated launches button never enabled";
-				}
-			}, 10000);
-		}
+			if (consoleButton.isEnabled()) {
+				consoleButton.click();
+			}
+			newConsoleText = view.bot().label().getText();
+		} while (!consoleText.equals(newConsoleText));
 	}
 }
