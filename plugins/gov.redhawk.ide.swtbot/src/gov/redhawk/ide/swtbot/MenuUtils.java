@@ -14,14 +14,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 
 public class MenuUtils {
-	static final String PROPERTIES_VIEW_ID = "org.eclipse.ui.views.PropertySheet";
 
-	/** private to prevent instantiation since all functions are static. */
 	private MenuUtils() {
 	}
 
@@ -98,21 +95,5 @@ public class MenuUtils {
 				return "Editor still dirty";
 			}
 		}, 10000, 1000);
-	}
-
-	/**
-	 * Opens the indicated view. If already open, brings view into focus.
-	 * @param bot
-	 * @param view
-	 * @return
-	 */
-	public static SWTBotView showView(SWTWorkbenchBot bot, String viewID) {
-		SWTBotView viewToOpen = bot.viewById(viewID); // SWTBot uses ViewMenuFinder underneath
-		viewToOpen.show();
-		return viewToOpen;
-	}
-
-	public static SWTBotView showPropertiesView(SWTWorkbenchBot bot) {
-		return showView(bot, PROPERTIES_VIEW_ID);
 	}
 }

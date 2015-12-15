@@ -12,13 +12,10 @@ package gov.redhawk.ide.swtbot;
 
 import java.util.List;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
-import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
-import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
-import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
-import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
@@ -26,8 +23,16 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList.ListElement;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.junit.Assert;
 
 public class ViewUtils {
+
+	public static final String PROPERTIES_VIEW_ID = "org.eclipse.ui.views.PropertySheet";
 
 	/** private to prevent instantiation since all functions are static. */
 	private ViewUtils() {
@@ -253,20 +258,40 @@ public class ViewUtils {
 		});
 	}
 
-	/**
-	 * Ensures that top tab in Properties view is activated
-	 * @param bot
-	 * @return the SWTBotTree of the selected properties tab
-	 */
-	public static SWTBotTree activateFirstPropertiesTab(SWTWorkbenchBot bot) {
-		SWTBotView propView = bot.viewByTitle("Properties");
-		SWTBot propBot = propView.bot();
-		SWTBotTree propTable = propBot.tree();
-		propTable.select(0);
-		Keyboard kb = KeyboardFactory.getSWTKeyboard(); 
-		kb.pressShortcut(Keystrokes.SHIFT, Keystrokes.TAB);
-		kb.pressShortcut(Keystrokes.UP);
-		return propBot.tree();
+	@SuppressWarnings("restriction")
+	public static SWTBotView selectPropertiesTab(SWTWorkbenchBot bot, String label) {
+		Matcher<TabbedPropertyList> matcher = new BaseMatcher<TabbedPropertyList>() {
+			@Override
+			public boolean matches(Object item) {
+				if (item instanceof TabbedPropertyList) {
+					return true;
+				}
+				return false;
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("Of type TabbedPropertyList");
+			}
+
+		};
+		SWTBotView view = bot.viewById(PROPERTIES_VIEW_ID);
+		TabbedPropertyList list = (TabbedPropertyList) view.bot().widget(matcher);
+
+		for (int index = 0; index < list.getNumberOfElements(); index++) {
+			final TabbedPropertyList.ListElement element = (ListElement) list.getElementAt(index);
+			if (label.equals(element.getTabItem().getText())) {
+				Display.getDefault().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						element.setSelected(true);
+					}
+				});
+				return view;
+			}
+		}
+
+		Assert.fail(String.format("Could not find properties tab '%s'", label));
+		return null;
 	}
-	
 }
