@@ -10,12 +10,15 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.ECollections;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
@@ -28,6 +31,7 @@ import org.eclipse.graphiti.pattern.config.IPatternConfiguration;
 
 import gov.redhawk.ide.graphiti.ui.diagram.features.update.UpdateAction;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.util.CollectionUtils;
 
 public abstract class AbstractContainerPattern extends AbstractPattern {
 	
@@ -121,5 +125,39 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 		// null means, that the value is valid
 		return null;
 	}
-	
+
+	/**
+	 * Nested helper class for sorting child shapes based on the order of their business objects in their original
+	 * containing list.
+	 */
+	protected class BusinessObjectListComparator implements Comparator<Shape> {
+		private final List< ? > list;
+
+		public BusinessObjectListComparator(List< ? > list) {
+			this.list = list;
+		}
+
+		@Override
+		public int compare(Shape o1, Shape o2) {
+			return Integer.compare(getIndex(o1), getIndex(o2));
+		}
+
+		private int getIndex(Shape shape) {
+			Object bo = getBusinessObjectForPictogramElement(shape);
+			return list.indexOf(bo);
+		}
+	}
+
+	protected boolean isSortedByBusinessObject(EList<Shape> children, List< ? > list) {
+		return CollectionUtils.isSorted(children, new BusinessObjectListComparator(list));
+	}
+
+	protected boolean sortByBusinessObject(EList<Shape> children, List< ? > list) {
+		Comparator<Shape> comparator = new BusinessObjectListComparator(list);
+		if (!CollectionUtils.isSorted(children, comparator)) {
+			ECollections.sort(children, comparator);
+			return true;
+		}
+		return false;
+	}
 }

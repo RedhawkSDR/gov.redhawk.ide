@@ -279,7 +279,13 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	protected boolean updatePorts(ContainerShape portsContainer, List< ? extends EObject > modelPorts) {
 		Map< EObject, UpdateAction > portActions = getChildrenToUpdate(portsContainer, modelPorts);
 		updateChildren(portsContainer, portActions);
-		return !portActions.isEmpty();
+		boolean updatePerformed = !portActions.isEmpty();
+
+		if (sortByBusinessObject(portsContainer.getChildren(), modelPorts)) {
+			updatePerformed = true;
+		}
+
+		return updatePerformed;
 	}
 
 	protected boolean updatePortsNeeded(ContainerShape portsContainer, List< ? extends EObject > modelPorts) {
@@ -287,7 +293,10 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			return true;
 		}
 		Map< EObject, UpdateAction > portActions = getChildrenToUpdate(portsContainer, modelPorts);
-		return !portActions.isEmpty();
+		if (!portActions.isEmpty()) {
+			return true;
+		}
+		return !isSortedByBusinessObject(portsContainer.getChildren(), modelPorts);
 	}
 
 	protected boolean updateSuperUsesPortsNeeded(ContainerShape superPort, List< ? extends EObject > modelStubs) {

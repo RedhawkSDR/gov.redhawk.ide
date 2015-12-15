@@ -486,6 +486,10 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 			return Reason.createTrueReason("Need to update component shape(s)");
 		}
 
+		if (!isSortedByBusinessObject(collocationShape.getChildren(), expectedComponents)) {
+			return Reason.createTrueReason("Need to sort component shape(s)");
+		}
+
 		return Reason.createFalseReason();
 	}
 
@@ -507,8 +511,16 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		List<SadComponentInstantiation> expectedComponents = getComponentInstantiations(collocation);
 		Map<EObject,UpdateAction> actions = getChildrenToUpdate(collocationShape, expectedComponents);
 		updateChildren(collocationShape, actions);
+		if (!actions.isEmpty()) {
+			updatePerformed = true;
+		}
 
-		if (updatePerformed || !actions.isEmpty()) {
+		// Sort the component shapes to match the order in the XML (not strictly necessary)
+		if (sortByBusinessObject(collocationShape.getChildren(), expectedComponents)) {
+			updatePerformed = true;
+		}
+
+		if (updatePerformed) {
 			layoutPictogramElement(collocationShape);
 			return true;
 		}
