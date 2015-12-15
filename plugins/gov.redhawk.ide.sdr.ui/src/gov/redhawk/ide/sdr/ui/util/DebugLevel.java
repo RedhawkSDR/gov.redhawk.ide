@@ -12,8 +12,9 @@ package gov.redhawk.ide.sdr.ui.util;
 
 /**
  * @since 3.3
- * 
+ * @deprecated Moved to the non-UI bundle
  */
+@Deprecated
 public enum DebugLevel {
 	Fatal, Error, Warn, Info, Debug, Trace;
 

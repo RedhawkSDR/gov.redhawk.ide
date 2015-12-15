@@ -12,7 +12,6 @@ package gov.redhawk.ide.sdr.ui.preferences;
 
 /**
  * @since 1.2
- * 
  */
 public final class SdrUiPreferenceConstants {
 	public static final String PREF_DEFAULT_DEVICE_MANAGER_NAME = "defaultDeviceManagerName";
@@ -34,6 +33,5 @@ public final class SdrUiPreferenceConstants {
 	public static final String TARGET_SDR_DOM_PATH = "domPath";
 
 	private SdrUiPreferenceConstants() {
-		// TODO Auto-generated constructor stub
 	}
 }

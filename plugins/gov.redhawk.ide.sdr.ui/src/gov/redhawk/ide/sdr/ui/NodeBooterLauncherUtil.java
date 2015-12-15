@@ -29,7 +29,9 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 1.1
+ * @deprecated Moved to the non-UI bundle
  */
+@Deprecated
 public class NodeBooterLauncherUtil {
 
 	private NodeBooterLauncherUtil() {
@@ -37,7 +39,9 @@ public class NodeBooterLauncherUtil {
 
 	/**
 	 * @since 2.0
+	 * @deprecated Use {@link gov.redhawk.ide.sdr.nodebooter.NodeBooterLauncherUtil#launch(String, String, IProgressMonitor)}
 	 */
+	@Deprecated
 	public static ILaunch launch(final ILaunchConfiguration config) throws CoreException {
 		final ILaunch launched = config.launch(ILaunchManager.RUN_MODE, null);
 
@@ -64,6 +68,11 @@ public class NodeBooterLauncherUtil {
 		return launched;
 	}
 
+	/**
+	 * @deprecated Use {@link gov.redhawk.ide.sdr.nodebooter.NodeBooterLauncherUtil#launch(String, String, IProgressMonitor)}
+	 */
+	@SuppressWarnings("restriction")
+	@Deprecated
 	public static ILaunchConfigurationWorkingCopy createNodeBooterLaunchConfig(final String name) throws CoreException {
 		final ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		final ILaunchConfigurationType type = manager.getLaunchConfigurationType(IExternalToolConstants.ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE);
@@ -83,6 +92,10 @@ public class NodeBooterLauncherUtil {
 		return workingCopy;
 	}
 
+	/**
+	 * @deprecated Do not use. No replacement.
+	 */
+	@Deprecated
 	public static ILaunchConfiguration findLaunchConfig(final String name) throws CoreException {
 		final ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		for (final ILaunchConfiguration config : manager.getLaunchConfigurations()) {

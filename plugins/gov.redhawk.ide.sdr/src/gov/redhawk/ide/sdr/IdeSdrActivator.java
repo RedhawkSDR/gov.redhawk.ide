@@ -8,16 +8,17 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr;
-
-import gov.redhawk.ide.sdr.util.IEnvMap;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
+
+import gov.redhawk.ide.sdr.nodebooter.NodeBooterLauncherUtil;
+import gov.redhawk.ide.sdr.util.IEnvMap;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -45,7 +46,7 @@ public class IdeSdrActivator extends Plugin {
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
-	
+
 		IdeSdrActivator.plugin = this;
 		envMapServices = new ServiceTracker<IEnvMap, IEnvMap>(context, IEnvMap.class, null);
 		envMapServices.open(true);
@@ -59,12 +60,13 @@ public class IdeSdrActivator extends Plugin {
 	 */
 	@Override
 	public void stop(final BundleContext context) throws Exception {
-		IdeSdrActivator.plugin = null;
 		if (envMapServices != null) {
 			envMapServices.close();
 			envMapServices = null;
 		}
-		
+		NodeBooterLauncherUtil.getInstance().terminateAll();
+
+		IdeSdrActivator.plugin = null;
 		super.stop(context);
 	}
 
@@ -76,11 +78,11 @@ public class IdeSdrActivator extends Plugin {
 	public static IdeSdrActivator getDefault() {
 		return IdeSdrActivator.plugin;
 	}
-	
+
 	/**
 	 * @since 8.2
 	 */
-	public IEnvMap [] getEnvMapServices() {
+	public IEnvMap[] getEnvMapServices() {
 		return envMapServices.getServices(new IEnvMap[envMapServices.size()]);
 	}
 

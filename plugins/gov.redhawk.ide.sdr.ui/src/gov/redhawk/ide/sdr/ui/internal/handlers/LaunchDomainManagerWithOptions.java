@@ -11,13 +11,12 @@
 package gov.redhawk.ide.sdr.ui.internal.handlers;
 
 import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.NodeBooterLauncherUtil;
+import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLaunchConfiguration;
+import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLauncherUtil;
+import gov.redhawk.ide.sdr.nodebooter.DomainManagerLauncherUtil;
+import gov.redhawk.ide.sdr.nodebooter.DomainManagerLaunchConfiguration;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
-import gov.redhawk.ide.sdr.ui.util.DebugLevel;
-import gov.redhawk.ide.sdr.ui.util.DeviceManagerLaunchConfiguration;
-import gov.redhawk.ide.sdr.ui.util.DomainManagerLaunchConfiguration;
-import gov.redhawk.ide.sdr.ui.util.LaunchDeviceManagersHelper;
 import gov.redhawk.model.sca.DomainConnectionState;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDomainManager;
@@ -28,12 +27,12 @@ import gov.redhawk.sca.preferences.ScaPreferenceConstants;
 import gov.redhawk.sca.ui.ScaUiPlugin;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.dmd.DomainManagerConfiguration;
 import mil.jpeojtrs.sca.util.CorbaUtils;
 
@@ -41,8 +40,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.externaltools.internal.IExternalToolConstants;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -50,104 +47,98 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 public class LaunchDomainManagerWithOptions extends AbstractHandler implements IHandler {
 
-	private static final int LAUNCH_WAIT_TIME = 1000;
-	private List<DeviceManagerLaunchConfiguration> deviceManagers = new ArrayList<DeviceManagerLaunchConfiguration>();
-	private DomainManagerLaunchConfiguration model = new DomainManagerLaunchConfiguration();
-
-	private Shell displayContext;
-
-	private ScaDomainManagerRegistry dmReg;
-
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
-		displayContext = HandlerUtil.getActiveShell(event);
-		dmReg = ScaPlugin.getDefault().getDomainManagerRegistry(displayContext);
-		final Shell shell = HandlerUtil.getActiveShell(event);
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ss = (IStructuredSelection) selection;
 			for (final Object obj : ss.toArray()) {
 				if (obj instanceof SdrRoot) {
-					final SdrRoot sdrRoot = (SdrRoot) obj;
-					Assert.isNotNull(sdrRoot);
-					if (sdrRoot.getLoadStatus() == null) {
-						ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
-						try {
-							dialog.run(true, true, new IRunnableWithProgress() {
-								
-								@Override
-								public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-									monitor.beginTask("Loading Target SDR..", IProgressMonitor.UNKNOWN);
-									try {
-										CorbaUtils.invoke(new Callable<Object>() {
-
-											@Override
-											public Object call() throws Exception {
-												sdrRoot.load(monitor);
-												return null;
-											}
-											
-										}, monitor);
-									} catch (CoreException e) {
-										throw new InvocationTargetException(e);
-									}
-									
-								}
-							});
-						} catch (InvocationTargetException e) {
-							StatusManager.getManager().handle(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Failed to load SDR.", e.getCause()),
-								StatusManager.SHOW | StatusManager.LOG);
-						} catch (InterruptedException e) {
-							return null;
-						}
-					}
-
-					final DomainManagerConfiguration domain = sdrRoot.getDomainConfiguration();
-					if (domain == null) {
-						StatusManager.getManager().handle(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "No Domain Configuration available."),
-							StatusManager.SHOW);
-						continue;
-					}
-					model.setDomainName(domain.getName());
-
-					final LaunchDomainManagerWithOptionsDialog dialog = new LaunchDomainManagerWithOptionsDialog(shell, model,
-						sdrRoot);
-					if (dialog.open() == IStatus.OK) {
-						deviceManagers = dialog.getDeviceManagerLaunchConfigurations();
-						prepareDomainManager(domain, event);
-					}
+					showDialogAndLaunch(event, (SdrRoot) obj);
 				}
 			}
 		}
-
 		return null;
 	}
 
-	private void prepareDomainManager(final DomainManagerConfiguration incomingDomain, final ExecutionEvent event) {
-		final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
+	private void showDialogAndLaunch(ExecutionEvent event, final SdrRoot sdrRoot) {
+		final Shell shell = HandlerUtil.getActiveShell(event);
 
+		if (sdrRoot.getLoadStatus() == null) {
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+			try {
+				dialog.run(true, true, new IRunnableWithProgress() {
+
+					@Override
+					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						monitor.beginTask("Loading Target SDR..", IProgressMonitor.UNKNOWN);
+						try {
+							CorbaUtils.invoke(new Callable<Object>() {
+
+								@Override
+								public Object call() throws Exception {
+									sdrRoot.load(monitor);
+									return null;
+								}
+
+							}, monitor);
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
+						}
+
+					}
+				});
+			} catch (InvocationTargetException e) {
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Failed to load SDR.", e.getCause()),
+					StatusManager.SHOW | StatusManager.LOG);
+			} catch (InterruptedException e) {
+				return;
+			}
+		}
+
+		final DomainManagerConfiguration dmd = sdrRoot.getDomainConfiguration();
+		if (dmd == null) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "No Domain Configuration available."), StatusManager.SHOW);
+			return;
+		}
+
+		DomainManagerLaunchConfiguration domMgrLaunchConfig = new DomainManagerLaunchConfiguration();
+		domMgrLaunchConfig.setDomainName(dmd.getName());
+		final LaunchDomainManagerWithOptionsDialog dialog = new LaunchDomainManagerWithOptionsDialog(shell, domMgrLaunchConfig, sdrRoot);
+		if (dialog.open() == IStatus.OK) {
+			List<DeviceManagerLaunchConfiguration> devMgrLaunchConfigs = dialog.getDeviceManagerLaunchConfigurations();
+			for (DeviceManagerLaunchConfiguration devMgrLaunchConfig : devMgrLaunchConfigs) {
+				devMgrLaunchConfig.setLaunchConfigName(getDevMgrLaunchConfigName(devMgrLaunchConfig.getDcd()));
+			}
+			launch(domMgrLaunchConfig, devMgrLaunchConfigs, dmd, event);
+		}
+	}
+
+	private void launch(final DomainManagerLaunchConfiguration domMgrLaunchConfig, final List<DeviceManagerLaunchConfiguration> devMgrLaunchConfigs,
+		final DomainManagerConfiguration dmd, final ExecutionEvent event) {
+		Shell displayContext = HandlerUtil.getActiveShell(event);
+		final ScaDomainManagerRegistry dmReg = ScaPlugin.getDefault().getDomainManagerRegistry(displayContext);
+
+		final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
 		final Map<String, String> connectionProperties = Collections.singletonMap(ScaDomainManager.NAMING_SERVICE_PROP, namingService);
 
-		final Job launchJob = new Job("Launch Domain: " + model.getDomainName()) {
+		final Job launchJob = new Job("Launch Domain: " + domMgrLaunchConfig.getDomainName()) {
 
 			@Override
 			protected IStatus run(final IProgressMonitor parentMonitor) {
-				SubMonitor subMonitor = SubMonitor.convert(parentMonitor, "Launching Domain " + model.getDomainName(), 2);
+				SubMonitor subMonitor = SubMonitor.convert(parentMonitor, "Launching Domain " + domMgrLaunchConfig.getDomainName(), 2);
 				try {
-					if (ScaPlugin.isDomainOnline(model.getDomainName(), subMonitor.newChild(1))) {
+					if (ScaPlugin.isDomainOnline(domMgrLaunchConfig.getDomainName(), subMonitor.newChild(1))) {
 						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Refusing to launch domain that already exists on name server");
 					}
 				} catch (CoreException e) {
@@ -156,13 +147,13 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					return Status.CANCEL_STATUS;
 				}
 
-				final ScaDomainManager connection = dmReg.findDomain(model.getDomainName());
+				final ScaDomainManager connection = dmReg.findDomain(domMgrLaunchConfig.getDomainName());
 
 				if (connection == null) {
 					ScaModelCommand.execute(dmReg, new ScaModelCommand() {
 						@Override
 						public void execute() {
-							dmReg.createDomain(model.getLocalDomainName(), model.getDomainName(), false, connectionProperties);
+							dmReg.createDomain(domMgrLaunchConfig.getLocalDomainName(), domMgrLaunchConfig.getDomainName(), false, connectionProperties);
 						}
 					});
 				} else {
@@ -171,20 +162,20 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					}
 				}
 
-				final ScaDomainManager config = dmReg.findDomain(model.getDomainName());
+				final ScaDomainManager config = dmReg.findDomain(domMgrLaunchConfig.getDomainName());
 
 				final String domainName = config.getLabel();
-				final String launchConfigName = getLaunchConfigName(domainName);
-				final String spdPath = incomingDomain.getDomainManagerSoftPkg().getLocalFile().getName();
-				model.setLaunchConfigName(launchConfigName);
-				model.setSpdPath(spdPath);
+				final String launchConfigName = getDomMgrLaunchConfigName(domainName);
+				final String spdPath = dmd.getDomainManagerSoftPkg().getLocalFile().getName();
+				domMgrLaunchConfig.setLaunchConfigName(launchConfigName);
+				domMgrLaunchConfig.setSpdPath(spdPath);
 				subMonitor.newChild(1).beginTask("Launching domain " + domainName, 2);
 				try {
-					final UIJob launcherJob = new UIJob("Domain Launcher") {
+					final Job launcherJob = new Job("Domain Launcher") {
 
 						@Override
-						public IStatus runInUIThread(final IProgressMonitor monitor) {
-							final IStatus retVal = launchDomainManager(model, new SubProgressMonitor(monitor, 1));
+						public IStatus run(final IProgressMonitor monitor) {
+							final IStatus retVal = DomainManagerLauncherUtil.launchDomainManager(domMgrLaunchConfig, new SubProgressMonitor(monitor, 1));
 							if (retVal != null && retVal.isOK()) {
 								final Job connectJob = new Job("Connect to Domain: " + domainName) {
 
@@ -192,14 +183,16 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 									protected IStatus run(final IProgressMonitor monitor) {
 										final IStatus retVal = connectToDomain(config, new SubProgressMonitor(monitor, 1));
 										if (retVal != null && retVal.isOK()) {
-											final UIJob launchDeviceManagers = new UIJob("Launching Device Managers...") {
+											final Job launchDeviceManagers = new Job("Launching Device Managers...") {
 
 												@Override
-												public IStatus runInUIThread(final IProgressMonitor monitor) {
-													for (DeviceManagerLaunchConfiguration conf : deviceManagers) {
-														conf.setDomainName(domainName);
+												public IStatus run(final IProgressMonitor monitor) {
+													for (DeviceManagerLaunchConfiguration devMgrLaunchConfig : devMgrLaunchConfigs) {
+														final String launchConfigName = getDevMgrLaunchConfigName(devMgrLaunchConfig.getDcd());
+														devMgrLaunchConfig.setDomainName(domainName);
+														devMgrLaunchConfig.setLaunchConfigName(launchConfigName);
 													}
-													return LaunchDeviceManagersHelper.launchDeviceManagers(monitor, deviceManagers);
+													return DeviceManagerLauncherUtil.launchDeviceManagers(devMgrLaunchConfigs, monitor);
 												}
 
 											};
@@ -210,7 +203,6 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 									}
 								};
 								connectJob.setPriority(Job.LONG);
-								// TODO A bit of a hack
 								connectJob.schedule(2000);
 							}
 							return retVal;
@@ -228,61 +220,6 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 		launchJob.setPriority(Job.LONG);
 		launchJob.schedule();
-	}
-
-	public static IStatus launchDomainManager(DomainManagerLaunchConfiguration model,  final IProgressMonitor parentMonitor) {
-		SubMonitor monitor = SubMonitor.convert(parentMonitor, "Launching NodeBooter (DomainManager) Process", 2);
-		try {
-			try {
-				final StringBuilder arguments = new StringBuilder();
-
-				monitor.subTask("Seting up launch configuration...");
-				final ILaunchConfigurationWorkingCopy config = NodeBooterLauncherUtil.createNodeBooterLaunchConfig(model.getLaunchConfigName());
-
-				arguments.append("-D ").append(model.getSpdPath());
-
-				if (model.getDomainName() != null) {
-					arguments.append(" --domainname \"" + model.getDomainName() + "\"");
-				}
-
-				if (model.getDebugLevel() != DebugLevel.Info) {
-					arguments.append(" -debug ").append(model.getDebugLevel().ordinal());
-				}
-
-				arguments.append(" --nopersist");
-
-				if (model.getArguments() != null && !model.getArguments().trim().isEmpty()) {
-					arguments.append(" ").append(model.getArguments().trim());
-				}
-
-				config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments.toString());
-				monitor.worked(1);
-
-				monitor.subTask("Launching process...");
-				final ILaunch launched = NodeBooterLauncherUtil.launch(config);
-				// Give things a second to ensure they started correctly
-				try {
-					Thread.sleep(LaunchDomainManagerWithOptions.LAUNCH_WAIT_TIME);
-				} catch (final InterruptedException e) {
-					// PASS
-				}
-				if (launched.isTerminated()) {
-					int exitValue = launched.getProcesses()[0].getExitValue();
-					if (exitValue != 0) {
-						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID,
-							"Domain Manager failed to launch. Check console output. Exit status = " + exitValue);
-					}
-				}
-				monitor.worked(1);
-			} catch (final CoreException e) {
-				return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e);
-			}
-
-			return Status.OK_STATUS;
-		} finally {
-			monitor.done();
-		}
-
 	}
 
 	private IStatus connectToDomain(final ScaDomainManager connection, final IProgressMonitor monitor) {
@@ -319,7 +256,12 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 		return SdrUiPlugin.getDefault().getPreferenceStore().getInt(SdrUiPreferenceConstants.PREF_AUTO_CONNECT_MAX_CONNECTION_ATTEMPTS);
 	}
 
-	private static String getLaunchConfigName(final String domainName) {
+	private static String getDomMgrLaunchConfigName(final String domainName) {
 		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DOMAIN_MANAGER_NAME) + " " + domainName;
+	}
+
+	private static String getDevMgrLaunchConfigName(final DeviceConfiguration dcd) {
+		String name = (dcd.getName() != null) ? dcd.getName() : dcd.getId();
+		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DEVICE_MANAGER_NAME) + " " + name;
 	}
 }

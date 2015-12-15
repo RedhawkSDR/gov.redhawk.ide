@@ -10,9 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.internal.ui.handlers;
 
-import gov.redhawk.ide.sdr.ui.util.DebugLevel;
-import gov.redhawk.ide.sdr.ui.util.DeviceManagerLaunchConfiguration;
-import gov.redhawk.ide.sdr.ui.util.LaunchDeviceManagersHelper;
+import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLaunchConfiguration;
+import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLauncherUtil;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDomainManager;
 
@@ -33,80 +34,80 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.progress.UIJob;
 
 public class LaunchDeviceManager extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
-		final List<DeviceManagerLaunchConfiguration> launchConfigs = new ArrayList<DeviceManagerLaunchConfiguration>();
+		if (!(selection instanceof IStructuredSelection)) {
+			return null;
+		}
+		final IStructuredSelection ss = (IStructuredSelection) selection;
 
-		if (selection instanceof IStructuredSelection) {
-			final IStructuredSelection ss = (IStructuredSelection) selection;
-			for (final Object obj : ss.toArray()) {
-				if (obj instanceof DeviceConfiguration) {
-					launchConfigs.add(new DeviceManagerLaunchConfiguration(null, (DeviceConfiguration) obj, (DebugLevel) null, null)); // The debug level will be correctly placed in later. 
-				}
-			}
-
-			if (launchConfigs.size() > 0) {
-
-				final LaunchDeviceManagerDialog dialog = new LaunchDeviceManagerDialog(HandlerUtil.getActiveShell(event));
-
-				if (dialog.open() == Window.OK) {
-					final Object[] result = dialog.getResult();
-					ScaDomainManager tmpDomMgr = null;
-
-					if (result.length > 0 && result[0] instanceof ScaDomainManager) {
-						tmpDomMgr = (ScaDomainManager) result[0];
-					}
-
-					DeviceManagerLaunchConfiguration conf = dialog.getConfiguration();
-					// If Default was chosen then tmpDomMgr is null.
-					final ScaDomainManager domMgr = tmpDomMgr;
-					String domainName = (domMgr == null) ? "" : domMgr.getLabel();
-
-					// Go through and set the debug Level for them all.  Currently the GUI only allows a single debug level to be applied to all of them.
-					for (DeviceManagerLaunchConfiguration entry : launchConfigs) {
-						entry.setDebugLevel(conf.getDebugLevel());
-						entry.setAdditionalArguments(conf.getAdditionalArguments());
-						entry.setDomainName(domainName);
-					}
-					final Job refreshJob;
-					if (domMgr != null) {
-						refreshJob = new Job("Refreshing Device Managers of " + domMgr.getLabel()) {
-
-							@Override
-							protected IStatus run(final IProgressMonitor monitor) {
-								domMgr.fetchDeviceManagers(monitor, RefreshDepth.SELF);
-								return Status.OK_STATUS;
-							}
-
-						};
-					} else {
-						refreshJob = null;
-					}
-
-					final Job launchDeviceManagerJob = new UIJob("Launching Device Manager(s)") {
-
-						@Override
-						public IStatus runInUIThread(final IProgressMonitor monitor) {
-							IStatus retVal = LaunchDeviceManagersHelper.launchDeviceManagers(monitor, launchConfigs);
-							if (retVal.isOK() && refreshJob != null) {
-								refreshJob.schedule();
-							}
-							return retVal;
-						}
-					};
-
-					launchDeviceManagerJob.setPriority(Job.LONG);
-					launchDeviceManagerJob.schedule();
-				}
-
+		List<DeviceConfiguration> dcds = new ArrayList<DeviceConfiguration>();
+		for (final Object obj : ss.toArray()) {
+			if (obj instanceof DeviceConfiguration) {
+				dcds.add((DeviceConfiguration) obj);
 			}
 		}
+		if (dcds.size() == 0) {
+			return null;
+		}
+
+		final LaunchDeviceManagerDialog dialog = new LaunchDeviceManagerDialog(HandlerUtil.getActiveShell(event));
+		if (dialog.open() != Window.OK) {
+			return null;
+		}
+
+		// Determine domain manager
+		final Object[] result = dialog.getResult();
+		ScaDomainManager tmpDomMgr = null;
+		if (result.length > 0 && result[0] instanceof ScaDomainManager) {
+			tmpDomMgr = (ScaDomainManager) result[0];
+		}
+		final ScaDomainManager domMgr = tmpDomMgr;
+		String domainName = (domMgr == null) ? "" : domMgr.getLabel();
+
+		// Create launch configs
+		final List<DeviceManagerLaunchConfiguration> launchConfigs = new ArrayList<DeviceManagerLaunchConfiguration>();
+		for (DeviceConfiguration dcd : dcds) {
+			String devMgrLaunchConfigName = getDevMgrLaunchConfigName(dcd);
+			launchConfigs.add(new DeviceManagerLaunchConfiguration(domainName, dcd, dialog.getDebugLevel(), dialog.getArguments(), devMgrLaunchConfigName));
+		}
+
+		final Job refreshJob;
+		if (domMgr != null) {
+			refreshJob = new Job("Refreshing Device Managers of " + domMgr.getLabel()) {
+				@Override
+				protected IStatus run(final IProgressMonitor monitor) {
+					domMgr.fetchDeviceManagers(monitor, RefreshDepth.SELF);
+					return Status.OK_STATUS;
+				}
+
+			};
+		} else {
+			refreshJob = null;
+		}
+
+		final Job launchDeviceManagerJob = new Job("Launching Device Manager(s)") {
+			@Override
+			public IStatus run(final IProgressMonitor monitor) {
+				IStatus retVal = DeviceManagerLauncherUtil.launchDeviceManagers(launchConfigs, monitor);
+				if (retVal.isOK() && refreshJob != null) {
+					refreshJob.schedule();
+				}
+				return retVal;
+			}
+		};
+
+		launchDeviceManagerJob.setPriority(Job.LONG);
+		launchDeviceManagerJob.schedule();
 		return null;
 	}
 
+	private static String getDevMgrLaunchConfigName(final DeviceConfiguration dcd) {
+		String name = (dcd.getName() != null) ? dcd.getName() : dcd.getId();
+		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DEVICE_MANAGER_NAME) + " " + name;
+	}
 }

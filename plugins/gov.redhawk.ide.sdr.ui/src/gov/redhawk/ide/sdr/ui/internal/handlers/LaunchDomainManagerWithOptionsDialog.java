@@ -10,11 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.internal.handlers;
 
+import gov.redhawk.ide.sdr.nodebooter.DebugLevel;
+import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLaunchConfiguration;
+import gov.redhawk.ide.sdr.nodebooter.DomainManagerLaunchConfiguration;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.ide.sdr.ui.util.DebugLevel;
-import gov.redhawk.ide.sdr.ui.util.DeviceManagerLaunchConfiguration;
-import gov.redhawk.ide.sdr.ui.util.DomainManagerLaunchConfiguration;
 import gov.redhawk.model.sca.ScaDomainManager;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
 import gov.redhawk.sca.ScaPlugin;
@@ -725,9 +725,10 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 	public List<DeviceManagerLaunchConfiguration> getDeviceManagerLaunchConfigurations() {
 		List<DeviceManagerLaunchConfiguration> retVal = new ArrayList<DeviceManagerLaunchConfiguration>();
-		for (Object o : this.nodes) {
-			DeviceManagerLaunchConfiguration conf = new DeviceManagerLaunchConfiguration(model.getDomainName(), (DeviceConfiguration) o,
-				(DebugLevel) nodeDebugLevel.getValue(), (String) nodeArguments.getValue());
+		for (Object node : this.nodes) {
+			DeviceConfiguration dcd = (DeviceConfiguration) node;
+			DeviceManagerLaunchConfiguration conf = new DeviceManagerLaunchConfiguration(model.getDomainName(), dcd,
+				(DebugLevel) nodeDebugLevel.getValue(), (String) nodeArguments.getValue(), null);
 			retVal.add(conf);
 		}
 		return retVal;

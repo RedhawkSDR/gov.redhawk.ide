@@ -31,7 +31,9 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 /**
  * @since 1.3
+ * @deprecated Move to the non-UI bundle
  */
+@Deprecated
 public class LaunchDeviceManagersHelper {
 	/**
 	 * @since 2.0

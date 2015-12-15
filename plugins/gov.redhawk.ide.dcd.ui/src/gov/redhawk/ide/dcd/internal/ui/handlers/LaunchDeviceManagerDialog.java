@@ -10,8 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.internal.ui.handlers;
 
-import gov.redhawk.ide.sdr.ui.util.DebugLevel;
-import gov.redhawk.ide.sdr.ui.util.DeviceManagerLaunchConfiguration;
+import gov.redhawk.ide.sdr.nodebooter.DebugLevel;
 import gov.redhawk.model.sca.provider.ScaItemProviderAdapterFactory;
 import gov.redhawk.sca.ScaPlugin;
 
@@ -34,29 +33,33 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ListDialog;
 
 public class LaunchDeviceManagerDialog extends ListDialog {
-	private DeviceManagerLaunchConfiguration configuration = new DeviceManagerLaunchConfiguration();
+
+	private DebugLevel debugLevel;
+
+	private String arguments;
+
 	private DataBindingContext context = new DataBindingContext();
 
 	public LaunchDeviceManagerDialog(Shell parent) {
 		super(parent);
-		
+
 		setTitle("Launch Device Manager");
 		setMessage("Select the Domain on which to launch the device manager(s):");
-		
+
 		final ScaItemProviderAdapterFactory factory = new ScaItemProviderAdapterFactory();
 		setLabelProvider(new AdapterFactoryLabelProvider(factory));
 		setContentProvider(new ArrayContentProvider());
-		
+
 		final ArrayList<Object> input = new ArrayList<Object>();
 		input.addAll(ScaPlugin.getDefault().getDomainManagerRegistry(Display.getCurrent()).getDomains());
 		final String defaultSelection = "<Default>";
 		input.add(defaultSelection);
-		super.setInput(input);
+		setInput(input);
 	}
-	
+
 	@Override
 	public void setInput(Object input) {
-		
+		super.setInput(input);
 	}
 
 	@Override
@@ -68,18 +71,29 @@ public class LaunchDeviceManagerDialog extends ListDialog {
 		debugViewer.setInput(DebugLevel.values());
 		debugViewer.setSelection(new StructuredSelection(DebugLevel.Info));
 		context.bindValue(ViewersObservables.observeSingleSelection(debugViewer),
-			PojoProperties.value(configuration.getClass(), DeviceManagerLaunchConfiguration.PROP_DEBUG_LEVEL).observe(configuration));
+			PojoProperties.value(LaunchDeviceManagerDialog.class, "debugLevel").observe(this));
 
 		label = new Label(parent, SWT.NULL);
 		label.setText("Arguments: ");
 		Text text = new Text(parent, SWT.BORDER);
-		context.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
-			PojoProperties.value(configuration.getClass(), DeviceManagerLaunchConfiguration.PROP_ARGUMENTS).observe(configuration));
-		
+		context.bindValue(WidgetProperties.text(SWT.Modify).observe(text), PojoProperties.value(LaunchDeviceManagerDialog.class, "arguments").observe(this));
+
 		super.createButtonsForButtonBar(parent);
 	}
 
-	public DeviceManagerLaunchConfiguration getConfiguration() {
-		return configuration;
+	public DebugLevel getDebugLevel() {
+		return debugLevel;
+	}
+
+	public void setDebugLevel(DebugLevel newLevel) {
+		this.debugLevel = newLevel;
+	}
+
+	public String getArguments() {
+		return arguments;
+	}
+
+	public void setArguments(String newArguments) {
+		this.arguments = newArguments;
 	}
 }

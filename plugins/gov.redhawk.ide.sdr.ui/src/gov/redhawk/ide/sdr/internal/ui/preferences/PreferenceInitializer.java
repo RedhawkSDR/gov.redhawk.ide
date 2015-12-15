@@ -15,21 +15,11 @@ import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 
-/**
- * 
- */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/**
-	 * 
-	 */
 	public PreferenceInitializer() {
-		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		SdrUiPlugin.getDefault().getPreferenceStore().setDefault(SdrUiPreferenceConstants.PREF_DEFAULT_DEVICE_MANAGER_NAME, "Device Manager");
