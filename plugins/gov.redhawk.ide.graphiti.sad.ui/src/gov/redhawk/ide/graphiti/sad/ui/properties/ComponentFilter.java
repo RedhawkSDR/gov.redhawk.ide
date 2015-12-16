@@ -10,13 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.properties;
 
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.platform.AbstractPropertySectionFilter;
 
@@ -24,15 +21,8 @@ public class ComponentFilter extends AbstractPropertySectionFilter {
 
 	@Override
 	protected boolean accept(PictogramElement pictogramElement) {
-		Object whatIsIt = DUtil.getBusinessObject(pictogramElement);
-		if (whatIsIt instanceof ProvidesPortStub || whatIsIt instanceof UsesPortStub) {
-			return false;
-		}
-		ContainerShape containerShape = (ContainerShape) DUtil.findContainerShapeParentWithProperty(pictogramElement,
-			RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		Object obj = DUtil.getBusinessObject(containerShape);
-		if (containerShape != null && obj != null && obj instanceof SadComponentInstantiation) {
-			return true;
+		if (pictogramElement instanceof ComponentShape) {
+			return DUtil.getBusinessObject(pictogramElement) instanceof SadComponentInstantiation;
 		}
 		return false;
 	}

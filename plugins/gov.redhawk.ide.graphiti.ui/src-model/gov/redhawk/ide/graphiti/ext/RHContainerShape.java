@@ -12,15 +12,12 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.ext;
 
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
-import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.Port;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.graphiti.mm.algorithms.Image;
+import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 
 /**
@@ -35,6 +32,7 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted <em>Started</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusSeverity <em>IStatus Severity</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isCollapsed <em>Collapsed</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
@@ -123,6 +121,35 @@ public interface RHContainerShape extends ContainerShape {
 	void setIStatusSeverity(int value);
 
 	/**
+	 * Returns the value of the '<em><b>Collapsed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Collapsed</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Flag for whether ports are expanded or not
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Collapsed</em>' attribute.
+	 * @see #setCollapsed(boolean)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_Collapsed()
+	 * @model unique="false" transient="true" volatile="true" derived="true"
+	 * @generated
+	 */
+	boolean isCollapsed();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isCollapsed <em>Collapsed</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Collapsed</em>' attribute.
+	 * @see #isCollapsed()
+	 * @generated
+	 */
+	void setCollapsed(boolean value);
+
+	/**
 	 * Returns the value of the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -203,18 +230,135 @@ public interface RHContainerShape extends ContainerShape {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model contextDataType="gov.redhawk.ide.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractContainerPattern" patternUnique="false"
+	 * @model
 	 * @generated
 	 */
-	void init(IAddContext context, AbstractContainerPattern pattern);
+	void init();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Outer Text</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Return the text for outer container
+	 * <!-- end-model-doc -->
+	 * @model kind="operation" unique="false"
+	 * @generated
+	 */
+	Text getOuterText();
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model contextDataType="gov.redhawk.ide.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractContainerPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.graphiti.ext.List<gov.redhawk.ide.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
+	 * <!-- begin-model-doc -->
+	 * Return the image for outer container
+	 * <!-- end-model-doc -->
+	 * @model kind="operation" unique="false"
 	 * @generated
 	 */
-	void init(IAddContext context, AbstractContainerPattern pattern, List<Port> externalPorts);
+	Image getOuterImage();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Return the image for inner container
+	 * <!-- end-model-doc -->
+	 * @model kind="operation" unique="false"
+	 * @generated
+	 */
+	Image getInnerImage();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Return the inner container shape
+	 * <!-- end-model-doc -->
+	 * @model kind="operation" unique="false"
+	 * @generated
+	 */
+	ContainerShape getInnerContainerShape();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Return the text for inner container
+	 * <!-- end-model-doc -->
+	 * @model kind="operation" unique="false"
+	 * @generated
+	 */
+	Text getInnerText();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Return the internal separator line
+	 * <!-- end-model-doc -->
+	 * @model kind="operation" unique="false"
+	 * @generated
+	 */
+	Polyline getInnerPolyline();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Return the interface lollipop shape
+	 * <!-- end-model-doc -->
+	 * @model kind="operation" unique="false"
+	 * @generated
+	 */
+	ContainerShape getLollipop();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Return the provides ports container
+	 * <!-- end-model-doc -->
+	 * @model kind="operation" unique="false"
+	 * @generated
+	 */
+	ContainerShape getProvidesPortsContainerShape();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Return to uses ports container
+	 * <!-- end-model-doc -->
+	 * @model kind="operation" unique="false"
+	 * @generated
+	 */
+	ContainerShape getUsesPortsContainerShape();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Return the collapsed uses ports container
+	 * <!-- end-model-doc -->
+	 * @model kind="operation" unique="false"
+	 * @generated
+	 */
+	ContainerShape getSuperUsesPortsContainerShape();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Return the collapsed provides ports container
+	 * <!-- end-model-doc -->
+	 * @model kind="operation" unique="false"
+	 * @generated
+	 */
+	ContainerShape getSuperProvidesPortsContainerShape();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -242,60 +386,12 @@ public interface RHContainerShape extends ContainerShape {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * performs a layout on the contents of this shape
-	 * <!-- end-model-doc -->
-	 * @model
-	 * @generated
-	 */
-	void layout();
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
 	 * Updates the shape with supplied values
 	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractContainerPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.graphiti.ext.List<gov.redhawk.ide.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
+	 * @model unique="false"
 	 * @generated
 	 */
-	Reason update(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Updates the shape with supplied values
-	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractContainerPattern" patternUnique="false"
-	 * @generated
-	 */
-	Reason update(IUpdateContext context, AbstractContainerPattern pattern);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Checks if shape requires an update.
-	 * If update required returns Reason with true
-	 * boolean value and message describing what needs to be updated
-	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractContainerPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.graphiti.ext.List<gov.redhawk.ide.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
-	 * @generated
-	 */
-	Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Checks if shape requires an update.
-	 * If update required returns Reason with true
-	 * boolean value and message describing what needs to be updated
-	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.ext.AbstractContainerPattern" patternUnique="false"
-	 * @generated
-	 */
-	Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern);
+	boolean update();
 
 } // RHContainerShape
 

@@ -15,24 +15,11 @@ import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxFactory;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxPackage;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-import java.util.List;
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.AssemblyController;
-import mil.jpeojtrs.sca.sad.ExternalPorts;
-import mil.jpeojtrs.sca.sad.Port;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
+import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -48,84 +35,6 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 	 * @generated
 	 */
 	private EClass componentShapeEClass = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType componentSupportedInterfaceStubEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType iFeatureProviderEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType usesPortStubEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType providesPortStubEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType portEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType assemblyControllerEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType externalPortsEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType reasonEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType listEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType sadComponentInstantiationEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType iAddContextEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType componentPatternEDataType = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType iUpdateContextEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -206,123 +115,6 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getComponentSupportedInterfaceStub() {
-		return componentSupportedInterfaceStubEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getIFeatureProvider() {
-		return iFeatureProviderEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getUsesPortStub() {
-		return usesPortStubEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getProvidesPortStub() {
-		return providesPortStubEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getPort() {
-		return portEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getAssemblyController() {
-		return assemblyControllerEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getExternalPorts() {
-		return externalPortsEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getReason() {
-		return reasonEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getList() {
-		return listEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getSadComponentInstantiation() {
-		return sadComponentInstantiationEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getIAddContext() {
-		return iAddContextEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getComponentPattern() {
-		return componentPatternEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getIUpdateContext() {
-		return iUpdateContextEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public RHSadGxFactory getRHSadGxFactory() {
 		return (RHSadGxFactory) getEFactoryInstance();
 	}
@@ -348,21 +140,6 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 
 		// Create classes and their features
 		componentShapeEClass = createEClass(COMPONENT_SHAPE);
-
-		// Create data types
-		listEDataType = createEDataType(LIST);
-		componentPatternEDataType = createEDataType(COMPONENT_PATTERN);
-		componentSupportedInterfaceStubEDataType = createEDataType(COMPONENT_SUPPORTED_INTERFACE_STUB);
-		usesPortStubEDataType = createEDataType(USES_PORT_STUB);
-		providesPortStubEDataType = createEDataType(PROVIDES_PORT_STUB);
-		portEDataType = createEDataType(PORT);
-		assemblyControllerEDataType = createEDataType(ASSEMBLY_CONTROLLER);
-		externalPortsEDataType = createEDataType(EXTERNAL_PORTS);
-		sadComponentInstantiationEDataType = createEDataType(SAD_COMPONENT_INSTANTIATION);
-		iAddContextEDataType = createEDataType(IADD_CONTEXT);
-		iUpdateContextEDataType = createEDataType(IUPDATE_CONTEXT);
-		iFeatureProviderEDataType = createEDataType(IFEATURE_PROVIDER);
-		reasonEDataType = createEDataType(REASON);
 	}
 
 	/**
@@ -391,9 +168,10 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 
 		// Obtain other dependent packages
 		RHGxPackage theRHGxPackage = (RHGxPackage) EPackage.Registry.INSTANCE.getEPackage(RHGxPackage.eNS_URI);
+		PictogramsPackage thePictogramsPackage = (PictogramsPackage) EPackage.Registry.INSTANCE.getEPackage(PictogramsPackage.eNS_URI);
+		AlgorithmsPackage theAlgorithmsPackage = (AlgorithmsPackage) EPackage.Registry.INSTANCE.getEPackage(AlgorithmsPackage.eNS_URI);
 
 		// Create type parameters
-		addETypeParameter(listEDataType, "Port");
 
 		// Set bounds for type parameters
 
@@ -403,36 +181,9 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 		// Initialize classes and features; add operations and parameters
 		initEClass(componentShapeEClass, ComponentShape.class, "ComponentShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		EOperation op = addEOperation(componentShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIAddContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEOperation(componentShapeEClass, thePictogramsPackage.getContainerShape(), "getStartOrderEllipseShape", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
-		addEOperation(componentShapeEClass, null, "layout", 0, 1, !IS_UNIQUE, IS_ORDERED);
-
-		op = addEOperation(componentShapeEClass, this.getReason(), "update", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
-
-		op = addEOperation(componentShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
-
-		// Initialize data types
-		initEDataType(listEDataType, List.class, "List", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(componentPatternEDataType, ComponentPattern.class, "ComponentPattern", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(componentSupportedInterfaceStubEDataType, ComponentSupportedInterfaceStub.class, "ComponentSupportedInterfaceStub", IS_SERIALIZABLE,
-			!IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(usesPortStubEDataType, UsesPortStub.class, "UsesPortStub", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(providesPortStubEDataType, ProvidesPortStub.class, "ProvidesPortStub", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(portEDataType, Port.class, "Port", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(assemblyControllerEDataType, AssemblyController.class, "AssemblyController", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(externalPortsEDataType, ExternalPorts.class, "ExternalPorts", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(sadComponentInstantiationEDataType, SadComponentInstantiation.class, "SadComponentInstantiation", IS_SERIALIZABLE,
-			!IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(iAddContextEDataType, IAddContext.class, "IAddContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(iUpdateContextEDataType, IUpdateContext.class, "IUpdateContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(iFeatureProviderEDataType, IFeatureProvider.class, "IFeatureProvider", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(reasonEDataType, Reason.class, "Reason", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		addEOperation(componentShapeEClass, theAlgorithmsPackage.getText(), "getStartOrderText", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

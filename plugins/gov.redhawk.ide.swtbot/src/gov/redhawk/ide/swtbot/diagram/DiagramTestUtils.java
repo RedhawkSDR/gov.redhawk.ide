@@ -19,11 +19,13 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
@@ -44,7 +46,6 @@ import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotLabel;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
@@ -55,6 +56,7 @@ import org.junit.Assert;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultiPageEditor;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.logging.ui.LogLevels;
@@ -176,13 +178,31 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 	 */
 	public static void addHostCollocationToDiagram(SWTGefBot gefBot, RHBotGefEditor editor, String hostCoName) {
 		addFromPaletteToDiagram(editor, "Host Collocation", 0, 0);
-		SWTBotShell hostCoShell = gefBot.shell("New Host Collocation");
-		hostCoShell.setFocus();
-		SWTBotText textField = gefBot.textWithLabel("Name:");
-		textField.setFocus();
-		textField.typeText(hostCoName);
-		gefBot.button("OK").click();
-		editor.setFocus();
+
+		SWTBotGefEditPart editPart = editor.getEditPart("collocation_1");
+		editPart.select();
+
+		// Set the DiagramBehavior's mouse position to point to the collocation name, otherwise activating direct
+		// editing will fail to activate.
+		ContainerShape shape = (ContainerShape) editPart.part().getModel();
+		Text name = getHostCollocationText(shape);
+		final int textX = name.getX() + name.getWidth() / 2;
+		final int textY = name.getY() + name.getHeight() / 2;
+		GraphitiWaveformMultiPageEditor diagramEditor = (GraphitiWaveformMultiPageEditor) editor.getReference().getEditor(false);
+		final DiagramBehavior diagramBehavior = diagramEditor.getDiagramEditor().getDiagramBehavior();
+		diagramBehavior.getMouseLocation().setLocation(textX, textY);
+
+		editPart.activateDirectEdit();
+		editor.directEditType(hostCoName);
+	}
+
+	private static Text getHostCollocationText(ContainerShape shape) {
+		for (GraphicsAlgorithm ga : shape.getGraphicsAlgorithm().getGraphicsAlgorithmChildren()) {
+			if (ga instanceof Text) {
+				return (Text) ga;
+			}
+		}
+		return null;
 	}
 
 	/**

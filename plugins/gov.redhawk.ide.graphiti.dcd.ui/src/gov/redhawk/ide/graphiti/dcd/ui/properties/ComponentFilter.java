@@ -10,11 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.properties;
 
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.platform.AbstractPropertySectionFilter;
 
@@ -22,13 +20,7 @@ public class ComponentFilter extends AbstractPropertySectionFilter {
 
 	@Override
 	protected boolean accept(PictogramElement pictogramElement) {
-		ContainerShape containerShape = (ContainerShape) DUtil.findContainerShapeParentWithProperty(pictogramElement,
-			RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		Object obj = DUtil.getBusinessObject(containerShape);
-		if (containerShape != null && obj != null && obj instanceof DcdComponentInstantiation) {
-			return true;
-		}
-		return false;
+		return DUtil.getBusinessObject(pictogramElement) instanceof DcdComponentInstantiation;
 	}
 
 }

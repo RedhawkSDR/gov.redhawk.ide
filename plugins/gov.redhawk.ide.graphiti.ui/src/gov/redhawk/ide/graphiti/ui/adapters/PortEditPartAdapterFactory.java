@@ -12,19 +12,14 @@
 package gov.redhawk.ide.graphiti.ui.adapters;
 
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaDevice;
-import gov.redhawk.model.sca.ScaDeviceManager;
 import gov.redhawk.model.sca.ScaPort;
+import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.model.sca.ScaWaveform;
 
-import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.scd.AbstractPort;
 
 import org.eclipse.core.runtime.IAdapterFactory;
@@ -51,16 +46,17 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 
 			PictogramElement pe = (PictogramElement) object;
 			EObject port = DUtil.getBusinessObject(pe);
-			Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pe);
-			ScaPort< ? , ? > scaPort = null;
+			String portName;
 			if (port instanceof UsesPortStub) {
-				UsesPortStub uses = (UsesPortStub) port;
-				scaPort = getScaPort(diagram, uses, uses.getName());
+				portName = ((UsesPortStub) port).getName();
 			} else if (port instanceof ProvidesPortStub) {
-				ProvidesPortStub provides = (ProvidesPortStub) port;
-				scaPort = getScaPort(diagram, provides, provides.getName());
+				portName = ((ProvidesPortStub) port).getName();
+			} else {
+				return null;
 			}
 
+			Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pe);
+			ScaPort< ? , ? > scaPort = getScaPort(diagram, port, portName);
 			if (scaPort != null && AbstractPort.class.isAssignableFrom(adapterType)) {
 				return adapterType.cast(scaPort.getProfileObj());
 			} else {
@@ -75,24 +71,9 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 			return null;
 		}
 
-		if (port.eContainer() instanceof SadComponentInstantiation) {
-			ScaWaveform waveform = DUtil.getBusinessObject(diagram, ScaWaveform.class);
-			if (waveform != null) {
-				final String instantiationId = ((ComponentInstantiation) port.eContainer()).getId();
-				final ScaComponent component = GraphitiAdapterUtil.safeFetchComponent(waveform, instantiationId);
-				if (component != null) {
-					return GraphitiAdapterUtil.safeFetchPort(component, name);
-				}
-			}
-		} else if (port.eContainer() instanceof DcdComponentInstantiation) {
-			ScaDeviceManager devMgr = DUtil.getBusinessObject(diagram, ScaDeviceManager.class);
-			if (devMgr != null) {
-				final String deviceId = ((ComponentInstantiation) port.eContainer()).getId();
-				final ScaDevice< ? > device = GraphitiAdapterUtil.safeFetchDevice(devMgr, deviceId);
-				if (device != null) {
-					return GraphitiAdapterUtil.safeFetchPort(device, name);
-				}
-			}
+		ScaPortContainer component = GraphitiAdapterUtil.safeFetchResource(diagram, (ComponentInstantiation) port.eContainer());
+		if (component != null) {
+			return GraphitiAdapterUtil.safeFetchPort(component, name);
 		}
 		return null;
 	}

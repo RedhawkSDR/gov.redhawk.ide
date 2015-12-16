@@ -68,6 +68,7 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.ILayoutFeature;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.ICustomContext;
@@ -77,6 +78,7 @@ import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
 import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
+import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
@@ -86,11 +88,14 @@ import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.AbstractText;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.styles.Point;
+import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -263,49 +268,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * @return All ports which are descendants of the specified shape in the diagram
-	 */
-	public static List<ContainerShape> getDiagramPorts(ContainerShape shape) {
-		List<ContainerShape> ports = getDiagramProvidesPorts(shape);
-		ports.addAll(getDiagramUsesPorts(shape));
-		return ports;
-	}
-
-	/**
-	 * @return All provides ports which are descendants of the specified shape in the diagram
-	 */
-	public static List<ContainerShape> getDiagramProvidesPorts(ContainerShape shape) {
-		return getDiagramPorts(shape, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER);
-	}
-
-	/**
-	 * @return All uses ports which are descendants of the specified shape in the diagram
-	 */
-	public static List<ContainerShape> getDiagramUsesPorts(ContainerShape shape) {
-		return getDiagramPorts(shape, RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER);
-	}
-
-	/**
-	 * Finds all ports of the specified type which are descendants of the specified shape in the diagram.
-	 * @param shape - The parent shape that you want to find ports of
-	 * @param portType - property value of the desired port type
-	 * @see {@link RHContainerShapeImpl} static property strings
-	 */
-	private static List<ContainerShape> getDiagramPorts(ContainerShape shape, String portType) {
-		List<ContainerShape> portsList = new ArrayList<ContainerShape>();
-
-		for (Shape child : shape.getChildren()) {
-			String shapeType = Graphiti.getPeService().getPropertyValue(child, DUtil.SHAPE_TYPE);
-			if (shapeType != null && portType.equals(shapeType)) {
-				portsList.add((ContainerShape) child);
-			} else if (child instanceof ContainerShape && !((ContainerShape) child).getChildren().isEmpty()) {
-				portsList.addAll(getDiagramPorts((ContainerShape) child, portType));
-			}
-		}
-		return portsList;
-	}
-
-	/**
 	 * @returns the IEditorPart for the active editor
 	 * Useful for getting the edit part for the GraphitiSadMultiPageScaEditor and the LocalGraphitiSadMultiPageScaEditor
 	 */
@@ -454,6 +416,44 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		} else {
 			pe.getLink().getBusinessObjects().addAll(eObjects);
 		}
+	}
+
+	/**
+	 * Finds a child shape with the given property key/value pair non-recursively.
+	 *
+	 * @param containerShape
+	 * @param propertyName
+	 * @param propertyValue
+	 * @return
+	 */
+	public static Shape findChildShapeByProperty(ContainerShape containerShape, String propertyName, String propertyValue) {
+		if (containerShape != null) {
+			for (Shape child : containerShape.getChildren()) {
+				if (propertyValue.equals(Graphiti.getPeService().getPropertyValue(child, propertyName))) {
+					return child;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Finds a child graphics algorithm with the given property key/value pair non-recursively.
+	 *
+	 * @param ga
+	 * @param propertyName
+	 * @param propertyValue
+	 * @return
+	 */
+	public static GraphicsAlgorithm findChildGraphicsAlgorithmByProperty(GraphicsAlgorithm ga, String propertyName, String propertyValue) {
+		if (ga != null) {
+			for (GraphicsAlgorithm child : ga.getGraphicsAlgorithmChildren()) {
+				if (propertyValue.equals(Graphiti.getPeService().getPropertyValue(child, propertyName))) {
+					return child;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -803,6 +803,34 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
+	 * Remove PictogramElement via feature for the provided object
+	 * @param featureProvider
+	 * @param pe
+	 */
+	public static void removeShapeViaFeature(IFeatureProvider featureProvider, PictogramElement pe) {
+		RemoveContext removeContext = new RemoveContext(pe);
+		IRemoveFeature removeFeature = featureProvider.getRemoveFeature(removeContext);
+		if (removeFeature != null) {
+			removeFeature.remove(removeContext);
+		}
+	}
+
+	/**
+	 * Layout PictogramElement via feature
+	 * Relies on the framework determining which feature should be used and whether it lay out the shape
+	 * @param featureProvider
+	 * @param pe
+	 * @return true if layout was applied
+	 */
+	public static boolean layoutShapeViaFeature(IFeatureProvider featureProvider, PictogramElement pe) {
+		LayoutContext updateContext = new LayoutContext(pe);
+		ILayoutFeature layoutFeature = featureProvider.getLayoutFeature(updateContext);
+		if (layoutFeature != null && layoutFeature.canLayout(updateContext)) {
+			return layoutFeature.layout(updateContext);
+		}
+		return false;
+	}
+	/**
 	 * Add PictogramElement Connection via feature for the provided object and anchors.
 	 * Relies on the framework determining which feature should be used and whether it can be added to diagram
 	 * @param featureProvider
@@ -828,189 +856,12 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @return
 	 */
 	public static < T > T getBusinessObject(PictogramElement pe, Class<T> cls) {
-		if (pe != null && pe.getLink() != null) {
-			for (EObject eObj : pe.getLink().getBusinessObjects()) {
-				if (cls.isInstance(eObj)) {
-					return cls.cast(eObj);
-				}
+		for (EObject eObj : Graphiti.getLinkService().getAllBusinessObjectsForLinkedPictogramElement(pe)) {
+			if (cls.isInstance(eObj)) {
+				return cls.cast(eObj);
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Examines a list of PictogramElements (pes) and ensures there is an associated object in the model (objects).
-	 * If the PictogramElement has an associated object than it is updated (if necessary) otherwise the PictogramElement
-	 * is removed
-	 * @param pes
-	 * @param objects
-	 * @param objectClass
-	 * @param pictogramLabel
-	 * @param featureProvider
-	 * @param performUpdate
-	 * @return
-	 */
-	public static Reason removeUpdatePictogramElement(List<PictogramElement> pes, List<EObject> objects, Class< ? > objectClass, String pictogramLabel,
-		IFeatureProvider featureProvider, boolean performUpdate) {
-
-		boolean updateStatus = false;
-
-		// update PictogramElements if in model, if not in model remove from diagram
-		for (Iterator<PictogramElement> peIter = pes.iterator(); peIter.hasNext();) {
-			// in model?
-			PictogramElement pe = peIter.next();
-			boolean found = false;
-			for (Object obj : objects) {
-				if (obj.equals(DUtil.getBusinessObject(pe, objectClass))) {
-					found = true;
-					// update Shape
-					featureProvider.updateIfPossibleAndNeeded(new UpdateContext(pe));
-				}
-			}
-			if (!found) {
-				// wasn't found, deleting shape
-				if (performUpdate) {
-					updateStatus = true;
-					// delete shape
-					peIter.remove();
-					// TODO: if we use DeleteContext it prompts user, if we use EcoreUtil.delete there is no prompt
-					RemoveContext rc = new RemoveContext(pe);
-					IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
-					if (removeFeature != null) {
-						removeFeature.remove(rc);
-					}
-				} else {
-					return new Reason(true, "A " + pictogramLabel + " in diagram no longer has an associated business object");
-				}
-			}
-		}
-
-		if (updateStatus && performUpdate) {
-			return new Reason(true, "Update successful");
-		}
-
-		return new Reason(false, "No updates required");
-	}
-
-	/**
-	 * Remove connections from the diagram that are missing start/end points.
-	 * Connections in the diagram may no longer have start/end points.
-	 * They may have been deleted which will cause the connection to point to random places in the diagram.
-	 * @param pes
-	 * @param objects
-	 * @param objectClass
-	 * @param pictogramLabel
-	 * @param featureProvider
-	 * @param performUpdate
-	 * @return
-	 */
-	public static Reason removeConnectionsWithoutEndpoints(List<Connection> connections, List<SadConnectInterface> sadConnectInterfaces,
-		IFeatureProvider featureProvider, boolean performUpdate) {
-
-		boolean updateStatus = false;
-
-		// update PictogramElements if in model, if not in model remove from diagram
-		for (Iterator<Connection> connIter = connections.iterator(); connIter.hasNext();) {
-			Connection conn = connIter.next();
-			if (conn.getStart() == null || conn.getEnd() == null) {
-				// endpoint missing, delete connection
-				if (performUpdate) {
-					updateStatus = true;
-					// delete shape
-					connIter.remove();
-					DeleteContext dc = new DeleteContext(conn);
-					IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
-					if (deleteFeature != null) {
-						deleteFeature.delete(dc);
-					}
-				} else {
-					return new Reason(true, "A connection in diagram is missing either a start or end point");
-				}
-			}
-		}
-
-		// update model if there are references to components that no longer exist
-		for (Iterator<SadConnectInterface> connIter = sadConnectInterfaces.iterator(); connIter.hasNext();) {
-
-			// delete connection in model if
-			// uses port is present but the referenced component isn't
-			// provides port is present but references component isn't
-			SadConnectInterface conn = connIter.next();
-			if ((conn.getUsesPort() != null && conn.getUsesPort().getComponentInstantiationRef() != null && conn.getUsesPort().getComponentInstantiationRef().getInstantiation() == null)
-				|| (conn.getProvidesPort() != null && conn.getProvidesPort().getComponentInstantiationRef() != null && conn.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
-
-				// endpoint missing, delete connection
-				if (performUpdate) {
-					updateStatus = true;
-					// delete connection
-					connIter.remove();
-					EcoreUtil.delete(conn, true);
-				} else {
-					return new Reason(true, "A connection in model is missing reference to component");
-				}
-			}
-		}
-
-		if (updateStatus && performUpdate) {
-			return new Reason(true, "Update successful");
-		}
-
-		return new Reason(false, "No updates required");
-	}
-
-	/**
-	 * Examines a list of Shapes and ensures there is an associated object in the model (objects).
-	 * If the Shape has an associated object than it is updated (if necessary) otherwise the Shape is removed
-	 * Next if there are new objects that do not have Shapes, then a new Shape is added using
-	 * the features associated the provided object type.
-	 * @param shapes
-	 * @param objects
-	 * @param pictogramLabel
-	 * @param featureProvider
-	 * @param performUpdate
-	 * @return
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Reason addRemoveUpdateShapes(List<Shape> shapes, List<EObject> objects, Class objectClass, String pictogramLabel, Diagram diagram,
-		IFeatureProvider featureProvider, boolean performUpdate) {
-
-		boolean updateStatus = false;
-
-		// remove shapes on diagram if no longer in model, update all other shapes if necessary
-		Reason updateShapesReason = removeUpdatePictogramElement((List<PictogramElement>) (List< ? >) shapes, objects, objectClass, pictogramLabel,
-			featureProvider, performUpdate);
-		if (!performUpdate && updateShapesReason.toBoolean()) {
-			return updateShapesReason;
-		} else if (updateShapesReason.toBoolean() == true) {
-			updateStatus = true;
-		}
-
-		// add Shapes found in model, but not in diagram
-		for (Object obj : objects) {
-			// in diagram
-			boolean found = false;
-			for (Shape pe : shapes) {
-				if (obj.equals(DUtil.getBusinessObject(pe, objectClass))) {
-					found = true;
-				}
-			}
-			if (!found) {
-				// wasn't found, add shape
-				if (performUpdate) {
-					updateStatus = true;
-					// add shape
-					DUtil.addShapeViaFeature(featureProvider, diagram, obj);
-				} else {
-					return new Reason(true, "A " + pictogramLabel + " in model isn't displayed in diagram");
-				}
-			}
-		}
-
-		if (updateStatus && performUpdate) {
-			return new Reason(true, "Update successful");
-		}
-
-		return new Reason(false, "No updates required");
 	}
 
 	/**
@@ -1482,9 +1333,12 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 			start.getOutgoingConnections().remove(connection);
 		}
 
+		// The diagram may be null, if the connection is no longer part of one
 		Diagram diagram = connection.getParent();
-		diagram.getPictogramLinks().remove(connection.getLink());
-		diagram.getConnections().remove(connection);
+		if (diagram != null) {
+			diagram.getPictogramLinks().remove(connection.getLink());
+			diagram.getConnections().remove(connection);
+		}
 	}
 
 	/**
@@ -1520,5 +1374,51 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	public static IDimension calculateTextSize(AbstractText text) {
 		return GraphitiUi.getUiLayoutService().calculateTextSize(text.getValue(), Graphiti.getGaService().getFont(text, true));
+	}
+
+	/**
+	 * Creates a {@link FixPointAnchor} overlay for a shape, with the anchor point vertically centered at horizontal
+	 * position x. The returned anchor has no graphics algorithm.
+	 *
+	 * @param parentShape shape on which to overlay anchor
+	 * @param x horizontal anchor point
+	 * @return new anchor
+	 */
+	public static FixPointAnchor createOverlayAnchor(Shape parentShape, int x) {
+		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(parentShape);
+		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
+		Point point = StylesFactory.eINSTANCE.createPoint();
+		point.setX(x);
+		point.setY(parentSize.getHeight() / 2);
+		fixPointAnchor.setLocation(point);
+		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
+		fixPointAnchor.setReferencedGraphicsAlgorithm(parentShape.getGraphicsAlgorithm());
+		return fixPointAnchor;
+	}
+
+	/**
+	 * Checks whether a @{link GraphicsAlgorithm} is visible (i.e, will draw something).
+	 *
+	 * @param ga GraphicsAlgorithm to check
+	 * @return true if ga is visible, false if it is not
+	 */
+	public static boolean isVisible(GraphicsAlgorithm ga) {
+		return ga.getLineVisible() || ga.getFilled();
+	}
+
+	/**
+	 * Updates whether a @{link GraphicsAlgorithm} is visible (i.e, will draw something).
+	 *
+	 * @param ga GraphicsAlgorithm to modify
+	 * @param visible new visibility of ga
+	 * @return true if the visibility changed, false if it was already set
+	 */
+	public static boolean setVisible(GraphicsAlgorithm ga, boolean visible) {
+		if (DUtil.isVisible(ga) != visible) {
+			ga.setFilled(visible);
+			ga.setLineVisible(visible);
+			return true;
+		}
+		return false;
 	}
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.UsesDeviceWizard;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -30,12 +31,8 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.ICreateContext;
-import org.eclipse.graphiti.pattern.IPattern;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.ui.PlatformUI;
 
-public class UsesDevicePattern extends AbstractUsesDevicePattern implements IPattern {
+public class UsesDevicePattern extends AbstractUsesDevicePattern {
 
 	public static final String NAME = "Use Device";
 
@@ -152,14 +149,56 @@ public class UsesDevicePattern extends AbstractUsesDevicePattern implements IPat
 		return new Object[] { usesDeviceStubs[0] };
 	}
 
-	
-	
-	public static Wizard openWizard(Wizard wizard) {
-		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
-		if (dialog.open() == WizardDialog.CANCEL) {
-			return null;
+	@Override
+	public String getEditName() {
+		return NAME;
+	}
+
+	/**
+	 * Open Wizard allowing edit of generic UsesDevice allocation
+	 * Persist selections in UsesDevice
+	 * @param usesDevice
+	 * @param usesDeviceShape
+	 */
+	protected boolean editUsesDevice(final UsesDeviceStub usesDeviceStub, final RHContainerShape usesDeviceShape) {
+
+		// get sad from diagram
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+
+		// prompt user for
+		final UsesDeviceWizard wizard = openWizard(new UsesDeviceWizard(sad, usesDeviceStub));
+		if (wizard == null) {
+			return false;
 		}
-		return wizard;
+
+		//extract values from wizard
+		final String usesDeviceId = wizard.getNamePage().getModel().getUsesDeviceId();
+		final List<String> usesPortNames = wizard.getPortsWizardPage().getModel().getUsesPortNames();
+		final List<String> providesPortNames = wizard.getPortsWizardPage().getModel().getProvidesPortNames();
+
+		// editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+
+			@Override
+			protected void doExecute() {
+
+				UsesDevice usesDevice = usesDeviceStub.getUsesDevice();
+
+				//uses device id
+				usesDevice.setId(usesDeviceId);
+
+				//clear existing structs
+				usesDevice.getStructRef().clear();
+
+				//update ports
+				updateUsesPortStubs(usesDeviceStub, usesPortNames);
+				updateProvidesPortStubs(usesDeviceStub, providesPortNames);
+			}
+		});
+
+		return true;
 	}
 
 }

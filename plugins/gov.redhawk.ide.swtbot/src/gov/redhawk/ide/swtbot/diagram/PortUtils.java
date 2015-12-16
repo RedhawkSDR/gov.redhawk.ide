@@ -25,7 +25,8 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Assert;
 
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.ProvidesPortPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
 @SuppressWarnings("restriction")
@@ -50,7 +51,7 @@ public class PortUtils {
 				GraphitiShapeEditPart editPart = (GraphitiShapeEditPart) item;
 				PictogramElement pe = editPart.getPictogramElement();
 				String propValue = Graphiti.getPeService().getPropertyValue(pe, DUtil.SHAPE_TYPE);
-				return RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER.equals(propValue);
+				return ProvidesPortPattern.SHAPE_PROVIDES_PORT_CONTAINER.equals(propValue);
 			}
 
 			@Override
@@ -76,7 +77,7 @@ public class PortUtils {
 				GraphitiShapeEditPart editPart = (GraphitiShapeEditPart) item;
 				PictogramElement pe = editPart.getPictogramElement();
 				String propValue = Graphiti.getPeService().getPropertyValue(pe, DUtil.SHAPE_TYPE);
-				return RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER.equals(propValue);
+				return UsesPortPattern.SHAPE_USES_PORT_CONTAINER.equals(propValue);
 			}
 
 			@Override
@@ -102,7 +103,7 @@ public class PortUtils {
 		GraphitiShapeEditPart graphitiEditPart = (GraphitiShapeEditPart) portBot.part();
 		PictogramElement pe = graphitiEditPart.getPictogramElement();
 		String propValue = Graphiti.getPeService().getPropertyValue(pe, DUtil.SHAPE_TYPE);
-		if (RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER.equals(propValue)) {
+		if (ProvidesPortPattern.SHAPE_PROVIDES_PORT_CONTAINER.equals(propValue)) {
 			portBot = portBot.children().get(0);
 		}
 

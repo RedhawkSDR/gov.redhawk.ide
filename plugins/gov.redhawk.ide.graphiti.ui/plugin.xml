@@ -82,7 +82,7 @@
    <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
-            adaptableType="org.eclipse.gef.editparts.AbstractGraphicalEditPart"
+            adaptableType="org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart"
             class="gov.redhawk.ide.graphiti.ui.adapters.ContainerShapeAdapterFactory">
          <adapter
                type="gov.redhawk.model.sca.ScaDevice">
@@ -157,13 +157,6 @@
          </adapter>
          <adapter
                type="mil.jpeojtrs.sca.scd.AbstractPort">
-         </adapter>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart"
-            class="gov.redhawk.ide.graphiti.ui.adapters.GraphitiEditPartToIPropertySourceAdapterFactory">
-         <adapter
-               type="org.eclipse.ui.views.properties.IPropertySource">
          </adapter>
       </factory>
    </extension>

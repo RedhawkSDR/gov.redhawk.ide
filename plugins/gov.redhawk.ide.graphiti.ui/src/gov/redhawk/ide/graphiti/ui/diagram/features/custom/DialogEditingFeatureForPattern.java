@@ -10,21 +10,21 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
-public class ExpandAllShapesFeature extends AbstractCustomFeature {
+public class DialogEditingFeatureForPattern extends AbstractCustomFeature implements IDialogEditingFeature {
 
-	/**
+	private final IDialogEditingPattern pattern;
+	private boolean changesApplied = false;
+
+	/*
 	 * Constructor
 	 */
-	public ExpandAllShapesFeature(IFeatureProvider fp) {
-		super(fp);
+	public DialogEditingFeatureForPattern(IFeatureProvider featureProvider, IDialogEditingPattern pattern) {
+		super(featureProvider);
+		this.pattern = pattern;
 	}
 
 	/*
@@ -33,7 +33,7 @@ public class ExpandAllShapesFeature extends AbstractCustomFeature {
 	 */
 	@Override
 	public String getDescription() {
-		return "Expand All Shapes"; //$NON-NLS-1$
+		return "Edit " + pattern.getEditName();
 	}
 
 	/*
@@ -42,7 +42,7 @@ public class ExpandAllShapesFeature extends AbstractCustomFeature {
 	 */
 	@Override
 	public String getName() {
-		return "&Expand All Shapes"; //$NON-NLS-1$
+		return "&Edit " + pattern.getEditName();
 	}
 
 	/*
@@ -50,12 +50,8 @@ public class ExpandAllShapesFeature extends AbstractCustomFeature {
 	 * @see org.eclipse.graphiti.features.custom.AbstractCustomFeature#canExecute(org.eclipse.graphiti.features.context.ICustomContext)
 	 */
 	@Override
-	public boolean canExecute(ICustomContext context) {
-		PictogramElement[] pes = context.getPictogramElements();
-		if (pes != null && pes.length == 1 && pes[0] instanceof Diagram) {
-			return true;
-		}
-		return false;
+	public boolean canDialogEdit(ICustomContext context) {
+		return pattern.canDialogEdit(context);
 	}
 
 	/*
@@ -63,18 +59,23 @@ public class ExpandAllShapesFeature extends AbstractCustomFeature {
 	 * @see org.eclipse.graphiti.features.custom.ICustomFeature#execute(org.eclipse.graphiti.features.context.ICustomContext)
 	 */
 	@Override
-	public void execute(ICustomContext context) {
-		//set preference for diagram
-		final Diagram diagram = getDiagram();
-		
-		//expand existing shapes in diagram
-		for (PictogramElement p: diagram.getChildren()) { //TODO: need to handle inside host collocation
-			RHContainerShape rhContainerShape = (RHContainerShape) p;
-			rhContainerShape.setCollapsed(false);
-			updatePictogramElement(rhContainerShape);
-			layoutPictogramElement(rhContainerShape);
-		}
-
-		updatePictogramElement(diagram);
+	public boolean dialogEdit(ICustomContext context) {
+		return pattern.dialogEdit(context);
 	}
+
+	@Override
+	public void execute(ICustomContext context) {
+		changesApplied = dialogEdit(context);
+	}
+
+	@Override
+	public boolean canExecute(ICustomContext context) {
+		return canDialogEdit(context);
+	}
+
+	@Override
+	public boolean hasDoneChanges() {
+		return changesApplied;
+	}
+
 }

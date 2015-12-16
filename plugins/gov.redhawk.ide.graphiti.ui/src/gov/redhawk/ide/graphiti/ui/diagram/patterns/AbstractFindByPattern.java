@@ -11,8 +11,6 @@
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.RHGxFactory;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
@@ -43,23 +41,18 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
-import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.pattern.IPattern;
-import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.jface.wizard.Wizard;
 
-public abstract class AbstractFindByPattern extends AbstractContainerPattern implements IPattern {
+public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern {
 
 	public AbstractFindByPattern() {
 		super(null);
@@ -102,17 +95,11 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public String getOuterTitle(EObject obj) {
+	protected String getOuterTitle(EObject obj) {
 		if (obj instanceof FindByStub) {
 			return getOuterTitle((FindByStub) obj);
 		}
 		return null;
-	}
-
-	@Override
-	public boolean canDirectEdit(IDirectEditingContext context) {
-		String gaType = Graphiti.getPeService().getPropertyValue(context.getGraphicsAlgorithm(), DUtil.GA_TYPE);
-		return RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT.equals(gaType);
 	}
 
 	/**
@@ -125,7 +112,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public String getInnerTitle(EObject obj) {
+	protected String getInnerTitle(EObject obj) {
 		if (obj instanceof FindByStub) {
 			return getInnerTitle((FindByStub) obj);
 		}
@@ -139,29 +126,18 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	 */
 	public abstract String getInnerTitle(FindByStub findByStub);
 
+	@Override
+	protected void setInnerTitle(EObject businessObject, String value) {
+		FindByStub findByStub = (FindByStub) businessObject;
+		setInnerTitle((FindByStub) businessObject, getModelFindBys(findByStub), value);
+	}
+
 	/**
 	 * Sets the title of the inner shape
 	 * @param findByStub
 	 * @return
 	 */
 	protected void setInnerTitle(FindByStub findByStub, List<FindBy> findBys, String value) {
-	}
-
-	@Override
-	public PictogramElement add(IAddContext context) {
-		// create shape
-		RHContainerShape rhContainerShape = RHGxFactory.eINSTANCE.createRHContainerShape();
-
-		// initialize shape contents
-		rhContainerShape.init(context, this);
-
-		// set shape location to user's selection
-		Graphiti.getGaLayoutService().setLocation(rhContainerShape.getGraphicsAlgorithm(), context.getX(), context.getY());
-
-		// layout
-		layoutPictogramElement(rhContainerShape);
-
-		return rhContainerShape;
 	}
 
 	@Override
@@ -178,26 +154,6 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	protected abstract FindByStub createFindByStub(ICreateContext context);
-
-	protected void addUsesPortStubs(FindByStub findByStub, List<String> usesPortNames) {
-		if (usesPortNames != null) {
-			for (String usesPortName : usesPortNames) {
-				UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
-				usesPortStub.setName(usesPortName);
-				findByStub.getUses().add(usesPortStub);
-			}
-		}
-	}
-
-	protected void addProvidesPortStubs(FindByStub findByStub, List<String> providesPortNames) {
-		if (providesPortNames != null) {
-			for (String providesPortName : providesPortNames) {
-				ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
-				providesPortStub.setName(providesPortName);
-				findByStub.getProvides().add(providesPortStub);
-			}
-		}
-	}
 
 	public static void addFindByToDiagram(final Diagram diagram, IFeatureProvider featureProvider, final FindByStub findByStub) {
 		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -216,47 +172,6 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	@Override
 	public boolean canResizeShape(IResizeShapeContext context) {
 		return true;
-	}
-
-	@Override
-	public boolean canLayout(ILayoutContext context) {
-		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
-		Object obj = DUtil.getBusinessObject(containerShape);
-		if (obj instanceof FindByStub) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Layout children of component
-	 */
-	@Override
-	public boolean layout(ILayoutContext context) {
-		((RHContainerShape) context.getPictogramElement()).layout();
-
-		// something is always changing.
-		return true;
-	}
-
-	@Override
-	public boolean update(IUpdateContext context) {
-		Reason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
-
-		// if we updated redraw
-		if (updated.toBoolean()) {
-			layoutPictogramElement(context.getPictogramElement());
-		}
-
-		return updated.toBoolean();
-	}
-
-	/**
-	 * Determines whether we need to update the diagram from the model.
-	 */
-	@Override
-	public IReason updateNeeded(IUpdateContext context) {
-		return ((RHContainerShape) context.getPictogramElement()).updateNeeded(context, this);
 	}
 
 	@Override
@@ -363,44 +278,8 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public int getEditingType() {
-		return TYPE_TEXT;
-	}
-
-	@Override
 	public String checkValueValid(String value, IDirectEditingContext context) {
 		return super.checkValueValid(value, context);
-	}
-
-	@Override
-	public String getInitialValue(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		FindByStub findBy = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
-		return getInnerTitle(findBy);
-	}
-
-	@Override
-	public void setValue(final String value, IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
-
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		// Perform business object manipulation in a Command
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				// set usage name
-				setInnerTitle(findByStub, getModelFindBys(findByStub), value);
-			}
-		});
-
-		// perform update, redraw
-		updatePictogramElement(rhContainerShape);
 	}
 
 	/**
@@ -529,6 +408,14 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		return false;
 	}
 
+	protected static Wizard getEditWizard() {
+		return new Wizard() {
+			public boolean performFinish() {
+				return true;
+			}
+		};
+	}
+
 	/**
 	 * Returns the {@link Diagram} this pattern lives for.
 	 * 
@@ -539,7 +426,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public EList<UsesPortStub> getUses(EObject obj) {
+	protected EList<UsesPortStub> getUses(EObject obj) {
 		if (obj instanceof FindByStub) {
 			return ((FindByStub) obj).getUses();
 		}
@@ -547,7 +434,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public EList<ProvidesPortStub> getProvides(EObject obj) {
+	protected EList<ProvidesPortStub> getProvides(EObject obj) {
 		if (obj instanceof FindByStub) {
 			return ((FindByStub) obj).getProvides();
 		}
@@ -555,7 +442,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public ComponentSupportedInterfaceStub getInterface(EObject obj) {
+	protected ComponentSupportedInterfaceStub getInterface(EObject obj) {
 		if (obj instanceof FindByStub) {
 			return ((FindByStub) obj).getInterface();
 		}
@@ -563,25 +450,26 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public abstract String getOuterImageId();
+	protected
+	abstract String getOuterImageId();
 
 	@Override
-	public String getInnerImageId() {
+	protected String getInnerImageId() {
 		return getCreateImageId();
 	}
 
 	@Override
-	public String getStyleForOuter() {
+	protected String getStyleForOuter() {
 		return StyleUtil.OUTER_SHAPE;
 	}
 
 	@Override
-	public String getStyleForInner() {
+	protected String getStyleForInner() {
 		return StyleUtil.FIND_BY_INNER;
 	}
 
 	@Override
-	public List<EObject> getBusinessObjectsToLink(EObject obj) {
+	protected List<EObject> getBusinessObjectsToLink(EObject obj) {
 		List<EObject> businessObjectsToLink = new ArrayList<EObject>();
 		businessObjectsToLink.add(obj);
 		return businessObjectsToLink;

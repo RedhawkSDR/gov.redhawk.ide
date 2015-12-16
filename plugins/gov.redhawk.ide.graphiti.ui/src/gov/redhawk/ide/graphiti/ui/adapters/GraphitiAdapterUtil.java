@@ -12,7 +12,9 @@
 package gov.redhawk.ide.graphiti.ui.adapters;
 
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.RefreshDepth;
+import gov.redhawk.model.sca.ScaAbstractComponent;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaDeviceManager;
@@ -26,6 +28,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.util.CorbaUtils;
 
 import org.eclipse.core.runtime.CoreException;
@@ -36,6 +41,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 
 /**
  * @since 3.3
@@ -197,4 +203,18 @@ public final class GraphitiAdapterUtil {
 		return null;
 	}
 
+	public static ScaAbstractComponent< ? > safeFetchResource(Diagram diagram, ComponentInstantiation instantiation) {
+		if (instantiation instanceof SadComponentInstantiation) {
+			ScaWaveform waveform = DUtil.getBusinessObject(diagram, ScaWaveform.class);
+			if (waveform != null) {
+				return GraphitiAdapterUtil.safeFetchComponent(waveform, instantiation.getId());
+			}
+		} else if (instantiation instanceof DcdComponentInstantiation) {
+			ScaDeviceManager devMgr = DUtil.getBusinessObject(diagram, ScaDeviceManager.class);
+			if (devMgr != null) {
+				return GraphitiAdapterUtil.safeFetchDevice(devMgr, instantiation.getId());
+			}
+		}
+		return null;
+	}
 }

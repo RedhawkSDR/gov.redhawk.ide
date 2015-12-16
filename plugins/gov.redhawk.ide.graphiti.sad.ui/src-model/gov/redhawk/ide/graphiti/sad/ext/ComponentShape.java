@@ -12,10 +12,8 @@
 package gov.redhawk.ide.graphiti.sad.ext;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 
 /**
  * <!-- begin-user-doc -->
@@ -28,47 +26,27 @@ import org.eclipse.graphiti.features.impl.Reason;
  * @generated
  */
 public interface ComponentShape extends RHContainerShape {
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @model contextDataType="gov.redhawk.ide.graphiti.sad.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.sad.ext.ComponentPattern" patternUnique="false"
-	 * @generated
-	 */
-	void init(IAddContext context, ComponentPattern pattern);
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Performs a layout on the contents of this shape
+	 * Returns the start order ellipse
 	 * <!-- end-model-doc -->
-	 * @model
+	 * @model kind="operation" unique="false"
 	 * @generated
 	 */
-	void layout();
+	ContainerShape getStartOrderEllipseShape();
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Updates the shape with supplied values
+	 * Returns the start order text
 	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.sad.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.sad.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.sad.ext.ComponentPattern" patternUnique="false"
+	 * @model kind="operation" unique="false"
 	 * @generated
 	 */
-	Reason update(IUpdateContext context, ComponentPattern pattern);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Checks if shape requires an update.
-	 * If update required returns Reason with true
-	 * boolean value and message describing what needs to be updated
-	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.graphiti.sad.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.graphiti.sad.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.graphiti.sad.ext.ComponentPattern" patternUnique="false"
-	 * @generated
-	 */
-	Reason updateNeeded(IUpdateContext context, ComponentPattern pattern);
+	Text getStartOrderText();
 
 } // ComponentShape

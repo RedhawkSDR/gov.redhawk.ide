@@ -25,12 +25,9 @@ import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.IPattern;
-import org.eclipse.graphiti.services.Graphiti;
 
 public class DevicePattern extends AbstractNodeComponentPattern implements IPattern {
 
@@ -44,42 +41,22 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 	}
 
 	@Override
-	public boolean canAdd(IAddContext context) {
-		if (context.getNewObject() instanceof DcdComponentInstantiation) {
-			DcdComponentInstantiation ci = (DcdComponentInstantiation) context.getNewObject();
-			SoftPkg spd = ci.getPlacement().getComponentFileRef().getFile().getSoftPkg();
-			String componentType = spd.getDescriptor().getComponent().getComponentType();
+	protected boolean isInstantiationApplicable(DcdComponentInstantiation instantiation) {
+		SoftPkg spd = instantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg();
+		String componentType = spd.getDescriptor().getComponent().getComponentType();
 
-			String[] deviceTypes = { mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral(), "loadabledevice", "executabledevice" };
-			for (String deviceType : deviceTypes) {
-				if (deviceType.equals(componentType)) {
-					return true;
-				}
+		String[] deviceTypes = { mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral(), "loadabledevice", "executabledevice" };
+		for (String deviceType : deviceTypes) {
+			if (deviceType.equals(componentType)) {
+				return true;
 			}
 		}
 		return false;
 	}
 
-	/**
-	 * Adds a Device to the diagram. Immediately calls resize at the end to keep sizing and location in one place.
-	 */
 	@Override
-	public PictogramElement add(IAddContext context) {
-
-		// creates shape
-		DeviceShape deviceShape = RHDeviceGxFactory.eINSTANCE.createDeviceShape();
-		deviceShape.init(context, this);
-
-		// set shape location to user's selection
-		Graphiti.getGaLayoutService().setLocation(deviceShape.getGraphicsAlgorithm(), context.getX(), context.getY());
-
-		// layout
-		deviceShape.layout();
-
-		// Check for any needed location adjustments, avoids accidentally stacking shapes
-		adjustShapeLocation(deviceShape);
-
-		return deviceShape;
+	protected DeviceShape createContainerShape() {
+		return RHDeviceGxFactory.eINSTANCE.createDeviceShape();
 	}
 
 	/**
@@ -102,29 +79,29 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 	}
 
 	@Override
-	public String getOuterImageId() {
+	protected String getOuterImageId() {
 		return NodeImageProvider.IMG_COMPONENT_PLACEMENT;
 	}
 
 	@Override
-	public String getInnerImageId() {
+	protected String getInnerImageId() {
 		return NodeImageProvider.IMG_SCA_DEVICE;
 	}
 
 	@Override
-	public String getStyleForOuter() {
+	protected String getStyleForOuter() {
 		return StyleUtil.OUTER_SHAPE;
 	}
 
 	@Override
-	public String getStyleForInner() {
+	protected String getStyleForInner() {
 		return StyleUtil.COMPONENT_INNER;
 	}
 
 	/**
 	 * Returns device, dcd, ports. Order does matter.
 	 */
-	public List<EObject> getBusinessObjectsToLink(EObject componentInstantiation) {
+	protected List<EObject> getBusinessObjectsToLink(EObject componentInstantiation) {
 		// get dcd from diagram, we need to link it to all shapes so the diagram will update when changes occur
 		List<EObject> businessObjectsToLink = new ArrayList<EObject>();
 		DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());

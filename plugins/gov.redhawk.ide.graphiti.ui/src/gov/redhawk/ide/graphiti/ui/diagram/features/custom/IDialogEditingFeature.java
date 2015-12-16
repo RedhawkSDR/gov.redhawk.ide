@@ -8,19 +8,13 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.dcd.ui.properties;
+package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 
-import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
-
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.features.IFeature;
 
 /**
- * 
+ * Feature for displaying an editing dialog for a selected pictogram element.
  */
-public class DeviceFilter extends ComponentFilter {
+public interface IDialogEditingFeature extends IDialogEditing, IFeature {
 
-	@Override
-	protected boolean accept(PictogramElement pictogramElement) {
-		return (pictogramElement instanceof DeviceShape) && super.accept(pictogramElement);
-	}
 }

@@ -11,9 +11,7 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
 import java.util.ArrayList;
@@ -35,28 +33,17 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
-import org.eclipse.graphiti.features.context.IDirectEditingContext;
-import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
-import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.Property;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.pattern.IPattern;
 
-public abstract class AbstractNodeComponentPattern extends AbstractContainerPattern implements IPattern {
+public abstract class AbstractNodeComponentPattern extends AbstractPortSupplierPattern {
 
 	public AbstractNodeComponentPattern() {
 		super(null);
@@ -65,7 +52,10 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 	// THE FOLLOWING THREE METHODS DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
-		return mainBusinessObject instanceof DcdComponentInstantiation;
+		if (mainBusinessObject instanceof DcdComponentInstantiation) {
+			return isInstantiationApplicable((DcdComponentInstantiation) mainBusinessObject);
+		}
+		return false;
 	}
 
 	@Override
@@ -79,6 +69,8 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 		Object domainObject = getBusinessObjectForPictogramElement(pictogramElement);
 		return isMainBusinessObjectApplicable(domainObject);
 	}
+
+	protected abstract boolean isInstantiationApplicable(DcdComponentInstantiation instantiation);
 
 	@Override
 	public boolean canAdd(IAddContext context) {
@@ -210,26 +202,6 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 		return true;
 	}
 
-	@Override
-	public boolean canLayout(ILayoutContext context) {
-		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
-		Object obj = DUtil.getBusinessObject(containerShape);
-		if (obj instanceof DcdComponentInstantiation) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Layout children of component
-	 */
-	@Override
-	public boolean layout(ILayoutContext context) {
-		// something is always changing.
-		((RHContainerShape) context.getPictogramElement()).layout();
-		return true;
-	}
-
 	public boolean canMoveShape(IMoveShapeContext context) {
 		DcdComponentInstantiation dcdComponentInstantiation = (DcdComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
 		if (dcdComponentInstantiation == null) {
@@ -244,67 +216,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 	}
 
 	@Override
-	public IReason updateNeeded(IUpdateContext context) {
-		return ((RHContainerShape) context.getPictogramElement()).updateNeeded(context, this);
-	}
-
-	@Override
-	public boolean canDirectEdit(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape containerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		Object obj = getBusinessObjectForPictogramElement(containerShape);
-		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-
-		// allow if we've selected the inner Text for the component
-		if (obj instanceof DcdComponentInstantiation && ga instanceof Text) {
-			Text text = (Text) ga;
-			for (Property prop : text.getProperties()) {
-				if (prop.getValue().equals(RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public int getEditingType() {
-		return TYPE_TEXT;
-	}
-
-	@Override
-	public String getInitialValue(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape containerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		DcdComponentInstantiation ci = (DcdComponentInstantiation) getBusinessObjectForPictogramElement(containerShape);
-		return ci.getUsageName();
-	}
-
-	@Override
-	public void setValue(final String value, IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape containerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		final DcdComponentInstantiation ci = (DcdComponentInstantiation) getBusinessObjectForPictogramElement(containerShape);
-
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		// Perform business object manipulation in a Command
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				// set usage name
-				ci.setUsageName(value);
-			}
-		});
-
-		// perform update, redraw
-		updatePictogramElement(containerShape);
-	}
-
-	@Override
-	public String getOuterTitle(EObject obj) {
+	protected String getOuterTitle(EObject obj) {
 		if (obj instanceof DcdComponentInstantiation) {
 			try {
 				return ((DcdComponentInstantiation) obj).getPlacement().getComponentFileRef().getFile().getSoftPkg().getName();
@@ -316,7 +228,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 	}
 
 	@Override
-	public String getInnerTitle(EObject obj) {
+	protected String getInnerTitle(EObject obj) {
 		if (obj instanceof DcdComponentInstantiation) {
 			return ((DcdComponentInstantiation) obj).getUsageName();
 		}
@@ -324,7 +236,12 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 	}
 
 	@Override
-	public EList<UsesPortStub> getUses(EObject obj) {
+	protected void setInnerTitle(EObject businessObject, String value) {
+		((DcdComponentInstantiation) businessObject).setUsageName(value);
+	}
+
+	@Override
+	protected EList<UsesPortStub> getUses(EObject obj) {
 		if (obj instanceof DcdComponentInstantiation) {
 			return ((DcdComponentInstantiation) obj).getUses();
 		}
@@ -332,7 +249,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 	}
 
 	@Override
-	public EList<ProvidesPortStub> getProvides(EObject obj) {
+	protected EList<ProvidesPortStub> getProvides(EObject obj) {
 		if (obj instanceof DcdComponentInstantiation) {
 			return ((DcdComponentInstantiation) obj).getProvides();
 		}
@@ -340,69 +257,10 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 	}
 
 	@Override
-	public ComponentSupportedInterfaceStub getInterface(EObject obj) {
+	protected ComponentSupportedInterfaceStub getInterface(EObject obj) {
 		if (obj instanceof DcdComponentInstantiation) {
 			return ((DcdComponentInstantiation) obj).getInterfaceStub();
 		}
 		return null;
-	}
-
-	@Override
-	public boolean update(IUpdateContext context) {
-		Reason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
-
-		// if we updated redraw
-		if (updated.toBoolean()) {
-			layoutPictogramElement(context.getPictogramElement());
-		}
-
-		return updated.toBoolean();
-	}
-
-	/**
-	 * Checks to make sure the new component is not being stacked on top of an existing component
-	 * @param componentShape
-	 */
-	protected void adjustShapeLocation(RHContainerShape shape) {
-		final int BUFFER_WIDTH = 20;
-
-		// if any overlap occurs (can happen when launching using the REDHAWK Explorer) adjust x/y-coords
-		Diagram diagram = getFeatureProvider().getDiagramTypeProvider().getDiagram();
-		EList<Shape> children = diagram.getChildren();
-		for (Shape child : children) {
-			boolean xAdjusted = false;
-			int xAdjustment = 0;
-
-			// Avoid infinite loop by checking a shape against itself
-			if (child.equals(shape)) {
-				continue;
-			}
-
-			// Don't adjust if the target shape is in a Host Collocation
-			if (child instanceof ContainerShape && DUtil.getHostCollocation((ContainerShape) child) != null) {
-				continue;
-			}
-			GraphicsAlgorithm childGa = child.getGraphicsAlgorithm();
-			int componentWidth = shape.getGraphicsAlgorithm().getWidth();
-			int componentHeight = shape.getGraphicsAlgorithm().getHeight();
-
-			int componentX = shape.getGraphicsAlgorithm().getX();
-			int componentY = shape.getGraphicsAlgorithm().getY();
-
-			boolean xOverlapped = componentX >= childGa.getX() && componentX <= (childGa.getX() + childGa.getWidth()) || childGa.getX() >= componentX
-				&& childGa.getX() <= componentX + componentWidth;
-			boolean yOverlapped = componentY >= childGa.getY() && componentY <= (childGa.getY() + childGa.getHeight()) || childGa.getY() >= componentY
-				&& childGa.getY() <= componentY + componentHeight;
-			// If there is any overlap, then move new component all the way to the right of the old component.
-			if (xOverlapped && yOverlapped) {
-				xAdjustment += childGa.getX() + childGa.getWidth() + BUFFER_WIDTH;
-				xAdjusted = true;
-			}
-			if (xAdjusted) {
-				shape.getGraphicsAlgorithm().setX(xAdjustment);
-				// If we've made any adjustments, make a recursive call to make sure we do not create a new collision
-				adjustShapeLocation(shape);
-			}
-		}
 	}
 }
