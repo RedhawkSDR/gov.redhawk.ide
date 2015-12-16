@@ -167,15 +167,16 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 	public boolean update(IUpdateContext context) {
 		PictogramElement pe = context.getPictogramElement();
 		if (pe instanceof Diagram) {
-			// Defer to the base class for most updates
-			boolean result = super.update(context);
-
-			// Ensure assembly controller is set in case a component was deleted that used to be the assembly controller
+			// Ensure assembly controller is set in case a component was deleted that used to be the assembly
+			// controller, and re-assign the start orders. It is not necessary to check whether this made any
+			// changes, because if it does, the child shapes will have to be updated and super.update() will
+			// return true.
 			Diagram diagram = (Diagram) pe;
 			SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
 			ComponentPattern.organizeStartOrder(sad, diagram, getFeatureProvider());
 
-			return result;
+			// Defer to the base class for most updates
+			return super.update(context);
 		}
 		return false;
 	}
