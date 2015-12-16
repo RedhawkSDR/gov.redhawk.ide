@@ -149,7 +149,7 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		link(outerContainerShape, hostCollocation);
 
 		// Resize outer rounded rectangle
-		int minWidth = Math.max(context.getWidth(),  300);
+		int minWidth = Math.max(context.getWidth(), 300);
 		int minHeight = Math.max(context.getHeight(), 300);
 		Graphiti.getGaLayoutService().setLocationAndSize(outerContainerShape.getGraphicsAlgorithm(), context.getX(), context.getY(), minWidth, minHeight);
 
@@ -481,7 +481,7 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		}
 
 		List<SadComponentInstantiation> expectedComponents = getComponentInstantiations(collocation);
-		Map<EObject,UpdateAction> actions = getChildrenToUpdate(collocationShape, expectedComponents);
+		Map<EObject, UpdateAction> actions = getChildrenToUpdate(collocationShape, expectedComponents);
 		if (!actions.isEmpty()) {
 			return Reason.createTrueReason("Need to update component shape(s)");
 		}
@@ -509,7 +509,7 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		boolean updatePerformed = UpdateUtil.update(getOuterText(collocationShape), collocation.getName());
 
 		List<SadComponentInstantiation> expectedComponents = getComponentInstantiations(collocation);
-		Map<EObject,UpdateAction> actions = getChildrenToUpdate(collocationShape, expectedComponents);
+		Map<EObject, UpdateAction> actions = getChildrenToUpdate(collocationShape, expectedComponents);
 		updateChildren(collocationShape, actions);
 		if (!actions.isEmpty()) {
 			updatePerformed = true;
@@ -532,7 +532,8 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		ContainerShape collocationShape = (ContainerShape) context.getPictogramElement();
 
 		// Lay out the icon in the upper left
-		Image outerImage = (Image) DUtil.findChildGraphicsAlgorithmByProperty(collocationShape.getGraphicsAlgorithm(), DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_IMAGE);
+		Image outerImage = (Image) DUtil.findChildGraphicsAlgorithmByProperty(collocationShape.getGraphicsAlgorithm(), DUtil.GA_TYPE,
+			GA_OUTER_ROUNDED_RECTANGLE_IMAGE);
 		boolean layoutApplied = UpdateUtil.moveAndResizeIfNeeded(outerImage, HostCollocationPattern.OUTER_IMAGE_LEFT_PADDING, 0,
 			HostCollocationPattern.ICON_IMAGE_WIDTH, HostCollocationPattern.ICON_IMAGE_HEIGHT);
 
@@ -568,7 +569,7 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		for (HostCollocation collocation : sad.getPartitioning().getHostCollocation()) {
 			existingNames.add(collocation.getName());
 		}
-		for (int index = 1; ; index++) {
+		for (int index = 1;; index++) {
 			String name = "collocation_" + index;
 			if (!existingNames.contains(name)) {
 				return name;
@@ -613,5 +614,5 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		// Perform update, redraw
 		updatePictogramElement(collocationShape);
 	}
-	
+
 }

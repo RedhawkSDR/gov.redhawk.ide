@@ -35,20 +35,20 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.util.CollectionUtils;
 
 public abstract class AbstractContainerPattern extends AbstractPattern {
-	
+
 	public AbstractContainerPattern(IPatternConfiguration patternConfiguration) {
 		super(null);
 	}
-	
+
 	/**
-	 * Unless overridden, this method ensures consistency of the validation logic 
+	 * Unless overridden, this method ensures consistency of the validation logic
 	 * and associated error messages for Component, FindBy, and HostCollocation names.
 	 */
 	@Override
 	public String checkValueValid(String value, IDirectEditingContext context) {
 		return validate(getCheckValueValidName(), value);
 	}
-	
+
 	/**
 	 * If <code>getCreateName</code> does not return the desired name for an error
 	 * message, this method can be overridden.
@@ -56,13 +56,13 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 	protected String getCheckValueValidName() {
 		return getCreateName();
 	}
-	
-	protected Map<EObject,UpdateAction> getChildrenToUpdate(ContainerShape containerShape, List< ? extends EObject > modelChildren) {
+
+	protected Map<EObject, UpdateAction> getChildrenToUpdate(ContainerShape containerShape, List< ? extends EObject> modelChildren) {
 		// Put the model children into a set for tracking
 		Set<EObject> expectedChildren = new HashSet<EObject>(modelChildren);
 
 		// Record the actions for each port shape or model stub
-		Map<EObject,UpdateAction> actions = new HashMap<EObject,UpdateAction>();
+		Map<EObject, UpdateAction> actions = new HashMap<EObject, UpdateAction>();
 
 		// First, check the existing shapes for removal or update
 		for (Shape child : containerShape.getChildren()) {
@@ -89,8 +89,8 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 		return actions;
 	}
 
-	protected void updateChildren(ContainerShape containerShape, Map<EObject,UpdateAction> actions) {
-		for (Map.Entry<EObject,UpdateAction> entry : actions.entrySet()) {
+	protected void updateChildren(ContainerShape containerShape, Map<EObject, UpdateAction> actions) {
+		for (Map.Entry<EObject, UpdateAction> entry : actions.entrySet()) {
 			switch (entry.getValue()) {
 			case ADD:
 				DUtil.addShapeViaFeature(getFeatureProvider(), containerShape, entry.getKey());
@@ -106,9 +106,10 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 			}
 		}
 	}
+
 	/**
 	 * Checks to see if the given String <code>value</code> is valid. Returns an error
-	 * message if invalid and <code>null</code> if valid. 
+	 * message if invalid and <code>null</code> if valid.
 	 * @param valueType - should be capitalized (e.g. Component, Host Collocation, etc.)
 	 * @param value
 	 * @return error message
