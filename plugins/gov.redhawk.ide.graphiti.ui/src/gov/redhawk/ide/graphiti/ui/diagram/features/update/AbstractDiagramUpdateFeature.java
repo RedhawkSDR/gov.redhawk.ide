@@ -42,6 +42,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.FindByUtil;
 import gov.redhawk.sca.util.Debug;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterface;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
@@ -650,7 +651,12 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				return findByStub.getUses();
 			}
 		} else if (usesPort.getComponentInstantiationRef() != null) {
-			return usesPort.getComponentInstantiationRef().getInstantiation().getUses();
+			// It's possible that the referenced component instantiation no longer exists, such as when the component
+			// was deleted via the XML editor
+			ComponentInstantiation instantiation = usesPort.getComponentInstantiationRef().getInstantiation();
+			if (instantiation != null) {
+				return instantiation.getUses();
+			}
 		}
 		return Collections.emptyList();
 	}
@@ -704,7 +710,12 @@ public class AbstractDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				return findByStub.getProvides();
 			}
 		} else if (providesPort.getComponentInstantiationRef() != null) {
-			return providesPort.getComponentInstantiationRef().getInstantiation().getProvides();
+			// It's possible that the referenced component instantiation no longer exists, such as when the component
+			// was deleted via the XML editor
+			ComponentInstantiation instantiation = providesPort.getComponentInstantiationRef().getInstantiation();
+			if (instantiation != null) {
+				return instantiation.getProvides();
+			}
 		}
 		return Collections.emptyList();
 	}
