@@ -285,6 +285,8 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			updatePerformed = true;
 		}
 
+		// Link the container to all of the ports for compatibility with 2.0.0. As of 2.0.1, these links are not used.
+		link(portsContainer, modelPorts.toArray());
 		return updatePerformed;
 	}
 
@@ -292,6 +294,12 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		if (portsContainer == null) {
 			return true;
 		}
+
+		// Check that the container is linked to the port business objects (see above).
+		if (!isLinked(portsContainer, modelPorts)) {
+			return true;
+		}
+
 		Map< EObject, UpdateAction > portActions = getChildrenToUpdate(portsContainer, modelPorts);
 		if (!portActions.isEmpty()) {
 			return true;
@@ -303,11 +311,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		if (superPort == null) {
 			return true;
 		}
-		List<Object> businessObjects = Arrays.asList(getMappingProvider().getAllBusinessObjectsForPictogramElement(superPort));
-		if (businessObjects.size() != modelStubs.size()) {
-			return true;
-		}
-		return !businessObjects.containsAll(modelStubs);
+		return !isLinked(superPort, modelStubs);
 	}
 
 	protected boolean updateSuperUsesPorts(ContainerShape superPort, List< ? extends EObject > modelStubs) {

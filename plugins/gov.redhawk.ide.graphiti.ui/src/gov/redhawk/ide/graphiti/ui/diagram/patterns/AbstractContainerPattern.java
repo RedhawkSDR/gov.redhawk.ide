@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -159,5 +160,21 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Checks whether the provided pictogram element is linked to exactly the set of objects given. It is assumed that
+	 * order does not matter and there are no duplicates.
+	 *
+	 * @param pictogramElement
+	 * @param businessObjects
+	 * @return true if the set of linked objects is exactly the set of business objects
+	 */
+	protected boolean isLinked(PictogramElement pictogramElement, List< ? > businessObjects) {
+		Object[] linkedObjects = getMappingProvider().getAllBusinessObjectsForPictogramElement(pictogramElement);
+		if (businessObjects.size() != linkedObjects.length) {
+			return false;
+		}
+		return businessObjects.containsAll(Arrays.asList(linkedObjects));
 	}
 }
