@@ -21,4 +21,9 @@
   <artifactId>gov.redhawk.ide.swtbot</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+
+  <properties>
+    <sonar.sources></sonar.sources>
+  </properties>
+
 </project>
