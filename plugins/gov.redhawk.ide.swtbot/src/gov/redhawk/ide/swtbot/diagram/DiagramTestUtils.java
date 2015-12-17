@@ -176,19 +176,6 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 	/**
 	 * Add a HostCollocation to the SAD diagram editor
 	 */
-	@Deprecated
-	public static void addHostCollocationToDiagram(SWTGefBot gefBot, RHBotGefEditor editor, String hostCoName) {
-		addHostCollocationToDiagram(editor);
-
-		SWTBotGefEditPart editPart = editor.getEditPart("collocation_1");
-		Text nameText = getHostCollocationText((ContainerShape) editPart.part().getModel());
-		activateDirectEditing(editor, editPart, nameText);
-		editor.directEditType(hostCoName);
-	}
-
-	/**
-	 * Add a HostCollocation to the SAD diagram editor
-	 */
 	public static void addHostCollocationToDiagram(RHBotGefEditor editor) {
 		addFromPaletteToDiagram(editor, "Host Collocation", 0, 0);
 	}
