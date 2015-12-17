@@ -113,6 +113,10 @@ public class RHTestBotViewer extends SWTBotGefViewer {
 			}
 		});
 
+		if (entries.isEmpty()) {
+			String errorMsg = String.format("%s was not found", Arrays.toString(labels));
+			throw new WidgetNotFoundException(errorMsg);
+		}
 		final PaletteEntry paletteEntry = entries.get(index);
 		if (!(paletteEntry instanceof ToolEntry)) {
 			String errorMsg = String.format("%s is not a tool entry, it's a %s", Arrays.toString(labels).toString(), paletteEntry.getClass().getName());
