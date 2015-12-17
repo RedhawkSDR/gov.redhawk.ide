@@ -28,6 +28,12 @@
       %license
    </license>
 
+   <requires>
+      <import feature="org.eclipse.swtbot" version="2.4.0.201511021241" match="greaterOrEqual"/>
+      <import feature="org.eclipse.swtbot.eclipse.gef" version="2.4.0.201511021241" match="greaterOrEqual"/>
+      <import feature="org.eclipse.swtbot.eclipse" version="2.4.0.201511021241" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
          id="gov.redhawk.ide.swtbot"
          download-size="0"
