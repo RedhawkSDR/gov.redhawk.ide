@@ -176,33 +176,42 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 	/**
 	 * Add a HostCollocation to the SAD diagram editor
 	 */
+	@Deprecated
 	public static void addHostCollocationToDiagram(SWTGefBot gefBot, RHBotGefEditor editor, String hostCoName) {
-		addFromPaletteToDiagram(editor, "Host Collocation", 0, 0);
+		addHostCollocationToDiagram(editor);
 
 		SWTBotGefEditPart editPart = editor.getEditPart("collocation_1");
-		editPart.select();
-
-		// Set the DiagramBehavior's mouse position to point to the collocation name, otherwise activating direct
-		// editing will fail to activate.
-		ContainerShape shape = (ContainerShape) editPart.part().getModel();
-		Text name = getHostCollocationText(shape);
-		final int textX = name.getX() + name.getWidth() / 2;
-		final int textY = name.getY() + name.getHeight() / 2;
-		GraphitiWaveformMultiPageEditor diagramEditor = (GraphitiWaveformMultiPageEditor) editor.getReference().getEditor(false);
-		final DiagramBehavior diagramBehavior = diagramEditor.getDiagramEditor().getDiagramBehavior();
-		diagramBehavior.getMouseLocation().setLocation(textX, textY);
-
-		editPart.activateDirectEdit();
+		Text nameText = getHostCollocationText((ContainerShape) editPart.part().getModel());
+		activateDirectEditing(editor, editPart, nameText);
 		editor.directEditType(hostCoName);
 	}
 
-	private static Text getHostCollocationText(ContainerShape shape) {
-		for (GraphicsAlgorithm ga : shape.getGraphicsAlgorithm().getGraphicsAlgorithmChildren()) {
-			if (ga instanceof Text) {
-				return (Text) ga;
-			}
-		}
-		return null;
+	/**
+	 * Add a HostCollocation to the SAD diagram editor
+	 */
+	public static void addHostCollocationToDiagram(RHBotGefEditor editor) {
+		addFromPaletteToDiagram(editor, "Host Collocation", 0, 0);
+	}
+
+	/**
+	 * Activates direct editing on an edit part as though the user had clicked on a specific graphics algorithm,
+	 * necessary to adapt Graphiti's direct editing model.
+	 * @param editor
+	 * @param editPart
+	 * @param ga
+	 */
+	public static void activateDirectEditing(RHBotGefEditor editor, SWTBotGefEditPart editPart, GraphicsAlgorithm ga) {
+		editPart.select();
+
+		// Set the DiagramBehavior's mouse position to point to the graphics algorithm, otherwise activating direct
+		// editing will fail to activate.
+		final int gaX = ga.getX() + ga.getWidth() / 2;
+		final int gaY = ga.getY() + ga.getHeight() / 2;
+		GraphitiWaveformMultiPageEditor diagramEditor = (GraphitiWaveformMultiPageEditor) editor.getReference().getEditor(false);
+		final DiagramBehavior diagramBehavior = diagramEditor.getDiagramEditor().getDiagramBehavior();
+		diagramBehavior.getMouseLocation().setLocation(gaX, gaY);
+
+		editPart.activateDirectEdit();
 	}
 
 	/**
@@ -413,6 +422,21 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 			return null;
 		}
 		return (ContainerShape) swtBotGefEditPart.part().getModel();
+	}
+
+	/**
+	 * Utility method to get the Text graphics algorithm that contains the name for a HostCollocation shape.
+	 * Returns null if object not found
+	 * @param shape
+	 * @return
+	 */
+	public static Text getHostCollocationText(ContainerShape shape) {
+		for (GraphicsAlgorithm ga : shape.getGraphicsAlgorithm().getGraphicsAlgorithmChildren()) {
+			if (ga instanceof Text) {
+				return (Text) ga;
+			}
+		}
+		return null;
 	}
 
 	/**
