@@ -25,7 +25,7 @@
    <feature url="features/gov.redhawk.ide.ui.sdk_0.0.0.qualifier.jar" id="gov.redhawk.ide.ui.sdk">
       <category name="gov.redhawk.ide"/>
    </feature>
-   <feature url="features/gov.redhawk.ide.swtbot_0.0.0.qualifier.jar" id="gov.redhawk.ide.swtbot">
+   <feature url="features/gov.redhawk.ide.swtbot.feature_0.0.0.qualifier.jar" id="gov.redhawk.ide.swtbot.feature">
       <category name="gov.redhawk.ide"/>
    </feature>
    <category-def name="gov.redhawk.ide" label="REDHAWK IDE"/>
