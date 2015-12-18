@@ -29,21 +29,27 @@ public class SynchronizedRefreshBehavior extends DefaultRefreshBehavior {
 		runInUIThread(new Runnable() {
 			@Override
 			public void run() {
-				doRefresh();
+				if (!diagramBehavior.isAlive()) {
+					return;
+				}
+				try {
+					diagramBehavior.getEditingDomain().runExclusive(new Runnable() {
+						public void run() {
+							doRefresh();
+						}
+					});
+				} catch (InterruptedException e) {
+					return;
+				}
 			}
 		});
 	}
 
 	protected void runInUIThread(final Runnable runnable) {
-		if (!diagramBehavior.isAlive()) {
-			return;
-		}
-		synchronized (diagramBehavior.getEditingDomain().getCommandStack()) {
-			if (Display.getCurrent() == null) {
-				Display.getDefault().syncExec(runnable);
-			} else {
-				runnable.run();
-			}
+		if (Display.getCurrent() == null) {
+			Display.getDefault().asyncExec(runnable);
+		} else {
+			runnable.run();
 		}
 	}
 
