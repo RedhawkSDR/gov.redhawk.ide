@@ -220,12 +220,9 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		return new Object[] { hostCollocation };
 	}
 
-	/**
-	 * Resizing a Component shape is always allowed
-	 */
 	@Override
 	public boolean canResizeShape(IResizeShapeContext context) {
-		// If a FindBy object would be wrapped in the Host Collocation, then cancel the operation
+		// If a findby or usesdevice would be covered by the host collocation then disallow
 		List<Shape> shapesToAddToHostCollocation = DUtil.getContainersInArea(getDiagram(), context.getWidth(), context.getHeight(), context.getX(),
 			context.getY(), GA_OUTER_ROUNDED_RECTANGLE);
 		for (Shape shape : shapesToAddToHostCollocation) {
