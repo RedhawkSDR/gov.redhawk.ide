@@ -22,7 +22,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.swtbot.swt.finder;bundle-version="2.4.0",
  org.eclipse.graphiti.ui,
  mil.jpeojtrs.sca.util,
- org.eclipse.ui.views.properties.tabbed;bundle-version="3.6.100"
+ org.eclipse.ui.views.properties.tabbed;bundle-version="3.6.100",
+ org.eclipse.draw2d;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: REDHAWK
@@ -32,4 +33,3 @@ Export-Package: gov.redhawk.ide.swtbot,
  gov.redhawk.ide.swtbot.finder,
  gov.redhawk.ide.swtbot.finder.widgets,
  gov.redhawk.ide.swtbot.scaExplorer
-Import-Package: gov.redhawk.ide.graphiti.sad.ext.impl
