@@ -31,6 +31,9 @@ public class ConnectionUtils {
 		WARNING
 	}
 
+	private ConnectionUtils() {
+	}
+
 	private static RGB convertColor(IColorConstant expected) {
 		return new RGB(expected.getRed(), expected.getGreen(), expected.getBlue());
 	}
