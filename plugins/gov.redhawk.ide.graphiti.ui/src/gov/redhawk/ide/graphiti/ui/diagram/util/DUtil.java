@@ -535,15 +535,16 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Returns list of ContainerShape in provided AreaContext with
-	 * property key DiagramUtil.GA_TYPE and provided propertyValue
-	 * @param containerShape
-	 * @param context
+	 * Checks the container shape and all its children and returns any which overlap any of the specified area.
+	 * @param containerShape Usually this should be the {@link Diagram}
+	 * @param width
+	 * @param height
+	 * @param x Absolute x
+	 * @param y Absolute y
 	 * @return
 	 */
-	public static List<Shape> getContainersInArea(final ContainerShape containerShape, int width, int height, int x, int y) {
+	public static List<Shape> getShapesInArea(final ContainerShape containerShape, int width, int height, int x, int y) {
 		List<Shape> retList = new ArrayList<Shape>();
-
 		EList<Shape> shapes = containerShape.getChildren();
 		for (Shape s : shapes) {
 			if (shapeExistsPartiallyInArea(s, width, height, x, y)) {
@@ -609,15 +610,16 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Returns list of ContainerShape outside of provided AreaContext on containerShape with
-	 * property key DiagramUtil.GA_TYPE and provided propertyValue
-	 * @param containerShape
-	 * @param context
+	 * Checks the container shape and all its children and returns any which do not overlap any of the specified area.
+	 * @param containerShape Usually this should be the {@link Diagram}
+	 * @param width
+	 * @param height
+	 * @param x Absolute x
+	 * @param y Absolute y
 	 * @return
 	 */
-	public static List<Shape> getContainersOutsideArea(final ContainerShape containerShape, int width, int height, int x, int y, String propertyValue) {
+	public static List<Shape> getShapesOutsideArea(final ContainerShape containerShape, int width, int height, int x, int y) {
 		List<Shape> retList = new ArrayList<Shape>();
-
 		EList<Shape> shapes = containerShape.getChildren();
 		for (Shape s : shapes) {
 			if (!shapeExistsPartiallyInArea(s, width, height, x, y)) {
@@ -628,78 +630,18 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Return true if GraphicsAlgorithm exists within IAreaContext
-	 * @param ga
-	 * @param context
-	 * @return
-	 */
-	public static boolean shapeExistsPartiallyInArea(final Shape s, int areaW, int areaH, int areaX, int areaY) {
-		GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
-		ILocation sLoc = GraphitiUi.getUiLayoutService().getLocationRelativeToDiagram(s);
-		int[] x = new int[4];
-		int[] y = new int[4];
-		// top left
-		x[0] = sLoc.getX();
-		y[0] = sLoc.getY();
-		// top right
-		x[1] = sLoc.getX() + ga.getWidth();
-		y[1] = sLoc.getY();
-		// bottom left
-		x[2] = sLoc.getX();
-		y[2] = sLoc.getY() + ga.getHeight();
-		// bottom right
-		x[3] = sLoc.getX() + ga.getWidth();
-		y[3] = sLoc.getY() + ga.getHeight();
-
-		// return true if any corner of s exists inside area
-		for (int i = 0; i < x.length; i++) {
-			if (xyExistInArea(x[i], y[i], areaW, areaH, areaX, areaY)) {
-				return true;
-			}
-		}
-
-		// return true if host collocation is inside shape
-		if ((sLoc.getX() < areaX) && ((sLoc.getX() + ga.getWidth()) > (areaX + areaW)) && (sLoc.getY() < areaY)
-			&& ((sLoc.getY() + ga.getHeight()) > (areaY + areaH))) {
-			return true;
-		}
-
-		// return true if area is inside of shape
-		if ((sLoc.getX() < areaX) && ((sLoc.getX() + ga.getWidth()) > (areaX + areaW)) && (sLoc.getY() < areaY)
-			&& ((sLoc.getY() + ga.getHeight()) > (areaY + areaH))) {
-			return true;
-		}
-
-		// return true if x area is outside of shape, but y is not
-		if ((sLoc.getX() > areaX) && ((sLoc.getX() + ga.getWidth()) < (areaX + areaW)) && (sLoc.getY() < areaY)
-			&& ((sLoc.getY() + ga.getHeight()) > (areaY + areaH))) {
-			return true;
-		}
-
-		// return true if y area is outside of shape, but c is not
-		if ((sLoc.getX() < areaX) && ((sLoc.getX() + ga.getWidth()) > (areaX + areaW)) && (sLoc.getY() > areaY)
-			&& ((sLoc.getY() + ga.getHeight()) < (areaY + areaH))) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * XY exists within xy area
+	 * Determine if a shape overlaps an area. Coordinates should be absolute.
+	 * @param s
+	 * @param width
+	 * @param height
 	 * @param x
 	 * @param y
-	 * @param areaW
-	 * @param areaH
-	 * @param areaX
-	 * @param areaY
 	 * @return
 	 */
-	public static boolean xyExistInArea(int x, int y, int areaW, int areaH, int areaX, int areaY) {
-		if (areaX <= x && (areaX + areaW) >= x && areaY <= y && (areaY + areaH) >= y) {
-			return true;
-		}
-		return false;
+	public static boolean shapeExistsPartiallyInArea(final Shape s, int width, int height, int x, int y) {
+		GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
+		ILocation shapeLoc = GraphitiUi.getUiLayoutService().getLocationRelativeToDiagram(s);
+		return ((x + width) > ga.getX() && x < (shapeLoc.getX() + ga.getWidth()) && (y + height) > ga.getY() && y < (shapeLoc.getY() + ga.getHeight()));
 	}
 
 	/**
