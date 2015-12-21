@@ -541,8 +541,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param context
 	 * @return
 	 */
-	public static List<Shape> getContainersInArea(final ContainerShape containerShape, int width, int height, int x, int y, String propertyValue) {
-
+	public static List<Shape> getContainersInArea(final ContainerShape containerShape, int width, int height, int x, int y) {
 		List<Shape> retList = new ArrayList<Shape>();
 
 		EList<Shape> shapes = containerShape.getChildren();

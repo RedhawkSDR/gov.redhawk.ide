@@ -184,8 +184,7 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// find all SadComponentInstantiation
-		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context.getWidth(), context.getHeight(), context.getX(), context.getY(),
-			GA_OUTER_ROUNDED_RECTANGLE);
+		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context.getWidth(), context.getHeight(), context.getX(), context.getY());
 		final List<SadComponentInstantiation> sadComponentInstantiations = new ArrayList<SadComponentInstantiation>();
 		for (Shape shape : containedShapes) {
 			EObject bo = (EObject) getBusinessObjectForPictogramElement(shape);
@@ -224,7 +223,7 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 	public boolean canResizeShape(IResizeShapeContext context) {
 		// If a findby or usesdevice would be covered by the host collocation then disallow
 		List<Shape> shapesToAddToHostCollocation = DUtil.getContainersInArea(getDiagram(), context.getWidth(), context.getHeight(), context.getX(),
-			context.getY(), GA_OUTER_ROUNDED_RECTANGLE);
+			context.getY());
 		for (Shape shape : shapesToAddToHostCollocation) {
 			for (EObject obj : shape.getLink().getBusinessObjects()) {
 				if (obj instanceof FindByStub || obj instanceof UsesDeviceStub) {
@@ -278,7 +277,7 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 
 		// find all components to add to add (now inside host collocation, expanded)
 		List<Shape> shapesToAddToHostCollocation = DUtil.getContainersInArea(getDiagram(), context.getWidth(), context.getHeight(), context.getX(),
-			context.getY(), GA_OUTER_ROUNDED_RECTANGLE);
+			context.getY());
 		final List<SadComponentInstantiation> ciToAdd = new ArrayList<SadComponentInstantiation>();
 		for (Shape shape : shapesToAddToHostCollocation) {
 			for (EObject obj : shape.getLink().getBusinessObjects()) {
