@@ -416,15 +416,6 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 		};
 	}
 
-	/**
-	 * Returns the {@link Diagram} this pattern lives for.
-	 * 
-	 * @return The diagram
-	 */
-	public Diagram getDiagram() {
-		return getFeatureProvider().getDiagramTypeProvider().getDiagram();
-	}
-
 	@Override
 	protected EList<UsesPortStub> getUses(EObject obj) {
 		if (obj instanceof FindByStub) {
