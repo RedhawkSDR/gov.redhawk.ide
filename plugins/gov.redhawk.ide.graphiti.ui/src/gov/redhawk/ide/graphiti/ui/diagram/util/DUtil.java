@@ -555,6 +555,28 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
+	 * Returns true if the specified area overlaps any part of a host collocation.
+	 * @param diagram
+	 * @param width
+	 * @param height
+	 * @param x Absolute x
+	 * @param y Absolute y
+	 * @return
+	 */
+	public static boolean overlapsHostCollocation(Diagram diagram, int width, int height, int x, int y) {
+		for (Shape shape : diagram.getChildren()) {
+			PictogramElement pe = shape.getLink().getPictogramElement();
+			if (!(DUtil.getBusinessObject(pe) instanceof HostCollocation)) {
+				continue;
+			}
+			if (shapeExistsPartiallyInArea(shape, width, height, x, y)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Adjust children x/y so they remain in the same relative position after resize
 	 * @param containerShape
 	 * @param context

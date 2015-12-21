@@ -45,7 +45,9 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -143,6 +145,18 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 	@Override
 	public boolean canCreate(ICreateContext context) {
 		return context.getTargetContainer() instanceof Diagram;
+	}
+
+	@Override
+	public boolean canMoveShape(IMoveShapeContext context) {
+		if (!super.canMoveShape(context)) {
+			return false;
+		}
+		GraphicsAlgorithm ga = context.getShape().getGraphicsAlgorithm();
+		if (DUtil.overlapsHostCollocation(getDiagram(), ga.getWidth(), ga.getHeight(), context.getX(), context.getY())) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
