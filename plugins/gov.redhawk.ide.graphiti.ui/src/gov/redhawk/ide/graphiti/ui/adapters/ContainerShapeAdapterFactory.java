@@ -62,7 +62,7 @@ public class ContainerShapeAdapterFactory implements IAdapterFactory {
 			return null;
 		}
 
-		ScaAbstractComponent< ? > component = GraphitiAdapterUtil.safeFetchResource(diagram, instantiation);
+		ScaAbstractComponent< ? > component = GraphitiAdapterUtil.getScaModelObject(diagram, instantiation);
 		if (adapterType.isInstance(component)) {
 			return adapterType.cast(component);
 		} else {

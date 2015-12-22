@@ -71,9 +71,9 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 			return null;
 		}
 
-		ScaPortContainer component = GraphitiAdapterUtil.safeFetchResource(diagram, (ComponentInstantiation) port.eContainer());
+		ScaPortContainer component = GraphitiAdapterUtil.getScaModelObject(diagram, (ComponentInstantiation) port.eContainer());
 		if (component != null) {
-			return GraphitiAdapterUtil.safeFetchPort(component, name);
+			return component.getScaPort(name);
 		}
 		return null;
 	}

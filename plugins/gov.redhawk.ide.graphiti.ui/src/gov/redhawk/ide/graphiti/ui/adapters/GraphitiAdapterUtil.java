@@ -18,11 +18,9 @@ import gov.redhawk.model.sca.ScaAbstractComponent;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaDeviceManager;
-import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,9 +36,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 
 /**
@@ -88,26 +83,9 @@ public final class GraphitiAdapterUtil {
 	}
 
 	/**
-	 *  Ensure the feature is "set" to avoid future zombie threads.
-	 *
-	 * @param target
-	 * @param feature
+	 * @deprecated Do not use
 	 */
-	private static void setFetchedFeature(final EObject target, final EStructuralFeature feature) {
-		if (!target.eIsSet(feature)) {
-			ScaModelCommand.execute(target, new ScaModelCommand() {
-
-				@Override
-				public void execute() {
-					if (!target.eIsSet(feature)) {
-						EList< ? > list = (EList< ? >) target.eGet(feature);
-						list.clear();
-					}
-				}
-			});
-		}
-	}
-
+	@Deprecated
 	public static ScaComponent safeFetchComponent(final ScaWaveform waveform, final String instantiationId) {
 		if (waveform != null) {
 			// Ensure that the components are fetched, but use the waveform's getScaComponent to find the requested
@@ -118,6 +96,10 @@ public final class GraphitiAdapterUtil {
 		return null;
 	}
 
+	/**
+	 * @deprecated Do not use
+	 */
+	@Deprecated
 	public static List<ScaComponent> safeFetchComponents(final ScaWaveform waveform) {
 		if (waveform == null) {
 			return Collections.emptyList();
@@ -131,12 +113,14 @@ public final class GraphitiAdapterUtil {
 					return waveform.fetchComponents(monitor, RefreshDepth.SELF);
 				}
 			});
-
-			GraphitiAdapterUtil.setFetchedFeature(waveform, ScaPackage.Literals.SCA_WAVEFORM__COMPONENTS);
 		}
 		return waveform.getComponents();
 	}
 
+	/**
+	 * @deprecated Do not use
+	 */
+	@Deprecated
 	public static ScaDevice< ? > safeFetchDevice(final ScaDeviceManager devMgr, final String deviceId) {
 		if (devMgr != null) {
 			// Ensure that all the devices are fetched before requesting the device.
@@ -146,6 +130,10 @@ public final class GraphitiAdapterUtil {
 		return null;
 	}
 
+	/**
+	 * @deprecated Do not use
+	 */
+	@Deprecated
 	public static List<ScaDevice<?>> safeFetchDevices(final ScaDeviceManager deviceManager) {
 		if (deviceManager == null) {
 			return Collections.emptyList();
@@ -159,12 +147,14 @@ public final class GraphitiAdapterUtil {
 					return deviceManager.fetchDevices(monitor, RefreshDepth.SELF);
 				}
 			});
-
-			GraphitiAdapterUtil.setFetchedFeature(deviceManager, ScaPackage.Literals.SCA_DEVICE_MANAGER__DEVICES);
 		}
 		return deviceManager.getAllDevices();
 	}
 
+	/**
+	 * @deprecated Do not use
+	 */
+	@Deprecated
 	public static List<ScaPort< ? , ? >> safeFetchPorts(final ScaPortContainer container) {
 		if (container == null) {
 			return Collections.emptyList();
@@ -187,13 +177,15 @@ public final class GraphitiAdapterUtil {
 					return container.fetchPorts(monitor);
 				}
 			});
-
-			GraphitiAdapterUtil.setFetchedFeature(container, ScaPackage.Literals.SCA_PORT_CONTAINER__PORTS);
 		}
 
 		return container.getPorts();
 	}
 
+	/**
+	 * @deprecated Do not use
+	 */
+	@Deprecated
 	public static ScaPort< ? , ? > safeFetchPort(ScaPortContainer container, String name) {
 		if (container != null) {
 			// Ensure that all the ports are fetched before requesting the port.
@@ -203,6 +195,10 @@ public final class GraphitiAdapterUtil {
 		return null;
 	}
 
+	/**
+	 * @deprecated Use {@link #getScaModelObject(Diagram, ComponentInstantiation)}
+	 */
+	@Deprecated
 	public static ScaAbstractComponent< ? > safeFetchResource(Diagram diagram, ComponentInstantiation instantiation) {
 		if (instantiation instanceof SadComponentInstantiation) {
 			ScaWaveform waveform = DUtil.getBusinessObject(diagram, ScaWaveform.class);
@@ -213,6 +209,27 @@ public final class GraphitiAdapterUtil {
 			ScaDeviceManager devMgr = DUtil.getBusinessObject(diagram, ScaDeviceManager.class);
 			if (devMgr != null) {
 				return GraphitiAdapterUtil.safeFetchDevice(devMgr, instantiation.getId());
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Maps from mil.jpeojtrs.sca model -> SCA model for a given Graphiti diagram.
+	 * @param diagram
+	 * @param instantiation
+	 * @return The model object, or null if it doesn't exist in the model
+	 */
+	public static ScaAbstractComponent< ? > getScaModelObject(Diagram diagram, ComponentInstantiation instantiation) {
+		if (instantiation instanceof SadComponentInstantiation) {
+			ScaWaveform waveform = DUtil.getBusinessObject(diagram, ScaWaveform.class);
+			if (waveform != null) {
+				return waveform.getScaComponent(instantiation.getId());
+			}
+		} else if (instantiation instanceof DcdComponentInstantiation) {
+			ScaDeviceManager devMgr = DUtil.getBusinessObject(diagram, ScaDeviceManager.class);
+			if (devMgr != null) {
+				return devMgr.getDevice(instantiation.getId());
 			}
 		}
 		return null;
