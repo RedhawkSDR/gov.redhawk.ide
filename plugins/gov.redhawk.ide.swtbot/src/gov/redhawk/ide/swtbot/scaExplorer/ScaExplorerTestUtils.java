@@ -268,32 +268,6 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Terminates component via REDHAWK Explorer
-	 * @param componentName
-	 * @deprecated Use {@link #terminateLocalResourceInExplorer(SWTWorkbenchBot, String[], String)}
-	 */
-	@Deprecated
-	public static void terminateComponentInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, String componentName) {
-		List<String> path = new ArrayList<String>();
-		Collections.addAll(path, waveformParentPath);
-		path.add(waveform);
-		terminateLocalResourceInExplorer(bot, path.toArray(new String[path.size()]), componentName);
-	}
-	
-	/**
-	 * Terminates component via REDHAWK Explorer
-	 * @param componentName
-	 * @deprecated Use {@link #terminateLocalResourceInExplorer(SWTWorkbenchBot, String[], String)}
-	 */
-	@Deprecated
-	public static void terminateDeviceInScaExplorer(SWTWorkbenchBot bot, String[] deviceManagerParentPath, String deviceManager, String deviceName) {
-		List<String> path = new ArrayList<String>();
-		Collections.addAll(path, deviceManagerParentPath);
-		path.add(deviceManager);
-		terminateLocalResourceInExplorer(bot, path.toArray(new String[path.size()]), deviceName);
-	}
-
-	/**
 	 * Connect component ports via REDHAWK Explorer
 	 * @param componentName
 	 */
@@ -363,23 +337,6 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Start component from REDHAWK Explorer
-	 * @param componentName
-	 * @deprecated Use {@link #startResourceInExplorer(SWTWorkbenchBot, String[], String)}
-	 */
-	@Deprecated
-	public static void startComponentFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, String componentName) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		SWTBotTreeItem waveformEntry = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-		if (!waveformEntry.isExpanded()) {
-			waveformEntry.expand();
-		}
-		SWTBotTreeItem componentEntry = waveformEntry.getNode(componentName);
-		componentEntry.contextMenu("Start").click();
-	}
-
-	/**
 	 * Clicks a context menu for a tree item in the explorer.
 	 * @param bot
 	 * @param nodeParentPath The parent elements in the tree above the item
@@ -414,15 +371,6 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Stop components in Diagram via REDHAWK Explorer
-	 * @deprecated Use {@link #stopResourceInExplorer(SWTWorkbenchBot, String[], String)}
-	 */
-	@Deprecated
-	public static void stopWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
-		stopResourceInExplorer(bot, waveformParentPath, waveform);
-	}
-
-	/**
 	 * Terminate components in Diagram via REDHAWK Explorer.
 	 */
 	public static void terminateWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
@@ -447,32 +395,6 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Start container/component in Diagram via REDHAWK Explorer
-	 * @deprecated Use {@link #startResourceInExplorer(SWTWorkbenchBot, String[], String)}
-	 */
-	@Deprecated
-	public static void startWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
-		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, node);
-		treeItemEntry.contextMenu("Start").click();
-	}
-
-	/**
-	 * Stop component from REDHAWK Explorer
-	 * @param bot
-	 * @param waveformParentPath
-	 * @param waveform
-	 * @param componentName
-	 * @deprecated Use {@link #stopResourceInExplorer(SWTWorkbenchBot, String[], String)}
-	 */
-	@Deprecated
-	public static void stopComponentFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, String componentName) {
-		List<String> path = new ArrayList<String>();
-		Collections.addAll(path, waveformParentPath);
-		path.add(waveform);
-		stopResourceInExplorer(bot, path.toArray(new String[path.size()]), componentName);
-	}
-
-	/**
 	 * Waits for the specified resource to be present and <b>not</b> decorated as started in the explorer view.
 	 * @param bot
 	 * @param nodeParentPath The parent elements in the tree above the node
@@ -480,40 +402,6 @@ public class ScaExplorerTestUtils {
 	 */
 	public static void waitUntilResourceStoppedInExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
 		waitUntilNodeStartedInScaExplorer(bot, nodeParentPath, nodeName, false);
-	}
-
-	/**
-	 * Waits until node appears stopped in REDHAWK Explorer
-	 * @param bot
-	 * @param parentPath - The domain or local path (e.g {"REDHAWK_DEV", "Device Managers"} or {"Sandbox"}
-	 * @param parent - The direct parent of the node (e.g. the waveform or device manager name) 
-	 * @param nodeName - The full name of the node to be checked
-	 * @deprecated Use {@link #waitUntilResourceStoppedInExplorer(SWTWorkbenchBot, String[], String)}
-	 */
-	@Deprecated
-	public static void waitUntilNodeStoppedInScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String parent,
-		final String nodeName) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		final SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, parent);
-
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return nodeName + " Node did not appear stopped in REDHAWK Explorer";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = treeItem.getItems();
-				for (SWTBotTreeItem item : items) {
-					if (item.getText().trim().equals(nodeName)) {
-						return true;
-					}
-				}
-				return false;
-			}
-		}, 10000);
 	}
 
 	/**
@@ -573,40 +461,6 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until node appears stopped in REDHAWK Explorer
-	 * @param bot
-	 * @param parentPath - The domain or local path (e.g {"REDHAWK_DEV", "Device Managers"} or {"Sandbox"}
-	 * @param parent - The direct parent of the node (e.g. the waveform or device manager name) 
-	 * @param nodeName - The full name of the node to be checked
-	 * @deprecated Use {@link #waitUntilResourceStartedInExplorer(SWTWorkbenchBot, String[], String)
-	 */
-	@Deprecated
-	public static void waitUntilNodeStartedInScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String parent,
-		final String nodeName) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		final SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, parent);
-
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return nodeName + " Node did not appear started in REDHAWK Explorer";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = treeItem.getItems();
-				for (SWTBotTreeItem item : items) {
-					if (item.getText().equals(nodeName + " STARTED")) {
-						return true;
-					}
-				}
-				return false;
-			}
-		});
-	}
-
-	/**
 	 * Waits until Component displays in REDHAWK Explorer
 	 * @param componentName
 	 */
@@ -660,16 +514,6 @@ public class ScaExplorerTestUtils {
 				return true;
 			}
 		});
-	}
-
-	/**
-	 * Waits until Waveform disappears in REDHAWK Explorer
-	 * @param componentName
-	 * @deprecated use the type agnostic method call {@link #waitUntilNodeRemovedFromScaExplorer(SWTWorkbenchBot, String[], String)} instead
-	 */
-	@Deprecated
-	public static void waitUntilScaExplorerWaveformDisappears(SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveform) {
-		waitUntilNodeRemovedFromScaExplorer(bot, waveformParentPath, waveform);
 	}
 
 	/**
@@ -924,16 +768,6 @@ public class ScaExplorerTestUtils {
 				return false;
 			}
 		});
-	}
-
-	/**
-	 * Waits until Waveform displays in REDHAWK Explorer
-	 * @param componentName
-	 * @deprecated use the type agnostic method call {@link #waitUntilNodeAppearsInScaExplorer(SWTWorkbenchBot, String[], String)} instead
-	 */
-	@Deprecated
-	public static void waitUntilWaveformAppearsInScaExplorer(SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveformName) {
-		waitUntilNodeAppearsInScaExplorer(bot, waveformParentPath, waveformName);
 	}
 	
 	/**
