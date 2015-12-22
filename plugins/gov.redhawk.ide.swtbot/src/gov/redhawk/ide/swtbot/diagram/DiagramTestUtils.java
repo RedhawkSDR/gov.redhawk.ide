@@ -68,7 +68,7 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
-public class DiagramTestUtils extends AbstractGraphitiTest {
+public class DiagramTestUtils {
 
 	/** hide constructor, since all functions are static. */
 	private DiagramTestUtils() {
@@ -81,7 +81,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest {
 	public static final String DIAGRAM_TAB = "Diagram";
 	public static final String XML_TAB = ".sad.xml";
 
-	static final long DELAY_MS = 100;
+	private static final long DELAY_MS = 100;
 
 	/**
 	 * Deletes the provided part from the diagram. Part must have a context menu option for "Delete"
