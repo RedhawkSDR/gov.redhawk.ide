@@ -25,30 +25,6 @@ public class PaletteUtils {
 	private PaletteUtils() {
 	}
 
-	/*
-	private static void ensureExpanded(SWTBot bot, SWTBotGefEditPart gefPart) {
-		final EditPart part = gefPart.part();
-		if (part instanceof DrawerEditPart && !((DrawerEditPart) part).isExpanded()
-			|| part instanceof PaletteNamespaceFolderEditPart && !((PaletteNamespaceFolderEditPart) part).isExpanded()) {
-			if (part instanceof PaletteNamespaceFolderEditPart) {
-				final PaletteNamespaceFolderEditPart partFolder = ((PaletteNamespaceFolderEditPart) part);
-				UIJob uiJob = new UIJob("Expanding palette node") {
-
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						partFolder.setExpanded(true);
-						return Status.OK_STATUS;
-					}
-				};
-
-				uiJob.schedule();
-				bot.sleep(500);
-			}
-
-		}
-	}
-	*/
-
 	/**
 	 * Determines if a tool is present (i.e. visible) in the palette.
 	 * @param editor
