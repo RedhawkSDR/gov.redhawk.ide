@@ -40,10 +40,8 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.ui.progress.UIJob;
-import org.omg.CORBA.SystemException;
 
 import CF.DataType;
-import CF.LifeCyclePackage.ReleaseError;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 import gov.redhawk.ide.debug.LocalScaComponent;
@@ -61,6 +59,7 @@ import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
+import gov.redhawk.model.sca.util.ReleaseJob;
 import gov.redhawk.sca.util.SubMonitor;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
@@ -157,7 +156,6 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 			@Override
 			@Nullable
 			protected IStatus run(IProgressMonitor monitor) {
-
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
 				LocalScaComponent newComp = null;
 				try {
@@ -165,21 +163,13 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 					nodeMapEntry.setLocalScaComponent(newComp);
 					updateEnabledState(comp, true);
 					editor.componentRegistered(comp);
-
 					return Status.OK_STATUS;
 				} catch (final CoreException e) {
-					delete(comp);
 					nodes.remove(nodeMapEntry.getKey());
-					return e.getStatus();
+					return new Status(e.getStatus().getSeverity(), SADUIGraphitiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e);
 				} finally {
 					if (nodes.get(nodeMapEntry.getKey()) == null) {
-						try {
-							delete(newComp);
-						} catch (ReleaseError e) {
-							// PASS
-						} catch (SystemException e) {
-							// PASS
-						}
+						delete(comp);
 					}
 					subMonitor.done();
 				}
@@ -483,19 +473,6 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	}
 
 	/**
-	 * @param oldComp
-	 * @throws ReleaseError
-	 */
-	private void delete(@Nullable final LocalScaComponent oldComp) throws ReleaseError {
-		if (oldComp == null) {
-			return;
-		}
-		if (!oldComp.isDisposed()) {
-			oldComp.releaseObject();
-		}
-	}
-
-	/**
 	 * Delete ScaConnection from local waveform
 	 * @param oldConnection
 	 * @throws InvalidPort
@@ -599,23 +576,8 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 		}
 		final LocalScaComponent oldComp = nodeMapEntry.getLocalScaComponent();
 		if (oldComp != null) {
-			Job job = new Job("Releasing " + comp.getUsageName()) {
-
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					SubMonitor subMonitor = SubMonitor.convert(monitor, "Releasing " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
-					try {
-						delete(oldComp);
-						return Status.OK_STATUS;
-					} catch (ReleaseError e) {
-						return new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Problems while removing component " + comp.getId(), e);
-					} finally {
-						subMonitor.done();
-					}
-				}
-
-			};
-			job.schedule();
+			Job releaseJob = new ReleaseJob(oldComp);
+			releaseJob.schedule();
 		}
 	}
 

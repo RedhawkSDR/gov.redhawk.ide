@@ -38,11 +38,9 @@ import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.ui.progress.UIJob;
-import org.omg.CORBA.SystemException;
 
 import CF.DataType;
 import CF.ExecutableDevicePackage.ExecuteFail;
-import CF.LifeCyclePackage.ReleaseError;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 import gov.redhawk.ide.debug.LocalAbstractComponent;
@@ -62,6 +60,7 @@ import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
+import gov.redhawk.model.sca.util.ReleaseJob;
 import gov.redhawk.sca.util.SubMonitor;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
@@ -363,7 +362,6 @@ public class GraphitiDcdModelMap extends AbstractGraphitiModelMap {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + device.getUsageName(), IProgressMonitor.UNKNOWN);
 				try {
 					GraphitiDcdModelMap.this.create(device, implID);
@@ -372,16 +370,11 @@ public class GraphitiDcdModelMap extends AbstractGraphitiModelMap {
 
 					return Status.OK_STATUS;
 				} catch (final CoreException e) {
-					delete(device);
 					nodes.remove(nodeMapEntry.getKey());
-					return e.getStatus();
+					return new Status(e.getStatus().getSeverity(), DCDUIGraphitiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e);
 				} finally {
 					if (nodes.get(nodeMapEntry.getKey()) == null) {
-						try {
-							delete(device);
-						} catch (SystemException e) {
-							// PASS
-						}
+						delete(device);
 					}
 					subMonitor.done();
 				}
@@ -703,23 +696,8 @@ public class GraphitiDcdModelMap extends AbstractGraphitiModelMap {
 		}
 		final ScaDevice< ? > oldDevice = nodeMapEntry.getScaDevice();
 		if (oldDevice != null) {
-			Job job = new Job("Releasing " + device.getUsageName()) {
-
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					SubMonitor subMonitor = SubMonitor.convert(monitor, "Releasing " + device.getUsageName(), IProgressMonitor.UNKNOWN);
-					try {
-						delete(oldDevice);
-						return Status.OK_STATUS;
-					} catch (ReleaseError e) {
-						return new Status(IStatus.WARNING, DCDUIGraphitiPlugin.PLUGIN_ID, "Problems while removing component " + device.getId(), e);
-					} finally {
-						subMonitor.done();
-					}
-				}
-
-			};
-			job.schedule();
+			Job releaseJob = new ReleaseJob(oldDevice);
+			releaseJob.schedule();
 		}
 	}
 
@@ -770,19 +748,6 @@ public class GraphitiDcdModelMap extends AbstractGraphitiModelMap {
 			delete(oldDcdInterface);
 		}
 
-	}
-
-	/**
-	 * @param oldComp
-	 * @throws ReleaseError
-	 */
-	private void delete(final ScaDevice< ? > oldDevice) throws ReleaseError {
-		if (oldDevice == null) {
-			return;
-		}
-		if (!oldDevice.isDisposed()) {
-			oldDevice.releaseObject();
-		}
 	}
 
 	/**
