@@ -31,17 +31,12 @@ import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
-import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
-import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
-import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.ui.progress.UIJob;
 import org.omg.CORBA.SystemException;
 
@@ -57,9 +52,8 @@ import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramFeatureProvider;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.internal.ui.AbstractGraphitiModelMap;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaDevice;
@@ -81,7 +75,8 @@ import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
-public class GraphitiDcdModelMap {
+public class GraphitiDcdModelMap extends AbstractGraphitiModelMap {
+
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
 		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
@@ -96,8 +91,8 @@ public class GraphitiDcdModelMap {
 	private final Map<String, DcdConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, DcdConnectionMapEntry>());
 
 	public GraphitiDcdModelMap(final GraphitiDcdSandboxEditor editor, final DeviceConfiguration dcd, final ScaDeviceManager deviceManager) {
+		super(editor);
 		Assert.isNotNull(deviceManager, "Device Manager must not be null");
-		Assert.isNotNull(editor, "Node Explorer editor must not be null");
 		Assert.isNotNull(dcd, "Device Configuration must not be null");
 		this.deviceManager = deviceManager;
 		this.editor = editor;
@@ -326,75 +321,6 @@ public class GraphitiDcdModelMap {
 		if (oldDevice != null) {
 			delete(oldDevice);
 		}
-	}
-
-	/**
-	 * Deletes a DcdComponentInstantiation from diagram
-	 * @param oldValue
-	 */
-	private void delete(final DcdComponentInstantiation dcdComponentInstantiation) {
-		if (dcdComponentInstantiation == null || editor.isDisposed()) {
-			return;
-		}
-		// setup to perform diagram operations
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final Diagram diagram = provider.getDiagram();
-
-		// get pictogram for device
-		final PictogramElement[] peToRemove = { DUtil.getPictogramElementForBusinessObject(diagram, dcdComponentInstantiation, RHContainerShapeImpl.class) };
-
-		// Delete Device in transaction
-		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		if (peToRemove.length > 0 && peToRemove[0] != null) {
-			stack.execute(new RecordingCommand(editingDomain) {
-				@Override
-				protected void doExecute() {
-
-					// delete shape & device
-					DeleteContext context = new DeleteContext(peToRemove[0]);
-					DCDDiagramFeatureProvider fp = (DCDDiagramFeatureProvider) featureProvider;
-					IPattern pattern = fp.getPatternForPictogramElement(peToRemove[0]);
-					DeleteFeatureForPattern deleteFeature = new DeleteFeatureForPattern(fp, pattern);
-					deleteFeature.delete(context);
-				}
-			});
-		}
-	}
-
-	/**
-	 * Delete DcdConnectInterface from diagram
-	 * @param connection
-	 */
-	private void delete(final DcdConnectInterface connection) {
-		if (connection == null || editor.isDisposed()) {
-			return;
-		}
-
-		// setup to perform diagram operations
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final Diagram diagram = provider.getDiagram();
-
-		// get pictogram for connection
-		final PictogramElement peToRemove = DUtil.getPictogramElementForBusinessObject(diagram, connection, Connection.class);
-
-		// Delete Component in transaction
-		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-
-				// delete connection shape & connection business object
-				DeleteContext dc = new DeleteContext(peToRemove);
-				IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
-				if (deleteFeature != null) {
-					deleteFeature.delete(dc);
-				}
-			}
-		});
 	}
 
 	/**

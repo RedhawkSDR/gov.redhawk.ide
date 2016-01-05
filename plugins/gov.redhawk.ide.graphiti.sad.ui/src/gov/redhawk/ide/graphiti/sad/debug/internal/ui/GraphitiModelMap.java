@@ -31,17 +31,12 @@ import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
-import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
-import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
-import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.ui.progress.UIJob;
@@ -54,12 +49,11 @@ import CF.PortPackage.OccupiedPort;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.internal.ui.AbstractGraphitiModelMap;
 import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformSandboxEditor;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
@@ -78,7 +72,7 @@ import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
-public class GraphitiModelMap {
+public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
 		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
@@ -92,8 +86,8 @@ public class GraphitiModelMap {
 	private final LocalScaWaveform waveform;
 
 	public GraphitiModelMap(@NonNull final GraphitiWaveformSandboxEditor editor, @NonNull final LocalScaWaveform waveform) {
+		super(editor);
 		Assert.isNotNull(waveform, "Sandbox Waveform must not be null");
-		Assert.isNotNull(editor, "Sandbox Editor must not be null");
 		this.waveform = waveform;
 		this.editor = editor;
 	}
@@ -499,79 +493,6 @@ public class GraphitiModelMap {
 		if (!oldComp.isDisposed()) {
 			oldComp.releaseObject();
 		}
-	}
-
-	/**
-	 * Delete SadComponentInstantiation from diagram
-	 * @param oldValue
-	 */
-	private void delete(@Nullable final SadComponentInstantiation sadComponentInstantiation) {
-
-		// No need to process delete if the waveform is disposed, since we are closing the editor anyways.
-		if (waveform.isDisposed()) {
-			return;
-		}
-
-		if (sadComponentInstantiation == null || editor.isDisposed()) {
-			return;
-		}
-		// setup to perform diagram operations
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final Diagram diagram = provider.getDiagram();
-
-		// get pictogram for component
-		final PictogramElement[] peToRemove = { DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, ComponentShape.class) };
-
-		// Delete Component in transaction
-		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-
-				// delete shape & component
-				DeleteContext context = new DeleteContext(peToRemove[0]);
-				SADDiagramFeatureProvider fp = (SADDiagramFeatureProvider) featureProvider;
-				IPattern pattern = fp.getPatternForPictogramElement(peToRemove[0]);
-				DeleteFeatureForPattern deleteFeature = new DeleteFeatureForPattern(fp, pattern);
-				deleteFeature.delete(context);
-			}
-		});
-	}
-
-	/**
-	 * Delete SadConnectInterface from diagram
-	 * @param connection
-	 */
-	private void delete(@Nullable final SadConnectInterface connection) {
-		if (connection == null || editor.isDisposed()) {
-			return;
-		}
-
-		// setup to perform diagram operations
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final Diagram diagram = provider.getDiagram();
-
-		// get pictogram for connection
-		final PictogramElement peToRemove = DUtil.getPictogramElementForBusinessObject(diagram, connection, Connection.class);
-
-		// Delete Component in transaction
-		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-
-				// delete connection shape & connection business object
-				DeleteContext dc = new DeleteContext(peToRemove);
-				IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
-				if (deleteFeature != null) {
-					deleteFeature.delete(dc);
-				}
-			}
-		});
 	}
 
 	/**
