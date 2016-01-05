@@ -186,8 +186,8 @@ public class ComponentCreateFeature extends AbstractCreateFeature {
 		SadComponentInstantiation sadComponentInstantiation = SadFactory.eINSTANCE.createSadComponentInstantiation();
 
 		//use provided name/id if provided otherwise generate
-		String compName = (providedUsageName != null) ? providedUsageName : SoftwareAssembly.Util.createComponentUsageName(sad, spd.getName());
-		String id = (providedInstantiationId != null) ? providedInstantiationId : SoftwareAssembly.Util.createComponentIdentifier(sad, compName);
+		String id = (providedInstantiationId != null) ? providedInstantiationId : SoftwareAssembly.Util.createComponentIdentifier(sad, spd.getName());
+		String compName = (providedUsageName != null) ? providedUsageName : SoftwareAssembly.Util.createComponentUsageName(sad, id);
 		
 
 		sadComponentInstantiation.setUsageName(compName);
