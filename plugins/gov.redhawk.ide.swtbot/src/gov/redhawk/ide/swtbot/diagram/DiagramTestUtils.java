@@ -1039,19 +1039,23 @@ public class DiagramTestUtils {
 	}
 
 	/**
-	 * Asserts external port
+	 * Asserts that a port is/is not an external port
+	 * @param portEditPart
 	 * @param external
+	 * @param name A name that can be used in the assertion error message
 	 * @return
 	 */
-	public static void assertExternalPort(SWTBotGefEditPart portEditPart, boolean external) {
+	public static void assertExternalPort(SWTBotGefEditPart portEditPart, boolean external, String name) {
 		// Get the edit part for the visible port rectangle, then get its graphics algorithm and check that its style
 		// reflects the expected external state
 		SWTBotGefEditPart portRectPart = portEditPart.children().get(0);
 		GraphicsAlgorithm portRect = ((Shape) portRectPart.part().getModel()).getGraphicsAlgorithm();
 		if (external) {
-			Assert.assertTrue("Port style is not external", StyleUtil.isStyleSet(portRect, StyleUtil.EXTERNAL_PROVIDES_PORT,  StyleUtil.EXTERNAL_USES_PORT));
+			String errorMsg = String.format("Port style for '%s' is not external", name);
+			Assert.assertTrue(errorMsg, StyleUtil.isStyleSet(portRect, StyleUtil.EXTERNAL_PROVIDES_PORT,  StyleUtil.EXTERNAL_USES_PORT));
 		} else {
-			Assert.assertFalse("Port style is external", StyleUtil.isStyleSet(portRect, StyleUtil.EXTERNAL_PROVIDES_PORT,  StyleUtil.EXTERNAL_USES_PORT));
+			String errorMsg = String.format("Port style for '%s' is external", name);
+			Assert.assertFalse(errorMsg, StyleUtil.isStyleSet(portRect, StyleUtil.EXTERNAL_PROVIDES_PORT,  StyleUtil.EXTERNAL_USES_PORT));
 		}
 	}
 
