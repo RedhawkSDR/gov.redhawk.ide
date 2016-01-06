@@ -90,7 +90,8 @@ public class PortUtils {
 	public enum PortState {
 		NORMAL_PROVIDES,
 		NORMAL_USES,
-		HIGHLIGHT_FOR_CONNECTION
+		HIGHLIGHT_FOR_CONNECTION,
+		EXTERNAL_PORT
 	}
 
 	/**
@@ -103,7 +104,7 @@ public class PortUtils {
 		GraphitiShapeEditPart graphitiEditPart = (GraphitiShapeEditPart) portBot.part();
 		PictogramElement pe = graphitiEditPart.getPictogramElement();
 		String propValue = Graphiti.getPeService().getPropertyValue(pe, DUtil.SHAPE_TYPE);
-		if (ProvidesPortPattern.SHAPE_PROVIDES_PORT_CONTAINER.equals(propValue)) {
+		if (ProvidesPortPattern.SHAPE_PROVIDES_PORT_CONTAINER.equals(propValue) || UsesPortPattern.SHAPE_USES_PORT_CONTAINER.equals(propValue)) {
 			portBot = portBot.children().get(0);
 		}
 
@@ -119,6 +120,9 @@ public class PortUtils {
 			break;
 		case HIGHLIGHT_FOR_CONNECTION:
 			Assert.assertEquals(new RGB(0, 255, 0), figure.getBackgroundColor().getRGB());
+			break;
+		case EXTERNAL_PORT:
+			Assert.assertEquals(new RGB(0, 0, 194), figure.getBackgroundColor().getRGB());
 			break;
 		default:
 			Assert.fail();
