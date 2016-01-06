@@ -85,8 +85,7 @@ public class RHTestBotCanvas extends SWTBotGefFigureCanvas {
 	}
 
 	/**
-	 * Cause a mouse-down event. Code will act as those mouse button (1) is being pressed until
-	 * {@link RHTestBotCanvas#mouseUp()} is called
+	 * Cause a mouse-down event. Don't forget to call {@link #mouseUp(int, int)}.
 	 */
 	public void mouseDown(final int xPosition, final int yPosition) {
 		UIThreadRunnable.asyncExec(new VoidResult() {
