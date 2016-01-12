@@ -12,10 +12,16 @@ package gov.redhawk.ide.swtbot;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 
 public class MenuUtils {
 
@@ -95,5 +101,36 @@ public class MenuUtils {
 				return "Editor still dirty";
 			}
 		}, 10000, 1000);
+	}
+
+	/**
+	 * Is the undo menu option "blank" (i.e. nothing on the operation stack), and disabled?
+	 * @return
+	 */
+	public static boolean isUndoBlankAndDisabled(SWTBot bot) {
+		Matcher<MenuItem> undoMatcher = new BaseMatcher<MenuItem>() {
+
+			@Override
+			public boolean matches(Object item) {
+				if (!(item instanceof MenuItem)) {
+					return false;
+				}
+				return ((MenuItem) item).getText().equals("&Undo\tCtrl+Z");
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("Checks for an undo menu item that is clean (disabled, no text for an non-undoable item");
+			}
+
+		};
+		try {
+			SWTBotMenu undoMenu = bot.menu().menu("Edit").menu(undoMatcher, false, 0);
+			boolean isEnabled = undoMenu.isEnabled();
+			undoMenu.hide();
+			return isEnabled;
+		} catch (WidgetNotFoundException ex) {
+			return false;
+		}
 	}
 }
