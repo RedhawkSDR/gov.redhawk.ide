@@ -34,8 +34,9 @@ public class ComponentLaunch extends Launch {
 	public ComponentLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
 		super(launchConfiguration, mode, locator);
 		try {
-			// Ideally, the console should be labeled with the usage name of the component
-			label = launchConfiguration.getAttribute(LaunchVariables.NAME_BINDING, launchConfiguration.getName());
+			// Ideally, the console should be labeled with the usage name of the component/device
+			label = launchConfiguration.getAttribute(LaunchVariables.DEVICE_LABEL,
+				launchConfiguration.getAttribute(LaunchVariables.NAME_BINDING, launchConfiguration.getName()));
 		} catch (CoreException e) {
 			label = launchConfiguration.getName();
 		}
