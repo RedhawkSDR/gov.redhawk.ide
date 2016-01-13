@@ -52,8 +52,6 @@ import org.eclipse.emf.workspace.WorkspaceEditingDomainFactory;
 import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -246,15 +244,6 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 			return commandStack.isSaveNeeded();
 		}
 		return false;
-	}
-	
-	/**
-	 * This implements {@link org.eclipse.jface.action.IMenuListener} to help
-	 * fill the context menus with contributions from the Edit menu.
-	 */
-	@Override
-	public void menuAboutToShow(final IMenuManager menuManager) {
-		((IMenuListener) getEditorSite().getActionBarContributor()).menuAboutToShow(menuManager);
 	}
 	
 	/*
