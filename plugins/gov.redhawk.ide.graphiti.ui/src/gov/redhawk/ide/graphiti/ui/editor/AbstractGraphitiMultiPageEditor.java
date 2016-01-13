@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.resources.IMarker;
@@ -32,7 +31,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.common.command.BasicCommandStack;
-import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -308,16 +306,10 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 		this.overviewPage = overviewPage;
 	}
 	
-	public abstract String getEditingDomainId();
-	
-	protected abstract AdapterFactory getSpecificAdapterFactory();
-	
 	public IActionBars getActionBars() {
 		return getActionBarContributor().getActionBars();
 	}
 	
-	public abstract List<Object> getOutlineItems();
-
 	/**
 	 * The Text editor always stays in sync with other editor changes therefore always save it.
 	 * Calling emfDoSave handles saving the graphiti diagram resource
