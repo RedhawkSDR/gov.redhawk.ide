@@ -203,7 +203,7 @@ public class ViewUtils {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return "DataList View isn't displayed";
+				return "DataList view didn't populate";
 			}
 
 			@Override
