@@ -41,16 +41,8 @@ import org.eclipse.zest.layouts.LayoutBendPoint;
 import org.eclipse.zest.layouts.LayoutEntity;
 import org.eclipse.zest.layouts.LayoutRelationship;
 import org.eclipse.zest.layouts.LayoutStyles;
-import org.eclipse.zest.layouts.algorithms.CompositeLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.DirectedGraphLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.HorizontalLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.HorizontalShift;
 import org.eclipse.zest.layouts.algorithms.HorizontalTreeLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.VerticalLayoutAlgorithm;
 import org.eclipse.zest.layouts.dataStructures.BendPoint;
 import org.eclipse.zest.layouts.exampleStructures.SimpleNode;
 
@@ -67,35 +59,20 @@ public class LayoutDiagramFeature extends AbstractCustomFeature {
 		"Composite Layout [Spring Layout + Horizontal Shift]", "Composite Layout [Radial Layout + Horizontal Shift]",
 		"Composite Layout [Tree Layout + Horizontal Shift]");
 
-	/**
-	 * Constructor
-	 */
 	public LayoutDiagramFeature(IFeatureProvider fp) {
 		super(fp);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.graphiti.features.custom.AbstractCustomFeature#getDescription()
-	 */
 	@Override
 	public String getDescription() {
-		return "Apply Horizontal Tree Layout"; //$NON-NLS-1$
+		return "Apply Horizontal Tree Layout";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.graphiti.features.impl.AbstractFeature#getName()
-	 */
 	@Override
 	public String getName() {
-		return "&Apply Horizontal Tree Layout"; //$NON-NLS-1$
+		return "&Apply Horizontal Tree Layout";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.graphiti.features.custom.AbstractCustomFeature#canExecute(org.eclipse.graphiti.features.context.ICustomContext)
-	 */
 	@Override
 	public boolean canExecute(ICustomContext context) {
 		PictogramElement[] pes = context.getPictogramElements();
@@ -105,10 +82,6 @@ public class LayoutDiagramFeature extends AbstractCustomFeature {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.graphiti.features.custom.ICustomFeature#execute(org.eclipse.graphiti.features.context.ICustomContext)
-	 */
 	@Override
 	public void execute(ICustomContext context) {
 		// get a map of the self connection anchor locations
@@ -359,72 +332,6 @@ public class LayoutDiagramFeature extends AbstractCustomFeature {
 		return list.toArray(new LayoutRelationship[0]);
 	}
 
-	/**
-	 * @param current
-	 * @return
-	 */
-	// CHECKSTYLE:OFF TODO: Remove sys out lines
-	@SuppressWarnings("unused")
-	private LayoutAlgorithm getLayoutAlgorithmn(int current) {
-		LayoutAlgorithm layout;
-		int style = LayoutStyles.NO_LAYOUT_NODE_RESIZING;
-		switch (current) {
-		case 1:
-			layout = new SpringLayoutAlgorithm(style);
-			System.out.println("SpringLayoutAlgorithmn");
-			break;
-		case 2:
-			layout = new TreeLayoutAlgorithm(style);
-			System.out.println("TreeLayoutAlgorithm");
-			break;
-		case 3:
-			layout = new GridLayoutAlgorithm(style);
-			System.out.println("GridLayoutAlgorithm");
-			break;
-		case 4:
-			layout = new HorizontalLayoutAlgorithm(style);
-			System.out.println("HorizontalLayoutAlgorithm");
-			break;
-		case 5:
-			layout = new HorizontalTreeLayoutAlgorithm(style);
-			System.out.println("HorizontalTreeLayoutAlgorithm");
-			break;
-		case 6:
-			layout = new VerticalLayoutAlgorithm(style);
-			System.out.println("VerticalLayoutAlgorithm");
-			break;
-		case 7:
-			layout = new RadialLayoutAlgorithm(style);
-			System.out.println("RadialLayoutAlgorithm");
-			break;
-		case 8:
-			layout = new DirectedGraphLayoutAlgorithm(style);
-			System.out.println("DirectedGraphLayoutAlgorithm");
-			break;
-		case 9:
-			layout = new CompositeLayoutAlgorithm(new LayoutAlgorithm[] { new DirectedGraphLayoutAlgorithm(style), new HorizontalShift(style) });
-			System.out.println("CompositeLayoutAlgorithm [DirectedGraphLayoutAlgorithm+HorizontalShift]");
-			break;
-		case 10:
-			layout = new CompositeLayoutAlgorithm(new LayoutAlgorithm[] { new SpringLayoutAlgorithm(style), new HorizontalShift(style) });
-			System.out.println("CompositeLayoutAlgorithm [SpringLayoutAlgorithm+HorizontalShift]");
-			break;
-		case 11:
-			layout = new CompositeLayoutAlgorithm(new LayoutAlgorithm[] { new RadialLayoutAlgorithm(style), new HorizontalShift(style) });
-			System.out.println("CompositeLayoutAlgorithm [RadialLayoutAlgorithm+HorizontalShift]");
-			break;
-		case 12:
-			layout = new HorizontalShift(style);
-			System.out.println("HorizontalShift");
-			break;
-		default:
-			layout = new CompositeLayoutAlgorithm(new LayoutAlgorithm[] { new TreeLayoutAlgorithm(style), new HorizontalShift(style) });
-			System.out.println("CompositeLayoutAlgorithm [TreeLayoutAlgorithm+HorizontalShift]");
-		}
-		return layout;
-	}
-
-	// CHECKSTYLE:ON
 	public static List<String> getLayouts() {
 		return layouts;
 	}
