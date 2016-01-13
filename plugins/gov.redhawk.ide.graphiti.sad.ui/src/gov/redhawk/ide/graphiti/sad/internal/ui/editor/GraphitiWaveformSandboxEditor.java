@@ -455,8 +455,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
 			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
 			try {
-				int pageIndex = 0;
-
 				final Resource sadResource = getMainResource();
 
 				final DiagramEditor editor = createDiagramEditor();
@@ -465,7 +463,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 				initModelMap();
 
 				final IEditorInput input = createDiagramInput(sadResource);
-				pageIndex = addPage(editor, input);
+				int pageIndex = addPage(editor, input);
 				setPageText(pageIndex, "Diagram");
 				setPartName(waveform.getName());
 
@@ -479,7 +477,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 
 				// set layout for sandbox editors
 				DUtil.layout(editor);
-
 			} catch (final PartInitException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
 					StatusManager.LOG | StatusManager.SHOW);

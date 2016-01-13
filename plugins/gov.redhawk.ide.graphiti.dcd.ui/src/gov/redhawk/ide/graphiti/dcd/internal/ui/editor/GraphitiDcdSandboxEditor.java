@@ -77,7 +77,6 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 
 	@Override
 	protected void createModel() {
-
 		final URI resourceURI = EditUIUtil.getURI(getEditorInput());
 		// For safety we'll decode the URI to make sure escape sequences have been correctly represented
 		String decodedURIString = URI.decode(resourceURI.toString());
@@ -298,14 +297,12 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
 			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
 			try {
-				int pageIndex = 0;
-
 				final Resource dcdResource = getMainResource();
 
 				final DiagramEditor editor = createDiagramEditor();
 				setDiagramEditor(editor);
 				final IEditorInput input = createDiagramInput(dcdResource);
-				pageIndex = addPage(editor, input);
+				int pageIndex = addPage(editor, input);
 				setPageText(pageIndex, "Diagram");
 				if (DUtil.isDiagramExplorer(getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram())) {
 					setPartName("Device Manager");
@@ -320,7 +317,6 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 
 				// set layout for sandbox editors
 				DUtil.layout(editor);
-
 			} catch (final PartInitException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
 					StatusManager.LOG | StatusManager.SHOW);
