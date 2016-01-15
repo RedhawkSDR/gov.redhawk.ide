@@ -291,7 +291,7 @@ public class LocalApplicationFactory {
 				String errorMsg = String.format("Failed to find SPD for component: %s", comp.getUsageName());
 				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
 			} else {
-				LocalScaComponent localComp = app.launch(comp.getUsageName(), createExecParam(comp), spdUri, getImplId(comp), this.mode);
+				LocalScaComponent localComp = app.launch(comp.getUsageName(), null, createExecParam(comp), spdUri, getImplId(comp), this.mode);
 				if (localComp != null) {
 					TransactionalEditingDomain localEditingDomain = TransactionUtil.getEditingDomain(localComp);
 					if (localEditingDomain != null) {

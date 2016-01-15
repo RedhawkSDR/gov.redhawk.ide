@@ -10,27 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.cf.extended.impl;
 
-import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
-import gov.redhawk.ide.debug.LocalScaComponent;
-import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.NotifyingNamingContext;
-import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.debug.SpdLauncherUtil;
-import gov.redhawk.ide.debug.internal.ApplicationStreams;
-import gov.redhawk.ide.debug.internal.ComponentLaunch;
-import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
-import gov.redhawk.ide.debug.variables.LaunchVariables;
-import gov.redhawk.model.sca.RefreshDepth;
-import gov.redhawk.model.sca.ScaAbstractProperty;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaConnection;
-import gov.redhawk.model.sca.ScaPort;
-import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.model.sca.impl.ScaComponentImpl;
-import gov.redhawk.sca.efs.WrappedFileStore;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,20 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.sad.ExternalPorts;
-import mil.jpeojtrs.sca.sad.ExternalProperties;
-import mil.jpeojtrs.sca.sad.ExternalProperty;
-import mil.jpeojtrs.sca.sad.Port;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadPackage;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.sad.util.StartOrderComparator;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.AnyUtils;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -119,6 +84,39 @@ import CF.PropertySetPackage.PartialConfiguration;
 import CF.ResourcePackage.StartError;
 import CF.ResourcePackage.StopError;
 import CF.TestableObjectPackage.UnknownTest;
+import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
+import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.NotifyingNamingContext;
+import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.ApplicationStreams;
+import gov.redhawk.ide.debug.internal.ComponentLaunch;
+import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
+import gov.redhawk.ide.debug.variables.LaunchVariables;
+import gov.redhawk.model.sca.RefreshDepth;
+import gov.redhawk.model.sca.ScaAbstractProperty;
+import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaConnection;
+import gov.redhawk.model.sca.ScaFactory;
+import gov.redhawk.model.sca.ScaPort;
+import gov.redhawk.model.sca.ScaUsesPort;
+import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.model.sca.impl.ScaComponentImpl;
+import gov.redhawk.sca.efs.WrappedFileStore;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.sad.ExternalPorts;
+import mil.jpeojtrs.sca.sad.ExternalProperties;
+import mil.jpeojtrs.sca.sad.ExternalProperty;
+import mil.jpeojtrs.sca.sad.Port;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.sad.util.StartOrderComparator;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 public class ApplicationImpl extends PlatformObject implements IProcess, ApplicationOperations, IAdaptable {
 
@@ -1195,7 +1193,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return retVal;
 	}
 
-	public Resource launch(final String compId, final DataType[] execParams, @NonNull final String spdURI, final String implId, final String mode)
+	public Resource launch(final String compId, final DataType[] initConfiguration, @NonNull final String spdURI, final String implId, final String mode)
 		throws ExecuteFail {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		LocalScaComponent retVal;
@@ -1204,7 +1202,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			if (uri == null) {
 				throw new NullPointerException();
 			}
-			retVal = launch(null, compId, createExecParamStr(execParams), uri, implId, mode);
+			retVal = launch(null, compId, initConfiguration, uri, implId, mode);
 		} catch (final CoreException e) {
 			ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to launch resource.", e));
 			logException(e);
@@ -1214,21 +1212,55 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	@NonNull
-	public LocalScaComponent launch(final String usageName, String compId, final DataType[] execParams, @NonNull final URI spdURI, final String implId,
+	public LocalScaComponent launch(final String usageName, String compId, final DataType[] initConfiguration, @NonNull final URI spdURI, final String implId,
 		final String mode) throws CoreException {
-		return launch(usageName, compId, createExecParamStr(execParams), spdURI, implId, mode);
+		ILaunchConfigurationWorkingCopy config = createLaunchConfig(usageName, compId, initConfiguration, spdURI, implId, mode);
+
+		final ILaunch subLaunch = config.launch(mode, new NullProgressMonitor(), false);
+		if (subLaunch instanceof ComponentLaunch) {
+			((ComponentLaunch) subLaunch).setParent(this);
+		}
+		this.streams.getOutStream().println("\tLaunch configuration succeeded.");
+
+		return postLaunch(subLaunch);
 	}
 
-	public LocalScaComponent launch(final String usageName, final DataType[] execParams, @NonNull final URI spdURI, final String implId, final String mode)
-		throws CoreException {
-		return launch(usageName, null, execParams, spdURI, implId, mode);
+	/**
+	 * @deprecated Use {@link #launch(String, String, DataType[], URI, String, String)}
+	 */
+	@Deprecated
+	public LocalScaComponent launch(final String usageName, final DataType[] initConfiguration, @NonNull final URI spdURI, final String implId,
+		final String mode) throws CoreException {
+		return launch(usageName, null, initConfiguration, spdURI, implId, mode);
 	}
 
+	/**
+	 * @deprecated Use {@link #launch(String, String, DataType[], URI, String, String)}
+	 */
+	@Deprecated
 	@NonNull
 	public LocalScaComponent launch(@Nullable String usageName, @Nullable final String compId, @Nullable final String execParams, @NonNull URI spdURI,
 		@Nullable final String implId, @Nullable String mode) throws CoreException {
+		ILaunchConfigurationWorkingCopy config = createLaunchConfig(usageName, compId, null, spdURI, implId, mode);
+		if (execParams != null && execParams.length() > 0) {
+			this.streams.getOutStream().println("\tExec params: " + execParams);
+			config.setAttribute(LaunchVariables.EXEC_PARAMS, execParams);
+		} else {
+			this.streams.getOutStream().println("\tUsing default exec params.");
+		}
+
+		final ILaunch subLaunch = config.launch(mode, new NullProgressMonitor(), false);
+		if (subLaunch instanceof ComponentLaunch) {
+			((ComponentLaunch) subLaunch).setParent(this);
+		}
+		this.streams.getOutStream().println("\tLaunch configuration succeeded.");
+
+		return postLaunch(subLaunch);
+	}
+
+	private ILaunchConfigurationWorkingCopy createLaunchConfig(String usageName, String compId, DataType[] initConfiguration, URI spdURI, String implId,
+		String mode) throws CoreException {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
-		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		if (!spdURI.isPlatform()) {
 			IFileStore store = EFS.getStore(java.net.URI.create(spdURI.toString()));
 			IFileStore unwrappedStore = WrappedFileStore.unwrap(store);
@@ -1241,6 +1273,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 		}
 
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 		if (mode == null) {
 			mode = ILaunchManager.RUN_MODE;
@@ -1296,11 +1329,20 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			config.setAttribute(LaunchVariables.COMPONENT_IDENTIFIER, compId);
 		}
 
-		if (execParams != null && execParams.length() > 0) {
-			this.streams.getOutStream().println("\tExec params: " + execParams);
-			config.setAttribute(LaunchVariables.EXEC_PARAMS, execParams);
-		} else {
-			this.streams.getOutStream().println("\tUsing default exec params.");
+		if (initConfiguration != null) {
+			final ScaComponent propHolder = ScaFactory.eINSTANCE.createScaComponent();
+			propHolder.setProfileURI(spdURI);
+			propHolder.fetchProfileObject(new NullProgressMonitor());
+			propHolder.fetchProperties(new NullProgressMonitor());
+			for (DataType dt : initConfiguration) {
+				ScaAbstractProperty< ? > prop = propHolder.getProperty(dt.id);
+				if (prop != null) {
+					prop.fromAny(dt.value);
+				} else {
+					this.streams.getErrStream().println("\tIgnoring invalid property: " + dt.id);
+				}
+			}
+			ScaLaunchConfigurationUtil.saveProperties(config, propHolder);
 		}
 
 		if (parentLaunch != null) {
@@ -1309,14 +1351,13 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			config.setAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT, timeout);
 		}
 		this.streams.getOutStream().println("\tCalling launch on configuration...");
-		final ILaunch subLaunch = config.launch(mode, new NullProgressMonitor(), false);
-		if (subLaunch instanceof ComponentLaunch) {
-			((ComponentLaunch) subLaunch).setParent(this);
-		}
-		this.streams.getOutStream().println("\tLaunch configuration succeeded.");
 
+		return config;
+	}
+
+	private LocalScaComponent postLaunch(ILaunch launch) throws CoreException {
 		LocalScaComponent newComponent = null;
-		final String newCompId = subLaunch.getAttribute(LaunchVariables.COMPONENT_IDENTIFIER);
+		final String newCompId = launch.getAttribute(LaunchVariables.COMPONENT_IDENTIFIER);
 		if (newCompId != null) {
 			for (final ScaComponent comp : ApplicationImpl.this.waveform.getComponentsCopy()) {
 				comp.fetchAttributes(null);
@@ -1329,21 +1370,23 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 
 		if (newComponent == null) {
-			subLaunch.terminate();
+			launch.terminate();
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to find component after launch", null));
 		}
 
 		// Add Child processes
-		for (final IProcess process : subLaunch.getProcesses()) {
+		for (final IProcess process : launch.getProcesses()) {
 			if (this.parentLaunch != null) {
 				this.parentLaunch.addProcess(process);
 			}
 		}
 
+		String defaultCompId = null;
+		String compId = launch.getLaunchConfiguration().getAttribute(LaunchVariables.COMPONENT_IDENTIFIER, defaultCompId);
+		String instID = ScaComponentImpl.convertIdentifierToInstantiationID(compId);
 		if (instID == null) {
 			instID = newComponent.getInstantiationIdentifier();
 		}
-
 		String assemblyID = ApplicationImpl.getAssemblyControllerID(waveform.getProfileObj());
 		if (assemblyID != null) {
 			if (assemblyID.equals(instID)) {
@@ -1351,17 +1394,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 		}
 		return newComponent;
-	}
-
-	private String createExecParamStr(final DataType[] execParams) {
-		if (execParams == null || execParams.length == 0) {
-			return "";
-		}
-		final Map<String, Object> map = new HashMap<String, Object>(execParams.length);
-		for (final DataType t : execParams) {
-			map.put(t.id, AnyUtils.convertAny(t.value));
-		}
-		return SpdLauncherUtil.createExecParamString(map);
 	}
 
 	@Override
