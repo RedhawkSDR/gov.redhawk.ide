@@ -150,15 +150,15 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 
 	@Override
 	protected CF.Resource createInstance(final String compID, final DataType[] qualifiers, final String launchMode) throws CreateResourceFailure {
-		LocalScaComponent comp;
 		try {
-			comp = getComponent(compID);
+			LocalScaComponent comp = getComponent(compID);
+			if (comp != null) {
+				return comp.getObj();
+			}
 		} catch (CoreException e2) {
-			throw new CreateResourceFailure(ErrorNumberType.CF_ENODEV, "Failed to find component.");
+			throw new CreateResourceFailure(ErrorNumberType.CF_ENODEV, "Failed to find chalkboard.");
 		}
-		if (comp != null) {
-			return comp.getObj();
-		}
+
 		String implementationID = null;
 		final List<DataType> params = new ArrayList<DataType>(Arrays.asList(qualifiers));
 		for (final Iterator<DataType> i = params.iterator(); i.hasNext();) {
