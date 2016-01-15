@@ -44,6 +44,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
@@ -196,7 +197,8 @@ public final class SpdLauncherUtil {
 			// Find configurable properties that aren't set to their default
 			List<DataType> configureProps = new ArrayList<DataType>();
 			for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
-				if (!prop.isDefaultValue() && PropertiesUtil.canConfigure(prop.getDefinition())) {
+				if (!prop.isDefaultValue() && !prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY)
+					&& PropertiesUtil.canConfigure(prop.getDefinition())) {
 					configureProps.add(new DataType(prop.getId(), prop.toAny()));
 				}
 			}
