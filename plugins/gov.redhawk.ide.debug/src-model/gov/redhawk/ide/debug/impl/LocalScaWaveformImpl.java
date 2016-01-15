@@ -504,14 +504,14 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 */
 	@Override
 	@NonNull
-	public LocalScaComponent launch(final String compID, final DataType[] execParams, final URI spdURI, final String implID, final String mode)
+	public LocalScaComponent launch(final String compID, final DataType[] initConfiguration, final URI spdURI, final String implID, final String mode)
 		throws CoreException {
 		// END GENERATED CODE
 		Assert.isNotNull(spdURI);
 		Assert.isNotNull(implID);
 		// TODO Fix this hack
 		if (getLocalApp() instanceof ApplicationImpl) {
-			return ((ApplicationImpl) getLocalApp()).launch(null, compID, execParams, spdURI, implID, mode);
+			return ((ApplicationImpl) getLocalApp()).launch(null, compID, initConfiguration, spdURI, implID, mode);
 		} else if (getLocalApp() != null) {
 			throw new IllegalStateException("Unknown Application type " + getLocalApp());
 		} else {

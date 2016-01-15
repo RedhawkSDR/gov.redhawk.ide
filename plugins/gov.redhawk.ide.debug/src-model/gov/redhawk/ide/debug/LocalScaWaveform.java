@@ -101,9 +101,12 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	 * This method is used to launch a component locally in this waveform.
 	 * @since 4.0
 	 * <!-- end-user-doc -->
-	 * @model exceptions="gov.redhawk.ide.debug.CoreException" execParamsDataType="gov.redhawk.model.sca.DataTypeArray" spdURIDataType="mil.jpeojtrs.sca.spd.URI"
+	 * <!-- begin-model-doc -->
+	 * @param initConfiguration The initial configuration of the resource (properties including exec params, configure params, etc).
+	 * <!-- end-model-doc -->
+	 * @model exceptions="gov.redhawk.ide.debug.CoreException" initConfigurationDataType="gov.redhawk.model.sca.DataTypeArray" spdURIDataType="mil.jpeojtrs.sca.spd.URI"
 	 * @generated
 	 */
 	@NonNull
-	LocalScaComponent launch(String id, DataType[] execParams, URI spdURI, String implID, String mode) throws CoreException;
+	LocalScaComponent launch(String id, DataType[] initConfiguration, URI spdURI, String implID, String mode) throws CoreException;
 } // LocalScaWaveform

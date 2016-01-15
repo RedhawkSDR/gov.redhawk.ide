@@ -63,7 +63,9 @@ import CF.FileSystemOperations;
 import CF.LifeCycleOperations;
 import CF.LoadableDevice;
 import CF.LoadableDeviceOperations;
+import CF.PortSetOperations;
 import CF.PortSupplierOperations;
+import CF.PropertyEmitterOperations;
 import CF.PropertySetOperations;
 import CF.Resource;
 import CF.ResourceOperations;
@@ -273,6 +275,11 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
+		public Adapter casePropertyEmitterOperations(PropertyEmitterOperations object) {
+			return createPropertyEmitterOperationsAdapter();
+		}
+
+		@Override
 		public < P extends org.omg.CORBA.Object, E extends Object > Adapter caseScaPropertyContainer(ScaPropertyContainer<P, E> object) {
 			return createScaPropertyContainerAdapter();
 		}
@@ -320,6 +327,11 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 		@Override
 		public Adapter caseScaComponent(ScaComponent object) {
 			return createScaComponentAdapter();
+		}
+
+		@Override
+		public Adapter casePortSetOperations(PortSetOperations object) {
+			return createPortSetOperationsAdapter();
 		}
 
 		@Override
@@ -805,6 +817,21 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link CF.PropertyEmitterOperations <em>Property Emitter Operations</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * @since 8.1
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see CF.PropertyEmitterOperations
+	 * @generated
+	 */
+	public Adapter createPropertyEmitterOperationsAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link gov.redhawk.model.sca.ScaPropertyContainer <em>Property Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -941,6 +968,21 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createScaComponentAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link CF.PortSetOperations <em>Port Set Operations</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * @since 8.1
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see CF.PortSetOperations
+	 * @generated
+	 */
+	public Adapter createPortSetOperationsAdapter() {
 		return null;
 	}
 
