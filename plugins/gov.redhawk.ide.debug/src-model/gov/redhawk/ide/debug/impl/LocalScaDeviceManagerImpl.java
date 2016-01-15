@@ -60,13 +60,13 @@ import CF.ExecutableDevicePackage.ExecuteFail;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl#getLaunch <em>Launch</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl#getMode <em>Mode</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl#getNamingContext <em>Naming Context</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl#getLocalDeviceManager <em>Local Device Manager</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

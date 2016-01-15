@@ -54,6 +54,7 @@ import gov.redhawk.sca.util.OrbSession;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#getWaveforms <em>Waveforms</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#getSandboxWaveform <em>Sandbox Waveform</em>}</li>
@@ -62,7 +63,6 @@ import gov.redhawk.sca.util.OrbSession;
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#getFileManager <em>File Manager</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#getSandbox <em>Sandbox</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -205,7 +205,8 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 			sandboxWaveform = (LocalScaWaveform) eResolveProxy(oldSandboxWaveform);
 			if (sandboxWaveform != oldSandboxWaveform) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, ScaDebugPackage.LOCAL_SCA__SANDBOX_WAVEFORM, oldSandboxWaveform, sandboxWaveform));
+					eNotify(
+						new ENotificationImpl(this, Notification.RESOLVE, ScaDebugPackage.LOCAL_SCA__SANDBOX_WAVEFORM, oldSandboxWaveform, sandboxWaveform));
 			}
 		}
 		return sandboxWaveform;
@@ -271,11 +272,11 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		if (newSandboxDeviceManager != sandboxDeviceManager) {
 			NotificationChain msgs = null;
 			if (sandboxDeviceManager != null)
-				msgs = ((InternalEObject) sandboxDeviceManager).eInverseRemove(this,
-					EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER, null, msgs);
+				msgs = ((InternalEObject) sandboxDeviceManager).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER,
+					null, msgs);
 			if (newSandboxDeviceManager != null)
-				msgs = ((InternalEObject) newSandboxDeviceManager).eInverseAdd(this,
-					EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER, null, msgs);
+				msgs = ((InternalEObject) newSandboxDeviceManager).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER,
+					null, msgs);
 			msgs = basicSetSandboxDeviceManager(newSandboxDeviceManager, msgs);
 			if (msgs != null)
 				msgs.dispatch();

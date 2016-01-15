@@ -32,13 +32,13 @@ import CF.LifeCyclePackage.ReleaseError;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaExecutableDeviceImpl#getLaunch <em>Launch</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaExecutableDeviceImpl#getMode <em>Mode</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaExecutableDeviceImpl#getImplementationID <em>Implementation ID</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaExecutableDeviceImpl#getExecParam <em>Exec Param</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

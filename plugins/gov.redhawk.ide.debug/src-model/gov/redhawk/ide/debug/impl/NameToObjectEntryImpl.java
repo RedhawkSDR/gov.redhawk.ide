@@ -28,11 +28,11 @@ import org.jacorb.naming.Name;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.impl.NameToObjectEntryImpl#getTypedKey <em>Key</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.NameToObjectEntryImpl#getTypedValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

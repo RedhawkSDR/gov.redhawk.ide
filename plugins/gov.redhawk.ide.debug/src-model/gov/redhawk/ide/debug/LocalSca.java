@@ -30,6 +30,7 @@ import ExtendedCF.SandboxOperations;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getWaveforms <em>Waveforms</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getSandboxWaveform <em>Sandbox Waveform</em>}</li>
@@ -38,7 +39,6 @@ import ExtendedCF.SandboxOperations;
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getFileManager <em>File Manager</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getSandbox <em>Sandbox</em>}</li>
  * </ul>
- * </p>
  *
  * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca()
  * @model superTypes="gov.redhawk.model.sca.CorbaObjWrapper<gov.redhawk.ide.debug.Sandbox>"

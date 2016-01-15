@@ -28,11 +28,11 @@ import CF.DataType;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getNamingContext <em>Naming Context</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}</li>
  * </ul>
- * </p>
  *
  * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaWaveform()
  * @model

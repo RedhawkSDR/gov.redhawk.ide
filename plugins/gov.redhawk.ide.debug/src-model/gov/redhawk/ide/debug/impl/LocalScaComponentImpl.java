@@ -31,13 +31,13 @@ import gov.redhawk.model.sca.impl.ScaComponentImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl#getLaunch <em>Launch</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl#getMode <em>Mode</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl#getImplementationID <em>Implementation ID</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl#getExecParam <em>Exec Param</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -202,7 +202,8 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 		String oldImplementationID = implementationID;
 		implementationID = newImplementationID;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID, oldImplementationID, implementationID));
+			eNotify(
+				new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID, oldImplementationID, implementationID));
 	}
 
 	/**

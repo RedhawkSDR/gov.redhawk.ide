@@ -77,6 +77,7 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#isDisposed <em>Disposed</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getObjectMap <em>Object Map</em>}</li>
@@ -87,7 +88,6 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
  *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getPoa <em>Poa</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getName <em>Name</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -319,7 +319,8 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			if (msgs != null)
 				msgs.dispatch();
 		} else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT, newParentContext, newParentContext));
+			eNotify(
+				new ENotificationImpl(this, Notification.SET, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT, newParentContext, newParentContext));
 	}
 
 	/**

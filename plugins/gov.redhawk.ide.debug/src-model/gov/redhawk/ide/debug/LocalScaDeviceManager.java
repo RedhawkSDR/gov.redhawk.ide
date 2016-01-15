@@ -21,11 +21,11 @@ import CF.DeviceManagerOperations;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaDeviceManager#getNamingContext <em>Naming Context</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaDeviceManager#getLocalDeviceManager <em>Local Device Manager</em>}</li>
  * </ul>
- * </p>
  *
  * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaDeviceManager()
  * @model

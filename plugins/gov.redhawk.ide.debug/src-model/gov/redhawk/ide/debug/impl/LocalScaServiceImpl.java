@@ -30,13 +30,13 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaServiceImpl#getLaunch <em>Launch</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaServiceImpl#getMode <em>Mode</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaServiceImpl#getImplementationID <em>Implementation ID</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaServiceImpl#getExecParam <em>Exec Param</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

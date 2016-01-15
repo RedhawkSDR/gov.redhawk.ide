@@ -18,11 +18,11 @@ package gov.redhawk.ide.debug;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.LocalAbstractComponent#getImplementationID <em>Implementation ID</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalAbstractComponent#getExecParam <em>Exec Param</em>}</li>
  * </ul>
- * </p>
  *
  * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalAbstractComponent()
  * @model interface="true" abstract="true"

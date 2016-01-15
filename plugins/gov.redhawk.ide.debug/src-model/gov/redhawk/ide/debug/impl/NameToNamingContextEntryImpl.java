@@ -29,11 +29,11 @@ import org.omg.CosNaming.NamingContext;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.impl.NameToNamingContextEntryImpl#getTypedKey <em>Key</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.NameToNamingContextEntryImpl#getTypedValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

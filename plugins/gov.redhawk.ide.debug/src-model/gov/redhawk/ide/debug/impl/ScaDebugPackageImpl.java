@@ -265,8 +265,8 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 			return (ScaDebugPackage) EPackage.Registry.INSTANCE.getEPackage(ScaDebugPackage.eNS_URI);
 
 		// Obtain or create and register package
-		ScaDebugPackageImpl theScaDebugPackage = (ScaDebugPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof ScaDebugPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI)
-			: new ScaDebugPackageImpl());
+		ScaDebugPackageImpl theScaDebugPackage = (ScaDebugPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof ScaDebugPackageImpl
+			? EPackage.Registry.INSTANCE.get(eNS_URI) : new ScaDebugPackageImpl());
 
 		isInited = true;
 
@@ -993,12 +993,12 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 			!IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getLocalSca_SandboxDeviceManager(), this.getLocalScaDeviceManager(), null, "sandboxDeviceManager", null, 1, 1, LocalSca.class,
 			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getLocalSca_RootContext(), this.getNotifyingNamingContext(), null, "rootContext", null, 1, 1, LocalSca.class, IS_TRANSIENT,
-			!IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getLocalSca_RootContext(), this.getNotifyingNamingContext(), null, "rootContext", null, 1, 1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE,
+			IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getLocalSca_FileManager(), this.getLocalFileManager(), null, "fileManager", null, 1, 1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE,
 			IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLocalSca_Sandbox(), this.getAttrSandboxOperations(), "sandbox", null, 0, 1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE,
-			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEAttribute(getLocalSca_Sandbox(), this.getAttrSandboxOperations(), "sandbox", null, 0, 1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+			!IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
 		initEClass(namingContextExtOperationsEClass, NamingContextExtOperations.class, "NamingContextExtOperations", IS_ABSTRACT, IS_INTERFACE,
 			!IS_GENERATED_INSTANCE_CLASS);
@@ -1010,18 +1010,18 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		initEReference(getNotifyingNamingContext_ContextMap(), this.getNameToNamingContextEntry(), null, "contextMap", null, 0, -1,
 			NotifyingNamingContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED,
 			IS_ORDERED);
-		initEAttribute(getNotifyingNamingContext_NamingContext(), theCfPackage.getNamingContextExt(), "namingContext", null, 1, 1,
-			NotifyingNamingContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getNotifyingNamingContext_SubContexts(), this.getNotifyingNamingContext(), this.getNotifyingNamingContext_ParentContext(),
-			"subContexts", null, 0, -1, NotifyingNamingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
-			!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getNotifyingNamingContext_NamingContext(), theCfPackage.getNamingContextExt(), "namingContext", null, 1, 1, NotifyingNamingContext.class,
+			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getNotifyingNamingContext_SubContexts(), this.getNotifyingNamingContext(), this.getNotifyingNamingContext_ParentContext(), "subContexts",
+			null, 0, -1, NotifyingNamingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE,
+			!IS_DERIVED, IS_ORDERED);
 		initEReference(getNotifyingNamingContext_ParentContext(), this.getNotifyingNamingContext(), this.getNotifyingNamingContext_SubContexts(),
 			"parentContext", null, 0, 1, NotifyingNamingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES,
 			!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getNotifyingNamingContext_Poa(), theScaPackage.getPOA(), "poa", null, 1, 1, NotifyingNamingContext.class, IS_TRANSIENT, !IS_VOLATILE,
 			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getNotifyingNamingContext_Name(), ecorePackage.getEString(), "name", null, 0, 1, NotifyingNamingContext.class, IS_TRANSIENT,
-			IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getNotifyingNamingContext_Name(), ecorePackage.getEString(), "name", null, 0, 1, NotifyingNamingContext.class, IS_TRANSIENT, IS_VOLATILE,
+			!IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		EOperation op = addEOperation(notifyingNamingContextEClass, this.getNameComponentArray(), "getName", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, theSpdPackage.getURI(), "uri", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -1057,7 +1057,8 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		initEAttribute(getLocalLaunch_Mode(), ecorePackage.getEString(), "mode", null, 0, 1, LocalLaunch.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
 			!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(localAbstractComponentEClass, LocalAbstractComponent.class, "LocalAbstractComponent", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(localAbstractComponentEClass, LocalAbstractComponent.class, "LocalAbstractComponent", IS_ABSTRACT, IS_INTERFACE,
+			IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLocalAbstractComponent_ImplementationID(), ecorePackage.getEString(), "implementationID", null, 0, 1, LocalAbstractComponent.class,
 			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getLocalAbstractComponent_ExecParam(), ecorePackage.getEString(), "execParam", "", 0, 1, LocalAbstractComponent.class, !IS_TRANSIENT,

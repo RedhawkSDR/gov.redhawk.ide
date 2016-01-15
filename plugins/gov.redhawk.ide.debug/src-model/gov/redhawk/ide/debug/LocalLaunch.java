@@ -21,11 +21,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.LocalLaunch#getLaunch <em>Launch</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalLaunch#getMode <em>Mode</em>}</li>
  * </ul>
- * </p>
  *
  * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalLaunch()
  * @model interface="true" abstract="true"

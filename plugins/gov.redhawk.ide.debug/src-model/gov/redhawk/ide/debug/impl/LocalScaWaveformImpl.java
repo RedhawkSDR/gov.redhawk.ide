@@ -60,13 +60,13 @@ import gov.redhawk.sca.util.SilentJob;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLaunch <em>Launch</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getMode <em>Mode</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getNamingContext <em>Naming Context</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLocalApp <em>Local App</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -244,8 +244,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			namingContext = (NotifyingNamingContext) eResolveProxy(oldNamingContext);
 			if (namingContext != oldNamingContext) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, ScaDebugPackage.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT, oldNamingContext,
-						namingContext));
+					eNotify(
+						new ENotificationImpl(this, Notification.RESOLVE, ScaDebugPackage.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT, oldNamingContext, namingContext));
 			}
 		}
 		return namingContext;

@@ -31,6 +31,7 @@ import org.omg.PortableServer.POA;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.NotifyingNamingContext#getObjectMap <em>Object Map</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.NotifyingNamingContext#getContextMap <em>Context Map</em>}</li>
@@ -40,7 +41,6 @@ import org.omg.PortableServer.POA;
  *   <li>{@link gov.redhawk.ide.debug.NotifyingNamingContext#getPoa <em>Poa</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.NotifyingNamingContext#getName <em>Name</em>}</li>
  * </ul>
- * </p>
  *
  * @see gov.redhawk.ide.debug.ScaDebugPackage#getNotifyingNamingContext()
  * @model superTypes="gov.redhawk.ide.debug.NamingContextExtOperations gov.redhawk.model.sca.IDisposable"
