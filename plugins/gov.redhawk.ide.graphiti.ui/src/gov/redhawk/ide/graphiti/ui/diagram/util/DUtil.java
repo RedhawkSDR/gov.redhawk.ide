@@ -1011,17 +1011,13 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	// creates new diagram from provided model resource
 	private static void populateDiagram(final IDiagramUtilHelper options, final String diagramTypeId, final String diagramTypeProviderId, final URI diagramURI,
 		final Resource resource, final OutputStream buffer) throws IOException {
-
-		// Create a resource set
+		// Create Resource
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-
-		// Create a resource for this file.
 		final Resource diagramResource = resourceSet.createResource(diagramURI);
 
-		// extract name for diagram from uri
+		// Create Diagram and add to Resource
+		// TODO: grid units could be passed to IPeCreateService.createDiagram(...) rather than being changed later
 		final String diagramName = diagramURI.lastSegment();
-
-		// create diagram
 		Diagram diagram = Graphiti.getPeCreateService().createDiagram(diagramTypeId, diagramName, true);
 		diagramResource.getContents().add(diagram);
 
