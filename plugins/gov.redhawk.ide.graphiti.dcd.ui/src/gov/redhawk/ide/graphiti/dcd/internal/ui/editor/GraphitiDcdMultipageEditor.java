@@ -19,6 +19,7 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDcdDiagramEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
+import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.model.sca.util.ModelUtil;
 
 import java.io.IOException;
@@ -43,8 +44,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramLink;
@@ -255,11 +254,9 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 		final DeviceConfiguration dcd = DeviceConfiguration.Util.getDeviceConfiguration(dcdResource);
 
 		// link diagram with DeviceConfiguration
-		TransactionalCommandStack stack = (TransactionalCommandStack) getEditingDomain().getCommandStack();
-		stack.execute(new RecordingCommand((TransactionalEditingDomain) getEditingDomain()) {
+		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
 			@Override
-			protected void doExecute() {
-
+			public void execute() {
 				// set property specifying diagram context (design, local, domain)
 				Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT, getDiagramContext(dcdResource));
 				
