@@ -291,8 +291,13 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 
 		// link diagram with SoftwareAssembly
 		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
-			public void execute() {
+			@Override
+			public String getLabel() {
+				return "Link diagram with SAD file";
+			}
 
+			@Override
+			public void execute() {
 				// set property specifying diagram context (design, local, domain)
 				Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT, getDiagramContext(sadResource));
 

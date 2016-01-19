@@ -256,6 +256,11 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 		// link diagram with DeviceConfiguration
 		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
 			@Override
+			public String getLabel() {
+				return "Link diagram with DCD file";
+			}
+
+			@Override
 			public void execute() {
 				// set property specifying diagram context (design, local, domain)
 				Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT, getDiagramContext(dcdResource));
