@@ -146,9 +146,14 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		} finally {
 			Job.getJobManager().endRule(RULE);
 		}
-		this.root.getComponentsContainer().eAdapters().remove(this.componentsListener);
-		this.root.getDevicesContainer().eAdapters().remove(this.devicesListener);
-		this.root.getServicesContainer().eAdapters().remove(this.serviceListener);
+		ScaModelCommand.execute(this.root, new ScaModelCommand() {
+			@Override
+			public void execute() {
+				root.getComponentsContainer().eAdapters().remove(componentsListener);
+				root.getDevicesContainer().eAdapters().remove(devicesListener);
+				root.getServicesContainer().eAdapters().remove(serviceListener);
+			}
+		});
 		this.root = null;
 		synchronized (this.resourceMap) {
 			for (final ResourceDesc desc : this.resourceMap.values()) {
