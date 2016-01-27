@@ -1261,6 +1261,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	private ILaunchConfigurationWorkingCopy createLaunchConfig(String usageName, String compId, DataType[] initConfiguration, URI spdURI, String implId,
 		String mode) throws CoreException {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
+		// Use EFS to unwrap non-platform URIs; for example convert sca URI -> file URI
 		if (!spdURI.isPlatform()) {
 			IFileStore store = EFS.getStore(java.net.URI.create(spdURI.toString()));
 			IFileStore unwrappedStore = WrappedFileStore.unwrap(store);

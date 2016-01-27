@@ -54,7 +54,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import CF.ResourceFactoryOperations;
 
 /**
- * 
+ * Provides descriptions of resources in the workspace which can be launched in the sandbox.
  */
 public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryProvider implements IResourceFactoryProvider {
 

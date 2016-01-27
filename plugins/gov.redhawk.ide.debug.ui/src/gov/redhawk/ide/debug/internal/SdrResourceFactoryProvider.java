@@ -38,7 +38,7 @@ import org.eclipse.emf.ecore.EObject;
 import CF.ResourceFactoryOperations;
 
 /**
- * 
+ * Provides descriptions of resources in the SDRROOT which can be launched in the sandbox.
  */
 public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider {
 

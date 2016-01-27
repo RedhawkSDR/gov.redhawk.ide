@@ -39,7 +39,8 @@ import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 /**
- * 
+ * Provides descriptions of resources inside bundles which can be launched in the sandbox. The bundle resource is
+ * declared to this class via extension point (see {@link #EP_ID}).
  */
 public class BundleResourceFactoryProvider extends AbstractResourceFactoryProvider implements IExtensionChangeHandler {
 
