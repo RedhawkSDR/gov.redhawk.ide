@@ -12,7 +12,6 @@ package gov.redhawk.ide.debug.internal;
 
 import gov.redhawk.core.resourcefactory.AbstractResourceFactoryProvider;
 import gov.redhawk.core.resourcefactory.ComponentDesc;
-import gov.redhawk.core.resourcefactory.IResourceFactoryProvider;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.SpdResourceFactory;
@@ -56,7 +55,7 @@ import CF.ResourceFactoryOperations;
 /**
  * Provides descriptions of resources in the workspace which can be launched in the sandbox.
  */
-public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryProvider implements IResourceFactoryProvider {
+public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryProvider {
 
 	private static final MutexRule RULE = new MutexRule(WorkspaceResourceFactoryProvider.class);
 	private static final String WORKSPACE_CATEGORY = "Workspace";
