@@ -15,11 +15,12 @@ import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.model.sca.CorbaObjWrapper;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaDevice;
-import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 import gov.redhawk.sca.util.OrbSession;
 
@@ -31,6 +32,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.transaction.RunnableWithResult;
 import org.omg.CosNaming.NamingContext;
 
 import CF.DeviceManager;
@@ -40,9 +42,6 @@ import CF.ResourceFactory;
 import ExtendedCF.SandboxOperations;
 import ExtendedCF.SandboxPackage.Depth;
 
-/**
- * 
- */
 public class SandboxImpl implements SandboxOperations {
 
 	private final LocalSca localSca;
@@ -61,9 +60,6 @@ public class SandboxImpl implements SandboxOperations {
 		return session;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public DeviceManager deviceManager() {
 		return this.localSca.getSandboxDeviceManager().getObj();
@@ -93,32 +89,30 @@ public class SandboxImpl implements SandboxOperations {
 
 	@Override
 	public ExtendedCF.ResourceDesc[] registeredResources() {
-		final List<ExtendedCF.ResourceDesc> retVal = new ArrayList<ExtendedCF.ResourceDesc>(this.localSca.getSandboxWaveform().getComponents().size()
-			+ this.localSca.getWaveforms().size() + this.localSca.getSandboxDeviceManager().getDevices().size());
-		final IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
-
-		for (final ScaComponent cp : this.localSca.getSandboxWaveform().getComponents()) {
-			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
-			desc.profile = cp.getProfileObj().eResource().getURI().path();
-			desc.resource = cp.getObj();
-			retVal.add(desc);
+		try {
+			return ScaModelCommand.runExclusive(this.localSca, new RunnableWithResult.Impl<ExtendedCF.ResourceDesc[]>() {
+				@Override
+				public void run() {
+					List<ExtendedCF.ResourceDesc> retVal = new ArrayList<ExtendedCF.ResourceDesc>();
+					for (final ScaComponent cp : SandboxImpl.this.localSca.getSandboxWaveform().getComponents()) {
+						final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
+						desc.profile = cp.getProfileObj().eResource().getURI().path();
+						desc.resource = cp.getObj();
+						retVal.add(desc);
+					}
+					for (final ScaDevice< ? > cp : SandboxImpl.this.localSca.getSandboxDeviceManager().getAllDevices()) {
+						final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
+						desc.profile = cp.getProfileObj().eResource().getURI().path();
+						desc.resource = cp.getObj();
+						retVal.add(desc);
+					}
+					setResult(retVal.toArray(new ExtendedCF.ResourceDesc[retVal.size()]));
+				}
+			});
+		} catch (InterruptedException e) {
+			ScaDebugPlugin.logError("Interrupted while creating list of registered resources", e);
+			return new ExtendedCF.ResourceDesc[0];
 		}
-		for (final ScaDevice< ? > cp : this.localSca.getSandboxDeviceManager().getAllDevices()) {
-			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
-			desc.profile = cp.getProfileObj().eResource().getURI().path();
-			desc.resource = cp.getObj();
-			retVal.add(desc);
-		}
-		for (final ScaWaveform cp : this.localSca.getWaveforms()) {
-			if (cp == localSca.getSandboxWaveform()) {
-				continue;
-			}
-			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
-			desc.profile = cp.getProfileObj().eResource().getURI().path();
-			desc.resource = cp.getObj();
-			retVal.add(desc);
-		}
-		return retVal.toArray(new ExtendedCF.ResourceDesc[retVal.size()]);
 	}
 
 	@Override
@@ -190,7 +184,5 @@ public class SandboxImpl implements SandboxOperations {
 			}
 		}
 	}
-
-
 
 }

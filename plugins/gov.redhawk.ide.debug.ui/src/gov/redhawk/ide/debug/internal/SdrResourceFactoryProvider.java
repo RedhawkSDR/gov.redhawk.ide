@@ -25,11 +25,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
@@ -80,41 +78,6 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		}
 	};
 
-	private final Adapter waveformsListener = new AdapterImpl() {
-		@Override
-		public void notifyChanged(final org.eclipse.emf.common.notify.Notification msg) {
-			if (disposed) {
-				if (msg.getNotifier() instanceof Notifier) {
-					((Notifier) msg.getNotifier()).eAdapters().remove(this);
-				}
-				return;
-			}
-			if (msg.getFeature() == SdrPackage.Literals.WAVEFORMS_CONTAINER__WAVEFORMS) {
-				switch (msg.getEventType()) {
-				case Notification.ADD:
-					// TODO Add SDR Waveform Factory
-					//					addResource((SoftwareAssembly) msg.getNewValue(), new SdrWaveformFactory((SoftwareAssembly) msg.getNewValue()));
-					break;
-				case Notification.ADD_MANY:
-					// TODO Add SDR Waveform Factory
-					//					for (final Object obj : (Collection< ? >) msg.getNewValue()) {
-					//						addResource((SoftwareAssembly) obj, new SdrWaveformFactory((SoftwareAssembly) obj));
-					//					}
-					break;
-				case Notification.REMOVE:
-					removeResource((SoftwareAssembly) msg.getOldValue());
-					break;
-				case Notification.REMOVE_MANY:
-					for (final Object obj : (Collection< ? >) msg.getOldValue()) {
-						removeResource((SoftwareAssembly) obj);
-					}
-					break;
-				default:
-					break;
-				}
-			}
-		}
-	};
 	private final Map<EObject, ResourceDesc> resourceMap = Collections.synchronizedMap(new HashMap<EObject, ResourceDesc>());
 	private SdrRoot root;
 	private SPDListener componentsListener;
@@ -152,15 +115,10 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getServicesContainer().getComponents()) {
 						addResource(spd, new SpdResourceFactory(spd));
 					}
-					// TODO Add SDR Waveform Factory
-					//					for (final SoftwareAssembly sad : SdrResourceFactoryProvider.this.root.getWaveformsContainer().getWaveforms()) {
-					//						addResource(sad, new SdrWaveformFactory(sad));
-					//					}
 					SdrResourceFactoryProvider.this.root.getComponentsContainer().eAdapters().add(SdrResourceFactoryProvider.this.componentsListener);
 					SdrResourceFactoryProvider.this.root.getSharedLibrariesContainer().eAdapters().add(SdrResourceFactoryProvider.this.sharedLibraryListener);
 					SdrResourceFactoryProvider.this.root.getDevicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.devicesListener);
 					SdrResourceFactoryProvider.this.root.getServicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.serviceListener);
-					SdrResourceFactoryProvider.this.root.getWaveformsContainer().eAdapters().add(SdrResourceFactoryProvider.this.waveformsListener);
 				}
 			});
 		}
@@ -198,7 +156,6 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		this.root.getSharedLibrariesContainer().eAdapters().remove(this.sharedLibraryListener);
 		this.root.getDevicesContainer().eAdapters().remove(this.devicesListener);
 		this.root.getServicesContainer().eAdapters().remove(this.serviceListener);
-		this.root.getWaveformsContainer().eAdapters().remove(this.waveformsListener);
 		this.root = null;
 		synchronized (this.resourceMap) {
 			for (final ResourceDesc desc : this.resourceMap.values()) {
