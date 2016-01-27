@@ -11,11 +11,14 @@
 package gov.redhawk.ide.debug;
 
 import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.transaction.RunnableWithResult;
 
 import CF.DataType;
 import CF.ErrorNumberType;
@@ -31,6 +34,32 @@ import ExtendedCF.Sandbox;
  * @since 4.0
  */
 public abstract class AbstractResourceFactory implements ResourceFactoryOperations {
+
+	/**
+	 * @since 8.2
+	 */
+	public LocalScaWaveform getChalkboard(IProgressMonitor monitor) throws CoreException {
+		return ScaDebugPlugin.getInstance().getLocalSca(monitor).getSandboxWaveform();
+	}
+
+	/**
+	 * @since 8.2
+	 */
+	protected LocalScaComponent getComponent(final String instantiationID) throws CoreException {
+		final LocalScaWaveform chalkboard = getChalkboard(null);
+		try {
+			return ScaModelCommand.runExclusive(chalkboard, new RunnableWithResult.Impl<LocalScaComponent>() {
+
+				@Override
+				public void run() {
+					setResult((LocalScaComponent) chalkboard.getScaComponent(instantiationID));
+				}
+
+			});
+		} catch (final InterruptedException e) {
+			return null;
+		}
+	}
 
 	@Override
 	public Resource createResource(String resourceId, final DataType[] inputQualifiers) throws CreateResourceFailure {
@@ -74,20 +103,20 @@ public abstract class AbstractResourceFactory implements ResourceFactoryOperatio
 
 	@Override
 	public void releaseResource(final String resourceId) throws InvalidResourceId {
-		LocalSca localSca;
+		LocalScaComponent comp;
 		try {
-			localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
-		} catch (CoreException e) {
-			throw new InvalidResourceId("Failed to find local sandbox to launch resource in.");
+			comp = getComponent(resourceId);
+		} catch (CoreException e1) {
+			throw new InvalidResourceId("Failed to find component or sandbox.");
 		}
-		for (ScaComponent component : localSca.getSandboxWaveform().getComponents()) {
-			if (component.getIdentifier().equals(resourceId)) {
-				try {
-					component.releaseObject();
-				} catch (ReleaseError e) {
-					// PASS
-				}
+		if (comp != null) {
+			try {
+				comp.releaseObject();
+			} catch (final ReleaseError e) {
+				// PASS
 			}
+		} else {
+			throw new InvalidResourceId("No resource of id: " + resourceId);
 		}
 	}
 
