@@ -10,6 +10,18 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.ecore.EObject;
+
+import CF.ResourceFactoryOperations;
 import gov.redhawk.core.resourcefactory.AbstractResourceFactoryProvider;
 import gov.redhawk.core.resourcefactory.ComponentDesc;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
@@ -19,21 +31,7 @@ import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.MutexRule;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import mil.jpeojtrs.sca.spd.SoftPkg;
-
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.ecore.EObject;
-
-import CF.ResourceFactoryOperations;
 
 /**
  * Provides descriptions of resources in the SDRROOT which can be launched in the sandbox.
@@ -56,11 +54,11 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			if (msg.getFeature() == SdrPackage.Literals.SOFT_PKG_REGISTRY__COMPONENTS) {
 				switch (msg.getEventType()) {
 				case Notification.ADD:
-					addResource((SoftPkg) msg.getNewValue(), new SpdResourceFactory((SoftPkg) msg.getNewValue()));
+					addResource((SoftPkg) msg.getNewValue(), SpdResourceFactory.createResourceFactory((SoftPkg) msg.getNewValue()));
 					break;
 				case Notification.ADD_MANY:
 					for (final Object obj : (Collection< ? >) msg.getNewValue()) {
-						addResource((SoftPkg) obj, new SpdResourceFactory((SoftPkg) obj));
+						addResource((SoftPkg) obj, SpdResourceFactory.createResourceFactory((SoftPkg) obj));
 					}
 					break;
 				case Notification.REMOVE:
@@ -85,9 +83,6 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 	private SPDListener serviceListener;
 	private boolean disposed;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public SdrResourceFactoryProvider() {
 		SdrUiPlugin sdrPlugin = SdrUiPlugin.getDefault();
 		if (sdrPlugin != null) {
@@ -102,13 +97,13 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 				@Override
 				public void execute() {
 					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getComponentsContainer().getComponents()) {
-						addResource(spd, new SpdResourceFactory(spd));
+						addResource(spd, SpdResourceFactory.createResourceFactory(spd));
 					}
 					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getDevicesContainer().getComponents()) {
-						addResource(spd, new SpdResourceFactory(spd));
+						addResource(spd, SpdResourceFactory.createResourceFactory(spd));
 					}
 					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getServicesContainer().getComponents()) {
-						addResource(spd, new SpdResourceFactory(spd));
+						addResource(spd, SpdResourceFactory.createResourceFactory(spd));
 					}
 					SdrResourceFactoryProvider.this.root.getComponentsContainer().eAdapters().add(SdrResourceFactoryProvider.this.componentsListener);
 					SdrResourceFactoryProvider.this.root.getDevicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.devicesListener);
@@ -132,9 +127,6 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void dispose() {
 		Job.getJobManager().beginRule(RULE, null);

@@ -47,6 +47,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
+import CF.ResourceFactoryOperations;
+
 /**
  * Provides descriptions of resources in the workspace which can be launched in the sandbox.
  */
@@ -91,8 +93,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 						}
 					} catch (CoreException e) {
 						ScaDebugPlugin.getInstance().getLog().log(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-						                                              "Failed to search project contents for new resources to add: "
-						                                                  + event.getResource().getFullPath(), e));
+							"Failed to search project contents for new resources to add: " + event.getResource().getFullPath(), e));
 					}
 				}
 				break;
@@ -143,17 +144,18 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 				}
 			});
 		} catch (final CoreException e) {
-			ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Error while to creating WorkspaceResourceFactoryProvider", e));
+			ScaDebugPlugin.getInstance().getLog().log(
+				new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Error while to creating WorkspaceResourceFactoryProvider", e));
 		}
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this.listener,
-		                                                         IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE
-		                                                             | IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_REFRESH);
+			IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_REFRESH);
 	}
 
 	private SoftPkg loadSpd(IFile resource) {
 		try {
 			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-			final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createPlatformResourceURI(resource.getFullPath().toPortableString(), true), true));
+			final SoftPkg spd = SoftPkg.Util.getSoftPkg(
+				resourceSet.getResource(URI.createPlatformResourceURI(resource.getFullPath().toPortableString(), true), true));
 			return spd;
 		} catch (WrappedException we) {
 			if (TRACE_LOGGER.enabled) {
@@ -162,17 +164,26 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 			return null;
 		}
 	}
-	
+
 	private void addSpdResource(final IFile resource) {
 		if (componentMap.containsKey(resource)) {
-			// Already mapped resource
+			// Remove old component previously mapped
 			removeComponent(resource);
 		}
+
 		SoftPkg spd = loadSpd(resource);
 		if (spd == null) {
 			return;
 		}
-		ComponentDesc desc = new ComponentDesc(spd, new SpdResourceFactory(spd));
+
+		ResourceFactoryOperations resourceFactory;
+		try {
+			resourceFactory = SpdResourceFactory.createResourceFactory(spd);
+		} catch (IllegalArgumentException e) {
+			// Ignore invalid SPDs
+			return;
+		}
+		ComponentDesc desc = new ComponentDesc(spd, resourceFactory);
 		desc.setCategory(WORKSPACE_CATEGORY);
 		this.componentMap.put(resource, desc);
 		addResourceDesc(desc);
