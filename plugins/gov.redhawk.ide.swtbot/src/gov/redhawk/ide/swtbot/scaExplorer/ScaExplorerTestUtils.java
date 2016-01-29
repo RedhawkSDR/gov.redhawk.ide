@@ -26,6 +26,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 
 import gov.redhawk.ide.swtbot.StandardTestActions;
 
@@ -255,7 +256,12 @@ public class ScaExplorerTestUtils {
 		bot.waitUntil(Conditions.widgetIsEnabled(wizardBot.tree()));
 		treeItem.select();
 		wizardBot.button("Finish").click();
-		bot.waitUntil(Conditions.shellCloses(wizardShell), 30000);
+		try {
+			bot.waitUntil(Conditions.shellCloses(wizardShell), 30000);
+		} catch (TimeoutException e) {
+			wizardBot.button("Finish").click();
+			bot.waitUntil(Conditions.shellCloses(wizardShell), 30000);
+		}
 	}
 
 	/**
