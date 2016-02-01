@@ -59,6 +59,8 @@ import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultiPageEditor;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 import gov.redhawk.logging.ui.LogLevels;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
@@ -736,7 +738,22 @@ public class DiagramTestUtils {
 		SWTBotGefEditPart anchor = getDiagramPortAnchor(portEditPart);
 		return anchor.targetConnections();
 	}
+	
+	/** Helper method to open Sandbox "Waveform" Chalkboard Graphiti Diagram */
+	public static RHBotGefEditor openChalkboardDiagram(RHSWTGefBot gefBot) {
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, new String[] { "Sandbox" }, "Chalkboard", DiagramType.GRAPHITI_CHALKBOARD);
+		RHBotGefEditor editor = gefBot.rhGefEditor("Chalkboard");
+		editor.setFocus();
+		return editor;
+	}
 
+	/** Helper method to open Sandbox Device Manager Graphiti Chalkboard Diagram */
+	public static RHBotGefEditor openNodeChalkboardDiagram(SWTWorkbenchBot gefBot) {
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, new String[]{ "Sandbox" }, "Device Manager", DiagramType.GRAPHITI_CHALKBOARD);
+		RHBotGefEditor editor = new RHSWTGefBot().rhGefEditor("Device Manager Chalkboard");
+		return editor;
+	}
+	
 	/**
 	 * Opens the given tab with the given name within the waveform editor.
 	 * @param editor - the editor within which to open the tab
@@ -746,7 +763,7 @@ public class DiagramTestUtils {
 	public static void openTabInEditor(SWTBotEditor editor, String tabName) {
 		editor.bot().cTabItem(tabName).activate();
 	}
-
+	
 	/**
 	 * Checks sad.xml for component instantiation code
 	 * @param componentShape
