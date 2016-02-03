@@ -370,6 +370,16 @@ public final class StandardTestActions {
 
 		return true;
 	}
+	
+	/**
+	 * Export the declared project from the Project Explorer to the Target SDR
+	 * @param projectName
+	 * @param bot 
+	 */
+	public static void exportProject(String projectName, SWTWorkbenchBot bot) {
+		SWTBotTreeItem projectNode = ProjectExplorerUtils.selectNode(bot, projectName);
+		projectNode.contextMenu("Export to SDR").click();
+	}
 
 	/**
 	 * @param bot
