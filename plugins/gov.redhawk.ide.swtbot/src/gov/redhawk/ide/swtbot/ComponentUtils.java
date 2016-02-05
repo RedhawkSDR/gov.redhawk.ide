@@ -16,6 +16,7 @@ import java.util.Arrays;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
+import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 
 public class ComponentUtils {
 
@@ -43,4 +44,52 @@ public class ComponentUtils {
 
 		bot.waitUntil(Conditions.shellCloses(wizardShell));
 	}
+
+	public static void addComponentPort(SWTBot editorBot, String portName, PortDirection portDirection) {
+		addComponentPort(editorBot, portName, portDirection, "BULKIO", "dataDouble");
+	}
+
+	public static void addComponentPort(SWTBot editorBot, String portName, PortDirection portDirection, String idlModule, String idlInterface) {
+		editorBot.cTabItem("Ports").activate();
+		editorBot.button("Add").click();
+		editorBot.textWithLabel("Name*:").setText(portName);
+		editorBot.comboBoxWithLabel("Direction:").setSelection(portDirection.toString());
+		selectIDL(editorBot, idlModule, idlInterface, true);
+	}
+
+	public enum PortDirection {
+		IN("in <provides>"),
+		OUT("out <uses>"),
+		BI_DIRECTIONAL("bi-dir <uses/provides");
+
+		private String labelText;
+
+		private PortDirection(String labelText) {
+			this.labelText = labelText;
+		}
+
+		@Override
+		public String toString() {
+			return this.labelText;
+		}
+	}
+
+	private static void selectIDL(SWTBot bot, String module, String intf, boolean showAll) {
+		bot.button("Browse...").click();
+		SWTBotShell dialogShell = bot.shell("Select an interface");
+		SWTBot dialogBot = dialogShell.bot();
+		if (showAll) {
+			dialogBot.checkBox("Show all interfaces").select();
+		}
+		try {
+			dialogBot.waitUntil(new SelectIDL(module, intf));
+		} catch (TimeoutException ex) {
+			dialogBot.button("Cancel").click();
+			bot.waitUntil(Conditions.shellCloses(dialogShell));
+			throw ex;
+		}
+		dialogBot.button("OK").click();
+		bot.waitUntil(Conditions.shellCloses(dialogShell));
+	}
+
 }

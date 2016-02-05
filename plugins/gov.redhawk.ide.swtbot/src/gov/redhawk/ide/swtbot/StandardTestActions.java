@@ -195,6 +195,15 @@ public final class StandardTestActions {
 		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.OVERVIEW_TAB);
 
 		editor.bot().toolbarButton(0).click();
+		
+		try {
+			SWTBotShell fileChangedShell = bot.shell("File Changed");
+			fileChangedShell.bot().button("Yes").click();
+			bot.waitUntil(Conditions.shellCloses(fileChangedShell));
+		} catch (WidgetNotFoundException e) {
+			// PASS
+		}
+		
 		bot.waitUntil(Conditions.shellIsActive("Regenerate Files"), 10000);
 		SWTBotShell fileShell = bot.shell("Regenerate Files");
 
