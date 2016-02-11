@@ -20,6 +20,8 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IConnectionContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
+import org.eclipse.graphiti.mm.MmFactory;
+import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.Polygon;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -39,6 +41,7 @@ import gov.redhawk.sca.util.StringUtil;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.Connections;
+import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
@@ -48,6 +51,7 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 	public static final String SHAPE_IMG_CONNECTION_DECORATOR = "imgConnectionDecorator";
 	public static final String SHAPE_TEXT_CONNECTION_DECORATOR = "textConnectionDecorator";
 	public static final String OVERRIDE_CONNECTION_ID = "OverrideConnectionId";
+	public static final String CONNECT_INTERFACE_ID = "connect_interface_id";
 
 	private Anchor sourceAnchor;
 
@@ -162,6 +166,7 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 			// Switch source/target direction and try again
 			connection = DUtil.assignAnchorObjectsToConnection(createConnectInterface(), target, source);
 		}
+
 		return connection;
 	}
 
@@ -187,6 +192,25 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 			connectionId = createConnectionId();
 		}
 		modelConnection.setId(connectionId);
+
+		// If we just created some findBy model objects, make sure they are reference by the pictogram element
+		FindBy fb = modelConnection.getProvidesPort().getFindBy();
+		RHContainerShape findByPE = null;
+		if (fb == null) {
+			fb = modelConnection.getUsesPort().getFindBy();
+			if (fb != null) {
+				findByPE = DUtil.getParentRhContainerShape(context.getSourceAnchor());
+			}
+		} else {
+			findByPE = DUtil.getParentRhContainerShape(context.getTargetAnchor());
+		}
+
+		if (fb != null) {
+			Property connectInterfaceProp = MmFactory.eINSTANCE.createProperty();
+			connectInterfaceProp.setKey(CONNECT_INTERFACE_ID);
+			connectInterfaceProp.setValue(modelConnection.getId());
+			findByPE.getProperties().add(connectInterfaceProp);
+		}
 
 		// Add the connection to the SAD/DCD model
 		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();

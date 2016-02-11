@@ -29,6 +29,7 @@ import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Image;
@@ -276,8 +277,8 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	 */
 	protected abstract List<EObject> getBusinessObjectsToLink(EObject obj);
 
-	protected boolean updatePorts(ContainerShape portsContainer, List< ? extends EObject > modelPorts) {
-		Map< EObject, UpdateAction > portActions = getChildrenToUpdate(portsContainer, modelPorts);
+	protected boolean updatePorts(ContainerShape portsContainer, List< ? extends EObject> modelPorts) {
+		Map<EObject, UpdateAction> portActions = getChildrenToUpdate(portsContainer, modelPorts);
 		updateChildren(portsContainer, portActions);
 		boolean updatePerformed = !portActions.isEmpty();
 
@@ -290,7 +291,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		return updatePerformed;
 	}
 
-	protected boolean updatePortsNeeded(ContainerShape portsContainer, List< ? extends EObject > modelPorts) {
+	protected boolean updatePortsNeeded(ContainerShape portsContainer, List< ? extends EObject> modelPorts) {
 		if (portsContainer == null) {
 			return true;
 		}
@@ -300,27 +301,27 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			return true;
 		}
 
-		Map< EObject, UpdateAction > portActions = getChildrenToUpdate(portsContainer, modelPorts);
+		Map<EObject, UpdateAction> portActions = getChildrenToUpdate(portsContainer, modelPorts);
 		if (!portActions.isEmpty()) {
 			return true;
 		}
 		return !isSortedByBusinessObject(portsContainer.getChildren(), modelPorts);
 	}
 
-	protected boolean updateSuperUsesPortsNeeded(ContainerShape superPort, List< ? extends EObject > modelStubs) {
+	protected boolean updateSuperUsesPortsNeeded(ContainerShape superPort, List< ? extends EObject> modelStubs) {
 		if (superPort == null) {
 			return true;
 		}
 		return !isLinked(superPort, modelStubs);
 	}
 
-	protected boolean updateSuperUsesPorts(ContainerShape superPort, List< ? extends EObject > modelStubs) {
+	protected boolean updateSuperUsesPorts(ContainerShape superPort, List< ? extends EObject> modelStubs) {
 		link(superPort, modelStubs.toArray());
 		link(superPort.getAnchors().get(0), modelStubs.toArray());
 		return DUtil.setVisible(superPort.getGraphicsAlgorithm(), !modelStubs.isEmpty());
 	}
 
-	protected boolean updateSuperProvidesPorts(ContainerShape superPort, EObject interfaceStub, List< ? extends EObject > modelStubs) {
+	protected boolean updateSuperProvidesPorts(ContainerShape superPort, EObject interfaceStub, List< ? extends EObject> modelStubs) {
 		List<Object> businessObjects = new ArrayList<Object>(modelStubs);
 		businessObjects.add(interfaceStub);
 		link(superPort, businessObjects.toArray());
@@ -328,7 +329,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		return false;
 	}
 
-	protected boolean updateSuperProvidesPortsNeeded(ContainerShape superPort, EObject interfaceStub, List< ? extends EObject > modelStubs) {
+	protected boolean updateSuperProvidesPortsNeeded(ContainerShape superPort, EObject interfaceStub, List< ? extends EObject> modelStubs) {
 		if (superPort == null || superPort.getLink() == null) {
 			return true;
 		}
@@ -505,10 +506,10 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 			int componentX = shape.getGraphicsAlgorithm().getX();
 			int componentY = shape.getGraphicsAlgorithm().getY();
 
-			boolean xOverlapped = componentX >= childGa.getX() && componentX <= (childGa.getX() + childGa.getWidth()) || childGa.getX() >= componentX
-				&& childGa.getX() <= componentX + componentWidth;
-			boolean yOverlapped = componentY >= childGa.getY() && componentY <= (childGa.getY() + childGa.getHeight()) || childGa.getY() >= componentY
-				&& childGa.getY() <= componentY + componentHeight;
+			boolean xOverlapped = componentX >= childGa.getX() && componentX <= (childGa.getX() + childGa.getWidth())
+				|| childGa.getX() >= componentX && childGa.getX() <= componentX + componentWidth;
+			boolean yOverlapped = componentY >= childGa.getY() && componentY <= (childGa.getY() + childGa.getHeight())
+				|| childGa.getY() >= componentY && childGa.getY() <= componentY + componentHeight;
 			// If there is any overlap, then move new component all the way to the right of the old component.
 			if (xOverlapped && yOverlapped) {
 				xAdjustment += childGa.getX() + childGa.getWidth() + BUFFER_WIDTH;
@@ -561,7 +562,7 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 	protected int getMinimumWidth(RHContainerShape shape) {
 		int innerWidth = getMinimumInnerWidth(shape);
 		int outerWidth = getMinimumOuterWidth(shape);
-		return Math.max(innerWidth,  outerWidth) + INTERFACE_SHAPE_WIDTH;
+		return Math.max(innerWidth, outerWidth) + INTERFACE_SHAPE_WIDTH;
 	}
 
 	protected int getMinimumInnerWidth(RHContainerShape shape) {
@@ -809,9 +810,18 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		// Capture the existing connection information and delete the connection
 		for (UsesPortStub portStub : portsToDelete) {
 			Anchor portStubPe = (Anchor) DUtil.getPictogramElementForBusinessObject(getDiagram(), portStub, Anchor.class);
+			RHContainerShape rhShape = DUtil.getParentRhContainerShape(portStubPe);
 			for (Connection connection : portStubPe.getOutgoingConnections()) {
 				Object connectionObject = getBusinessObjectForPictogramElement(connection);
 				if (connectionObject instanceof SadConnectInterface) {
+					SadConnectInterface ci = (SadConnectInterface) connectionObject;
+					// Remove any property reference to the connection id (this exists for FindBys)
+					EList<Property> properties = rhShape.getProperties();
+					for (int i = 0; i < properties.size(); i++) {
+						if (ci.getId().equals(properties.get(i).getValue())) {
+							properties.remove(i);
+						}
+					}
 					EcoreUtil.delete((SadConnectInterface) connectionObject);
 				}
 			}
@@ -847,9 +857,18 @@ public abstract class AbstractPortSupplierPattern extends AbstractContainerPatte
 		// Capture the existing connection information and delete the connection
 		for (ProvidesPortStub portStub : portsToDelete) {
 			Anchor portStubPe = (Anchor) DUtil.getPictogramElementForBusinessObject(getDiagram(), portStub, Anchor.class);
+			RHContainerShape rhShape = DUtil.getParentRhContainerShape(portStubPe);
 			for (Connection connection : portStubPe.getIncomingConnections()) {
 				Object connectionObject = getBusinessObjectForPictogramElement(connection);
 				if (connectionObject instanceof SadConnectInterface) {
+					SadConnectInterface ci = (SadConnectInterface) connectionObject;
+					// Remove any property reference to the connection id (this exists for FindBys)
+					EList<Property> properties = rhShape.getProperties();
+					for (int i = 0; i < properties.size(); i++) {
+						if (ci.getId().equals(properties.get(i).getValue())) {
+							properties.remove(i);
+						}
+					}
 					EcoreUtil.delete((SadConnectInterface) connectionObject);
 				}
 			}

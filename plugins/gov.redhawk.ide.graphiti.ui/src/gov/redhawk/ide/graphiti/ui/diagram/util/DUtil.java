@@ -704,6 +704,17 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		return children;
 	}
 
+	public static RHContainerShape getParentRhContainerShape(EObject childShape) {
+		RHContainerShape rhContainerShape = null;
+		if (childShape.eContainer() instanceof RHContainerShape) {
+			rhContainerShape = (RHContainerShape) childShape.eContainer();
+		} else {
+			getParentRhContainerShape(childShape.eContainer());
+		}
+
+		return rhContainerShape;
+	}
+
 	/**
 	 * Returns true if Pictogram Link contains an object of the provided Class
 	 * @param <T>
@@ -786,6 +797,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return false;
 	}
+
 	/**
 	 * Add PictogramElement Connection via feature for the provided object and anchors.
 	 * Relies on the framework determining which feature should be used and whether it can be added to diagram
@@ -1277,12 +1289,41 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static void fastDeleteConnection(Connection connection) {
 		// Connections may be referenced by their endpoints, so remove them from the anchors if necessary
 		Anchor end = connection.getEnd();
+
 		if (end != null) {
 			end.getIncomingConnections().remove(connection);
 		}
 		Anchor start = connection.getStart();
 		if (start != null) {
 			start.getOutgoingConnections().remove(connection);
+		}
+
+		// FindBy objects have Graphiti Property reference to connections, so check if we need to remove this.
+		String connectionId = null;
+		for (EObject obj : connection.getLink().getBusinessObjects()) {
+			if (obj instanceof ConnectInterface< ? , ? , ? >) {
+				ConnectInterface< ? , ? , ? > ci = (ConnectInterface< ? , ? , ? >) obj;
+				connectionId = ci.getId();
+				break;
+			}
+		}
+		if (connectionId != null && getParentRhContainerShape(start) != null) {
+			RHContainerShape rhShape = getParentRhContainerShape(start);
+			EList<Property> properties = rhShape.getProperties();
+			for (int i = 0; i < properties.size(); i++) {
+				if (connectionId.equals(properties.get(i).getValue())) {
+					properties.remove(i);
+				}
+			}
+		}
+		if (connectionId != null && getParentRhContainerShape(end) != null) {
+			RHContainerShape rhShape = getParentRhContainerShape(end);
+			EList<Property> properties = rhShape.getProperties();
+			for (int i = 0; i < properties.size(); i++) {
+				if (connectionId.equals(properties.get(i).getValue())) {
+					properties.remove(i);
+				}
+			}
 		}
 
 		// The diagram may be null, if the connection is no longer part of one

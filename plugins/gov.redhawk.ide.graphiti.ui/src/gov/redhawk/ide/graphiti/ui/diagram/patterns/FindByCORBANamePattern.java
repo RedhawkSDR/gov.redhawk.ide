@@ -10,17 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
-import gov.redhawk.diagram.util.FindByStubUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.wizards.FindByCORBANameWizardPage;
-import mil.jpeojtrs.sca.partitioning.FindBy;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
-import mil.jpeojtrs.sca.partitioning.NamingService;
-import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
@@ -29,10 +18,24 @@ import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
+import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
+
+import gov.redhawk.diagram.util.FindByStubUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.wizards.FindByCORBANameWizardPage;
+import mil.jpeojtrs.sca.partitioning.ConnectInterface;
+import mil.jpeojtrs.sca.partitioning.Connections;
+import mil.jpeojtrs.sca.partitioning.FindBy;
+import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.NamingService;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 public class FindByCORBANamePattern extends AbstractFindByPattern implements IDialogEditingPattern {
 
@@ -109,7 +112,7 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 	public String getInnerTitle(FindByStub findByStub) {
 		return findByStub.getNamingService().getName();
 	}
-	
+
 	@Override
 	protected void setInnerTitle(FindByStub findByStub, List<FindBy> findBys, String value) {
 		findByStub.getNamingService().setName(value);
@@ -118,7 +121,7 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 		}
 	}
 
-	@Override 
+	@Override
 	public String getCheckValueValidName() {
 		return "CORBA";
 	}
@@ -172,8 +175,8 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 
 	@Override
 	public boolean dialogEdit(ICustomContext context) {
-		PictogramElement pictogramElement = context.getPictogramElements()[0];
-		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(pictogramElement);
+		final PictogramElement findByPE = context.getPictogramElements()[0];
+		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(findByPE);
 
 		FindByCORBANameWizardPage page = openWizard(findByStub, getEditWizard());
 		if (page == null) {
@@ -195,13 +198,34 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 			@Override
 			protected void doExecute() {
 				findByStub.getNamingService().setName(corbaNameText);
+
+				// Update the naming service of all associated findBy model elements
+				String connectId = null;
+				for (Property prop : findByPE.getProperties()) {
+					if (AbstractConnectInterfacePattern.CONNECT_INTERFACE_ID.equals(prop.getKey())) {
+						connectId = prop.getValue();
+						Connections< ? > modelConnections = getModelConnections();
+						for (ConnectInterface< ? , ? , ? > ci : modelConnections.getConnectInterface()) {
+							if (connectId.equals(ci.getId())) {
+								FindBy fb = ci.getProvidesPort().getFindBy();
+								if (fb == null) {
+									fb = ci.getUsesPort().getFindBy();
+								}
+								if (fb != null) {
+									fb.getNamingService().setName(corbaNameText);
+								}
+							}
+						}
+					}
+				}
+
 				// if applicable, add uses and provides port stub(s)
 				updateUsesPortStubs(findByStub, usesPortNames);
 				updateProvidesPortStubs(findByStub, providesPortNames);
 			}
 		});
-		updatePictogramElement(pictogramElement);
-		layoutPictogramElement(pictogramElement);
+		updatePictogramElement(findByPE);
+		layoutPictogramElement(findByPE);
 
 		return true;
 	}
