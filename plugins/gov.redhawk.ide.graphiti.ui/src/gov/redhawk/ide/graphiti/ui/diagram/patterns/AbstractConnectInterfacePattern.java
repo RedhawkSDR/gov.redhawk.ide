@@ -194,8 +194,14 @@ public abstract class AbstractConnectInterfacePattern extends AbstractConnection
 		modelConnection.setId(connectionId);
 
 		// If we just created some findBy model objects, make sure they are reference by the pictogram element
-		FindBy fb = modelConnection.getProvidesPort().getFindBy();
+		FindBy fb = null;
 		RHContainerShape findByPE = null;
+		
+		if (modelConnection.getProvidesPort() == null) {
+			fb = modelConnection.getComponentSupportedInterface().getFindBy();
+		} else {
+			fb = modelConnection.getProvidesPort().getFindBy();
+		}
 		if (fb == null) {
 			fb = modelConnection.getUsesPort().getFindBy();
 			if (fb != null) {

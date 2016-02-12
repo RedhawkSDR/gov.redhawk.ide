@@ -207,10 +207,17 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 						Connections< ? > modelConnections = getModelConnections();
 						for (ConnectInterface< ? , ? , ? > ci : modelConnections.getConnectInterface()) {
 							if (connectId.equals(ci.getId())) {
-								FindBy fb = ci.getProvidesPort().getFindBy();
-								if (fb == null) {
-									fb = ci.getUsesPort().getFindBy();
+								FindBy fb = null;
+								if (ci.getProvidesPort() != null) {
+									fb = ci.getProvidesPort().getFindBy();
+								} else {
+									fb = ci.getComponentSupportedInterface().getFindBy();
 								}
+								if (fb != null) {
+									fb.getNamingService().setName(corbaNameText);
+								}
+								
+								fb = ci.getUsesPort().getFindBy();
 								if (fb != null) {
 									fb.getNamingService().setName(corbaNameText);
 								}

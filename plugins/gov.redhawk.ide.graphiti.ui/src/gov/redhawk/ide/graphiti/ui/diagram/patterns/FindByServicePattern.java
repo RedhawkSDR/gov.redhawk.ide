@@ -14,7 +14,8 @@ import gov.redhawk.diagram.util.FindByStubUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.wizards.FindByServiceWizardPage;
-
+import mil.jpeojtrs.sca.partitioning.ConnectInterface;
+import mil.jpeojtrs.sca.partitioning.Connections;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
 import mil.jpeojtrs.sca.partitioning.FindBy;
@@ -31,6 +32,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -227,8 +229,8 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 
 	@Override
 	public boolean dialogEdit(ICustomContext context) {
-		PictogramElement pictogramElement = context.getPictogramElements()[0];
-		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(pictogramElement);
+		final PictogramElement findByPE = context.getPictogramElements()[0];
+		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(findByPE);
 
 		// Find By Service
 		FindByServiceWizardPage page = FindByServicePattern.getWizardPage(findByStub, getEditWizard());
@@ -261,6 +263,35 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 			@Override
 			protected void doExecute() {
 				setNameAndType(findByStub, getModelFindBys(findByStub), name, type);
+				// Update the domain finder of all associated findBy model elements
+				String connectId = null;
+				for (Property prop : findByPE.getProperties()) {
+					if (AbstractConnectInterfacePattern.CONNECT_INTERFACE_ID.equals(prop.getKey())) {
+						connectId = prop.getValue();
+						Connections< ? > modelConnections = getModelConnections();
+						for (ConnectInterface<?, ?, ?> ci : modelConnections.getConnectInterface()) {
+							if (connectId.equals(ci.getId())) {
+								FindBy fb = null;
+								if (ci.getProvidesPort() != null) {
+									fb = ci.getProvidesPort().getFindBy();
+								} else {
+									fb = ci.getComponentSupportedInterface().getFindBy();
+								}
+								if (fb != null) {
+									fb.getDomainFinder().setName(name);
+									fb.getDomainFinder().setType(type);
+								}
+								
+								fb = ci.getUsesPort().getFindBy();
+								if (fb != null) {
+									fb.getDomainFinder().setName(name);
+									fb.getDomainFinder().setType(type);
+								}								
+							}
+						}
+					}
+				}
+
 
 				// if applicable, add uses and provides port stub(s)
 				updateUsesPortStubs(findByStub, usesPortNames);
@@ -268,8 +299,8 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 			}
 		});
 
-		updatePictogramElement(pictogramElement);
-		layoutPictogramElement(pictogramElement);
+		updatePictogramElement(findByPE);
+		layoutPictogramElement(findByPE);
 		return true;
 	}
 

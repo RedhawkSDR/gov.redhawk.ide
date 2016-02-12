@@ -709,7 +709,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		if (childShape.eContainer() instanceof RHContainerShape) {
 			rhContainerShape = (RHContainerShape) childShape.eContainer();
 		} else {
-			getParentRhContainerShape(childShape.eContainer());
+			rhContainerShape = getParentRhContainerShape(childShape.eContainer());
 		}
 
 		return rhContainerShape;

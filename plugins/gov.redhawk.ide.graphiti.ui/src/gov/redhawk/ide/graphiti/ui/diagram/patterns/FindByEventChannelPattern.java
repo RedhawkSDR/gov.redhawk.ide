@@ -14,6 +14,8 @@ import gov.redhawk.diagram.util.FindByStubUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
+import mil.jpeojtrs.sca.partitioning.ConnectInterface;
+import mil.jpeojtrs.sca.partitioning.Connections;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
 import mil.jpeojtrs.sca.partitioning.FindBy;
@@ -26,6 +28,7 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
+import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
@@ -150,8 +153,8 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 
 	@Override
 	public boolean dialogEdit(ICustomContext context) {
-		PictogramElement pictogramElement = context.getPictogramElements()[0];
-		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(pictogramElement);
+		final PictogramElement findByPE = context.getPictogramElements()[0];
+		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(findByPE);
 
 		String oldName = findByStub.getDomainFinder().getName();
 		final String eventChannelName = getDialog().getInput(oldName);
@@ -169,10 +172,37 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 			protected void doExecute() {
 				// set event name
 				findByStub.getDomainFinder().setName(eventChannelName);
+				
+				// Update the domain finder of all associated findBy model elements
+				String connectId = null;
+				for (Property prop : findByPE.getProperties()) {
+					if (AbstractConnectInterfacePattern.CONNECT_INTERFACE_ID.equals(prop.getKey())) {
+						connectId = prop.getValue();
+						Connections< ? > modelConnections = getModelConnections();
+						for (ConnectInterface<?, ?, ?> ci : modelConnections.getConnectInterface()) {
+							if (connectId.equals(ci.getId())) {
+								FindBy fb = null;
+								if (ci.getProvidesPort() != null) {
+									fb = ci.getProvidesPort().getFindBy();
+								} else {
+									fb = ci.getComponentSupportedInterface().getFindBy();
+								}
+								if (fb != null) {
+									fb.getDomainFinder().setName(eventChannelName);
+								}
+								
+								fb = ci.getUsesPort().getFindBy();
+								if (fb != null) {
+									fb.getDomainFinder().setName(eventChannelName);
+								}								
+							}
+						}
+					}
+				}
 			}
 		});
-		updatePictogramElement(pictogramElement);
-		layoutPictogramElement(pictogramElement);
+		updatePictogramElement(findByPE);
+		layoutPictogramElement(findByPE);
 		return true;
 	}
 
