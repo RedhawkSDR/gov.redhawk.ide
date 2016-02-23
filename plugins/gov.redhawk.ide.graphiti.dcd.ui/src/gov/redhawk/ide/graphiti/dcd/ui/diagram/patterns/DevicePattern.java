@@ -43,6 +43,10 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 	@Override
 	protected boolean isInstantiationApplicable(DcdComponentInstantiation instantiation) {
 		SoftPkg spd = instantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg();
+		if (spd == null) {
+			return true;
+		}
+
 		String componentType = spd.getDescriptor().getComponent().getComponentType();
 
 		String[] deviceTypes = { mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral(), "loadabledevice", "executabledevice" };

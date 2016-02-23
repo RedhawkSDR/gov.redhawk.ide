@@ -43,6 +43,10 @@ public class ServicePattern extends AbstractNodeComponentPattern implements IPat
 	@Override
 	protected boolean isInstantiationApplicable(DcdComponentInstantiation instantiation) {
 		SoftPkg spd = instantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg();
+		if (spd == null) {
+			return true;
+		}
+
 		if (spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.SERVICE.getLiteral())) {
 			return true;
 		}
