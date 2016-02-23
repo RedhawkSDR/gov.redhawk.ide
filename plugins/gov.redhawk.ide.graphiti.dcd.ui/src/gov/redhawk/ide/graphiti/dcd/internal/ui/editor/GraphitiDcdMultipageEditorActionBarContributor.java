@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.dcd.internal.ui.editor;
 
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
+import org.eclipse.graphiti.ui.editor.DiagramEditorActionBarContributor;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -27,7 +28,9 @@ public class GraphitiDcdMultipageEditorActionBarContributor extends ScaMultipage
 	 */
 	@Override
 	protected IEditorActionBarContributor getSubActionBarContributor(final IEditorPart activeEditor) {
-		if (activeEditor instanceof SCAFormEditor) {
+		if (activeEditor instanceof DiagramEditor) {
+			return new DiagramEditorActionBarContributor();
+		} else if (activeEditor instanceof SCAFormEditor) {
 			return new DcdActionBarContributor();
 		}
 		return super.getSubActionBarContributor(activeEditor);
