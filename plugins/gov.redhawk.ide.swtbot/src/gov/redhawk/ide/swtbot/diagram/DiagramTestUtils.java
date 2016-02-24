@@ -24,7 +24,10 @@ import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.tb.IDecorator;
+import org.eclipse.graphiti.tb.IToolBehaviorProvider;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 import org.eclipse.jdt.annotation.NonNull;
@@ -59,6 +62,7 @@ import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultiPageEditor;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 import gov.redhawk.logging.ui.LogLevels;
@@ -546,19 +550,19 @@ public class DiagramTestUtils {
 	}
 
 	/**
-	 * Display Port Monitor View on provided Port Anchor
+	 * Display Port Monitor View on provided Uses Port Anchor
 	 * If there is only one port you leave portName null
 	 * @param portEditPart - The SWTBotGefEditPart of the port you are trying to get the anchor for
 	 * @return
 	 */
-	public static void displayPortMonitorViewOnComponentPort(SWTBotGefEditor editor, String componentName, String portName) {
+	public static void displayPortMonitorViewOnUsesPort(SWTBotGefEditor editor, String componentName, String portName) {
 		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
 		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
 		usesPortAnchor.select();
 		editor.clickContextMenu("Monitor Ports");
 	}
-
-	/**
+	
+		/**
 	 * 
 	 * @param editor - SWTBotGefEditor
 	 * @param componentName - Component being searched
@@ -609,7 +613,7 @@ public class DiagramTestUtils {
 		// If you get here, no matching provides port was found
 		return null;
 	}
-
+	
 	/**
 	 * 
 	 * @param editor - SWTBotGefEditor
@@ -713,6 +717,15 @@ public class DiagramTestUtils {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * @return = Returns an array of IDecorators associated with the provided pictogram 
+	 */
+	public static IDecorator[] getPictogramElementDecorators(SWTBotGefEditor editor, PictogramElement pe) {
+		AbstractGraphitiMultiPageEditor graphitiEditor = (AbstractGraphitiMultiPageEditor) editor.getReference().getEditor(false);
+		IToolBehaviorProvider[] tbBehaviors = graphitiEditor.getDiagramEditor().getDiagramTypeProvider().getAvailableToolBehaviorProviders();
+		return tbBehaviors[0].getDecorators(pe);
 	}
 
 	/**
