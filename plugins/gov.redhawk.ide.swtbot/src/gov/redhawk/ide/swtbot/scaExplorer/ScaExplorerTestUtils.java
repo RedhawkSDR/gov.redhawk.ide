@@ -788,5 +788,15 @@ public class ScaExplorerTestUtils {
 		}
 		return retList.toArray(new String[retList.size()]);
 	}
+
+	public static void deleteFromTargetSdr(SWTWorkbenchBot bot, String[] scaPath, String projectName) {
+		SWTBotTreeItem treeItem = ScaExplorerTestUtils.getTreeItemFromScaExplorer(bot, scaPath, projectName);
+		treeItem.select();
+		treeItem.contextMenu("Delete").click();
+		SWTBotShell shell = bot.shell("Delete");
+		shell.bot().button("Yes").click();
+		bot.waitUntil(Conditions.shellCloses(shell));
+		ScaExplorerTestUtils.waitUntilNodeRemovedFromScaExplorer(bot, scaPath, projectName);		
+	}
 	
 }
