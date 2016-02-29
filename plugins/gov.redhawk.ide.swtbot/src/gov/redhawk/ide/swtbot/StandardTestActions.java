@@ -215,6 +215,14 @@ public final class StandardTestActions {
 		} catch (WidgetNotFoundException e) {
 			// PASS
 		}
+		
+		try {
+			SWTBotShell fileChangedShell = bot.shell("File Changed");
+			fileChangedShell.bot().button("OK").click();
+			bot.waitUntil(Conditions.shellCloses(fileChangedShell), 10000);
+		} catch (WidgetNotFoundException e) {
+			// PASS
+		}
 	}
 
 	public static void assertNoOpenDialogs() {
