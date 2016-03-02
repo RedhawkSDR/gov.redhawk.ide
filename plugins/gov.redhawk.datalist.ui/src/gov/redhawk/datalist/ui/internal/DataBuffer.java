@@ -11,15 +11,6 @@
 
 package gov.redhawk.datalist.ui.internal;
 
-import gov.redhawk.bulkio.util.AbstractUberBulkIOPort;
-import gov.redhawk.bulkio.util.BulkIOType;
-import gov.redhawk.bulkio.util.BulkIOUtilActivator;
-import gov.redhawk.datalist.ui.DataCollectionSettings;
-import gov.redhawk.datalist.ui.DataListPlugin;
-import gov.redhawk.datalist.ui.Sample;
-import gov.redhawk.datalist.ui.views.OptionsComposite.CaptureMethod;
-import gov.redhawk.model.sca.ScaUsesPort;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +27,14 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
+import gov.redhawk.bulkio.util.AbstractUberBulkIOPort;
+import gov.redhawk.bulkio.util.BulkIOType;
+import gov.redhawk.bulkio.util.BulkIOUtilActivator;
+import gov.redhawk.datalist.ui.DataCollectionSettings;
+import gov.redhawk.datalist.ui.DataListPlugin;
+import gov.redhawk.datalist.ui.Sample;
+import gov.redhawk.datalist.ui.views.OptionsComposite.CaptureMethod;
+import gov.redhawk.model.sca.ScaUsesPort;
 
 public class DataBuffer extends AbstractUberBulkIOPort {
 
@@ -215,10 +214,15 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 					cached = null;
 				}
 
-				while (i < length && sampleList.size() < this.dimension) {
+				while (i < length) {
 					if (Array.get(data, i) != null) {
 						sampleList.add(Array.get(data, i));
 					}
+
+					if (sampleList.size() >= this.dimension) {
+						break;
+					}
+
 					i++;
 				}
 
