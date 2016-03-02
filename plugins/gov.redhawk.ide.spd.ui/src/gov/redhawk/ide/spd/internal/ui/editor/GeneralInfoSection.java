@@ -103,7 +103,7 @@ public class GeneralInfoSection extends ScaSection {
 		final TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
 		section.setLayoutData(data);
 
-		section.setDescription("This section describes general information about this component.");
+		section.setDescription("This section describes general information about this resource.");
 
 		final IActionBars actionBars = getPage().getEditor().getEditorSite().getActionBars();
 		this.client = new GeneralInformationComposite(section, SWT.None, toolkit, actionBars, page.isSoftpackageLibrary());

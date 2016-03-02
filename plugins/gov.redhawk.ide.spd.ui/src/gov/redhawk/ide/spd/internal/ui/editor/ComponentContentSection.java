@@ -33,9 +33,9 @@ public class ComponentContentSection extends ScaSection {
 	public static final String IMPL_HREF = "http://implementations";
 
 	private static final String FORM_TEXT = "<form>" + "<li> <a href=\"" + ComponentContentSection.PROP_HREF
-	        + "\" nowrap=\"true\">Properties</a>: declares properties of the component.</li>" + "<li> <a href=\""
+	        + "\" nowrap=\"true\">Properties</a>: declares properties of the resource.</li>" + "<li> <a href=\""
 	        + ComponentContentSection.IMPL_HREF
-	        + "\" nowrap=\"true\">Implementations</a>: declares implementations of the component.</li>" + "</form>";
+	        + "\" nowrap=\"true\">Implementations</a>: declares implementations of the resource.</li>" + "</form>";
 
 	/**
 	 * The Constructor.
@@ -61,12 +61,12 @@ public class ComponentContentSection extends ScaSection {
 	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
-		section.setText("Component Content");
+		section.setText("Resource Content");
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		final TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
 		section.setLayoutData(data);
 
-		section.setDescription("The content of the component is made up of two sections");
+		section.setDescription("The content of the resource is made up of two sections");
 		final Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createClearTableWrapLayout(true, 1));
 		section.setClient(client);

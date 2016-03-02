@@ -156,7 +156,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText("Code");
 		section.setDescription("The code element will be used to indicate the" + " local filename of the code that is described by the softpkg element,"
-			+ " for a specific implementation of the software component.");
+			+ " for a specific implementation of the resource.");
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 
@@ -234,7 +234,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 			| ExpandableComposite.EXPANDED);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText("Implementation");
-		section.setDescription("The implementation element contains descriptive information about the particular implementation template for a software component contained in the softpkg element.");
+		section.setDescription("The implementation element contains descriptive information about the particular implementation template for a resource contained in the softpkg element.");
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 
@@ -315,7 +315,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 			| ExpandableComposite.EXPANDED);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText("Dependencies");
-		section.setDescription("Dependencies are used to assign a component to a suitable device and to allocate capacity on a device.  You must specify at least one dependency.");
+		section.setDescription("Dependencies are used to assign a resource to a suitable device and to allocate capacity on a device.  You must specify at least one dependency.");
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 

@@ -75,7 +75,7 @@ public class ImplementationWizard extends Wizard implements ScaImplementationWiz
 		Compiler compiler = SpdFactory.eINSTANCE.createCompiler();
 		Runtime runtime = SpdFactory.eINSTANCE.createRuntime();
 		
-		impl.setDescription("The implementation contains descriptive information about the template for a software component.");
+		impl.setDescription("The implementation contains descriptive information about the template for a software resource.");
 		impl.setId("");
 		progLang.setName("");
 		impl.setProgrammingLanguage(progLang);

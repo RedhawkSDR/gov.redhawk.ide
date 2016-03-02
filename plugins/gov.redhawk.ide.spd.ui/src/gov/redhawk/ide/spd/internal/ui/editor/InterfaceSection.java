@@ -100,7 +100,7 @@ public class InterfaceSection extends ScaSection {
 		final TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
 		section.setLayoutData(data);
 
-		section.setDescription("This section configures the interfaces of the component.");
+		section.setDescription("This section configures the interfaces of the resource.");
 		final Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, InterfaceSection.NUM_COLUMNS));
 		section.setClient(client);

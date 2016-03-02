@@ -83,7 +83,7 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 	private void createIDEntry() {
 		this.idEntry = new FormEntry(this, this.toolkit, "ID*:", SWT.SINGLE);
 		this.idEntry.getText().setToolTipText(
-		        "The implementation element's id attribute uniquely" + " identifies a specific implementation of the component and is a DCE UUID value.");
+		        "The implementation element's id attribute uniquely" + " identifies a specific implementation of the resource and is a DCE UUID value.");
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 	private void createPropertyFileEntry() {
 		this.prfEntry = new FormEntry(this, this.toolkit, "Property File:", SWT.SINGLE, "Browse", true);
 		this.prfEntry.getText().setToolTipText(
-		        "The propertyfile element is used to indicate the local filename" + " of the Property Descriptor file associated with this component "
+		        "The propertyfile element is used to indicate the local filename" + " of the Property Descriptor file associated with this resource "
 		                + "package described by the implementation element.");
 	}
 

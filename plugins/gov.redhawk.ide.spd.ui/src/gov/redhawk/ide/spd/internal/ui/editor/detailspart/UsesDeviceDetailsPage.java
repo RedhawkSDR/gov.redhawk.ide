@@ -68,7 +68,7 @@ public class UsesDeviceDetailsPage extends ScaDetails {
 		        | ExpandableComposite.EXPANDED);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText("Uses Device");
-		section.setDescription("The 'usesdevice' element describes any \"uses\" " + "relationships this component has with a device in the system. "
+		section.setDescription("The 'usesdevice' element describes any \"uses\" " + "relationships this resource has with a device in the system. "
 		        + "The propertyref element references allocation properties, which "
 		        + "indicate the CF Device to be used, and/or the capacity needed from the CF Device to be used.");
 

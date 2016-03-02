@@ -63,7 +63,7 @@ public class TestingSection extends ScaSection {
 		final TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
 		section.setLayoutData(data);
 
-		section.setDescription("Test the component by:");
+		section.setDescription("Test the resource by:");
 		final Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createClearTableWrapLayout(true, 1));
 		section.setClient(client);
@@ -85,25 +85,25 @@ public class TestingSection extends ScaSection {
 	 */
 	private void createTestingArea(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		ImageHyperlink imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
-		imageHyperlink.setText("Launch a component in the sandbox");
+		imageHyperlink.setText("Launch resource in the sandbox");
 		imageHyperlink.setHref(TestingSection.TESTING_HREF_LOCAL_LAUNCH);
 		imageHyperlink.addHyperlinkListener(this.getPage());
 		imageHyperlink.setImage(ComponentImages.getImage(ComponentImages.RUN_EXEC));
 
 		//		imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
-		//		imageHyperlink.setText("Launch a remote component");
+		//		imageHyperlink.setText("Launch a remote resource");
 		//		imageHyperlink.setHref(TestingSection.TESTING_HREF);
 		//		imageHyperlink.addHyperlinkListener(this.getPage());
 
 		imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
-		imageHyperlink.setText("Debug a component in the sandbox");
+		imageHyperlink.setText("Debug resource in the sandbox");
 		imageHyperlink.setHref(TestingSection.TESTING_HREF_LOCAL_DEBUG);
 		imageHyperlink.addHyperlinkListener(this.getPage());
 		imageHyperlink.setEnabled(getPage().getEditor().getMainResource().getURI().isPlatform());
 		imageHyperlink.setImage(ComponentImages.getImage(ComponentImages.DEBUG_EXEC));
 
 		//		imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
-		//		imageHyperlink.setText("Launch a remote component in debug mode");
+		//		imageHyperlink.setText("Launch a remote resource in debug mode");
 		//		imageHyperlink.setHref(TestingSection.TESTING_HREF);
 		//		imageHyperlink.addHyperlinkListener(this.getPage());
 	}

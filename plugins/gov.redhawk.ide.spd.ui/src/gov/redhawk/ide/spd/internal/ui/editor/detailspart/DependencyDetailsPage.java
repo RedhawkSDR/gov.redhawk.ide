@@ -61,8 +61,8 @@ public class DependencyDetailsPage extends ScaDetails {
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText("Dependency");
 		section.setDescription("The dependency element is used to "
-		        + "indicate the dependent relationships between the components being"
-		        + " delivered and other components and devices in the system.");
+		        + "indicate the dependent relationships between the resources being"
+		        + " delivered and other resources in the system.");
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));

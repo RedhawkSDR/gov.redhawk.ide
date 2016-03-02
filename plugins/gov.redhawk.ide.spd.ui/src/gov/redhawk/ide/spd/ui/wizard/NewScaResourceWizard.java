@@ -122,7 +122,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	 * @since 8.1
 	 */
 	protected void initImpl(Implementation implementation) {
-		implementation.setDescription("The implementation contains descriptive information about the template for a software component.");
+		implementation.setDescription("The implementation contains descriptive information about the template for a software resource.");
 		implementation.setId("");
 		this.progLang.setName("");
 		implementation.setProgrammingLanguage(this.progLang);
