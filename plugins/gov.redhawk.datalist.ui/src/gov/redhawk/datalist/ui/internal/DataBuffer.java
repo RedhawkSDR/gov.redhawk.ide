@@ -209,10 +209,15 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 					cached = null;
 				}
 
-				while (i < length && sampleList.size() < this.dimension) {
+				while (i < length) {
 					if (Array.get(data, i) != null) {
 						sampleList.add(Array.get(data, i));
 					}
+					
+					if (sampleList.size() >= this.dimension) {
+						break;
+					}
+					
 					i++;
 				}
 
