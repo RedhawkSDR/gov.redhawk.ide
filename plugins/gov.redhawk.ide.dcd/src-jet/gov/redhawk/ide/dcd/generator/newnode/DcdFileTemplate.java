@@ -74,7 +74,7 @@ public class DcdFileTemplate
     
         for (SoftPkg device : args.getDevices()) {
             String usageName = ProjectCreator.getBaseFileName(device.getName());
-            devToId.put(device, usageName + "_" + UUID.randomUUID());
+            devToId.put(device, args.getNodeName() + ":" + usageName);
 
     stringBuffer.append(TEXT_5);
     stringBuffer.append(devToId.get(device));

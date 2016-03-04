@@ -151,7 +151,7 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 		if (file == null) {
 			file = SadFactory.eINSTANCE.createComponentFile();
 			cFiles.getComponentFile().add(file);
-			file.setSoftPkg(spd);
+			file.setSoftPkg(spd, dcd.getName());
 		}
 
 		return file;

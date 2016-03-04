@@ -25,7 +25,7 @@ java.util.UUID"
 <%
         for (SoftPkg device : args.getDevices()) {
             String usageName = ProjectCreator.getBaseFileName(device.getName());
-            devToId.put(device, usageName + "_" + UUID.randomUUID());
+            devToId.put(device, args.getNodeName() + ":" + usageName);
 %>
     <componentfile id="<%=devToId.get(device)%>" type="SPD">
       <localfile name="<%=device.eResource().getURI().path()%>"/>
