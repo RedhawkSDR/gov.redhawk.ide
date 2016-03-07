@@ -45,6 +45,7 @@ public class DcdFileTemplateTest {
 		final gov.redhawk.ide.dcd.generator.newdevice.GeneratorArgs args1 = new gov.redhawk.ide.dcd.generator.newdevice.GeneratorArgs();
 		args1.setAuthorName("MyName");
 		args1.setSoftPkgId("MyIdentifier");
+		args1.setSoftPkgName("MyResource");
 		args1.setProjectName("MyProject");
 		final String spdContent = spdTemplate.generate(args1);
 
@@ -78,9 +79,9 @@ public class DcdFileTemplateTest {
 		Assert.assertEquals(args2.getNodeId(), devcfg.getId());
 		Assert.assertEquals("/mgr/DeviceManager.spd.xml", devcfg.getDeviceManagerSoftPkg().getLocalFile().getName());
 		Assert.assertEquals("SPD", devcfg.getComponentFiles().getComponentFile().get(0).getType());
-		Assert.assertTrue(devcfg.getComponentFiles().getComponentFile().get(0).getId().startsWith(args1.getSoftPkgName() + "_"));
+		Assert.assertTrue(devcfg.getComponentFiles().getComponentFile().get(0).getId().equals(args2.getNodeName() + ":" + args1.getSoftPkgName()));
 		Assert.assertEquals(spdFile.getAbsolutePath(), devcfg.getComponentFiles().getComponentFile().get(0).getLocalFile().getName());
-		Assert.assertTrue(devcfg.getPartitioning().getComponentPlacement().get(0).getComponentFileRef().getRefid().startsWith(args1.getSoftPkgName() + "_"));
+		Assert.assertTrue(devcfg.getPartitioning().getComponentPlacement().get(0).getComponentFileRef().getRefid().startsWith(args2.getNodeName() + ":" + args1.getSoftPkgName()));
 		Assert.assertEquals(args1.getSoftPkgName() + "_1", devcfg.getPartitioning()
 		        .getComponentPlacement()
 		        .get(0)
