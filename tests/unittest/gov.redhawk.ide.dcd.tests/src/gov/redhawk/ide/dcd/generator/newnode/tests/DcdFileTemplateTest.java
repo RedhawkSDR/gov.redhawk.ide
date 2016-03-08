@@ -59,9 +59,7 @@ public class DcdFileTemplateTest {
 		// Now generate XML for a DCD
 		final gov.redhawk.ide.dcd.generator.newnode.GeneratorArgs args2 = new gov.redhawk.ide.dcd.generator.newnode.GeneratorArgs();
 		args2.setAuthorName(args1.getAuthorName());
-		args2.setDevices(new SoftPkg[] {
-			softpkg
-		});
+		args2.setDevices(new SoftPkg[] { softpkg });
 		args2.setDomainManagerName("MyDomain");
 		args2.setNodeName("MyNodeName");
 		args2.setNodeId("MyNodeID");
@@ -74,20 +72,17 @@ public class DcdFileTemplateTest {
 
 		// Try to create a model from the file and test some of the fields
 		// that should have been filled in
-		final DeviceConfiguration devcfg = DeviceConfiguration.Util.getDeviceConfiguration(resourceSet.getResource(URI.createFileURI(dcdFile.toString()), true));
+		final DeviceConfiguration devcfg = DeviceConfiguration.Util.getDeviceConfiguration(
+			resourceSet.getResource(URI.createFileURI(dcdFile.toString()), true));
 		Assert.assertEquals("MyNodeName", devcfg.getName());
 		Assert.assertEquals(args2.getNodeId(), devcfg.getId());
 		Assert.assertEquals("/mgr/DeviceManager.spd.xml", devcfg.getDeviceManagerSoftPkg().getLocalFile().getName());
 		Assert.assertEquals("SPD", devcfg.getComponentFiles().getComponentFile().get(0).getType());
-		Assert.assertTrue(devcfg.getComponentFiles().getComponentFile().get(0).getId().equals(args2.getNodeName() + ":" + args1.getSoftPkgName()));
+		Assert.assertTrue(devcfg.getComponentFiles().getComponentFile().get(0).getId().startsWith(args1.getSoftPkgName() + "_"));
 		Assert.assertEquals(spdFile.getAbsolutePath(), devcfg.getComponentFiles().getComponentFile().get(0).getLocalFile().getName());
-		Assert.assertTrue(devcfg.getPartitioning().getComponentPlacement().get(0).getComponentFileRef().getRefid().startsWith(args2.getNodeName() + ":" + args1.getSoftPkgName()));
-		Assert.assertEquals(args1.getSoftPkgName() + "_1", devcfg.getPartitioning()
-		        .getComponentPlacement()
-		        .get(0)
-		        .getComponentInstantiation()
-		        .get(0)
-		        .getUsageName());
+		Assert.assertEquals(devcfg.getPartitioning().getComponentPlacement().get(0).getComponentInstantiation().get(0).getId(), args2.getNodeName() + ":" + args1.getSoftPkgName() + "_1");
+		Assert.assertTrue(devcfg.getPartitioning().getComponentPlacement().get(0).getComponentFileRef().getRefid().startsWith(args1.getSoftPkgName() + "_"));
+		Assert.assertEquals(args1.getSoftPkgName() + "_1", devcfg.getPartitioning().getComponentPlacement().get(0).getComponentInstantiation().get(0).getUsageName());
 		Assert.assertEquals(args2.getDomainManagerName() + "/" + args2.getDomainManagerName(), devcfg.getDomainManager().getNamingService().getName());
 	}
 }

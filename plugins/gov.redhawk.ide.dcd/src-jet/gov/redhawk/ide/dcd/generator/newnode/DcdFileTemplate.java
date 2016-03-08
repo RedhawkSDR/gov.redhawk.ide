@@ -74,7 +74,7 @@ public class DcdFileTemplate
     
         for (SoftPkg device : args.getDevices()) {
             String usageName = ProjectCreator.getBaseFileName(device.getName());
-            devToId.put(device, args.getNodeName() + ":" + usageName);
+            devToId.put(device, usageName + "_" + UUID.randomUUID());
 
     stringBuffer.append(TEXT_5);
     stringBuffer.append(devToId.get(device));
@@ -93,11 +93,13 @@ public class DcdFileTemplate
                 devNum++;
             }
             deviceList.add(usageName + "_" + devNum);
+            
+            String compInstId = args.getNodeName() + ":" + usageName + "_" + devNum;
 
     stringBuffer.append(TEXT_9);
     stringBuffer.append(devToId.get(device));
     stringBuffer.append(TEXT_10);
-    stringBuffer.append(DceUuidUtil.createDceUUID());
+    stringBuffer.append(compInstId);
     stringBuffer.append(TEXT_11);
     stringBuffer.append(usageName);
     stringBuffer.append(TEXT_12);

@@ -25,7 +25,7 @@ java.util.UUID"
 <%
         for (SoftPkg device : args.getDevices()) {
             String usageName = ProjectCreator.getBaseFileName(device.getName());
-            devToId.put(device, args.getNodeName() + ":" + usageName);
+            devToId.put(device, usageName + "_" + UUID.randomUUID());
 %>
     <componentfile id="<%=devToId.get(device)%>" type="SPD">
       <localfile name="<%=device.eResource().getURI().path()%>"/>
@@ -43,10 +43,12 @@ java.util.UUID"
                 devNum++;
             }
             deviceList.add(usageName + "_" + devNum);
+            
+            String compInstId = args.getNodeName() + ":" + usageName + "_" + devNum;
 %>
     <componentplacement>
       <componentfileref refid="<%=devToId.get(device)%>"/>
-      <componentinstantiation id="<%=DceUuidUtil.createDceUUID()%>">
+      <componentinstantiation id="<%=compInstId%>">
         <usagename><%=usageName%>_<%=devNum%></usagename>
       </componentinstantiation>
     </componentplacement>

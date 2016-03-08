@@ -151,7 +151,7 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 		if (file == null) {
 			file = SadFactory.eINSTANCE.createComponentFile();
 			cFiles.getComponentFile().add(file);
-			file.setSoftPkg(spd, dcd.getName());
+			file.setSoftPkg(spd);
 		}
 
 		return file;
@@ -163,7 +163,7 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 		DcdComponentInstantiation dcdComponentInstantiation = DcdFactory.eINSTANCE.createDcdComponentInstantiation();
 
 		String deviceName = (providedUsageName != null) ? providedUsageName : DeviceConfiguration.Util.createDeviceUsageName(dcd, spd.getName());
-		String id = (providedInstantiationId != null) ? providedInstantiationId : deviceName;
+		String id = (providedInstantiationId != null) ? providedInstantiationId : dcd.getName() + ":" + deviceName;
 		String implementationId = (providedImplId != null) ? providedImplId : implId;
 
 		dcdComponentInstantiation.setUsageName(deviceName);
