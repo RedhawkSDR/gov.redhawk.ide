@@ -43,6 +43,7 @@ import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.AccessType;
 import mil.jpeojtrs.sca.prf.ConfigurationKind;
 import mil.jpeojtrs.sca.prf.Kind;
 import mil.jpeojtrs.sca.prf.PrfFactory;
@@ -252,6 +253,10 @@ public class PropertyKindUtil {
 			}
 		}
 		if (hadExecParam && prop.eClass().getClassifierID() == PrfPackage.SIMPLE) {
+			// read-write execparms that aren't configurable -> read-only command line property
+			if (!hadConfigure && !hasProperty && prop.getMode() == AccessType.READWRITE) {
+				prop.setMode(AccessType.READONLY);
+			}
 			if (!hasProperty) {
 				Kind newKind = PrfFactory.eINSTANCE.createKind();
 				newKind.setType(PropertyConfigurationType.PROPERTY);
