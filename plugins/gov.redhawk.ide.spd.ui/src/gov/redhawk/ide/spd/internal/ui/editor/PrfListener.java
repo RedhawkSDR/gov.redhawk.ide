@@ -10,8 +10,22 @@
  *******************************************************************************/
 package gov.redhawk.ide.spd.internal.ui.editor;
 
-import java.util.Collection;
 import java.util.Iterator;
+
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.command.CompoundCommand;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.emf.ecore.util.FeatureMap;
+import org.eclipse.emf.ecore.util.FeatureMap.Entry;
+import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
+import org.omg.CosEventChannelAdmin.EventChannelHelper;
 
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.ConfigurationKind;
@@ -37,32 +51,14 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
-import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.common.command.CompoundCommand;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.EStructuralFeature.Setting;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EContentAdapter;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.util.FeatureMap;
-import org.eclipse.emf.ecore.util.FeatureMap.Entry;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
-import org.eclipse.emf.edit.command.SetCommand;
-import org.eclipse.emf.edit.domain.EditingDomain;
-import org.omg.CosEventChannelAdmin.EventChannelHelper;
-
 public class PrfListener extends EContentAdapter {
 
 	public static final String EVENTCHANNEL_REPID = EventChannelHelper.id();
 
 	public static final String PROPERTY_EVENT = Uses.PORT_NAME_PROP_EVENTS;
 
-	private static final EStructuralFeature[] COMPONENT_PATH = new EStructuralFeature[] {
-	        SpdPackage.Literals.SOFT_PKG__DESCRIPTOR, SpdPackage.Literals.DESCRIPTOR__COMPONENT,
-	};
+	private static final EStructuralFeature[] COMPONENT_PATH = new EStructuralFeature[] { SpdPackage.Literals.SOFT_PKG__DESCRIPTOR,
+		SpdPackage.Literals.DESCRIPTOR__COMPONENT, };
 
 	private Properties properties;
 	private final SoftPkg spd;
@@ -191,31 +187,22 @@ public class PrfListener extends EContentAdapter {
 	}
 
 	private Command removePropertyEventPort(final EditingDomain dom, final Ports ports, final Interfaces ifaces) {
-		final CompoundCommand command = new CompoundCommand("Remove Port Command");
-		Interface iface = null;
 		for (final FeatureMap.Entry entry : ports.getGroup()) {
 			if (entry.getValue() instanceof AbstractPort) {
 				final AbstractPort port = (AbstractPort) entry.getValue();
 				if (PrfListener.PROPERTY_EVENT.equals(port.getName()) && PrfListener.EVENTCHANNEL_REPID.equals(port.getRepID())) {
-					command.append(RemoveCommand.create(dom, ports, entry.getEStructuralFeature(), port));
-					iface = port.getInterface();
+					return RemoveCommand.create(dom, ports, entry.getEStructuralFeature(), port);
 				}
 			}
 		}
 
-		// Remove the interface if nothing else uses it
-		final Collection<Setting> result = EcoreUtil.UsageCrossReferencer.find(iface, ifaces.eResource());
-		if (result.size() <= 1) {
-			command.append(RemoveCommand.create(dom, ifaces, ScdPackage.Literals.INTERFACES__INTERFACE, iface));
-		}
-
-		return command.unwrap();
+		return new CompoundCommand();
 	}
 
 	@Override
 	protected void addAdapter(final Notifier notifier) {
 		if (notifier instanceof Properties || notifier instanceof Simple || notifier instanceof SimpleSequence || notifier instanceof Struct
-		        || notifier instanceof StructSequence || notifier instanceof Kind || notifier instanceof ConfigurationKind) {
+			|| notifier instanceof StructSequence || notifier instanceof Kind || notifier instanceof ConfigurationKind) {
 			super.addAdapter(notifier);
 		}
 	}

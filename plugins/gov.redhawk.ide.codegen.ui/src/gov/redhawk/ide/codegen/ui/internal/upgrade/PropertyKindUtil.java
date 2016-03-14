@@ -138,7 +138,8 @@ public class PropertyKindUtil {
 
 		// Offer upgrade if using deprecated property kinds with a newer codegen
 		for (Version codegenVersion : codegenVersions) {
-			if (codegenVersion.compareTo(new Version(2, 0, 0)) >= 0 && (kindTypes.contains(PropertyConfigurationType.CONFIGURE) || kindTypes.contains(PropertyConfigurationType.EXECPARAM))) {
+			if (codegenVersion.compareTo(new Version(2, 0, 0)) >= 0 && (kindTypes.contains(PropertyConfigurationType.CONFIGURE)
+				|| kindTypes.contains(PropertyConfigurationType.EXECPARAM) || kindTypes.contains(PropertyConfigurationType.EVENT))) {
 				String[] buttons = new String[] { IDialogConstants.CANCEL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_LABEL };
 				MessageDialog dialog = new MessageDialog(shell, Messages.DeprecatedProps_Title, null, Messages.DeprecatedProps_Message, MessageDialog.QUESTION,
 					buttons, 2);
@@ -248,6 +249,9 @@ public class PropertyKindUtil {
 				iterator.remove();
 				hadExecParam = true;
 				break;
+			case EVENT:
+				iterator.remove();
+				break;
 			default:
 				break;
 			}
@@ -263,7 +267,7 @@ public class PropertyKindUtil {
 				kinds.add(newKind);
 			}
 			((Simple) prop).setCommandline(true);
-		} else  if (hadConfigure && !hasProperty) {
+		} else if (hadConfigure && !hasProperty) {
 			Kind newKind = PrfFactory.eINSTANCE.createKind();
 			newKind.setType(PropertyConfigurationType.PROPERTY);
 			kinds.add(newKind);
@@ -299,6 +303,9 @@ public class PropertyKindUtil {
 			case CONFIGURE:
 				iterator.remove();
 				hadConfigure = true;
+				break;
+			case EVENT:
+				iterator.remove();
 				break;
 			default:
 				break;
