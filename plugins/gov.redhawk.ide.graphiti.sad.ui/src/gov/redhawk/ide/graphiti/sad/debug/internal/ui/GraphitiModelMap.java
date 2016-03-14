@@ -58,6 +58,7 @@ import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
+import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.model.sca.util.ReleaseJob;
 import gov.redhawk.sca.util.SubMonitor;
@@ -97,7 +98,6 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	 * @param comp
 	 */
 	public void add(@NonNull final LocalScaComponent comp) {
-
 		final NodeMapEntry nodeMapEntry = new NodeMapEntry();
 		nodeMapEntry.setLocalScaComponent(comp);
 		synchronized (nodes) {
@@ -230,6 +230,11 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	 * @param conn
 	 */
 	public void add(@NonNull final ScaConnection conn) {
+		// Ignore connections at the waveform level
+		if (conn.getPort().eContainer() instanceof ScaWaveform) {
+			return;
+		}
+
 		final ConnectionMapEntry connectionMap = new ConnectionMapEntry();
 		connectionMap.setScaConnection(conn);
 		synchronized (connections) {
