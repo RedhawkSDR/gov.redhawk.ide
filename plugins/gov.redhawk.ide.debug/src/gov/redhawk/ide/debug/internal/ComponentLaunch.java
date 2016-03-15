@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
@@ -29,17 +28,9 @@ import gov.redhawk.ide.debug.variables.LaunchVariables;
 public class ComponentLaunch extends Launch {
 
 	private IProcess parent;
-	private String label;
 
 	public ComponentLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
 		super(launchConfiguration, mode, locator);
-		try {
-			// Ideally, the console should be labeled with the usage name of the component/device
-			label = launchConfiguration.getAttribute(LaunchVariables.DEVICE_LABEL,
-				launchConfiguration.getAttribute(LaunchVariables.NAME_BINDING, launchConfiguration.getName()));
-		} catch (CoreException e) {
-			label = launchConfiguration.getName();
-		}
 		setAttribute(ScaDebugPlugin.LAUNCH_ATTRIBUTE_REDHAWK_EXIT_STATUS, "true");
 	}
 
@@ -50,6 +41,14 @@ public class ComponentLaunch extends Launch {
 	}
 
 	private void setProcessLabel(IProcess process) {
+		// Ideally, the console should be labeled with the usage name of the component/device
+		String label = getAttribute(LaunchVariables.DEVICE_LABEL);
+		if (label == null) {
+			label = getAttribute(LaunchVariables.NAME_BINDING);
+		}
+		if (label == null) {
+			label = getLaunchConfiguration().getName();
+		}
 		process.setAttribute(IProcess.ATTR_PROCESS_LABEL, label + getParentName() + process.getLabel());
 	}
 
