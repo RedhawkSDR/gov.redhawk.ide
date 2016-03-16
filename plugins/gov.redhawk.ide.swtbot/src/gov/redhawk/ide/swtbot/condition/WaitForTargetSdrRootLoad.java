@@ -17,14 +17,17 @@ import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
 public class WaitForTargetSdrRootLoad extends DefaultCondition {
 
+	private LoadState lastObservedState;
+
 	@Override
 	public boolean test() throws Exception {
-		return SdrUiPlugin.getDefault().getTargetSdrRoot().getState() != LoadState.LOADED;
+		lastObservedState = SdrUiPlugin.getDefault().getTargetSdrRoot().getState();
+		return lastObservedState == LoadState.LOADED;
 	}
 
 	@Override
 	public String getFailureMessage() {
-		return "Target SDR Root failed to load in model";
+		return String.format("Target SDR Root failed to load in model (state was %s)", lastObservedState);
 	}
 
 }
