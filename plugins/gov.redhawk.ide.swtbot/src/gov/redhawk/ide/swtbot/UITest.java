@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -29,6 +30,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
+import gov.redhawk.ide.swtbot.condition.WaitForTargetSdrRootLoad;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 /** run with SWTBotJunit4ClassRunner to capture screenshots on test failures. */
@@ -50,10 +52,14 @@ public abstract class UITest {
 		pydevPrefs.setValue(PYDEV_CHECK_SETTINGS, false);
 		pydevPrefs.setValue(PYDEV_FUNDING_SHOWN, true);
 
+		// Wait for the workbench to start, and close the intro
 		while (PlatformUI.getWorkbench().isStarting()) {
 			Thread.sleep(1000);
 		}
 		StandardTestActions.closeIntro();
+
+		// Wait for the SDR root to finish loading. This helps prevent context menu issues on the SDR root.
+		new SWTBot().waitUntil(new WaitForTargetSdrRootLoad());
 	}
 
 	@Before
