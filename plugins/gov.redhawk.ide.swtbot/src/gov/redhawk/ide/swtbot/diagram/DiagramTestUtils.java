@@ -960,7 +960,7 @@ public class DiagramTestUtils {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return componentName + " Component did not disappear from Chalkboard Diagram";
+				return componentName + " did not disappear in diagram";
 			}
 
 			@Override
