@@ -20,6 +20,7 @@ import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.matchers.AbstractMatcher;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarToggleButton;
 import org.hamcrest.Description;
 import org.junit.Assert;
 
@@ -149,5 +150,27 @@ public class ConsoleUtils {
 			}
 			newConsoleText = view.bot().label().getText();
 		} while (!consoleText.equals(newConsoleText));
+	}
+
+	/**
+	 * Stop the Console View from popping up every time it gets pinged
+	 * Makes assumption on location of 'Show Standard Out' and 'Show Standard Error' buttons
+	 * @param bot
+	 * @return
+	 */
+	public static void disableAutoShowConsole(SWTWorkbenchBot bot) {
+		final String stdOutTT = "Show Console When Standard Out Changes";
+		final String errOutTT = "Show Console When Standard Error Changes";
+		SWTBotView view = ViewUtils.getConsoleView(bot);
+		view.setFocus();
+		List<SWTBotToolbarButton> buttons = view.getToolbarButtons();
+		for (SWTBotToolbarButton button : buttons) {
+			if (stdOutTT.equals(button.getToolTipText()) || errOutTT.equals(button.getToolTipText())) {
+				SWTBotToolbarToggleButton tmp = (SWTBotToolbarToggleButton) button;
+				if (tmp.isChecked()) {
+					button.click();
+				}
+			}
+		}
 	}
 }

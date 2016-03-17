@@ -10,8 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
-import java.util.List;
-
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
@@ -20,8 +18,6 @@ import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarToggleButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
@@ -69,21 +65,11 @@ public class ViewUtils {
 	 * Makes assumption on location of 'Show Standard Out' and 'Show Standard Error' buttons
 	 * @param bot
 	 * @return
+	 * @deprecated Use {@link ConsoleUtils#disableAutoShowConsole(SWTWorkbenchBot)}
 	 */
+	@Deprecated
 	public static void disableConsoleView(SWTWorkbenchBot bot) {
-		final String stdOutTT = "Show Console When Standard Out Changes";
-		final String errOutTT = "Show Console When Standard Error Changes";
-		SWTBotView view = getConsoleView(bot);
-		view.setFocus();
-		List<SWTBotToolbarButton> buttons = view.getToolbarButtons();
-		for (SWTBotToolbarButton button : buttons) {
-			if (stdOutTT.equals(button.getToolTipText()) || errOutTT.equals(button.getToolTipText())) {
-				SWTBotToolbarToggleButton tmp = (SWTBotToolbarToggleButton) button;
-				if (tmp.isChecked()) {
-					button.click();
-				}
-			}
-		}
+		ConsoleUtils.disableAutoShowConsole(bot);
 	}
 
 	public static SWTBotView getConsoleView(SWTWorkbenchBot bot) {
