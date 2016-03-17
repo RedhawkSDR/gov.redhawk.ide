@@ -12,6 +12,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
@@ -41,6 +42,11 @@ public abstract class ReleaseFeature extends DefaultDeleteFeature {
 	}
 
 	protected abstract boolean isReleaseableShape(RHContainerShape shape);
+
+	@Override
+	public boolean canUndo(IContext context) {
+		return false;
+	}
 
 	@Override
 	public boolean canDelete(IDeleteContext context) {

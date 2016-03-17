@@ -11,23 +11,19 @@
 package gov.redhawk.ide.graphiti.internal.ui;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
-import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
-import org.eclipse.graphiti.pattern.IFeatureProviderWithPatterns;
-import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.widgets.Display;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.internal.command.DeleteCommand;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
@@ -47,47 +43,7 @@ public abstract class AbstractGraphitiModelMap {
 	 * @param componentInstantiation
 	 */
 	protected void delete(final ComponentInstantiation componentInstantiation) {
-		if (componentInstantiation == null || editor.isDisposed()) {
-			return;
-		}
-
-		// Run Graphiti model commands in the UI thread
-		if (Display.getCurrent() == null) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					delete(componentInstantiation);
-				}
-			});
-		}
-
-		// setup to perform diagram operations
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final Diagram diagram = provider.getDiagram();
-
-		// Get the PictogramElement
-		final PictogramElement[] peToRemove = { DUtil.getPictogramElementForBusinessObject(diagram, componentInstantiation, RHContainerShape.class) };
-		if (peToRemove.length == 0 || peToRemove[0] == null) {
-			return;
-		}
-
-		// Run the delete feature in a transaction
-		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				// Create an instance of DeleteFeatureForPattern. The normal delete feature is for triggering a
-				// releaseObject() CORBA call. This way we delete the diagram model object, and the diagram graphical
-				// objects.
-				DeleteContext context = new DeleteContext(peToRemove[0]);
-				IFeatureProviderWithPatterns fp = (IFeatureProviderWithPatterns) featureProvider;
-				IPattern pattern = fp.getPatternForPictogramElement(peToRemove[0]);
-				DeleteFeatureForPattern deleteFeature = new DeleteFeatureForPattern(featureProvider, pattern);
-				deleteFeature.delete(context);
-			}
-		});
+		delete(componentInstantiation, RHContainerShape.class);
 	}
 
 	/**
@@ -95,7 +51,15 @@ public abstract class AbstractGraphitiModelMap {
 	 * @param connection
 	 */
 	protected void delete(@Nullable final ConnectInterface< ? , ? , ? > connection) {
-		if (connection == null || editor.isDisposed()) {
+		delete(connection, Connection.class);
+	}
+
+	/**
+	 * @param deleteObj The business model object being deleted
+	 * @param peClass The type of the pictogram element for the model object
+	 */
+	private < T extends PictogramElement > void delete(final EObject deleteObj, final Class<T> peClass) {
+		if (deleteObj == null || editor.isDisposed()) {
 			return;
 		}
 
@@ -104,32 +68,27 @@ public abstract class AbstractGraphitiModelMap {
 			Display.getDefault().asyncExec(new Runnable() {
 				@Override
 				public void run() {
-					delete(connection);
+					delete(deleteObj, peClass);
 				}
 			});
+			return;
 		}
 
 		// setup to perform diagram operations
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final IFeatureProvider featureProvider = provider.getFeatureProvider();
 		final Diagram diagram = provider.getDiagram();
+		boolean runtime = DUtil.isDiagramRuntime(diagram);
 
 		// Get the PictogramElement
-		final PictogramElement peToRemove = DUtil.getPictogramElementForBusinessObject(diagram, connection, Connection.class);
+		final PictogramElement pictogramElement = DUtil.getPictogramElementForBusinessObject(diagram, deleteObj, peClass);
+		if (pictogramElement == null) {
+			return;
+		}
 
 		// Run the delete feature in a transaction
 		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				// delete connection shape & connection business object
-				DeleteContext dc = new DeleteContext(peToRemove);
-				IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
-				if (deleteFeature != null) {
-					deleteFeature.delete(dc);
-				}
-			}
-		});
+		stack.execute(new DeleteCommand(editingDomain, pictogramElement, featureProvider, runtime));
 	}
 }
