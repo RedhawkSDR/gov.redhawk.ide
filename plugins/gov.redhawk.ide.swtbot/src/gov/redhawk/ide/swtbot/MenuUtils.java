@@ -104,10 +104,10 @@ public class MenuUtils {
 	}
 
 	/**
-	 * Is the undo menu option "blank" (i.e. nothing on the operation stack), and disabled?
+	 * Is the undo menu option disabled?
 	 * @return
 	 */
-	public static boolean isUndoBlankAndDisabled(SWTBot bot) {
+	public static boolean isUndoDisabled(SWTBot bot) {
 		Matcher<MenuItem> undoMatcher = new BaseMatcher<MenuItem>() {
 
 			@Override
@@ -115,12 +115,12 @@ public class MenuUtils {
 				if (!(item instanceof MenuItem)) {
 					return false;
 				}
-				return ((MenuItem) item).getText().equals("&Undo\tCtrl+Z");
+				return ((MenuItem) item).getText().startsWith("&Undo");
 			}
 
 			@Override
 			public void describeTo(Description description) {
-				description.appendText("Checks for an undo menu item that is clean (disabled, no text for an non-undoable item");
+				description.appendText("disabled, and no text for an non-undoable item");
 			}
 
 		};
