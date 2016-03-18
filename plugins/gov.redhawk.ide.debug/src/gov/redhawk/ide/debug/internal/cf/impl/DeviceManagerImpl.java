@@ -18,7 +18,6 @@ import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaService;
-import gov.redhawk.model.sca.impl.ScaComponentImpl;
 import gov.redhawk.sca.efs.WrappedFileStore;
 import gov.redhawk.sca.util.PluginUtil;
 
@@ -34,6 +33,7 @@ import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.AnyUtils;
+import mil.jpeojtrs.sca.util.DceUuidUtil;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.filesystem.EFS;
@@ -438,7 +438,16 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
 
 		if (usageName == null && compId != null) {
-			usageName = ScaComponentImpl.convertIdentifierToInstantiationID(compId);
+			if (DceUuidUtil.isValid(compId)) {
+				usageName = compId;
+			} else {
+				int index = compId.indexOf(':');
+				if (index != -1 && compId.length() > (index + 1)) {
+					usageName = compId.substring(index + 1);
+				} else {
+					usageName = compId;
+				}
+			}
 		}
 
 		if (type == ComponentType.SERVICE) {
