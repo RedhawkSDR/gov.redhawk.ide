@@ -10,32 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ext.RHSadGxFactory;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-
-import mil.jpeojtrs.sca.partitioning.ComponentFile;
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.AssemblyController;
-import mil.jpeojtrs.sca.sad.ExternalPorts;
-import mil.jpeojtrs.sca.sad.HostCollocation;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
-import mil.jpeojtrs.sca.sad.SadComponentPlacement;
-import mil.jpeojtrs.sca.sad.SadConnectInterface;
-import mil.jpeojtrs.sca.sad.SadFactory;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -66,6 +43,30 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
+
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.sad.ext.RHSadGxFactory;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.UpdateUtil;
+import mil.jpeojtrs.sca.partitioning.ComponentFile;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.AssemblyController;
+import mil.jpeojtrs.sca.sad.ExternalPorts;
+import mil.jpeojtrs.sca.sad.ExternalProperty;
+import mil.jpeojtrs.sca.sad.HostCollocation;
+import mil.jpeojtrs.sca.sad.Port;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
+import mil.jpeojtrs.sca.sad.SadComponentPlacement;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
+import mil.jpeojtrs.sca.sad.SadFactory;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 public class ComponentPattern extends AbstractPortSupplierPattern {
 
@@ -210,7 +211,7 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 	 * Delete SadComponentInstantiation and corresponding SadComponentPlacement business object from SoftwareAssembly
 	 * This method should be executed within a RecordingCommand.
 	 * @param ciToDelete
-	 * @param diagram
+	 * @param sad
 	 */
 	public static void deleteComponentInstantiation(final SadComponentInstantiation ciToDelete, final SoftwareAssembly sad) {
 
@@ -236,12 +237,12 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 				// and therefore null checks need to be performed.
 				// FindBy connections don't have ComponentInstantiationRefs and so they can also be null
 				if ((connectionInterface.getComponentSupportedInterface() != null
-					&& connectionInterface.getComponentSupportedInterface().getComponentInstantiationRef() != null && ciToDelete.getId().equals(
-					connectionInterface.getComponentSupportedInterface().getComponentInstantiationRef().getRefid()))
-					|| (connectionInterface.getUsesPort() != null && connectionInterface.getUsesPort().getComponentInstantiationRef() != null && ciToDelete.getId().equals(
-						connectionInterface.getUsesPort().getComponentInstantiationRef().getRefid()))
-					|| (connectionInterface.getProvidesPort() != null && connectionInterface.getProvidesPort().getComponentInstantiationRef() != null && ciToDelete.getId().equals(
-						connectionInterface.getProvidesPort().getComponentInstantiationRef().getRefid()))) {
+					&& connectionInterface.getComponentSupportedInterface().getComponentInstantiationRef() != null
+					&& ciToDelete.getId().equals(connectionInterface.getComponentSupportedInterface().getComponentInstantiationRef().getRefid()))
+					|| (connectionInterface.getUsesPort() != null && connectionInterface.getUsesPort().getComponentInstantiationRef() != null
+						&& ciToDelete.getId().equals(connectionInterface.getUsesPort().getComponentInstantiationRef().getRefid()))
+					|| (connectionInterface.getProvidesPort() != null && connectionInterface.getProvidesPort().getComponentInstantiationRef() != null
+						&& ciToDelete.getId().equals(connectionInterface.getProvidesPort().getComponentInstantiationRef().getRefid()))) {
 					connectionsToRemove.add(connectionInterface);
 				}
 			}
@@ -249,6 +250,38 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		// remove gathered connections
 		if (sad.getConnections() != null) {
 			sad.getConnections().getConnectInterface().removeAll(connectionsToRemove);
+		}
+
+		// remove any associated external ports
+		List<Port> externalPortsToRemove = new ArrayList<Port>();
+		for (Port port : sad.getExternalPorts().getPort()) {
+			if (port.getComponentInstantiationRef().getRefid().equals(ciToDelete.getId())) {
+				externalPortsToRemove.add(port);
+			}
+		}
+
+		for (Port port : externalPortsToRemove) {
+			sad.getExternalPorts().getPort().remove(port);
+		}
+
+		if (sad.getExternalPorts().getPort().isEmpty()) {
+			sad.setExternalPorts(null);
+		}
+
+		// remove any associated external properties
+		List<ExternalProperty> externalPropertiesToRemove = new ArrayList<ExternalProperty>();
+		for (ExternalProperty property : sad.getExternalProperties().getProperties()) {
+			if (property.getCompRefID().equals(ciToDelete.getId())) {
+				externalPropertiesToRemove.add(property);
+			}
+		}
+
+		for (ExternalProperty property : externalPropertiesToRemove) {
+			sad.getExternalProperties().getProperties().remove(property);
+		}
+
+		if (sad.getExternalProperties().getProperties().isEmpty()) {
+			sad.setExternalProperties(null);
 		}
 
 		// delete component file if applicable
@@ -326,7 +359,8 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		ContainerShape startOrderEllipse = componentShape.getStartOrderEllipseShape();
 		if (startOrderEllipse != null) {
 			// Move the ellipse to the upper right corner of its parent
-			int xOffset = startOrderEllipse.getContainer().getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING);
+			int xOffset = startOrderEllipse.getContainer().getGraphicsAlgorithm().getWidth()
+				- (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING);
 			if (UpdateUtil.moveIfNeeded(startOrderEllipse.getGraphicsAlgorithm(), xOffset, START_ORDER_ELLIPSE_TOP_PADDING)) {
 				layoutApplied = true;
 			}
