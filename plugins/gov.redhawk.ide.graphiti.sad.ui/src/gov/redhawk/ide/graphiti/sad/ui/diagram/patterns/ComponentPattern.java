@@ -253,37 +253,40 @@ public class ComponentPattern extends AbstractPortSupplierPattern {
 		}
 
 		// remove any associated external ports
-		List<Port> externalPortsToRemove = new ArrayList<Port>();
-		for (Port port : sad.getExternalPorts().getPort()) {
-			if (port.getComponentInstantiationRef().getRefid().equals(ciToDelete.getId())) {
-				externalPortsToRemove.add(port);
+		if (sad.getExternalPorts() != null) {
+			List<Port> externalPortsToRemove = new ArrayList<Port>();
+			for (Port port : sad.getExternalPorts().getPort()) {
+				if (port.getComponentInstantiationRef().getRefid().equals(ciToDelete.getId())) {
+					externalPortsToRemove.add(port);
+				}
 			}
-		}
 
-		for (Port port : externalPortsToRemove) {
-			sad.getExternalPorts().getPort().remove(port);
-		}
+			for (Port port : externalPortsToRemove) {
+				sad.getExternalPorts().getPort().remove(port);
+			}
 
-		if (sad.getExternalPorts().getPort().isEmpty()) {
-			sad.setExternalPorts(null);
+			if (sad.getExternalPorts().getPort().isEmpty()) {
+				sad.setExternalPorts(null);
+			}
 		}
 
 		// remove any associated external properties
-		List<ExternalProperty> externalPropertiesToRemove = new ArrayList<ExternalProperty>();
-		for (ExternalProperty property : sad.getExternalProperties().getProperties()) {
-			if (property.getCompRefID().equals(ciToDelete.getId())) {
-				externalPropertiesToRemove.add(property);
+		if (sad.getExternalProperties() != null) {
+			List<ExternalProperty> externalPropertiesToRemove = new ArrayList<ExternalProperty>();
+			for (ExternalProperty property : sad.getExternalProperties().getProperties()) {
+				if (property.getCompRefID().equals(ciToDelete.getId())) {
+					externalPropertiesToRemove.add(property);
+				}
+			}
+
+			for (ExternalProperty property : externalPropertiesToRemove) {
+				sad.getExternalProperties().getProperties().remove(property);
+			}
+
+			if (sad.getExternalProperties().getProperties().isEmpty()) {
+				sad.setExternalProperties(null);
 			}
 		}
-
-		for (ExternalProperty property : externalPropertiesToRemove) {
-			sad.getExternalProperties().getProperties().remove(property);
-		}
-
-		if (sad.getExternalProperties().getProperties().isEmpty()) {
-			sad.setExternalProperties(null);
-		}
-
 		// delete component file if applicable
 		// figure out which component file we are using and if no other component placements using it then remove it.
 		ComponentFile componentFileToRemove = placement.getComponentFileRef().getFile();
