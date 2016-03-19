@@ -571,8 +571,13 @@ public final class StandardTestActions {
 	 * @param text
 	 * @see gov.redhawk.ide.swtbot.condition.WaitForCellValue#WaitForCellValue(SWTBotTable, int, int, String)
 	 */
-	public static void writeToCell(SWTBot bot, SWTBotTable table, final int row, final int column, final String text) {
-		table.click(row, column);
+	public static void writeToCell(SWTBot bot, SWTBotTable table, final int row, final int column, final String text, final boolean doubleClick) {
+		if (doubleClick) {
+			table.doubleClick(row, column);
+		} else {
+			table.click(row, column);
+		}
+		
 
 		// Type in the cell editor when it appears
 		final SWTBotText cellEditor = new SWTBot(table.widget).text();
