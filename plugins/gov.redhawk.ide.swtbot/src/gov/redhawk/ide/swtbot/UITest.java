@@ -59,7 +59,7 @@ public abstract class UITest {
 		StandardTestActions.closeIntro();
 
 		// Wait for the SDR root to finish loading. This helps prevent context menu issues on the SDR root.
-		new SWTBot().waitUntil(new WaitForTargetSdrRootLoad());
+		new SWTBot().waitUntil(new WaitForTargetSdrRootLoad(), WaitForTargetSdrRootLoad.TIMEOUT);
 	}
 
 	@Before

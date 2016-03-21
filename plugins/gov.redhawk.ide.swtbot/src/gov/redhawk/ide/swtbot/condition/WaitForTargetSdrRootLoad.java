@@ -17,6 +17,11 @@ import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
 public class WaitForTargetSdrRootLoad extends DefaultCondition {
 
+	/**
+	 * The recommended timeout when using this condition
+	 */
+	public static final long TIMEOUT = 10000;
+
 	private LoadState lastObservedState;
 
 	@Override
