@@ -61,6 +61,7 @@ import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
 import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotCCombo;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotList;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
@@ -186,7 +187,7 @@ public final class StandardTestActions {
 	public static void buildAll() {
 		KeyboardFactory.getSWTKeyboard().pressShortcut(SWT.CTRL, 'b');
 	}
-	
+
 	/**
 	 * Generates the project using the Generate button in the overview tab
 	 * Generates all files
@@ -195,7 +196,7 @@ public final class StandardTestActions {
 		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.OVERVIEW_TAB);
 
 		editor.bot().toolbarButton(0).click();
-		
+
 		try {
 			SWTBotShell fileChangedShell = bot.shell("File Changed");
 			fileChangedShell.bot().button("Yes").click();
@@ -203,7 +204,7 @@ public final class StandardTestActions {
 		} catch (WidgetNotFoundException e) {
 			// PASS
 		}
-		
+
 		bot.waitUntil(Conditions.shellIsActive("Regenerate Files"), 10000);
 		SWTBotShell fileShell = bot.shell("Regenerate Files");
 
@@ -215,7 +216,7 @@ public final class StandardTestActions {
 		} catch (WidgetNotFoundException e) {
 			// PASS
 		}
-		
+
 		try {
 			SWTBotShell fileChangedShell = bot.shell("File Changed");
 			fileChangedShell.bot().button("OK").click();
@@ -233,7 +234,7 @@ public final class StandardTestActions {
 			public void run() {
 				Shell s = Display.getCurrent().getActiveShell();
 				if (s == PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()) {
-					badDialog[0] = null;        // good
+					badDialog[0] = null; // good
 				} else if (s != null) {
 					badDialog[0] = s.getText(); // bad - set to dialog's title
 				}
@@ -372,7 +373,8 @@ public final class StandardTestActions {
 					return IOverwriteQuery.ALL;
 				}
 			};
-			ImportOperation operation = new ImportOperation(project.getFullPath(), importSource, FileSystemStructureProvider.INSTANCE, overwrite, filesToImport);
+			ImportOperation operation = new ImportOperation(project.getFullPath(), importSource, FileSystemStructureProvider.INSTANCE, overwrite,
+				filesToImport);
 			operation.setContext(null);
 			operation.setOverwriteResources(true); // need to overwrite
 			// .project, .classpath
@@ -387,11 +389,11 @@ public final class StandardTestActions {
 
 		return true;
 	}
-	
+
 	/**
 	 * Export the declared project from the Project Explorer to the Target SDR
 	 * @param projectName
-	 * @param bot 
+	 * @param bot
 	 */
 	public static void exportProject(String projectName, SWTWorkbenchBot bot) {
 		SWTBotTreeItem projectNode = ProjectExplorerUtils.selectNode(bot, projectName);
@@ -422,6 +424,48 @@ public final class StandardTestActions {
 		// Type in the cell editor text box when it appears
 		final SWTBotText cellEditor = new SWTBot(parent).text();
 		cellEditor.typeText(text);
+		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
+		keyboard.pressShortcut(Keystrokes.CR);
+
+		// Wait for cell editor to close
+		bot.waitUntil(new DefaultCondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return cellEditor.widget.isDisposed() || !(cellEditor.isActive() || cellEditor.isVisible());
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Cell editor did not disappear";
+			}
+		});
+	}
+
+	/**
+	 * @param bot
+	 * @param item
+	 * @param column
+	 * @param text
+	 * @see gov.redhawk.ide.swtbot.condition.WaitForCellValue#WaitForCellValue(SWTBotTreeItem, int, String)
+	 */
+	public static void writeToComboCell(SWTBot bot, final SWTBotTreeItem item, final int column, final String text) {
+		item.select();
+		item.click(column);
+
+		// Get parent
+		RunnableWithResult<Widget> runnable = new RunnableWithResult.Impl<Widget>() {
+			@Override
+			public void run() {
+				setResult(item.widget.getParent());
+			}
+		};
+		item.display.syncExec(runnable);
+		Widget parent = runnable.getResult();
+
+		// Type in the cell editor text box when it appears
+		final SWTBotCCombo cellEditor = new SWTBot(parent).ccomboBox();
+		cellEditor.setText(text);
 		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
 		keyboard.pressShortcut(Keystrokes.CR);
 
@@ -577,7 +621,6 @@ public final class StandardTestActions {
 		} else {
 			table.click(row, column);
 		}
-		
 
 		// Type in the cell editor when it appears
 		final SWTBotText cellEditor = new SWTBot(table.widget).text();
