@@ -10,18 +10,17 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.runtime.CoreException;
+
 import gov.redhawk.ide.sdr.internal.util.AbstractEnvMap;
 import gov.redhawk.ide.sdr.internal.util.CppEnvMap;
 import gov.redhawk.ide.sdr.internal.util.JavaEnvMap;
 import gov.redhawk.ide.sdr.internal.util.OssieHomeEnvMap;
 import gov.redhawk.ide.sdr.internal.util.PythonEnvMap;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import mil.jpeojtrs.sca.spd.Implementation;
-
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * @since 3.2
@@ -63,9 +62,7 @@ public final class ScaEnvironmentUtil {
 	public static Map<String, String> getLauncherEnvMap(Implementation impl) throws CoreException {
 		final Map<String, String> retVal = new HashMap<String, String>();
 		for (AbstractEnvMap map : REGISTRY) {
-			if (map.handles(impl)) {
-				map.initEnv(impl, retVal);
-			}
+			map.initEnv(impl, retVal);
 		}
 		
 		return retVal;
