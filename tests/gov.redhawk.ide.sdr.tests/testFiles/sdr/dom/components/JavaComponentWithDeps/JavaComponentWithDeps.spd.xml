@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This file is protected by Copyright.
+    Please refer to the COPYRIGHT file distributed with this source distribution.
+
+    This file is part of REDHAWK IDE.
+
+    All rights reserved.  This program and the accompanying materials are made available under
+    the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html.
+-->
+<!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
+<softpkg id="DCE:351db6e5-4fa7-4950-9218-797a46485f7a" name="JavaComponentWithDeps" type="sca_compliant">
+  <title></title>
+  <author>
+    <name>null</name>
+  </author>
+  <propertyfile type="PRF">
+    <localfile name="JavaComponentWithDeps.prf.xml"/>
+  </propertyfile>
+  <descriptor>
+    <localfile name="JavaComponentWithDeps.scd.xml"/>
+  </descriptor>
+  <implementation id="java">
+    <description>The implementation contains descriptive information about the template for a software resource.</description>
+    <code type="Executable">
+      <localfile name="java"/>
+      <entrypoint>java/startJava.sh</entrypoint>
+    </code>
+    <compiler name="/usr/bin/javac" version="1.5"/>
+    <programminglanguage name="Java"/>
+    <humanlanguage name="EN"/>
+    <runtime name="/usr/bin/java" version="1.5"/>
+    <os name="Linux"/>
+    <dependency type="other">
+      <softpkgref>
+        <localfile name="/deps/JavaDepA/JavaDepA.spd.xml"/>
+      </softpkgref>
+    </dependency>
+    <dependency type="other">
+      <softpkgref>
+        <localfile name="/deps/JavaDepD/JavaDepD.spd.xml"/>
+      </softpkgref>
+    </dependency>
+  </implementation>
+</softpkg>

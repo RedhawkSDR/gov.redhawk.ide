@@ -28,55 +28,55 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 /**
  * IDE-1407 Ensure proper paths are used for chalkboard launches
  */
-public class JavaEnvMapTest {
+public class PythonEnvMapTest {
 
-	private static final String SUFFIX = "${OssieHome}/lib/*:${env_var:CLASSPATH}";
+	private static final String SUFFIX = "${OssieHome}/lib/python:${env_var:PYTHONPATH}";
 
-	private JavaEnvMap mapper = new JavaEnvMap();
+	private PythonEnvMap mapper = new PythonEnvMap();
 
 	@Test
 	public void initEnv_null() throws CoreException {
 		Map<String, String> map = new HashMap<String, String>();
 		mapper.initEnv(null, map);
 		Assert.assertEquals(1, map.size());
-		checkClassPath(map, new String[0]);
+		checkPythonPath(map, new String[0]);
 	}
 
 	@Test
 	public void initEnv_component() throws CoreException, URISyntaxException, IOException {
 		SdrRoot sdr = SdrTests.getSdrTestsSdrRoot();
-		SoftPkg spd = sdr.getComponentsContainer().getSoftPkg("DCE:0237f7ac-ff28-4a22-b203-5bf755fbd5dc");
-		Assert.assertEquals("JavaComponent", spd.getName());
+		SoftPkg spd = sdr.getComponentsContainer().getSoftPkg("DCE:e8f986a9-e717-4792-bb06-d1c6f34650c6");
+		Assert.assertEquals("PythonComponent", spd.getName());
 
 		Map<String, String> map = new HashMap<String, String>();
-		mapper.initEnv(spd.getImplementation("java"), map);
+		mapper.initEnv(spd.getImplementation("python"), map);
 		Assert.assertEquals(1, map.size());
-		checkClassPath(map, new String[0]);
+		checkPythonPath(map, new String[0]);
 	}
 
 	@Test
 	public void initEnv_componentWithDeps() throws CoreException, URISyntaxException, IOException {
 		SdrRoot sdr = SdrTests.getSdrTestsSdrRoot();
-		SoftPkg spd = sdr.getComponentsContainer().getSoftPkg("DCE:351db6e5-4fa7-4950-9218-797a46485f7a");
-		Assert.assertEquals("JavaComponentWithDeps", spd.getName());
+		SoftPkg spd = sdr.getComponentsContainer().getSoftPkg("DCE:263456f0-5789-4b62-bc4b-3599f30fe86d");
+		Assert.assertEquals("PythonComponentWithDeps", spd.getName());
 
 		Map<String, String> map = new HashMap<String, String>();
-		mapper.initEnv(spd.getImplementation("java"), map);
+		mapper.initEnv(spd.getImplementation("python"), map);
 		Assert.assertEquals(1, map.size());
 		String sdrDom = getSdrDomLocation();
-		String[] paths = { sdrDom + "/deps/JavaDepD/java/lib/JavaDepD.jar", sdrDom + "/deps/JavaDepDE/java/lib/JavaDepDE.jar",
-			sdrDom + "/deps/JavaDepA/java/lib/JavaDepA.jar", sdrDom + "/deps/JavaDepAC/java/lib/JavaDepAC.jar", sdrDom + "/deps/JavaDepAB/java/lib/JavaDepAB.jar" };
-		checkClassPath(map, paths);
+		String[] paths = { sdrDom + "/deps/PythonDepD/python/lib", sdrDom + "/deps/PythonDepDE/python/lib", sdrDom + "/deps/PythonDepA/python/lib",
+			sdrDom + "/deps/PythonDepAC/python/lib", sdrDom + "/deps/PythonDepAB/python/lib" };
+		checkPythonPath(map, paths);
 	}
 
-	private void checkClassPath(Map<String, String> map, String[] paths) {
-		Assert.assertTrue(map.containsKey("CLASSPATH"));
-		String path = map.get("CLASSPATH");
+	private void checkPythonPath(Map<String, String> map, String[] paths) {
+		Assert.assertTrue(map.containsKey("PYTHONPATH"));
+		String path = map.get("PYTHONPATH");
 
 		if (path.endsWith(SUFFIX)) {
 			path = path.substring(0, path.length() - SUFFIX.length());
 		} else {
-			Assert.fail("Required CLASSPATH suffix not found");
+			Assert.fail("Required PYTHONPATH suffix not found");
 		}
 		if (path.endsWith(":")) {
 			path = path.substring(0, path.length() - 1);
@@ -90,9 +90,9 @@ public class JavaEnvMapTest {
 		String[] pathElements = path.split(":");
 		for (int index = 0; index < pathElements.length; index++) {
 			if (index >= paths.length) {
-				Assert.fail(String.format("CLASSPATH contains more elements (%d) than expected (%d)", pathElements.length, paths.length));
+				Assert.fail(String.format("PYTHONPATH contains more elements (%d) than expected (%d)", pathElements.length, paths.length));
 			}
-			String errorMsg = String.format("CLASSPATH element %d did not match expected element", index);
+			String errorMsg = String.format("PYTHONPATH element %d did not match expected element", index);
 			Assert.assertEquals(errorMsg, pathElements[index], paths[index]);
 		}
 	}
@@ -102,5 +102,4 @@ public class JavaEnvMapTest {
 		URI javaDomUri = URI.create(domUri);
 		return EFS.getStore(javaDomUri).toLocalFile(0, null).toString();
 	}
-
 }
