@@ -12,17 +12,14 @@ package gov.redhawk.ide.sdr.util;
 
 import java.util.Map;
 
-import mil.jpeojtrs.sca.spd.Implementation;
-
 import org.eclipse.core.runtime.CoreException;
+
+import mil.jpeojtrs.sca.spd.Implementation;
 
 /**
  * @since 8.2
- * 
  */
 public interface IEnvMap {
-
-	boolean handles(Implementation impl) throws CoreException;
 
 	void initEnv(Implementation impl, Map<String, String> retVal) throws CoreException;
 

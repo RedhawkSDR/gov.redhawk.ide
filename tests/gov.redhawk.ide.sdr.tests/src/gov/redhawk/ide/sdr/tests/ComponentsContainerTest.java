@@ -84,12 +84,11 @@ public class ComponentsContainerTest extends SoftPkgRegistryTest {
 
 	public void testComponentsContainer() {
 		final EList<SoftPkg> components = getFixture().getComponents();
-		Assert.assertEquals(3, components.size());
-		for (final SoftPkg softPkg : components) {
-			Assert.assertNotNull(softPkg);
-		}
+		Assert.assertTrue(components.size() >= 3);
+		Assert.assertNotNull(getFixture().getSoftPkg("DCE:e0cfeb24-1039-4b4c-93cb-33c42008d64f"));
+		Assert.assertNotNull(getFixture().getSoftPkg("DCE:859ebb11-4767-4e8e-874a-101e6efb3440"));
+		Assert.assertNotNull(getFixture().getSoftPkg("DCE:38279be0-4650-40c4-9084-352e6ebeedeb"));
 		Assert.assertEquals(this.sdrRoot, getFixture().getSdrRoot());
-		
 		Assert.assertNotNull(this.fixture);
 	}
 

@@ -10,25 +10,22 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.util;
 
-import gov.redhawk.ide.sdr.IdeSdrActivator;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import mil.jpeojtrs.sca.spd.Implementation;
-
 import org.eclipse.core.runtime.CoreException;
+
+import gov.redhawk.ide.sdr.IdeSdrActivator;
+import mil.jpeojtrs.sca.spd.Implementation;
 
 /**
  * @since 3.2
- * 
  */
 public final class ScaEnvironmentUtil {
 
 	private ScaEnvironmentUtil() {
-		
 	}
-	
+
 	/**
 	 * @deprecated Use {@link #getLauncherEnvMap(Implementation)} instead.
 	 * @return
@@ -42,22 +39,19 @@ public final class ScaEnvironmentUtil {
 			throw new IllegalStateException("Core Exception when loading envirornment map.", e);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param impl
 	 * @return
-	 * @throws CoreException 
+	 * @throws CoreException
 	 * @since 8.1
 	 */
 	public static Map<String, String> getLauncherEnvMap(Implementation impl) throws CoreException {
 		final Map<String, String> retVal = new HashMap<String, String>();
 		for (IEnvMap map : IdeSdrActivator.getDefault().getEnvMapServices()) {
-			if (map.handles(impl)) {
-				map.initEnv(impl, retVal);
-			}
+			map.initEnv(impl, retVal);
 		}
-		
 		return retVal;
 	}
 
