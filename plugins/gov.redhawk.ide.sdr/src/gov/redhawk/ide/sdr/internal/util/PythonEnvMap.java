@@ -11,68 +11,72 @@
 package gov.redhawk.ide.sdr.internal.util;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SpdPackage;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
-
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.CommonPlugin;
 import org.eclipse.emf.common.util.URI;
 
-public class PythonEnvMap extends AbstractEnvMap {
-	
+import mil.jpeojtrs.sca.spd.Implementation;
 
-	@Override
-	public boolean handles(Implementation impl) {
-		String language = getImplProgrammingLanguage(impl);
-		return "python".equalsIgnoreCase(language);
-	}
+public class PythonEnvMap extends AbstractEnvMap {
 
 	@Override
 	public void initEnv(Implementation impl, Map<String, String> envMap) throws CoreException {
 		envMap.put("PYTHONPATH", getPythonPath(impl));
 	}
 
-	public String getPythonPath(Implementation impl) throws CoreException {
-		// Python lib is always in the "lib" sub directory
-		final Set<String> pythonPath = new LinkedHashSet<String>();
-		pythonPath.add("${env_var:PYTHONPATH}");
-		pythonPath.add("${OssieHome}/lib/python");
-		if (impl != null) {
-			addToPath(pythonPath, impl);
+	private String getPythonPath(Implementation impl) throws CoreException {
+		LinkedHashSet<String> pythonPaths = new LinkedHashSet<String>();
+
+		// Dependencies
+		List<Implementation> depImpls = getDependencyImplementations(impl);
+		for (Implementation depImpl : depImpls) {
+			addToPath(pythonPaths, depImpl);
 		}
 
+		// CF
+		pythonPaths.add("${OssieHome}/lib/python");
+
+		// Pre-existing
+		pythonPaths.add("${env_var:PYTHONPATH}");
+
 		StringBuilder pythonPathString = new StringBuilder();
-		Iterator<String> i = pythonPath.iterator();
-		String s = i.next();
-		pythonPathString.append(s);
-		// Insert in reverse order
-		for (; i.hasNext();) {
-			s = i.next();
-			pythonPathString.insert(0, s + File.pathSeparatorChar);
+		for (String pythonPath : pythonPaths) {
+			pythonPathString.append(pythonPath);
+			pythonPathString.append(File.pathSeparatorChar);
 		}
+		pythonPathString.setLength(pythonPathString.length() - 1);
 		return pythonPathString.toString();
 	}
 
 	@Override
-	protected boolean addToPath(Set<String> path, Implementation impl) throws CoreException {
-		boolean retVal = super.addToPath(path, impl);
+	protected String createPath(String relativeCodePath, URI spdUri) throws CoreException {
+		if (relativeCodePath == null || spdUri == null) {
+			return null;
+		}
 
-		if (retVal) {
-			String relativeCodePath = ScaEcoreUtils.getFeature(impl, SpdPackage.Literals.IMPLEMENTATION__CODE, SpdPackage.Literals.CODE__LOCAL_FILE,
-			        SpdPackage.Literals.LOCAL_FILE__NAME);
-			String[] dir = URI.createFileURI(relativeCodePath).segments();
-			if (impl.eResource() != null && impl.eResource().getURI() != null) {
-				URI pathUri = impl.eResource().getURI().trimSegments(1).appendSegments(dir);
-				path.add(getAbsolutePath(pathUri));
+		URI fullPathUri = spdUri.trimSegments(1).appendSegments(URI.createFileURI(relativeCodePath).segments());
+		if (fullPathUri.isPlatformResource()) {
+			fullPathUri = CommonPlugin.resolve(spdUri);
+		}
+
+		IFileStore store = EFS.getStore(java.net.URI.create(fullPathUri.toString()));
+		IFileInfo info = store.fetchInfo();
+		if (info.exists()) {
+			if (info.isDirectory()) {
+				return getAbsolutePath(fullPathUri);
+			} else {
+				return getAbsolutePath(fullPathUri.trimSegments(1));
 			}
 		}
-		
-		return retVal;
+
+		return null;
 	}
 
 }

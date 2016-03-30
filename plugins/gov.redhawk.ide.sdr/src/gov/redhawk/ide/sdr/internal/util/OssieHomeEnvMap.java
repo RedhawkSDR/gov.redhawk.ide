@@ -13,22 +13,23 @@ package gov.redhawk.ide.sdr.internal.util;
 import java.io.File;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.util.URI;
+
 import mil.jpeojtrs.sca.spd.Implementation;
 
-import org.eclipse.core.runtime.CoreException;
-
 public class OssieHomeEnvMap extends AbstractEnvMap {
-
-	@Override
-	public boolean handles(Implementation impl) {
-		return true;
-	}
 
 	@Override
 	public void initEnv(Implementation impl, Map<String, String> envMap) throws CoreException {
 		envMap.put("OSSIEHOME", "${OssieHome}");
 		envMap.put("SDRROOT", "${SdrRoot}");
 		envMap.put("PATH", "${OssieHome}/bin" + File.pathSeparator + "${env_var:PATH}");
+	}
+
+	@Override
+	protected String createPath(String relativeCodePath, URI spdUri) throws CoreException {
+		return null;
 	}
 
 }
