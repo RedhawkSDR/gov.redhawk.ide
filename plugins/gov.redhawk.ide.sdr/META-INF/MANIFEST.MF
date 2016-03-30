@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: gov.redhawk.ide.sdr;singleton:=true
-Bundle-Version: 9.1.0.qualifier
+Bundle-Version: 10.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -10,7 +10,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.sdr,
  gov.redhawk.ide.sdr.commands,
  gov.redhawk.ide.sdr.impl,
- gov.redhawk.ide.sdr.internal.util;x-internal:=true,
+ gov.redhawk.ide.sdr.internal.util;x-friends:="gov.redhawk.ide.sdr.tests",
  gov.redhawk.ide.sdr.nodebooter,
  gov.redhawk.ide.sdr.util
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",

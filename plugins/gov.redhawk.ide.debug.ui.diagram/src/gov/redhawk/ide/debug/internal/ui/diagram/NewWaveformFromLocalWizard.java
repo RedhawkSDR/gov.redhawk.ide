@@ -10,26 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.diagram;
 
-import gov.redhawk.ide.codegen.CodegenUtil;
-import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
-import gov.redhawk.ide.sad.ui.SadUiActivator;
-import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectPropertiesWizardPage;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-
-import mil.jpeojtrs.sca.partitioning.ComponentFile;
-import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
-import mil.jpeojtrs.sca.partitioning.ComponentPlacement;
-import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.util.DceUuidUtil;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -57,6 +43,24 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
+import gov.redhawk.ide.codegen.CodegenUtil;
+import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
+import gov.redhawk.ide.sad.ui.SadUiActivator;
+import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectPropertiesWizardPage;
+import mil.jpeojtrs.sca.partitioning.ComponentFile;
+import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
+import mil.jpeojtrs.sca.partitioning.ComponentPlacement;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.sad.AssemblyController;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
+import mil.jpeojtrs.sca.sad.SadComponentPlacement;
+import mil.jpeojtrs.sca.sad.SadFactory;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.DceUuidUtil;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
+
+@SuppressWarnings("restriction")
 public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExtension {
 
 	/** The configuration. */
@@ -125,6 +129,20 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 				protected void execute(final IProgressMonitor monitor) throws CoreException {
 					try {
 						final SubMonitor progress = SubMonitor.convert(monitor, 3);
+
+						// Set assembly controller to the first component in the list.
+						if (!(newSad.getPartitioning().getComponentPlacement().isEmpty())) {
+							SadComponentPlacement componentPlacement = newSad.getPartitioning().getComponentPlacement().get(0);
+							if (!(componentPlacement.getComponentInstantiation().isEmpty())) {
+								String componentInstantationId = componentPlacement.getComponentInstantiation().get(0).getId();
+
+								AssemblyController assemblyController = SadFactory.eINSTANCE.createAssemblyController();
+								SadComponentInstantiationRef compInstantiationRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
+								compInstantiationRef.setRefid(componentInstantationId);
+								assemblyController.setComponentInstantiationRef(compInstantiationRef);
+								newSad.setAssemblyController(assemblyController);
+							}
+						}
 
 						// Create an empty project
 						final IProject project = WaveformProjectCreator.createEmptyProject(projectName, locationURI, progress.newChild(1));
