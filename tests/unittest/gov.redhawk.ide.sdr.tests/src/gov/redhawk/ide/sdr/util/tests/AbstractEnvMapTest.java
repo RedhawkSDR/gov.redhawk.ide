@@ -21,7 +21,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.tests.SdrTests;
+import gov.redhawk.ide.sdr.tests.SdrTestsUtil;
 import gov.redhawk.ide.sdr.util.AbstractEnvMap;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -33,7 +33,7 @@ public class AbstractEnvMapTest extends AbstractEnvMap {
 	 */
 	@Test
 	public void getDependencyImplementations_recursion1() throws URISyntaxException, IOException, CoreException {
-		SdrRoot sdr = SdrTests.getSdrTestsSdrRoot();
+		SdrRoot sdr = SdrTestsUtil.getSdrTestsSdrRoot();
 		SoftPkg spd = sdr.getComponentsContainer().getSoftPkg("DCE:2fc3c8c5-a984-4be7-87c5-16ff9f0d0c8f");
 		Assert.assertEquals("CppComponentWithDeps", spd.getName());
 
@@ -50,7 +50,7 @@ public class AbstractEnvMapTest extends AbstractEnvMap {
 	 */
 	@Test
 	public void getDependencyImplementations_recursion2() throws URISyntaxException, IOException, CoreException {
-		SdrRoot sdr = SdrTests.getSdrTestsSdrRoot();
+		SdrRoot sdr = SdrTestsUtil.getSdrTestsSdrRoot();
 		SoftPkg spd = sdr.getComponentsContainer().getSoftPkg("DCE:ff5ee7ed-b419-4c34-8dd1-b6904a377b64");
 		Assert.assertEquals("CppComponentWithDeps2", spd.getName());
 
