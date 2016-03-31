@@ -172,6 +172,9 @@ public abstract class AbstractEnvMap {
 			SoftPkg currentSpd = depQueue.pop();
 
 			// Prevent circular recursion
+			if (visitedSpds.contains(currentSpd)) {
+				continue;
+			}
 			visitedSpds.add(currentSpd);
 
 			// We choose the first implementation, and add to the result list (pre-order)
@@ -190,11 +193,6 @@ public abstract class AbstractEnvMap {
 						String errorMsg = String.format("Unable to find / load softpkg dependency '%s' (dependency of softpkg '%s', implementation '%s')",
 							spdRef.getLocalFile().getName(), currentImpl.getSoftPkg().getName(), currentImpl.getId());
 						throw new CoreException(new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, errorMsg));
-					}
-
-					// Prevent circular recursion
-					if (visitedSpds.contains(depSpd)) {
-						continue;
 					}
 
 					depQueue.push(depSpd);
