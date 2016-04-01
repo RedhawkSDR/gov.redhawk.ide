@@ -276,6 +276,27 @@ public final class StandardTestActions {
 	}
 
 	/**
+	 * Adjusts how often the IDE polls for changes in the model
+	 */
+	public static void setRefreshInterval(SWTWorkbenchBot bot, int milliseconds) {
+		bot.menu("Window").menu("Preferences").click();
+		bot.waitUntil(Conditions.shellIsActive("Preferences"));
+		SWTBotShell prefShell = bot.shell("Preferences");
+		SWTBot prefBot = prefShell.bot();
+		prefBot.tree().getTreeItem("REDHAWK").expand().expandNode("Data Providers", "Polling Data Provider Preferences").select();
+		prefBot.textWithLabel("Refresh Interval (ms):").setText(String.valueOf(milliseconds));
+		prefBot.button("Apply").click();
+		prefBot.button("OK").click();
+		bot.waitUntil(Conditions.shellCloses(prefShell));
+
+		try {
+			bot.shell("Oomph Preference Recorder").close();
+		} catch (WidgetNotFoundException e) {
+			// PASS - Should only get here if the preference recorder shell wasn't opened.
+		}
+	}
+
+	/**
 	 * @param bundle the bundle in which to search
 	 * @param path file path relative to plug-in installation location
 	 * @param override override map of override substitution arguments to be used for any $arg$ path elements. The map
