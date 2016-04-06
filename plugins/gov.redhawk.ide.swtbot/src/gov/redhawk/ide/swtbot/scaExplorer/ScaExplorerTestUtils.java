@@ -57,7 +57,7 @@ public class ScaExplorerTestUtils {
 
 	protected ScaExplorerTestUtils() {
 	}
-	
+
 	/**
 	 * Opens and sets focus to the REDHAWK Explorer view
 	 * @return Returns the SWTBot associated with the view
@@ -322,6 +322,48 @@ public class ScaExplorerTestUtils {
 
 	}
 
+	public static void connectPortsInScaExplorer(SWTWorkbenchBot bot, final String[] parentPath, final String connectionName, final String sourceResourceName,
+		final String sourcePortName, final String targetResourceName, final String targetPortName) {
+		List<String> path = new ArrayList<String>();
+		Collections.addAll(path, parentPath);
+		path.add(sourceResourceName);
+
+		final SWTBotTreeItem sourcePortEntry = getTreeItemFromScaExplorer(bot, path.toArray(new String[path.size()]), sourcePortName);
+		sourcePortEntry.contextMenu("Connect").click();
+
+		// Connect wizard
+		SWTBotShell wizardShell = bot.shell("Connect");
+		final SWTBot wizardBot = wizardShell.bot();
+		wizardShell.activate();
+
+		// Wait until the waveform fully displays and we can select the port
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return parentPath[parentPath.length - 1] + " did not display entirely in Connect wizard";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				// We collapse/expand everything at each test. SWTBot's quick expansion can cause issues with the
+				// tree view's display.
+				SWTBotTree targetTree = wizardBot.treeInGroup("Target");
+				targetTree.collapseNode(parentPath[0]);
+				SWTBotTreeItem targetParentTreeItem = wizardBot.treeInGroup("Target").expandNode(parentPath);
+				SWTBotTreeItem targetPortTreeItem = targetParentTreeItem.expandNode(targetResourceName, targetPortName);
+				targetPortTreeItem.select();
+				return true;
+			}
+		});
+
+		// Enter the name for connection
+		wizardBot.textWithLabel("Connection ID:").setText(connectionName);
+
+		// Close wizard
+		SWTBotButton finishButton = wizardBot.button("Finish");
+		finishButton.click();
+	}
+
 	/**
 	 * Disconnect connection via REDHAWK Explorer
 	 * @param componentName
@@ -498,7 +540,8 @@ public class ScaExplorerTestUtils {
 	 * Waits until Component disappears in REDHAWK Explorer
 	 * @param componentName
 	 */
-	public static void waitUntilComponentDisappearsInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, final String componentName) {
+	public static void waitUntilComponentDisappearsInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform,
+		final String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		final SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
@@ -647,8 +690,8 @@ public class ScaExplorerTestUtils {
 	 * Waits until Connection disappears in REDHAWK Explorer
 	 * @param componentName
 	 */
-	public static void waitUntilConnectionDisappearsInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform,
-		final String componentName, final String usesPortName, final String connectionName) {
+	public static void waitUntilConnectionDisappearsInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, final String componentName,
+		final String usesPortName, final String connectionName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		final SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
@@ -687,7 +730,7 @@ public class ScaExplorerTestUtils {
 		SWTBotTreeItem componentEntry = getTreeItemFromScaExplorer(bot, path.subList(0, last).toArray(new String[last]), path.get(last));
 		componentEntry.contextMenu().menu("Launch in Sandbox", implementationId).click();
 	}
-	
+
 	/**
 	 * Launch component from REDHAWK Explorer TargetSDR
 	 * @param bot The SWTBot
@@ -716,14 +759,14 @@ public class ScaExplorerTestUtils {
 		SWTBotTreeItem deviceEntry = getTreeItemFromScaExplorer(bot, path.subList(0, last).toArray(new String[last]), path.get(last));
 		deviceEntry.contextMenu().menu("Launch in Sandbox", "Default").click();
 	}
-	
-	/** 
+
+	/**
 	 * Waits for a TreeItem to exist in the REDHAWK Explorer.
 	 * @see #getTreeItemFromScaExplorer(SWTWorkbenchBot, String[], String).
 	 * @param bot
 	 * @param nodeParentPath
 	 * @param nodeName
-	 * @return 
+	 * @return
 	 */
 	public static SWTBotTreeItem waitUntilNodeAppearsInScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
 		// 30 second wait, since projects build when exported
@@ -739,21 +782,22 @@ public class ScaExplorerTestUtils {
 				return true;
 			}
 		}, 30000);
-		
+
 		return getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
 	}
-	
-	/** 
-	 * Type agnostic check to find if a node removed from REDHAWK Explorer.  Can be used for anything, Sandbox, Target SDR, etc. 
+
+	/**
+	 * Type agnostic check to find if a node removed from REDHAWK Explorer. Can be used for anything, Sandbox, Target
+	 * SDR, etc.
 	 * @param bot
 	 * @param nodeParentPath
 	 * @param nodeName
-	 * @return 
+	 * @return
 	 */
 	public static void waitUntilNodeRemovedFromScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		
+
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
@@ -775,15 +819,15 @@ public class ScaExplorerTestUtils {
 			}
 		});
 	}
-	
+
 	/**
 	 * Consolidates arrays of Strings into one
 	 * @param args
 	 * @return
 	 */
-	public static String[] joinPaths(String[] ... args) {
+	public static String[] joinPaths(String[]... args) {
 		ArrayList<String> retList = new ArrayList<String>();
-		for (String[] arg: args) {
+		for (String[] arg : args) {
 			retList.addAll(Arrays.asList(arg));
 		}
 		return retList.toArray(new String[retList.size()]);
@@ -796,7 +840,7 @@ public class ScaExplorerTestUtils {
 		SWTBotShell shell = bot.shell("Delete");
 		shell.bot().button("Yes").click();
 		bot.waitUntil(Conditions.shellCloses(shell));
-		ScaExplorerTestUtils.waitUntilNodeRemovedFromScaExplorer(bot, scaPath, projectName);		
+		ScaExplorerTestUtils.waitUntilNodeRemovedFromScaExplorer(bot, scaPath, projectName);
 	}
-	
+
 }
