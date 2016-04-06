@@ -273,55 +273,6 @@ public class ScaExplorerTestUtils {
 		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Terminate");
 	}
 
-	/**
-	 * Connect component ports via REDHAWK Explorer
-	 * @param componentName
-	 */
-	public static void connectComponentPortsInScaExplorer(SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveform,
-		final String connectionName, final String sourceComponentName, final String sourceComponentPortName, final String targetComponentName,
-		final String targetComponentPortName) {
-		List<String> path = new ArrayList<String>();
-		Collections.addAll(path, waveformParentPath);
-		path.add(waveform);
-		path.add(sourceComponentName);
-
-		final SWTBotTreeItem sourceComponentPortEntry = getTreeItemFromScaExplorer(bot, path.toArray(new String[path.size()]), sourceComponentPortName);
-		sourceComponentPortEntry.contextMenu("Connect").click();
-
-		// Connect wizard
-		SWTBotShell wizardShell = bot.shell("Connect");
-		final SWTBot wizardBot = wizardShell.bot();
-		wizardShell.activate();
-
-		// Wait until the waveform fully displays and we can select the port
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return waveform + " waveform did not display entirely in Connect wizard";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				// We collapse/expand everything at each test. SWTBot's quick expansion can cause issues with the
-				// tree view's display.
-				SWTBotTree targetTree = wizardBot.treeInGroup("Target");
-				targetTree.collapseNode(waveformParentPath[0]);
-				SWTBotTreeItem targetWaveformParentTreeItem = wizardBot.treeInGroup("Target").expandNode(waveformParentPath);
-				SWTBotTreeItem targetComponentPortTreeItem = targetWaveformParentTreeItem.expandNode(waveform, targetComponentName, targetComponentPortName);
-				targetComponentPortTreeItem.select();
-				return true;
-			}
-		});
-
-		// Enter the name for connection
-		wizardBot.textWithLabel("Connection ID:").setText(connectionName);
-
-		// Close wizard
-		SWTBotButton finishButton = wizardBot.button("Finish");
-		finishButton.click();
-
-	}
-
 	public static void connectPortsInScaExplorer(SWTWorkbenchBot bot, final String[] parentPath, final String connectionName, final String sourceResourceName,
 		final String sourcePortName, final String targetResourceName, final String targetPortName) {
 		List<String> path = new ArrayList<String>();
