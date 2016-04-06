@@ -224,7 +224,8 @@ public class GraphitiDcdModelMap extends AbstractGraphitiModelMap {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 				final Diagram diagram = provider.getDiagram();
-				final RHContainerShape rhContainerShape = DUtil.getPictogramElementForBusinessObject(diagram, dcdComponentInstantiation, RHContainerShape.class);
+				final RHContainerShape rhContainerShape = DUtil.getPictogramElementForBusinessObject(diagram, dcdComponentInstantiation,
+					RHContainerShape.class);
 				if (rhContainerShape == null) {
 					return Status.CANCEL_STATUS;
 				}
@@ -524,7 +525,8 @@ public class GraphitiDcdModelMap extends AbstractGraphitiModelMap {
 		final ScaUsesPort usesPort = (ScaUsesPort) sourceDevice.getScaPort(conn.getUsesPort().getUsesIdentifier());
 		org.omg.CORBA.Object targetObj = null;
 		if (conn.getComponentSupportedInterface() != null) {
-			final ScaDevice< ? > targetDevice = get((DcdComponentInstantiation) conn.getComponentSupportedInterface().getComponentInstantiationRef().getInstantiation());
+			final ScaDevice< ? > targetDevice = get(
+				(DcdComponentInstantiation) conn.getComponentSupportedInterface().getComponentInstantiationRef().getInstantiation());
 			if (targetDevice != null) {
 				targetObj = targetDevice.getCorbaObj();
 			}
@@ -748,6 +750,18 @@ public class GraphitiDcdModelMap extends AbstractGraphitiModelMap {
 			delete(oldDcdInterface);
 		}
 
+	}
+
+	/**
+	 * Adds a new connection object to the connection map
+	 * @param con
+	 * @param dcdCon
+	 */
+	public void put(ScaConnection con, DcdConnectInterface dcdCon) {
+		DcdConnectionMapEntry connectionMapEntry = new DcdConnectionMapEntry();
+		connectionMapEntry.setScaConnection(con);
+		connectionMapEntry.setProfile(dcdCon);
+		connections.put(connectionMapEntry.getKey(), connectionMapEntry);
 	}
 
 	/**
