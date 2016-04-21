@@ -35,3 +35,4 @@ Export-Package: gov.redhawk.ide.debug.internal;x-internal:=true,
  gov.redhawk.ide.debug.internal.ui;x-internal:=true,
  gov.redhawk.ide.debug.ui,
  gov.redhawk.ide.debug.ui.tabs
+Service-Component: OSGI-INF/component.xml

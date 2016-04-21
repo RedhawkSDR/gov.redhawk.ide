@@ -12,6 +12,7 @@ package gov.redhawk.ide.debug;
 
 import gov.redhawk.ExtendedCF.Sandbox;
 import gov.redhawk.ide.debug.impl.TerminateJob;
+import gov.redhawk.ide.debug.internal.LaunchLogger;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 
@@ -22,10 +23,8 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.jacorb.JacorbActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
-/**
- * 
- */
 public class ScaDebugPlugin extends Plugin {
 
 	public static final String ID = "gov.redhawk.ide.debug";
@@ -37,17 +36,22 @@ public class ScaDebugPlugin extends Plugin {
 
 	private static ScaDebugPlugin instance;
 
+	private static ServiceTracker launchLoggerTracker;
+
 	@Override
 	public void start(final BundleContext context) throws Exception {
-		ScaDebugPlugin.instance = this;
 		super.start(context);
+
+		ScaDebugPlugin.instance = this;
+
+		launchLoggerTracker = new ServiceTracker(context, ILaunchLogger.class.getName(), LaunchLogger.INSTANCE);
+		launchLoggerTracker.open();
+
 		JacorbActivator.getDefault().init();
 	}
 
 	@Override
 	public void stop(final BundleContext context) throws Exception {
-		super.stop(context);
-
 		// Dispose the local model
 		ScaModelCommand.execute(getLocalSca(), new ScaModelCommand() {
 			public void execute() {
@@ -75,6 +79,11 @@ public class ScaDebugPlugin extends Plugin {
 				}
 			}
 		}
+
+		launchLoggerTracker.close();
+		launchLoggerTracker = null;
+
+		super.stop(context);
 	}
 
 	public LocalSca getLocalSca() {
@@ -87,6 +96,13 @@ public class ScaDebugPlugin extends Plugin {
 
 	public static ScaDebugPlugin getInstance() {
 		return ScaDebugPlugin.instance;
+	}
+
+	/**
+	 * @since 5.0
+	 */
+	public static void logWarning(final String msg, final Throwable e) {
+		ScaDebugPlugin.instance.getLog().log(new Status(IStatus.WARNING, ScaDebugPlugin.ID, msg, e));
 	}
 
 	public static void logError(final String msg, final Throwable e) {
