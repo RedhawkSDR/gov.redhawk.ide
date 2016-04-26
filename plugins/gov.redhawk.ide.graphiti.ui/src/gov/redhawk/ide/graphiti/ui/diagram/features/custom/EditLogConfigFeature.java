@@ -14,36 +14,32 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 import CF.LogConfigurationOperations;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.logging.ui.handlers.SetLoggingLevel;
+import gov.redhawk.logging.ui.handlers.EditLogConfig;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 
-/**
- * This feature gives access to the UI that lets the user view/change the logging level of the resource.
- */
-public class LogLevelFeature extends NonUndoableCustomFeature {
+public class EditLogConfigFeature extends NonUndoableCustomFeature {
 
-	public LogLevelFeature(IFeatureProvider fp) {
+	public EditLogConfigFeature(IFeatureProvider fp) {
 		super(fp);
 	}
 
 	@Override
 	public String getName() {
-		return "Log Level";
+		return "Edit Log Config";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Show/set the resource's logging level";
+		return "Edit the resource's logging configuration file";
 	}
 
 	@Override
 	public boolean canExecute(ICustomContext context) {
-		// It only makes sense to allow the user to do this with one selected resource
 		if (context.getPictogramElements().length != 1) {
 			return false;
 		}
@@ -56,10 +52,11 @@ public class LogLevelFeature extends NonUndoableCustomFeature {
 	@Override
 	public void execute(ICustomContext context) {
 		PictogramElement pe = context.getPictogramElements()[0];
-		LogConfigurationOperations logConfigOperations = Platform.getAdapterManager().getAdapter(pe, LogConfigurationOperations.class);
-		if (logConfigOperations != null) {
-			SetLoggingLevel setLoggingLevelHandler = new SetLoggingLevel();
-			setLoggingLevelHandler.handleSetLoggingLevel(logConfigOperations, Display.getCurrent().getActiveShell());
+		LogConfigurationOperations resource = Platform.getAdapterManager().getAdapter(pe, LogConfigurationOperations.class);
+		if (resource != null) {
+			EditLogConfig editLogConfig = new EditLogConfig();
+			editLogConfig.handleEditLogConfiguration(resource, PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage());
 		}
 	}
+
 }

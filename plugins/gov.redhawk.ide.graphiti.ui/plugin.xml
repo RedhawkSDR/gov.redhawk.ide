@@ -106,7 +106,7 @@
                type="CF.LifeCycleOperations">
          </adapter>
          <adapter
-               type="CF.LoggingOperations">
+               type="CF.LogConfigurationOperations">
          </adapter>
       </factory>
       <factory
@@ -134,7 +134,7 @@
                type="CF.LifeCycleOperations">
          </adapter>
          <adapter
-               type="CF.LoggingOperations">
+               type="CF.LogConfigurationOperations">
          </adapter>
       </factory>
       <factory

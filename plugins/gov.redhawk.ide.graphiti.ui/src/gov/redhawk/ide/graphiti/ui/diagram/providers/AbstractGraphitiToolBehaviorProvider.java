@@ -11,31 +11,11 @@
  */
 package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.palette.PaletteTreeEntry;
-import gov.redhawk.ide.sdr.SdrPackage;
-import gov.redhawk.ide.sdr.SoftPkgRegistry;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.spd.Code;
-import mil.jpeojtrs.sca.spd.CodeFileType;
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -82,6 +62,26 @@ import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.progress.WorkbenchJob;
+
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.EditLogConfigFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.palette.PaletteTreeEntry;
+import gov.redhawk.ide.sdr.SdrPackage;
+import gov.redhawk.ide.sdr.SoftPkgRegistry;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.spd.Code;
+import mil.jpeojtrs.sca.spd.CodeFileType;
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
@@ -343,18 +343,22 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	@Override
 	public IContextMenuEntry[] getContextMenu(ICustomContext context) {
 		List<IContextMenuEntry> contextMenuItems = new ArrayList<IContextMenuEntry>();
+		ContextMenuEntry loggingSubMenu = null;
 
 		for (ICustomFeature customFeature : getFeatureProvider().getCustomFeatures(context)) {
 			ContextMenuEntry entry = new ContextMenuEntry(customFeature, context);
-			if (customFeature instanceof LogLevelFeature) {
+			
+			if (customFeature instanceof LogLevelFeature || customFeature instanceof EditLogConfigFeature) {
 				// Create a sub-menu for logging
-				ContextMenuEntry loggingSubMenu = new ContextMenuEntry(null, context);
-				loggingSubMenu.setText("Logging");
-				loggingSubMenu.setDescription("Logging");
-				loggingSubMenu.setSubmenu(true);
-				contextMenuItems.add(0, loggingSubMenu);
+				if (loggingSubMenu == null) { 
+					loggingSubMenu = new ContextMenuEntry(null, context);
+					loggingSubMenu.setText("Logging");
+					loggingSubMenu.setDescription("Logging");
+					loggingSubMenu.setSubmenu(true);
+					contextMenuItems.add(0, loggingSubMenu);
+				}
 
-				// Make the log level feature a sub-entry of this menu
+				// Make the logging feature a sub-entry of this menu
 				loggingSubMenu.add(entry);
 			} else {
 				contextMenuItems.add(entry);

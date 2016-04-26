@@ -53,6 +53,7 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePatte
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DisabledDeleteFeatureWrapper;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.EditLogConfigFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
@@ -102,6 +103,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 					retList.add(new StopFeature(this));
 					retList.add(new ShowConsoleFeature(this));
 					retList.add(new LogLevelFeature(this));
+					retList.add(new EditLogConfigFeature(this));
 
 					// Don't add ability to remove components from Graphiti Waveform Explorer
 					if (!DUtil.isDiagramExplorer(diagram)) {

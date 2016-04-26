@@ -51,6 +51,7 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DisabledDeleteFeatureWrapper;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.EditLogConfigFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
@@ -123,6 +124,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 					retList.add(new StopFeature(this));
 					retList.add(new ShowConsoleFeature(this));
 					retList.add(new LogLevelFeature(this));
+					retList.add(new EditLogConfigFeature(this));
 
 					// Add terminate, but not for the explorer
 					if (!DUtil.isDiagramExplorer(diagram)) {
