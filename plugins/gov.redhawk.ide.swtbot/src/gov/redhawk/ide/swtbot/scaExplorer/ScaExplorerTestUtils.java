@@ -557,7 +557,7 @@ public class ScaExplorerTestUtils {
 				scaExplorerView.bot().tree().getTreeItem(domain + " CONNECTED");
 				return true;
 			}
-		});
+		}, 10000);
 	}
 
 	/**
