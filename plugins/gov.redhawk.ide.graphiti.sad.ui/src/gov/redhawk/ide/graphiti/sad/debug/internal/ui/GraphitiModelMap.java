@@ -48,7 +48,7 @@ import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.internal.ui.AbstractGraphitiModelMap;
-import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformSandboxEditor;
+import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformExplorerEditor;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
@@ -78,14 +78,14 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
 		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
 		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
-	private final GraphitiWaveformSandboxEditor editor;
+	private final GraphitiWaveformExplorerEditor editor;
 	// maps containing to uniquely identify component/connections, use with synchronized statement
 	private final Map<String, NodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, NodeMapEntry>());
 	private final Map<String, ConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMapEntry>());
 
 	private final LocalScaWaveform waveform;
 
-	public GraphitiModelMap(@NonNull final GraphitiWaveformSandboxEditor editor, @NonNull final LocalScaWaveform waveform) {
+	public GraphitiModelMap(@NonNull final GraphitiWaveformExplorerEditor editor, @NonNull final LocalScaWaveform waveform) {
 		super(editor);
 		Assert.isNotNull(waveform, "Sandbox Waveform must not be null");
 		this.waveform = waveform;
