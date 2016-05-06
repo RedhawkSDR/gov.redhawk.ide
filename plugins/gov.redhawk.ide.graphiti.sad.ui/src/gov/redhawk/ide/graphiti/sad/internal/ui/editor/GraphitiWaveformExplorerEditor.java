@@ -45,11 +45,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
-import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
 import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
 import gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiModelMap;
 import gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiModelMapInitializerCommand;
@@ -72,19 +69,18 @@ import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.CorbaUtils;
 
-//TODO: CHECKSTYLE:OFF
 @SuppressWarnings("restriction")
 public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEditor {
-	
+
 	private static final Debug DEBUG = new Debug(SADUIGraphitiPlugin.PLUGIN_ID, "editor");
 	private ScaGraphitiModelAdapter scaListener;
 	private SadGraphitiModelAdapter sadlistener;
 	private boolean isLocalSca;
 	private Resource mainResource;
 	private SoftwareAssembly sad;
-	protected GraphitiModelMap modelMap;
-	protected LocalScaWaveform waveform;
-	
+	protected GraphitiModelMap modelMap; // SUPPRESS CHECKSTYLE INLINE
+	protected ScaWaveform waveform; // SUPPRESS CHECKSTYLE INLINE
+
 	@Override
 	protected void createModel() {
 		if (isLocalSca) {
@@ -105,7 +101,6 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 
 	@Override
 	protected void setInput(IEditorInput input) {
-		System.out.println("Set Input");
 		if (input instanceof ScaFileStoreEditorInput) {
 			this.waveform = getScaWaveform((ScaFileStoreEditorInput) input);
 		} else if (input instanceof URIEditorInput) {
@@ -174,21 +169,14 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 		}
 
 		super.setInput(input);
-		System.out.println("END Set Input");
 	}
 
-	protected LocalScaWaveform getScaWaveform(ScaFileStoreEditorInput scaInput) {
-		LocalScaWaveform tmpWaveform = null;
-		if (scaInput.getScaObject() instanceof LocalScaWaveform) {
-			System.out.println("Local");
-			tmpWaveform = (LocalScaWaveform) scaInput.getScaObject();
-		} else if (scaInput.getScaObject() instanceof ScaWaveform) {
-			System.out.println("ScaWaveform");
-			tmpWaveform = getLocalScaWaveform((ScaWaveform) scaInput.getScaObject());
+	protected ScaWaveform getScaWaveform(ScaFileStoreEditorInput scaInput) {
+		if (scaInput.getScaObject() instanceof ScaWaveform) {
+			return (ScaWaveform) scaInput.getScaObject();
 		} else {
 			throw new IllegalStateException("Sandbox Editor opened on invalid sca input " + scaInput.getScaObject());
 		}
-		return tmpWaveform;
 	}
 
 	@Override
@@ -197,68 +185,6 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 			return super.getMainResource();
 		}
 		return mainResource;
-	}
-
-	protected LocalScaWaveform getLocalScaWaveform(final ScaWaveform remoteWaveform) {
-		System.out.println("Get Local Sca Waveform");
-		// Try to find a LocalScaWaveform object with the same identifier as the domain waveform. If found, it's
-		// the proxy
-		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
-		for (ScaWaveform localWaveform : localSca.getWaveforms()) {
-			if (localWaveform.getIdentifier() != null && localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier())
-				&& localWaveform instanceof LocalScaWaveform) {
-				return (LocalScaWaveform) localWaveform;
-			}
-		}
-
-		// Create a new ScaLocalWaveform from the ScaWaveform
-		final LocalScaWaveform localWaveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform(remoteWaveform);
-		ScaModelCommand.execute(localSca, new ScaModelCommand() {
-
-			@Override
-			public void execute() {
-				localSca.getWaveforms().add(localWaveform);
-			}
-		});
-
-		// Bind the application
-		if (Display.getCurrent() != null) {
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
-			try {
-				dialog.run(true, true, new IRunnableWithProgress() {
-
-					@Override
-					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						try {
-							CorbaUtils.invoke(new Callable<Object>() {
-
-								@Override
-								public Object call() throws Exception {
-									LocalApplicationFactory.bindApp((ApplicationImpl) localWaveform.getLocalApp());
-									return null;
-								}
-
-							}, monitor);
-						} catch (CoreException e1) {
-							throw new InvocationTargetException(e1);
-						}
-
-					}
-				});
-			} catch (InvocationTargetException e) {
-				throw new IllegalStateException("Failed to bind waveform", e);
-			} catch (InterruptedException e) {
-				// PASS
-			}
-		} else {
-			try {
-				LocalApplicationFactory.bindApp((ApplicationImpl) localWaveform.getLocalApp());
-			} catch (CoreException e) {
-				throw new IllegalStateException("Failed to bind waveform", e);
-			}
-		}
-		System.out.println("END Get Local Sca Waveform");
-		return localWaveform;
 	}
 
 	/**
@@ -395,7 +321,8 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 
 		if (isLocalSca) {
 			// Use the REDHAWK Model source to build the SAD when in the chalkboard since the SAD file isn't modified
-			getEditingDomain().getCommandStack().execute(new SadGraphitiModelInitializerCommand(modelMap, sad, waveform));
+			SadGraphitiModelInitializerCommand command = new SadGraphitiModelInitializerCommand(modelMap, sad, (LocalScaWaveform) waveform);
+			getEditingDomain().getCommandStack().execute(command);
 			ScaModelCommand.execute(this.waveform, new ScaModelCommand() {
 
 				@Override
@@ -514,7 +441,7 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
 				StatusManager.LOG | StatusManager.SHOW);
 		}
-	
+
 		final Diagram diagram = this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram();
 		setPartName(waveform.getName());
 		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
@@ -575,13 +502,6 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 		} else {
 			return "Chalkboard dynamic waveform";
 		}
-	}
-
-	/**
-	 * @return the waveform instance
-	 */
-	public LocalScaWaveform getWaveform() {
-		return waveform;
 	}
 
 	public void componentRegistered(final SadComponentInstantiation component) {

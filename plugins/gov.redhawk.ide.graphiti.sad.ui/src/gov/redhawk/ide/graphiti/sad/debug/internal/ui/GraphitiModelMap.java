@@ -83,9 +83,9 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	private final Map<String, NodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, NodeMapEntry>());
 	private final Map<String, ConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMapEntry>());
 
-	private final LocalScaWaveform waveform;
+	private final ScaWaveform waveform;
 
-	public GraphitiModelMap(@NonNull final GraphitiWaveformExplorerEditor editor, @NonNull final LocalScaWaveform waveform) {
+	public GraphitiModelMap(@NonNull final GraphitiWaveformExplorerEditor editor, @NonNull final ScaWaveform waveform) {
 		super(editor);
 		Assert.isNotNull(waveform, "Sandbox Waveform must not be null");
 		this.waveform = waveform;
@@ -99,7 +99,7 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	 */
 	public void add(@NonNull final LocalScaComponent comp) {
 		final NodeMapEntry nodeMapEntry = new NodeMapEntry();
-		nodeMapEntry.setLocalScaComponent(comp);
+		nodeMapEntry.setScaComponent(comp);
 		synchronized (nodes) {
 			if (nodes.get(nodeMapEntry.getKey()) != null) {
 				return;
@@ -160,7 +160,7 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 				LocalScaComponent newComp = null;
 				try {
 					newComp = GraphitiModelMap.this.create(comp, implID);
-					nodeMapEntry.setLocalScaComponent(newComp);
+					nodeMapEntry.setScaComponent(newComp);
 					updateEnabledState(comp, true);
 					editor.componentRegistered(comp);
 					return Status.OK_STATUS;
@@ -347,7 +347,13 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 			throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to resolve SPD.", null));
 		}
 		final URI spdURI = spd.eResource().getURI();
-		return this.waveform.launch(comp.getId(), execParams, spdURI, implID, ILaunchManager.RUN_MODE);
+
+		if (waveform instanceof LocalScaWaveform) {
+			return ((LocalScaWaveform) this.waveform).launch(comp.getId(), execParams, spdURI, implID, ILaunchManager.RUN_MODE);
+		} else {
+			// TODO: Throw an error here? Can we assume LocalScaWaveform?
+			return null;
+		}
 	}
 
 	/**
@@ -360,7 +366,7 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	@Nullable
 	private ScaConnection create(@NonNull final SadConnectInterface conn) throws InvalidPort, OccupiedPort {
 		SadComponentInstantiation inst = ScaEcoreUtils.getFeature(conn, GraphitiModelMap.CONN_INST_PATH);
-		final LocalScaComponent sourceComp = get(inst);
+		final ScaComponent sourceComp = get(inst);
 		if (sourceComp == null) {
 			return null;
 		}
@@ -368,12 +374,12 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 		final ScaUsesPort usesPort = (ScaUsesPort) sourceComp.getScaPort(conn.getUsesPort().getUsesIdentifier());
 		org.omg.CORBA.Object targetObj = null;
 		if (conn.getComponentSupportedInterface() != null) {
-			final LocalScaComponent targetComp = get((SadComponentInstantiation) conn.getComponentSupportedInterface().getComponentInstantiationRef().getInstantiation());
+			final ScaComponent targetComp = get((SadComponentInstantiation) conn.getComponentSupportedInterface().getComponentInstantiationRef().getInstantiation());
 			if (targetComp != null) {
 				targetObj = targetComp.getCorbaObj();
 			}
 		} else if (conn.getProvidesPort() != null) {
-			final LocalScaComponent targetComp = get(conn.getProvidesPort().getComponentInstantiationRef().getInstantiation());
+			final ScaComponent targetComp = get(conn.getProvidesPort().getComponentInstantiationRef().getInstantiation());
 			if (targetComp != null) {
 				targetComp.fetchPorts(null);
 				final ScaPort< ? , ? > targetPort = targetComp.getScaPort(conn.getProvidesPort().getProvidesIdentifier());
@@ -492,7 +498,7 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	}
 
 	@Nullable
-	public SadComponentInstantiation get(@Nullable final LocalScaComponent comp) {
+	public SadComponentInstantiation get(@Nullable final ScaComponent comp) {
 		if (comp == null) {
 			return null;
 		}
@@ -505,13 +511,13 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	}
 
 	@Nullable
-	public LocalScaComponent get(@Nullable final SadComponentInstantiation compInst) {
+	public ScaComponent get(@Nullable final SadComponentInstantiation compInst) {
 		if (compInst == null) {
 			return null;
 		}
 		NodeMapEntry nodeMapEntry = nodes.get(NodeMapEntry.getKey(compInst));
 		if (nodeMapEntry != null) {
-			return nodeMapEntry.getLocalScaComponent();
+			return nodeMapEntry.getScaComponent();
 		} else {
 			return null;
 		}
@@ -553,7 +559,7 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	 * This method removes SadComponentInstantiation from the diagram
 	 * @param comp
 	 */
-	public void remove(@NonNull final LocalScaComponent comp) {
+	public void remove(@NonNull final ScaComponent comp) {
 
 		final NodeMapEntry nodeMapEntry = nodes.remove(NodeMapEntry.getKey(comp));
 		if (nodeMapEntry == null) {
@@ -579,7 +585,7 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 		if (nodeMapEntry == null) {
 			return;
 		}
-		final LocalScaComponent oldComp = nodeMapEntry.getLocalScaComponent();
+		final ScaComponent oldComp = nodeMapEntry.getScaComponent();
 		if (oldComp != null) {
 			Job releaseJob = new ReleaseJob(oldComp);
 			releaseJob.schedule();
@@ -692,7 +698,7 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 		synchronized (nodes) {
 			for (String nodeKey : nodes.keySet()) {
 				final NodeMapEntry nodeMapEntry = nodes.get(nodeKey);
-				LocalScaComponent component = nodeMapEntry.getLocalScaComponent();
+				ScaComponent component = nodeMapEntry.getScaComponent();
 				if (component == null) {
 					updateEnabledState(nodeMapEntry.getProfile(), false);
 				} else {
@@ -753,9 +759,9 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	 * @param comp
 	 * @param inst
 	 */
-	public void put(@NonNull LocalScaComponent comp, @NonNull SadComponentInstantiation inst) {
+	public void put(@NonNull ScaComponent comp, @NonNull SadComponentInstantiation inst) {
 		NodeMapEntry nodeMapEntry = new NodeMapEntry();
-		nodeMapEntry.setLocalScaComponent(comp);
+		nodeMapEntry.setScaComponent(comp);
 		nodeMapEntry.setProfile(inst);
 		nodes.put(nodeMapEntry.getKey(), nodeMapEntry);
 	}

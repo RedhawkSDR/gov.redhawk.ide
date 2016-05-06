@@ -10,8 +10,24 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.debug.internal.ui;
 
-import gov.redhawk.ide.debug.LocalScaComponent;
-import gov.redhawk.ide.debug.LocalScaWaveform;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.command.AbstractCommand;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.statushandlers.StatusManager;
+
+import ExtendedCF.UsesConnection;
 import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.model.sca.ScaComponent;
@@ -23,14 +39,6 @@ import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.PluginUtil;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterface;
@@ -49,26 +57,14 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.command.AbstractCommand;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.statushandlers.StatusManager;
-
-import ExtendedCF.UsesConnection;
-
 public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "init");
 
 	private final GraphitiModelMap modelMap;
-	private final LocalScaWaveform waveform;
+	private final ScaWaveform waveform;
 	private final SoftwareAssembly sad;
 
-	public GraphitiModelMapInitializerCommand(final GraphitiModelMap map, final SoftwareAssembly sad, final LocalScaWaveform waveform) {
+	public GraphitiModelMapInitializerCommand(final GraphitiModelMap map, final SoftwareAssembly sad, final ScaWaveform waveform) {
 		this.modelMap = map;
 		this.waveform = waveform;
 		this.sad = sad;
@@ -81,7 +77,7 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 			// Can only add connections within Components
 			return;
 		}
-		final LocalScaComponent comp = (LocalScaComponent) container;
+		final ScaComponent comp = (ScaComponent) container;
 
 		// Initialize the connection ID and the USES side of the connection
 		final SadConnectInterface sadCon = SadFactory.eINSTANCE.createSadConnectInterface();
@@ -101,7 +97,7 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 			if (is_equivalent(target, c.getObj())) {
 				final ComponentSupportedInterface csi = PartitioningFactory.eINSTANCE.createComponentSupportedInterface();
 				final SadComponentInstantiationRef ref = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-				ref.setInstantiation(modelMap.get((LocalScaComponent) c));
+				ref.setInstantiation(modelMap.get((ScaComponent) c));
 				csi.setComponentInstantiationRef(ref);
 				csi.setSupportedIdentifier(uses.getProfileObj().getRepID());
 				sadCon.setComponentSupportedInterface(csi);
@@ -112,7 +108,7 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 					if (cPort instanceof ScaProvidesPort && is_equivalent(target, cPort.getObj())) {
 						final SadProvidesPort sadProvidesPort = SadFactory.eINSTANCE.createSadProvidesPort();
 						final SadComponentInstantiationRef ref = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-						ref.setInstantiation(modelMap.get((LocalScaComponent) c));
+						ref.setInstantiation(modelMap.get((ScaComponent) c));
 						sadProvidesPort.setComponentInstantiationRef(ref);
 						sadProvidesPort.setProvidesIdentifier(cPort.getName());
 						sadCon.setProvidesPort(sadProvidesPort);
@@ -162,7 +158,7 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 
 	}
 
-	public static void initComponent(@NonNull final LocalScaComponent comp, SoftwareAssembly sad, GraphitiModelMap modelMap) {
+	public static void initComponent(@NonNull final ScaComponent comp, SoftwareAssembly sad, GraphitiModelMap modelMap) {
 
 		if (comp.getProfileObj() == null) {
 			try {
@@ -243,7 +239,7 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 		if (waveform != null) {
 			for (final ScaComponent comp : this.waveform.getComponents()) {
 				if (comp != null) {
-					initComponent((LocalScaComponent) comp, sad, modelMap);
+					initComponent(comp, sad, modelMap);
 				}
 			}
 

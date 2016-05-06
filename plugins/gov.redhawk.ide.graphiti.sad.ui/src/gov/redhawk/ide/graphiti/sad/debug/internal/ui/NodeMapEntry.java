@@ -13,19 +13,18 @@ package gov.redhawk.ide.graphiti.sad.debug.internal.ui;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.model.sca.ScaComponent;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 public class NodeMapEntry {
 	private String key;
-	private LocalScaComponent comp;
+	private ScaComponent comp;
 	private SadComponentInstantiation profile;
 
 	/**
 	 * @param comp the comp to set
 	 */
-	public void setLocalScaComponent(@NonNull LocalScaComponent comp) {
+	public void setScaComponent(@NonNull ScaComponent comp) {
 		this.comp = comp;
 		setKey(comp.getInstantiationIdentifier());
 	}
@@ -42,7 +41,7 @@ public class NodeMapEntry {
 	/**
 	 * @return the comp
 	 */
-	public LocalScaComponent getLocalScaComponent() {
+	public ScaComponent getScaComponent() {
 		return comp;
 	}
 

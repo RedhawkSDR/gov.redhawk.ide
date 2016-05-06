@@ -24,7 +24,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
-import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 
 public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEditor {
@@ -32,17 +31,13 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 
 	@Override
 	protected LocalScaWaveform getScaWaveform(ScaFileStoreEditorInput scaInput) {
-		LocalScaWaveform tmpWaveform = null;
 		if (scaInput.getScaObject() instanceof LocalScaWaveform) {
-			tmpWaveform = (LocalScaWaveform) scaInput.getScaObject();
-		} else if (scaInput.getScaObject() instanceof ScaWaveform) {
-			tmpWaveform = getLocalScaWaveform((ScaWaveform) scaInput.getScaObject());
+			return (LocalScaWaveform) scaInput.getScaObject();
 		} else {
 			throw new IllegalStateException("Sandbox Editor opened on invalid sca input " + scaInput.getScaObject());
 		}
-		return tmpWaveform;
 	}
-	
+
 	@Override
 	public String getDiagramContext(Resource sadResource) {
 		return DUtil.DIAGRAM_CONTEXT_LOCAL;
