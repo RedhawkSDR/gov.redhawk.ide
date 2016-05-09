@@ -506,6 +506,47 @@ public final class StandardTestActions {
 	}
 
 	/**
+	 * @param bot
+	 * @param item
+	 * @param column
+	 * @param text
+	 */
+	public static void selectComboListFromCell(SWTBot bot, final SWTBotTreeItem item, final int column, final String text) {
+		item.select();
+		item.click(column);
+
+		// Get parent
+		RunnableWithResult<Widget> runnable = new RunnableWithResult.Impl<Widget>() {
+			@Override
+			public void run() {
+				setResult(item.widget.getParent());
+			}
+		};
+		item.display.syncExec(runnable);
+		Widget parent = runnable.getResult();
+
+		// Select a value from the combo list box when it appears
+		final SWTBotCCombo cellEditor = new SWTBot(parent).ccomboBox();
+		cellEditor.setSelection(text);
+		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
+		keyboard.pressShortcut(Keystrokes.CR);
+
+		// Wait for cell editor to close
+		bot.waitUntil(new DefaultCondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return cellEditor.widget.isDisposed() || !(cellEditor.isActive() || cellEditor.isVisible());
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Cell editor did not disappear";
+			}
+		});
+	}
+
+	/**
 	 * Select's an XViewer's pop-up list from editing a cell
 	 * @param bot
 	 * @param item
