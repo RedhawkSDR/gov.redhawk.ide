@@ -10,10 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
@@ -22,10 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -40,7 +36,6 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.ui.progress.UIJob;
 
 import CF.DataType;
-import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 import gov.redhawk.ide.debug.LocalAbstractComponent;
@@ -70,7 +65,6 @@ import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
@@ -78,9 +72,6 @@ public class GraphitiDcdModelMap extends AbstractGraphitiModelMap {
 
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
 		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
-	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 
 	private final GraphitiDcdExplorerEditor editor;
 	private final ScaDeviceManager deviceManager;
@@ -365,7 +356,7 @@ public class GraphitiDcdModelMap extends AbstractGraphitiModelMap {
 			protected IStatus run(IProgressMonitor monitor) {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + device.getUsageName(), IProgressMonitor.UNKNOWN);
 				try {
-					GraphitiDcdModelMap.this.create(device, implID);
+					GraphitiDcdModelMap.this.launch(device, implID, LocalAbstractComponent.class);
 					// The device is added to the nodeMapEntry via the add(ScaDevice< ? >) method call, which is called
 					// on refresh of the LoaclScaDomainManagerImpl
 
@@ -473,39 +464,10 @@ public class GraphitiDcdModelMap extends AbstractGraphitiModelMap {
 		job.schedule();
 	}
 
-	/**
-	 * Launch ScaDevice for corresponding DcdComponentInstantiation
-	 * @param ci
-	 * @param implID
-	 * @return
-	 * @return
-	 * @throws CoreException
-	 */
-	private void create(final DcdComponentInstantiation ci, final String implID) throws CoreException {
-		DataType[] execParams = null;
-		if (ci.getComponentProperties() != null) {
-			final List<DataType> params = new ArrayList<DataType>(ci.getComponentProperties().getProperties().size());
-			for (final Entry entry : ci.getComponentProperties().getProperties()) {
-				if (entry.getValue() instanceof AbstractPropertyRef) {
-					final AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
-					params.add(new DataType(ref.getRefID(), ref.toAny()));
-				}
-			}
-			execParams = params.toArray(new DataType[params.size()]);
-		}
-		final SoftPkg spd = ScaEcoreUtils.getFeature(ci, GraphitiDcdModelMap.SPD_PATH);
-		if (spd == null) {
-			throw new CoreException(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to resolve SPD.", null));
-		}
-
-		final URI spdURI = spd.eResource().getURI();
-
-		try {
-			LocalScaDeviceManagerImpl localDeviceManager = (LocalScaDeviceManagerImpl) deviceManager;
-			localDeviceManager.launch(ci.getId(), execParams, spdURI.toString(), implID, ILaunchManager.RUN_MODE);
-		} catch (ExecuteFail e) {
-			throw new CoreException(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to launch device: " + e.msg, e));
-		}
+	@Override
+	protected LocalAbstractComponent launch(String id, DataType[] initConfiguration, URI spdURI, String implID, String runMode) throws CoreException {
+		LocalScaDeviceManagerImpl localDeviceManager = (LocalScaDeviceManagerImpl) deviceManager;
+		return localDeviceManager.launch(id, initConfiguration, spdURI, implID, runMode);
 	}
 
 	/**

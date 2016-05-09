@@ -10,10 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.debug.internal.ui;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
@@ -22,10 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -44,6 +40,7 @@ import org.eclipse.ui.progress.UIJob;
 import CF.DataType;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
+import gov.redhawk.ide.debug.LocalAbstractComponent;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
@@ -66,7 +63,6 @@ import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -75,10 +71,9 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
 		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
-	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
+
 	private final GraphitiWaveformExplorerEditor editor;
+
 	// maps containing to uniquely identify component/connections, use with synchronized statement
 	private final Map<String, NodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, NodeMapEntry>());
 	private final Map<String, ConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMapEntry>());
@@ -159,7 +154,7 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
 				LocalScaComponent newComp = null;
 				try {
-					newComp = GraphitiModelMap.this.create(comp, implID);
+					newComp = GraphitiModelMap.this.launch(comp, implID, LocalScaComponent.class);
 					nodeMapEntry.setScaComponent(newComp);
 					updateEnabledState(comp, true);
 					editor.componentRegistered(comp);
@@ -322,38 +317,10 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 		return sadComponentInstantiations[0];
 	}
 
-	/**
-	 * Launch LocalScaComponent for corresponding SadComponentInstantiation
-	 * @param comp
-	 * @param implID
-	 * @return
-	 * @throws CoreException
-	 */
-	@NonNull
-	private LocalScaComponent create(@NonNull final SadComponentInstantiation comp, @Nullable final String implID) throws CoreException {
-		DataType[] execParams = null;
-		if (comp.getComponentProperties() != null) {
-			final List<DataType> params = new ArrayList<DataType>(comp.getComponentProperties().getProperties().size());
-			for (final Entry entry : comp.getComponentProperties().getProperties()) {
-				if (entry.getValue() instanceof AbstractPropertyRef) {
-					final AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
-					params.add(new DataType(ref.getRefID(), ref.toAny()));
-				}
-			}
-			execParams = params.toArray(new DataType[params.size()]);
-		}
-		final SoftPkg spd = ScaEcoreUtils.getFeature(comp, GraphitiModelMap.SPD_PATH);
-		if (spd == null) {
-			throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to resolve SPD.", null));
-		}
-		final URI spdURI = spd.eResource().getURI();
-
-		if (waveform instanceof LocalScaWaveform) {
-			return ((LocalScaWaveform) this.waveform).launch(comp.getId(), execParams, spdURI, implID, ILaunchManager.RUN_MODE);
-		} else {
-			// TODO: Throw an error here? Can we assume LocalScaWaveform?
-			return null;
-		}
+	@Override
+	protected LocalAbstractComponent launch(String id, DataType[] initConfiguration, URI spdURI, String implID, String runMode) throws CoreException {
+		LocalScaWaveform localWaveform = (LocalScaWaveform) this.waveform;
+		return localWaveform.launch(id, initConfiguration, spdURI, implID, runMode);
 	}
 
 	/**
@@ -765,5 +732,4 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 		nodeMapEntry.setProfile(inst);
 		nodes.put(nodeMapEntry.getKey(), nodeMapEntry);
 	}
-
 }
