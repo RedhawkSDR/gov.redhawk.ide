@@ -133,6 +133,17 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalScaComponent" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaComponent #//LocalAbstractComponent"/>
   <eClassifiers xsi:type="ecore:EClass" name="LocalScaDeviceManager" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaDeviceManager #//LocalLaunch">
+    <eOperations name="launch" eType="#//LocalAbstractComponent" eExceptions="#//CoreException">
+      <eParameters name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="initConfiguration" eType="ecore:EDataType ../../gov.redhawk.sca.model/model/sca.ecore#//DataTypeArray">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="The initial configuration of the resource (properties including exec params, configure params, etc)."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="spdURI" eType="ecore:EDataType ../../mil.jpeojtrs.sca.spd/model/spd.ecore#//URI"/>
+      <eParameters name="implID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="mode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="namingContext" lowerBound="1"
         eType="#//NotifyingNamingContext" transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="localDeviceManager" ordered="false"
