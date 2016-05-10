@@ -332,11 +332,12 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * <!-- begin-user-doc -->
 	 * @since 8.2
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public LocalAbstractComponent launch(String id, DataType[] initConfiguration, URI spdURI, String implID, String mode) throws CoreException {
-		// TODO: Implement
-		return null;
+		// END GENERATED CODE
+		return ((DeviceManagerImpl) getLocalDeviceManager()).launch(null, id, initConfiguration, spdURI, implID, mode);
+		// BEGIN GENERATED CODE
 	}
 
 	@Override
@@ -543,10 +544,12 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	/**
 	 * @since 6.0
+	 * @deprecated Use {@link #launch(String, DataType[], URI, String, String)}.
 	 */
-	public Resource launch(final String compId, final DataType[] execParams, @NonNull final String spdURI, final String implId, final String mode)
+	@Deprecated
+	public Resource launch(final String compId, final DataType[] initConfiguration, @NonNull final String spdURI, final String implId, final String mode)
 		throws ExecuteFail {
-		return ((DeviceManagerImpl) getLocalDeviceManager()).launch(compId, execParams, spdURI, implId, mode);
+		return ((DeviceManagerImpl) getLocalDeviceManager()).launch(compId, initConfiguration, spdURI, implId, mode);
 	}
 
 } // LocalScaDeviceManagerImpl
