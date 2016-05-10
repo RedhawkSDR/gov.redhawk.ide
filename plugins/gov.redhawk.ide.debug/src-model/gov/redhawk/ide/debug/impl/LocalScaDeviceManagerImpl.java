@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -51,6 +52,7 @@ import CF.DeviceManagerPOATie;
 import CF.ExecutableDeviceHelper;
 import CF.LoadableDeviceHelper;
 import CF.Resource;
+import gov.redhawk.ide.debug.LocalAbstractComponent;
 import CF.DeviceManagerPackage.ServiceType;
 import CF.ExecutableDevicePackage.ExecuteFail;
 
@@ -324,6 +326,17 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 		}
 
 		// BEGIN GENERATED CODE
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 8.2
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public LocalAbstractComponent launch(String id, DataType[] initConfiguration, URI spdURI, String implID, String mode) throws CoreException {
+		// TODO: Implement
+		return null;
 	}
 
 	@Override

@@ -16,6 +16,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src-model/gov/redhawk/ide/debug/LocalScaDeviceManager.java" type="gov.redhawk.ide.debug.LocalScaDeviceManager">
+        <filter comment="EMF interface, so only implemented internally" id="403804204">
+            <message_arguments>
+                <message_argument value="gov.redhawk.ide.debug.LocalScaDeviceManager"/>
+                <message_argument value="launch(String, DataType[], URI, String, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src-model/gov/redhawk/ide/debug/LocalScaLoadableDevice.java" type="gov.redhawk.ide.debug.LocalScaLoadableDevice">
         <filter id="574619656">
             <message_arguments>
