@@ -174,9 +174,10 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Launch Domain from TargetSDR
+	 * Launch a domain manager and optionally a device manager.
 	 * @param bot
-	 * @param domainName
+	 * @param domainName The name of the domain manager to launch
+	 * @param deviceMgrName The name of the device manager to launch, or null for none
 	 */
 	public static void launchDomain(SWTWorkbenchBot bot, String domainName, final String deviceMgrName) {
 		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
@@ -190,29 +191,34 @@ public class ScaExplorerTestUtils {
 		// Enter the Domain Name text
 		wizardBot.text(0).setText(domainName);
 
-		// select waveform to launch
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public boolean test() throws Exception {
-				for (SWTBotTreeItem treeItem : wizardBot.tree().getAllItems()) {
-					if (treeItem.getText().startsWith(deviceMgrName)) {
-						return true;
+		// Select device manager to launch
+		if (deviceMgrName != null) {
+			bot.waitUntil(new DefaultCondition() {
+				@Override
+				public boolean test() throws Exception {
+					for (SWTBotTreeItem treeItem : wizardBot.tree().getAllItems()) {
+						if (treeItem.getText().startsWith(deviceMgrName)) {
+							return true;
+						}
 					}
+					return false;
 				}
-				return false;
-			}
 
-			@Override
-			public String getFailureMessage() {
-				return "Couldn't find device manager " + deviceMgrName;
-			}
-		});
-		for (SWTBotTreeItem treeItem : wizardBot.tree().getAllItems()) {
-			if (treeItem.getText().startsWith(deviceMgrName)) {
-				treeItem.check();
-				break;
+				@Override
+				public String getFailureMessage() {
+					return "Couldn't find device manager " + deviceMgrName;
+				}
+			});
+			for (SWTBotTreeItem treeItem : wizardBot.tree().getAllItems()) {
+				if (treeItem.getText().startsWith(deviceMgrName)) {
+					treeItem.check();
+					break;
+				}
 			}
 		}
+
+		// Wait for validation
+		bot.sleep(250);
 
 		// Close wizard
 		SWTBotButton okButton = wizardBot.button("OK");
