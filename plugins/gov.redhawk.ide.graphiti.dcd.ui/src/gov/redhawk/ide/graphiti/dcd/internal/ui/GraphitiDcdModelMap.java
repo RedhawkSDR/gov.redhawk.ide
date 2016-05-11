@@ -46,7 +46,7 @@ import CF.PortPackage.OccupiedPort;
 import gov.redhawk.ide.debug.LocalAbstractComponent;
 import gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl;
 import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
-import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor;
+import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdExplorerEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
@@ -82,14 +82,14 @@ public class GraphitiDcdModelMap extends AbstractGraphitiModelMap {
 		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
 		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 
-	private final GraphitiDcdSandboxEditor editor;
+	private final GraphitiDcdExplorerEditor editor;
 	private final ScaDeviceManager deviceManager;
 
 	// maps containing to uniquely identify devices/connections, use with synchronized statement
 	private final Map<String, DcdNodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, DcdNodeMapEntry>());
 	private final Map<String, DcdConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, DcdConnectionMapEntry>());
 
-	public GraphitiDcdModelMap(final GraphitiDcdSandboxEditor editor, final DeviceConfiguration dcd, final ScaDeviceManager deviceManager) {
+	public GraphitiDcdModelMap(final GraphitiDcdExplorerEditor editor, final DeviceConfiguration dcd, final ScaDeviceManager deviceManager) {
 		super(editor);
 		Assert.isNotNull(deviceManager, "Device Manager must not be null");
 		Assert.isNotNull(dcd, "Device Configuration must not be null");
