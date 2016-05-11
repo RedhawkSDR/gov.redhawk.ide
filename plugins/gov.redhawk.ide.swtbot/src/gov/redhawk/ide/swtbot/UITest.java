@@ -70,7 +70,7 @@ public abstract class UITest {
 	}
 
 	@After
-	public void after() throws Exception {
+	public void after() throws CoreException {
 		cleanup(ScaFileSystemConstants.SCHEME_TARGET_SDR_DOM, sdrDomCleanupPaths);
 		cleanup(ScaFileSystemConstants.SCHEME_TARGET_SDR_DEV, sdrDevCleanupPaths);
 		StandardTestActions.assertNoOpenDialogs();
