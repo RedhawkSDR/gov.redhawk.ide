@@ -32,14 +32,8 @@ import ExtendedCF.Sandbox;
  */
 public abstract class AbstractResourceFactory implements ResourceFactoryOperations {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Resource createResource(String resourceId, final DataType[] inputQualifiers) throws CreateResourceFailure {
-		if (!resourceId.endsWith(identifier())) {
-			resourceId = resourceId + ":" + identifier();
-		}
 		LocalSca localSca;
 		try {
 			localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
@@ -78,9 +72,6 @@ public abstract class AbstractResourceFactory implements ResourceFactoryOperatio
 
 	protected abstract Resource createInstance(String resourceId, DataType[] qualifiers, String launchMode) throws CreateResourceFailure;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void releaseResource(final String resourceId) throws InvalidResourceId {
 		LocalSca localSca;
@@ -100,13 +91,9 @@ public abstract class AbstractResourceFactory implements ResourceFactoryOperatio
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void shutdown() throws ShutdownFailure {
 		// Do nothing
-
 	}
 
 }
