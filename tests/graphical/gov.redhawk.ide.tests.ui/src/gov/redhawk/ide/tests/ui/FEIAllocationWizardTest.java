@@ -16,6 +16,7 @@ import gov.redhawk.frontend.TunerStatus;
 import gov.redhawk.frontend.ui.wizard.TunerAllocationWizard;
 import gov.redhawk.ide.swtbot.UITest;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swtbot.swt.finder.SWTBot;
@@ -51,7 +52,7 @@ public class FEIAllocationWizardTest extends UITest {
 	}
 
 	@After
-	public void after() throws Exception {
+	public void after() throws CoreException {
 		dialog = null;
 		wizardBot = null;
 		wizard = null;
