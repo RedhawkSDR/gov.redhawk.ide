@@ -21,22 +21,11 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
-import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 
 public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEditor {
 	public static final String EDITOR_ID = "gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca";
-
-	@Override
-	protected LocalScaWaveform getScaWaveform(ScaFileStoreEditorInput scaInput) {
-		if (scaInput.getScaObject() instanceof LocalScaWaveform) {
-			return (LocalScaWaveform) scaInput.getScaObject();
-		} else {
-			throw new IllegalStateException("Sandbox Editor opened on invalid sca input " + scaInput.getScaObject());
-		}
-	}
 
 	@Override
 	public String getDiagramContext(Resource sadResource) {

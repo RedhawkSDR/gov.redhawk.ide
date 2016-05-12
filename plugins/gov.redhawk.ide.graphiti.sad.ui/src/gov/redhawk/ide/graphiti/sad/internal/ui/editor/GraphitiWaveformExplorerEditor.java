@@ -102,7 +102,12 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 	@Override
 	protected void setInput(IEditorInput input) {
 		if (input instanceof ScaFileStoreEditorInput) {
-			this.waveform = getScaWaveform((ScaFileStoreEditorInput) input);
+			ScaFileStoreEditorInput scaInput = (ScaFileStoreEditorInput) input;
+			if (scaInput.getScaObject() instanceof ScaWaveform) {
+				this.waveform = (ScaWaveform) scaInput.getScaObject();
+			} else {
+				throw new IllegalStateException("Sandbox Editor opened on invalid sca input " + scaInput.getScaObject());
+			}
 		} else if (input instanceof URIEditorInput) {
 			URIEditorInput uriInput = (URIEditorInput) input;
 			if (uriInput.getURI().equals(ScaDebugInstance.getLocalSandboxWaveformURI())) {
@@ -169,14 +174,6 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 		}
 
 		super.setInput(input);
-	}
-
-	protected ScaWaveform getScaWaveform(ScaFileStoreEditorInput scaInput) {
-		if (scaInput.getScaObject() instanceof ScaWaveform) {
-			return (ScaWaveform) scaInput.getScaObject();
-		} else {
-			throw new IllegalStateException("Sandbox Editor opened on invalid sca input " + scaInput.getScaObject());
-		}
 	}
 
 	@Override
