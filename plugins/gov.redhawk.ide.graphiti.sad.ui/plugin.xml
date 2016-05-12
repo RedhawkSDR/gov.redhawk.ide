@@ -174,7 +174,7 @@
             contributorClass="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
             default="true"
             icon="icons/redhawk16.gif"
-            id="gov.redhawk.ide.graphiti.sad.ui..editor.localMultiPageSca"
+            id="gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca"
             name="Chalkboard">
       </editor>
       <editor
@@ -199,12 +199,12 @@
          </contentTypeBinding>
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
-            editorId="gov.redhawk.ide.graphiti.sad.ui..editor.localMultiPageSca"
+            editorId="gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca"
             priority="HIGHEST">
       </contentTypeBinding>
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
-            editorId="gov.redhawk.ide.graphiti.sad.ui..editor.localMultiPageSca"
+            editorId="gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca"
             priority="HIGHEST">
       </contentTypeBinding>
       <contentTypeBinding
