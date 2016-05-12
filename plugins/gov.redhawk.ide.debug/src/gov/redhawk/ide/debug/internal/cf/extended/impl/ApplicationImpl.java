@@ -1193,6 +1193,10 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return retVal;
 	}
 
+	/**
+	 * @deprecated Use {@link #launch(String, String, DataType[], URI, String, String)}
+	 */
+	@Deprecated
 	public Resource launch(final String compId, final DataType[] initConfiguration, @NonNull final String spdURI, final String implId, final String mode)
 		throws ExecuteFail {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
@@ -1261,6 +1265,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	private ILaunchConfigurationWorkingCopy createLaunchConfig(String usageName, String compId, DataType[] initConfiguration, URI spdURI, String implId,
 		String mode) throws CoreException {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
+
 		// Use EFS to unwrap non-platform URIs; for example convert sca URI -> file URI
 		if (!spdURI.isPlatform()) {
 			IFileStore store = EFS.getStore(java.net.URI.create(spdURI.toString()));
@@ -1274,27 +1279,31 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 		}
 
+		// Load SPD
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 		if (mode == null) {
 			mode = ILaunchManager.RUN_MODE;
 		}
 
+		// Create a launch config
 		this.streams.getOutStream().println("Launching component: " + spd.getName());
 		final ILaunchConfigurationFactory factory = ScaDebugPlugin.getInstance().getLaunchConfigurationFactoryRegistry().getFactory(spd, implId);
 		if (factory == null) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to obtain Launch Factory for impl: " + implId, null));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to obtain Launch Factory for impl: " + implId));
 		}
 		final ILaunchConfigurationWorkingCopy config = factory.createLaunchConfiguration(spd.getName(), implId, spd);
 
+		// Create a name for the component
 		final NameComponent[] spdContextName = this.waveformContext.getName(spdURI);
-		final String spdContextNameStr;
+		String spdContextNameStr;
 		try {
 			spdContextNameStr = Name.toString(spdContextName);
 		} catch (final InvalidName e) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create sub context for spd.", e));
 		}
 
+		// Bind the component's name in the waveform's naming context
 		NamingContext spdContext;
 		try {
 			spdContext = this.waveformContext.bind_new_context(spdContextName);
@@ -1320,16 +1329,21 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		if (usageName == null && compId != null) {
 			usageName = instID;
 		}
+
+		// Waveform name
 		config.setAttribute(LaunchVariables.WAVEFORM_NAME, this.name);
 		if (usageName != null) {
 			this.streams.getOutStream().println("\tLaunching with name: " + usageName);
 			config.setAttribute(LaunchVariables.NAME_BINDING, usageName);
 		}
+
+		// Component identifier
 		if (compId != null) {
 			this.streams.getOutStream().println("\tLaunching with id: " + compId);
 			config.setAttribute(LaunchVariables.COMPONENT_IDENTIFIER, compId);
 		}
 
+		// Initial properties
 		if (initConfiguration != null) {
 			final ScaComponent propHolder = ScaFactory.eINSTANCE.createScaComponent();
 			propHolder.setProfileURI(spdURI);
@@ -1346,6 +1360,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			ScaLaunchConfigurationUtil.saveProperties(config, propHolder);
 		}
 
+		// Copy launch timeout from parent, if any
 		if (parentLaunch != null) {
 			int timeout = parentLaunch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
 				ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
