@@ -10,20 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
-import gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import mil.jpeojtrs.sca.scd.ComponentType;
-import mil.jpeojtrs.sca.scd.SoftwareComponent;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -36,18 +27,25 @@ import org.eclipse.emf.transaction.RunnableWithResult;
 
 import CF.DataType;
 import CF.ErrorNumberType;
-import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.ReleaseError;
 import CF.ResourceFactoryPackage.CreateResourceFailure;
 import CF.ResourceFactoryPackage.InvalidResourceId;
 import CF.ResourceFactoryPackage.ShutdownFailure;
+import gov.redhawk.model.sca.ScaAbstractComponent;
+import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaDevice;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import mil.jpeojtrs.sca.scd.ComponentType;
+import mil.jpeojtrs.sca.scd.SoftwareComponent;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
  * @since 4.0
  */
 public class SpdResourceFactory extends AbstractResourceFactory {
 
-	private final List<LocalScaComponent> launched = Collections.synchronizedList(new ArrayList<LocalScaComponent>());
+	private final List<ScaAbstractComponent< ? >> launched = Collections.synchronizedList(new ArrayList<ScaAbstractComponent< ? >>());
 	private final URI spdURI;
 	private final String identifier;
 
@@ -69,9 +67,6 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		return ScaDebugPlugin.getInstance().getLocalSca(monitor).getSandboxWaveform();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String identifier() {
 		return this.identifier;
@@ -106,9 +101,6 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void releaseResource(final String resourceId) throws InvalidResourceId {
 		LocalScaComponent comp;
@@ -128,13 +120,10 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void shutdown() throws ShutdownFailure {
 		synchronized (this.launched) {
-			for (final LocalScaComponent comp : this.launched) {
+			for (final ScaAbstractComponent< ? > comp : this.launched) {
 				if (comp.isDisposed()) {
 					continue;
 				}
@@ -182,34 +171,32 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 
 		ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
 		switch (type) {
-		case DEVICE:
 		case SERVICE:
-			LocalSca sandbox;
+			// Because the service's CORBA type can be anything, we can't just return a CF.Resource
+			// Currently that means there's no way to use this interface to launch a service at present
+			throw new CreateResourceFailure(ErrorNumberType.CF_ENOTSUP, "Launching services is not supported");
+		case DEVICE:
 			try {
-				sandbox = ScaDebugPlugin.getInstance().getLocalSca(null);
-			} catch (CoreException e1) {
-				throw new CreateResourceFailure(ErrorNumberType.CF_ENODEV, "Failed to get sandbox.");
-			}
-			
-			LocalScaDeviceManager devMgr = sandbox.getSandboxDeviceManager();
-			try {
-				return ((LocalScaDeviceManagerImpl) devMgr).launch(compID, qualifiers, spdURI.toString(), implementationID, launchMode);
-			} catch (ExecuteFail e) {
+				LocalScaDeviceManager devMgr = ScaDebugPlugin.getInstance().getLocalSca(null).getSandboxDeviceManager();
+				LocalAbstractComponent absComponent = devMgr.launch(compID, params.toArray(new DataType[params.size()]), spdURI, implementationID, launchMode);
+				ScaDevice< ? > dev = (ScaDevice< ? >) absComponent;
+				this.launched.add(dev);
+				return dev.fetchNarrowedObject(null);
+			} catch (CoreException e) {
+				ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to create instance.", e));
 				throw new CreateResourceFailure(ErrorNumberType.CF_EFAULT, "Failed to launch: " + identifier() + " " + e.getMessage());
 			}
 		default:
-			break;
-		}
-
-		try {
-			LocalScaWaveform chalkboard = getChalkboard(null);
-			final LocalScaComponent component = chalkboard.launch(compID, params.toArray(new DataType[params.size()]), spdURI.trimFragment(),
-				implementationID, launchMode);
-			this.launched.add(component);
-			return component.fetchNarrowedObject(null);
-		} catch (final CoreException e) {
-			ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to create instance.", e));
-			throw new CreateResourceFailure(ErrorNumberType.CF_EFAULT, "Failed to launch: " + identifier() + " " + e.getMessage());
+			try {
+				LocalScaWaveform chalkboard = getChalkboard(null);
+				final LocalScaComponent component = chalkboard.launch(compID, params.toArray(new DataType[params.size()]), spdURI.trimFragment(),
+					implementationID, launchMode);
+				this.launched.add(component);
+				return component.fetchNarrowedObject(null);
+			} catch (CoreException e) {
+				ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to create instance.", e));
+				throw new CreateResourceFailure(ErrorNumberType.CF_EFAULT, "Failed to launch: " + identifier() + " " + e.getMessage());
+			}
 		}
 	}
 

@@ -20,6 +20,12 @@ import junit.textui.TestRunner;
  * <!-- begin-user-doc -->
  * A test case for the model object '<em><b>Local Sca Device Manager</b></em>'.
  * <!-- end-user-doc -->
+ * <p>
+ * The following operations are tested:
+ * <ul>
+ *   <li>{@link gov.redhawk.ide.debug.LocalScaDeviceManager#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String) <em>Launch</em>}</li>
+ * </ul>
+ * </p>
  * @generated
  */
 public class LocalScaDeviceManagerTest extends TestCase {
@@ -91,6 +97,17 @@ public class LocalScaDeviceManagerTest extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		setFixture(null);
+	}
+
+	/**
+	 * Tests the '{@link gov.redhawk.ide.debug.LocalScaDeviceManager#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String) <em>Launch</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gov.redhawk.ide.debug.LocalScaDeviceManager#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String)
+	 * @generated
+	 */
+	public void testLaunch__String_DataType_URI_String_String() {
+		// PASS - This would be difficult/impossible to test in a unit test environment
 	}
 
 	public void testStub() {

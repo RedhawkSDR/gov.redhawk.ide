@@ -266,7 +266,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @generated
 	 */
 	@Override
-	public void setNamingContext(final NotifyingNamingContext newNamingContext) {
+	public void setNamingContext(NotifyingNamingContext newNamingContext) {
 		NotifyingNamingContext oldNamingContext = namingContext;
 		namingContext = newNamingContext;
 		if (eNotificationRequired())

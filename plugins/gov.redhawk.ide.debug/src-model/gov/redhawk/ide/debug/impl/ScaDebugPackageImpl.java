@@ -1087,6 +1087,14 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		initEAttribute(getLocalScaDeviceManager_LocalDeviceManager(), this.getAttrDeviceManagerOperations(), "localDeviceManager", null, 0, 1,
 			LocalScaDeviceManager.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
+		op = addEOperation(localScaDeviceManagerEClass, this.getLocalAbstractComponent(), "launch", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "id", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theScaPackage.getDataTypeArray(), "initConfiguration", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theSpdPackage.getURI(), "spdURI", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "implID", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "mode", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEException(op, this.getCoreException());
+
 		initEClass(localScaExecutableDeviceEClass, LocalScaExecutableDevice.class, "LocalScaExecutableDevice", !IS_ABSTRACT, !IS_INTERFACE,
 			IS_GENERATED_INSTANCE_CLASS);
 

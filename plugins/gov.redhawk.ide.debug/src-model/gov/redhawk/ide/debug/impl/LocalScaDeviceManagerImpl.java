@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -51,6 +52,7 @@ import CF.DeviceManagerPOATie;
 import CF.ExecutableDeviceHelper;
 import CF.LoadableDeviceHelper;
 import CF.Resource;
+import gov.redhawk.ide.debug.LocalAbstractComponent;
 import CF.DeviceManagerPackage.ServiceType;
 import CF.ExecutableDevicePackage.ExecuteFail;
 
@@ -326,6 +328,18 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 		// BEGIN GENERATED CODE
 	}
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 8.2
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public LocalAbstractComponent launch(String id, DataType[] initConfiguration, URI spdURI, String implID, String mode) throws CoreException {
+		// END GENERATED CODE
+		return ((DeviceManagerImpl) getLocalDeviceManager()).launch(null, id, initConfiguration, spdURI, implID, mode);
+		// BEGIN GENERATED CODE
+	}
+
 	@Override
 	public void unsetProfile() {
 
@@ -530,10 +544,12 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	/**
 	 * @since 6.0
+	 * @deprecated Use {@link #launch(String, DataType[], URI, String, String)}.
 	 */
-	public Resource launch(final String compId, final DataType[] execParams, @NonNull final String spdURI, final String implId, final String mode)
+	@Deprecated
+	public Resource launch(final String compId, final DataType[] initConfiguration, @NonNull final String spdURI, final String implId, final String mode)
 		throws ExecuteFail {
-		return ((DeviceManagerImpl) getLocalDeviceManager()).launch(compId, execParams, spdURI, implId, mode);
+		return ((DeviceManagerImpl) getLocalDeviceManager()).launch(compId, initConfiguration, spdURI, implId, mode);
 	}
 
 } // LocalScaDeviceManagerImpl

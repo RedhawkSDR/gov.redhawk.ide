@@ -11,7 +11,10 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug;
 
+import CF.DataType;
 import gov.redhawk.model.sca.ScaDeviceManager;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.util.URI;
 import CF.DeviceManagerOperations;
 
 /**
@@ -82,5 +85,17 @@ public interface LocalScaDeviceManager extends ScaDeviceManager, LocalLaunch {
 	 * @generated
 	 */
 	void setLocalDeviceManager(DeviceManagerOperations value);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 8.2
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * @param initConfiguration The initial configuration of the resource (properties including exec params, configure params, etc).
+	 * <!-- end-model-doc -->
+	 * @model exceptions="gov.redhawk.ide.debug.CoreException" initConfigurationDataType="gov.redhawk.model.sca.DataTypeArray" spdURIDataType="mil.jpeojtrs.sca.spd.URI"
+	 * @generated
+	 */
+	LocalAbstractComponent launch(String id, DataType[] initConfiguration, URI spdURI, String implID, String mode) throws CoreException;
 
 } // LocalScaDeviceManager
