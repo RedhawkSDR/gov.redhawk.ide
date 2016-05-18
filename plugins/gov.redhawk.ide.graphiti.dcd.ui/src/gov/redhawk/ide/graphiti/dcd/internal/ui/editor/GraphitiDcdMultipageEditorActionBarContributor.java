@@ -23,9 +23,6 @@ import gov.redhawk.ui.editor.ScaMultipageActionBarContributor;
 
 public class GraphitiDcdMultipageEditorActionBarContributor extends ScaMultipageActionBarContributor {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected IEditorActionBarContributor getSubActionBarContributor(final IEditorPart activeEditor) {
 		if (activeEditor instanceof DiagramEditor) {
@@ -36,13 +33,10 @@ public class GraphitiDcdMultipageEditorActionBarContributor extends ScaMultipage
 		return super.getSubActionBarContributor(activeEditor);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected String getType(final IEditorPart activeEditor) {
 		if (activeEditor == null || activeEditor instanceof SCAFormEditor) {
-			return "SAD Editor";
+			return "DCD Editor";
 		} else if (activeEditor instanceof TextEditor) {
 			return "Text Editor";
 		} else if (activeEditor instanceof DiagramEditor) {
