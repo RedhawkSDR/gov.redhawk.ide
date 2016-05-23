@@ -468,6 +468,10 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 		dialog.open();
 	}
 
+	public ScaWaveform getWaveform() {
+		return waveform;
+	}
+
 	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
