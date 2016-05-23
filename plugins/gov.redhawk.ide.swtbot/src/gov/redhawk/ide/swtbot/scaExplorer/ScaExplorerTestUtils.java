@@ -462,7 +462,7 @@ public class ScaExplorerTestUtils {
 				}
 				return sb.toString();
 			}
-		});
+		}, 10000);
 	}
 
 	/**
