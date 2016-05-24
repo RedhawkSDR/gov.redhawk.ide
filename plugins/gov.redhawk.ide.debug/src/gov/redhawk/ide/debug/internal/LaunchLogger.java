@@ -20,7 +20,7 @@ import gov.redhawk.ide.debug.ConsoleColor;
 import gov.redhawk.ide.debug.ILaunchLogger;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 
-public enum LaunchLogger implements ServiceTrackerCustomizer {
+public enum LaunchLogger implements ServiceTrackerCustomizer<ILaunchLogger, ILaunchLogger> {
 
 	INSTANCE;
 
@@ -52,17 +52,17 @@ public enum LaunchLogger implements ServiceTrackerCustomizer {
 		ScaDebugPlugin.logWarning(message, null);
 	}
 
-	public Object addingService(ServiceReference reference) {
+	public ILaunchLogger addingService(ServiceReference<ILaunchLogger> reference) {
 		BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 		logger = (ILaunchLogger) context.getService(reference);
 		return logger;
 	}
 
-	public void modifiedService(ServiceReference reference, Object service) {
+	public void modifiedService(ServiceReference<ILaunchLogger> reference, ILaunchLogger service) {
 		// PASS - Don't care
 	}
 
-	public void removedService(ServiceReference reference, Object service) {
+	public void removedService(ServiceReference<ILaunchLogger> reference, ILaunchLogger service) {
 		logger = null;
 		BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 		context.ungetService(reference);

@@ -39,7 +39,7 @@ public class ScaDebugPlugin extends Plugin {
 
 	private static ScaDebugPlugin instance;
 
-	private static ServiceTracker launchLoggerTracker;
+	private static ServiceTracker<ILaunchLogger, ILaunchLogger> launchLoggerTracker;
 
 	@Override
 	public void start(final BundleContext context) throws Exception {
@@ -47,7 +47,7 @@ public class ScaDebugPlugin extends Plugin {
 
 		ScaDebugPlugin.instance = this;
 
-		launchLoggerTracker = new ServiceTracker(context, ILaunchLogger.class.getName(), LaunchLogger.INSTANCE);
+		launchLoggerTracker = new ServiceTracker<ILaunchLogger, ILaunchLogger>(context, ILaunchLogger.class, LaunchLogger.INSTANCE);
 		launchLoggerTracker.open();
 
 		JacorbActivator.getDefault().init();
