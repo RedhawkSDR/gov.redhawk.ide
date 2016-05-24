@@ -50,6 +50,7 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.AnyUtils;
+import mil.jpeojtrs.sca.util.CFErrorFormatter;
 import mil.jpeojtrs.sca.util.NamedThreadFactory;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
@@ -104,9 +105,6 @@ import CF.ResourcePackage.StartError;
 import CF.ResourcePackage.StopError;
 import CF.TestableObjectPackage.UnknownTest;
 
-/**
- * 
- */
 public class ApplicationImpl extends PlatformObject implements IProcess, ApplicationOperations {
 	private static final ExecutorService APP_EXECUTOR = Executors.newCachedThreadPool(new NamedThreadFactory(ApplicationImpl.class.getName()));
 
@@ -168,7 +166,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
         }
 	}
 	
-	private static class FromConnectionInfo implements ConnectionInfo {
+	private class FromConnectionInfo implements ConnectionInfo {
 		private final String connectionID;
 		private final ScaUsesPort port;
 		private final String targetCompID;
@@ -188,7 +186,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			try {
 				this.connection.getPort().disconnectPort(this.connection);
 			} catch (final InvalidPort e) {
-				// PASS
+				String msg = "Problems while disconnecting connection " + this.connectionID;
+				ApplicationImpl.this.streams.getErrStream().println(msg);
+				ApplicationImpl.this.streams.getErrStream().println(CFErrorFormatter.format(e, "connection " + this.connectionID));
 			}
 		}
 
@@ -208,7 +208,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 	}
 
-	private static class ToConnectionInfo implements ConnectionInfo {
+	private class ToConnectionInfo implements ConnectionInfo {
 		private final String connectionID;
 		private final String sourceCompID;
 		private final String sourcePort;
@@ -241,7 +241,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			try {
 				this.connection.getPort().disconnectPort(this.connection);
 			} catch (final InvalidPort e) {
-				// PASS
+				String msg = "Problems while disconnecting connection " + this.connectionID;
+				ApplicationImpl.this.streams.getErrStream().println(msg);
+				ApplicationImpl.this.streams.getErrStream().println(CFErrorFormatter.format(e, "connection " + this.connectionID));
 			}
 		}
 
@@ -289,16 +291,10 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return this.waveformContext.getNamingContext();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public String identifier() {
 		return this.identifier;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public boolean started() {
 		if (this.assemblyController != null) {
 			return this.assemblyController.started();
@@ -310,9 +306,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return this.streams;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void start() throws StartError {
 		this.streams.getOutStream().println("Starting...");
 
@@ -325,8 +318,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				}
 			});
 		} catch (InterruptedException e) {
-			logException(e);
-			throw new StartError(ErrorNumberType.CF_EINTR, "Interrupted while getting waveform's components");
+			String msg = "Interrupted while getting waveform's components";
+			ScaDebugPlugin.logError(msg, e);
+			throw new StartError(ErrorNumberType.CF_EINTR, msg);
 		}
 		Collections.sort(sortedSet, new ScaComponentComparator());
 
@@ -340,17 +334,15 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			try {
 				comp.start();
 			} catch (final StartError e) {
-				throw logException("Error during start", e);
+				this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + comp.getName()));
+				throw e;
 			}
 		}
-		
+
 		this.streams.getOutStream().println("Start succeeded");
 		this.started = true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void stop() throws StopError {
 		this.streams.getOutStream().println("Stopping...");
 
@@ -363,8 +355,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				}
 			});
 		} catch (InterruptedException e) {
-			logException(e);
-			throw new StopError(ErrorNumberType.CF_EINTR, "Interrupted while getting waveform's components");
+			String msg = "Interrupted while getting waveform's components";
+			ScaDebugPlugin.logError(msg, e);
+			throw new StopError(ErrorNumberType.CF_EINTR, msg);
 		}
 		Collections.sort(sortedSet, new ScaComponentComparator());
 		Collections.reverse(sortedSet);
@@ -379,15 +372,14 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			try {
 				comp.stop();
 			} catch (final StopError e) {
-				throw logException("Error during stop", e);
+				this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + comp.getName()));
+				throw e;
 			}
 		}
+
 		this.started = false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void initialize() throws InitializeError {
 		this.streams.getOutStream().println("Initializing application...");
 		if (this.assemblyController == null) {
@@ -397,23 +389,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			this.assemblyController.initialize();
 			this.streams.getOutStream().println("Initialize succeeded");
 		} catch (final InitializeError e) {
-			throw logException("Error during initialize", e);
+			this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + this.assemblyController.getName()));
+			throw e;
 		}
 	}
 
-	private < T extends Throwable > T logException(final T e) {
-		this.streams.getErrStream().printStackTrace("\n\n" + e.getMessage(), e); // SUPPRESS CHECKSTYLE OUTPUT
-		return e;
-	}
-
-	private < T extends Throwable > T logException(final String msg, final T e) {
-		this.streams.getErrStream().printStackTrace("\n\n" + msg, e); // SUPPRESS CHECKSTYLE OUTPUT
-		return e;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public void releaseObject() throws ReleaseError {
 		if (this.terminated) {
 			return;
@@ -435,9 +415,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		fireTerminated();
 	}
 
-	/**
-	 * 
-	 */
 	protected void unbind() {
 		if (this.waveformContext != null) {
 			
@@ -481,9 +458,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 	}
 
-	/**
-	 * 
-	 */
 	protected void releaseAll() {
 		this.streams.getOutStream().println("Releasing components...");
 		// Shutdown each component
@@ -493,21 +467,21 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("Released components");
 	}
 
-	/**
-	 * @param info
-	 */
 	protected void release(final ScaComponent info) {
 		this.streams.getOutStream().println("\tReleasing component " + info.getName());
 		try {
 			info.releaseObject();
+		} catch (ReleaseError e) {
+			String msg = "Problems while releasing component " + info.getName();
+			this.streams.getErrStream().println(msg);
+			this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + info.getName()));
 		} catch (final Exception e) {
-			logException("Problems while releasing: " + info.getName(), e);
+			String msg = "Problems while releasing component " + info.getName();
+			this.streams.getErrStream().println(msg);
+			ScaDebugPlugin.logError(msg, e);
 		}
 	}
 
-	/**
-	 * 
-	 */
 	protected void disconnectAll() {
 		this.streams.getOutStream().println("Disconnecting connections...");
 		// Disconnect components
@@ -517,9 +491,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("Disconnected");
 	}
 
-	/**
-	 * @param info
-	 */
 	protected void disconnect(final ScaComponent comp) {
 		for (final ScaPort< ? , ? > port : comp.getPorts().toArray(new ScaPort< ? , ? >[comp.getPorts().size()])) {
 			if (port instanceof ScaUsesPort) {
@@ -528,8 +499,14 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				for (final ScaConnection c : connections) {
 					try {
 						up.disconnectPort(c);
+					} catch (final InvalidPort e) {
+						String msg = "Problems while disconnecting connection " + c.getId();
+						this.streams.getErrStream().println(msg);
+						this.streams.getErrStream().println(CFErrorFormatter.format(e, "connection " + c.getId()));
 					} catch (final Exception e) {
-						logException("Problems while disconnecting: " + c.getId(), e);
+						String msg = "Problems while disconnecting connection " + c.getId();
+						this.streams.getErrStream().println(msg);
+						ScaDebugPlugin.logError(msg, e);
 					}
 				}
 			}
@@ -543,9 +520,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void runTest(final int testid, final PropertiesHolder testValues) throws UnknownTest, UnknownProperties {
 		this.streams.getOutStream().println("Runing Test: " + testValues);
 		if (this.assemblyController == null) {
@@ -555,15 +529,14 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			this.assemblyController.runTest(testid, testValues);
 			this.streams.getOutStream().println("Run Test Succeeded");
 		} catch (final UnknownTest e) {
-			throw logException("Errors during Run Test", e);
+			this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + this.assemblyController.getName()));
+			throw e;
 		} catch (final UnknownProperties e) {
-			throw logException("Errors during Run Test", e);
+			this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + this.assemblyController.getName()));
+			throw e;
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void configure(final DataType[] configProperties) throws InvalidConfiguration, PartialConfiguration {
 		final Map<String, String> propertyMap = new HashMap<String, String>();
 		for (final DataType type : configProperties) {
@@ -577,15 +550,14 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			this.assemblyController.configure(configProperties);
 			this.streams.getOutStream().println("Configure succeeded");
 		} catch (final InvalidConfiguration e) {
-			throw logException("Error during configure", e);
+			this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + this.assemblyController.getName()));
+			throw e;
 		} catch (final PartialConfiguration e) {
-			throw logException("Error during configure", e);
+			this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + this.assemblyController.getName()));
+			throw e;
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void query(final PropertiesHolder configProperties) throws UnknownProperties {
 		final List<String> properties = new ArrayList<String>();
 		for (final DataType type : configProperties.value) {
@@ -599,13 +571,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			this.assemblyController.query(configProperties);
 			this.streams.getOutStream().println("Query succeeded");
 		} catch (final UnknownProperties e) {
-			throw logException("Error during query", e);
+			this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + this.assemblyController.getName()));
+			throw e;
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public org.omg.CORBA.Object getPort(final String name) throws UnknownPort {
 		getStreamsProxy().getOutStream().println("Get port " + name);
 		try {
@@ -627,10 +597,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 					}
 				}
 			}
-			throw new UnknownPort("No external port of name: " + name);
 		} catch (final UnknownPort e) {
-			throw logException("Error during get port " + name, e);
+			this.streams.getErrStream().println(CFErrorFormatter.format(e, "port " + name));
+			throw e;
 		}
+		throw new UnknownPort("No external port of name: " + name);
 	}
 
 	private ScaComponent findComponent(final String instId) {
@@ -650,9 +621,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.externalPorts = externalPorts;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public ComponentType[] registeredComponents() {
 		final ComponentType[] types = new ComponentType[this.waveform.getComponents().size()];
 		for (int i = 0; i < types.length; i++) {
@@ -666,9 +634,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return types;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public ComponentElementType[] componentNamingContexts() {
 		final ComponentElementType[] types = new ComponentElementType[this.waveform.getComponents().size()];
 		for (int i = 0; i < types.length; i++) {
@@ -679,23 +644,14 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return types;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public ComponentProcessIdType[] componentProcessIds() {
 		return new ComponentProcessIdType[0];
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public DeviceAssignmentType[] componentDevices() {
 		return new DeviceAssignmentType[0];
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public ComponentElementType[] componentImplementations() {
 		final ComponentElementType[] types = new ComponentElementType[this.waveform.getComponents().size()];
 		for (int i = 0; i < types.length; i++) {
@@ -715,16 +671,10 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return types;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public String profile() {
 		return this.profile;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public String name() {
 		return this.name;
 	}
@@ -741,7 +691,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		try {
 			releaseObject();
 		} catch (final ReleaseError e) {
-			throw new DebugException(new Status(IStatus.WARNING, ScaDebugPlugin.ID, "Problems releasing application.", e));
+			throw new DebugException(new Status(IStatus.WARNING, ScaDebugPlugin.ID, CFErrorFormatter.format(e, "waveform " + this.name), e));
 		}
 	}
 
@@ -785,7 +735,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			if (compInstId.equals(info.getInstantiationIdentifier())) {
 				if (!(info instanceof LocalScaComponent)) {
 					// This should never happen but check for it anyway
-					throw logException(new ReleaseError(new String[] { "Can only reset local components" }));
+					String msg = "Can only reset local components";
+					this.streams.getErrStream().println(msg);
+					throw new ReleaseError(new String[] { msg });
 				}
 				oldComponent = (LocalScaComponent) info;
 				break;
@@ -831,7 +783,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			this.streams.getOutStream().println("Done resetting component " + oldComponent.getName());
 			return retVal.getObj();
 		} catch (final ExecuteFail e) {
-			throw logException("Failed to launch component: " + oldComponent.getName(), e);
+			this.streams.getErrStream().println("Failed to re-launch component " + usageName);
+			this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + usageName));
+			throw e;
 		}
 	}
 
@@ -848,13 +802,16 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				try {
 					info.reconnect(this.waveform);
 				} catch (final InvalidPort e) {
-					this.streams.getErrStream().println("Failed to reconnect " + info.getConnectionID() + " " + e.msg);
+					this.streams.getErrStream().println("Failed to reconnect connection " + info.getConnectionID());
+					this.streams.getErrStream().println(CFErrorFormatter.format(e, "connection " + info.getConnectionID()));
 				} catch (final OccupiedPort e) {
-					this.streams.getErrStream().println("Failed to reconnect " + info.getConnectionID() + " " + e.getMessage());
+					this.streams.getErrStream().println("Failed to reconnect connection " + info.getConnectionID());
+					this.streams.getErrStream().println(CFErrorFormatter.format(e, "connection " + info.getConnectionID()));
 				}
 			}
 		} catch (final InterruptedException e) {
-			// PASS
+			this.streams.getErrStream().println("Failed to reconnect connections");
+			ScaDebugPlugin.logError("Interrupted while refreshing waveform", e);
 		}
 	}
 
@@ -963,8 +920,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		try {
 			subLaunch = config.launch(componentMode, new NullProgressMonitor(), false);
 		} catch (final CoreException e) {
-			ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
-			throw logException(new ExecuteFail(ErrorNumberType.CF_EFAULT, e.getStatus().getMessage()));
+			this.streams.getErrStream().println("Failed to launch: " + e.toString());
+			throw new ExecuteFail(ErrorNumberType.CF_EFAULT, e.getStatus().getMessage());
 		}
 		// Add Child processes
 		for (final IProcess process : subLaunch.getProcesses()) {

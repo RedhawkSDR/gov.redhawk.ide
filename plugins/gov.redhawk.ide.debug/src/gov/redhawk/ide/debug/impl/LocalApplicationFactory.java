@@ -39,6 +39,7 @@ import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.AnyUtils;
+import mil.jpeojtrs.sca.util.CFErrorFormatter;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -70,9 +71,6 @@ import CF.PortPackage.OccupiedPort;
 import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
 
-/**
- * 
- */
 public class LocalApplicationFactory {
 
 	private final Map<String, String> implMap;
@@ -104,9 +102,6 @@ public class LocalApplicationFactory {
 		this.namingContext = ((LocalScaImpl) this.localSca).getRootContext();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public LocalScaWaveform create(final SoftwareAssembly sad, String name, final IProgressMonitor monitor) throws CoreException {
 		String adjustedName = name;
 		NamingContextExt waveformContext = null;
@@ -179,12 +174,6 @@ public class LocalApplicationFactory {
 		return retVal;
 	}
 
-	/**
-	 * @param app
-	 * @param sad
-	 * @param assemblyConfig
-	 * @throws CoreException
-	 */
 	protected void configureComponents(final ApplicationImpl app, final SoftwareAssembly sad, final DataType[] assemblyConfig) throws CoreException {
 		app.getStreams().getOutStream().println("Configuring Components...");
 		for (final ScaComponent comp : app.getLocalWaveform().getComponents()) {
@@ -193,19 +182,17 @@ public class LocalApplicationFactory {
 				configureComponent(app, comp);
 				app.getStreams().getOutStream().println("");
 			} catch (final InvalidConfiguration e) {
-				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to configure: " + comp.getName() + " " + e.getMessage(), e));
+				String msg = CFErrorFormatter.format(e, "component " + comp.getName());
+				app.getStreams().getErrStream().println(msg);
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg, e));
 			} catch (final PartialConfiguration e) {
-				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to configure: " + comp.getName() + " " + e.getMessage(), e));
+				String msg = CFErrorFormatter.format(e, "component " + comp.getName());
+				app.getStreams().getErrStream().println(msg);
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg, e));
 			}
 		}
 	}
 
-	/**
-	 * @param app
-	 * @param sad
-	 * @param config
-	 * @throws CoreException
-	 */
 	protected void launchComponents(final ApplicationImpl app, final SoftwareAssembly sad) throws CoreException {
 		final List<SadComponentInstantiation> instantiations = getComponentInstantiations(sad);
 
@@ -214,8 +201,9 @@ public class LocalApplicationFactory {
 			try {
 				app.launch(comp.getUsageName(), comp.getId(), createExecParam(comp), getSpdURI(comp).toString(), getImplId(comp));
 			} catch (final ExecuteFail e) {
-				app.getStreams().getErrStream().println("Failed to launch " + comp.getUsageName() + " " + e.msg);
-				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to launch " + comp.getUsageName(), e));
+				String msg = CFErrorFormatter.format(e, "component " + comp.getUsageName());
+				app.getStreams().getErrStream().println(msg);
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg, e));
 			}
 			app.getStreams().getOutStream().println("\n");
 		}
@@ -266,9 +254,9 @@ public class LocalApplicationFactory {
 						try {
 							usesPort.connectPort(target, connection.getId());
 						} catch (final InvalidPort e) {
-							app.getStreams().getErrStream().println("Failed to create connection " + connection.getId());
+							app.getStreams().getErrStream().println(CFErrorFormatter.format(e, "connection " + connection.getId()));
 						} catch (final OccupiedPort e) {
-							app.getStreams().getErrStream().println("Failed to create connection " + connection.getId());
+							app.getStreams().getErrStream().println(CFErrorFormatter.format(e, "connection " + connection.getId()));
 						}
 					}
 				}

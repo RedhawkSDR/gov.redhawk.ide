@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
+import gov.redhawk.ide.debug.internal.LaunchLogger;
 import gov.redhawk.model.sca.IRefreshable;
 import gov.redhawk.model.sca.ProfileObjectWrapper;
 import gov.redhawk.model.sca.RefreshDepth;
@@ -46,6 +47,7 @@ import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.CFErrorFormatter;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 import mil.jpeojtrs.sca.util.NamedThreadFactory;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
@@ -74,9 +76,6 @@ import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
 import CF.ResourcePackage.StartError;
 
-/**
- * 
- */
 public final class ScaLauncherUtil {
 
 	private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool(new NamedThreadFactory(ScaLauncherUtil.class.getName()));
@@ -96,12 +95,16 @@ public final class ScaLauncherUtil {
 
 	public static void postLaunch(final ILaunch launch) throws CoreException {
 		LocalAbstractComponent comp = null;
+		String description = "unknown resource";
 		try {
 			if (launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_DEVICE_LABEL) != null) {
+				description = String.format("device %s", launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_DEVICE_LABEL));
 				comp = ScaLauncherUtil.postLaunchDevice(launch);
 			} else if (launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_SERVICE_NAME) != null) {
+				description = String.format("service %s", launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_SERVICE_NAME));
 				comp = ScaLauncherUtil.postLaunchService(launch);
 			} else {
+				description = String.format("component %s", launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_NAME_BINDING));
 				comp = ScaLauncherUtil.postLaunchComponent(launch);
 			}
 		} catch (final CoreException e) {
@@ -177,9 +180,9 @@ public final class ScaLauncherUtil {
 					try {
 						scaProp.setRemoteValue(prop.toAny());
 					} catch (final PartialConfiguration e) {
-						// PASS
+						LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
 					} catch (final InvalidConfiguration e) {
-						// PASS
+						LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
 					}
 				}
 			}
@@ -190,7 +193,7 @@ public final class ScaLauncherUtil {
 				try {
 					((ResourceOperations) newComponent).start();
 				} catch (final StartError e) {
-					// PASS
+					LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
 				}
 			}
 		}

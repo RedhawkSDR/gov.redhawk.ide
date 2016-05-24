@@ -45,6 +45,7 @@ import mil.jpeojtrs.sca.sad.diagram.edit.parts.SadConnectInterfaceEditPart;
 import mil.jpeojtrs.sca.sad.diagram.providers.SadElementTypes;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.CFErrorFormatter;
 import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
@@ -162,7 +163,7 @@ public class ModelMap {
 				try {
 					newComp = create(comp, impl.getId());
 				} catch (final ExecuteFail e) {
-					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to launch: " + comp.getUsageName(), e);
+					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, CFErrorFormatter.format(e, "component " + comp.getUsageName()), e);
 				}
 				put(newComp, comp);
 				if (display != null) {
@@ -221,9 +222,9 @@ public class ModelMap {
 				try {
 					newConnection = create(conn);
 				} catch (final InvalidPort e) {
-					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to connect: " + conn.getId(), e);
+					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, CFErrorFormatter.format(e, "connection " + conn.getId()), e);
 				} catch (final OccupiedPort e) {
-					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to connect: " + conn.getId(), e);
+					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, CFErrorFormatter.format(e, "connection " + conn.getId()), e);
 				}
 				put(newConnection, conn);
 				return Status.OK_STATUS;
