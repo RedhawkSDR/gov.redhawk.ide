@@ -24,6 +24,7 @@ import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -34,8 +35,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -68,6 +67,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.transaction.RunnableWithResult;
 import org.jacorb.naming.Name;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NameComponent;
@@ -315,15 +315,27 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	public void start() throws StartError {
 		this.streams.getOutStream().println("Starting...");
-		SortedSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator());
-		
-		for (ScaComponent comp : waveform.getComponents()) {
-			if (comp.getInstantiationIdentifier() != null) {
-				sortedSet.add(comp);
-			}
+
+		// Sort components
+		List<ScaComponent> sortedSet;
+		try {
+			sortedSet = ScaModelCommandWithResult.runExclusive(waveform, new RunnableWithResult.Impl<List<ScaComponent>>() {
+				public void run() {
+					setResult(new ArrayList<ScaComponent>(waveform.getComponents()));
+				}
+			});
+		} catch (InterruptedException e) {
+			logException(e);
+			throw new StartError(ErrorNumberType.CF_EINTR, "Interrupted while getting waveform's components");
 		}
-		
+		Collections.sort(sortedSet, new ScaComponentComparator());
+
 		for (ScaComponent comp : sortedSet) {
+			// With the exception of the assembly controller, don't stop things that have a component
+			// instantiation but don't have a start order (i.e. they're defined in a SAD without a start order)
+			if (comp != assemblyController && comp.getComponentInstantiation() != null && comp.getComponentInstantiation().getStartOrder() == null) {
+				continue;
+			}
 			this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
 			try {
 				comp.start();
@@ -341,26 +353,31 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	public void stop() throws StopError {
 		this.streams.getOutStream().println("Stopping...");
-		if (this.assemblyController == null) {
-			TreeSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator() {
-				@Override
-				public int compare(ScaComponent o1, ScaComponent o2) {
-					// Reverse the order for stopping
-				    return -1 * super.compare(o1, o2);
+
+		// Sort components
+		List<ScaComponent> sortedSet;
+		try {
+			sortedSet = ScaModelCommandWithResult.runExclusive(waveform, new RunnableWithResult.Impl<List<ScaComponent>>() {
+				public void run() {
+					setResult(new ArrayList<ScaComponent>(waveform.getComponents()));
 				}
 			});
-			for (ScaComponent comp : waveform.getComponents()) {
-				sortedSet.add(comp);
+		} catch (InterruptedException e) {
+			logException(e);
+			throw new StopError(ErrorNumberType.CF_EINTR, "Interrupted while getting waveform's components");
+		}
+		Collections.sort(sortedSet, new ScaComponentComparator());
+		Collections.reverse(sortedSet);
+
+		for (ScaComponent comp : sortedSet) {
+			// With the exception of the assembly controller, don't stop things that have a component
+			// instantiation but don't have a start order (i.e. they're defined in a SAD without a start order)
+			if (comp != assemblyController && comp.getComponentInstantiation() != null && comp.getComponentInstantiation().getStartOrder() == null) {
+				continue;
 			}
-			
-			for (ScaComponent comp : sortedSet) {
-				this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
-				comp.stop();
-			}
-		} else {
+			this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
 			try {
-				this.assemblyController.stop();
-				this.streams.getOutStream().println("Stop succeeded");
+				comp.stop();
 			} catch (final StopError e) {
 				throw logException("Error during stop", e);
 			}
