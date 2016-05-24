@@ -43,6 +43,7 @@ import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.AnyUtils;
+import mil.jpeojtrs.sca.util.CFErrorFormatter;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
@@ -75,9 +76,6 @@ import CF.PortPackage.OccupiedPort;
 import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
 
-/**
- * 
- */
 public class LocalApplicationFactory {
 
 	private final Map<String, String> implMap;
@@ -231,9 +229,11 @@ public class LocalApplicationFactory {
 				configureComponent(app, comp);
 				app.getStreams().getOutStream().println("");
 			} catch (final InvalidConfiguration e) {
-				app.logException("WARNING: Error while configuring component: " + comp.getName() + " InvalidConfiguration ", e);
+				String msg = CFErrorFormatter.format(e, "component " + comp.getName());
+				app.getStreams().getErrStream().println(msg);
 			} catch (final PartialConfiguration e) {
-				app.logException("WARNING: Error while configuring component: " + comp.getName() + " PartialConfiguration ", e);
+				String msg = CFErrorFormatter.format(e, "component " + comp.getName());
+				app.getStreams().getErrStream().println(msg);
 			}
 		}
 	}
@@ -332,9 +332,9 @@ public class LocalApplicationFactory {
 						try {
 							usesPort.connectPort(target, connection.getId());
 						} catch (final InvalidPort e) {
-							app.getStreams().getErrStream().println("Failed to create connection " + connection.getId());
+							app.getStreams().getErrStream().println(CFErrorFormatter.format(e, "connection " + connection.getId()));
 						} catch (final OccupiedPort e) {
-							app.getStreams().getErrStream().println("Failed to create connection " + connection.getId());
+							app.getStreams().getErrStream().println(CFErrorFormatter.format(e, "connection " + connection.getId()));
 						}
 					}
 				}
