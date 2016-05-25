@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
+import gov.redhawk.ide.debug.internal.LaunchLogger;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.IRefreshable;
 import gov.redhawk.model.sca.ProfileObjectWrapper;
@@ -46,6 +47,7 @@ import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.CFErrorFormatter;
 import mil.jpeojtrs.sca.util.NamedThreadFactory;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
@@ -115,17 +117,21 @@ public final class SpdLauncherUtil {
 		}
 
 		LocalAbstractComponent comp = null;
+		String description = "unknown resource";
 		try {
 			switch (type) {
 			case DEVICE:
 				comp = SpdLauncherUtil.postLaunchDevice(launch);
+				description = String.format("device %s", launch.getAttribute(LaunchVariables.DEVICE_LABEL));
 				break;
 			case EVENT_SERVICE:
 			case SERVICE:
 				comp = SpdLauncherUtil.postLaunchService(launch);
+				description = String.format("service %s", launch.getAttribute(LaunchVariables.SERVICE_NAME));
 				break;
 			case RESOURCE:
 				comp = SpdLauncherUtil.postLaunchComponent(launch);
+				description = String.format("component %s", launch.getAttribute(LaunchVariables.NAME_BINDING));
 				break;
 			default:
 				String errorMsg = String.format("Unsupported component type during post-launch in the sandbox (%s) - treating as component", spd.getName());
@@ -195,9 +201,9 @@ public final class SpdLauncherUtil {
 					try {
 						scaProp.setRemoteValue(prop.toAny());
 					} catch (final PartialConfiguration e) {
-						// PASS
+						LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
 					} catch (final InvalidConfiguration e) {
-						// PASS
+						LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
 					}
 				}
 			}
@@ -209,7 +215,7 @@ public final class SpdLauncherUtil {
 				try {
 					((ResourceOperations) newComponent).start();
 				} catch (final StartError e) {
-					// PASS
+					LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
 				}
 			}
 		}
