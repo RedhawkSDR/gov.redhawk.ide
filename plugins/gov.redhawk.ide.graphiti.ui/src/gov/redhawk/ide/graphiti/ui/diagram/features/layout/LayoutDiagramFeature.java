@@ -11,7 +11,6 @@
 package gov.redhawk.ide.graphiti.ui.diagram.features.layout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,23 +53,18 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 @SuppressWarnings("restriction")
 public class LayoutDiagramFeature extends AbstractCustomFeature {
 
-	private static List<String> layouts = Arrays.asList("Spring Layout", "Tree Layout", "Grid Layout", "Horizontal Layout", "Horizontal Tree Layout",
-		"Vertical Layout", "Radial Layout", "Directed Graph Layout", "Composite Layout [Directed Graph + Horizontal Shift]",
-		"Composite Layout [Spring Layout + Horizontal Shift]", "Composite Layout [Radial Layout + Horizontal Shift]",
-		"Composite Layout [Tree Layout + Horizontal Shift]");
-
 	public LayoutDiagramFeature(IFeatureProvider fp) {
 		super(fp);
 	}
 
 	@Override
 	public String getDescription() {
-		return "Apply Horizontal Tree Layout";
+		return "Arrange all diagram elements using a horizontal tree layout";
 	}
 
 	@Override
 	public String getName() {
-		return "&Apply Horizontal Tree Layout";
+		return "&Arrange All";
 	}
 
 	@Override
@@ -330,14 +324,6 @@ public class LayoutDiagramFeature extends AbstractCustomFeature {
 			}
 		}
 		return list.toArray(new LayoutRelationship[0]);
-	}
-
-	public static List<String> getLayouts() {
-		return layouts;
-	}
-
-	public static void setLayouts(List<String> layouts) {
-		LayoutDiagramFeature.layouts = layouts;
 	}
 
 	/**
