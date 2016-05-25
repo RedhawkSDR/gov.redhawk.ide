@@ -46,6 +46,7 @@ import mil.jpeojtrs.sca.sad.diagram.edit.parts.SadConnectInterfaceEditPart;
 import mil.jpeojtrs.sca.sad.diagram.providers.SadElementTypes;
 import mil.jpeojtrs.sca.sad.impl.SadComponentInstantiationImpl;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.CFErrorFormatter;
 import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
@@ -177,7 +178,7 @@ public class ModelMap {
 				} catch (final CoreException e) {
 					delete(comp);
 					nodes.remove(nodeMap.getKey());
-					return new Status(e.getStatus().getSeverity(), LocalScaDiagramPlugin.PLUGIN_ID, "Failed to launch " + comp.getUsageName(), e);
+					return new Status(e.getStatus().getSeverity(), LocalScaDiagramPlugin.PLUGIN_ID, "Failed to launch component " + comp.getUsageName(), e);
 				} finally {
 					if (nodes.get(nodeMap.getKey()) == null) {
 						try {
@@ -226,11 +227,11 @@ public class ModelMap {
 				} catch (final InvalidPort e) {
 					delete(conn);
 					connections.remove(connectionMap.getKey());
-					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, CFErrorFormatter.format(e, "connection " + conn.getId()), e);
 				} catch (final OccupiedPort e) {
 					delete(conn);
 					connections.remove(connectionMap.getKey());
-					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, CFErrorFormatter.format(e, "connection " + conn.getId()), e);
 				} finally {
 					if (connections.get(connectionMap.getKey()) == null) {
 						delete(conn);

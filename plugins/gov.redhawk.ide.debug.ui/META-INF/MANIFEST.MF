@@ -37,4 +37,4 @@ Export-Package: gov.redhawk.ide.debug.internal;x-internal:=true,
  gov.redhawk.ide.debug.internal.ui;x-internal:=true,
  gov.redhawk.ide.debug.ui,
  gov.redhawk.ide.debug.ui.tabs
-Service-Component: OSGI-INF/locator.xml
+Service-Component: OSGI-INF/locator.xml, OSGI-INF/component.xml

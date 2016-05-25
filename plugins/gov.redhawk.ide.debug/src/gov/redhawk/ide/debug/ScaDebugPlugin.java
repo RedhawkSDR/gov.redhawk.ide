@@ -21,9 +21,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jacorb.JacorbActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 import ExtendedCF.Sandbox;
 import gov.redhawk.ide.debug.internal.LaunchConfigurationFactoryRegistry;
+import gov.redhawk.ide.debug.internal.LaunchLogger;
 import gov.redhawk.ide.debug.internal.LauncherVariableRegistry;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.jobs.TerminateJob;
@@ -47,17 +49,22 @@ public class ScaDebugPlugin extends Plugin {
 	 */
 	public static final String LAUNCH_ATTRIBUTE_REDHAWK_EXIT_STATUS = ID + ".ShowRedhawkExitStatus";
 
+	private static ServiceTracker<ILaunchLogger, ILaunchLogger> launchLoggerTracker;
+
 	@Override
 	public void start(final BundleContext context) throws Exception {
-		ScaDebugPlugin.instance = this;
 		super.start(context);
+
+		ScaDebugPlugin.instance = this;
+
+		launchLoggerTracker = new ServiceTracker<ILaunchLogger, ILaunchLogger>(context, ILaunchLogger.class, LaunchLogger.INSTANCE);
+		launchLoggerTracker.open();
+
 		JacorbActivator.getDefault().init();
 	}
 
 	@Override
 	public void stop(final BundleContext context) throws Exception {
-		super.stop(context);
-
 		// Dispose the local model
 		ScaModelCommand.execute(getLocalSca(), new ScaModelCommand() {
 			@Override
@@ -81,6 +88,11 @@ public class ScaDebugPlugin extends Plugin {
 				}
 			}
 		}
+
+		launchLoggerTracker.close();
+		launchLoggerTracker = null;
+
+		super.stop(context);
 	}
 
 	public LocalSca getLocalSca() {
