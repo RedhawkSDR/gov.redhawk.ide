@@ -30,7 +30,7 @@
     <eclipse-support>http://download.eclipse.org/eclipse/updates/3.8</eclipse-support>
     <eclipse-updates>http://download.eclipse.org/eclipse/updates/3.8</eclipse-updates>
     <orbit>http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository</orbit>
-    <nebula>http://download.eclipse.org/technology/nebula/archives/Q32014/release/</nebula>
+    <nebula>http://archive.eclipse.org/technology/nebula/Q32014/release/</nebula>
     <nxm>http://nextmidas.techma.com/p2/nxm/updates/stable</nxm>
     <nxm-rcp>http://download.redhawksdr.org/nxm-rcp/releases/1.0</nxm-rcp>
     <jacorb>http://download.redhawksdr.org/jacorb/updates/stable</jacorb>
