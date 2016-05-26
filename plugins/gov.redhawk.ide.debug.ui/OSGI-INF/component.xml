@@ -9,7 +9,7 @@
     the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
     http://www.eclipse.org/legal/epl-v10.html.
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="gov.redhawk.ide.debug.ui">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="gov.redhawk.ide.debug.ui.LaunchLogger">
    <implementation class="gov.redhawk.ide.debug.internal.ui.LaunchConsoleLogger"/>
    <service>
       <provide interface="gov.redhawk.ide.debug.ILaunchLogger"/>
