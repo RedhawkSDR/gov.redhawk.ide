@@ -387,16 +387,21 @@ public final class SpdLauncherUtil {
 		try {
 			DataType[] initializePropsArray = initializeProps.toArray(new CF.DataType[initializeProps.size()]);
 			component.initializeProperties(initializePropsArray);
-		} catch (AlreadyInitialized | InvalidConfiguration | PartialConfiguration e) {
-			ScaDebugPlugin.logError("Error while initializing properties", e);
+		} catch (AlreadyInitialized e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
+		} catch (InvalidConfiguration e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
+		} catch (PartialConfiguration e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
 		} catch (BAD_OPERATION e) {
+			String msg;
 			if (initializeProps.size() == 0) {
-				String msg = "Could not call initializeProperties on component %s in the sandbox. "
-					+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.";
-				ScaDebugPlugin.logWarning(String.format(msg, compID), e);
+				msg = String.format("Could not call initializeProperties on component %s in the sandbox (CORBA BAD_OPERATION). "
+					+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.", nameBinding);
 			} else {
-				ScaDebugPlugin.logError("Component has properties of kind 'property', but does not appear to support REDHAWK 2.0 API", e);
+				msg = "Component has properties of kind 'property', but does not appear to support REDHAWK 2.0 API (CORBA BAD_OPERATION)";
 			}
+			LaunchLogger.INSTANCE.writeToConsole(launch, msg, ConsoleColor.STDERR);
 		}
 		progress.newChild(WORK_INITIALIZE_PROPS);
 
@@ -404,7 +409,7 @@ public final class SpdLauncherUtil {
 		try {
 			component.initialize();
 		} catch (InitializeError e) {
-			ScaDebugPlugin.logError("Error while initializing the component", e);
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
 		}
 		progress.newChild(WORK_INITIALIZE);
 

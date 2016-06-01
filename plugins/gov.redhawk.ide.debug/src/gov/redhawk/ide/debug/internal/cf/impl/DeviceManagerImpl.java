@@ -62,10 +62,12 @@ import CF.PortSupplierPackage.UnknownPort;
 import CF.PropertyEmitterPackage.AlreadyInitialized;
 import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
+import gov.redhawk.ide.debug.ConsoleColor;
 import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
 import gov.redhawk.ide.debug.LocalAbstractComponent;
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.LaunchLogger;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaAbstractProperty;
@@ -253,18 +255,19 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		String deviceLabel = registeringDevice.label();
 
 		// Iterate all launches for find the current launch
+		ILaunch launch = null;
 		ScaDevice<Device> propHolder = null;
-		for (ILaunch launch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
+		for (ILaunch candidateLaunch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
 			// Find the launch by matching device id and/or label
-			String launchDevId = launch.getAttribute(LaunchVariables.DEVICE_ID);
-			String launchDevLabel = launch.getAttribute(LaunchVariables.DEVICE_LABEL);
+			String launchDevId = candidateLaunch.getAttribute(LaunchVariables.DEVICE_ID);
+			String launchDevLabel = candidateLaunch.getAttribute(LaunchVariables.DEVICE_LABEL);
 			if (launchDevId != null && !launchDevId.equals(deviceId)) {
 				continue;
 			}
 			if (launchDevLabel != null && !launchDevLabel.equals(deviceLabel)) {
 				continue;
 			}
-			ILaunchConfiguration launchConfig = launch.getLaunchConfiguration();
+			ILaunchConfiguration launchConfig = candidateLaunch.getLaunchConfiguration();
 
 			// Load the properties from the PRF and override with values from the launch configuration
 			try {
@@ -298,19 +301,20 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 				DataType[] initializePropsArray = initializeProps.toArray(new CF.DataType[initializeProps.size()]);
 				registeringDevice.initializeProperties(initializePropsArray);
 			} catch (AlreadyInitialized e) {
-				ScaDebugPlugin.logError(CFErrorFormatter.format(e, deviceLabel), e);
+				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "device " + deviceLabel), ConsoleColor.STDERR);
 			} catch (InvalidConfiguration e) {
-				ScaDebugPlugin.logError(CFErrorFormatter.format(e, deviceLabel), e);
+				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "device " + deviceLabel), ConsoleColor.STDERR);
 			} catch (PartialConfiguration e) {
-				ScaDebugPlugin.logError(CFErrorFormatter.format(e, deviceLabel), e);
+				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "device " + deviceLabel), ConsoleColor.STDERR);
 			} catch (BAD_OPERATION e) {
+				String msg;
 				if (initializeProps.size() == 0) {
-					String msg = "Could not call initializeProperties on device %s in the sandbox. "
-						+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.";
-					ScaDebugPlugin.logWarning(String.format(msg, deviceLabel), e);
+					msg = String.format("Could not call initializeProperties on device %s in the sandbox (CORBA BAD_OPERATION). "
+						+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.", deviceLabel);
 				} else {
-					ScaDebugPlugin.logError("Component has properties of kind 'property', but does not appear to support REDHAWK 2.0 API", e);
+					msg = "Device has properties of kind 'property', but does not appear to support REDHAWK 2.0 API (CORBA BAD_OPERATION)";
 				}
+				LaunchLogger.INSTANCE.writeToConsole(launch, msg, ConsoleColor.STDERR);
 			}
 		}
 
@@ -318,7 +322,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		try {
 			registeringDevice.initialize();
 		} catch (final InitializeError e) {
-			throw new InvalidObjectReference("Initialize error", CFErrorFormatter.format(e, deviceLabel));
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "device " + deviceLabel), ConsoleColor.STDERR);
 		}
 
 		// Register the device and refresh the model so it notices it
