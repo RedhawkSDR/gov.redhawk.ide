@@ -10,6 +10,23 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Callable;
+
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorInput;
+
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
@@ -24,24 +41,7 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 import gov.redhawk.sca.ui.editors.IScaContentDescriber;
 import gov.redhawk.sca.ui.editors.ScaObjectWrapperContentDescriber;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.Callable;
-
 import mil.jpeojtrs.sca.util.CorbaUtils;
-
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorInput;
 
 public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 
@@ -200,6 +200,12 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 		if (contents == ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform()) {
 			return LocalScaElementFactory.getLocalScaInput();
 		} else if (contents instanceof ScaWaveform) {
+			// We must have the profile URI to create the editor input
+			ScaWaveform waveform = (ScaWaveform) contents;
+			if (!waveform.isSetProfileURI()) {
+				fetchProfileURI(waveform);
+			}
+
 			try {
 				return new DelayedEditorInput((ScaWaveform) contents);
 			} catch (CoreException e) {
@@ -209,5 +215,34 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 		}
 
 		return null;
+	}
+
+	private void fetchProfileURI(final ScaWaveform waveform) {
+		if (Display.getCurrent() != null) {
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+			try {
+				dialog.run(true, true, new IRunnableWithProgress() {
+					@Override
+					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						try {
+							CorbaUtils.invoke(new Callable<Object>() {
+								@Override
+								public Object call() throws Exception {
+									return waveform.fetchProfileURI(monitor);
+								}
+							}, monitor);
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
+						}
+					}
+				});
+			} catch (InvocationTargetException e) {
+				throw new IllegalStateException("Unable to fetch profile URI for waveform", e);
+			} catch (InterruptedException e) {
+				throw new IllegalStateException("Interrupted while fetching profile URI for waveform");
+			}
+		} else {
+			waveform.fetchProfileURI(new NullProgressMonitor());
+		}
 	}
 }
