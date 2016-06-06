@@ -12,9 +12,15 @@ package gov.redhawk.ide.swtbot.condition;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
+import org.eclipse.ui.statushandlers.StatusManager;
+
+import gov.redhawk.ide.swtbot.SwtBotActivator;
 
 /**
  * Used to wait for the severity of all markers in the workspace to be at or below a certain severity.
@@ -22,6 +28,10 @@ import org.eclipse.swtbot.swt.finder.waits.ICondition;
 public class WaitForSeverityMarkers implements ICondition {
 
 	private int maxMarkerSeverity;
+
+	private IWorkspaceRoot root;
+
+	private long startingWaitTime = 0;
 
 	/**
 	 * @param maxMarkerSeverity The maximum severity (one of -1, {@link IMarker#SEVERITY_INFO},
@@ -33,11 +43,21 @@ public class WaitForSeverityMarkers implements ICondition {
 
 	@Override
 	public boolean test() throws Exception {
-		return ResourcesPlugin.getWorkspace().getRoot().findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE) <= maxMarkerSeverity;
+		if (startingWaitTime == 0) {
+			startingWaitTime = System.currentTimeMillis();
+		}
+
+		if (root.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE) <= maxMarkerSeverity) {
+			String msg = String.format("Marker severity okay after %f seconds", (System.currentTimeMillis() - startingWaitTime) / 1000.0);
+			StatusManager.getManager().handle(new Status(IStatus.INFO, SwtBotActivator.PLUGIN_ID, msg), StatusManager.LOG);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public void init(SWTBot bot) {
+		root = ResourcesPlugin.getWorkspace().getRoot();
 	}
 
 	@Override
