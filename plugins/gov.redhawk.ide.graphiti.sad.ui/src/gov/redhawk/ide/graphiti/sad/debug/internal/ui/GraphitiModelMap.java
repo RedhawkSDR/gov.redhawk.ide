@@ -379,7 +379,7 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	@Nullable
 	private SadConnectInterface create(@NonNull final ScaConnection newValue) throws CoreException {
 		UsesPortStub source = null;
-		final SadComponentInstantiation sourceComponent = get((LocalScaComponent) newValue.getPort().eContainer());
+		final SadComponentInstantiation sourceComponent = get((ScaComponent) newValue.getPort().eContainer());
 		if (sourceComponent != null) {
 			for (final UsesPortStub stub : sourceComponent.getUses()) {
 				if (stub.getName() != null && stub.getName().equals(newValue.getPort().getName())) {
@@ -392,7 +392,7 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 		ConnectionTarget target = null;
 		out: for (final ScaComponent c : this.waveform.getComponents()) {
 			if (c.getObj()._is_equivalent(newValue.getData().port)) {
-				SadComponentInstantiation sci = get((LocalScaComponent) c);
+				SadComponentInstantiation sci = get((ScaComponent) c);
 				if (sci != null) {
 					target = sci.getInterfaceStub();
 				}
@@ -400,7 +400,7 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 			}
 			for (final ScaPort< ? , ? > p : c.fetchPorts(null)) {
 				if (p instanceof ScaProvidesPort && p.getObj()._is_equivalent(newValue.getData().port)) {
-					final SadComponentInstantiation comp = get((LocalScaComponent) c);
+					final SadComponentInstantiation comp = get((ScaComponent) c);
 					if (comp != null) {
 						for (final ProvidesPortStub provides : comp.getProvides()) {
 							if (provides.getName().equals(p.getName())) {
