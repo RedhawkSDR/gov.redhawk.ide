@@ -159,10 +159,10 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 		if (contents == ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform()) {
 			return LocalScaElementFactory.getLocalScaInput();
 		} else if (contents instanceof ScaWaveform) {
-			// We must have the profile URI to create the editor input
+			// We must have the profile object and other attributes to create the editor input
 			ScaWaveform waveform = (ScaWaveform) contents;
-			if (!waveform.isSetProfileURI()) {
-				fetchProfileURI(waveform);
+			if (!waveform.isSetProfileObj()) {
+				fetchAttributes(waveform);
 			}
 
 			try {
@@ -176,7 +176,7 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 		return null;
 	}
 
-	private void fetchProfileURI(final ScaWaveform waveform) {
+	private void fetchAttributes(final ScaWaveform waveform) {
 		if (Display.getCurrent() != null) {
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 			try {
@@ -187,7 +187,8 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 							CorbaUtils.invoke(new Callable<Object>() {
 								@Override
 								public Object call() throws Exception {
-									return waveform.fetchProfileURI(monitor);
+									waveform.fetchAttributes(monitor);
+									return null;
 								}
 							}, monitor);
 						} catch (CoreException e) {
@@ -201,7 +202,7 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 				throw new IllegalStateException("Interrupted while fetching profile URI for waveform");
 			}
 		} else {
-			waveform.fetchProfileURI(new NullProgressMonitor());
+			waveform.fetchAttributes(new NullProgressMonitor());
 		}
 	}
 }
