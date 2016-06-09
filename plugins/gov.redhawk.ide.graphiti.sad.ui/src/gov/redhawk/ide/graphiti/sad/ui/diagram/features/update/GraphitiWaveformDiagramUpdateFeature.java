@@ -147,6 +147,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 	 * @param performUpdate
 	 * @return
 	 * @throws CoreException
+	 * @deprecated This isn't used any more
 	 */
 	@Deprecated
 	public Reason internalUpdate(IUpdateContext context, boolean performUpdate) throws CoreException {

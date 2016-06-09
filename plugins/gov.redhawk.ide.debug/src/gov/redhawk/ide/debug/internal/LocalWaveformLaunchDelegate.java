@@ -210,6 +210,8 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 				setStructValue(((ScaStructSequenceProperty) property).createScaStructProperty(), (Map< ? , ? >) obj);
 			}
 			break;
+		default:
+			throw new IllegalArgumentException("Invalid property");
 		}
 	}
 }

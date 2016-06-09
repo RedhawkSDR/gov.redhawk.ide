@@ -570,6 +570,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 				case SWT.TRAVERSE_ESCAPE:
 					cancelPressed();
 					break;
+				default:
 				}
 			}
 		});

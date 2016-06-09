@@ -634,8 +634,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				throw e;
 			}
 			this.streams.getOutStream().println("Delegate Run Test Succeeded");
-		}
-		else if (this.assemblyController != null) {
+		} else if (this.assemblyController != null) {
 			this.streams.getOutStream().println(String.format("Runing test '%d' on '%s'", testid, this.assemblyController.getName()));
 			try {
 				this.assemblyController.runTest(testid, testValues);
