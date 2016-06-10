@@ -1022,12 +1022,24 @@ public class DiagramTestUtils {
 	}
 
 	/**
-	 * See {@link #waitForComponentState(SWTBot, SWTBotGefEditor, String, ComponentState, long)}
+	 * Wait for a component to appear in the diagram and have a certain state.
+	 * @param bot
+	 * @param editor
+	 * @param componentName
+	 * @param state
 	 */
 	public static void waitForComponentState(SWTBot bot, SWTBotGefEditor editor, String componentName, ComponentState state) {
 		waitForComponentState(bot, editor, componentName, state, 10000);
 	}
 
+	/**
+	 * Wait for a component to appear in the diagram and have a certain state.
+	 * @param bot
+	 * @param editor
+	 * @param componentName
+	 * @param state
+	 * @param timeout The wait timeout in ms
+	 */
 	public static void waitForComponentState(SWTBot bot, final SWTBotGefEditor editor, final String componentName, final ComponentState state, long timeout) {
 		waitUntilComponentDisplaysInDiagram(bot, editor, componentName, timeout);
 		bot.waitUntil(new DefaultCondition() {
