@@ -10,25 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.internal.handlers;
 
-import gov.redhawk.ide.sdr.nodebooter.DebugLevel;
-import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLaunchConfiguration;
-import gov.redhawk.ide.sdr.nodebooter.DomainManagerLaunchConfiguration;
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.model.sca.ScaDomainManager;
-import gov.redhawk.model.sca.ScaDomainManagerRegistry;
-import gov.redhawk.sca.ScaPlugin;
-import gov.redhawk.sca.preferences.ScaPreferenceConstants;
-import gov.redhawk.sca.ui.ScaUiPlugin;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -42,7 +29,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.Dialog;
@@ -83,7 +69,20 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
+
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.nodebooter.DebugLevel;
+import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLaunchConfiguration;
+import gov.redhawk.ide.sdr.nodebooter.DomainManagerLaunchConfiguration;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.model.sca.ScaDomainManager;
+import gov.redhawk.model.sca.ScaDomainManagerRegistry;
+import gov.redhawk.sca.ScaPlugin;
+import gov.redhawk.sca.preferences.ScaPreferenceConstants;
+import gov.redhawk.sca.ui.ScaUiPlugin;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
 public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDialog {
 	/**
@@ -135,7 +134,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			}
 			LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.addAll(Arrays.asList(names));
 
-			// We also need to handle the case where the default name server doesn't  have the domain name in use
+			// We also need to handle the case where the default name server doesn't have the domain name in use
 			// but we have a domain definition against an alternate name server...in this case you cannot use
 			// the domain name regardless because we cannot alter or remove the connection setting.
 			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
@@ -228,18 +227,17 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		data = textFactory.create();
 		data.horizontalSpan = 2;
 		text.setLayoutData(data);
+
 		this.nameBinding = this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
 			PojoProperties.value(this.model.getClass(), DomainManagerLaunchConfiguration.PROP_DOMAIN_NAME).observe(this.model),
-			new UpdateValueStrategy().setAfterConvertValidator(this.nameValidator), null);
-		text.addModifyListener(new ModifyListener() {
+			new UpdateValueStrategy().setAfterConvertValidator(new DomainValidator()), null);
 
+		text.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(final ModifyEvent e) {
 				updateButtonsEnableState((IStatus) LaunchDomainManagerWithOptionsDialog.this.nameBinding.getValidationStatus().getValue());
 			}
 		});
-
-		ControlDecorationSupport.create(this.nameBinding, SWT.TOP | SWT.LEFT);
 
 		label = new Label(domainManagerGroup, SWT.NONE);
 		label.setText("Debug Level: ");
@@ -264,7 +262,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		deviceManagerGroup.setLayout(GridLayoutFactory.fillDefaults().create());
 		deviceManagerGroup.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 		deviceManagerGroup.setVisible(!this.sdrRoot.getNodesContainer().getNodes().isEmpty());
-		
+
 		final CheckboxTreeViewer treeViewer = createTreeViewer(deviceManagerGroup);
 		treeViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 
@@ -301,6 +299,45 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 		return composite;
 	}
+
+	// Inner class used to check for error states in the Dialog page
+	class DomainValidator implements IValidator {
+
+		@Override
+		public IStatus validate(Object value) {
+			String errorMessage = null;
+			IStatus status = null;
+
+			// IMPORTANT - DO NOT ISSUE CORBA CALLS HERE BECAUSE THEY CAN HANG POTENTIALLY FOREVER
+			// AND BLOCK THE UI THREAD
+			String s = (String) value;
+			if ((s == null) || (s.trim().length() == 0)) {
+				errorMessage = "Please provide a valid Domain Manager name.";
+			}
+			s = s.trim();
+
+			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
+			final ScaDomainManager dom = dmReg.findDomain(s);
+			if ((dom != null) && (!namingService.equals(dom.getConnectionProperties().get(ScaDomainManager.NAMING_SERVICE_PROP)))) {
+				errorMessage = "This name is registered against a non-default name server and cannot be launched";
+			}
+
+			if (LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.contains(s)) {
+				errorMessage = "Domain of this name is in use, please select a different name.";
+			}
+
+			if (errorMessage != null) {
+				status = ValidationStatus.error(errorMessage);
+				LaunchDomainManagerWithOptionsDialog.this.updateStatus(status);
+				return ValidationStatus.error(errorMessage);
+			}
+
+			status = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", null);
+			LaunchDomainManagerWithOptionsDialog.this.updateStatus(status);
+			return ValidationStatus.ok();
+		}
+
+	} // End DomainValidator inner class
 
 	/**
 	 * Hook method for subclasses to create a custom progress monitor part.
@@ -440,32 +477,6 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		return retVal;
 	}
 
-	private final IValidator nameValidator = new IValidator() {
-
-		@Override
-		public IStatus validate(final Object value) {
-			// IMPORTANT - DO NOT ISSUE CORBA CALLS HERE BECAUSE THEY CAN HANG POTENTIALLY FOREVER
-			// AND BLOCK THE UI THREAD
-			String s = (String) value;
-			if ((s == null) || (s.trim().length() == 0)) {
-				return ValidationStatus.error("Please provide a valid Domain Manager name.");
-			}
-			s = s.trim();
-
-			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
-			final ScaDomainManager dom = dmReg.findDomain(s);
-			if ((dom != null) && (!namingService.equals(dom.getConnectionProperties().get(ScaDomainManager.NAMING_SERVICE_PROP)))) {
-				return ValidationStatus.error("This name is registered against a non-default name server and cannot be launched");
-			}
-
-			if (LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.contains(s)) {
-				return ValidationStatus.error("Domain of this name is in use, please select a different name.");
-			}
-
-			return ValidationStatus.ok();
-		}
-	};
-
 	/**
 	 * This implementation of IRunnableContext#run(boolean, boolean,
 	 * IRunnableWithProgress) blocks until the runnable has been run, regardless
@@ -561,10 +572,10 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		((GridLayout) parent.getLayout()).makeColumnsEqualWidth = false;
 		this.cancelButton = createCancelButton(parent);
-		
+
 		// also add cancel operation to the shell
 		getShell().addListener(SWT.Traverse, new Listener() {
-			
+
 			public void handleEvent(Event event) {
 				switch (event.detail) {
 				case SWT.TRAVERSE_ESCAPE:
@@ -653,8 +664,8 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 							// only
 							// after the UI state is restored (which by definition means all jobs are done.
 							// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887
-							if (LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished != 0
-								&& System.currentTimeMillis() - LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished < LaunchDomainManagerWithOptionsDialog.RESTORE_ENTER_DELAY) {
+							if (LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished != 0 && System.currentTimeMillis()
+								- LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished < LaunchDomainManagerWithOptionsDialog.RESTORE_ENTER_DELAY) {
 								e.doit = false;
 								return;
 							}
@@ -728,8 +739,8 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		List<DeviceManagerLaunchConfiguration> retVal = new ArrayList<DeviceManagerLaunchConfiguration>();
 		for (Object node : this.nodes) {
 			DeviceConfiguration dcd = (DeviceConfiguration) node;
-			DeviceManagerLaunchConfiguration conf = new DeviceManagerLaunchConfiguration(model.getDomainName(), dcd,
-				(DebugLevel) nodeDebugLevel.getValue(), (String) nodeArguments.getValue(), null);
+			DeviceManagerLaunchConfiguration conf = new DeviceManagerLaunchConfiguration(model.getDomainName(), dcd, (DebugLevel) nodeDebugLevel.getValue(),
+				(String) nodeArguments.getValue(), null);
 			retVal.add(conf);
 		}
 		return retVal;
