@@ -259,7 +259,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		final Group deviceManagerGroup = new Group(composite, SWT.NONE);
 
 		deviceManagerGroup.setText("Device Manager");
-		deviceManagerGroup.setLayout(GridLayoutFactory.fillDefaults().create());
+		deviceManagerGroup.setLayout(GridLayoutFactory.fillDefaults().margins(5, 5).create());
 		deviceManagerGroup.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 		deviceManagerGroup.setVisible(!this.sdrRoot.getNodesContainer().getNodes().isEmpty());
 
