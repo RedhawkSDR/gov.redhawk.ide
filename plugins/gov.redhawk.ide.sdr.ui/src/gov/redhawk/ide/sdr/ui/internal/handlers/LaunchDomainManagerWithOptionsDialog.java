@@ -95,6 +95,10 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	private final Set<String> takenDomainNames = new HashSet<String>();
 	private boolean lockedUI = false;
 
+	public static final String INVALID_DOMAIN_NAME_ERR = "Please provide a valid Domain Manager name.";
+	public static final String NON_DEFAULT_ERR = "This name is registered against a non-default name server and cannot be launched";
+	public static final String DUPLICATE_NAME = "Domain of this name is in use, please select a different name.";
+
 	private WritableSet nodes = new WritableSet();
 	private WritableValue nodeDebugLevel = new WritableValue(DebugLevel.Info, DebugLevel.class);
 	private WritableValue nodeArguments = new WritableValue();
@@ -312,18 +316,18 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			// AND BLOCK THE UI THREAD
 			String s = (String) value;
 			if ((s == null) || (s.trim().length() == 0)) {
-				errorMessage = "Please provide a valid Domain Manager name.";
+				errorMessage = INVALID_DOMAIN_NAME_ERR;
 			}
 			s = s.trim();
 
 			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
 			final ScaDomainManager dom = dmReg.findDomain(s);
 			if ((dom != null) && (!namingService.equals(dom.getConnectionProperties().get(ScaDomainManager.NAMING_SERVICE_PROP)))) {
-				errorMessage = "This name is registered against a non-default name server and cannot be launched";
+				errorMessage = NON_DEFAULT_ERR;
 			}
 
 			if (LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.contains(s)) {
-				errorMessage = "Domain of this name is in use, please select a different name.";
+				errorMessage = DUPLICATE_NAME;
 			}
 
 			if (errorMessage != null) {
