@@ -17,12 +17,9 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.ui.PlatformUI;
 
 import CF.LogConfigurationOperations;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.logging.ui.handlers.EditLogConfig;
-import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 
-public class EditLogConfigFeature extends NonUndoableCustomFeature {
+public class EditLogConfigFeature extends AbstractLoggingFeature {
 
 	public EditLogConfigFeature(IFeatureProvider fp) {
 		super(fp);
@@ -36,17 +33,6 @@ public class EditLogConfigFeature extends NonUndoableCustomFeature {
 	@Override
 	public String getDescription() {
 		return "Edit the resource's logging configuration file";
-	}
-
-	@Override
-	public boolean canExecute(ICustomContext context) {
-		if (context.getPictogramElements().length != 1) {
-			return false;
-		}
-
-		RHContainerShape componentShape = (RHContainerShape) context.getPictogramElements()[0];
-		Object object = DUtil.getBusinessObject(componentShape);
-		return (object instanceof ComponentInstantiation) && componentShape.isEnabled();
 	}
 
 	@Override

@@ -58,6 +58,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StopFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TailLogFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TerminateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.remove.FastRemoveFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
@@ -104,6 +105,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 					retList.add(new ShowConsoleFeature(this));
 					retList.add(new LogLevelFeature(this));
 					retList.add(new EditLogConfigFeature(this));
+					retList.add(new TailLogFeature(this));
 
 					// Don't add ability to remove components from Graphiti Waveform Explorer
 					if (!DUtil.isDiagramExplorer(diagram)) {

@@ -17,15 +17,12 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.swt.widgets.Display;
 
 import CF.LogConfigurationOperations;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.logging.ui.handlers.SetLoggingLevel;
-import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 
 /**
  * This feature gives access to the UI that lets the user view/change the logging level of the resource.
  */
-public class LogLevelFeature extends NonUndoableCustomFeature {
+public class LogLevelFeature extends AbstractLoggingFeature {
 
 	public LogLevelFeature(IFeatureProvider fp) {
 		super(fp);
@@ -39,18 +36,6 @@ public class LogLevelFeature extends NonUndoableCustomFeature {
 	@Override
 	public String getDescription() {
 		return "Show/set the resource's logging level";
-	}
-
-	@Override
-	public boolean canExecute(ICustomContext context) {
-		// It only makes sense to allow the user to do this with one selected resource
-		if (context.getPictogramElements().length != 1) {
-			return false;
-		}
-
-		RHContainerShape componentShape = (RHContainerShape) context.getPictogramElements()[0];
-		Object object = DUtil.getBusinessObject(componentShape);
-		return (object instanceof ComponentInstantiation) && componentShape.isEnabled();
 	}
 
 	@Override

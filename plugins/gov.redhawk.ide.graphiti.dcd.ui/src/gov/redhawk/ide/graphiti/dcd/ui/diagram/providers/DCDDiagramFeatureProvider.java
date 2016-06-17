@@ -56,6 +56,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StopFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TailLogFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TerminateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -125,6 +126,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 					retList.add(new ShowConsoleFeature(this));
 					retList.add(new LogLevelFeature(this));
 					retList.add(new EditLogConfigFeature(this));
+					retList.add(new TailLogFeature(this));
 
 					// Add terminate, but not for the explorer
 					if (!DUtil.isDiagramExplorer(diagram)) {

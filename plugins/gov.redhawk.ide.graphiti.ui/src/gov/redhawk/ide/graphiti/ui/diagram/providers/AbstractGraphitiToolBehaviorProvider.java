@@ -65,9 +65,8 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.EditLogConfigFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.AbstractLoggingFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.PaletteTreeEntry;
@@ -348,7 +347,7 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		for (ICustomFeature customFeature : getFeatureProvider().getCustomFeatures(context)) {
 			ContextMenuEntry entry = new ContextMenuEntry(customFeature, context);
 			
-			if (customFeature instanceof LogLevelFeature || customFeature instanceof EditLogConfigFeature) {
+			if (customFeature instanceof AbstractLoggingFeature) {
 				// Create a sub-menu for logging
 				if (loggingSubMenu == null) { 
 					loggingSubMenu = new ContextMenuEntry(null, context);

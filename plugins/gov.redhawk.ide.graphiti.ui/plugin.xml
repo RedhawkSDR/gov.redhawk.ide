@@ -97,6 +97,9 @@
                type="gov.redhawk.model.sca.ScaPropertyContainer">
          </adapter>
          <adapter
+               type="gov.redhawk.model.sca.CorbaObjWrapper">
+         </adapter>
+         <adapter
                type="gov.redhawk.ide.debug.LocalLaunch">
          </adapter>
          <adapter
@@ -123,6 +126,9 @@
          </adapter>
          <adapter
                type="gov.redhawk.model.sca.ScaPropertyContainer">
+         </adapter>
+         <adapter
+               type="gov.redhawk.model.sca.CorbaObjWrapper">
          </adapter>
          <adapter
                type="gov.redhawk.ide.debug.LocalLaunch">
