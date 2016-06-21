@@ -12,6 +12,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.swt.widgets.Display;
@@ -39,6 +40,36 @@ public class TailLogFeature extends AbstractLoggingFeature {
 	@Override
 	public String getDescription() {
 		return "View the resource's log";
+	}
+
+	@Override
+	public boolean canExecute(ICustomContext context) {
+		// It only makes sense to allow the user to do this with one selected resource
+		return context.getPictogramElements().length == 1;
+	}
+
+	@Override
+	public boolean isAvailable(IContext context) {
+		if (!(context instanceof ICustomContext)) {
+			return false;
+		}
+		ICustomContext customContext = (ICustomContext) context;
+
+		// Selected object(s) must support CF.LogConfiguration, and must be in a domain
+		if (customContext.getPictogramElements().length == 0) {
+			return false;
+		}
+		for (PictogramElement pe : customContext.getPictogramElements()) {
+			CorbaObjWrapper< ? > wrapper = Platform.getAdapterManager().getAdapter(pe, CorbaObjWrapper.class);
+			if (wrapper == null || !(wrapper instanceof LogConfigurationOperations)) {
+				return false;
+			}
+			ScaDomainManager domMgr = ScaEcoreUtils.getEContainerOfType(wrapper, ScaDomainManager.class);
+			if (domMgr == null) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
