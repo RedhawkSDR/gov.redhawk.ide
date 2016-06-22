@@ -37,7 +37,7 @@ public enum LaunchLogger implements ServiceTrackerCustomizer<ILaunchLogger, ILau
 	 * @param color The color to use
 	 */
 	public void writeToConsole(ILaunch launch, String message, ConsoleColor color) {
-		if (logger != null) {
+		if (logger != null && launch != null) {
 			try {
 				logger.writeToConsole(launch, message, color);
 			} catch (IllegalStateException e) {

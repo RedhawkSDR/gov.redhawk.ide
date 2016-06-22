@@ -267,6 +267,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			if (launchDevLabel != null && !launchDevLabel.equals(deviceLabel)) {
 				continue;
 			}
+			launch = candidateLaunch;
 			ILaunchConfiguration launchConfig = candidateLaunch.getLaunchConfiguration();
 
 			// Load the properties from the PRF and override with values from the launch configuration
