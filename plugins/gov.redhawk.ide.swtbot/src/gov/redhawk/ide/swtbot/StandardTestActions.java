@@ -182,7 +182,7 @@ public final class StandardTestActions {
 	}
 
 	/**
-	 * Uses the hotkey ctrl+b to build all projects in the workspace
+	 * Presses Ctrl+B to begin building all projects in the workspace
 	 */
 	public static void buildAll() {
 		KeyboardFactory.getSWTKeyboard().pressShortcut(SWT.CTRL, 'b');

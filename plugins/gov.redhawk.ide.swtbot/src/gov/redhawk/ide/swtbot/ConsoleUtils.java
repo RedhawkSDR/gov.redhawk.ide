@@ -82,41 +82,41 @@ public class ConsoleUtils {
 	}
 
 	/**
-	 * Shows the console for a particular process.
+	 * Shows the console that contains certain text in its title
 	 * @param bot
-	 * @param processName
+	 * @param titleText The text to look for somewhere in the console's title
 	 * @return The SWTBot console view
 	 */
-	public static SWTBotView showConsole(SWTWorkbenchBot bot, final String processName) {
+	public static SWTBotView showConsole(SWTWorkbenchBot bot, final String titleText) {
 		SWTBotView view = ViewUtils.getConsoleView(bot);
 		view.show();
 
 		// We could already be on the correct console
 		String consoleText = view.bot().label().getText();
-		if (consoleText.contains(processName)) {
+		if (consoleText.contains(titleText)) {
 			return view;
 		}
 
 		SWTBotToolbarDropDownButton consoleButton = (SWTBotToolbarDropDownButton) view.toolbarButton("Display Selected Console");
 		if (!consoleButton.isEnabled()) {
-			throw new WidgetNotFoundException(String.format("Can't find console for %s", processName));
+			throw new WidgetNotFoundException(String.format("Can't find console for %s", titleText));
 		}
 
 		// Switch consoles until we hit the right one
 		consoleButton.click();
 		for (String newConsoleText = view.bot().label().getText(); !consoleText.equals(newConsoleText); newConsoleText = view.bot().label().getText()) {
-			if (newConsoleText.contains(processName)) {
+			if (newConsoleText.contains(titleText)) {
 				return view;
 			}
 			consoleButton.click();
 		}
-		throw new WidgetNotFoundException(String.format("Can't find console for %s", processName));
+		throw new WidgetNotFoundException(String.format("Can't find console for %s", titleText));
 	}
 
 	/**
 	 * Terminate a process via the console's terminate button
 	 * @param bot
-	 * @param processName
+	 * @param processName The text to look for somewhere in the console's title
 	 */
 	public static void terminateProcess(SWTWorkbenchBot bot, final String processName) {
 		SWTBotView view = showConsole(bot, processName);
