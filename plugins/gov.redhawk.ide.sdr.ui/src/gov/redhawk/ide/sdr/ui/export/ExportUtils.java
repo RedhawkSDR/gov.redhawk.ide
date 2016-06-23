@@ -43,12 +43,20 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.emf.common.util.BasicDiagnostic;
+import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreValidator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.service.prefs.BackingStoreException;
 
 import gov.redhawk.ide.RedhawkIdeActivator;
@@ -73,7 +81,10 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 /**
  * @since 3.1
  */
+@SuppressWarnings("restriction")
 public class ExportUtils {
+
+	private static boolean continueExport;
 
 	private ExportUtils() {
 	}
@@ -118,6 +129,11 @@ public class ExportUtils {
 					new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Cannot export a project with an empty name. Check the project's SAD file."));
 			}
 
+			// Validate against the ecore model
+			if (!validateEcore(sad, sad.getName())) {
+				return;
+			}
+
 			// Make directory & copy SAD file
 			final IPath outputFolder = new Path("dom/waveforms").append(name.replace('.', File.separatorChar));
 			exporter.mkdir(outputFolder, progress.newChild(1));
@@ -125,6 +141,62 @@ public class ExportUtils {
 		}
 
 		progress.done();
+	}
+
+	private static boolean validateEcore(EObject object, String projectName) {
+		// Get all resource contents, we are validating everything
+		TreeIterator<EObject> allContents = object.eResource().getAllContents();
+
+		boolean errorFound = true;
+		BasicDiagnostic diagnostic = new BasicDiagnostic();
+		while (allContents.hasNext()) {
+			boolean result = EcoreValidator.INSTANCE.validate(allContents.next(), diagnostic, null);
+
+			// Update flag only once if error found. But we need to cycle through everything so we
+			// can display multiple errors at once via BasicDiagnostic.getChildren()
+			if (errorFound) {
+				if (!result) {
+					errorFound = result;
+				}
+			}
+		}
+
+		if (!errorFound) {
+			boolean exportProject = showWarningDialog(projectName, diagnostic);
+			if (!exportProject) {
+				// User chose not to continue export
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * @return false if the user wants to cancel the export operation
+	 */
+	private static boolean showWarningDialog(String projectName, BasicDiagnostic diagnostic) {
+		// Always default this static boolean to true, since we don't know what other methods have done to it
+		setContinueExport(true);
+
+		// Create the error message
+		String message = "Trouble exporting project " + projectName + ". Invalid XML detected.  Do you wish to continue exporting?";
+		for (Diagnostic child : diagnostic.getChildren()) {
+			message += "\n\n" + child.getMessage();
+		}
+		final String errMsg = message;
+
+		// Dialog has to be in the UI thread. Update the static variable since Runnable is a void return.
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+				MessageDialog dialog = new MessageDialog(shell, "Export Error", null, errMsg, SWT.ICON_ERROR, new String[] { "OK", "Cancel" }, 1);
+				if (dialog.open() == MessageDialog.CANCEL) {
+					setContinueExport(false);
+				}
+			}
+		});
+
+		return getContinueExport();
 	}
 
 	/**
@@ -191,6 +263,11 @@ public class ExportUtils {
 			if (name == null || name.isEmpty()) {
 				throw new CoreException(
 					new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Cannot export a project with an empty name. Check the project's DCD file."));
+			}
+
+			// Validate against the ecore model
+			if (!validateEcore(dcd, dcd.getName())) {
+				return;
 			}
 
 			// Make directory & copy DCD file
@@ -491,8 +568,8 @@ public class ExportUtils {
 			}
 		}
 		if (launch.getProcesses()[0].getExitValue() != 0) {
-			throw new CoreException(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Install script returned with error code "
-				+ launch.getProcesses()[0].getExitValue() + "\n\nSee console output for details.", null));
+			throw new CoreException(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID,
+				"Install script returned with error code " + launch.getProcesses()[0].getExitValue() + "\n\nSee console output for details.", null));
 		}
 	}
 
@@ -527,6 +604,14 @@ public class ExportUtils {
 		} catch (BackingStoreException e) {
 			SdrUiPlugin.getDefault().logError("Unable to enable useBuild.sh project preference for " + project, e);
 		}
+	}
+
+	private static boolean getContinueExport() {
+		return ExportUtils.continueExport;
+	}
+
+	private static void setContinueExport(boolean continueExport) {
+		ExportUtils.continueExport = continueExport;
 	}
 
 	/**
@@ -576,8 +661,8 @@ public class ExportUtils {
 			}
 		}
 		if (launch.getProcesses()[0].getExitValue() != 0) {
-			throw new CoreException(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Install script returned with error code "
-				+ launch.getProcesses()[0].getExitValue() + "\n\nSee console output for details.", null));
+			throw new CoreException(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID,
+				"Install script returned with error code " + launch.getProcesses()[0].getExitValue() + "\n\nSee console output for details.", null));
 		}
 	}
 
@@ -618,12 +703,13 @@ public class ExportUtils {
 					Display.getDefault().syncExec(new Runnable() {
 						@Override
 						public void run() {
-							shouldExport[0] = MessageDialog.openQuestion(null, "File does not exist", "The file '" + localFileName + "' " + inProjStr
-								+ "does not exist, export implementation anyway?");
+							shouldExport[0] = MessageDialog.openQuestion(null, "File does not exist",
+								"The file '" + localFileName + "' " + inProjStr + "does not exist, export implementation anyway?");
 						}
 					});
 					if (!shouldExport[0]) {
-						SdrUiPlugin.getDefault().logError("Expected file '" + codeLocalFile + "' " + inProjStr + "does not exist, not exporting implementation");
+						SdrUiPlugin.getDefault().logError(
+							"Expected file '" + codeLocalFile + "' " + inProjStr + "does not exist, not exporting implementation");
 						return false;
 					}
 				}
@@ -633,8 +719,8 @@ public class ExportUtils {
 			Display.getDefault().syncExec(new Runnable() {
 				@Override
 				public void run() {
-					shouldExport[0] = MessageDialog.openQuestion(null, "No Implementations Found", "No Implementations were found in " + projectName
-						+ ", export anyway?");
+					shouldExport[0] = MessageDialog.openQuestion(null, "No Implementations Found",
+						"No Implementations were found in " + projectName + ", export anyway?");
 				}
 			});
 			if (!shouldExport[0]) {
