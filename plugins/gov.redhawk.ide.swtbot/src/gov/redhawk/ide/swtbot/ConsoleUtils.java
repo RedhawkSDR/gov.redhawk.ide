@@ -18,6 +18,7 @@ import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.matchers.AbstractMatcher;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarToggleButton;
@@ -172,5 +173,55 @@ public class ConsoleUtils {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Wait for a console containing certain text to be present
+	 * @param bot
+	 * @param titleText The text to look for somewhere in the console's title
+	 */
+	public static void waitForConsole(SWTWorkbenchBot bot, final String titleText) {
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public boolean test() throws Exception {
+				String[] titles = getConsoleTitles((SWTWorkbenchBot) bot);
+				for (String title : titles) {
+					if (title.contains(titleText)) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Console did not appear";
+			}
+		});
+	}
+
+	/**
+	 * Stop a console log via the console's stop button
+	 * @param bot
+	 * @param titleText The text to look for somewhere in the console's title
+	 */
+	public static void stopLogging(SWTWorkbenchBot bot, final String titleText) {
+		final SWTBotView view = showConsole(bot, titleText);
+		final String consoleText = view.bot().label().getText();
+
+		// Click stop, wait for it to close
+		final SWTBotToolbarButton stopButton = view.toolbarButton("Stop");
+		stopButton.click();
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public boolean test() throws Exception {
+				return !consoleText.equals(view.bot().label().getText());
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Console did not close";
+			}
+		});
 	}
 }

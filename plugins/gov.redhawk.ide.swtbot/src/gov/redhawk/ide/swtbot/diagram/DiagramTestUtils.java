@@ -1122,4 +1122,17 @@ public class DiagramTestUtils {
 		}
 		return foundMenuItem;
 	}
+
+	public static void tailLog(RHBotGefEditor editor, String componentName, String logger, LogLevels logLevel) {
+		editor.setFocus();
+		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
+		componentPart.select();
+		editor.clickContextMenu("Tail Log");
+
+		SWTBotShell shell = editor.bot().shell("View log for " + componentName);
+		shell.bot().comboBox().setSelection(logLevel.getLabel());
+		shell.bot().text().setText(logger);
+		shell.bot().button("OK").click();
+		editor.bot().waitUntil(Conditions.shellCloses(shell));
+	}
 }
