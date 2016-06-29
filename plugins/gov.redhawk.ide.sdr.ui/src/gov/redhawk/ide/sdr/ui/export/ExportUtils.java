@@ -43,6 +43,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.emf.common.ui.dialogs.DiagnosticDialog;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -54,8 +55,11 @@ import org.eclipse.emf.ecore.util.EcoreValidator;
 import org.eclipse.emf.transaction.RunnableWithResult;
 import org.eclipse.emf.transaction.RunnableWithResult.Impl;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -172,22 +176,30 @@ public class ExportUtils {
 	/**
 	 * @return false if the user wants to cancel the export operation
 	 */
-	private static boolean showWarningDialog(String projectName, BasicDiagnostic diagnostic) {
-
-		// Create the error message
-		String message = "Trouble exporting project " + projectName + ". Invalid XML detected.  Do you wish to continue exporting?";
-		for (Diagnostic child : diagnostic.getChildren()) {
-			message += "\n\n" + child.getMessage();
-		}
-		final String errMsg = message;
-
+	private static boolean showWarningDialog(String projectName, final BasicDiagnostic diagnostic) {
 		// Dialog has to be in the UI thread. Update the static variable since Runnable is a void return.
 		Impl<Boolean> runnable = new RunnableWithResult.Impl<Boolean>() {
 			public void run() {
 				setResult(true);
 				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-				MessageDialog dialog = new MessageDialog(shell, "Export Error", null, errMsg, SWT.ICON_ERROR, new String[] { "OK", "Cancel" }, 1);
-				if (dialog.open() == MessageDialog.CANCEL) {
+				Dialog warnDialog = new DiagnosticDialog(shell, "Invalid Model", null, diagnostic, Diagnostic.ERROR | Diagnostic.WARNING) {
+
+					@Override
+					protected Control createMessageArea(final Composite composite) {
+						this.message = "Errors have been detected. Do you want to continue export to Target SDR?";
+						return super.createMessageArea(composite);
+					}
+
+					@Override
+					protected void createButtonsForButtonBar(final Composite parent) {
+						// create Yes, No and Details buttons
+						createButton(parent, IDialogConstants.OK_ID, IDialogConstants.YES_LABEL, true);
+						createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.NO_LABEL, true);
+						createDetailsButton(parent);
+					}
+				};
+
+				if (warnDialog.open() == IDialogConstants.CANCEL_ID) {
 					setResult(false);
 				}
 			}
