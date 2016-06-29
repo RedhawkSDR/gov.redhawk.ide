@@ -51,6 +51,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreValidator;
+import org.eclipse.emf.transaction.RunnableWithResult;
+import org.eclipse.emf.transaction.RunnableWithResult.Impl;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -83,8 +85,6 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
  */
 @SuppressWarnings("restriction")
 public class ExportUtils {
-
-	private static boolean continueExport;
 
 	private ExportUtils() {
 	}
@@ -173,8 +173,6 @@ public class ExportUtils {
 	 * @return false if the user wants to cancel the export operation
 	 */
 	private static boolean showWarningDialog(String projectName, BasicDiagnostic diagnostic) {
-		// Always default this static boolean to true, since we don't know what other methods have done to it
-		setContinueExport(true);
 
 		// Create the error message
 		String message = "Trouble exporting project " + projectName + ". Invalid XML detected.  Do you wish to continue exporting?";
@@ -184,17 +182,18 @@ public class ExportUtils {
 		final String errMsg = message;
 
 		// Dialog has to be in the UI thread. Update the static variable since Runnable is a void return.
-		Display.getDefault().syncExec(new Runnable() {
+		Impl<Boolean> runnable = new RunnableWithResult.Impl<Boolean>() {
 			public void run() {
+				setResult(true);
 				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 				MessageDialog dialog = new MessageDialog(shell, "Export Error", null, errMsg, SWT.ICON_ERROR, new String[] { "OK", "Cancel" }, 1);
 				if (dialog.open() == MessageDialog.CANCEL) {
-					setContinueExport(false);
+					setResult(false);
 				}
 			}
-		});
-
-		return getContinueExport();
+		};
+		Display.getDefault().syncExec(runnable);
+		return runnable.getResult();
 	}
 
 	/**
@@ -602,14 +601,6 @@ public class ExportUtils {
 		} catch (BackingStoreException e) {
 			SdrUiPlugin.getDefault().logError("Unable to enable useBuild.sh project preference for " + project, e);
 		}
-	}
-
-	private static boolean getContinueExport() {
-		return ExportUtils.continueExport;
-	}
-
-	private static void setContinueExport(boolean continueExport) {
-		ExportUtils.continueExport = continueExport;
 	}
 
 	/**
