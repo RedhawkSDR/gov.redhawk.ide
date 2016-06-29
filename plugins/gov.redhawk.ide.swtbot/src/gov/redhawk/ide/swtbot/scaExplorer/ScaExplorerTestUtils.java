@@ -26,11 +26,17 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
-import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 
 import gov.redhawk.ide.swtbot.StandardTestActions;
+import gov.redhawk.ide.swtbot.condition.WaitForModalContext;
 
 public class ScaExplorerTestUtils {
+
+	/**
+	 * The delay after a wizard completes a modal progress context before it should accept input. See
+	 * {@link WizardDialog#RESTORE_ENTER_DELAY}.
+	 */
+	private static final int WIZARD_POST_MODAL_PROGRESS_DELAY = 500;
 
 	/**
 	 * The ID for the REDHAWK Explorer view
@@ -258,16 +264,23 @@ public class ScaExplorerTestUtils {
 
 		SWTBotShell wizardShell = bot.shell("Launch Waveform");
 		SWTBot wizardBot = wizardShell.bot();
+
+		// Wait for the waveform list to load (it's a deferred content adapter). Afterwards, the first waveform will be
+		// automatically selected, which will trigger loading of associated PRF file(s) via a modal progress context.
+		wizardBot.waitWhile(Conditions.treeHasRows(wizardBot.tree(), 1));
+		wizardBot.waitUntil(new WaitForModalContext());
+		bot.sleep(WIZARD_POST_MODAL_PROGRESS_DELAY);
+
+		// Find our waveform and select. Again, selection will trigger a modal progress context.
 		SWTBotTreeItem treeItem = StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList(waveform));
-		bot.waitUntil(Conditions.widgetIsEnabled(wizardBot.tree()));
 		treeItem.select();
-		wizardBot.button("Finish").click();
-		try {
-			bot.waitUntil(Conditions.shellCloses(wizardShell), 30000);
-		} catch (TimeoutException e) {
-			wizardBot.button("Finish").click();
-			bot.waitUntil(Conditions.shellCloses(wizardShell), 30000);
-		}
+		wizardBot.waitUntil(new WaitForModalContext());
+		bot.sleep(WIZARD_POST_MODAL_PROGRESS_DELAY);
+
+		// Finish will launch the waveform, again triggering a modal progress context, then closing the dialog
+		bot.button("Finish").click();
+		wizardBot.waitUntil(new WaitForModalContext(), 30000);
+		bot.waitUntil(Conditions.shellCloses(wizardShell));
 	}
 
 	/**
