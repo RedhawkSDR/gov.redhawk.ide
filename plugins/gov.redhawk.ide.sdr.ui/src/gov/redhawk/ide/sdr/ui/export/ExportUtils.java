@@ -176,7 +176,7 @@ public class ExportUtils {
 	/**
 	 * @return false if the user wants to cancel the export operation
 	 */
-	private static boolean showWarningDialog(String projectName, final BasicDiagnostic diagnostic) {
+	private static boolean showWarningDialog(final String projectName, final BasicDiagnostic diagnostic) {
 		// Dialog has to be in the UI thread. Update the static variable since Runnable is a void return.
 		Impl<Boolean> runnable = new RunnableWithResult.Impl<Boolean>() {
 			public void run() {
@@ -186,7 +186,7 @@ public class ExportUtils {
 
 					@Override
 					protected Control createMessageArea(final Composite composite) {
-						this.message = "Errors have been detected. Do you want to continue export to Target SDR?";
+						this.message = "Errors have been detected in " + projectName + ". Do you want to continue export to Target SDR?";
 						return super.createMessageArea(composite);
 					}
 
