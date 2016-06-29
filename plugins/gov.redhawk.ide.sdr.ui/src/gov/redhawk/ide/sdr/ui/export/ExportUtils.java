@@ -147,21 +147,19 @@ public class ExportUtils {
 		// Get all resource contents, we are validating everything
 		TreeIterator<EObject> allContents = object.eResource().getAllContents();
 
-		boolean errorFound = true;
+		boolean modelIsValid = true;
 		BasicDiagnostic diagnostic = new BasicDiagnostic();
 		while (allContents.hasNext()) {
-			boolean result = EcoreValidator.INSTANCE.validate(allContents.next(), diagnostic, null);
+			boolean validatorResult = EcoreValidator.INSTANCE.validate(allContents.next(), diagnostic, null);
 
 			// Update flag only once if error found. But we need to cycle through everything so we
 			// can display multiple errors at once via BasicDiagnostic.getChildren()
-			if (errorFound) {
-				if (!result) {
-					errorFound = result;
-				}
+			if (modelIsValid && !validatorResult) {
+				modelIsValid = false;
 			}
 		}
 
-		if (!errorFound) {
+		if (!modelIsValid) {
 			boolean exportProject = showWarningDialog(projectName, diagnostic);
 			if (!exportProject) {
 				// User chose not to continue export
