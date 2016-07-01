@@ -154,7 +154,9 @@ public class ScaExplorerTestUtils {
 				if (pattern.matcher(node).matches()) {
 					if (path.size() == 1) {
 						SWTBotTreeItem result = parentItem.getNode(node);
-						result.expand();
+						if (!result.isExpanded()) {
+							result.expand();
+						}
 						return result;
 					} else {
 						return internalGetTreeItem(parentItem.getNode(node), path.subList(1, path.size()));
