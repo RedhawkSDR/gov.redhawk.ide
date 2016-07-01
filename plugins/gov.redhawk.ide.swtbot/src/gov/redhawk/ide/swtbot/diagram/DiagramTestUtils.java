@@ -1036,7 +1036,7 @@ public class DiagramTestUtils {
 		// its state until it polls again. Once we fix that, we should drop this delay, and anywhere that depends on
 		// polling to update state should use an explicit delay.
 		long refreshInterval = new ScopedPreferenceAccessor(InstanceScope.INSTANCE, "gov.redhawk.sca.model.provider.refresh").getLong("refreshInterval");
-		waitForComponentState(bot, editor, componentName, state, refreshInterval + 2000);
+		waitForComponentState(bot, editor, componentName, state, refreshInterval + 5000);
 	}
 
 	/**
@@ -1048,7 +1048,15 @@ public class DiagramTestUtils {
 	 * @param timeout The wait timeout in ms
 	 */
 	public static void waitForComponentState(SWTBot bot, final SWTBotGefEditor editor, final String componentName, final ComponentState state, long timeout) {
+		long remainingTime = timeout;
+		long startTime = System.currentTimeMillis();
 		waitUntilComponentDisplaysInDiagram(bot, editor, componentName, timeout);
+
+		remainingTime -= (System.currentTimeMillis() - startTime);
+		if (remainingTime <= 0) {
+			throw new TimeoutException("Timeout after: " + timeout + " ms.: Unable to check component state.");
+		}
+
 		bot.waitUntil(new DefaultCondition() {
 
 			private String lastStyle = null;
@@ -1066,7 +1074,7 @@ public class DiagramTestUtils {
 				String styleDesc = (ComponentState.getStateFromStyle(lastStyle) != null) ? ComponentState.getStateFromStyle(lastStyle).toString() : "id: " + lastStyle;
 				return String.format("Resource did not change to state '%s'. Style was '%s'.", state.toString(), styleDesc);
 			}
-		}, timeout);
+		}, remainingTime);
 	}
 
 	public static void waitUntilComponentDisplaysInDiagram(SWTBot bot, final SWTBotGefEditor editor, final String componentName) {

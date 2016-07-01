@@ -39,6 +39,11 @@ public class ScaExplorerTestUtils {
 	private static final int WIZARD_POST_MODAL_PROGRESS_DELAY = 500;
 
 	/**
+	 * How often the Redhawk data polling provider runs
+	 */
+	private static final int REDHAWK_DATA_PROVIDER_POLLING = 10000;
+
+	/**
 	 * The ID for the REDHAWK Explorer view
 	 */
 	public static final String SCA_EXPLORER_VIEW_ID = "gov.redhawk.ui.sca_explorer";
@@ -475,7 +480,7 @@ public class ScaExplorerTestUtils {
 				}
 				return sb.toString();
 			}
-		}, 10000);
+		}, REDHAWK_DATA_PROVIDER_POLLING + 5000);
 	}
 
 	/**
