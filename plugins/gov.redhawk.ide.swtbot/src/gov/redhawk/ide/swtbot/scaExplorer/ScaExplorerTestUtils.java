@@ -447,13 +447,20 @@ public class ScaExplorerTestUtils {
 	 */
 	private static void waitUntilNodeStartedInScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName, final boolean started) {
 		bot.waitUntil(new DefaultCondition() {
-			private boolean found = false;
+
+			private WidgetNotFoundException ex;
 
 			@Override
 			public boolean test() throws Exception {
 				// Check presence
-				SWTBotTreeItem treeItem = getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
-				found = true;
+				SWTBotTreeItem treeItem;
+				try {
+					treeItem = getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
+				} catch (WidgetNotFoundException e) {
+					this.ex = e;
+					return false;
+				}
+				ex = null;
 
 				// Check started / stopped
 				boolean nodeStarted = treeItem.getText().endsWith(" STARTED");
@@ -469,8 +476,10 @@ public class ScaExplorerTestUtils {
 				}
 				sb.append(' ');
 				sb.append(nodeName);
-				if (!found) {
-					sb.append("} does not exist");
+				if (ex != null) {
+					sb.append("} does not exist (");
+					sb.append(ex.getMessage());
+					sb.append(')');
 				} else {
 					if (started) {
 						sb.append("} is not started");
