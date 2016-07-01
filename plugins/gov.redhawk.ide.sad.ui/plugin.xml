@@ -163,19 +163,6 @@
    </extension>
     <extension
        point="gov.redhawk.sca.ui.scaContentTypes">
-     <contentType
-            id="gov.redhawk.ui.sad.contentType"
-            name="SAD Content Type"
-            priority="LOW">
-         <describer
-               class="gov.redhawk.sca.ui.editors.ScaObjectWrapperContentDescriber"
-               plugin="gov.redhawk.sca.ui">
-            <parameter
-                  name="profileFilename"
-                  value=".*sad.xml">
-            </parameter>
-         </describer>
-      </contentType>
     <contentTypeBinding
           contentTypeId="mil.jpeojtrs.sca.sad.contentType"
           editorId="gov.redhawk.ide.sad.ui.editor.presentation.SadEditorID"
