@@ -158,9 +158,7 @@ public class ExportUtils {
 
 			// Update flag only once if error found. But we need to cycle through everything so we
 			// can display multiple errors at once via BasicDiagnostic.getChildren()
-			if (modelIsValid && !validatorResult) {
-				modelIsValid = false;
-			}
+			modelIsValid = modelIsValid && validatorResult;
 		}
 
 		if (!modelIsValid) {
