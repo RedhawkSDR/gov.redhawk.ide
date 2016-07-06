@@ -11,17 +11,6 @@
  */
 package gov.redhawk.ide.graphiti.ui.adapters;
 
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.model.sca.ScaPort;
-import gov.redhawk.model.sca.ScaPortContainer;
-import gov.redhawk.model.sca.ScaProvidesPort;
-import gov.redhawk.model.sca.ScaUsesPort;
-
-import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.scd.AbstractPort;
-
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
@@ -30,40 +19,56 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.model.sca.ScaPort;
+import gov.redhawk.model.sca.ScaPortContainer;
+import gov.redhawk.model.sca.ScaProvidesPort;
+import gov.redhawk.model.sca.ScaUsesPort;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.scd.AbstractPort;
+
+/**
+ * Adapts a graphical port object ({@link org.eclipse.graphiti.ui.internal.parts.AdvancedAnchorEditPart
+ * AdvancedAnchorEditPart}) to an SCA port model object, or its profile.
+ */
 public class PortEditPartAdapterFactory implements IAdapterFactory {
 
-	private static final Class< ? >[] LIST = new Class< ? >[] { ScaProvidesPort.class, ScaUsesPort.class, ScaPort.class };
+	private static final Class< ? >[] LIST = new Class< ? >[] { ScaProvidesPort.class, ScaUsesPort.class, ScaPort.class, AbstractPort.class };
 
 	@Override
-	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-		if (AbstractPort.class.isAssignableFrom(adapterType) || ScaPort.class.isAssignableFrom(adapterType)) {
-			EObject object = (EObject) ((EditPart) adaptableObject).getModel();
+	public < T > T getAdapter(Object adaptableObject, Class<T> adapterType) {
+		// EditPart is a parent class of AdvancedAnchorEditPart (and isn't private API)
+		EditPart editPart = (EditPart) adaptableObject;
+		PictogramElement pe = (PictogramElement) editPart.getModel();
 
-			// Disallow context menu options for super ports
-			if (DUtil.isSuperPort((ContainerShape) object.eContainer())) {
-				return null;
-			}
-
-			PictogramElement pe = (PictogramElement) object;
-			EObject port = DUtil.getBusinessObject(pe);
-			String portName;
-			if (port instanceof UsesPortStub) {
-				portName = ((UsesPortStub) port).getName();
-			} else if (port instanceof ProvidesPortStub) {
-				portName = ((ProvidesPortStub) port).getName();
-			} else {
-				return null;
-			}
-
-			Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pe);
-			ScaPort< ? , ? > scaPort = getScaPort(diagram, port, portName);
-			if (scaPort != null && AbstractPort.class.isAssignableFrom(adapterType)) {
-				return adapterType.cast(scaPort.getProfileObj());
-			} else {
-				return adapterType.cast(scaPort);
-			}
+		// Disallow context menu options for super ports
+		if (DUtil.isSuperPort((ContainerShape) pe.eContainer())) {
+			return null;
 		}
-		return null;
+
+		// Get the port name
+		EObject port = DUtil.getBusinessObject(pe);
+		String portName;
+		if (port instanceof UsesPortStub) {
+			portName = ((UsesPortStub) port).getName();
+		} else if (port instanceof ProvidesPortStub) {
+			portName = ((ProvidesPortStub) port).getName();
+		} else {
+			return null;
+		}
+
+		// Get the SCA model object, or the profile for it
+		Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pe);
+		ScaPort< ? , ? > scaPort = getScaPort(diagram, port, portName);
+		if (scaPort != null && AbstractPort.class.isAssignableFrom(adapterType)) {
+			return adapterType.cast(scaPort.getProfileObj());
+		} else if (adapterType.isInstance(scaPort)) {
+			return adapterType.cast(scaPort);
+		} else {
+			return null;
+		}
 	}
 
 	private ScaPort< ? , ? > getScaPort(Diagram diagram, EObject port, String name) {
@@ -82,5 +87,4 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 	public Class< ? >[] getAdapterList() {
 		return PortEditPartAdapterFactory.LIST;
 	}
-
 }

@@ -144,7 +144,7 @@
          </adapter>
       </factory>
       <factory
-            adaptableType="org.eclipse.graphiti.ui.internal.parts.IAnchorEditPart"
+            adaptableType="org.eclipse.graphiti.ui.internal.parts.AdvancedAnchorEditPart"
             class="gov.redhawk.ide.graphiti.ui.adapters.PortEditPartAdapterFactory">
          <adapter
                type="gov.redhawk.model.sca.ScaProvidesPort">
@@ -154,12 +154,6 @@
          </adapter>
          <adapter
                type="gov.redhawk.model.sca.ScaPort">
-         </adapter>
-         <adapter
-               type="org.eclipse.emf.edit.provider.IItemPropertySource">
-         </adapter>
-         <adapter
-               type="org.eclipse.emf.edit.provider.ITableItemLabelProvider">
          </adapter>
          <adapter
                type="mil.jpeojtrs.sca.scd.AbstractPort">
