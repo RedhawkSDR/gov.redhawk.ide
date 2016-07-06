@@ -11,8 +11,6 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
@@ -23,12 +21,10 @@ import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IContext;
-import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IReconnectionContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -49,18 +45,9 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeat
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DisabledDeleteFeatureWrapper;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.EditLogConfigFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StopFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TailLogFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TerminateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -103,40 +90,6 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		}
 
 		return super.getAddFeature(context);
-	}
-
-	@Override
-	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
-		ICustomFeature[] parentCustomFeatures = super.getCustomFeatures(context);
-		List<ICustomFeature> retList = new ArrayList<ICustomFeature>(Arrays.asList(parentCustomFeatures));
-
-		Diagram diagram = getDiagramTypeProvider().getDiagram();
-		PictogramElement[] pes = context.getPictogramElements();
-		if (pes == null || pes.length == 0) {
-			return retList.toArray(new ICustomFeature[retList.size()]);
-		}
-		Object businessObject = DUtil.getBusinessObject(pes[0]);
-
-		if (pes[0] instanceof RHContainerShape) {
-			if (businessObject instanceof DcdComponentInstantiation) {
-				if (DUtil.isDiagramRuntime(diagram)) {
-					// Device/service runtime features
-					retList.add(new StartFeature(this));
-					retList.add(new StopFeature(this));
-					retList.add(new ShowConsoleFeature(this));
-					retList.add(new LogLevelFeature(this));
-					retList.add(new EditLogConfigFeature(this));
-					retList.add(new TailLogFeature(this));
-
-					// Add terminate, but not for the explorer
-					if (!DUtil.isDiagramExplorer(diagram)) {
-						retList.add(new TerminateFeature(this));
-					}
-				}
-			}
-		}
-
-		return retList.toArray(new ICustomFeature[retList.size()]);
 	}
 
 	@Override

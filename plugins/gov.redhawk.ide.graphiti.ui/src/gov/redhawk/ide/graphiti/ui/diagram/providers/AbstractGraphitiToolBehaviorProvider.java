@@ -32,7 +32,7 @@ import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
-import org.eclipse.graphiti.features.context.ICustomContext;
+import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IDoubleClickContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CustomContext;
@@ -52,11 +52,9 @@ import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.pattern.CreateFeatureForPattern;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.tb.ContextButtonEntry;
-import org.eclipse.graphiti.tb.ContextMenuEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.graphiti.tb.IColorDecorator;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
-import org.eclipse.graphiti.tb.IContextMenuEntry;
 import org.eclipse.graphiti.tb.IDecorator;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.util.IColorConstant;
@@ -65,7 +63,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.AbstractLoggingFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -309,12 +306,13 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	}
 
 	/**
-	 * IDE-1021: Adds start/stop/etc. buttons to hover context button pad of component as applicable.
+	 * {@inheritDoc}
+	 * <p/>
+	 * Adds start/stop/etc. buttons to hover context button pad of component as applicable.
 	 */
 	@Override
 	public IContextButtonPadData getContextButtonPad(IPictogramElementContext context) {
-		// IDE-1061 allow button pad to appear when cursor is anywhere
-		// inside the ComponentShape
+		// Allow button pad to appear when cursor is anywhere inside the ComponentShape
 		PictogramElement pe = context.getPictogramElement();
 		if (pe instanceof Shape) {
 			while (!(pe instanceof RHContainerShapeImpl || pe == null)) {
@@ -325,46 +323,30 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 			}
 		}
 		context = new LayoutContext(pe);
-
 		IContextButtonPadData pad = super.getContextButtonPad(context);
 
-		// Add domain-specific context buttons
-		CustomContext cc = new CustomContext(new PictogramElement[] {pe});
-		ICustomFeature[] cf = getFeatureProvider().getCustomFeatures(cc);
-		for (ICustomFeature feature: cf) {
-			if (feature.getImageId() != null && feature.isAvailable(cc) && feature.canExecute(cc)) {
-				pad.getDomainSpecificContextButtons().add(new ContextButtonEntry(feature, cc));
+		// Check the feature provider's custom features and add anything that can run and has an icon
+		CustomContext customContext = new CustomContext(new PictogramElement[] { pe });
+		IFeatureProvider featureProvider = getFeatureProvider();
+		ICustomFeature[] customFeatures = featureProvider.getCustomFeatures(customContext);
+		for (ICustomFeature feature : customFeatures) {
+			if (feature.getImageId() != null && feature.isAvailable(customContext) && feature.canExecute(customContext)) {
+				pad.getDomainSpecificContextButtons().add(new ContextButtonEntry(feature, customContext));
 			}
 		}
-		return pad;
-	}
 
-	@Override
-	public IContextMenuEntry[] getContextMenu(ICustomContext context) {
-		List<IContextMenuEntry> contextMenuItems = new ArrayList<IContextMenuEntry>();
-		ContextMenuEntry loggingSubMenu = null;
-
-		for (ICustomFeature customFeature : getFeatureProvider().getCustomFeatures(context)) {
-			ContextMenuEntry entry = new ContextMenuEntry(customFeature, context);
-			
-			if (customFeature instanceof AbstractLoggingFeature) {
-				// Create a sub-menu for logging
-				if (loggingSubMenu == null) { 
-					loggingSubMenu = new ContextMenuEntry(null, context);
-					loggingSubMenu.setText("Logging");
-					loggingSubMenu.setDescription("Logging");
-					loggingSubMenu.setSubmenu(true);
-					contextMenuItems.add(0, loggingSubMenu);
+		// Add any hover-specific features from the feature provider that can run
+		if (featureProvider instanceof IHoverPadFeatureProvider) {
+			IHoverPadFeatureProvider hoverFeatureProvider = (IHoverPadFeatureProvider) featureProvider;
+			ICustomFeature[] hoverFeatures = hoverFeatureProvider.getContextButtonPadFeatures(customContext);
+			for (ICustomFeature hoverFeature : hoverFeatures) {
+				if (hoverFeature.isAvailable(customContext) && hoverFeature.canExecute(customContext)) {
+					pad.getDomainSpecificContextButtons().add(new ContextButtonEntry(hoverFeature, customContext));
 				}
-
-				// Make the logging feature a sub-entry of this menu
-				loggingSubMenu.add(entry);
-			} else {
-				contextMenuItems.add(entry);
 			}
 		}
 
-		return contextMenuItems.toArray(new IContextMenuEntry[contextMenuItems.size()]);
+		return pad;
 	}
 
 	/**

@@ -10,24 +10,29 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-
 import org.eclipse.gef.EditPartViewer;
+import org.eclipse.gef.editparts.AbstractEditPart;
 import org.eclipse.gef.ui.actions.ActionRegistry;
+import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.graphiti.ui.editor.DiagramEditorContextMenuProvider;
-import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 import org.eclipse.graphiti.ui.platform.IConfigurationProvider;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.actions.ActionFactory;
+
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 
 /**
  * 
  */
 public class ChalkboardContextMenuProvider extends DiagramEditorContextMenuProvider {
+
+	private static final String GROUP_CONTROL_ID = "group.control"; //$NON-NLS-1$
+	private static final String DELETE_ID = "delete"; //$NON-NLS-1$
 
 	/**
 	 * @param viewer
@@ -44,49 +49,46 @@ public class ChalkboardContextMenuProvider extends DiagramEditorContextMenuProvi
 	@Override
 	public void buildContextMenu(IMenuManager manager) {
 		super.buildContextMenu(manager);
-		IContributionItem[] items = manager.getItems();
 
-		ActionContributionItem actionItem = null;
-		for (IContributionItem item : items) {
-			if (item instanceof ActionContributionItem) {
-				actionItem = (ActionContributionItem) item;
-				IAction action = actionItem.getAction();
-				if (action != null && action.getId() != null && action.getId().equals(ActionFactory.DELETE.getId())
-					&& this.getViewer().getSelection() instanceof StructuredSelection) {
-					StructuredSelection selection = (StructuredSelection) this.getViewer().getSelection();
-					if (selection.getFirstElement() instanceof GraphitiShapeEditPart
-						&& ((GraphitiShapeEditPart) selection.getFirstElement()).getModel() instanceof RHContainerShape) {
-						action.setText("Release");
-						break;
-					} else {
-						action.setText("Delete");
-						break;
-					}
-				}
-			}
-		}
+		// Insert the control group (contains start, stop, etc)
+		manager.insertBefore(GEFActionConstants.GROUP_EDIT, new Separator(GROUP_CONTROL_ID));
 
-		// Move Release and Terminate to the bottom of the context menu
-		if (actionItem != null && "Release".equals(actionItem.getAction().getText())) {
-			ActionContributionItem terminateAction = findTerminateAction(items);
-			if (terminateAction != null) {
-				terminateAction.setId("terminate");
-				manager.remove(actionItem);
-				manager.insertBefore(terminateAction.getId(), actionItem);
-			}
-		}
+		adjustDeleteToRelease(manager);
 	}
 
-	private ActionContributionItem findTerminateAction(IContributionItem[] items) {
-		for (IContributionItem item : items) {
-			if (item instanceof ActionContributionItem) {
-				ActionContributionItem actionItem = (ActionContributionItem) item;
-				IAction action = actionItem.getAction();
-				if (action.getId() == null && "Terminate".equals(action.getText())) {
-					return actionItem;
-				}
+	/**
+	 * Renames the delete action to release, and moves it to the end of the control group
+	 * @param manager
+	 */
+	private void adjustDeleteToRelease(IMenuManager manager) {
+		// Ensure selection is RHContainerShape(s)
+		ISelection selection = this.getViewer().getSelection();
+		if (!(selection instanceof StructuredSelection)) {
+			return;
+		}
+		StructuredSelection ss = (StructuredSelection) selection;
+		for (Object selectedObj : ss.toList()) {
+			if (!(selectedObj instanceof AbstractEditPart)) {
+				return;
+			}
+			AbstractEditPart editPart = (AbstractEditPart) selectedObj;
+			if (!(editPart.getModel() instanceof RHContainerShape)) {
+				return;
 			}
 		}
-		return null;
+
+		// Find delete action
+		IContributionItem deleteContrib = manager.find(DELETE_ID);
+		if (deleteContrib == null || !(deleteContrib instanceof ActionContributionItem)) {
+			return;
+		}
+		IAction deleteAction = ((ActionContributionItem) deleteContrib).getAction();
+
+		// Rename
+		deleteAction.setText("Release");
+
+		// Place at the end of the control group
+		manager.remove(deleteContrib);
+		manager.appendToGroup(GROUP_CONTROL_ID, deleteContrib);
 	}
 }

@@ -53,13 +53,6 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePatte
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DisabledDeleteFeatureWrapper;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.EditLogConfigFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StopFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TailLogFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TerminateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.remove.FastRemoveFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -98,20 +91,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		if (pes[0] instanceof RHContainerShape) {
 			if (businessObject instanceof SadComponentInstantiation) {
 				// Component features
-				if (DUtil.isDiagramRuntime(diagram)) {
-					// Runtime-only component features
-					retList.add(new StartFeature(this));
-					retList.add(new StopFeature(this));
-					retList.add(new ShowConsoleFeature(this));
-					retList.add(new LogLevelFeature(this));
-					retList.add(new EditLogConfigFeature(this));
-					retList.add(new TailLogFeature(this));
-
-					// Don't add ability to remove components from Graphiti Waveform Explorer
-					if (!DUtil.isDiagramExplorer(diagram)) {
-						retList.add(new TerminateFeature(this));
-					}
-				} else {
+				if (!DUtil.isDiagramRuntime(diagram)) {
 					// Design-time-only component features
 					retList.add(new SetAsAssemblyControllerFeature(this));
 					retList.add(new IncrementStartOrderFeature(this));
