@@ -238,4 +238,43 @@
             parentId="gov.redhawk.ide.dcd.graphiti.ui.contexts.diagram">
       </context>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor?after=org.eclipse.gef.group.rest">
+         <command
+               commandId="gov.redhawk.ide.graphiti.ui.showPropertiesView"
+               label="Show Properties"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:gov.redhawk.ide.graphiti.dcd.ui.editor.dcdExplorer?after=org.eclipse.gef.group.rest">
+         <command
+               commandId="gov.redhawk.ide.graphiti.ui.showPropertiesView"
+               label="Show Properties"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox?after=org.eclipse.gef.group.rest">
+         <command
+               commandId="gov.redhawk.ide.graphiti.ui.showPropertiesView"
+               label="Show Properties"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
 </plugin>
