@@ -14,7 +14,6 @@ import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.editparts.AbstractEditPart;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
-import org.eclipse.graphiti.ui.editor.DiagramEditorContextMenuProvider;
 import org.eclipse.graphiti.ui.platform.IConfigurationProvider;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -26,10 +25,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 
-/**
- * 
- */
-public class ChalkboardContextMenuProvider extends DiagramEditorContextMenuProvider {
+public class ChalkboardContextMenuProvider extends GraphitiContextMenuProvider {
 
 	private static final String GROUP_CONTROL_ID = "group.control"; //$NON-NLS-1$
 	private static final String DELETE_ID = "delete"; //$NON-NLS-1$

@@ -24,8 +24,10 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.workspace.util.WorkspaceSynchronizer.Delegate;
 import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -39,6 +41,7 @@ import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.IDiagramEditorInput;
+import org.eclipse.graphiti.ui.platform.IConfigurationProvider;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -50,6 +53,7 @@ import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ChalkboardContextMenuProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.GraphitiContextMenuProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteBehavior;
 
@@ -259,11 +263,14 @@ public abstract class AbstractGraphitiDiagramEditor extends DiagramEditor {
 
 			@Override
 			protected ContextMenuProvider createContextMenuProvider() {
+				EditPartViewer viewer = getDiagramContainer().getGraphicalViewer();
+				ActionRegistry registry = getDiagramContainer().getActionRegistry();
+				IConfigurationProvider configurationProvider = getConfigurationProvider();
 				if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
-					return new ChalkboardContextMenuProvider(getDiagramContainer().getGraphicalViewer(), getDiagramContainer().getActionRegistry(),
-						getConfigurationProvider());
+					return new ChalkboardContextMenuProvider(viewer, registry, configurationProvider);
+				} else {
+					return new GraphitiContextMenuProvider(viewer, registry, configurationProvider);
 				}
-				return super.createContextMenuProvider();
 			}
 		};
 	}
