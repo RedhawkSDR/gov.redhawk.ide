@@ -46,6 +46,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -66,44 +67,45 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-/**
- * 
- */
 public class NewControlPanelProject extends AbstractHandler {
 
-	/*
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
 
 		final IEditorPart editor = HandlerUtil.getActiveEditor(event);
+		if (!(editor instanceof SCAFormEditor)) {
+			return null;
+		}
+		SCAFormEditor scaEditor = (SCAFormEditor) editor;
+
 		EObject eObj = null;
 		String name = null;
-		if (editor != null) {
-			if (editor instanceof SCAFormEditor) {
-				SCAFormEditor scaEditor = (SCAFormEditor) editor;
-				Resource resource = scaEditor.getMainResource();
-				if (resource instanceof SpdResourceImpl) {
-					SoftPkg spd = SoftPkg.Util.getSoftPkg(resource);
-					name = spd.getName();
-					eObj = spd;
-				} else if (resource instanceof SadResourceImpl) {
-					SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
-					name = sad.getName();
-					eObj = sad;
-				} else if (resource instanceof DcdResourceImpl) {
-					DeviceConfiguration dcd = DeviceConfiguration.Util.getDeviceConfiguration(resource);
-					name = dcd.getName();
-					eObj = dcd;
-				}
-			}
+		Resource resource = scaEditor.getMainResource();
+		if (resource instanceof SpdResourceImpl) {
+			SoftPkg spd = SoftPkg.Util.getSoftPkg(resource);
+			name = spd.getName();
+			eObj = spd;
+		} else if (resource instanceof SadResourceImpl) {
+			SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
+			name = sad.getName();
+			eObj = sad;
+		} else if (resource instanceof DcdResourceImpl) {
+			DeviceConfiguration dcd = DeviceConfiguration.Util.getDeviceConfiguration(resource);
+			name = dcd.getName();
+			eObj = dcd;
 		}
+
 		if (eObj == null) {
 			return null;
 		}
 		IProject spdProject = ModelUtil.getProject(eObj);
+
+		// Confirm creation of new project
+		String msg = String.format("Create a new control panel project for %s?", name);
+		if (!MessageDialog.openConfirm(HandlerUtil.getActiveShell(event), "Create control panel", msg)) {
+			return null;
+		}
 
 		String baseName = null;
 		if (spdProject != null) {
