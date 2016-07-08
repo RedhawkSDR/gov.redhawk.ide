@@ -97,6 +97,9 @@
                type="gov.redhawk.model.sca.ScaPropertyContainer">
          </adapter>
          <adapter
+               type="gov.redhawk.model.sca.ScaPortContainer">
+         </adapter>
+         <adapter
                type="gov.redhawk.model.sca.CorbaObjWrapper">
          </adapter>
          <adapter
@@ -126,6 +129,9 @@
          </adapter>
          <adapter
                type="gov.redhawk.model.sca.ScaPropertyContainer">
+         </adapter>
+         <adapter
+               type="gov.redhawk.model.sca.ScaPortContainer">
          </adapter>
          <adapter
                type="gov.redhawk.model.sca.CorbaObjWrapper">
