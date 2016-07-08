@@ -267,6 +267,33 @@ public class DiagramTestUtils {
 	}
 
 	/**
+	 * Show the connection wizard for a uses port
+	 * @param editor
+	 * @param componentName
+	 * @param portName
+	 */
+	public static void showConnectionWizardForUsesPort(SWTBotGefEditor editor, String componentName, String portName) {
+		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
+		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
+		editor.setFocus();
+		usesPortAnchor.select();
+		editor.clickContextMenu("Connect");
+	}
+
+	/**
+	 * Show the connection wizard for a provides port
+	 * @param editor
+	 * @param componentName
+	 * @param portName
+	 */
+	public static void showConnectionWizardForProvidesPort(SWTBotGefEditor editor, String componentName, String portName) {
+		final SWTBotGefEditPart providesPort = getDiagramProvidesPort(editor, componentName, portName);
+		final SWTBotGefEditPart providesPortAnchor = getDiagramPortAnchor(providesPort);
+		providesPortAnchor.select();
+		editor.clickContextMenu("Connect");
+	}
+
+	/**
 	 * Returns the center of the edit part, relative to the diagram
 	 * @param part The edit part for which to find the center
 	 * @return The center of the part
@@ -552,9 +579,22 @@ public class DiagramTestUtils {
 	}
 
 	/**
-	 * Display Port Monitor View on provided Uses Port Anchor
-	 * If there is only one port you leave portName null
-	 * @param portEditPart - The SWTBotGefEditPart of the port you are trying to get the anchor for
+	 * Monitor all ports on the specified resource
+	 * @param editor
+	 * @param componentName
+	 * @return
+	 */
+	public static void displayPortMonitorView(SWTBotGefEditor editor, String componentName) {
+		editor.setFocus();
+		editor.getEditPart(componentName).select();
+		editor.clickContextMenu("Monitor Ports");
+	}
+
+	/**
+	 * Monitor the specified uses port
+	 * @param editor
+	 * @param componentName
+	 * @param portName - The SWTBotGefEditPart of the uses port, or null to use the first one found
 	 * @return
 	 */
 	public static void displayPortMonitorViewOnUsesPort(SWTBotGefEditor editor, String componentName, String portName) {
@@ -563,8 +603,8 @@ public class DiagramTestUtils {
 		usesPortAnchor.select();
 		editor.clickContextMenu("Monitor Ports");
 	}
-	
-		/**
+
+	/**
 	 * 
 	 * @param editor - SWTBotGefEditor
 	 * @param componentName - Component being searched
@@ -1142,5 +1182,38 @@ public class DiagramTestUtils {
 		shell.bot().text().setText(logger);
 		shell.bot().button("OK").click();
 		editor.bot().waitUntil(Conditions.shellCloses(shell));
+	}
+
+	/**
+	 * Show a local component's console using the context menu
+	 * @param editor
+	 * @param componentName
+	 */
+	public static void showConsole(SWTBotGefEditor editor, String componentName) {
+		editor.setFocus();
+		editor.getEditPart(componentName).select();
+		editor.clickContextMenu("Show Console");
+	}
+
+	/**
+	 * Show a component's properties using the context menu
+	 * @param editor
+	 * @param componentName
+	 */
+	public static void showProperties(SWTBotGefEditor editor, String componentName) {
+		editor.getEditPart(componentName).select();
+		editor.clickContextMenu("Show Properties");
+	}
+
+	/**
+	 * Show a component's properties using the context menu
+	 * @param editor
+	 * @param componentName
+	 */
+	public static void showProperties(SWTBotGefEditor editor, String componentName, String portName) {
+		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
+		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
+		usesPortAnchor.select();
+		editor.clickContextMenu("Show Properties");
 	}
 }
