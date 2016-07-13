@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
+<!--
+    This file is protected by Copyright.
+    Please refer to the COPYRIGHT file distributed with this source distribution.
+
+    This file is part of REDHAWK IDE.
+
+    All rights reserved.  This program and the accompanying materials are made available under
+    the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html.
+-->
+<softpkg id="DCE:7585e55d-0836-4989-85a8-d599411e6eda" name="SpdMissingPrfAndScd" type="sca_compliant">
+  <author>
+  </author>
+  <propertyfile type="PRF">
+    <localfile name="SpdMissingPrfAndScd.prf.xml"/>
+  </propertyfile>
+  <descriptor>
+    <localfile name="SpdMissingPrfAndScd.scd.xml"/>
+  </descriptor>
+  <implementation id="cpp">
+    <code type="Executable">
+      <localfile name="cpp/SpdMissingPrfAndScd"/>
+      <entrypoint>cpp/SpdMissingPrfAndScd</entrypoint>
+    </code>
+    <os name="Linux"/>
+  </implementation>
+</softpkg>
+
