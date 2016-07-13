@@ -291,10 +291,9 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * @param bot
-	 * @param nodeParentPath The parent elements in the tree above the item
-	 * @param nodeName The item name itself
+	 * @deprecated Use {@link #terminate()}
 	 */
+	@Deprecated
 	public static void terminateLocalResourceInExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
 		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Terminate");
 	}
@@ -411,9 +410,30 @@ public class ScaExplorerTestUtils {
 		treeItemEntry.contextMenu("Release").click();
 	}
 
+	public static void allocate(SWTWorkbenchBot bot, String[] nodeParentPath, String nodeName) {
+		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Allocate");
+	}
+
+	public static void deallocate(SWTWorkbenchBot bot, String[] nodeParentPath, String nodeName) {
+		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Deallocate");
+	}
+
+	public static void deallocateAll(SWTWorkbenchBot bot, String[] nodeParentPath, String nodeName) {
+		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Deallocate All");
+	}
+
+	public static void addListener(SWTWorkbenchBot bot, String[] nodeParentPath, String nodeName) {
+		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Add Listener...");
+	}
+
+	public static void terminate(SWTWorkbenchBot bot, String[] nodeParentPath, String nodeName) {
+		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Terminate");
+	}
+
 	/**
-	 * Release node via REDHAWK Explorer.
+	 * @deprecated Use {@link #terminate()}
 	 */
+	@Deprecated
 	public static void terminateFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
 		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, node);
 		treeItemEntry.contextMenu("Terminate").click();
@@ -757,14 +777,27 @@ public class ScaExplorerTestUtils {
 	public static SWTBotTreeItem waitUntilNodeAppearsInScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
 		// 30 second wait, since projects build when exported
 		bot.waitUntil(new DefaultCondition() {
+
+			private WidgetNotFoundException lastException = null;
+
 			@Override
 			public String getFailureMessage() {
-				return nodeName + " did not load into REDHAWK Explorer";
+				if (lastException != null) {
+					return "Failed waiting for a tree item in the explorer view: " + lastException.toString();
+				} else {
+					return String.format("Unknown failure while waiting for a tree item in the explorer view. Parent path: %s. Tree item: %s.", Arrays.deepToString(nodeParentPath), nodeName);
+				}
 			}
 
 			@Override
 			public boolean test() throws Exception {
-				getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
+				try {
+					getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
+				} catch (WidgetNotFoundException e) {
+					lastException = e;
+					return false;
+				}
+				lastException = null;
 				return true;
 			}
 		}, 30000);

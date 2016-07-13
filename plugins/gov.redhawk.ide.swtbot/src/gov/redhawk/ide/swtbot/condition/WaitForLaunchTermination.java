@@ -18,7 +18,7 @@ import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.junit.Assert;
 
 /**
- * Waits for any/all launches to terminated
+ * Waits for any/all launches to terminate
  */
 public class WaitForLaunchTermination extends DefaultCondition {
 
