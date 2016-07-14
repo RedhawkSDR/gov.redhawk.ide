@@ -93,6 +93,9 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		final List<DataType> assemblyConfig = new ArrayList<DataType>();
 		final List<DataType> assemblyExec = new ArrayList<DataType>();
 
+		// Validate all XML before doing anything else
+		SadLauncherUtil.validateAllXML(sad);
+
 		// Find the assembly controller
 		SoftPkg assemblySoftPkg = ScaEcoreUtils.getFeature(sad, LocalWaveformLaunchDelegate.SAD_TO_ASSEMBLY_CONTROLLER_SPD);
 		if (assemblySoftPkg != null) {
