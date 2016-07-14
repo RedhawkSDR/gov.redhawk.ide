@@ -16,7 +16,7 @@
   <parent>
     <groupId>gov.redhawk.ide</groupId>
     <artifactId>releng-swtbot-development</artifactId>
-    <version>2.0.2-SNAPSHOT</version>
+    <version>2.0.3-SNAPSHOT</version>
     <relativePath>../../../releng/swtbot/development</relativePath>
   </parent>
   <groupId>gov.redhawk.ide</groupId>
