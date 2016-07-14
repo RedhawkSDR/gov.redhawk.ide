@@ -46,7 +46,7 @@ public final class SadLauncherUtil {
 
 	/**
 	 * @throws CoreException
-	 * @since 8.2
+	 * @since 8.3
 	 */
 	public static void validateAllXML(SoftwareAssembly sad) throws CoreException {
 		// Check SAD - throw immediately if there are errors
