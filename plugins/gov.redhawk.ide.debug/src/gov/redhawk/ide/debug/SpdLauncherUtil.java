@@ -45,6 +45,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.scd.ComponentType;
@@ -57,6 +58,7 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -64,8 +66,11 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreValidator;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TCKind;
@@ -788,6 +793,66 @@ public final class SpdLauncherUtil {
 		final URI spdURI = ScaLaunchConfigurationUtil.getProfileURI(configuration);
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		return SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
+	}
+
+	/**
+	 * Ensure there aren't obvious errors with the XML or dependent XML (PRFs, SCDs) that will prevent a launch.
+	 * @since 8.3
+	 */
+	public static IStatus validateAllXML(SoftPkg spd) {
+		if (!validateNoXMLErrors(spd)) {
+			String msg = String.format("Errors in SPD for component %s", spd.getName());
+			return new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg);
+		}
+
+		MultiStatus multiStatus = new MultiStatus(ScaDebugPlugin.ID, 0, "Some XML file(s) have errors", null);
+
+		// Check PRF if applicable
+		if (spd.getPropertyFile() != null) {
+			Properties prf = spd.getPropertyFile().getProperties();
+			String prfFilePath = spd.getPropertyFile().getLocalFile().getName();
+			if (prf == null) {
+				String msg = String.format("Missing PRF for component %s (%s)", spd.getName(), prfFilePath);
+				multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
+			} else if (!validateNoXMLErrors(prf)) {
+				String msg = String.format("Errors in PRF for component %s (%s)", spd.getName(), prfFilePath);
+				multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
+			}
+		}
+
+		// Check SCD if applicable
+		if (spd.getDescriptor() != null) {
+			SoftwareComponent scd = spd.getDescriptor().getComponent();
+			String scdFilePath = spd.getDescriptor().getLocalfile().getName();
+			if (scd == null) {
+				String msg = String.format("Missing SCD for component %s (%s)", spd.getName(), scdFilePath);
+				multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
+			} else if (!validateNoXMLErrors(scd)) {
+				String msg = String.format("Errors in SCD for component %s (%s)", spd.getName(), scdFilePath);
+				multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
+			}
+		}
+
+		if (!multiStatus.isOK()) {
+			return multiStatus;
+		} else {
+			return Status.OK_STATUS;
+		}
+	}
+
+	/**
+	 * Check for EMF validation errors on an EObject and its children.
+	 * @param object
+	 * @return
+	 */
+	static boolean validateNoXMLErrors(EObject object) {
+		TreeIterator<EObject> allContents = object.eResource().getAllContents();
+		boolean modelIsValid = true;
+		while (allContents.hasNext()) {
+			boolean validatorResult = EcoreValidator.INSTANCE.validate(allContents.next(), null, null);
+			modelIsValid = modelIsValid && validatorResult;
+		}
+		return modelIsValid;
 	}
 
 	/**

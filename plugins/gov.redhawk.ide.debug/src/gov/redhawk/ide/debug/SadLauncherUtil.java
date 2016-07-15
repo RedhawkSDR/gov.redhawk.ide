@@ -23,9 +23,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreValidator;
 
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
-import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 /**
@@ -45,61 +43,41 @@ public final class SadLauncherUtil {
 	}
 
 	/**
-	 * @throws CoreException
+	 * Ensure there aren't obvious errors with the XML or dependent XML (SPDs, etc.) that will prevent a launch.
 	 * @since 8.3
 	 */
-	public static void validateAllXML(SoftwareAssembly sad) throws CoreException {
+	public static IStatus validateAllXML(SoftwareAssembly sad) {
 		// Check SAD - throw immediately if there are errors
 		if (!validateNoXMLErrors(sad)) {
-			Status status = new Status(IStatus.ERROR, ScaDebugPlugin.ID, "There are 1 or more errors in the SAD file. Open the SAD file from a project to see the errors and correct them.");
-			throw new CoreException(status);
+			return new Status(IStatus.ERROR, ScaDebugPlugin.ID,
+				"There are errors in the SAD file");
 		}
 
 		// Check each referenced component
 		MultiStatus multiStatus = new MultiStatus(ScaDebugPlugin.ID, 0, "Some XML file(s) have errors", null);
 		for (ComponentFile componentFile : sad.getComponentFiles().getComponentFile()) {
-			// Check SPD - no further checks for this component if there are errors
+			// Check SPD - no further checks if it is missing
 			SoftPkg spd = componentFile.getSoftPkg();
 			if (spd == null) {
-				String msg = String.format("Missing component SPD for %s", componentFile.getId());
-				multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
-				continue;
-			} else if (!validateNoXMLErrors(spd)) {
-				String msg = String.format("Errors in SPD for component %s (%s)", spd.getName(), componentFile.getLocalFile().getName());
+				String msg = String.format("Missing component SPD for component %s (%s)", componentFile.getId(), componentFile.getLocalFile().getName());
 				multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
 				continue;
 			}
 
-			// Check PRF if applicable
-			if (spd.getPropertyFile() != null) {
-				Properties prf = spd.getPropertyFile().getProperties();
-				String prfFilePath = spd.getPropertyFile().getLocalFile().getName();
-				if (prf == null) {
-					String msg = String.format("Missing PRF for component %s (%s)", spd.getName(), prfFilePath);
-					multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
-				} else if (!validateNoXMLErrors(prf)) {
-					String msg = String.format("Errors in PRF for component  %s (%s)", spd.getName(), prfFilePath);
-					multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
-				}
-			}
-
-			// Check SCD if applicable
-			if (spd.getDescriptor() != null) {
-				SoftwareComponent scd = spd.getDescriptor().getComponent();
-				String scdFilePath = spd.getDescriptor().getLocalfile().getName();
-				if (scd == null) {
-					String msg = String.format("Missing SCD for component %s (%s)", spd.getName(), scdFilePath);
-					multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
-					continue;
-				} else if (!validateNoXMLErrors(scd)) {
-					String msg = String.format("Errors in SCD for component %s (%s)", spd.getName(), scdFilePath);
-					multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
+			IStatus status = SpdLauncherUtil.validateAllXML(spd);
+			if (!status.isOK()) {
+				if (status.isMultiStatus()) {
+					multiStatus.addAll(status);
+				} else {
+					multiStatus.add(status);
 				}
 			}
 		}
 
 		if (!multiStatus.isOK()) {
-			throw new CoreException(multiStatus);
+			return multiStatus;
+		} else {
+			return Status.OK_STATUS;
 		}
 	}
 

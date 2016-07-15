@@ -17,6 +17,7 @@ import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.externaltools.internal.launchConfigurations.ProgramLaunchDelegate;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -36,8 +37,14 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 		final int WORK_POST_LAUNCH = 100;
 		SubMonitor subMonitor = SubMonitor.convert(monitor, WORK_LAUNCH + WORK_POST_LAUNCH);
 
-		final ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
+		// Validate all XML before doing anything else
 		final SoftPkg spd = SpdLauncherUtil.getSpd(configuration);
+		IStatus status = SpdLauncherUtil.validateAllXML(spd);
+		if (!status.isOK()) {
+			throw new CoreException(status);
+		}
+
+		final ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
 		insertProgramArguments(spd, launch, workingCopy);
 
 		try {

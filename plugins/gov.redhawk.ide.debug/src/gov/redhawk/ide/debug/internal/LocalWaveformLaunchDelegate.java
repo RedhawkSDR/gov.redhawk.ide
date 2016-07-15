@@ -54,6 +54,7 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
@@ -94,7 +95,10 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		final List<DataType> assemblyExec = new ArrayList<DataType>();
 
 		// Validate all XML before doing anything else
-		SadLauncherUtil.validateAllXML(sad);
+		IStatus status = SadLauncherUtil.validateAllXML(sad);
+		if (!status.isOK()) {
+			throw new CoreException(status);
+		}
 
 		// Find the assembly controller
 		SoftPkg assemblySoftPkg = ScaEcoreUtils.getFeature(sad, LocalWaveformLaunchDelegate.SAD_TO_ASSEMBLY_CONTROLLER_SPD);

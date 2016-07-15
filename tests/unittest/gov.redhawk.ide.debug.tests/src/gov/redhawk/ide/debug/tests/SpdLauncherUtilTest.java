@@ -17,12 +17,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.junit.Assert;
 import org.junit.Test;
 
-import gov.redhawk.ide.debug.SadLauncherUtil;
+import gov.redhawk.ide.debug.SpdLauncherUtil;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.util.SdrPluginLoader;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.spd.SoftPkg;
 
-public class SadLauncherUtilTest {
+public class SpdLauncherUtilTest {
 
 	private static final String PLUGIN_ID = "gov.redhawk.ide.debug.tests";
 	private static final String TEST_SDR_PATH = "testFiles/sdr";
@@ -31,21 +31,26 @@ public class SadLauncherUtilTest {
 	public void validateAllXML() throws URISyntaxException, IOException {
 		SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(PLUGIN_ID, TEST_SDR_PATH);
 
-		SoftwareAssembly sad = getSad(sdrRoot, "sadWithErrors");
-		IStatus status = SadLauncherUtil.validateAllXML(sad);
+		SoftPkg spd = getSpd(sdrRoot, "SpdMissingPrfAndScd");
+		IStatus status = SpdLauncherUtil.validateAllXML(spd);
+		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
+		Assert.assertEquals(2, status.getChildren().length);
+
+		spd = getSpd(sdrRoot, "SpdWithErrors");
+		status = SpdLauncherUtil.validateAllXML(spd);
 		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
 		Assert.assertEquals(0, status.getChildren().length);
 
-		sad = getSad(sdrRoot, "sadWithComponentsWithErrors");
-		status = SadLauncherUtil.validateAllXML(sad);
+		spd = getSpd(sdrRoot, "SpdWithPrfAndScdErrors");
+		status = SpdLauncherUtil.validateAllXML(spd);
 		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
-		Assert.assertEquals(6, status.getChildren().length);
+		Assert.assertEquals(2, status.getChildren().length);
 	}
 
-	private SoftwareAssembly getSad(SdrRoot sdrRoot, String name) {
-		for (SoftwareAssembly sad : sdrRoot.getWaveformsContainer().getWaveforms()) {
-			if (name.equals(sad.getName())) {
-				return sad;
+	private SoftPkg getSpd(SdrRoot sdrRoot, String name) {
+		for (SoftPkg spd : sdrRoot.getComponentsContainer().getComponents()) {
+			if (name.equals(spd.getName())) {
+				return spd;
 			}
 		}
 		return null;
