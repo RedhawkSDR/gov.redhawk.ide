@@ -11,6 +11,35 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
+import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
+
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
@@ -26,13 +55,6 @@ import gov.redhawk.ide.sdr.WaveformsContainer;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.PluginUtil;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.dmd.DmdPackage;
@@ -49,34 +71,6 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
-
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.NotificationChain;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.EObjectImpl;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.SetCommand;
-import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.emf.transaction.util.TransactionUtil;
 
 /**
  * <!-- begin-user-doc --> An implementation of the model object '
@@ -780,6 +774,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			overallLoadStatus.merge(loadDomFileSystem(editingDomain, subMonitor.newChild(1)));
 			overallLoadStatus.merge(loadDevFileSystem(editingDomain, subMonitor.newChild(1)));
 			overallLoadStatus.merge(loadIdlLibrary(subMonitor.newChild(1)));
+			overallLoadStatus.merge(checkForDuplicates());
+
 		} finally {
 			if (!overallLoadStatus.isOK()) {
 				editingDomain.getCommandStack().execute(SetCommand.create(editingDomain, this, SdrPackage.Literals.SDR_ROOT__LOAD_STATUS, overallLoadStatus));
@@ -793,6 +789,51 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			}
 		}
 		// BEGIN GENERATED CODE
+	}
+
+	/**
+	 * Check through all objects in the Target SDR and ensure that no duplicate ID's are found
+	 */
+	private IStatus checkForDuplicates() {
+		final CustomMultiStatus duplicateStatus = new CustomMultiStatus(IdeSdrActivator.PLUGIN_ID, IStatus.OK, null, null);
+		Map<String, EObject> duplicatesMap = new HashMap<String, EObject>();
+		// Components
+		for (SoftPkg spd : getComponentsContainer().getComponents()) {
+			updateDuplicateMap(duplicateStatus, duplicatesMap, spd, spd.getId());
+		}
+		// Shared Libraries
+		for (SoftPkg spd : getSharedLibrariesContainer().getComponents()) {
+			updateDuplicateMap(duplicateStatus, duplicatesMap, spd, spd.getId());
+		}
+		// Devices
+		for (SoftPkg spd : getDevicesContainer().getComponents()) {
+			updateDuplicateMap(duplicateStatus, duplicatesMap, spd, spd.getId());
+		}
+		// Services
+		for (SoftPkg spd : getServicesContainer().getComponents()) {
+			updateDuplicateMap(duplicateStatus, duplicatesMap, spd, spd.getId());
+		}
+		// Waveforms
+		for (SoftwareAssembly waveform : getWaveformsContainer().getWaveforms()) {
+			updateDuplicateMap(duplicateStatus, duplicatesMap, waveform, waveform.getId());
+		}
+		// Nodes
+		for (DeviceConfiguration node : getNodesContainer().getNodes()) {
+			updateDuplicateMap(duplicateStatus, duplicatesMap, node, node.getId());
+		}
+
+		return duplicateStatus;
+	}
+
+	/**
+	 * Add a Status.ERROR for every duplicate found
+	 */
+	private void updateDuplicateMap(CustomMultiStatus duplicateStatus, Map<String, EObject> duplicatesMap, EObject newObj, String key) {
+		EObject exitingObj = duplicatesMap.put(key, newObj);
+		if (exitingObj != null) {
+			duplicateStatus.merge(new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, convertFileURI(newObj.eResource().getURI()) + " duplicate ID of "
+				+ convertFileURI(exitingObj.eResource().getURI()) + ". IDs should be unique."));
+		}
 	}
 
 	private IStatus loadIdlLibrary(IProgressMonitor monitor) {
@@ -845,65 +886,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			}
 		} else {
 			return new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, "SDR Domain Root is 'null'", null);
-		}
-		// BEGIN GENERATED CODE
-	}
-
-	private IStatus processResource(EditingDomain domain, IFile resource, IProgressMonitor monitor) {
-		// END GENERATED CODE
-		try {
-			if (resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-				return loadSpd(domain, EFS.getStore(resource.getLocationURI()), monitor);
-			} else if (resource.getName().endsWith(SadPackage.FILE_EXTENSION)) {
-				return loadSad(domain, EFS.getStore(resource.getLocationURI()), monitor);
-			} else if (resource.getName().endsWith(DcdPackage.FILE_EXTENSION)) {
-				return loadDcd(domain, EFS.getStore(resource.getLocationURI()), monitor);
-			} else if (resource.getName().endsWith(DmdPackage.FILE_EXTENSION)) {
-				return loadDmd(domain, EFS.getStore(resource.getLocationURI()), monitor);
-			} else {
-				return Status.OK_STATUS;
-			}
-		} catch (CoreException e) {
-			return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to process resource " + resource, e);
-		}
-		// BEGIN GENERATED CODE
-	}
-
-	private IStatus processResource(EditingDomain domain, IContainer resource, IProgressMonitor monitor) {
-		// END GENERATED CODE
-		IResource[] children;
-		try {
-			children = resource.members();
-		} catch (CoreException e) {
-			return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to process resource " + resource, e);
-		}
-		monitor.beginTask("Processing directory " + resource.getName(), children.length);
-		CustomMultiStatus status = new CustomMultiStatus(IdeSdrActivator.PLUGIN_ID, Status.OK, "Failed to process resource : " + resource.getName(), null);
-		try {
-			for (IResource child : children) {
-				status.merge(processResource(domain, child, new SubProgressMonitor(monitor, 1)));
-			}
-		} finally {
-			monitor.done();
-		}
-		return status;
-		// BEGIN GENERATED CODE
-	}
-
-	private IStatus processResource(EditingDomain domain, IResource resource, IProgressMonitor monitor) {
-		// END GENERATED CODE
-		if (resource instanceof IProject) {
-			IProject project = (IProject) resource;
-			if (project.isOpen()) {
-				return processResource(domain, project, monitor);
-			}
-			return Status.OK_STATUS;
-		} else if (resource instanceof IContainer) {
-			return processResource(domain, (IContainer) resource, monitor);
-		} else if (resource instanceof IFile) {
-			return processResource(domain, (IFile) resource, monitor);
-		} else {
-			return Status.OK_STATUS;
 		}
 		// BEGIN GENERATED CODE
 	}
@@ -1410,15 +1392,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		}
 		submonitor.worked(1);
 
-		IStatus retVal = Status.OK_STATUS;
-		for (SoftPkg spd : getDevicesContainer().getComponents()) {
-			if (PluginUtil.equals(spd.getId(), softPkg.getId())) {
-				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, convertFileURI(spdFileUri) + " duplicate ID of "
-					+ convertFileURI(spd.eResource().getURI()) + ". IDs should be unique.");
-				break;
-			}
-		}
-
 		// Determine type of spd to be added
 		final SoftwareComponent component = ScaEcoreUtils.getFeature(softPkg, DESC_PATH);
 		if (component != null) {
@@ -1454,7 +1427,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			addResource(domain, softPkg, null);
 		}
 		submonitor.worked(1);
-		return retVal;
+		return Status.OK_STATUS;
 		// BEGIN GENERATED CODE
 	}
 
@@ -1476,17 +1449,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 */
 	private void addResource(EditingDomain domain, final SoftPkg softPkg, final SoftwareComponent component) {
 		// END GENERATED CODE
-		List<SoftPkg> existingSpds = new ArrayList<SoftPkg>();
-		existingSpds.addAll(getComponentsContainer().getComponents());
-		existingSpds.addAll(getSharedLibrariesContainer().getComponents());
-
-		for (SoftPkg spd : existingSpds) {
-			if (PluginUtil.equals(spd.getId(), softPkg.getId())) {
-				// Skip it is already in the SDR
-				return;
-			}
-		}
-
 		if (component != null) {
 			boolean isDevice = false;
 			for (final SupportsInterface iface : component.getComponentFeatures().getSupportsInterface()) {
