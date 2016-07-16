@@ -11,22 +11,28 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.tests;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
+import org.junit.Assert;
+
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.eclipsecorba.library.LibraryFactory;
 import gov.redhawk.ide.sdr.LoadState;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.util.SdrPluginLoader;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
-import java.net.URI;
-import org.junit.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.emf.edit.command.SetCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.emf.transaction.util.TransactionUtil;
 
 /**
  * <!-- begin-user-doc --> A test case for the model object '
@@ -379,6 +385,18 @@ public class SdrRootTest extends TestCase {
 		// END GENERATED CODE
 		getFixture().getDomResource(null);
 		// BEGIN GENERATED CODE
+	}
+
+	public void testDuplicateId_IDE_1121() throws URISyntaxException, IOException {
+		SdrRoot sdr = SdrPluginLoader.getSdrRoot(SdrTestsUtil.PLUGIN_ID, "testFiles/sdr2");
+		IStatus loadStatus = sdr.getLoadStatus();
+		Assert.assertTrue(loadStatus.getSeverity() == Status.ERROR);
+		for (IStatus child : loadStatus.getChildren()) {
+			if (child.getMessage() != null && child.getMessage().matches(".*" + "IDs should be unique.")) {
+				return;
+			}
+		}
+		Assert.fail("Duplicate error message was not loaded");
 	}
 
 } // SdrRootTest
