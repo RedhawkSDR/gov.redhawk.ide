@@ -13,15 +13,12 @@ package gov.redhawk.ide.sad.internal.ui.properties;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
-import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 
-/**
- * 
- */
 public final class PropertiesDefaultCustomizations {
-	private PropertiesDefaultCustomizations() {
 
+	private PropertiesDefaultCustomizations() {
 	}
 
 	private static final List<XViewerColumn> DEFAULT_COLUMNS = Arrays.asList(new XViewerColumn[] { PropertiesViewerFactory.NAME, PropertiesViewerFactory.EXTERNAL,

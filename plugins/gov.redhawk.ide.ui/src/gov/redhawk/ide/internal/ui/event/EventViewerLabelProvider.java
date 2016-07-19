@@ -20,8 +20,8 @@ import mil.jpeojtrs.sca.util.AnyUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
-import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.swt.graphics.Image;
 
 import CF.DataType;
@@ -40,20 +40,13 @@ import StandardEvent.StateChangeEventType;
 import StandardEvent.StateChangeEventTypeHelper;
 import StandardEvent.StateChangeType;
 
-/**
- * 
- */
 public class EventViewerLabelProvider extends XViewerLabelProvider {
 
 	private static final DateFormat DATE_FORMAT_MS = new SimpleDateFormat("HH:mm::SSSS");
 	private static final DateFormat DATE_FORMAT_SS = new SimpleDateFormat("HH:mm::ss");
 
-	/**
-	 * @param viewer
-	 */
 	public EventViewerLabelProvider(XViewer viewer) {
 		super(viewer);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -71,26 +64,16 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 		// do nothing
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider#getColumnImage(java.lang.Object, org.eclipse.nebula.widgets.xviewer.XViewerColumn, int)
-	 */
 	@Override
 	public Image getColumnImage(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider#getColumnText(java.lang.Object, org.eclipse.nebula.widgets.xviewer.XViewerColumn, int)
-	 */
 	@Override
 	public String getColumnText(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
 		if (element instanceof Event) {

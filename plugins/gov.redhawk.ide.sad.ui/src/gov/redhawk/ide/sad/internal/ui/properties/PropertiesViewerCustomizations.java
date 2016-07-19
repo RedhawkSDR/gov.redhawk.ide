@@ -13,15 +13,10 @@ package gov.redhawk.ide.sad.internal.ui.properties;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.customize.XViewerCustomizations;
 
-/**
- * 
- */
 public class PropertiesViewerCustomizations extends XViewerCustomizations {
-	
-	
 
 	@Override
 	public List<CustomizeData> getSavedCustDatas() throws Exception {

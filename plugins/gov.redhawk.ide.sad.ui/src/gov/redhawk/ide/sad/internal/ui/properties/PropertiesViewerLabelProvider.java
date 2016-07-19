@@ -31,24 +31,18 @@ import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
-import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 
-/**
- * 
- */
 public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 
 	private ComposedAdapterFactory adapterFactory;
 	private AdapterFactoryLabelProvider labelProvider;
 
-	/**
-	 * @param viewer
-	 */
 	public PropertiesViewerLabelProvider(XViewer viewer) {
 		super(viewer);
 		adapterFactory = new ComposedAdapterFactory();
@@ -72,17 +66,11 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		// do nothing
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		adapterFactory.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider#getColumnImage(java.lang.Object, org.eclipse.nebula.widgets.xviewer.XViewerColumn, int)
-	 */
 	@Override
 	public Image getColumnImage(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
 		if (columnIndex == 0) {
@@ -96,9 +84,6 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider#getColumnText(java.lang.Object, org.eclipse.nebula.widgets.xviewer.XViewerColumn, int)
-	 */
 	@Override
 	public String getColumnText(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
 		String retVal = internalGetColumnText(element, xCol, columnIndex);

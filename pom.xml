@@ -23,7 +23,7 @@
     <tycho.scmUrl>scm:git:https://github.com/RedhawkSDR/eclipse-gov.redhawk.ide</tycho.scmUrl>
     <eclipse>http://download.eclipse.org/releases/mars</eclipse>
     <orbit>http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository</orbit>
-    <nebula>http://archive.eclipse.org/technology/nebula/Q32014/release/</nebula>
+    <nebula>http://download.eclipse.org/nebula/releases/1.0.0/</nebula>
     <nxm>http://nextmidas.techma.com/p2/nxm/updates/latest</nxm>
     <nxm-rcp>http://nextmidas.techma.com/p2/nxm.ui/updates/latest/</nxm-rcp>
     <jacorb>http://download.redhawksdr.org/jacorb/updates/stable</jacorb>
