@@ -324,6 +324,9 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 
 	@Override
 	public boolean hasChildren(final Object object) {
+		if (object instanceof SoftPkg) {
+			return false;
+		}
 		return true;
 	}
 
