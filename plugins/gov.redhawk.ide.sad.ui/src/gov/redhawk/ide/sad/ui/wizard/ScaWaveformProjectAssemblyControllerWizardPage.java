@@ -10,39 +10,42 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.ui.wizard;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.impl.SoftPkgImpl;
-import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
-
-import org.eclipse.emf.common.util.URI;
+import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
-import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
+
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
+import gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
 /**
  * @since 4.0
  */
 public class ScaWaveformProjectAssemblyControllerWizardPage extends WizardPage {
 
-	private List<SoftPkg> components;
-	private TableViewer tableViewer;
+	private TreeViewer treeViewer;
 	private static final int TABLE_HEIGHT_HINT = 150;
 
 	public ScaWaveformProjectAssemblyControllerWizardPage(final String pageName) {
@@ -65,74 +68,70 @@ public class ScaWaveformProjectAssemblyControllerWizardPage extends WizardPage {
 		directionsLabel.setText("Select the Component that you want to be the Assembly Controller for your Waveform:");
 		GridDataFactory.generate(directionsLabel, 2, 1);
 
-		this.tableViewer = new TableViewer(new Table(composite, SWT.BORDER));
+		this.treeViewer = new TreeViewer(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		this.treeViewer.setContentProvider(new SdrNavigatorContentProvider());
+		this.treeViewer.setLabelProvider(new SdrNavigatorLabelProvider());
+		this.treeViewer.setComparator(new SdrViewerSorter());
+
 		final GridData data = new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1);
 		data.heightHint = ScaWaveformProjectAssemblyControllerWizardPage.TABLE_HEIGHT_HINT;
-		this.tableViewer.getControl().setLayoutData(data);
+		this.treeViewer.getControl().setLayoutData(data);
 
 		final ComposedAdapterFactory factory = new ComposedAdapterFactory();
 		factory.addAdapterFactory(new SpdItemProviderAdapterFactory());
 
-		this.tableViewer.setContentProvider(new ArrayContentProvider());
-		this.tableViewer.setLabelProvider(new DecoratingLabelProvider(new AdapterFactoryLabelProvider(factory),
-			PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()) {
+		final WorkspaceJob job = new WorkspaceJob("Load SdrRoot") {
+			@Override
+			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+				final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
+				sdrRoot.load(null);
+				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						treeViewer.setInput(sdrRoot.getComponentsContainer());
+					}
+				});
+				return Status.OK_STATUS;
+			}
+		};
+
+		job.setUser(true);
+		job.schedule();
+
+		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
-			public String getText(final Object element) {
-				if (element instanceof SoftPkgImpl) {
-					final SoftPkgImpl softPkg = (SoftPkgImpl) element;
-					final URI uri = softPkg.eResource().getURI();
-					return softPkg.getName() + " (" + uri.path().replace(uri.lastSegment(), "") + ")";
-				}
-
-				return "";
+			public void selectionChanged(SelectionChangedEvent event) {
+				getWizard().getContainer().updateButtons();
 			}
-
 		});
 
-		if (this.components != null) {
-			this.tableViewer.setInput(this.components);
-		}
 		setControl(composite);
 	}
 
 	public SoftPkg getAssemblyController() {
-		return (SoftPkg) ((IStructuredSelection) this.tableViewer.getSelection()).getFirstElement();
+		return (SoftPkg) ((IStructuredSelection) this.treeViewer.getSelection()).getFirstElement();
 	}
 
-	public void setComponents(final List<SoftPkg> components) {
-		// Make a new ArrayList, don't mess with the passed in list
-		this.components = new ArrayList<SoftPkg>(components);
-
-		Collections.sort(this.components, new Comparator<SoftPkg>() {
-			@Override
-			public int compare(final SoftPkg o1, final SoftPkg o2) {
-				final String s1 = o1.getName();
-				final String s2 = o2.getName();
-
-				if (s1 == null) {
-					if (s2 == null) {
-						return 0;
-					} else {
-						return 1;
-					}
-				} else if (s2 == null) {
-					return -1;
-				} else {
-					return s1.compareToIgnoreCase(s2);
-				}
-			}
-		});
-
-		if (this.tableViewer != null) {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!tableViewer.getControl().isDisposed()) {
-						tableViewer.setInput(ScaWaveformProjectAssemblyControllerWizardPage.this.components);
-					}
-				}
-			});
+	@Override
+	public boolean isPageComplete() {
+		if (treeViewer.getSelection().isEmpty()) {
+			return super.isPageComplete();
 		}
+
+		Object selection = ((TreeSelection) treeViewer.getSelection()).getFirstElement();
+		if (selection instanceof SoftPkg) {
+			return super.isPageComplete();
+		}
+		return false;
+	}
+
+	/**
+	 * @deprecated {@link ScaWaveformProjectAssemblyControllerWizardPage} now collects the list of available components
+	 * internally
+	 */
+	@Deprecated
+	public void setComponents(final List<SoftPkg> components) {
+		return;
 	}
 }

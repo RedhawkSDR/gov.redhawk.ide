@@ -10,25 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.ui.wizard;
 
-import gov.redhawk.ide.codegen.CodegenUtil;
-import gov.redhawk.ide.codegen.util.ProjectCreator;
-import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
-import gov.redhawk.ide.sad.ui.SadUiActivator;
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-
-import mil.jpeojtrs.sca.sad.SadPackage;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
@@ -51,6 +38,15 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+
+import gov.redhawk.ide.codegen.CodegenUtil;
+import gov.redhawk.ide.codegen.util.ProjectCreator;
+import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
+import gov.redhawk.ide.sad.ui.SadUiActivator;
+import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
  * Wizard for creating new REDHAWK waveform projects.
@@ -81,23 +77,9 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 	public void addPages() {
 		this.waveformPropertiesPage = new ScaWaveformProjectPropertiesWizardPage("");
 		addPage(this.waveformPropertiesPage);
-
 		this.waveformACpage = new ScaWaveformProjectAssemblyControllerWizardPage("");
 		this.waveformACpage.setDescription("Add an existing Assembly Controller to your Waveform");
 		addPage(this.waveformACpage);
-
-		final WorkspaceJob job = new WorkspaceJob("Load SdrRoot") {
-			@Override
-			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
-				final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
-				sdrRoot.load(monitor);
-				NewScaWaveformProjectWizard.this.waveformACpage.setComponents(sdrRoot.getComponentsContainer().getComponents());
-				return Status.OK_STATUS;
-			}
-		};
-
-		job.setUser(true);
-		job.schedule();
 	}
 
 	/**
@@ -108,7 +90,9 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 		if (this.waveformPropertiesPage.isCreateNewResource()) {
 			return super.canFinish();
 		} else {
-			return this.waveformPropertiesPage.isPageComplete();
+			boolean isPropPageComplete = this.waveformPropertiesPage.isPageComplete();
+			boolean isControllerPageComplete = this.waveformACpage.isPageComplete();
+			return isPropPageComplete && isControllerPageComplete;
 		}
 	}
 
