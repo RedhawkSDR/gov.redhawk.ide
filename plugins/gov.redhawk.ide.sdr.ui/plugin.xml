@@ -30,9 +30,9 @@
         point="org.eclipse.ui.navigator.navigatorContent">
      <navigatorContent
            activeByDefault="true"
-           contentProvider="gov.redhawk.ide.sdr.internal.ui.navigator.SdrNavigatorContentProvider"
+           contentProvider="gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider"
            id="gov.redhawk.ide.ui.sdr.navigatorContent"
-           labelProvider="gov.redhawk.ide.sdr.internal.ui.navigator.SdrNavigatorLabelProvider"
+           labelProvider="gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider"
            name="%navigatorContent.name.sdr"
            priority="lowest"
            providesSaveables="false"
@@ -43,7 +43,7 @@
            </instanceof>
         </triggerPoints>
         <commonSorter
-              class="gov.redhawk.ide.sdr.internal.ui.navigator.SdrViewerSorter">
+              class="gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter">
         </commonSorter>
         <possibleChildren>
            <or>

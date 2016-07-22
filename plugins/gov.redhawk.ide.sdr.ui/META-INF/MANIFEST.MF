@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: gov.redhawk.ide.sdr.ui;singleton:=true
-Bundle-Version: 4.1.0.qualifier
+Bundle-Version: 4.2.0.qualifier
 Bundle-Activator: gov.redhawk.ide.sdr.ui.SdrUiPlugin
 Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.core.runtime;bundle-version="3.6.0",
@@ -37,11 +37,11 @@ Bundle-Vendor: %Bundle-Provider.0
 Export-Package: gov.redhawk.ide.sdr.internal.ui;x-internal:=true,
  gov.redhawk.ide.sdr.internal.ui.commands;x-internal:=true,
  gov.redhawk.ide.sdr.internal.ui.filesystem;x-internal:=true,
- gov.redhawk.ide.sdr.internal.ui.navigator;x-internal:=true,
  gov.redhawk.ide.sdr.internal.ui.preferences;x-internal:=true,
  gov.redhawk.ide.sdr.ui,
  gov.redhawk.ide.sdr.ui.export,
  gov.redhawk.ide.sdr.ui.internal.handlers;x-friends:="gov.redhawk.ide.ui.tests.runtime",
+ gov.redhawk.ide.sdr.ui.navigator,
  gov.redhawk.ide.sdr.ui.preferences,
  gov.redhawk.ide.sdr.ui.util
 Service-Component: OSGI-INF/service.xml

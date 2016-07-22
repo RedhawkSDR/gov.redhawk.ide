@@ -8,13 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sdr.internal.ui.navigator;
-
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrLabelProvider;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.sca.efs.WrappedFileStore;
-import gov.redhawk.sca.ui.ITooltipProvider;
+package gov.redhawk.ide.sdr.ui.navigator;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -37,6 +31,15 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.ui.SdrLabelProvider;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.sca.efs.WrappedFileStore;
+import gov.redhawk.sca.ui.ITooltipProvider;
+
+/**
+ * @since 4.2
+ */
 public class SdrNavigatorLabelProvider extends SdrLabelProvider implements IDescriptionProvider, ICommonLabelProvider, ITooltipProvider {
 
 	@Override
