@@ -10,26 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.spd.internal.ui.editor.wizard;
 
-import gov.redhawk.ide.sdr.SharedLibrariesContainer;
-import gov.redhawk.ide.sdr.ui.SdrContentProvider;
-import gov.redhawk.ide.sdr.ui.SdrLabelProvider;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionPropertyRefItemProvider;
-import gov.redhawk.ide.spd.internal.ui.parts.PropertyElementSelectorDialog;
-import gov.redhawk.sca.util.PluginUtil;
-import gov.redhawk.ui.util.EMFEmptyStringToNullUpdateValueStrategy;
-import gov.redhawk.ui.validation.EmfValidationStatusProvider;
-import mil.jpeojtrs.sca.prf.AbstractProperty;
-import mil.jpeojtrs.sca.prf.Simple;
-import mil.jpeojtrs.sca.spd.Dependency;
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.PropertyRef;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.SoftPkgRef;
-import mil.jpeojtrs.sca.spd.SpdFactory;
-import mil.jpeojtrs.sca.spd.SpdPackage;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
-
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
@@ -53,11 +33,8 @@ import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -74,6 +51,25 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.PageBook;
+
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
+import gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter;
+import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionPropertyRefItemProvider;
+import gov.redhawk.ide.spd.internal.ui.parts.PropertyElementSelectorDialog;
+import gov.redhawk.ui.util.EMFEmptyStringToNullUpdateValueStrategy;
+import gov.redhawk.ui.validation.EmfValidationStatusProvider;
+import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.Simple;
+import mil.jpeojtrs.sca.spd.Dependency;
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.PropertyRef;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SoftPkgRef;
+import mil.jpeojtrs.sca.spd.SpdFactory;
+import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 public class DependencyWizardPage extends WizardPage {
 	private static final int NUM_COLUMNS = 3;
@@ -198,7 +194,7 @@ public class DependencyWizardPage extends WizardPage {
 		this.dependencyTypeComboViewer = new ComboViewer(client, SWT.DROP_DOWN | SWT.BORDER);
 		this.dependencyTypeComboViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 		this.dependencyTypeComboViewer.setContentProvider(new ArrayContentProvider());
-		dependencyTypeComboViewer.setInput(new String[0]);
+		this.dependencyTypeComboViewer.setInput(new String[0]);
 		this.dependencyTypeComboViewer.setComparator(new ViewerComparator());
 
 		this.detailsPageBook = new PageBook(client, SWT.NONE);
@@ -282,10 +278,10 @@ public class DependencyWizardPage extends WizardPage {
 			}
 		}
 
-		final IEMFValueProperty propRefIdPath = EMFProperties.value(FeaturePath.fromList(SpdPackage.Literals.DEPENDENCY__PROPERTY_REF,
-			SpdPackage.Literals.PROPERTY_REF__REF_ID));
-		final IEMFValueProperty propValuePath = EMFProperties.value(FeaturePath.fromList(SpdPackage.Literals.DEPENDENCY__PROPERTY_REF,
-			SpdPackage.Literals.PROPERTY_REF__VALUE));
+		final IEMFValueProperty propRefIdPath = EMFProperties.value(
+			FeaturePath.fromList(SpdPackage.Literals.DEPENDENCY__PROPERTY_REF, SpdPackage.Literals.PROPERTY_REF__REF_ID));
+		final IEMFValueProperty propValuePath = EMFProperties.value(
+			FeaturePath.fromList(SpdPackage.Literals.DEPENDENCY__PROPERTY_REF, SpdPackage.Literals.PROPERTY_REF__VALUE));
 
 		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.refIdText), propRefIdPath.observe(this.dependency),
 			new EMFEmptyStringToNullUpdateValueStrategy(), null);
@@ -306,8 +302,8 @@ public class DependencyWizardPage extends WizardPage {
 			}
 
 		});
-		this.context.bindValue(WidgetProperties.text(SWT.None).observe(this.propNameText), propRefIdPath.observe(this.dependency), new UpdateValueStrategy(
-			UpdateValueStrategy.POLICY_NEVER), strategy);
+		this.context.bindValue(WidgetProperties.text(SWT.None).observe(this.propNameText), propRefIdPath.observe(this.dependency),
+			new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), strategy);
 		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.valueText), propValuePath.observe(this.dependency),
 			new EMFEmptyStringToNullUpdateValueStrategy(), null);
 
@@ -329,48 +325,11 @@ public class DependencyWizardPage extends WizardPage {
 		this.softPkgRefGroup.setText("Shared Library (SoftPkg) Reference");
 		this.softPkgRefGroup.setLayout(new FillLayout());
 		this.softPkgRefViewer = new TreeViewer(this.softPkgRefGroup, SWT.FULL_SELECTION | SWT.SINGLE);
-		this.softPkgRefViewer.setComparer(new IElementComparer() {
-
-			@Override
-			public int hashCode(final Object element) {
-				if (element instanceof EObject) {
-					final String id = EcoreUtil.getID((EObject) element);
-					if (id != null) {
-						return id.hashCode();
-					}
-				}
-				return element.hashCode();
-			}
-
-			@Override
-			public boolean equals(final Object a, final Object b) {
-				if (a instanceof EObject && b instanceof EObject) {
-					final String ida = EcoreUtil.getID((EObject) a);
-					final String idb = EcoreUtil.getID((EObject) b);
-					if (ida != null && idb != null) {
-						return ida.equals(idb);
-					}
-				}
-				return PluginUtil.equals(a, b);
-			}
-		});
 		this.softPkgRefViewer.setUseHashlookup(true);
-		this.softPkgRefViewer.setContentProvider(new SdrContentProvider());
-		this.softPkgRefViewer.setLabelProvider(new SdrLabelProvider());
-		this.softPkgRefViewer.setFilters(new ViewerFilter[] { new ViewerFilter() {
-
-			@Override
-			public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-				final Class< ? >[] showTypes = new Class< ? >[] { SharedLibrariesContainer.class, SoftPkg.class, Implementation.class };
-				for (final Class< ? > type : showTypes) {
-					if (type.isInstance(element)) {
-						return true;
-					}
-				}
-				return false;
-			}
-		} });
-		this.softPkgRefViewer.setInput(SdrUiPlugin.getDefault().getTargetSdrRoot());
+		this.softPkgRefViewer.setContentProvider(new SdrNavigatorContentProvider());
+		this.softPkgRefViewer.setLabelProvider(new SdrNavigatorLabelProvider());
+		this.softPkgRefViewer.setComparator(new SdrViewerSorter());
+		this.softPkgRefViewer.setInput(SdrUiPlugin.getDefault().getTargetSdrRoot().getSharedLibrariesContainer());
 	}
 
 	private void createPropertyRefGroup(final Composite parent) {
