@@ -10,52 +10,61 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.ui.wizard;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.impl.SoftPkgImpl;
-import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
-
-import org.eclipse.emf.common.util.URI;
+import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
-import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
+
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
+import gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
 /**
  * @since 1.1
  */
 public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 
-	private SoftPkg[] devices;
-	private CheckboxTableViewer tableViewer;
-
-	public ScaNodeProjectDevicesWizardPage(final String pageName, final SoftPkg[] devices) {
-		super(pageName);
-		setTitle("Select Devices for Node");
-		this.devices = devices;
-		this.setPageComplete(true);
-	}
+	private TreeViewer treeViewer;
 
 	/**
 	 * @since 1.2
 	 */
 	public ScaNodeProjectDevicesWizardPage(final String pageName) {
-		this(pageName, new SoftPkg[0]);
+		super(pageName);
+		setTitle("Select Devices for Node");
+		this.setPageComplete(true);
+	}
+
+	/**
+	 * @deprecated {@link ScaNodeProjectDevicesWizardPage} now collects the list of available devices
+	 * internally
+	 */
+	@Deprecated
+	public ScaNodeProjectDevicesWizardPage(final String pageName, final SoftPkg[] devices) {
+		this(pageName);
 	}
 
 	/**
@@ -69,42 +78,43 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 
 		// Top Heading
 		final Label directionsLabel = new Label(composite, SWT.NONE);
-		directionsLabel.setText("Check the boxes next to the devices to include in this node:");
+		directionsLabel.setText("Select devices to include in this node (ctrl+click to select multiple devices):");
 		GridDataFactory.generate(directionsLabel, 2, 1);
 
-		this.tableViewer = new CheckboxTableViewer(new Table(composite, SWT.CHECK | SWT.BORDER));
-		this.tableViewer.getControl().setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
+		this.treeViewer = new TreeViewer(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		this.treeViewer.getControl().setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
+		this.treeViewer.setContentProvider(new SdrNavigatorContentProvider());
+		this.treeViewer.setLabelProvider(new SdrNavigatorLabelProvider());
+		this.treeViewer.setComparator(new SdrViewerSorter());
 
 		final ComposedAdapterFactory factory = new ComposedAdapterFactory();
 		factory.addAdapterFactory(new SpdItemProviderAdapterFactory());
 
-		this.tableViewer.setContentProvider(new ArrayContentProvider());
-		this.tableViewer.setLabelProvider(new DecoratingLabelProvider(new AdapterFactoryLabelProvider(factory), PlatformUI.getWorkbench().getDecoratorManager()
-		        .getLabelDecorator()) {
+		final WorkspaceJob job = new WorkspaceJob("Load SdrRoot") {
+			@Override
+			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+				final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
+				sdrRoot.load(null);
+				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						treeViewer.setInput(sdrRoot.getDevicesContainer());
+					}
+				});
+				return Status.OK_STATUS;
+			}
+		};
+
+		job.setUser(true);
+		job.schedule();
+
+		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
-			public String getText(final Object element) {
-				if (element instanceof SoftPkgImpl) {
-					final SoftPkgImpl softPkg = (SoftPkgImpl) element;
-					final URI uri = softPkg.eResource().getURI();
-					return softPkg.getName() + " (" + uri.path().replace(uri.lastSegment(), "") + ")";
-				}
-
-				return "";
-			}
-
-		});
-		this.tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(final DoubleClickEvent event) {
-				final StructuredSelection ss = (StructuredSelection) event.getSelection();
-				final SoftPkg selected = (SoftPkg) ss.getFirstElement();
-				ScaNodeProjectDevicesWizardPage.this.tableViewer.setChecked(selected, !ScaNodeProjectDevicesWizardPage.this.tableViewer.getChecked(selected));
+			public void selectionChanged(SelectionChangedEvent event) {
+				getWizard().getContainer().updateButtons();
 			}
 		});
-		this.tableViewer.setInput(this.devices);
-		this.tableViewer.setCheckedElements(Collections.EMPTY_LIST.toArray());
 
 		setControl(composite);
 	}
@@ -116,27 +126,33 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 	}
 
 	public SoftPkg[] getNodeDevices() {
-		final Object[] elements = this.tableViewer.getCheckedElements();
-		final SoftPkg[] retVal = new SoftPkg[elements.length];
-		System.arraycopy(elements, 0, retVal, 0, elements.length);
-		return retVal;
+		List<SoftPkg> softPkgs = new ArrayList<SoftPkg>();
+		StructuredSelection selection = (StructuredSelection) treeViewer.getSelection();
+		for (@SuppressWarnings("unchecked")
+		Iterator<SoftPkg> iterator = selection.iterator(); iterator.hasNext();) {
+			softPkgs.add(iterator.next());
+		}
+		return softPkgs.toArray(new SoftPkg[0]);
+	}
+
+	@Override
+	public boolean isPageComplete() {
+		StructuredSelection selection = (StructuredSelection) treeViewer.getSelection();
+		for (Iterator< ? > iterator = selection.iterator(); iterator.hasNext();) {
+			if (!(iterator.next() instanceof SoftPkg)) {
+				return false;
+			}
+		}
+
+		return super.isPageComplete();
 	}
 
 	/**
-	 * @since 1.2
+	 * @deprecated {@link ScaNodeProjectDevicesWizardPage} now collects the list of available devices
+	 * internally
 	 */
+	@Deprecated
 	public void setDevices(Collection<SoftPkg> devices) {
-		this.devices = devices.toArray(new SoftPkg[devices.size()]);
-
-		if (this.tableViewer != null) {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!tableViewer.getControl().isDisposed()) {
-						tableViewer.setInput(ScaNodeProjectDevicesWizardPage.this.devices);
-					}
-				}
-			});
-		}
+		return;
 	}
 }

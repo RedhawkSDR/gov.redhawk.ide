@@ -10,38 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.internal.ui.editor;
 
-import gov.redhawk.ide.dcd.internal.ui.ComponentPlacementContentProvider;
-import gov.redhawk.ide.dcd.internal.ui.editor.provider.DcdItemProviderAdapterFactoryAdapter;
-import gov.redhawk.ide.dcd.internal.ui.editor.provider.DevicesSectionComponentPlacementItemProvider;
-import gov.redhawk.ide.dcd.ui.wizard.ScaNodeProjectDevicesWizardPage;
-import gov.redhawk.ide.sdr.LoadState;
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.sca.ui.parts.FormFilteredTree;
-import gov.redhawk.ui.actions.SortAction;
-import gov.redhawk.ui.editor.TreeSection;
-import gov.redhawk.ui.parts.TreePart;
-import gov.redhawk.ui.util.SCAEditorUtil;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
-
-import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
-import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
-import mil.jpeojtrs.sca.dcd.DcdFactory;
-import mil.jpeojtrs.sca.dcd.DcdPackage;
-import mil.jpeojtrs.sca.dcd.DcdPartitioning;
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.dcd.provider.DcdItemProviderAdapterFactory;
-import mil.jpeojtrs.sca.partitioning.ComponentFile;
-import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
-import mil.jpeojtrs.sca.partitioning.ComponentFiles;
-import mil.jpeojtrs.sca.partitioning.ComponentPlacement;
-import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -99,6 +70,34 @@ import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.progress.WorkbenchJob;
+
+import gov.redhawk.ide.dcd.internal.ui.ComponentPlacementContentProvider;
+import gov.redhawk.ide.dcd.internal.ui.editor.provider.DcdItemProviderAdapterFactoryAdapter;
+import gov.redhawk.ide.dcd.internal.ui.editor.provider.DevicesSectionComponentPlacementItemProvider;
+import gov.redhawk.ide.dcd.ui.wizard.ScaNodeProjectDevicesWizardPage;
+import gov.redhawk.ide.sdr.LoadState;
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.sca.ui.parts.FormFilteredTree;
+import gov.redhawk.ui.actions.SortAction;
+import gov.redhawk.ui.editor.TreeSection;
+import gov.redhawk.ui.parts.TreePart;
+import gov.redhawk.ui.util.SCAEditorUtil;
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
+import mil.jpeojtrs.sca.dcd.DcdFactory;
+import mil.jpeojtrs.sca.dcd.DcdPackage;
+import mil.jpeojtrs.sca.dcd.DcdPartitioning;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.dcd.provider.DcdItemProviderAdapterFactory;
+import mil.jpeojtrs.sca.partitioning.ComponentFile;
+import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
+import mil.jpeojtrs.sca.partitioning.ComponentFiles;
+import mil.jpeojtrs.sca.partitioning.ComponentPlacement;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.spd.SoftPkg;
 
 /**
  * @since 1.1
@@ -444,8 +443,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 			}
 		}
 
-		final ScaNodeProjectDevicesWizardPage devWizardPage = new ScaNodeProjectDevicesWizardPage("Select Devices to Add", sdrRoot.getDevicesContainer()
-		        .getComponents().toArray(new SoftPkg[0]));
+		final ScaNodeProjectDevicesWizardPage devWizardPage = new ScaNodeProjectDevicesWizardPage("Select Devices to Add");
 
 		final Wizard wiz = new Wizard() {
 

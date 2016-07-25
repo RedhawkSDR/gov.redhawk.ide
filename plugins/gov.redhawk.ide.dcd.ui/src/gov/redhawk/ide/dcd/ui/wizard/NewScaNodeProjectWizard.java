@@ -11,28 +11,12 @@
 
 package gov.redhawk.ide.dcd.ui.wizard;
 
-import gov.redhawk.ide.codegen.CodegenUtil;
-import gov.redhawk.ide.codegen.util.ProjectCreator;
-import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
-import gov.redhawk.ide.dcd.ui.DcdUiActivator;
-import gov.redhawk.ide.sad.ui.SadUiActivator;
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-
-import mil.jpeojtrs.sca.dcd.DcdFactory;
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.dcd.DomainManager;
-import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
@@ -56,6 +40,18 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+
+import gov.redhawk.ide.codegen.CodegenUtil;
+import gov.redhawk.ide.codegen.util.ProjectCreator;
+import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
+import gov.redhawk.ide.dcd.ui.DcdUiActivator;
+import gov.redhawk.ide.sad.ui.SadUiActivator;
+import mil.jpeojtrs.sca.dcd.DcdFactory;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.dcd.DomainManager;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
  * The Class NewScaDeviceProjectWizard.
@@ -124,18 +120,18 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 						if (workingSets.length > 0) {
 							PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(project, workingSets);
 						}
-						
 
 						// If we're creating a new waveform (vs importing one)
 						if (isCreateNewResource) {
 							// Create the XML files
 							NewScaNodeProjectWizard.this.openEditorOn = NodeProjectCreator.createNodeFiles(project, id, null, domainManagerName, devices,
-							        progress.newChild(1));
+								progress.newChild(1));
 						} else {
 							openEditorOn = project.getFile("DeviceManager.dcd.xml");
 							ProjectCreator.importFile(project, openEditorOn, existingDcdPath, progress.newChild(1));
 							ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-							URI uri = URI.createPlatformResourceURI(openEditorOn.getFullPath().toString(), true).appendFragment(DeviceConfiguration.EOBJECT_PATH);
+							URI uri = URI.createPlatformResourceURI(openEditorOn.getFullPath().toString(), true).appendFragment(
+								DeviceConfiguration.EOBJECT_PATH);
 							DeviceConfiguration dcd = (DeviceConfiguration) resourceSet.getEObject(uri, true);
 							dcd.setId(id);
 							dcd.setName(project.getName());
@@ -146,10 +142,10 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 								dcd.setDomainManager(dm);
 							}
 							try {
-	                            dcd.eResource().save(null);
-                            } catch (IOException e) {
-                            	throw new CoreException(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, "Failed to modify SAD File."));
-                            }
+								dcd.eResource().save(null);
+							} catch (IOException e) {
+								throw new CoreException(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, "Failed to modify SAD File."));
+							}
 							openEditorOn.refreshLocal(IResource.DEPTH_ONE, null);
 						}
 
@@ -167,7 +163,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 			}
 		} catch (final InvocationTargetException x) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, DcdUiActivator.PLUGIN_ID, x.getCause().getMessage(), x.getCause()),
-			        StatusManager.SHOW | StatusManager.LOG);
+				StatusManager.SHOW | StatusManager.LOG);
 			return false;
 		} catch (final InterruptedException x) {
 			return false;
@@ -209,19 +205,6 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 		this.nodeDevicesPage = new ScaNodeProjectDevicesWizardPage("");
 		this.nodeDevicesPage.setDescription("Add existing Device(s) to your node.");
 		addPage(this.nodeDevicesPage);
-
-		final WorkspaceJob job = new WorkspaceJob("Load SdrRoot") {
-			@Override
-			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
-				final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
-				sdrRoot.load(monitor);
-				NewScaNodeProjectWizard.this.nodeDevicesPage.setDevices(sdrRoot.getDevicesContainer().getComponents());
-				return Status.OK_STATUS;
-			}
-		};
-
-		job.setUser(true);
-		job.schedule();
 	}
 
 	/**
