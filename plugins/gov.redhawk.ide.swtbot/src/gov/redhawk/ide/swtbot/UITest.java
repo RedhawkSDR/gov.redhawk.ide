@@ -39,7 +39,7 @@ public abstract class UITest {
 
 	private static final String PYDEV_BUNDLE = "org.python.pydev";
 	private static final String PYDEV_CHECK_SETTINGS = "CHECK_PREFERRED_PYDEV_SETTINGS";
-	private static final String PYDEV_FUNDING_SHOWN = "PYDEV_FUNDING_SHOWN_2014";
+	private static final String PYDEV_FUNDING_SHOWN = "PYDEV_FUNDING_SHOWN_2016";
 
 	protected SWTWorkbenchBot bot; // SUPPRESS CHECKSTYLE VisibilityModifier
 	private List<IPath> sdrDomCleanupPaths = null;
