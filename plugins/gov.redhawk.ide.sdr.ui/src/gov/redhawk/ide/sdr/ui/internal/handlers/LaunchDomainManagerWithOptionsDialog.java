@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoProperties;
-import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
@@ -38,13 +39,10 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
@@ -70,13 +68,15 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.nodebooter.DebugLevel;
 import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLaunchConfiguration;
 import gov.redhawk.ide.sdr.nodebooter.DomainManagerLaunchConfiguration;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.ui.navigator.LaunchDomainContentProvider;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
 import gov.redhawk.model.sca.ScaDomainManager;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
 import gov.redhawk.sca.ScaPlugin;
@@ -84,7 +84,7 @@ import gov.redhawk.sca.preferences.ScaPreferenceConstants;
 import gov.redhawk.sca.ui.ScaUiPlugin;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
-public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDialog {
+public class LaunchDomainManagerWithOptionsDialog extends ElementTreeSelectionDialog {
 	/**
 	 * A delay in milliseconds that reduces the risk that the user accidentally triggers a
 	 * button by pressing the 'Enter' key immediately after a job has finished.
@@ -99,7 +99,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	public static final String NON_DEFAULT_ERR = "This name is registered against a non-default name server and cannot be launched";
 	public static final String DUPLICATE_NAME = "Domain of this name is in use, please select a different name.";
 
-	private WritableSet nodes = new WritableSet();
+	private WritableList nodes = new WritableList();
 	private WritableValue nodeDebugLevel = new WritableValue(DebugLevel.Info, DebugLevel.class);
 	private WritableValue nodeArguments = new WritableValue();
 
@@ -109,6 +109,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	private Binding nameBinding = null;
 	private boolean useCustomProgressMonitorPart;
 	private ProgressMonitorPart progressMonitorPart;
+	private TreeViewer treeViewer;
 
 	private int activeRunningOperations;
 	private long timeWhenLastJobFinished;
@@ -193,7 +194,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	private final ScaDomainManagerRegistry dmReg;
 
 	public LaunchDomainManagerWithOptionsDialog(final Shell parentShell, final DomainManagerLaunchConfiguration model, SdrRoot root) {
-		super(parentShell, new LaunchDomainManagerDialogLabelProvider(), new LaunchDomainManagerDialogContentProvider());
+		super(parentShell, new SdrNavigatorLabelProvider(), new LaunchDomainContentProvider());
 		this.model = model;
 		this.sdrRoot = root;
 		this.dmReg = ScaPlugin.getDefault().getDomainManagerRegistry(parentShell.getDisplay());
@@ -201,7 +202,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		setComparator(new ViewerComparator());
 		setEmptyListMessage("No nodes found");
 		setStatusLineAboveButtons(true);
-		super.setInput(root);
+		super.setInput(root.getNodesContainer());
 	}
 
 	@Override
@@ -262,18 +263,18 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 		final Group deviceManagerGroup = new Group(composite, SWT.NONE);
 
-		deviceManagerGroup.setText("Device Manager");
+		deviceManagerGroup.setText("Device Manager(s)");
 		deviceManagerGroup.setLayout(GridLayoutFactory.fillDefaults().margins(5, 5).create());
-		deviceManagerGroup.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
+		deviceManagerGroup.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).minSize(450, 1).create());
 		deviceManagerGroup.setVisible(!this.sdrRoot.getNodesContainer().getNodes().isEmpty());
 
-		final CheckboxTreeViewer treeViewer = createTreeViewer(deviceManagerGroup);
+		treeViewer = super.createTreeViewer(deviceManagerGroup);
 		treeViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 
 		final Control buttonComposite = createSelectionButtons(deviceManagerGroup);
 		buttonComposite.setLayoutData(GridDataFactory.fillDefaults().create());
 
-		context.bindSet(ViewersObservables.observeCheckedElements(treeViewer, DeviceConfiguration.class), nodes);
+		context.bindList(ViewersObservables.observeMultiPostSelection(treeViewer), nodes);
 
 		// Insert a progress monitor
 		this.progressMonitorPart = createProgressMonitorPart(composite, new GridLayout());
@@ -356,7 +357,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	protected ProgressMonitorPart createProgressMonitorPart(final Composite composite, final GridLayout pmlayout) {
 		this.useCustomProgressMonitorPart = false;
 		return new ProgressMonitorPart(composite, pmlayout, true) {
-			String currentTask = null;
+			private String currentTask = null;
 
 			@Override
 			public void setBlocked(final IStatus reason) {
@@ -389,8 +390,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			@Override
 			public void subTask(final String name) {
 				super.subTask(name);
-				// If we haven't got anything yet use this value for more
-				// context
+				// If we haven't got anything yet use this value for more context
 				if (this.currentTask == null) {
 					this.currentTask = name;
 				}
@@ -404,12 +404,9 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		updateButtonsEnableState((IStatus) LaunchDomainManagerWithOptionsDialog.this.nameBinding.getValidationStatus().getValue());
 	}
 
-	@Override
 	protected Composite createSelectionButtons(final Composite parent) {
 		final Composite root = new Composite(parent, SWT.NONE);
-		root.setLayout(new GridLayout(2, true));
-		final Control controls = super.createSelectionButtons(root);
-		controls.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		root.setLayout(new GridLayout(2, false));
 
 		final Composite subContainer = new Composite(root, SWT.NONE);
 		final GridLayout gridLayout = new GridLayout(2, false);
@@ -424,6 +421,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		debugViewer.setContentProvider(new ArrayContentProvider());
 		debugViewer.setInput(DebugLevel.values());
 		debugViewer.setSelection(new StructuredSelection("Info"));
+		debugViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 		context.bindValue(ViewersObservables.observeSingleSelection(debugViewer), nodeDebugLevel);
 
 		label = new Label(subContainer, SWT.NONE);
@@ -456,31 +454,6 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		super.okPressed();
 	}
 
-	@Override
-	protected CheckboxTreeViewer createTreeViewer(final Composite parent) {
-		final CheckboxTreeViewer retVal = super.createTreeViewer(parent);
-
-		retVal.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(final DoubleClickEvent event) {
-				final IStructuredSelection ss = (IStructuredSelection) event.getSelection();
-				final DeviceConfiguration dc = (DeviceConfiguration) ss.getFirstElement();
-				retVal.setChecked(dc, !retVal.getChecked(dc));
-
-				// DataBinding for observeCheckedElements does not pick up on double click events
-				// So manually adding/removing nodes here to compensate
-				if (retVal.getChecked(dc)) {
-					nodes.add(dc);
-				} else {
-					nodes.remove(dc);
-				}
-			}
-		});
-
-		return retVal;
-	}
-
 	/**
 	 * This implementation of IRunnableContext#run(boolean, boolean,
 	 * IRunnableWithProgress) blocks until the runnable has been run, regardless
@@ -497,8 +470,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 * 
 	 */
 	public void run(final boolean fork, final boolean cancelable, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		// The operation can only be canceled if it is executed in a separate
-		// thread.
+		// The operation can only be canceled if it is executed in a separate thread.
 		// Otherwise the UI is blocked anyway.
 		getOkButton().setEnabled(false);
 		if (this.activeRunningOperations == 0) {
@@ -659,14 +631,11 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 						if (e.detail == SWT.TRAVERSE_RETURN || (e.detail == SWT.TRAVERSE_MNEMONIC && e.keyCode == 32)) {
 							// We want to ignore the keystroke when we detect that it has been received within the
 							// delay period after the last operation has finished. This prevents the user from
-							// accidentally
-							// hitting "Enter" or "Space", intending to cancel an operation, but having it processed
-							// exactly
-							// when the operation finished, thus traversing the wizard. If there is another operation
-							// still
-							// running, the UI is locked anyway so we are not in this code. This listener should fire
-							// only
-							// after the UI state is restored (which by definition means all jobs are done.
+							// accidentally hitting "Enter" or "Space", intending to cancel an operation, but having it
+							// processed exactly when the operation finished, thus traversing the wizard. If there is
+							// another operation still running, the UI is locked anyway so we are not in this code. This
+							// listener should fire only after the UI state is restored (which by definition means all
+							// jobs are done.
 							// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887
 							if (LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished != 0 && System.currentTimeMillis()
 								- LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished < LaunchDomainManagerWithOptionsDialog.RESTORE_ENTER_DELAY) {
@@ -734,6 +703,15 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 */
 	@Override
 	protected void updateButtonsEnableState(final IStatus status) {
+		if (!treeViewer.getSelection().isEmpty()) {
+			StructuredSelection selection = (StructuredSelection) treeViewer.getSelection();
+			for (Iterator< ? > iterator = selection.iterator(); iterator.hasNext();) {
+				if (!(iterator.next() instanceof DeviceConfiguration)) {
+					super.updateButtonsEnableState(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "", null));
+					return;
+				}
+			}
+		}
 		if (nameBinding != null) {
 			super.updateButtonsEnableState((IStatus) this.nameBinding.getValidationStatus().getValue());
 		}

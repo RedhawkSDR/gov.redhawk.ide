@@ -78,7 +78,7 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 
 		// Top Heading
 		final Label directionsLabel = new Label(composite, SWT.NONE);
-		directionsLabel.setText("Select devices to include in this node (ctrl+click to select multiple devices):");
+		directionsLabel.setText("Select devices to include in this node:");
 		GridDataFactory.generate(directionsLabel, 2, 1);
 
 		this.treeViewer = new TreeViewer(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -125,11 +125,11 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 		super.setVisible(visible);
 	}
 
+	@SuppressWarnings("unchecked")
 	public SoftPkg[] getNodeDevices() {
 		List<SoftPkg> softPkgs = new ArrayList<SoftPkg>();
 		StructuredSelection selection = (StructuredSelection) treeViewer.getSelection();
-		for (@SuppressWarnings("unchecked")
-		Iterator<SoftPkg> iterator = selection.iterator(); iterator.hasNext();) {
+		for (Iterator<SoftPkg> iterator = selection.iterator(); iterator.hasNext();) {
 			softPkgs.add(iterator.next());
 		}
 		return softPkgs.toArray(new SoftPkg[0]);
