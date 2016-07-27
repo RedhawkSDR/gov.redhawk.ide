@@ -10,11 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.wizards;
 
-import gov.redhawk.ide.sdr.ui.SdrContentProvider;
-import gov.redhawk.ide.sdr.ui.SdrLabelProvider;
-import mil.jpeojtrs.sca.scd.ComponentType;
-import mil.jpeojtrs.sca.scd.SoftwareComponent;
-import mil.jpeojtrs.sca.spd.SoftPkg;
+import java.util.Iterator;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -28,10 +24,10 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -39,12 +35,21 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
+import gov.redhawk.ide.sdr.ComponentsSubContainer;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
+import gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter;
+import mil.jpeojtrs.sca.scd.ComponentType;
+import mil.jpeojtrs.sca.scd.SoftwareComponent;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+
 /**
  * 
  */
 public class SoftPkgSelectionPage extends WizardPage {
 
 	private LaunchComponentWizard wizard;
+	private TreeViewer viewer;
 
 	private DataBindingContext dbc = new DataBindingContext();
 
@@ -62,9 +67,9 @@ public class SoftPkgSelectionPage extends WizardPage {
 		Composite main = new Composite(parent, SWT.None);
 		main.setLayout(new GridLayout(2, false));
 
-		TreeViewer viewer = new TreeViewer(main, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
+		viewer = new TreeViewer(main, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
 		viewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(2, 1).create());
-		viewer.setContentProvider(new SdrContentProvider() {
+		viewer.setContentProvider(new SdrNavigatorContentProvider() {
 			@Override
 			public boolean hasChildren(Object object) {
 				if (object instanceof SoftPkg) {
@@ -73,7 +78,7 @@ public class SoftPkgSelectionPage extends WizardPage {
 				return super.hasChildren(object);
 			}
 		});
-		viewer.setLabelProvider(new SdrLabelProvider());
+		viewer.setLabelProvider(new SdrNavigatorLabelProvider());
 		viewer.setFilters(new ViewerFilter[] { new ViewerFilter() {
 
 			@Override
@@ -95,22 +100,14 @@ public class SoftPkgSelectionPage extends WizardPage {
 							}
 						}
 					}
+				} else if (element instanceof ComponentsSubContainer) {
+					return true;
 				}
 				return false;
 			}
 		} });
-		viewer.setSorter(new ViewerSorter() {
-			@Override
-			public int compare(Viewer viewer, Object e1, Object e2) {
-				if (e1 instanceof SoftPkg && e2 instanceof SoftPkg) {
-					SoftPkg spd1 = (SoftPkg) e1;
-					SoftPkg spd2 = (SoftPkg) e2;
-					return spd1.getName().compareTo(spd2.getName());
-				}
-				return super.compare(viewer, e1, e2);
-			}
-		});
-		
+		viewer.setSorter(new SdrViewerSorter());
+
 		Group descriptionGroup = new Group(main, SWT.None);
 		descriptionGroup.setText("Description");
 		descriptionGroup.setLayout(new GridLayout());
@@ -134,20 +131,35 @@ public class SoftPkgSelectionPage extends WizardPage {
 
 		dbc.bindValue(ViewersObservables.observeInput(viewer), BeanProperties.value(wizard.getClass(), "spdContainer").observe(wizard));
 		dbc.bindValue(ViewersObservables.observeSingleSelection(viewer), BeanProperties.value(wizard.getClass(), "softPkg").observe(wizard),
-			new UpdateValueStrategy().setAfterConvertValidator(new IValidator() {
+			new UpdateValueStrategy().setBeforeSetValidator(new IValidator() {
 
 				@Override
 				public IStatus validate(Object value) {
-					if (value == null) {
+					if (value instanceof ComponentsSubContainer) {
 						return ValidationStatus.error("Must select an spd");
 					}
 					return ValidationStatus.ok();
 				}
-
 			}), null);
 
 		WizardPageSupport.create(this, dbc);
 
 		setControl(main);
+	}
+
+	@Override
+	public boolean isPageComplete() {
+		if (viewer.getSelection().isEmpty()) {
+			return false;
+		}
+
+		StructuredSelection selection = (StructuredSelection) viewer.getSelection();
+		for (Iterator< ? > iterator = selection.iterator(); iterator.hasNext();) {
+			if (!(iterator.next() instanceof SoftPkg)) {
+				return false;
+			}
+		}
+
+		return super.isPageComplete();
 	}
 }

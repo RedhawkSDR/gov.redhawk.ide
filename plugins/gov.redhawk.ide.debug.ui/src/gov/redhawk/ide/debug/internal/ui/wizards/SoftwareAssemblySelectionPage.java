@@ -10,9 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.wizards;
 
-import gov.redhawk.ide.sdr.ui.SdrContentProvider;
-import gov.redhawk.ide.sdr.ui.SdrLabelProvider;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import java.util.Iterator;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -26,9 +24,8 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -36,12 +33,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
+import gov.redhawk.ide.sdr.WaveformsSubContainer;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
+import gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+
 /**
  * 
  */
 public class SoftwareAssemblySelectionPage extends WizardPage {
 
 	private LaunchLocalWaveformWizard wizard;
+	private TreeViewer viewer;
 	private DataBindingContext dbc = new DataBindingContext();
 
 	protected SoftwareAssemblySelectionPage(LaunchLocalWaveformWizard wizard) {
@@ -58,9 +62,9 @@ public class SoftwareAssemblySelectionPage extends WizardPage {
 		Composite main = new Composite(parent, SWT.None);
 		main.setLayout(new GridLayout(2, false));
 
-		TreeViewer viewer = new TreeViewer(main, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
+		viewer = new TreeViewer(main, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
 		viewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(2, 1).create());
-		viewer.setContentProvider(new SdrContentProvider() {
+		viewer.setContentProvider(new SdrNavigatorContentProvider() {
 			@Override
 			public boolean hasChildren(Object object) {
 				if (object instanceof SoftwareAssembly) {
@@ -69,18 +73,8 @@ public class SoftwareAssemblySelectionPage extends WizardPage {
 				return super.hasChildren(object);
 			}
 		});
-		viewer.setLabelProvider(new SdrLabelProvider());
-		viewer.setSorter(new ViewerSorter() {
-			@Override
-			public int compare(Viewer viewer, Object e1, Object e2) {
-				if (e1 instanceof SoftwareAssembly && e2 instanceof SoftwareAssembly) {
-					SoftwareAssembly spd1 = (SoftwareAssembly) e1;
-					SoftwareAssembly spd2 = (SoftwareAssembly) e2;
-					return spd1.getName().compareTo(spd2.getName());
-				}
-				return super.compare(viewer, e1, e2);
-			}
-		});
+		viewer.setLabelProvider(new SdrNavigatorLabelProvider());
+		viewer.setSorter(new SdrViewerSorter());
 
 		Group descriptionGroup = new Group(main, SWT.None);
 		descriptionGroup.setText("Description");
@@ -105,11 +99,11 @@ public class SoftwareAssemblySelectionPage extends WizardPage {
 
 		dbc.bindValue(ViewersObservables.observeInput(viewer), BeanProperties.value(wizard.getClass(), "waveformsContainer").observe(wizard));
 		dbc.bindValue(ViewersObservables.observeSingleSelection(viewer), BeanProperties.value(wizard.getClass(), "softwareAssembly").observe(wizard),
-			new UpdateValueStrategy().setAfterConvertValidator(new IValidator() {
+			new UpdateValueStrategy().setBeforeSetValidator(new IValidator() {
 
 				@Override
 				public IStatus validate(Object value) {
-					if (value == null) {
+					if (value instanceof WaveformsSubContainer) {
 						return ValidationStatus.error("Must select a waveform");
 					}
 					return ValidationStatus.ok();
@@ -121,4 +115,19 @@ public class SoftwareAssemblySelectionPage extends WizardPage {
 		setControl(main);
 	}
 
+	@Override
+	public boolean isPageComplete() {
+		if (viewer.getSelection().isEmpty()) {
+			return false;
+		}
+
+		StructuredSelection selection = (StructuredSelection) viewer.getSelection();
+		for (Iterator< ? > iterator = selection.iterator(); iterator.hasNext();) {
+			if (!(iterator.next() instanceof SoftwareAssembly)) {
+				return false;
+			}
+		}
+
+		return super.isPageComplete();
+	}
 }

@@ -15,6 +15,7 @@ import gov.redhawk.ide.debug.internal.ui.wizards.LaunchComponentWizard;
 import gov.redhawk.ide.debug.internal.ui.wizards.LaunchLocalWaveformWizard;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
+import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
@@ -68,7 +69,12 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 		if ("waveform".equalsIgnoreCase(value)) {
 			handleLaunchWaveform(event);
 		} else if ("component".equalsIgnoreCase(value) || "device".equalsIgnoreCase(value) || "service".equalsIgnoreCase(value)) {
-			handleLaunchComponentType(event);
+			try {
+				handleLaunchComponentType(event);
+			} catch (final CoreException e) {
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e),
+					StatusManager.LOG | StatusManager.SHOW);
+			}
 		} else {
 			// Launch with defaults (no wizard)
 			ISelection sel = HandlerUtil.getActiveMenuSelection(event);
@@ -93,9 +99,9 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 	/**
 	 * Handles launching a component/device/service locally based on the results of the advanced launch wizard.
 	 * @param event The event details
+	 * @throws CoreException
 	 */
-	private void handleLaunchComponentType(ExecutionEvent event) {
-		String type = event.getParameter("gov.redhawk.ide.debug.ui.wizardType");
+	private void handleLaunchComponentType(ExecutionEvent event) throws CoreException {
 		ISelection sel = HandlerUtil.getActiveMenuSelection(event);
 		if (sel == null) {
 			sel = HandlerUtil.getCurrentSelection(event);
@@ -111,43 +117,59 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 					wizard.hideAutoStartControl();
 				}
 			}
-			if (element instanceof SoftPkgRegistry) {
-				wizard.setWindowTitle("Launch");
-				wizard.setSpdContainer((SoftPkgRegistry) element);
-			} else if (element instanceof SoftPkg) {
-				wizard.setWindowTitle("Launch");
-				wizard.setSoftPkg((SoftPkg) element);
-			} else if (element instanceof Implementation) {
-				wizard.setWindowTitle("Launch");
-				wizard.setImplementation((Implementation) element);
-			} else if (element instanceof SdrRoot) {
-				SdrRoot root = (SdrRoot) element;
-				if ("device".equalsIgnoreCase(type)) {
-					wizard.setWindowTitle("Launch Device");
-					wizard.setSpdContainer(root.getDevicesContainer());
-				} else if ("service".equalsIgnoreCase(type)) {
-					wizard.setWindowTitle("Launch Service");
-					wizard.setSpdContainer(root.getServicesContainer());
-					wizard.hideAutoStartControl();
-				} else {
-					wizard.setWindowTitle("Launch Component");
-					wizard.setSpdContainer(root.getComponentsContainer());
-				}
-			} else if (element instanceof LocalSca) {
-				SdrRoot root = SdrUiPlugin.getDefault().getTargetSdrRoot();
-				if ("device".equalsIgnoreCase(type)) {
-					wizard.setWindowTitle("Launch Device");
-					wizard.setSpdContainer(root.getDevicesContainer());
-				} else if ("service".equalsIgnoreCase(type)) {
-					wizard.setWindowTitle("Launch Service");
-					wizard.setSpdContainer(root.getServicesContainer());
-				} else {
-					wizard.setWindowTitle("Launch Component");
-					wizard.setSpdContainer(root.getComponentsContainer());
-				}
-			}
+
+			setLaunchValues(event, wizard, element);
+
 			WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard);
 			dialog.open();
+		}
+	}
+
+	private void setLaunchValues(ExecutionEvent event, LaunchComponentWizard wizard, Object element) throws CoreException {
+		String type = event.getParameter("gov.redhawk.ide.debug.ui.wizardType");
+		if (element instanceof SoftPkgRegistry) {
+			wizard.setWindowTitle("Launch");
+			wizard.setSpdContainer((SoftPkgRegistry) element);
+		} else if (element instanceof SoftPkg) {
+			wizard.setWindowTitle("Launch");
+			wizard.setSoftPkg((SoftPkg) element);
+		} else if (element instanceof Implementation) {
+			wizard.setWindowTitle("Launch");
+			wizard.setImplementation((Implementation) element);
+		} else if (element instanceof SdrRoot) {
+			SdrRoot root = (SdrRoot) element;
+			if ("device".equalsIgnoreCase(type)) {
+				wizard.setWindowTitle("Launch Device");
+				wizard.setSpdContainer(root.getDevicesContainer());
+			} else if ("service".equalsIgnoreCase(type)) {
+				wizard.setWindowTitle("Launch Service");
+				wizard.setSpdContainer(root.getServicesContainer());
+				wizard.hideAutoStartControl();
+			} else {
+				wizard.setWindowTitle("Launch Component");
+				wizard.setSpdContainer(root.getComponentsContainer());
+			}
+		} else if (element instanceof LocalSca) {
+			SdrRoot root = SdrUiPlugin.getDefault().getTargetSdrRoot();
+			if ("device".equalsIgnoreCase(type)) {
+				wizard.setWindowTitle("Launch Device");
+				wizard.setSpdContainer(root.getDevicesContainer());
+			} else if ("service".equalsIgnoreCase(type)) {
+				wizard.setWindowTitle("Launch Service");
+				wizard.setSpdContainer(root.getServicesContainer());
+			} else {
+				wizard.setWindowTitle("Launch Component");
+				wizard.setSpdContainer(root.getComponentsContainer());
+			}
+		} else if (element instanceof ComponentsSubContainer) {
+			ComponentsSubContainer container = (ComponentsSubContainer) element;
+			if (!(container.getComponents().isEmpty())) {
+				setLaunchValues(event, wizard, container.getComponents().get(0));
+			} else if (!(container.getSubContainers().isEmpty())) {
+				setLaunchValues(event, wizard, container.getSubContainers().get(0));
+			} else {
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Unable to determine type of launch element"));
+			}
 		}
 	}
 
@@ -241,7 +263,8 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 
 	/**
 	 * Handles launching something with default parameters.
-	 * @param element An {@link IFile} to an SPD/SAD, a {@link SoftPkg}, a {@link SoftwareAssembly}, or an {@link Implementation}
+	 * @param element An {@link IFile} to an SPD/SAD, a {@link SoftPkg}, a {@link SoftwareAssembly}, or an
+	 * {@link Implementation}
 	 * @param event The event details
 	 * @throws CoreException
 	 */
