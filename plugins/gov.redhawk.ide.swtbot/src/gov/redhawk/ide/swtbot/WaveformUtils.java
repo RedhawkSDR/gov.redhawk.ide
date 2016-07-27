@@ -15,11 +15,9 @@ import java.util.Arrays;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class WaveformUtils {
@@ -27,7 +25,7 @@ public class WaveformUtils {
 	/** private to prevent instantiation since all functions are static. */
 	private WaveformUtils() {
 	}
-	
+
 	/**
 	 * Creates a new waveform using File > New > Other... > REDHAWK Waveform Project wizard
 	 * @param bot - the executing SWTBot
@@ -40,7 +38,8 @@ public class WaveformUtils {
 		SWTBot wizardBot = wizardShell.bot();
 		wizardShell.activate();
 
-		SWTBotTreeItem treeItem = StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList("REDHAWK", "REDHAWK Waveform Project"));
+		SWTBotTreeItem treeItem = StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(),
+			Arrays.asList("REDHAWK", "REDHAWK Waveform Project"));
 		treeItem.select();
 		wizardBot.button("Next >").click();
 
@@ -50,22 +49,7 @@ public class WaveformUtils {
 		// Select the assembly controller, if requested
 		if (assemblyController != null) {
 			wizardBot.button("Next >").click();
-
-			SWTBotTable table = wizardBot.table();
-			bot.waitWhile(Conditions.tableHasRows(table, 0));
-
-			String prefix = assemblyController + " (";
-			boolean found = false;
-			for (int i = 0; i < table.rowCount(); i++) {
-				if (table.getTableItem(i).getText(0).startsWith(prefix)) {
-					table.getTableItem(i).select();
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				throw new WidgetNotFoundException("Couldn't find component for assembly controller: " + assemblyController);
-			}
+			StandardTestActions.selectNamespacedComponentFromTree(wizardBot, wizardBot.tree(), assemblyController);
 		}
 
 		// Close wizard
@@ -119,5 +103,5 @@ public class WaveformUtils {
 
 		return null;
 	}
-	
+
 }

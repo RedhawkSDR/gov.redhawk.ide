@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -544,6 +545,12 @@ public final class StandardTestActions {
 				return "Cell editor did not disappear";
 			}
 		});
+	}
+	
+	public static void selectNamespacedComponentFromTree(SWTBot bot, SWTBotTree tree, String componentName) {
+		String[] path = componentName.split("\\.");
+		SWTBotTreeItem treeItem = waitForTreeItemToAppear(bot, tree, Arrays.asList(path));
+		treeItem.select();
 	}
 
 	/**
