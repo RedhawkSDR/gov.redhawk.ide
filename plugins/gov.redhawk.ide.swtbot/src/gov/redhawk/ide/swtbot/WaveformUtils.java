@@ -49,7 +49,7 @@ public class WaveformUtils {
 		// Select the assembly controller, if requested
 		if (assemblyController != null) {
 			wizardBot.button("Next >").click();
-			StandardTestActions.selectNamespacedComponentFromTree(wizardBot, wizardBot.tree(), assemblyController);
+			StandardTestActions.selectNamespacedTreeItem(wizardBot, wizardBot.tree(), assemblyController);
 		}
 
 		// Close wizard

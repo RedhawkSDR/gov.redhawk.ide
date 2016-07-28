@@ -547,10 +547,16 @@ public final class StandardTestActions {
 		});
 	}
 	
-	public static void selectNamespacedComponentFromTree(SWTBot bot, SWTBotTree tree, String componentName) {
-		String[] path = componentName.split("\\.");
+	/**
+	 * Waits for and selects a namespaced item (component, waveform, etc) from a tree.
+	 * @param bot
+	 * @param tree
+	 * @param namespacedItem The fully-qualified name of the item
+	 */
+	public static SWTBotTreeItem selectNamespacedTreeItem(SWTBot bot, SWTBotTree tree, String namespacedItem) {
+		String[] path = namespacedItem.split("\\.");
 		SWTBotTreeItem treeItem = waitForTreeItemToAppear(bot, tree, Arrays.asList(path));
-		treeItem.select();
+		return treeItem.select();
 	}
 
 	/**
