@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -557,6 +558,23 @@ public final class StandardTestActions {
 		String[] path = namespacedItem.split("\\.");
 		SWTBotTreeItem treeItem = waitForTreeItemToAppear(bot, tree, Arrays.asList(path));
 		return treeItem.select();
+	}
+
+	/**
+	 * Waits for and selects multiple items (component, waveform, etc) from a tree.
+	 * @param bot
+	 * @param tree
+	 * @param namespacedItem The fully-qualified name of the items
+	 */
+	public static List<SWTBotTreeItem> selectNamespacedTreeItems(SWTBot bot, SWTBotTree tree, String... namespacedItems) {
+		List<SWTBotTreeItem> treeItems = new ArrayList<SWTBotTreeItem>();
+		for (String namespacedItem : namespacedItems) {
+			String[] path = namespacedItem.split("\\.");
+			SWTBotTreeItem treeItem = waitForTreeItemToAppear(bot, tree, Arrays.asList(path));
+			treeItems.add(treeItem);
+		}
+		tree.select(treeItems.toArray(new SWTBotTreeItem[0]));
+		return treeItems;
 	}
 
 	/**
