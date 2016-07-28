@@ -206,28 +206,7 @@ public class ScaExplorerTestUtils {
 
 		// Select device manager to launch
 		if (deviceMgrName != null) {
-			bot.waitUntil(new DefaultCondition() {
-				@Override
-				public boolean test() throws Exception {
-					for (SWTBotTreeItem treeItem : wizardBot.tree().getAllItems()) {
-						if (treeItem.getText().startsWith(deviceMgrName)) {
-							return true;
-						}
-					}
-					return false;
-				}
-
-				@Override
-				public String getFailureMessage() {
-					return "Couldn't find device manager " + deviceMgrName;
-				}
-			});
-			for (SWTBotTreeItem treeItem : wizardBot.tree().getAllItems()) {
-				if (treeItem.getText().startsWith(deviceMgrName)) {
-					treeItem.check();
-					break;
-				}
-			}
+			StandardTestActions.selectNamespacedTreeItem(wizardBot, wizardBot.tree(), deviceMgrName);
 		}
 
 		// Wait for validation
