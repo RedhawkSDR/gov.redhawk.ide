@@ -91,8 +91,6 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 
 	// END GENERATED CODE
 
-	private Map<String, SoftPkg> spdMap = new HashMap<String, SoftPkg>();
-
 	private Adapter mapAdapter = new AdapterImpl() {
 		@Override
 		public void notifyChanged(org.eclipse.emf.common.notify.Notification msg) {
@@ -150,7 +148,6 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 		if (spd == null) {
 			return;
 		}
-		spdMap.put(spd.getId(), spd);
 		if (spd.getPropertyFile() != null && spd.getPropertyFile().getProperties() != null) {
 			Properties prf = spd.getPropertyFile().getProperties();
 			for (ValueListIterator<Object> iterator = prf.getProperties().valueListIterator(); iterator.hasNext();) {
@@ -169,7 +166,6 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 		if (spd == null) {
 			return;
 		}
-		spdMap.remove(spd.getId());
 		if (spd.getPropertyFile() != null && spd.getPropertyFile().getProperties() != null) {
 			Properties prf = spd.getPropertyFile().getProperties();
 			for (ValueListIterator<Object> iterator = prf.getProperties().valueListIterator(); iterator.hasNext();) {
