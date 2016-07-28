@@ -11,26 +11,27 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
-import gov.redhawk.ide.sdr.SdrPackage;
-import gov.redhawk.ide.sdr.SoftPkgRegistry;
-
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import mil.jpeojtrs.sca.prf.AbstractProperty;
-import mil.jpeojtrs.sca.prf.Properties;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
-import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
+import org.eclipse.emf.ecore.util.FeatureMap;
+
+import gov.redhawk.ide.sdr.SdrPackage;
+import gov.redhawk.ide.sdr.SoftPkgRegistry;
+import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.PrfPackage;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.DceUuidUtil;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
+import mil.jpeojtrs.sca.util.collections.FeatureMapList;
 
 /**
  * <!-- begin-user-doc -->
@@ -144,38 +145,29 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 		eAdapters().add(mapAdapter);
 	}
 
+	private static final EStructuralFeature[] PATH_SPD_TO_PROPERTIES_MAP = { SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
+		SpdPackage.Literals.PROPERTY_FILE__PROPERTIES, PrfPackage.Literals.PROPERTIES__PROPERTIES };
+
 	private void addSpd(SoftPkg spd) {
-		if (spd == null) {
+		FeatureMap properties = ScaEcoreUtils.getFeature(spd, PATH_SPD_TO_PROPERTIES_MAP);
+		if (properties == null) {
 			return;
 		}
-		if (spd.getPropertyFile() != null && spd.getPropertyFile().getProperties() != null) {
-			Properties prf = spd.getPropertyFile().getProperties();
-			for (ValueListIterator<Object> iterator = prf.getProperties().valueListIterator(); iterator.hasNext();) {
-				Object obj = iterator.next();
-				if (obj instanceof AbstractProperty) {
-					AbstractProperty prop = (AbstractProperty) obj;
-					if (DceUuidUtil.isValid(prop.getId())) {
-						getProperties().put(prop.getId(), prop);
-					}
-				}
+		for (AbstractProperty prop : new FeatureMapList<AbstractProperty>(properties, AbstractProperty.class)) {
+			if (DceUuidUtil.isValid(prop.getId())) {
+				getProperties().put(prop.getId(), prop);
 			}
 		}
 	}
 
 	private void removeSpd(SoftPkg spd) {
-		if (spd == null) {
+		FeatureMap properties = ScaEcoreUtils.getFeature(spd, PATH_SPD_TO_PROPERTIES_MAP);
+		if (properties == null) {
 			return;
 		}
-		if (spd.getPropertyFile() != null && spd.getPropertyFile().getProperties() != null) {
-			Properties prf = spd.getPropertyFile().getProperties();
-			for (ValueListIterator<Object> iterator = prf.getProperties().valueListIterator(); iterator.hasNext();) {
-				Object obj = iterator.next();
-				if (obj instanceof AbstractProperty) {
-					AbstractProperty prop = (AbstractProperty) obj;
-					if (DceUuidUtil.isValid(prop.getId())) {
-						getProperties().remove(prop.getId());
-					}
-				}
+		for (AbstractProperty prop : new FeatureMapList<AbstractProperty>(properties, AbstractProperty.class)) {
+			if (DceUuidUtil.isValid(prop.getId())) {
+				getProperties().remove(prop.getId());
 			}
 		}
 	}
