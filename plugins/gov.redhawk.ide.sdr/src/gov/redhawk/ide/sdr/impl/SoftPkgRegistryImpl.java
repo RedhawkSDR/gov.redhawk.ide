@@ -89,10 +89,11 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 		return components;
 	}
 
+	// END GENERATED CODE
+
 	private Map<String, SoftPkg> spdMap = new HashMap<String, SoftPkg>();
 
 	private Adapter mapAdapter = new AdapterImpl() {
-		// END GENERATED CODE
 		@Override
 		public void notifyChanged(org.eclipse.emf.common.notify.Notification msg) {
 			switch (msg.getFeatureID(SoftPkgRegistry.class)) {
@@ -140,16 +141,12 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 				break;
 			}
 		}
-		// BEGIN GENERATED CODE
 	};
 	{
-		// END GENERATED CODE
 		eAdapters().add(mapAdapter);
-		// BEGIN GENERATED CODE
 	}
 
 	private void addSpd(SoftPkg spd) {
-		// END GENERATED CODE
 		if (spd == null) {
 			return;
 		}
@@ -166,11 +163,9 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 				}
 			}
 		}
-		// BEGIN GENERATED CODE
 	}
 
 	private void removeSpd(SoftPkg spd) {
-		// END GENERATED CODE
 		if (spd == null) {
 			return;
 		}
@@ -187,8 +182,9 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 				}
 			}
 		}
-		// BEGIN GENERATED CODE
 	}
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * <!-- begin-user-doc -->
