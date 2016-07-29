@@ -224,6 +224,12 @@
                     <instanceof
                           value="mil.jpeojtrs.sca.spd.SoftPkg">
                     </instanceof>
+                    <instanceof
+                          value="gov.redhawk.ide.sdr.ComponentsSubContainer">
+                    </instanceof>
+                    <instanceof
+                          value="gov.redhawk.ide.sdr.WaveformsSubContainer">
+                    </instanceof>
                  </or>
               </iterate>
            </visibleWhen>
@@ -391,6 +397,12 @@
                  </instanceof>
                  <instanceof
                        value="mil.jpeojtrs.sca.spd.SoftPkg">
+                 </instanceof>
+                 <instanceof
+                       value="gov.redhawk.ide.sdr.ComponentsSubContainer">
+                 </instanceof>
+                 <instanceof
+                       value="gov.redhawk.ide.sdr.WaveformsSubContainer">
                  </instanceof>
               </or>
            </iterate>
