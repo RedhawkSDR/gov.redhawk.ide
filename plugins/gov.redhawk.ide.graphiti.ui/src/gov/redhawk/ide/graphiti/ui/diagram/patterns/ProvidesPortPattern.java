@@ -13,7 +13,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.core.graphiti.ui.util.StyleUtil;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;

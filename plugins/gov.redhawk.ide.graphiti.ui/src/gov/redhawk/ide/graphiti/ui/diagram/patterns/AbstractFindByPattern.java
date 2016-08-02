@@ -10,9 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.core.graphiti.ui.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;

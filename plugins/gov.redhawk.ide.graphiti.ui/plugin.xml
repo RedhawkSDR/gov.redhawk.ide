@@ -30,12 +30,6 @@
             contentTypeIdentifier="http://www.redhawk.gov/model/rhgext/1.0.0"
             class="org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl"/>
    </extension>
-   <extension
-         point="org.eclipse.emf.ecore.content_handler">
-      <contentHandler
-            class="gov.redhawk.ide.graphiti.internal.ui.resource.StyleContentHandler">
-      </contentHandler>
-   </extension>
 
    <extension point="org.eclipse.core.contenttype.contentTypes">
       <!-- @generated RHGraphiti -->
@@ -165,13 +159,6 @@
                type="mil.jpeojtrs.sca.scd.AbstractPort">
          </adapter>
       </factory>
-   </extension>
-   <extension
-         point="org.eclipse.emf.ecore.content_parser">
-      <parser
-            class="gov.redhawk.ide.graphiti.internal.ui.resource.StyleResourceFactory"
-            contentTypeIdentifier="gov.redhawk.ide.graphiti.ui.style">
-      </parser>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
