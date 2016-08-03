@@ -151,7 +151,7 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 	}
 
 	@Override
-	public String getTitle() {
+	public void updateTitle() {
 		String name = null;
 		final DeviceConfiguration dcd = getDeviceConfiguration();
 		if (dcd != null) {
@@ -160,11 +160,10 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 				name = getEditorInput().getName();
 			}
 		}
-		if (name != null) {
-			return name;
-		} else {
-			return "";
+		if (name == null) {
+			name = "";
 		}
+		setPartName(name);
 	}
 
 	private DeviceConfiguration getDeviceConfiguration() {

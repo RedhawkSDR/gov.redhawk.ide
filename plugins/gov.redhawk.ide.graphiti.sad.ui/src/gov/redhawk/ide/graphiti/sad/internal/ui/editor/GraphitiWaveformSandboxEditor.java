@@ -48,7 +48,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 				final IEditorInput input = createDiagramInput(sadResource);
 				int pageIndex = addPage(editor, input);
 				setPageText(pageIndex, "Diagram");
-				setPartName(waveform.getName());
 
 				// set layout for diagram editors
 				DUtil.layout(editor);

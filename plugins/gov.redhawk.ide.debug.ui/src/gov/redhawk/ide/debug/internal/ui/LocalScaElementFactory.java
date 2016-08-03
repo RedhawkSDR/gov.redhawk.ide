@@ -19,9 +19,6 @@ import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 
-/**
- * 
- */
 public class LocalScaElementFactory implements IElementFactory {
 
 	public static final String ID = "gov.redhawk.ide.debug.ui.localSca.factory";
@@ -51,6 +48,11 @@ public class LocalScaElementFactory implements IElementFactory {
 					}
 				};
 			}
+
+			@Override
+			public String getToolTipText() {
+				return "Sandbox chalkboard";
+			}
 		};
 	}
 
@@ -76,12 +78,14 @@ public class LocalScaElementFactory implements IElementFactory {
 					}
 				};
 			}
+
+			@Override
+			public String getToolTipText() {
+				return "Sandbox device manager";
+			}
 		};
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public IAdaptable createElement(final IMemento memento) {
 		String editorType = memento.getString(EDITOR_TYPE);

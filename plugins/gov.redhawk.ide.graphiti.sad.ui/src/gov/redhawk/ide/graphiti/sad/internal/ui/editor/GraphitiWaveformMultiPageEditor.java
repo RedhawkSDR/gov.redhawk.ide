@@ -175,7 +175,7 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getTitle() {
+	public void updateTitle() {
 		String name = null;
 		final SoftwareAssembly sad = getSoftwareAssembly();
 		if (sad != null) {
@@ -184,11 +184,10 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 				name = getEditorInput().getName();
 			}
 		}
-		if (name != null) {
-			return name;
-		} else {
-			return "";
+		if (name == null) {
+			name = "";
 		}
+		setPartName(name);
 	}
 
 	/**

@@ -45,11 +45,6 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdExplorerEditor {
 				final IEditorInput input = createDiagramInput(dcdResource);
 				int pageIndex = addPage(editor, input);
 				setPageText(pageIndex, "Diagram");
-				if (DUtil.isDiagramExplorer(getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram())) {
-					setPartName("Device Manager");
-				} else {
-					setPartName("Device Manager Chalkboard");
-				}
 
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
 

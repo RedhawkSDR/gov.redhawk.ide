@@ -259,8 +259,6 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 		return this.diagramEditor.getContributorId();
 	}
 	
-	public abstract String getTitle();
-	
 	protected abstract void addPages();
 	
 	public IEditorPart getTextEditor() {

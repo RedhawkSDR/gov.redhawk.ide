@@ -398,7 +398,6 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 				final IEditorInput input = createDiagramInput(sadResource);
 				int pageIndex = addPage(editor, input);
 				setPageText(pageIndex, "Diagram");
-				setPartName(waveform.getName());
 
 				// set layout for diagram editors
 				DUtil.layout(editor);
@@ -440,7 +439,6 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 		}
 
 		final Diagram diagram = this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram();
-		setPartName(waveform.getName());
 		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
 			@Override
 			public void execute() {
@@ -488,20 +486,24 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 	}
 
 	@Override
-	public String getTitle() {
-		if (waveform != null && waveform.getName() != null) {
-			return waveform.getName();
+	public void updateTitle() {
+		final String name;
+		if (waveform != null) {
+			name = (waveform.getName() != null) ? waveform.getName() : "Waveform";
 		} else {
-			return "Chalkboard";
+			name = "Waveform";
 		}
-	}
-
-	@Override
-	public String getTitleToolTip() {
-		if (waveform != null && waveform.getName() != null) {
-			return waveform.getName() + " dynamic waveform";
+		if (Display.getCurrent() != null) {
+			setPartName(name);
 		} else {
-			return "Chalkboard dynamic waveform";
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (!isDisposed()) {
+						setPartName(name);
+					}
+				}
+			});
 		}
 	}
 

@@ -303,11 +303,6 @@ public class GraphitiDcdExplorerEditor extends GraphitiDcdMultipageEditor {
 				final IEditorInput input = createDiagramInput(dcdResource);
 				int pageIndex = addPage(editor, input);
 				setPageText(pageIndex, "Diagram");
-				if (DUtil.isDiagramExplorer(getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram())) {
-					setPartName("Device Manager");
-				} else {
-					setPartName("Device Manager Chalkboard");
-				}
 
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
 
@@ -346,7 +341,6 @@ public class GraphitiDcdExplorerEditor extends GraphitiDcdMultipageEditor {
 		}
 
 		final Diagram diagram = this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram();
-		this.setPartName(getDeviceManager().getLabel());
 		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
 			@Override
 			public void execute() {
@@ -372,6 +366,28 @@ public class GraphitiDcdExplorerEditor extends GraphitiDcdMultipageEditor {
 
 	public ScaDeviceManager getDeviceManager() {
 		return deviceManager;
+	}
+
+	@Override
+	public void updateTitle() {
+		final String name;
+		if (deviceManager != null) {
+			name = (deviceManager.getLabel() != null) ? deviceManager.getLabel() : "Device Manager";
+		} else {
+			name = "Device Manager";
+		}
+		if (Display.getCurrent() != null) {
+			setPartName(name);
+		} else {
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (!isDisposed()) {
+						setPartName(name);
+					}
+				}
+			});
+		}
 	}
 
 	public void deviceRegistered(DcdComponentInstantiation device) {
