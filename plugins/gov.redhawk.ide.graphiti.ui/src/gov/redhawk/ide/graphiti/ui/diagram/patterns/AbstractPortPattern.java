@@ -21,7 +21,6 @@ import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
-import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -203,28 +202,12 @@ abstract class AbstractPortPattern< E extends EObject > extends AbstractPattern 
 	 * The returned anchor has an invisible rectangle for its graphics algorithm.
 	 */
 	protected FixPointAnchor createPortAnchor(ContainerShape portShape, int x) {
-		FixPointAnchor fixPointAnchor = createOverlayAnchor(portShape, x);
+		FixPointAnchor fixPointAnchor = DUtil.createOverlayAnchor(portShape, x);
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createPlainRectangle(fixPointAnchor);
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, RHContainerShapeImpl.GA_FIX_POINT_ANCHOR_RECTANGLE);
 		fixPointAnchorRectangle.setFilled(false);
 		fixPointAnchorRectangle.setLineVisible(false);
 		layoutAnchor(portShape);
-		return fixPointAnchor;
-	}
-
-	/**
-	 * Create an anchor overlay for a shape, with the anchor point vertically centered at horizontal position x.
-	 * The returned anchor has no graphics algorithm.
-	 */
-	private FixPointAnchor createOverlayAnchor(Shape parentShape, int x) {
-		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(parentShape);
-		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
-		Point point = StylesFactory.eINSTANCE.createPoint();
-		point.setX(x);
-		point.setY(parentSize.getHeight() / 2);
-		fixPointAnchor.setLocation(point);
-		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
-		fixPointAnchor.setReferencedGraphicsAlgorithm(parentShape.getGraphicsAlgorithm());
 		return fixPointAnchor;
 	}
 
