@@ -62,9 +62,9 @@ public class GraphitiDcdExplorerEditor extends GraphitiDcdMultipageEditor {
 	public static final String EDITOR_ID = "gov.redhawk.ide.graphiti.dcd.ui.editor.dcdExplorer";
 	private static final Debug DEBUG = new Debug(DCDUIGraphitiPlugin.PLUGIN_ID, "editor");
 
-	protected Resource mainResource; // SUPPRESS CHECKSTYLE INLINE
-	protected DeviceConfiguration dcd; // SUPPRESS CHECKSTYLE INLINE
-	protected GraphitiDcdModelMap modelMap; // SUPPRESS CHECKSTYLE INLINE
+	private Resource mainResource;
+	private DeviceConfiguration dcd;
+	private GraphitiDcdModelMap modelMap;
 	private ScaDeviceManager deviceManager;
 	private ScaGraphitiModelAdapter scaListener;
 	private DcdGraphitiModelAdapter dcdListener;
@@ -72,6 +72,14 @@ public class GraphitiDcdExplorerEditor extends GraphitiDcdMultipageEditor {
 	@Override
 	public String getDiagramContext(Resource sadResource) {
 		return DUtil.DIAGRAM_CONTEXT_EXPLORER;
+	}
+
+	protected ScaDeviceManager getDeviceManager() {
+		return deviceManager;
+	}
+
+	protected GraphitiDcdModelMap getModelMap() {
+		return modelMap;
 	}
 
 	@Override
@@ -328,12 +336,12 @@ public class GraphitiDcdExplorerEditor extends GraphitiDcdMultipageEditor {
 			setTextEditor(textEditor);
 			if (textEditor != null) {
 				final int dcdSourcePageNum = addPage(-1, textEditor, getEditorInput(), getMainResource());
-				for (String s : getDeviceManager().getProfile().split("/")) {
+				for (String s : deviceManager.getProfile().split("/")) {
 					if (s.contains(".xml")) {
 						this.setPageText(dcdSourcePageNum, s);
 						break;
 					}
-					this.setPageText(dcdSourcePageNum, getDeviceManager().getLabel());
+					this.setPageText(dcdSourcePageNum, deviceManager.getLabel());
 				}
 			}
 		} catch (PartInitException e) {
@@ -354,18 +362,6 @@ public class GraphitiDcdExplorerEditor extends GraphitiDcdMultipageEditor {
 		GraphitiDcdDiagramEditor editor = new GraphitiDcdDiagramEditor((TransactionalEditingDomain) getEditingDomain());
 		editor.addContext("gov.redhawk.ide.dcd.graphiti.ui.contexts.sandbox");
 		return editor;
-	}
-
-	protected DeviceConfiguration getDcd() {
-		return dcd;
-	}
-
-	protected void setDcd(DeviceConfiguration dcd) {
-		this.dcd = dcd;
-	}
-
-	public ScaDeviceManager getDeviceManager() {
-		return deviceManager;
 	}
 
 	@Override

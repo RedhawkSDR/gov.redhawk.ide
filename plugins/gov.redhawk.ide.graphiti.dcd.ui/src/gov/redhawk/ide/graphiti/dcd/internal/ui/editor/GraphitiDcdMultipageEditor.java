@@ -57,7 +57,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-@SuppressWarnings("restriction")
 public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor {
 
 	public static final String ID = "gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor";
@@ -74,21 +73,12 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 			this.dcdResource = dcdResource;
 			if (this.dcdResource != null) {
 				this.dcdResource.eAdapters().add(this);
-				this.dcd = getDeviceConfiguration();
+				this.dcd = DeviceConfiguration.Util.getDeviceConfiguration(this.dcdResource);
 				if (this.dcd != null) {
 					this.dcd.eAdapters().add(this);
 					updateTitle();
 				}
 			}
-		}
-
-		/**
-		 * Gets the soft pkg.
-		 * 
-		 * @return the soft pkg
-		 */
-		private DeviceConfiguration getDeviceConfiguration() {
-			return ModelUtil.getDeviceConfiguration(this.dcdResource);
 		}
 
 		public void dispose() {
@@ -100,9 +90,6 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 			}
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public void notifyChanged(final Notification msg) {
 			if (msg.getNotifier() instanceof Resource) {
@@ -113,10 +100,9 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 						this.dcd = null;
 					}
 					if (this.dcdResource.isLoaded()) {
-						this.dcd = getDeviceConfiguration();
+						this.dcd = DeviceConfiguration.Util.getDeviceConfiguration(this.dcdResource);
 						if (this.dcd != null) {
 							this.dcd.eAdapters().add(this);
-
 							updateTitle();
 						}
 					}
@@ -126,7 +112,6 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 				}
 			} else if (msg.getNotifier() instanceof DeviceConfiguration) {
 				final int featureID = msg.getFeatureID(DeviceConfiguration.class);
-
 				if (featureID == DcdPackage.DEVICE_CONFIGURATION__NAME) {
 					if (msg.getEventType() == Notification.SET) {
 						updateTitle();
@@ -142,7 +127,6 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 
 	@Override
 	public void dispose() {
-
 		if (this.nameListener != null) {
 			this.nameListener.dispose();
 			this.nameListener = null;
@@ -223,10 +207,10 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 		}
 	}
 
-	protected void addNameListener(final Resource dcdResource) {
+	private void addNameListener(final Resource dcdResource) {
 		this.nameListener = new ResourceListener(dcdResource);
 	}
-	
+
 	protected IEditorInput createDiagramInput(final Resource dcdResource) throws IOException, CoreException {
 		final URI diagramURI = DUtil.getDiagramResourceURI(DcdDiagramUtilHelper.INSTANCE, dcdResource);
 
@@ -282,7 +266,7 @@ public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor 
 		retVal.setInput(dcdResource);
 		return retVal;
 	}
-	
+
 	protected IFormPage createDcdDevicesPage(final Resource dcdResource) {
 		final DevicesPage retVal = new DevicesPage(this);
 		retVal.setInput(dcdResource);

@@ -78,8 +78,21 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 	private boolean isLocalSca;
 	private Resource mainResource;
 	private SoftwareAssembly sad;
-	protected GraphitiModelMap modelMap; // SUPPRESS CHECKSTYLE INLINE
-	protected ScaWaveform waveform; // SUPPRESS CHECKSTYLE INLINE
+	private GraphitiModelMap modelMap;
+	private ScaWaveform waveform;
+
+	@Override
+	public String getDiagramContext(Resource sadResource) {
+		return DUtil.DIAGRAM_CONTEXT_EXPLORER;
+	}
+
+	protected ScaWaveform getWaveform() {
+		return waveform;
+	}
+
+	protected GraphitiModelMap getModelMap() {
+		return modelMap;
+	}
 
 	@Override
 	protected void createModel() {
@@ -182,16 +195,6 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 			return super.getMainResource();
 		}
 		return mainResource;
-	}
-
-	/**
-	 * Returns the property value that should be set for the Diagram container's DIAGRAM_CONTEXT property.
-	 * Indicates the mode the diagram is operating in.
-	 * @return
-	 */
-	@Override
-	public String getDiagramContext(Resource sadResource) {
-		return DUtil.DIAGRAM_CONTEXT_EXPLORER;
 	}
 
 	protected void initModelMap() throws CoreException {
@@ -464,10 +467,6 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformMultiPageEdi
 		final NewWaveformFromLocalWizard wizard = new NewWaveformFromLocalWizard(SoftwareAssembly.Util.getSoftwareAssembly(getMainResource()));
 		final WizardDialog dialog = new WizardDialog(getSite().getShell(), wizard);
 		dialog.open();
-	}
-
-	public ScaWaveform getWaveform() {
-		return waveform;
 	}
 
 	@Override

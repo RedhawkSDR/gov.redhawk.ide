@@ -55,7 +55,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
 
 				// reflect runtime aspects here
-				this.modelMap.reflectRuntimeStatus();
+				getModelMap().reflectRuntimeStatus();
 
 				// set layout for sandbox editors
 				DUtil.layout(editor);

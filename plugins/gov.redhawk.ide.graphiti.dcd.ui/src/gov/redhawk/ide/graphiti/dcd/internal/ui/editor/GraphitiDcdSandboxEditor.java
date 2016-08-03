@@ -49,7 +49,7 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdExplorerEditor {
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
 
 				// make sure diagram elements reflect current runtime state
-				this.modelMap.reflectRuntimeStatus();
+				getModelMap().reflectRuntimeStatus();
 
 				// set layout for sandbox editors
 				DUtil.layout(editor);

@@ -60,10 +60,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import CF.Application;
 
-/**
- * This is an example of a Sad model editor.
- */
-@SuppressWarnings("restriction")
 public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEditor {
 
 	public static final String ID = "gov.redhawk.ide.graphiti.sad.ui.editor.presentation.SadEditorID";
@@ -81,21 +77,12 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 			this.sadResource = spdResource;
 			if (this.sadResource != null) {
 				this.sadResource.eAdapters().add(this);
-				this.sad = getSoftwareAssembly();
+				this.sad = SoftwareAssembly.Util.getSoftwareAssembly(this.sadResource);
 				if (this.sad != null) {
 					this.sad.eAdapters().add(this);
 					updateTitle();
 				}
 			}
-		}
-
-		/**
-		 * Gets the soft pkg.
-		 *
-		 * @return the soft pkg
-		 */
-		private SoftwareAssembly getSoftwareAssembly() {
-			return ModelUtil.getSoftwareAssembly(this.sadResource);
 		}
 
 		public void dispose() {
@@ -107,9 +94,6 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 			}
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public void notifyChanged(final Notification msg) {
 			if (msg.getNotifier() instanceof Resource) {
@@ -120,7 +104,7 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 						this.sad = null;
 					}
 					if (this.sadResource.isLoaded()) {
-						this.sad = getSoftwareAssembly();
+						this.sad = SoftwareAssembly.Util.getSoftwareAssembly(this.sadResource);
 						if (this.sad != null) {
 							this.sad.eAdapters().add(this);
 							updateTitle();
@@ -132,7 +116,6 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 				}
 			} else if (msg.getNotifier() instanceof SoftwareAssembly) {
 				final int featureID = msg.getFeatureID(SoftwareAssembly.class);
-
 				if (featureID == SadPackage.SOFTWARE_ASSEMBLY__NAME) {
 					if (msg.getEventType() == Notification.SET) {
 						updateTitle();
@@ -142,16 +125,10 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 		}
 	}
 
-	/**
-	 * This creates a model editor.
-	 */
 	public GraphitiWaveformMultiPageEditor() {
 		super();
 	}
 
-	/**
-	 * This is how the framework determines which interfaces we implement.
-	 */
 	@Override
 	public <T> T getAdapter(final Class<T> key) {
 		if (key.equals(ScaWaveform.class) || key.isAssignableFrom(Application.class)) {
@@ -162,7 +139,6 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 
 	@Override
 	public void dispose() {
-
 		if (this.nameListener != null) {
 			this.nameListener.dispose();
 			this.nameListener = null;
@@ -170,10 +146,6 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 		super.dispose();
 	}
 
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateTitle() {
 		String name = null;
@@ -190,9 +162,6 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 		setPartName(name);
 	}
 
-	/**
-	 * @return
-	 */
 	private SoftwareAssembly getSoftwareAssembly() {
 		return ModelUtil.getSoftwareAssembly(getMainResource());
 	}
@@ -202,9 +171,6 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 		return getSoftwareAssembly();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void addPages() {
 		// Only creates the other pages if there is something that can be edited
@@ -260,8 +226,7 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 		return page;
 	}
 
-
-	protected void addNameListener(final Resource sadResource) {
+	private void addNameListener(final Resource sadResource) {
 		this.nameListener = new ResourceListener(sadResource);
 	}
 
@@ -274,7 +239,6 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 	 * @throws CoreException
 	 */
 	protected IEditorInput createDiagramInput(final Resource sadResource) throws IOException, CoreException {
-
 		final URI diagramURI = DUtil.getDiagramResourceURI(SadDiagramUtilHelper.INSTANCE, sadResource);
 
 		DUtil.initializeDiagramResource(SadDiagramUtilHelper.INSTANCE, SADDiagramTypeProvider.DIAGRAM_TYPE_ID,
@@ -332,17 +296,11 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 		return page;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getEditingDomainId() {
 		return GraphitiWaveformMultiPageEditor.EDITING_DOMAIN_ID;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected AdapterFactory getSpecificAdapterFactory() {
 		final ComposedAdapterFactory factory = new ComposedAdapterFactory();

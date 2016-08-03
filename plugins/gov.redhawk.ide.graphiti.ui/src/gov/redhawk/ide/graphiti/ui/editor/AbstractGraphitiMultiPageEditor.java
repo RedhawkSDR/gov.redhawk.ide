@@ -56,7 +56,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -86,12 +85,6 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 	private DiagramEditor diagramEditor;
 
 	/**
-	 * This keeps track of the active content viewer, which may be either one of
-	 * the viewers in the pages or the content outline viewer.
-	 */
-	private Viewer currentViewer;
-
-	/**
 	 * This selection provider coordinates the selections of the various editor
 	 * parts.
 	 */
@@ -101,9 +94,6 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 
 	private IEditorPart textEditor;
 	
-	/**
-	 * This creates a model editor.
-	 */
 	public AbstractGraphitiMultiPageEditor() {
 		super();
 		this.selectionProvider = new MultiPageSelectionProvider(this);
@@ -123,28 +113,6 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 		return super.getAdapter(adapter);
 	}
 
-	/**
-	 * This makes sure that one content viewer, either for the current page or
-	 * the outline view, if it has focus, is the current one.
-	 */
-	public void setCurrentViewer(final Viewer viewer) {
-		// If it is changing...
-		//
-		if (this.currentViewer != viewer) {
-			// Remember it.
-			//
-			this.currentViewer = viewer;
-		}
-	}
-	
-	/**
-	 * This returns the viewer as required by the {@link IViewerProvider} interface.
-	 */
-	@Override
-	public Viewer getViewer() {
-		return this.currentViewer;
-	}
-	
 	@Override
 	protected String getPropertyEditorPageKey(final IFileEditorInput input) {
 		final String retVal = super.getPropertyEditorPageKey(input);
@@ -182,7 +150,7 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 		return AdapterFactoryEditingDomain.getWrapper(eObject, getEditingDomain());
 	}
 	
-	public void setStatusLineManager(final ISelection selection) {
+	private void setStatusLineManager(final ISelection selection) {
 		final IStatusLineManager statusLineManager;
 
 		statusLineManager = getActionBars().getStatusLineManager();
@@ -207,10 +175,7 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 			}
 		}
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
+
 	@Override
 	public boolean isDirty() {
 		if (this.getMainResource() != null && !this.getMainResource().getURI().isPlatform()) {
@@ -243,14 +208,7 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 		}
 		return false;
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor
-	 * #getContributorId()
-	 */
+
 	@Override
 	public String getContributorId() {
 		if (this.diagramEditor == null) {
@@ -261,15 +219,9 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 	
 	protected abstract void addPages();
 	
-	public IEditorPart getTextEditor() {
-		return textEditor;
-	}
-
 	public void setTextEditor(IEditorPart textEditor) {
 		this.textEditor = textEditor;
 	}
-	
-	protected abstract void addNameListener(final Resource resource);
 	
 	protected abstract IEditorInput createDiagramInput(final Resource resource) throws IOException, CoreException;
 	
@@ -278,7 +230,7 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 	 * Indicates the mode the diagram is operating in.
 	 * @return
 	 */
-	public String getDiagramContext(Resource sadResource) {
+	protected String getDiagramContext(Resource sadResource) {
 		// We assume this is design-time, not runtime. The runtime editors will override this method.
 		// So, if the SCA file system scheme is in use that means the file is from the Target SDR.
 		if (ScaFileSystemConstants.SCHEME.equals(sadResource.getURI().scheme())) {
