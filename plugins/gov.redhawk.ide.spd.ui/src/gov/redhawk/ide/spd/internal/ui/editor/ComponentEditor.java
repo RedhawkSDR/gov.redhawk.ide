@@ -71,6 +71,7 @@ import gov.redhawk.ui.editor.SCAFormEditor;
 import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
+import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.Interface;
 import mil.jpeojtrs.sca.scd.ScdFactory;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
@@ -595,19 +596,21 @@ public class ComponentEditor extends SCAFormEditor {
 	}
 	
 
-	/**
-	 */
 	private void addScdPages() {
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(this.getMainResource());
-		boolean showPortsPage = true;
+		final SoftwareComponent scd = ScaEcoreUtils.getFeature(spd, ComponentEditor.SCD_PATH);
+		if (scd == null) {
+			return;
+		}
 
 		// If resource is a Service, only show the Ports page if PortSupplier is in the inheritance path
-		if (spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.SERVICE.getLiteral())) {
+		boolean showPortsPage = true;
+		ComponentType componentType = SoftwareComponent.Util.getWellKnownComponentType(scd);
+		if (componentType == ComponentType.SERVICE) {
 			showPortsPage = false;
-			SoftwareComponent comp = spd.getDescriptor().getComponent();
-			for (Interface serviceInterface : comp.getInterfaces().getInterface()) {
-				Interface tmpInterface = ScdFactory.eINSTANCE.createInterface();
-				tmpInterface.setRepid(PortSupplierHelper.id());
+			Interface tmpInterface = ScdFactory.eINSTANCE.createInterface();
+			tmpInterface.setRepid(PortSupplierHelper.id());
+			for (Interface serviceInterface : scd.getInterfaces().getInterface()) {
 				if (serviceInterface.isInstance(tmpInterface)) {
 					showPortsPage = true;
 					break;
@@ -616,8 +619,6 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 
 		try {
-			final Descriptor descriptorFile = spd.getDescriptor();
-
 			// Add the ports page after the properties page, if available, otherwise after the overview page
 			if (showPortsPage) {
 				this.portsPage = new PortsFormPage(this);
@@ -628,27 +629,20 @@ public class ComponentEditor extends SCAFormEditor {
 					index = this.getPropertiesPageIndex() + 1;
 				}
 				this.addPage(index, this.portsPage);
-
-				if (descriptorFile != null && descriptorFile.getComponent() != null) {
-					final SoftwareComponent component = descriptorFile.getComponent();
-					this.portsPage.setInput(component.eResource());
-				}
+				this.portsPage.setInput(scd.eResource());
 			}
 
 			// Add the SCD XML editor
 			if (this.scdInput != null) {
-				if (descriptorFile != null && descriptorFile.getComponent() != null) {
-					final SoftwareComponent component = descriptorFile.getComponent();
-					this.scdEditor = this.createTextEditor(this.scdInput);
-					int index;
-					if (this.getPrfPageIndex() == -1) {
-						index = this.getSpdPageIndex() + 1;
-					} else {
-						index = this.getPrfPageIndex() + 1;
-					}
-					addPage(index, this.scdEditor, this.scdInput, component.eResource());
-					this.setPageText(index, this.scdInput.getName());
+				this.scdEditor = this.createTextEditor(this.scdInput);
+				int index;
+				if (this.getPrfPageIndex() == -1) {
+					index = this.getSpdPageIndex() + 1;
+				} else {
+					index = this.getPrfPageIndex() + 1;
 				}
+				addPage(index, this.scdEditor, this.scdInput, scd.eResource());
+				this.setPageText(index, this.scdInput.getName());
 			}
 		} catch (final CoreException e) {
 			// PASS
