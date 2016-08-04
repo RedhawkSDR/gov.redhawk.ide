@@ -51,7 +51,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor"
+            class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDeviceManagerSandboxEditor"
             contributorClass="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
             default="true"
             icon="icons/full/obj16/ScaDeviceManager.gif"

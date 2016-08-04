@@ -28,7 +28,7 @@ import gov.redhawk.model.sca.ScaDeviceManager;
 /**
  * The multi-page sandbox editor for device managers ({@link ScaDeviceManager}). Includes a Graphiti diagram.
  */
-public class GraphitiDcdSandboxEditor extends GraphitiDcdExplorerEditor {
+public class GraphitiDeviceManagerSandboxEditor extends GraphitiDcdExplorerEditor {
 	public static final String EDITOR_ID = "gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox";
 
 	@Override
