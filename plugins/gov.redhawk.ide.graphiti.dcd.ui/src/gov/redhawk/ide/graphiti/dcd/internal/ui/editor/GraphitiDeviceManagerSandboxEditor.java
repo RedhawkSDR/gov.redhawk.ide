@@ -21,6 +21,7 @@ import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDeviceManagerExplorerEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaDeviceManager;
@@ -28,7 +29,7 @@ import gov.redhawk.model.sca.ScaDeviceManager;
 /**
  * The multi-page sandbox editor for device managers ({@link ScaDeviceManager}). Includes a Graphiti diagram.
  */
-public class GraphitiDeviceManagerSandboxEditor extends GraphitiDcdExplorerEditor {
+public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExplorerEditor {
 	public static final String EDITOR_ID = "gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox";
 
 	@Override

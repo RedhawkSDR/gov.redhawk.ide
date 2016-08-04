@@ -20,6 +20,7 @@ import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import gov.redhawk.core.graphiti.sad.ui.editor.GraphitiWaveformExplorerEditor;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaWaveform;

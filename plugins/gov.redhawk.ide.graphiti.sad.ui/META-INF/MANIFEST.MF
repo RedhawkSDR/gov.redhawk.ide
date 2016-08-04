@@ -46,7 +46,8 @@ Require-Bundle: gov.redhawk.validation;bundle-version="1.0.0",
  gov.redhawk.prf.ui,
  gov.redhawk.sca.model,
  mil.jpeojtrs.sca.scd,
- gov.redhawk.core.graphiti.ui
+ gov.redhawk.core.graphiti.ui,
+ gov.redhawk.core.graphiti.sad.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
