@@ -18,12 +18,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.ui.SadUiActivator;
+import gov.redhawk.model.sca.ScaWaveform;
 
+/**
+ * The multi-page sandbox editor for waveforms ({@link ScaWaveform}). Includes a Graphiti diagram.
+ */
 public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEditor {
 	public static final String EDITOR_ID = "gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca";
 
@@ -59,14 +62,8 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 
 				// set layout for sandbox editors
 				DUtil.layout(editor);
-			} catch (final PartInitException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-					StatusManager.LOG | StatusManager.SHOW);
-			} catch (final IOException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-					StatusManager.LOG | StatusManager.SHOW);
-			} catch (final CoreException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
+			} catch (IOException | CoreException e) {
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
 					StatusManager.LOG | StatusManager.SHOW);
 			}
 		}
