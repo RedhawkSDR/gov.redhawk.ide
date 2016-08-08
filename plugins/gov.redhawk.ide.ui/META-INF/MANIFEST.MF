@@ -45,6 +45,7 @@ Export-Package: gov.redhawk.ide.internal.ui.handlers,
  gov.redhawk.ide.ui.wizard
 Bundle-Localization: plugin
 Bundle-Vendor: %Bundle-Provider.0
-Import-Package: nxm.sys.prim,
+Import-Package: com.google.inject.matcher;version="1.3.0",
+ nxm.sys.prim,
  org.omg.CosEventChannelAdmin,
  org.omg.CosEventComm
