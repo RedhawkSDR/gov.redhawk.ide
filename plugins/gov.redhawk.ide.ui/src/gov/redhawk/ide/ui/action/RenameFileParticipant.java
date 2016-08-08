@@ -35,6 +35,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.corext.refactoring.changes.RenamePackageChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -209,7 +214,7 @@ public class RenameFileParticipant extends RenameParticipant {
 	@Override
 	public Change createPreChange(final IProgressMonitor pm) throws CoreException {
 		final HashMap<IFile, TextFileChange> changes = new HashMap<IFile, TextFileChange>(); // SUPPRESS CHECKSTYLE HideField
-		final String newName = getArguments().getNewName().split("[.]")[0];
+		final String newName = getArguments().getNewName();
 		final String oldName = this.currentProject.getName();
 
 		final IResource[] roots = { this.currentProject };
@@ -263,6 +268,8 @@ public class RenameFileParticipant extends RenameParticipant {
 			result.add(iter.next());
 		}
 
+		// TODO: I don't think we care if the spd.xml is there, we still want to update the Java package if this is a Java project, 
+		// and we still want to update the spec file name
 		if (hasAllResourceFiles(this.affectedFiles)) {
 			String fileName = "";
 			RenameResourceChange change;
@@ -292,6 +299,22 @@ public class RenameFileParticipant extends RenameParticipant {
 				change = new RenameResourceChange(folder.getFullPath(), fileName);
 				result.add(change);
 			}
+			
+			// Handle updating Java packages, if necessary
+			//TODO: I assume there is a static variable somewhere for the jave nature id
+			if (this.currentProject.isNatureEnabled("org.eclipse.jdt.core.javanature")) {  
+				IJavaProject javaProject = JavaCore.create(this.currentProject);
+				IPackageFragment[] packages = javaProject.getPackageFragments();  // TODO: There should be a more efficient way to get just the packages we need
+				for (IPackageFragment pkg : packages) {
+					if (pkg.getKind() == IPackageFragmentRoot.K_SOURCE) {
+						if (pkg.getElementName().equals(oldName + ".java")) {
+							// TODO: Need to have a better way than tacking on .java here.  Bit of a magic string
+							RenamePackageChange packageChange = new RenamePackageChange(pkg, newName + ".java", true);  // NOT SAFE since we are using an internal class.  Other options?
+							result.add(packageChange);
+						}
+					}
+				}
+			}
 		}
 
 		return result;
@@ -313,7 +336,10 @@ public class RenameFileParticipant extends RenameParticipant {
 		for (final IFile file : files) {
 			if (file.getFileExtension() != null) {
 				if ("xml".equals(file.getFileExtension())) {
-					final String scaType = file.getFullPath().toString().split("[.]")[1];
+					
+					// Assuming pattern of *.spd.xml, where the extension we care about is the second to last element
+					String[] nameSegments = file.getFullPath().toString().split("[.]");
+					final String scaType = nameSegments[nameSegments.length - 2]; 
 
 					if ("spd".equals(scaType)) {
 						spdFile = file;
