@@ -152,51 +152,21 @@
       </propertySections>
    </extension>
 
-
-   <!--
-        Registers an Eclipse adapter factory to provide IPropertySource objects for the GraphitiShapeEditPart
-        that gets selected in the DiagramEditor to provide a standard (table format) property sheet for EReference
-        objects.
-        -->
-            <extension
+   <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultiPageEditor"
-            contributorClass="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
-            default="true"
-            icon="icons/full/obj16/SadModelFile.gif"
-            id="gov.redhawk.ide.graphiti.sad.ui.editor.presentation.SadEditorID"
-            name="Waveform Editor">
-         <contentTypeBinding contentTypeId="mil.jpeojtrs.sca.sad.content-type"/>
-      </editor>
-      <editor
             class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformSandboxEditor"
-            contributorClass="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
+            contributorClass="gov.redhawk.core.graphiti.sad.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
             default="true"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca"
             name="Chalkboard">
       </editor>
-      <editor
-            class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformExplorerEditor"
-            contributorClass="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
-            default="true"
-            icon="icons/redhawk16.gif"
-            id="gov.redhawk.ide.graphiti.sad.ui.editor.waveformExplorer"
-            name="Waveform Explorer">
-      </editor>
    </extension>
 
-
-
-      <extension
+   <extension
             name="Graphiti Content Types"
             point="gov.redhawk.sca.ui.scaContentTypes">
-         <contentTypeBinding
-               contentTypeId="mil.jpeojtrs.sca.sad.contentType"
-               editorId="gov.redhawk.ide.graphiti.sad.ui.editor.presentation.SadEditorID"
-               priority="HIGHEST">
-         </contentTypeBinding>
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
             editorId="gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca"
@@ -207,13 +177,9 @@
             editorId="gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca"
             priority="HIGHEST">
       </contentTypeBinding>
-      <contentTypeBinding
-            contentTypeId="gov.redhawk.ui.sad.contentType"
-            editorId="gov.redhawk.ide.graphiti.sad.ui.editor.waveformExplorer"
-            priority="HIGHEST">
-      </contentTypeBinding>
    </extension>
-      <extension
+
+   <extension
             point="org.eclipse.ui.navigator.navigatorContent">
          <commonFilter
                activeByDefault="true"
@@ -276,30 +242,6 @@
       </extension>
    <extension
          point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:gov.redhawk.ide.graphiti.sad.ui.editor.presentation.SadEditorID?after=org.eclipse.gef.group.rest">
-         <command
-               commandId="gov.redhawk.ide.graphiti.ui.showPropertiesView"
-               label="Show Properties"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:gov.redhawk.ide.graphiti.sad.ui.editor.waveformExplorer?after=org.eclipse.gef.group.rest">
-         <command
-               commandId="gov.redhawk.ide.graphiti.ui.showPropertiesView"
-               label="Show Properties"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-            </visibleWhen>
-         </command>
-      </menuContribution>
       <menuContribution
             allPopups="false"
             locationURI="popup:gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca?after=org.eclipse.gef.group.rest">
