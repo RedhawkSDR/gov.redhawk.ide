@@ -31,6 +31,14 @@
     <gov.redhawk.core>http://download.redhawksdr.org/gov.redhawk.core/releases/2.0</gov.redhawk.core>
     <swt-bot>http://download.eclipse.org/technology/swtbot/snapshots/</swt-bot>
     <pydev>https://dl.bintray.com/fabioz/pydev/4.5.5/</pydev>
+    <!-- Sonar -->
+    <sonar.language>java</sonar.language>
+    <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    <sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
+    <sonar.issue.ignore.block>e1</sonar.issue.ignore.block>
+    <sonar.issue.ignore.block.e1.beginBlockRegexp>BEGIN GENERATED CODE</sonar.issue.ignore.block.e1.beginBlockRegexp>
+    <sonar.issue.ignore.block.e1.endBlockRegexp>END GENERATED CODE</sonar.issue.ignore.block.e1.endBlockRegexp>
   </properties>
 
   <repositories>

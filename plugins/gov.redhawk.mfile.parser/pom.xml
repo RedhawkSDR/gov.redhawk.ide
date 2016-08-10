@@ -24,6 +24,10 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
+  <properties>
+    <sonar.exclusions>src-jj/**/*</sonar.exclusions>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
