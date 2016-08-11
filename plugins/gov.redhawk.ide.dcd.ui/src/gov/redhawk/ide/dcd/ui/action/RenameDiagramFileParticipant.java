@@ -10,133 +10,53 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.ui.action;
 
-import gov.redhawk.ide.natures.ScaNodeProjectNature;
-import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.sca.dcd.diagram.DcdDiagramUtilHelper;
-import gov.redhawk.ui.editor.SCAFormEditor;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import mil.jpeojtrs.sca.dcd.DcdPackage;
-
-import org.eclipse.core.internal.resources.File;
-import org.eclipse.core.internal.resources.Project;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.search.ui.text.FileTextSearchScope;
 
-@SuppressWarnings("restriction")
-public class RenameDiagramFileParticipant extends RenameParticipant {
+import gov.redhawk.ide.natures.ScaNodeProjectNature;
+import gov.redhawk.ide.natures.ScaWaveformProjectNature;
+import gov.redhawk.ide.ui.action.RenameFileParticipant;
+import gov.redhawk.sca.dcd.diagram.DcdDiagramUtilHelper;
+import gov.redhawk.sca.sad.diagram.SadDiagramUtilHelper;
 
-	private File dcdFile;
-	private StringBuilder builder;
-	private Project project;
-	private boolean refactoringProject = true;
-	private boolean saveConfirmed;
-	private IEditorReference[] activeEditors;
-	private final List<File> affectedFiles = new ArrayList<File>();
-	private final String[] fileNamePattern = {
-	        "*.spec", "*" + DcdDiagramUtilHelper.DIAGRAM_FILE_EXTENSION
-	};
-
-	public RenameDiagramFileParticipant() {
-	}
+public class RenameDiagramFileParticipant extends RenameFileParticipant {
 
 	@Override
-	protected boolean initialize(final Object element) {
-		if (element instanceof Project) {
-			this.project = (Project) element;
+	protected Map<FileTextSearchScope, Pattern> createNamePatternMap() {
+		final String oldProjectName = getCurrentProject().getName();
 
-			try {
-				if (this.project.hasNature(ScaNodeProjectNature.ID)) {
-					this.dcdFile = (File) ModelUtil.getFile(this.project, DcdPackage.FILE_EXTENSION);
-				}
-			} catch (final CoreException e) {
-				// PASS
-			}
+		/* A Map where:
+		 * - Key is the name of the files we want to look in
+		 * - Value is the pattern we are using to find the text we want to replace
+		 */
+		Map<String[], String> filePatterns = new HashMap<String[], String>();
+		filePatterns.put(new String[] { "*" + SadDiagramUtilHelper.SAD_FILE_EXTENSION }, "(?:softwareassembly.*)" + oldProjectName);
+		filePatterns.put(new String[] { "*" + DcdDiagramUtilHelper.FILE_EXTENSION }, "(?:deviceconfiguration.*)" + oldProjectName);
 
-		} else if (element instanceof File) {
-			final File file = (File) element;
-
-			if (file.getFullPath().lastSegment().endsWith(DcdPackage.FILE_EXTENSION)) {
-				this.dcdFile = file;
-				this.project = (Project) file.getParent();
-				this.refactoringProject = false;
-			}
+		Map<FileTextSearchScope, Pattern> namePatternMap = super.createNamePatternMap();
+		for (Entry<String[], String> filePattern : filePatterns.entrySet()) {
+			FileTextSearchScope scope = FileTextSearchScope.newSearchScope(new IResource[] { getCurrentProject() }, filePattern.getKey(), true);
+			Pattern pattern = Pattern.compile(filePattern.getValue());
+			namePatternMap.put(scope, pattern);
 		}
 
-		if (this.dcdFile != null && this.dcdFile.exists()) {
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					RenameDiagramFileParticipant.this.saveConfirmed = IDE.saveAllEditors(new IResource[] {
-						RenameDiagramFileParticipant.this.dcdFile
-					}, true);
-					RenameDiagramFileParticipant.this.activeEditors = PlatformUI.getWorkbench()
-					        .getActiveWorkbenchWindow()
-					        .getActivePage()
-					        .getEditorReferences();
-				}
-			});
-
-			if (this.saveConfirmed) {
-				for (final IEditorReference editor : this.activeEditors) {
-					final IEditorPart editorPart = editor.getEditor(false);
-
-					if (editorPart instanceof SCAFormEditor) {
-						final SCAFormEditor formEditor = (SCAFormEditor) editorPart;
-						if (formEditor.getEditorInput() instanceof FileEditorInput) {
-							final FileEditorInput input = (FileEditorInput) formEditor.getEditorInput();
-
-							if (input.getFile().equals(this.dcdFile)) {
-								PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-									@Override
-									public void run() {
-										formEditor.close(true);
-									}
-								});
-							}
-						}
-					}
-				}
-			}
-
-			return true;
-		}
-
-		return false;
+		return namePatternMap;
 	}
 
 	@Override
 	public String getName() {
-		return "Closing associated Diagram file.";
+		return "Refactoring associated Diagram file.";
 	}
 
 	@Override
-	public RefactoringStatus checkConditions(final IProgressMonitor pm, final CheckConditionsContext context) {
-		return new RefactoringStatus();
+	protected boolean hasCorrectNature(IProject project) throws CoreException {
+		return (project.hasNature(ScaNodeProjectNature.ID) || project.hasNature(ScaWaveformProjectNature.ID));
 	}
-
-	@Override
-	public Change createPreChange(final IProgressMonitor pm) throws CoreException {
-		return null;
-	}
-
-	@Override
-	public Change createChange(final IProgressMonitor pm) throws CoreException {
-		return null;
-	}
-
 }

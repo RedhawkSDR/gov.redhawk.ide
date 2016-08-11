@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: gov.redhawk.ide.ui;singleton:=true
-Bundle-Version: 10.0.0.qualifier
+Bundle-Version: 10.1.0.qualifier
 Bundle-Activator: gov.redhawk.ide.ui.RedhawkIDEUiPlugin
 Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.core.runtime;bundle-version="3.6.0",
@@ -41,6 +41,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.internal.ui.handlers,
  gov.redhawk.ide.internal.ui.perspective;x-internal:=true,
  gov.redhawk.ide.ui,
+ gov.redhawk.ide.ui.action,
  gov.redhawk.ide.ui.preferences,
  gov.redhawk.ide.ui.wizard
 Bundle-Localization: plugin

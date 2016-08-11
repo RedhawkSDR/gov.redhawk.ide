@@ -321,7 +321,7 @@
           point="org.eclipse.ltk.core.refactoring.renameParticipants">
        <renameParticipant
              class="gov.redhawk.ide.ui.action.RenameFileParticipant"
-             id="gov.redhawk.ide.ui.renameDiagramFile"
+             id="gov.redhawk.ide.ui.renameFile"
              name="%renameParticipant.name">
           <enablement>
               <or>

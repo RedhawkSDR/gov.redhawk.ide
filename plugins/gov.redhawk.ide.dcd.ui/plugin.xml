@@ -202,17 +202,10 @@
           point="org.eclipse.ltk.core.refactoring.renameParticipants">
        <renameParticipant
              class="gov.redhawk.ide.dcd.ui.action.RenameDiagramFileParticipant"
-             id="gov.redhawk.ide.dcd.ui.renameDiagramFile"
+             id="gov.redhawk.ide.ui.renameDiagramFile"
              name="%renameParticipant.name">
           <enablement>
               <or>
-                 <adapt
-                       type="org.eclipse.core.resources.IResource">
-                    <test
-                          property="org.eclipse.core.resources.name"
-                          value="*.dcd.xml">
-                    </test>
-                 </adapt>
                  <adapt
                        type="org.eclipse.core.resources.IProject">
                  </adapt>

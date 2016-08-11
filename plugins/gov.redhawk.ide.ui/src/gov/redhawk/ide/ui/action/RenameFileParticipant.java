@@ -10,11 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.action;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
@@ -24,8 +21,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.emf.common.util.URI;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -44,30 +42,24 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import gov.redhawk.ide.natures.ScaComponentProjectNature;
 import gov.redhawk.ide.natures.ScaNodeProjectNature;
-import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.ui.editor.SCAFormEditor;
-import mil.jpeojtrs.sca.prf.PrfPackage;
-import mil.jpeojtrs.sca.scd.ScdPackage;
-import mil.jpeojtrs.sca.spd.SoftPkg;
+import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 
+/**
+ * @since 10.1
+ */
 @SuppressWarnings("restriction")
 public class RenameFileParticipant extends RenameParticipant {
-
-	/** Keep track to see if editor has been saved */
-	private boolean saveConfirmed = false;
-
-	/** Keep a list of active editors so that we later reference it */
-	private IEditorReference[] activeEditors;
 
 	/** The project that is being refactored */
 	private IProject currentProject;
 
-	/** The main spd file in the project that is currently being refactored */
-	private IFile currentSpdFile;
+	/** Keep a list of active editors so that we later reference it */
+	private IEditorReference[] activeEditors;
 
 	/**
 	 * The current project's editor input
@@ -75,79 +67,68 @@ public class RenameFileParticipant extends RenameParticipant {
 	 */
 	private FileEditorInput input;
 
-	/** List of REDHAWK XML file extensions */
-	private static final List<String> SUPPORTED_FILES = Arrays.asList(
-		new String[] { PrfPackage.FILE_EXTENSION, SpdPackage.FILE_EXTENSION, ScdPackage.FILE_EXTENSION });
-
 	@Override
 	protected boolean initialize(final Object element) {
 		/*  Verify object for refactoring is a project with the REDHAWK component nature.
-		 *  Grab it's spd file.
-		 *  Get all three main resource files and prompt to save, then close the associated Editor in the UI thread...otherwise
-		 *  conflicts will arise when we start making changes to resources.
+		 *  Prompt to save, then close associated editors in the UI thread, otherwise conflicts 
+		 *  will arise when we start making changes to resources.
 		 *  Finally, refresh the local resource to make Eclipse full aware of our changes.
 		 */
-		if (element instanceof IProject) {
-			final IProject project = (IProject) element;
+		if (!(element instanceof IProject)) {
+			return false;
+		}
 
-			try {
-				if (project.hasNature(ScaComponentProjectNature.ID) && !project.hasNature(ScaNodeProjectNature.ID)) {
-					this.currentProject = project;
-					final List<IResource> resources = new ArrayList<IResource>();
+		this.currentProject = (IProject) element;
 
-					for (final IResource resource : this.currentProject.members()) {
-						for (final String s : SUPPORTED_FILES) {
-							if (resource.getName().endsWith(s)) {
-								if (resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-									this.currentSpdFile = (IFile) resource;
-								}
-								resources.add(resource);
-							}
-						}
-					}
+		try {
 
-					if (!resources.isEmpty()) {
+			if (!hasCorrectNature(currentProject)) {
+				return false;
+			}
+
+			// Prompt to save any dirty editors associated with this project
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					IDE.saveAllEditors(new IResource[] { RenameFileParticipant.this.currentProject }, true);
+					RenameFileParticipant.this.activeEditors = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getEditorReferences();
+				}
+			});
+
+			// If the user decided not to save, we won't try and update anything other than the Project name
+			for (IEditorReference editor : activeEditors) {
+				if (editor.isDirty()) {
+					return false;
+				}
+			}
+
+			// Close associated editors in the UI thread, otherwise conflicts will arise when we start making changes to
+			// resources.
+			for (final IEditorReference editor : this.activeEditors) {
+				final IEditorPart editorPart = editor.getEditor(false);
+
+				if (editor.getEditorInput() instanceof FileEditorInput) {
+					this.input = (FileEditorInput) editor.getEditorInput();
+					if (this.currentProject.equals(this.input.getFile().getProject())) {
 						PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 							@Override
 							public void run() {
-								RenameFileParticipant.this.saveConfirmed = IDE.saveAllEditors(resources.toArray(new IResource[0]), true);
-								RenameFileParticipant.this.activeEditors = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getEditorReferences();
+								editor.getPage().closeEditor(editorPart, true);
 							}
 						});
-
-						if (this.saveConfirmed) {
-							for (final IEditorReference editor : this.activeEditors) {
-								final IEditorPart editorPart = editor.getEditor(false);
-
-								if (editorPart instanceof SCAFormEditor) {
-									final SCAFormEditor formEditor = (SCAFormEditor) editorPart;
-									if (formEditor.getEditorInput() instanceof FileEditorInput) {
-										this.input = (FileEditorInput) formEditor.getEditorInput();
-
-										if (this.input.getFile().equals(this.currentSpdFile)) {
-											PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-												@Override
-												public void run() {
-													formEditor.close(true);
-												}
-											});
-										}
-									}
-								}
-							}
-						}
 					}
-
-					this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-					return true;
 				}
-			} catch (final CoreException e) {
-				// PASS
 			}
+
+			// Refresh the local resource to make Eclipse full aware of our changes.
+			this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			return true;
+		} catch (final CoreException e) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to perform project refactor", e),
+				StatusManager.SHOW | StatusManager.LOG);
+			return false;
 		}
-		return false;
 	}
 
 	/*
@@ -188,26 +169,24 @@ public class RenameFileParticipant extends RenameParticipant {
 			result.add(iter.next());
 		}
 
-		if (hasAllResourceFiles(searchRequestor.getAffectedFiles())) {
-			// Update file name for *.spec
-			for (final IFile file : searchRequestor.getAffectedFiles()) {
-				if (file.getFullPath().lastSegment().endsWith(".spec")) {
-					String fileName = file.getFullPath().lastSegment().replace(oldName, newName);
-					RenameResourceChange change = new RenameResourceChange(file.getFullPath(), fileName);
-					result.add(change);
-				}
+		// Update file name for *.spec
+		for (final IFile file : searchRequestor.getAffectedFiles()) {
+			if (file.getFullPath().lastSegment().endsWith(".spec") || file.getFullPath().lastSegment().endsWith(".pc.in")) {
+				String fileName = file.getFullPath().lastSegment().replace(oldName, newName);
+				RenameResourceChange change = new RenameResourceChange(file.getFullPath(), fileName);
+				result.add(change);
 			}
+		}
 
-			// Handle updating Java packages, if necessary
-			if (this.currentProject.isNatureEnabled(JavaCore.NATURE_ID)) {
-				IJavaProject javaProject = JavaCore.create(this.currentProject);
-				IPackageFragment[] packages = javaProject.getPackageFragments();
-				for (IPackageFragment pkg : packages) {
-					if (pkg.getKind() == IPackageFragmentRoot.K_SOURCE) {
-						if (pkg.getElementName().equals(oldName + ".java")) {
-							RenamePackageChange packageChange = new RenamePackageChange(pkg, newName + ".java", true);
-							result.add(packageChange);
-						}
+		// Handle updating Java packages, if necessary
+		if (this.currentProject.isNatureEnabled(JavaCore.NATURE_ID)) {
+			IJavaProject javaProject = JavaCore.create(this.currentProject);
+			IPackageFragment[] packages = javaProject.getPackageFragments();
+			for (IPackageFragment pkg : packages) {
+				if (pkg.getKind() == IPackageFragmentRoot.K_SOURCE) {
+					if (pkg.getElementName().equals(oldName + ".java")) {
+						RenamePackageChange packageChange = new RenamePackageChange(pkg, newName + ".java", true);
+						result.add(packageChange);
 					}
 				}
 			}
@@ -220,7 +199,7 @@ public class RenameFileParticipant extends RenameParticipant {
 	 * A map used to determine files where we need to update dot(.) delimited patterns (e.g. replace Foo.Bar with
 	 * Foo.Baz.Bar).
 	 */
-	private Map<FileTextSearchScope, Pattern> createNamePatternMap() {
+	protected Map<FileTextSearchScope, Pattern> createNamePatternMap() {
 		Map<FileTextSearchScope, Pattern> namePatternMap = new HashMap<FileTextSearchScope, Pattern>();
 		final IResource[] roots = { this.currentProject };
 		final String oldProjectName = this.currentProject.getName();
@@ -230,13 +209,16 @@ public class RenameFileParticipant extends RenameParticipant {
 		 * - Value is the pattern we are using to find the text we want to replace
 		 */
 		Map<String[], String> filePatterns = new HashMap<String[], String>();
-		filePatterns.put(new String[] { "build.sh" }, "(?:-e.*)" + oldProjectName + "|(?:tmpdir.*)");
-		filePatterns.put(new String[] { "*.spec" }, "(?:Name:\\s*)" + oldProjectName);
-		filePatterns.put(new String[] { "*" + SpdPackage.FILE_EXTENSION }, "(?:name.*)" + oldProjectName + "(?!\\.)");
-		filePatterns.put(new String[] { "Makefile.am" }, "(?:ossieName.*)" + oldProjectName);
-		filePatterns.put(new String[] { "*.wavedev" }, "(?:properties.*)" + oldProjectName);
+		filePatterns.put(new String[] { "*" + SpdPackage.FILE_EXTENSION }, oldProjectName + "(?:.*type=)");
+		filePatterns.put(new String[] { "*.spec", "*.pc.in" }, "(?:Name:\\s*)" + oldProjectName);
 		filePatterns.put(new String[] { "*.java" }, "(?:package.*)" + oldProjectName);
+		filePatterns.put(new String[] { "*.wavedev" }, "(?:properties.*)" + oldProjectName);
+		filePatterns.put(new String[] { "build.sh" }, "(?:-e.*)" + oldProjectName + "|(?:tmpdir.*)");
 		filePatterns.put(new String[] { "configure.ac" }, "(?:AC_INIT.*)" + oldProjectName);
+		filePatterns.put(new String[] { "configure.ac" }, "(?:RH_SOFTPKG_PREFIX.*)" + oldProjectName);
+		filePatterns.put(new String[] { "configure.ac" }, "(?:AC_CONFIG_FILES.*)" + oldProjectName);
+		filePatterns.put(new String[] { "Makefile.am" }, "(?:ossieName.*)" + oldProjectName);
+		filePatterns.put(new String[] { "Makefile.am" }, "(?:pkgconfig_DATA.*)" + oldProjectName);
 		filePatterns.put(new String[] { "startJava.sh" }, "(?<!\\.)" + oldProjectName + "(?!\\.jar)");
 
 		for (Entry<String[], String> filePattern : filePatterns.entrySet()) {
@@ -262,8 +244,16 @@ public class RenameFileParticipant extends RenameParticipant {
 		 * - Value is the pattern we are using to find the text we want to replace
 		 */
 		Map<String[], String> filePatterns = new HashMap<String[], String>();
-		filePatterns.put(new String[] { "*.spec" }, "(?:/)" + oldProjectPath + "(?!\\.)");
+
 		filePatterns.put(new String[] { "Makefile.am" }, "(?:\\$\\(prefix\\).*)" + oldProjectPath);
+
+		// Update all paths in the .spec file EXCEPT those describing %dir
+		filePatterns.put(new String[] { "*.spec" }, "(?<!\\%dir )(?:\\%\\{_prefix\\}.*)" + oldProjectPath + "(?!\\.)");
+		filePatterns.put(new String[] { "*.spec" }, "(?<!\\%dir )(?:\\%\\{_sdrroot\\}.*)" + oldProjectPath + "(?!\\.)");
+
+		// Update the %dir declarations in .spec files. These are special cases that need to be handled
+		filePatterns.put(new String[] { "*.spec" }, "(?s:\\%dir \\%\\{_prefix\\}.*?)" + oldProjectPath);
+		filePatterns.put(new String[] { "*.spec" }, "(?s:\\%dir \\%\\{_sdrroot\\}.*?)" + oldProjectPath);
 
 		for (Entry<String[], String> filePattern : filePatterns.entrySet()) {
 			FileTextSearchScope scope = FileTextSearchScope.newSearchScope(roots, filePattern.getKey(), true);
@@ -272,62 +262,6 @@ public class RenameFileParticipant extends RenameParticipant {
 		}
 
 		return pathPatternMap;
-	}
-
-	/*
-	 * Method that finds the spd file in the list and uses the ModelUtil helper to get both the SCD and PRF as well.
-	 * Once all of the files are found, adds it to the list.  This ensures that when the SPD files is refactored, so are
-	 * the PRF and SCD files are changed as well...otherwise explosions may happen.
-	 * 
-	 * @param files a list of affected files that was gathered while searching for potential candidates for refactoring.
-	 * @return boolean whether or not the list of files has references for SPD, SCD and PRF files. 
-	 */
-	private boolean hasAllResourceFiles(final List<IFile> files) {
-		IFile spdFile = null;
-		IFile scdFile = null;
-		IFile prfFile = null;
-
-		for (final IFile file : files) {
-			if (file.getFileExtension() != null) {
-				if ("xml".equals(file.getFileExtension())) {
-
-					// Assuming pattern of *.spd.xml, where the extension we care about is the second to last element
-					String[] nameSegments = file.getFullPath().toString().split("[.]");
-					final String scaType = nameSegments[nameSegments.length - 2];
-
-					if ("spd".equals(scaType)) {
-						spdFile = file;
-						break;
-					}
-				}
-			}
-		}
-
-		if (spdFile == null) {
-			return false;
-		}
-
-		final URI spdURI = URI.createPlatformResourceURI(spdFile.getFullPath().toString(), false);
-		final SoftPkg softPkg = ModelUtil.loadSoftPkg(spdURI);
-
-		scdFile = (IFile) ModelUtil.getScdFile(softPkg.getDescriptor());
-		prfFile = (IFile) ModelUtil.getPrfFile(softPkg.getPropertyFile());
-
-		if (scdFile.exists() && prfFile.exists()) {
-			if (!files.contains(scdFile)) {
-				files.add(scdFile);
-			}
-
-			if (!files.contains(prfFile)) {
-				files.add(prfFile);
-			}
-
-			IDE.saveAllEditors(new IResource[] { scdFile, prfFile, spdFile }, true);
-
-			return true;
-		}
-
-		return false;
 	}
 
 	@Override
@@ -341,6 +275,15 @@ public class RenameFileParticipant extends RenameParticipant {
 	@Override
 	public String getName() {
 		return "Refactoring associated resources.";
+	}
+
+	/**
+	 * @param currentProject2
+	 * @return True if the project has a nature that is acceptable for this RenameParticipant
+	 * @throws CoreException
+	 */
+	protected boolean hasCorrectNature(IProject project) throws CoreException {
+		return (project.hasNature(ScaComponentProjectNature.ID) && !project.hasNature(ScaNodeProjectNature.ID));
 	}
 
 	@Override
@@ -359,5 +302,9 @@ public class RenameFileParticipant extends RenameParticipant {
 				+ "If you choose to continue please note all references to the original project name must be manually updated");
 		}
 		return status;
+	}
+
+	protected IProject getCurrentProject() {
+		return currentProject;
 	}
 }

@@ -29,6 +29,9 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEditGroup;
 
+/**
+ * @since 10.1
+ */
 public class RenameFileSearchRequestor extends TextSearchRequestor {
 
 	private final RefactoringParticipant participant;
@@ -46,7 +49,10 @@ public class RenameFileSearchRequestor extends TextSearchRequestor {
 	/** Id used to tack refactor operation */
 	private String changeId;
 
+	/** The new project name (Could be either dot(.) or forward-slash(/) delimited */
 	private String newText;
+
+	/** The old project name (Could be either dot(.) or forward-slash(/) delimited */
 	private String oldText;
 
 	/**
@@ -88,13 +94,51 @@ public class RenameFileSearchRequestor extends TextSearchRequestor {
 			changes.put(matchedFile, change);
 		}
 
-		String replacementText = matchAccess.getFileContent(matchAccess.getMatchOffset(), matchAccess.getMatchLength());
-		replacementText = replacementText.replace(this.oldText, this.newText);
+		String originalText = matchAccess.getFileContent(matchAccess.getMatchOffset(), matchAccess.getMatchLength());
+		String replacementText = "";
+		if (matchedFile.getName().endsWith(".spec") && originalText.contains("%dir")) {
+			replacementText = buildDirectoryBlock(originalText);
+		} else {
+			replacementText = originalText.replace(this.oldText, this.newText);
+		}
 
 		final ReplaceEdit edit = new ReplaceEdit(matchAccess.getMatchOffset(), matchAccess.getMatchLength(), replacementText);
 		change.addEdit(edit);
 		change.addTextEditGroup(new TextEditGroup("Update type reference", edit));
 		return true;
+	}
+
+	/**
+	 * Builds a text block for each directory in the namespaced path. For example: A/B/Foo becomes <br>
+	 * &ltprefix&gt/A</br>
+	 * &ltprefix&gt/A/B</br>
+	 * &ltprefix&gt/A/B/Foo</br>
+	 * 
+	 * @param originalText - The original text block from the file
+	 * @return
+	 */
+	private String buildDirectoryBlock(String originalText) {
+		StringBuilder builder = new StringBuilder();
+
+		// Preserve the existing prefix, as this is specific to the project type
+		String[] textArray = originalText.split("\n");
+		String pathPrefix = textArray[textArray.length - 1];
+		pathPrefix = pathPrefix.substring(0, pathPrefix.indexOf(this.oldText) - 1);
+
+		// Add lines to the directory block for each folder in the path
+		String[] newPathElements = this.newText.split("/");
+		String pathSuffix = "";
+		for (int i = 0; i < newPathElements.length; i++) {
+			pathSuffix = pathSuffix + "/" + newPathElements[i];
+			if (i == newPathElements.length - 1) {
+				builder.append(pathPrefix + pathSuffix);
+			} else {
+				builder.append(pathPrefix + pathSuffix + "\n");
+			}
+		}
+
+		// Return the formated block
+		return builder.toString();
 	}
 
 	public List<IFile> getAffectedFiles() {
