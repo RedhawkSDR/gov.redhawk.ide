@@ -322,13 +322,25 @@
        <renameParticipant
              class="gov.redhawk.ide.ui.action.RenameFileParticipant"
              id="gov.redhawk.ide.ui.renameFile"
-             name="%renameParticipant.name">
+             name="%renameFileParticipant.name">
           <enablement>
               <or>
                  <adapt
                        type="org.eclipse.core.resources.IProject">
                  </adapt>
               </or>
+          </enablement>
+       </renameParticipant>
+       <renameParticipant
+             class="gov.redhawk.ide.ui.action.RenameDiagramFileParticipant"
+             id="gov.redhawk.ide.ui.renameDiagramFile"
+             name="%renameDiagramParticipant.name">
+          <enablement>
+             <or>
+                <adapt
+                      type="org.eclipse.core.resources.IProject">
+                </adapt>
+             </or>
           </enablement>
        </renameParticipant>
     </extension>

@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.dcd.ui.action;
+package gov.redhawk.ide.ui.action;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +22,12 @@ import org.eclipse.search.ui.text.FileTextSearchScope;
 
 import gov.redhawk.ide.natures.ScaNodeProjectNature;
 import gov.redhawk.ide.natures.ScaWaveformProjectNature;
-import gov.redhawk.ide.ui.action.RenameFileParticipant;
-import gov.redhawk.sca.dcd.diagram.DcdDiagramUtilHelper;
-import gov.redhawk.sca.sad.diagram.SadDiagramUtilHelper;
+import mil.jpeojtrs.sca.dcd.DcdPackage;
+import mil.jpeojtrs.sca.sad.SadPackage;
 
+/**
+ * @since 10.1
+ */
 public class RenameDiagramFileParticipant extends RenameFileParticipant {
 
 	@Override
@@ -37,8 +39,8 @@ public class RenameDiagramFileParticipant extends RenameFileParticipant {
 		 * - Value is the pattern we are using to find the text we want to replace
 		 */
 		Map<String[], String> filePatterns = new HashMap<String[], String>();
-		filePatterns.put(new String[] { "*" + SadDiagramUtilHelper.SAD_FILE_EXTENSION }, "(?:softwareassembly.*)" + oldProjectName);
-		filePatterns.put(new String[] { "*" + DcdDiagramUtilHelper.FILE_EXTENSION }, "(?:deviceconfiguration.*)" + oldProjectName);
+		filePatterns.put(new String[] { "*" + SadPackage.FILE_EXTENSION }, "(?:softwareassembly.*)" + oldProjectName);
+		filePatterns.put(new String[] { "*" + DcdPackage.FILE_EXTENSION }, "(?:deviceconfiguration.*)" + oldProjectName);
 
 		Map<FileTextSearchScope, Pattern> namePatternMap = super.createNamePatternMap();
 		for (Entry<String[], String> filePattern : filePatterns.entrySet()) {

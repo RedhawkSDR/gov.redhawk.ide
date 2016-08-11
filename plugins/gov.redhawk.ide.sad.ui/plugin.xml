@@ -169,26 +169,4 @@
           priority="LOWEST">
     </contentTypeBinding>
  </extension>
-    <extension
-          point="org.eclipse.ltk.core.refactoring.renameParticipants">
-       <renameParticipant
-             class="gov.redhawk.ide.sad.ui.action.RenameDiagramFileParticipant"
-             id="gov.redhawk.ide.sad.ui.renameDiagramFile"
-             name="%renameParticipant.name">
-          <enablement>
-              <or>
-                 <adapt
-                       type="org.eclipse.core.resources.IProject">
-                 </adapt>
-                 <adapt
-                       type="org.eclipse.core.resources.IResource">
-                    <test
-                          property="org.eclipse.core.resources.name"
-                          value="*.sad.xml">
-                    </test>
-                 </adapt>
-              </or>
-          </enablement>
-       </renameParticipant>
-    </extension>
 </plugin>

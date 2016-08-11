@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: gov.redhawk.ide.sad.ui;singleton:=true
-Bundle-Version: 5.1.0.qualifier
+Bundle-Version: 6.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -59,7 +59,6 @@ Export-Package: gov.redhawk.ide.sad.internal.ui;x-internal:=true,
  gov.redhawk.ide.sad.internal.ui.section;x-internal:=true,
  gov.redhawk.ide.sad.internal.ui.wizard;x-internal:=true,
  gov.redhawk.ide.sad.ui,
- gov.redhawk.ide.sad.ui.action,
  gov.redhawk.ide.sad.ui.edit.policies,
  gov.redhawk.ide.sad.ui.providers,
  gov.redhawk.ide.sad.ui.wizard
