@@ -50,7 +50,7 @@ import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 
 /**
- * @since 10.1
+ * @since 10.0
  */
 @SuppressWarnings("restriction")
 public class RenameFileParticipant extends RenameParticipant {

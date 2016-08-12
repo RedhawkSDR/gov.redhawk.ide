@@ -26,7 +26,7 @@ import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.sad.SadPackage;
 
 /**
- * @since 10.1
+ * @since 10.0
  */
 public class RenameDiagramFileParticipant extends RenameFileParticipant {
 

@@ -30,7 +30,7 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEditGroup;
 
 /**
- * @since 10.1
+ * @since 10.0
  */
 public class RenameFileSearchRequestor extends TextSearchRequestor {
 
