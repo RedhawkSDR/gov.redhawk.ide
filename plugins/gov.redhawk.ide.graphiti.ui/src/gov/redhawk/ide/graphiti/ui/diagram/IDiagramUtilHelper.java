@@ -17,8 +17,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-//import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint;
-
 /**
  * @since 3.0
  */
@@ -27,10 +25,6 @@ public interface IDiagramUtilHelper {
 	String getDiagramFileExtension();
 
 	Map< ? , ? > getSaveOptions();
-
-	// String getModelId();
-
-	// PreferencesHint getDiagramPreferencesHint();
 
 	EObject getRootDiagramObject(Resource resource);
 

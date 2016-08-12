@@ -14,9 +14,37 @@
    <extension
          point="org.eclipse.graphiti.ui.diagramTypeProviders">
       <diagramTypeProvider
-            class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramTypeProvider"
-            id="gov.redhawk.ide.graphiti.sad.ui.FactoryProvider"
-            name="FactoryProvider">
+            class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADEditorTypeProvider"
+            id="gov.redhawk.ide.graphiti.sad.ui.SADEditorTypeProvider"
+            name="SAD Editor Diagram Type Provider">
+         <diagramType
+               id="gov.redhawk.ide.graphiti.sad.ui.SADDiagramEditor">
+         </diagramType>
+         <imageProvider
+               id="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.imageProvider">
+         </imageProvider>
+         <imageProvider
+               id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
+         </imageProvider>
+      </diagramTypeProvider>
+      <diagramTypeProvider
+            class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformExplorerTypeProvider"
+            id="gov.redhawk.ide.graphiti.sad.ui.WaveformExplorerTypeProvider"
+            name="Waveform Explorer Diagram Type Provider">
+         <diagramType
+               id="gov.redhawk.ide.graphiti.sad.ui.SADDiagramEditor">
+         </diagramType>
+         <imageProvider
+               id="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.imageProvider">
+         </imageProvider>
+         <imageProvider
+               id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
+         </imageProvider>
+      </diagramTypeProvider>
+      <diagramTypeProvider
+            class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformSandboxTypeProvider"
+            id="gov.redhawk.ide.graphiti.sad.ui.WaveformSandboxTypeProvider"
+            name="Sandbox Waveform Diagram Type Provider">
          <diagramType
                id="gov.redhawk.ide.graphiti.sad.ui.SADDiagramEditor">
          </diagramType>
@@ -32,7 +60,7 @@
          point="org.eclipse.graphiti.ui.diagramTypes">
       <diagramType
             id="gov.redhawk.ide.graphiti.sad.ui.SADDiagramEditor"
-            name="SAD Diagram"
+            name="SAD / Waveform Diagram"
             type="SADDiagram">
       </diagramType>
    </extension>

@@ -25,7 +25,7 @@ import gov.redhawk.ide.sdr.ServicesContainer;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
-public class DCDPaletteToolBehaviorProvider extends AbstractPaletteToolBehaviorProvider {
+public abstract class DCDPaletteToolBehaviorProvider extends AbstractPaletteToolBehaviorProvider {
 
 	private PaletteCompartmentEntry deviceCompartment;
 	private PaletteCompartmentEntry serviceCompartment;

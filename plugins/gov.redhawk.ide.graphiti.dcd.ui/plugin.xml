@@ -18,9 +18,37 @@
    <extension
          point="org.eclipse.graphiti.ui.diagramTypeProviders">
       <diagramTypeProvider
-            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramTypeProvider"
-            id="gov.redhawk.ide.graphiti.dcd.ui.FactoryProvider"
-            name="FactoryProvider">
+            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDEditorDiagramTypeProvider"
+            id="gov.redhawk.ide.graphiti.dcd.ui.DCDEditorDiagramTypeProvider"
+            name="DCD Editor Diagram Type Provider">
+         <diagramType
+               id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor">
+         </diagramType>
+         <imageProvider
+               id="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.deviceImageProvider">
+         </imageProvider>
+         <imageProvider
+               id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
+         </imageProvider>
+      </diagramTypeProvider>
+      <diagramTypeProvider
+            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DevMgrExplorerDiagramTypeProvider"
+            id="gov.redhawk.ide.graphiti.dcd.ui.DevMgrExplorerDiagramTypeProvider"
+            name="Device Manager Diagram Type Provider">
+         <diagramType
+               id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor">
+         </diagramType>
+         <imageProvider
+               id="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.deviceImageProvider">
+         </imageProvider>
+         <imageProvider
+               id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
+         </imageProvider>
+      </diagramTypeProvider>
+      <diagramTypeProvider
+            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DevMgrSandboxDiagramTypeProvider"
+            id="gov.redhawk.ide.graphiti.dcd.ui.DevMgrSandboxDiagramTypeProvider"
+            name="Sandbox Device Manager Diagram Type Provider">
          <diagramType
                id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor">
          </diagramType>
@@ -36,7 +64,7 @@
          point="org.eclipse.graphiti.ui.diagramTypes">
       <diagramType
             id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor"
-            name="DCD Diagram"
+            name="DCD / Device Manager Diagram"
             type="DCDDiagram">
       </diagramType>
    </extension>

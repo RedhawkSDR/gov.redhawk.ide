@@ -11,26 +11,23 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram;
 
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramTypeProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.IDiagramUtilHelper;
-import gov.redhawk.model.sca.util.ModelUtil;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import mil.jpeojtrs.sca.dcd.DcdPackage;
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 
+import gov.redhawk.ide.graphiti.ui.diagram.IDiagramUtilHelper;
+import gov.redhawk.model.sca.util.ModelUtil;
+import mil.jpeojtrs.sca.dcd.DcdPackage;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+
 public enum DcdDiagramUtilHelper implements IDiagramUtilHelper {
 	INSTANCE;
-	
-	public static final String FILE_EXTENSION = DcdPackage.FILE_EXTENSION;
-	public static final String DIAGRAM_FILE_EXTENSION = DCDDiagramTypeProvider.DIAGRAM_EXT;
+
+	public static final String DIAGRAM_FILE_EXTENSION = ".dcd_GDiagram"; //$NON-NLS-1$
 
 	@Override
 	public String getDiagramFileExtension() {
@@ -52,7 +49,7 @@ public enum DcdDiagramUtilHelper implements IDiagramUtilHelper {
 
 	@Override
 	public String getSemanticFileExtension() {
-		return DcdDiagramUtilHelper.FILE_EXTENSION;
+		return DcdPackage.FILE_EXTENSION;
 	}
 
 	@Override

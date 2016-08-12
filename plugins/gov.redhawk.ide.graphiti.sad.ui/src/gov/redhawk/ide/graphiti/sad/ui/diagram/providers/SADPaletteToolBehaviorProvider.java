@@ -23,7 +23,7 @@ import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
-public class SADPaletteToolBehaviorProvider extends AbstractPaletteToolBehaviorProvider {
+public abstract class SADPaletteToolBehaviorProvider extends AbstractPaletteToolBehaviorProvider {
 
 	private PaletteCompartmentEntry componentCompartment;
 
