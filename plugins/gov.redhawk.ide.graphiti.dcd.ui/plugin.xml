@@ -32,20 +32,6 @@
          </imageProvider>
       </diagramTypeProvider>
       <diagramTypeProvider
-            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DevMgrExplorerDiagramTypeProvider"
-            id="gov.redhawk.ide.graphiti.dcd.ui.DevMgrExplorerDiagramTypeProvider"
-            name="Device Manager Diagram Type Provider">
-         <diagramType
-               id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor">
-         </diagramType>
-         <imageProvider
-               id="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.deviceImageProvider">
-         </imageProvider>
-         <imageProvider
-               id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
-         </imageProvider>
-      </diagramTypeProvider>
-      <diagramTypeProvider
             class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DevMgrSandboxDiagramTypeProvider"
             id="gov.redhawk.ide.graphiti.dcd.ui.DevMgrSandboxDiagramTypeProvider"
             name="Sandbox Device Manager Diagram Type Provider">
@@ -59,14 +45,6 @@
                id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
          </imageProvider>
       </diagramTypeProvider>
-   </extension>
-   <extension
-         point="org.eclipse.graphiti.ui.diagramTypes">
-      <diagramType
-            id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor"
-            name="DCD / Device Manager Diagram"
-            type="DCDDiagram">
-      </diagramType>
    </extension>
    <extension
          point="org.eclipse.graphiti.ui.imageProviders">

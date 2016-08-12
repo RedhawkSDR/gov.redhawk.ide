@@ -33,6 +33,7 @@ import org.omg.CORBA.BAD_OPERATION;
 
 import BULKIO.PortStatistics;
 import CF.DataType;
+import gov.redhawk.core.graphiti.ui.diagram.providers.IDecoratorProvider;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;

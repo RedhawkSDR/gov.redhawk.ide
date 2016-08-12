@@ -33,6 +33,7 @@ import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.pattern.CreateFeatureForPattern;
 import org.eclipse.ui.progress.WorkbenchJob;
 
+import gov.redhawk.core.graphiti.ui.diagram.providers.AbstractToolBehaviorProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.PaletteTreeEntry;
