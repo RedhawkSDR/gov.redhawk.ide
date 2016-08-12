@@ -56,7 +56,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import ExtendedCF.UsesConnection;
 
 /**
- * 
+ * Uses the REDHAWK SCA model to build a corresponding SAD
  */
 public class SadGraphitiModelInitializerCommand extends AbstractCommand {
 

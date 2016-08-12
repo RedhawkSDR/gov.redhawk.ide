@@ -46,6 +46,9 @@ import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
+/**
+ * Uses the REDHAWK SCA model to build a corresponding DCD
+ */
 public class GraphitiDcdModelMapInitializerCommand extends AbstractCommand {
 	private static final Debug DEBUG = new Debug(DCDUIGraphitiPlugin.PLUGIN_ID, "init");
 

@@ -57,6 +57,9 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
+/**
+ * Uses the existing SAD file as a template when initializing the modeling map.
+ */
 public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "init");
 
