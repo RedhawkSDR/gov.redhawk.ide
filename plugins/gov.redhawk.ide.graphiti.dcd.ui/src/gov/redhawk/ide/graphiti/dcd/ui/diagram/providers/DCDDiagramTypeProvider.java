@@ -33,7 +33,7 @@ public class DCDDiagramTypeProvider extends AbstractDiagramTypeProvider {
 
 	public DCDDiagramTypeProvider() {
 		super();
-		setFeatureProvider(new DCDDiagramFeatureProvider(this));
+		setFeatureProvider(new DCDGraphitiFeatureProvider(this));
 
 		// Open properties view
 		try {

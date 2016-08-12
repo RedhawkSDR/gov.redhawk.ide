@@ -32,7 +32,7 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider {
 
 	public SADDiagramTypeProvider() {
 		super();
-		setFeatureProvider(new SADDiagramFeatureProvider(this));
+		setFeatureProvider(new SADGraphitiFeatureProvider(this));
 
 		// Open properties view
 		try {

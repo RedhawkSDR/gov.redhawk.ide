@@ -1,13 +1,12 @@
 /**
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
- * 
+ *
  * This file is part of REDHAWK IDE.
- * 
- * All rights reserved.  This program and the accompanying materials are made available under 
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- *
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
@@ -16,28 +15,21 @@ import java.util.List;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.IDeleteFeature;
-import org.eclipse.graphiti.features.IReconnectionFeature;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
-import org.eclipse.graphiti.features.context.IReconnectionContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AddFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 
-import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
-import gov.redhawk.ide.graphiti.dcd.ext.ServiceShape;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DCDConnectionInterfaceDeleteFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DeviceReleaseFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect.DCDReconnectFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.DCDConnectionInterfaceUpdateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.GraphitiDcdDiagramUpdateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
@@ -45,18 +37,14 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeat
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DisabledDeleteFeatureWrapper;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
-public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
+public abstract class DCDGraphitiFeatureProvider extends AbstractGraphitiFeatureProvider {
 
-	public DCDDiagramFeatureProvider(IDiagramTypeProvider diagramTypeProvider) {
+	public DCDGraphitiFeatureProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 
+		// Add device, service and connections
 		addPattern(new DevicePattern());
 		addPattern(new ServicePattern());
 		addConnectionPattern(new DCDConnectInterfacePattern());
@@ -105,38 +93,13 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 	@Override
 	public IDeleteFeature getDeleteFeature(IDeleteContext context) {
-		// Don't show delete for the node explorer
-		final Diagram diagram = getDiagramTypeProvider().getDiagram();
-		if (DUtil.isDiagramExplorer(diagram)) {
-			return null;
-		}
-
-		// Check for shapes for which we don't want the user to have the delete capability,
-		// including the diagram as a whole
-		final PictogramElement pe = context.getPictogramElement();
-		if (pe instanceof Diagram || pe instanceof FixPointAnchor) {
-			return null;
-		}
-
 		// If the element to be deleted is a connection, return the proper feature
+		final PictogramElement pe = context.getPictogramElement();
 		if (pe instanceof Connection) {
 			return new DCDConnectionInterfaceDeleteFeature(this);
 		}
 
-		// If the element is in the Chalkboard, its removal will be handled by the Release and Terminate features
-		if (DUtil.isDiagramRuntime(diagram)) {
-			if (pe instanceof DeviceShape || pe instanceof ServiceShape) {
-				return new DeviceReleaseFeature(this);
-			}
-			return null;
-		}
-
-		// Use parent class logic, but disable the result if read-only
-		IDeleteFeature deleteFeature = super.getDeleteFeature(context);
-		if (deleteFeature != null && DUtil.isDiagramReadOnly(diagram)) {
-			deleteFeature = new DisabledDeleteFeatureWrapper(deleteFeature);
-		}
-		return deleteFeature;
+		return super.getDeleteFeature(context);
 	}
 
 	@Override
@@ -146,19 +109,5 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 				return false;
 			}
 		};
-	}
-
-	@Override
-	public IReconnectionFeature getReconnectionFeature(IReconnectionContext context) {
-		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
-			// We don't currently support reconnect actions for runtime
-			return null;
-		}
-
-		Object businessObject = getBusinessObjectForPictogramElement(context.getOldAnchor());
-		if (businessObject instanceof UsesPortStub || businessObject instanceof ProvidesPortStub || businessObject instanceof ComponentSupportedInterfaceStub) {
-			return new DCDReconnectFeature(this);
-		}
-		return super.getReconnectionFeature(context);
 	}
 }

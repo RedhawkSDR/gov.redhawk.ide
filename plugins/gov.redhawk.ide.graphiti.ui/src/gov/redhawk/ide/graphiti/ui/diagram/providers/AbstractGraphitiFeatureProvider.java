@@ -1,13 +1,12 @@
 /**
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
- * 
+ *
  * This file is part of REDHAWK IDE.
- * 
- * All rights reserved.  This program and the accompanying materials are made available under 
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- *
  */
 package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
@@ -16,14 +15,17 @@ import java.util.List;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
+import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IDirectEditingFeature;
 import org.eclipse.graphiti.features.IFeature;
 import org.eclipse.graphiti.features.context.ICustomContext;
+import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
 import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
@@ -33,6 +35,7 @@ import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseAllShapesFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseShapeFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DialogEditingFeatureForPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DisabledDeleteFeatureWrapper;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandAllShapesFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandShapeFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
@@ -40,11 +43,6 @@ import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StopFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.ProvidesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -54,14 +52,8 @@ public abstract class AbstractGraphitiFeatureProvider extends DefaultFeatureProv
 
 	public AbstractGraphitiFeatureProvider(IDiagramTypeProvider dtp) {
 		super(dtp);
-		
-		// Add Find By patterns
-		addPattern(new FindByDomainManagerPattern());
-		addPattern(new FindByFileManagerPattern());
-		addPattern(new FindByEventChannelPattern());
-		addPattern(new FindByServicePattern());
-		addPattern(new FindByCORBANamePattern());
 
+		// Add port patterns
 		addPattern(new UsesPortPattern());
 		addPattern(new ProvidesPortPattern());
 	}
@@ -100,6 +92,24 @@ public abstract class AbstractGraphitiFeatureProvider extends DefaultFeatureProv
 			businessObject = getBusinessObjectForPictogramElement(pictogramElement);
 		}
 		return businessObject;
+	}
+
+	@Override
+	public IDeleteFeature getDeleteFeature(IDeleteContext context) {
+		// Check for shapes for which we don't want the user to have the delete capability,
+		// including the diagram as a whole
+		final PictogramElement pe = context.getPictogramElement();
+		if (pe instanceof Diagram || pe instanceof FixPointAnchor) {
+			return null;
+		}
+
+		// Use parent class logic, but disable the result if read-only
+		IDeleteFeature deleteFeature = super.getDeleteFeature(context);
+		final Diagram diagram = getDiagramTypeProvider().getDiagram();
+		if (deleteFeature != null && DUtil.isDiagramReadOnly(diagram)) {
+			deleteFeature = new DisabledDeleteFeatureWrapper(deleteFeature);
+		}
+		return deleteFeature;
 	}
 
 	@Override
