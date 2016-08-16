@@ -23,9 +23,11 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import gov.redhawk.core.graphiti.dcd.ui.editor.AbstractGraphitiDCDEditor;
+import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
 import gov.redhawk.ide.dcd.internal.ui.editor.DevicesPage;
 import gov.redhawk.ide.dcd.internal.ui.editor.NodeOverviewPage;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDCDDiagramEditor;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -107,6 +109,16 @@ public class GraphitiDCDEditor extends AbstractGraphitiDCDEditor {
 	}
 
 	@Override
+	protected String getDiagramContext(Resource dcdResource) {
+		// If the SCA file system scheme is in use that means the file is from the Target SDR.
+		if (ScaFileSystemConstants.SCHEME.equals(dcdResource.getURI().scheme())) {
+			return DUtil.DIAGRAM_CONTEXT_TARGET_SDR;
+		} else {
+			return DUtil.DIAGRAM_CONTEXT_DESIGN;
+		}
+	}
+
+	@Override
 	protected void addPages() {
 		try {
 			this.nameListener = new ResourceListener(getMainResource());
@@ -137,16 +149,6 @@ public class GraphitiDCDEditor extends AbstractGraphitiDCDEditor {
 	}
 
 	@Override
-	protected String getDiagramContext(Resource sadResource) {
-		// If the SCA file system scheme is in use that means the file is from the Target SDR.
-		if (ScaFileSystemConstants.SCHEME.equals(sadResource.getURI().scheme())) {
-			return DUtil.DIAGRAM_CONTEXT_TARGET_SDR;
-		} else {
-			return DUtil.DIAGRAM_CONTEXT_DESIGN;
-		}
-	}
-
-	@Override
 	public void updateTitle() {
 		String name = null;
 		final DeviceConfiguration dcd = getDeviceConfiguration();
@@ -172,5 +174,10 @@ public class GraphitiDCDEditor extends AbstractGraphitiDCDEditor {
 			items.add(getDeviceConfiguration().getPartitioning());
 		}
 		return items;
+	}
+
+	@Override
+	protected AbstractGraphitiDiagramEditor createDiagramEditor() {
+		return new GraphitiDCDDiagramEditor(getEditingDomain());
 	}
 }

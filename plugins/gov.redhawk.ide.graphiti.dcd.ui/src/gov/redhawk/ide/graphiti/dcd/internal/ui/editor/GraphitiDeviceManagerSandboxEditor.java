@@ -24,11 +24,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 
 import gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDeviceManagerExplorerEditor;
+import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.GraphitiDcdModelMapInitializerCommand;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDeviceManagerSandboxDiagramEditor;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaDeviceManager;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -109,6 +111,11 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 		} else {
 			super.createModel();
 		}
+	}
+
+	@Override
+	protected AbstractGraphitiDiagramEditor createDiagramEditor() {
+		return new GraphitiDeviceManagerSandboxDiagramEditor(getEditingDomain());
 	}
 
 	@Override

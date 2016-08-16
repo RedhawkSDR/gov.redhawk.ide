@@ -10,16 +10,21 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram;
 
-import gov.redhawk.ide.graphiti.ui.diagram.AbstractGraphitiDiagramEditor;
-
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.gef.ContextMenuProvider;
+import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
+import org.eclipse.graphiti.ui.platform.IConfigurationProvider;
 import org.eclipse.jface.util.TransferDropTargetListener;
 
-public class GraphitiWaveformDiagramEditor extends AbstractGraphitiDiagramEditor {
+import gov.redhawk.core.graphiti.ui.diagram.providers.BasicContextMenuProvider;
+import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
 
-	public GraphitiWaveformDiagramEditor(EditingDomain editingDomain) {
+public class GraphitiSADDiagramEditor extends AbstractGraphitiDiagramEditor {
+
+	public GraphitiSADDiagramEditor(EditingDomain editingDomain) {
 		super(editingDomain);
 		addContext("gov.redhawk.ide.graphiti.sad.ui.contexts.diagram");
 	}
@@ -29,4 +34,8 @@ public class GraphitiWaveformDiagramEditor extends AbstractGraphitiDiagramEditor
 		return new DiagramDropTargetListener(viewer, behavior);
 	}
 
+	@Override
+	protected ContextMenuProvider createContextMenuProvider(EditPartViewer viewer, ActionRegistry registry, IConfigurationProvider configurationProvider) {
+		return new BasicContextMenuProvider(viewer, registry, configurationProvider);
+	}
 }

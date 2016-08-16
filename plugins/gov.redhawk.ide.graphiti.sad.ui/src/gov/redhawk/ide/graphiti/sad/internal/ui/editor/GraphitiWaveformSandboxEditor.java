@@ -24,12 +24,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 
 import gov.redhawk.core.graphiti.sad.ui.editor.GraphitiWaveformExplorerEditor;
+import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
 import gov.redhawk.ide.graphiti.sad.debug.internal.ui.SadGraphitiModelInitializerCommand;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformSandboxDiagramEditor;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -109,6 +111,11 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 		} else {
 			super.createModel();
 		}
+	}
+
+	@Override
+	protected AbstractGraphitiDiagramEditor createDiagramEditor() {
+		return new GraphitiWaveformSandboxDiagramEditor(getEditingDomain());
 	}
 
 	@Override
