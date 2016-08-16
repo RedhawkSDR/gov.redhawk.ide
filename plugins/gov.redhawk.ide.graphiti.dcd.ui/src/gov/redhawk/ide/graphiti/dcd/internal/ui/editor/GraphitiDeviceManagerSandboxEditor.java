@@ -11,22 +11,17 @@
  */
 package gov.redhawk.ide.graphiti.dcd.internal.ui.editor;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDeviceManagerExplorerEditor;
 import gov.redhawk.ide.debug.LocalSca;
@@ -34,7 +29,6 @@ import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.GraphitiDcdModelMapInitializerCommand;
-import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaDeviceManager;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -50,38 +44,6 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 
 	private Resource mainResource;
 	private boolean isSandboxDeviceManager = false;
-
-	@Override
-	public String getDiagramContext(Resource dcdResource) {
-		return DUtil.DIAGRAM_CONTEXT_LOCAL;
-	}
-
-	@Override
-	protected void addPages() {
-		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
-			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
-			try {
-				final Resource dcdResource = getMainResource();
-
-				final DiagramEditor editor = createDiagramEditor();
-				setDiagramEditor(editor);
-				final IEditorInput input = createDiagramInput(dcdResource);
-				int pageIndex = addPage(editor, input);
-				setPageText(pageIndex, "Diagram");
-
-				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
-
-				// make sure diagram elements reflect current runtime state
-				getModelMap().reflectRuntimeStatus();
-
-				// set layout for sandbox editors
-				DUtil.layout(editor);
-			} catch (final IOException | CoreException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
-					StatusManager.LOG | StatusManager.SHOW);
-			}
-		}
-	}
 
 	@Override
 	protected void setInput(IEditorInput input) {
@@ -124,6 +86,16 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 	}
 
 	@Override
+	public String getDiagramContext(Resource dcdResource) {
+		return DUtil.DIAGRAM_CONTEXT_LOCAL;
+	}
+
+	@Override
+	public Resource getMainResource() {
+		return (isSandboxDeviceManager) ? mainResource : super.getMainResource();
+	}
+
+	@Override
 	protected void createModel() {
 		if (isSandboxDeviceManager) {
 			mainResource = getEditingDomain().getResourceSet().createResource(ScaDebugInstance.getLocalSandboxDeviceManagerURI());
@@ -147,10 +119,5 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 		} else {
 			return super.createModelInitializeCommand();
 		}
-	}
-
-	@Override
-	public Resource getMainResource() {
-		return (isSandboxDeviceManager) ? mainResource : super.getMainResource();
 	}
 }

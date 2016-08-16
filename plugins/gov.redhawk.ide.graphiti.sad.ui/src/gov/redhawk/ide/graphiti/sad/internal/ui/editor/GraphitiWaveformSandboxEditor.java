@@ -10,25 +10,19 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.internal.ui.editor;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.statushandlers.StatusManager;
 
-import gov.redhawk.core.graphiti.sad.ui.editor.GraphitiModelMap;
 import gov.redhawk.core.graphiti.sad.ui.editor.GraphitiWaveformExplorerEditor;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
@@ -36,7 +30,6 @@ import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
 import gov.redhawk.ide.graphiti.sad.debug.internal.ui.SadGraphitiModelInitializerCommand;
-import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -52,45 +45,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 
 	private Resource mainResource;
 	private boolean isSandboxChalkboardWaveform = false;
-
-	@Override
-	public String getDiagramContext(Resource sadResource) {
-		return DUtil.DIAGRAM_CONTEXT_LOCAL;
-	}
-
-	@Override
-	protected void addPages() {
-		// Only creates the other pages if there is something that can be edited
-		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
-			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
-			try {
-				final Resource sadResource = getMainResource();
-
-				final DiagramEditor editor = createDiagramEditor();
-				setDiagramEditor(editor);
-
-				initModelMap();
-
-				final IEditorInput input = createDiagramInput(sadResource);
-				int pageIndex = addPage(editor, input);
-				setPageText(pageIndex, "Diagram");
-
-				// set layout for diagram editors
-				DUtil.layout(editor);
-
-				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
-
-				// reflect runtime aspects here
-				getModelMap().reflectRuntimeStatus();
-
-				// set layout for sandbox editors
-				DUtil.layout(editor);
-			} catch (IOException | CoreException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
-					StatusManager.LOG | StatusManager.SHOW);
-			}
-		}
-	}
 
 	@Override
 	protected void setInput(IEditorInput input) {
@@ -132,6 +86,16 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 	}
 
 	@Override
+	public String getDiagramContext(Resource sadResource) {
+		return DUtil.DIAGRAM_CONTEXT_LOCAL;
+	}
+
+	@Override
+	public Resource getMainResource() {
+		return (isSandboxChalkboardWaveform) ? mainResource : super.getMainResource();
+	}
+
+	@Override
 	protected void createModel() {
 		if (isSandboxChalkboardWaveform) {
 			mainResource = getEditingDomain().getResourceSet().createResource(ScaDebugInstance.getLocalSandboxWaveformURI());
@@ -155,11 +119,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 		} else {
 			return super.createModelInitializeCommand();
 		}
-	}
-
-	@Override
-	public Resource getMainResource() {
-		return (isSandboxChalkboardWaveform) ? mainResource : super.getMainResource();
 	}
 
 	@Override
