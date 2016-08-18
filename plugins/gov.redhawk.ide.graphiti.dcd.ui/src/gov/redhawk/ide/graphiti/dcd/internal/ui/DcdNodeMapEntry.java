@@ -11,55 +11,35 @@
 package gov.redhawk.ide.graphiti.dcd.internal.ui;
 
 import gov.redhawk.model.sca.ScaDevice;
+import gov.redhawk.model.sca.ScaService;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 
 public class DcdNodeMapEntry {
+
 	private String key;
 	private ScaDevice< ? > device;
+	private ScaService service;
 	private DcdComponentInstantiation profile;
 
-	/**
-	 * @param comp the comp to set
-	 */
-	public void setScaDevice(ScaDevice< ? > device) {
-		this.device = device;
-		setKey(device.getIdentifier());
+	public DcdNodeMapEntry() {
 	}
 
-	/**
-	 * @param key
-	 */
-	private void setKey(String key) {
-		if (this.key == null) {
-			this.key = key;
-		}
+	public DcdNodeMapEntry(ScaDevice< ? > device, DcdComponentInstantiation profile) {
+		setScaDevice(device);
+		setProfile(profile);
 	}
 
-	/**
-	 * @return the comp
-	 */
-	public ScaDevice< ? > getScaDevice() {
-		return device;
-	}
-
-	/**
-	 * @param profile the profile to set
-	 */
-	public void setProfile(DcdComponentInstantiation profile) {
-		this.profile = profile;
-		setKey(profile.getId());
-	}
-
-	/**
-	 * @return the profile
-	 */
-	public DcdComponentInstantiation getProfile() {
-		return profile;
+	public DcdNodeMapEntry(ScaService service, DcdComponentInstantiation profile) {
+		setScaService(service);
+		setProfile(profile);
 	}
 
 	public String getKey() {
 		if (device != null) {
-			return device.getIdentifier();
+			return getKey(device);
+		} else if (service != null) {
+			return getKey(service);
 		} else if (profile != null) {
 			return profile.getId();
 		}
@@ -70,8 +50,45 @@ public class DcdNodeMapEntry {
 		return obj.getIdentifier();
 	}
 
-	public static String getKey(DcdComponentInstantiation obj) {
+	public static String getKey(ScaService obj) {
+		return obj.getName();
+	}
+
+	public static String getKey(ComponentInstantiation obj) {
 		return obj.getId();
+	}
+
+	private void setKey(String key) {
+		if (this.key == null) {
+			this.key = key;
+		}
+	}
+
+	public void setScaDevice(ScaDevice< ? > device) {
+		this.device = device;
+		setKey(getKey(device));
+	}
+
+	public ScaDevice< ? > getScaDevice() {
+		return device;
+	}
+
+	public ScaService getScaService() {
+		return service;
+	}
+
+	public void setScaService(ScaService service) {
+		this.service = service;
+		setKey(getKey(service));
+	}
+
+	public DcdComponentInstantiation getProfile() {
+		return profile;
+	}
+
+	public void setProfile(DcdComponentInstantiation profile) {
+		this.profile = profile;
+		setKey(profile.getId());
 	}
 
 	@Override

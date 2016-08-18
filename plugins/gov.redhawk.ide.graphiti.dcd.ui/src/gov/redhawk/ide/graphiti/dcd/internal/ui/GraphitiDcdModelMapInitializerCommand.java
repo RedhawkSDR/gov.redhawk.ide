@@ -27,7 +27,6 @@ import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiationRef;
@@ -50,7 +49,6 @@ import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
  * Uses the REDHAWK SCA model to build a corresponding DCD
  */
 public class GraphitiDcdModelMapInitializerCommand extends AbstractCommand {
-	private static final Debug DEBUG = new Debug(DCDUIGraphitiPlugin.PLUGIN_ID, "init");
 
 	private final GraphitiDcdModelMap modelMap;
 	private final ScaDeviceManager deviceManager;
@@ -75,7 +73,7 @@ public class GraphitiDcdModelMapInitializerCommand extends AbstractCommand {
 		final DcdConnectInterface dcdCon = DcdFactory.eINSTANCE.createDcdConnectInterface();
 		final DcdUsesPort usesPort = DcdFactory.eINSTANCE.createDcdUsesPort();
 		final DcdComponentInstantiationRef usesCompRef = DcdFactory.eINSTANCE.createDcdComponentInstantiationRef();
-		usesCompRef.setInstantiation(modelMap.get(device));
+		usesCompRef.setInstantiation(modelMap.getComponentInstantiation(device));
 		usesPort.setComponentInstantiationRef(usesCompRef);
 		usesPort.setUsesIdentifier(uses.getName());
 		dcdCon.setUsesPort(usesPort);
@@ -89,7 +87,7 @@ public class GraphitiDcdModelMapInitializerCommand extends AbstractCommand {
 			if (is_equivalent(target, d.getObj())) {
 				final ComponentSupportedInterface csi = PartitioningFactory.eINSTANCE.createComponentSupportedInterface();
 				final DcdComponentInstantiationRef ref = DcdFactory.eINSTANCE.createDcdComponentInstantiationRef();
-				ref.setInstantiation(modelMap.get((ScaDevice< ? >) d));
+				ref.setInstantiation(modelMap.getComponentInstantiation(d));
 				csi.setComponentInstantiationRef(ref);
 				csi.setSupportedIdentifier(uses.getProfileObj().getRepID());
 				dcdCon.setComponentSupportedInterface(csi);
@@ -100,7 +98,7 @@ public class GraphitiDcdModelMapInitializerCommand extends AbstractCommand {
 					if (cPort instanceof ScaProvidesPort && is_equivalent(target, cPort.getObj())) {
 						final DcdProvidesPort dcdProvidesPort = DcdFactory.eINSTANCE.createDcdProvidesPort();
 						final DcdComponentInstantiationRef ref = DcdFactory.eINSTANCE.createDcdComponentInstantiationRef();
-						ref.setInstantiation(modelMap.get((ScaDevice< ? >) d));
+						ref.setInstantiation(modelMap.getComponentInstantiation(d));
 						dcdProvidesPort.setComponentInstantiationRef(ref);
 						dcdProvidesPort.setProvidesIdentifier(cPort.getName());
 						dcdCon.setProvidesPort(dcdProvidesPort);
@@ -110,18 +108,17 @@ public class GraphitiDcdModelMapInitializerCommand extends AbstractCommand {
 				}
 			}
 		}
-		// We were unable to find the target side of the connection, so ignore it
-		if (foundTarget) {
-			if (dcd.getConnections() == null) {
-				dcd.setConnections(DcdFactory.eINSTANCE.createDcdConnections());
-			}
-			dcd.getConnections().getConnectInterface().add(dcdCon);
-			modelMap.put(con, dcdCon);
-		} else {
-			if (GraphitiDcdModelMapInitializerCommand.DEBUG.enabled) {
-				GraphitiDcdModelMapInitializerCommand.DEBUG.trace("Failed to initialize connection " + con.getId());
-			}
+
+		// If we were unable to find the target side of the connection then ignore it
+		if (!foundTarget) {
+			return;
 		}
+
+		if (dcd.getConnections() == null) {
+			dcd.setConnections(DcdFactory.eINSTANCE.createDcdConnections());
+		}
+		dcd.getConnections().getConnectInterface().add(dcdCon);
+		modelMap.put(con, dcdCon);
 	}
 
 	private static boolean is_equivalent(final org.omg.CORBA.Object obj1, final org.omg.CORBA.Object obj2) {

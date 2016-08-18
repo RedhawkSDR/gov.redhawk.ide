@@ -37,7 +37,6 @@ import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
@@ -61,7 +60,6 @@ import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
  * Uses the existing SAD file as a template when initializing the modeling map.
  */
 public class GraphitiModelMapInitializerCommand extends AbstractCommand {
-	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "init");
 
 	private final GraphitiModelMap modelMap;
 	private final ScaWaveform waveform;
@@ -86,7 +84,7 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 		final SadConnectInterface sadCon = SadFactory.eINSTANCE.createSadConnectInterface();
 		final SadUsesPort usesPort = SadFactory.eINSTANCE.createSadUsesPort();
 		final SadComponentInstantiationRef usesCompRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-		usesCompRef.setInstantiation(modelMap.get(comp));
+		usesCompRef.setInstantiation(modelMap.getComponentInstantiation(comp));
 		usesPort.setComponentInstantiationRef(usesCompRef);
 		usesPort.setUsesIdentifier(uses.getName());
 		sadCon.setUsesPort(usesPort);
@@ -100,7 +98,7 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 			if (is_equivalent(target, c.getObj())) {
 				final ComponentSupportedInterface csi = PartitioningFactory.eINSTANCE.createComponentSupportedInterface();
 				final SadComponentInstantiationRef ref = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-				ref.setInstantiation(modelMap.get((ScaComponent) c));
+				ref.setInstantiation(modelMap.getComponentInstantiation((ScaComponent) c));
 				csi.setComponentInstantiationRef(ref);
 				csi.setSupportedIdentifier(uses.getProfileObj().getRepID());
 				sadCon.setComponentSupportedInterface(csi);
@@ -111,7 +109,7 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 					if (cPort instanceof ScaProvidesPort && is_equivalent(target, cPort.getObj())) {
 						final SadProvidesPort sadProvidesPort = SadFactory.eINSTANCE.createSadProvidesPort();
 						final SadComponentInstantiationRef ref = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-						ref.setInstantiation(modelMap.get((ScaComponent) c));
+						ref.setInstantiation(modelMap.getComponentInstantiation((ScaComponent) c));
 						sadProvidesPort.setComponentInstantiationRef(ref);
 						sadProvidesPort.setProvidesIdentifier(cPort.getName());
 						sadCon.setProvidesPort(sadProvidesPort);
@@ -121,18 +119,17 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 				}
 			}
 		}
-		// We were unable to find the target side of the connection, so ignore it
-		if (foundTarget) {
-			if (sad.getConnections() == null) {
-				sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
-			}
-			sad.getConnections().getConnectInterface().add(sadCon);
-			modelMap.put(con, sadCon);
-		} else {
-			if (GraphitiModelMapInitializerCommand.DEBUG.enabled) {
-				GraphitiModelMapInitializerCommand.DEBUG.trace("Failed to initialize connection " + con.getId());
-			}
+
+		// If we were unable to find the target side of the connection then ignore it
+		if (!foundTarget) {
+			return;
 		}
+
+		if (sad.getConnections() == null) {
+			sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
+		}
+		sad.getConnections().getConnectInterface().add(sadCon);
+		modelMap.put(con, sadCon);
 	}
 
 	private static boolean is_equivalent(final org.omg.CORBA.Object obj1, final org.omg.CORBA.Object obj2) {

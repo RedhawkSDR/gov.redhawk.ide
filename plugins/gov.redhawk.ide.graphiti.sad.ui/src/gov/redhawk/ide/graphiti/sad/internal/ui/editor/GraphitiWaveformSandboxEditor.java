@@ -23,6 +23,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 
+import gov.redhawk.core.graphiti.sad.ui.editor.GraphitiModelMap;
 import gov.redhawk.core.graphiti.sad.ui.editor.GraphitiWaveformExplorerEditor;
 import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
 import gov.redhawk.ide.debug.LocalSca;
@@ -30,6 +31,7 @@ import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
+import gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiSADLocalModelMap;
 import gov.redhawk.ide.graphiti.sad.debug.internal.ui.SadGraphitiModelInitializerCommand;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformSandboxDiagramEditor;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -47,6 +49,13 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 
 	private Resource mainResource;
 	private boolean isSandboxChalkboardWaveform = false;
+	private GraphitiModelMap modelMap;
+
+	@Override
+	protected GraphitiModelMap createModelMapInstance() {
+		modelMap = new GraphitiSADLocalModelMap(this, getWaveform());
+		return modelMap;
+	}
 
 	@Override
 	protected void setInput(IEditorInput input) {
@@ -122,7 +131,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 	protected Command createModelInitializeCommand() {
 		if (isSandboxChalkboardWaveform) {
 			SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(super.getMainResource());
-			return new SadGraphitiModelInitializerCommand(getModelMap(), sad, (LocalScaWaveform) getWaveform());
+			return new SadGraphitiModelInitializerCommand(modelMap, sad, (LocalScaWaveform) getWaveform());
 		} else {
 			return super.createModelInitializeCommand();
 		}

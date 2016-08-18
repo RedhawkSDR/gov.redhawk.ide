@@ -10,9 +10,21 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.debug.internal.ui;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.command.AbstractCommand;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.jdt.annotation.NonNull;
+
+import ExtendedCF.UsesConnection;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
@@ -20,15 +32,7 @@ import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.PluginUtil;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterface;
@@ -47,21 +51,11 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.command.AbstractCommand;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.jdt.annotation.NonNull;
-
-import ExtendedCF.UsesConnection;
-
 /**
  * Uses the REDHAWK SCA model to build a corresponding SAD
  */
 public class SadGraphitiModelInitializerCommand extends AbstractCommand {
 
-	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "init");
-	
 	private final GraphitiModelMap modelMap;
 	private final LocalScaWaveform waveform;
 	private final SoftwareAssembly sad;
@@ -85,7 +79,7 @@ public class SadGraphitiModelInitializerCommand extends AbstractCommand {
 		final SadConnectInterface sadCon = SadFactory.eINSTANCE.createSadConnectInterface();
 		final SadUsesPort usesPort = SadFactory.eINSTANCE.createSadUsesPort();
 		final SadComponentInstantiationRef usesCompRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-		usesCompRef.setInstantiation(this.modelMap.get(comp));
+		usesCompRef.setInstantiation(this.modelMap.getComponentInstantiation(comp));
 		usesPort.setComponentInstantiationRef(usesCompRef);
 		usesPort.setUsesIdentifier(uses.getName());
 		sadCon.setUsesPort(usesPort);
@@ -99,7 +93,7 @@ public class SadGraphitiModelInitializerCommand extends AbstractCommand {
 			if (target._is_equivalent(c.getObj())) {
 				final ComponentSupportedInterface csi = PartitioningFactory.eINSTANCE.createComponentSupportedInterface();
 				final SadComponentInstantiationRef ref = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-				ref.setInstantiation(this.modelMap.get((LocalScaComponent) c));
+				ref.setInstantiation(this.modelMap.getComponentInstantiation(c));
 				csi.setComponentInstantiationRef(ref);
 				csi.setSupportedIdentifier(uses.getProfileObj().getRepID());
 				sadCon.setComponentSupportedInterface(csi);
@@ -110,7 +104,7 @@ public class SadGraphitiModelInitializerCommand extends AbstractCommand {
 					if (cPort instanceof ScaProvidesPort && target._is_equivalent(cPort.getObj())) {
 						final SadProvidesPort sadProvidesPort = SadFactory.eINSTANCE.createSadProvidesPort();
 						final SadComponentInstantiationRef ref = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-						ref.setInstantiation(this.modelMap.get((LocalScaComponent) c));
+						ref.setInstantiation(this.modelMap.getComponentInstantiation(c));
 						sadProvidesPort.setComponentInstantiationRef(ref);
 						sadProvidesPort.setProvidesIdentifier(cPort.getName());
 						sadCon.setProvidesPort(sadProvidesPort);
@@ -120,18 +114,21 @@ public class SadGraphitiModelInitializerCommand extends AbstractCommand {
 				}
 			}
 		}
-		// We were unable to find the target side of the connection, so ignore it
-		if (foundTarget) {
-			if (this.sad.getConnections() == null) {
-				this.sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
-			}
-			this.sad.getConnections().getConnectInterface().add(sadCon);
-			if (con == null) {
-				// Should be dead code, but outC block above apparently messes up null analysis
-				return;
-			}
-			this.modelMap.put(con, sadCon);
+
+		// If we were unable to find the target side of the connection then ignore it
+		if (!foundTarget) {
+			return;
 		}
+
+		if (this.sad.getConnections() == null) {
+			this.sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
+		}
+		this.sad.getConnections().getConnectInterface().add(sadCon);
+		if (con == null) {
+			// Should be dead code, but outC block above apparently messes up null analysis
+			return;
+		}
+		this.modelMap.put(con, sadCon);
 	}
 
 	private void initComponent(@NonNull final LocalScaComponent comp) {
@@ -211,13 +208,7 @@ public class SadGraphitiModelInitializerCommand extends AbstractCommand {
 						}
 
 					});
-				} catch (InterruptedException e) {
-					SADUIGraphitiPlugin.getDefault().getLog().log(
-						new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
-				} catch (ExecutionException e) {
-					SADUIGraphitiPlugin.getDefault().getLog().log(
-						new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
-				} catch (TimeoutException e) {
+				} catch (InterruptedException | ExecutionException | TimeoutException e) {
 					SADUIGraphitiPlugin.getDefault().getLog().log(
 						new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
 				}
@@ -233,13 +224,7 @@ public class SadGraphitiModelInitializerCommand extends AbstractCommand {
 									return uses.fetchConnections(null);
 								}
 							});
-						} catch (InterruptedException e) {
-							SADUIGraphitiPlugin.getDefault().getLog().log(
-								new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
-						} catch (ExecutionException e) {
-							SADUIGraphitiPlugin.getDefault().getLog().log(
-								new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
-						} catch (TimeoutException e) {
+						} catch (InterruptedException | ExecutionException | TimeoutException e) {
 							SADUIGraphitiPlugin.getDefault().getLog().log(
 								new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
 						}

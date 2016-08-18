@@ -19,6 +19,9 @@ import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 
+/**
+ * Adapts changes on a Graphiti DCD XML model to calls on the model map.
+ */
 public class DcdGraphitiModelAdapter extends EContentAdapter {
 
 	private final GraphitiDcdModelMap modelMap;

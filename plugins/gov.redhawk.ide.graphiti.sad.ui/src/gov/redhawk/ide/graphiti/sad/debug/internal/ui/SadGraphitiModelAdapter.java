@@ -19,6 +19,9 @@ import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 
+/**
+ * Adapts changes on a Graphiti SAD XML model to calls on the model map.
+ */
 public class SadGraphitiModelAdapter extends EContentAdapter {
 
 	private final GraphitiModelMap modelMap;

@@ -23,12 +23,13 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 
+import gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDcdModelMap;
 import gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDeviceManagerExplorerEditor;
 import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
 import gov.redhawk.ide.debug.LocalSca;
-import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
+import gov.redhawk.ide.graphiti.dcd.internal.ui.GraphitiDCDLocalModelMap;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.GraphitiDcdModelMapInitializerCommand;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDeviceManagerSandboxDiagramEditor;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -46,6 +47,13 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 
 	private Resource mainResource;
 	private boolean isSandboxDeviceManager = false;
+	private GraphitiDcdModelMap modelMap;
+
+	@Override
+	protected GraphitiDcdModelMap createModelMapInstance() {
+		modelMap = new GraphitiDCDLocalModelMap(this, getDeviceManager());
+		return modelMap;
+	}
 
 	@Override
 	protected void setInput(IEditorInput input) {
@@ -122,7 +130,7 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 	protected Command createModelInitializeCommand() {
 		if (isSandboxDeviceManager) {
 			DeviceConfiguration dcd = DeviceConfiguration.Util.getDeviceConfiguration(super.getMainResource());
-			return new GraphitiDcdModelMapInitializerCommand(getModelMap(), dcd, (LocalScaDeviceManager) getDeviceManager());
+			return new GraphitiDcdModelMapInitializerCommand(modelMap, dcd, getDeviceManager());
 		} else {
 			return super.createModelInitializeCommand();
 		}

@@ -125,6 +125,5 @@ public class ScaGraphitiModelAdapter extends EContentAdapter {
 		if (notifier instanceof ScaDeviceManager || notifier instanceof ScaDevice || notifier instanceof ScaUsesPort) {
 			super.addAdapter(notifier);
 		}
-
 	}
 }

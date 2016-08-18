@@ -10,57 +10,24 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.debug.internal.ui;
 
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-
 import gov.redhawk.model.sca.ScaComponent;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 public class NodeMapEntry {
+
 	private String key;
 	private ScaComponent comp;
 	private SadComponentInstantiation profile;
 
-	/**
-	 * @param comp the comp to set
-	 */
-	public void setScaComponent(@NonNull ScaComponent comp) {
-		this.comp = comp;
-		setKey(comp.getInstantiationIdentifier());
+	public NodeMapEntry() {
 	}
 
-	/**
-	 * @param key
-	 */
-	private void setKey(String key) {
-		if (this.key == null) {
-			this.key = key;
-		}
+	public NodeMapEntry(ScaComponent comp, SadComponentInstantiation profile) {
+		setScaComponent(comp);
+		setProfile(profile);
 	}
 
-	/**
-	 * @return the comp
-	 */
-	public ScaComponent getScaComponent() {
-		return comp;
-	}
-
-	/**
-	 * @param profile the profile to set
-	 */
-	public void setProfile(@NonNull SadComponentInstantiation profile) {
-		this.profile = profile;
-		setKey(profile.getId());
-	}
-
-	/**
-	 * @return the profile
-	 */
-	public SadComponentInstantiation getProfile() {
-		return profile;
-	}
-
-	@Nullable
 	public String getKey() {
 		if (comp != null) {
 			return comp.getInstantiationIdentifier();
@@ -74,8 +41,32 @@ public class NodeMapEntry {
 		return obj.getInstantiationIdentifier();
 	}
 
-	public static String getKey(SadComponentInstantiation obj) {
+	public static String getKey(ComponentInstantiation obj) {
 		return obj.getId();
+	}
+
+	private void setKey(String key) {
+		if (this.key == null) {
+			this.key = key;
+		}
+	}
+
+	public ScaComponent getScaComponent() {
+		return comp;
+	}
+
+	public void setScaComponent(ScaComponent comp) {
+		this.comp = comp;
+		setKey(comp.getInstantiationIdentifier());
+	}
+
+	public SadComponentInstantiation getProfile() {
+		return profile;
+	}
+
+	public void setProfile(SadComponentInstantiation profile) {
+		this.profile = profile;
+		setKey(profile.getId());
 	}
 
 	@Override

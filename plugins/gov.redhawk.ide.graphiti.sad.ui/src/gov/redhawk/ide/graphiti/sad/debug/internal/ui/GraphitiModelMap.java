@@ -12,6 +12,7 @@ package gov.redhawk.ide.graphiti.sad.debug.internal.ui;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
@@ -20,79 +21,66 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.graphiti.dt.IDiagramTypeProvider;
-import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
-import org.eclipse.graphiti.mm.pictograms.Anchor;
-import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.ui.progress.UIJob;
 
-import CF.DataType;
-import CF.PortPackage.InvalidPort;
-import CF.PortPackage.OccupiedPort;
-import gov.redhawk.ide.debug.LocalAbstractComponent;
-import gov.redhawk.ide.debug.LocalScaComponent;
-import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
 import gov.redhawk.ide.graphiti.internal.ui.AbstractGraphitiModelMap;
-import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformExplorerEditor;
+import gov.redhawk.ide.graphiti.internal.ui.CreateComponentInstantiationCommand;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.model.sca.CorbaObjWrapper;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
+import gov.redhawk.model.sca.ScaPortContainer;
+import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.model.sca.ScaProvidesPort;
-import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.model.sca.util.ReleaseJob;
 import gov.redhawk.sca.util.SubMonitor;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public class GraphitiModelMap extends AbstractGraphitiModelMap {
-	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
-		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
-
-	private final GraphitiWaveformExplorerEditor editor;
-
-	// maps containing to uniquely identify component/connections, use with synchronized statement
-	private final Map<String, NodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, NodeMapEntry>());
-	private final Map<String, ConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMapEntry>());
 
 	private final ScaWaveform waveform;
 
-	public GraphitiModelMap(@NonNull final GraphitiWaveformExplorerEditor editor, @NonNull final ScaWaveform waveform) {
+	/**
+	 * Associates {@link ScaComponent}s with their {@link SadComponentInstantiation}.
+	 */
+	private final Map<String, NodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, NodeMapEntry>());
+
+	public GraphitiModelMap(@NonNull final AbstractGraphitiMultiPageEditor editor, @NonNull final ScaWaveform waveform) {
 		super(editor);
 		Assert.isNotNull(waveform, "Sandbox Waveform must not be null");
 		this.waveform = waveform;
-		this.editor = editor;
 	}
 
+	public ScaWaveform getWaveform() {
+		return waveform;
+	}
+
+	protected Map<String, NodeMapEntry> getNodes() {
+		return nodes;
+	}
+
+	////////////////////////////////////////////////////
+	// Components section
+	////////////////////////////////////////////////////
+
 	/**
-	 * New LocalScaComponent was recently added and this method will now add
-	 * a SadComponentInstiation to the SofwareAssembly of the Graphiti Diagram.
+	 * Called when a new {@link ScaComponent} is added to the SCA model. Asynchronously updates the diagram.
 	 * @param comp
 	 */
-	public void add(@NonNull final LocalScaComponent comp) {
+	public void add(@NonNull final ScaComponent comp) {
 		final NodeMapEntry nodeMapEntry = new NodeMapEntry();
 		nodeMapEntry.setScaComponent(comp);
 		synchronized (nodes) {
@@ -106,12 +94,11 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, "Adding component: " + comp.getInstantiationIdentifier(), IProgressMonitor.UNKNOWN);
+				SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 				SadComponentInstantiation newComp = null;
 				try {
-					newComp = GraphitiModelMap.this.create(comp);
+					newComp = (SadComponentInstantiation) GraphitiModelMap.this.create(comp, subMonitor.newChild(1));
 					nodeMapEntry.setProfile(newComp);
-
 					return Status.OK_STATUS;
 				} catch (CoreException e) {
 					nodes.remove(nodeMapEntry.getKey());
@@ -126,346 +113,94 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 
 		};
 		job.schedule();
-
 	}
 
 	/**
-	 * New SadComponentInstantiation was recently added to the diagram and this method will now launch
-	 * the corresponding LocalScaComponent
-	 * @param comp
+	 * Called when a new {@link SadComponentInstantiation} is added to the diagram's XML model. Asynchronously launches
+	 * the component.
+	 * @param compInst
 	 */
-	public void add(@NonNull final SadComponentInstantiation comp) {
-		final NodeMapEntry nodeMapEntry = new NodeMapEntry();
-		nodeMapEntry.setProfile(comp);
-		synchronized (nodes) {
-			if (nodes.get(nodeMapEntry.getKey()) != null) {
-				return;
-			} else {
-				nodes.put(nodeMapEntry.getKey(), nodeMapEntry);
-			}
-		}
+	public void add(@NonNull final SadComponentInstantiation compInst) {
+		// Launching not supported by this class
+		throw new IllegalStateException("Launching components is not permitted by this class");
+	}
 
-		final String implID = ((SadComponentInstantiation) comp).getImplID();
-		Job job = new Job("Launching " + comp.getUsageName()) {
+	protected CreateComponentInstantiationCommand createComponentInstantiationCommand(TransactionalEditingDomain editingDomain,
+		final IFeatureProvider featureProvider, ScaPropertyContainer< ? , SoftPkg> newObject) {
+		final ScaComponent newComponent = (ScaComponent) newObject;
+		return new CreateComponentInstantiationCommand(editingDomain) {
+
+			private ComponentInstantiation compInst;
 
 			@Override
-			@Nullable
-			protected IStatus run(IProgressMonitor monitor) {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
-				LocalScaComponent newComp = null;
-				try {
-					newComp = GraphitiModelMap.this.launch(comp, implID, LocalScaComponent.class);
-					nodeMapEntry.setScaComponent(newComp);
-					updateEnabledState(comp, true);
-					editor.componentRegistered(comp);
-					return Status.OK_STATUS;
-				} catch (final CoreException e) {
-					nodes.remove(nodeMapEntry.getKey());
-					return new Status(e.getStatus().getSeverity(), SADUIGraphitiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e);
-				} finally {
-					if (nodes.get(nodeMapEntry.getKey()) == null) {
-						delete(comp);
-					}
-					subMonitor.done();
-				}
+			public ComponentInstantiation getComponentInstantiation() {
+				return compInst;
 			}
 
-		};
-		job.schedule();
-	}
-
-	/**
-	 * New SadConnectInterface was recently added to the diagram and this method will now launch
-	 * the corresponding ScaConnection
-	 * @param conn
-	 */
-	public void add(@NonNull final SadConnectInterface conn) {
-		final ConnectionMapEntry connectionMap = new ConnectionMapEntry();
-		connectionMap.setProfile(conn);
-		synchronized (connections) {
-			if (connections.get(connectionMap.getKey()) != null) {
-				return;
-			} else {
-				connections.put(connectionMap.getKey(), connectionMap);
-			}
-		}
-		Job job = new Job("Connecting " + conn.getId()) {
-
-			@Override
-			@NonNull
-			protected IStatus run(IProgressMonitor monitor) {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, "Connecting " + conn.getId(), IProgressMonitor.UNKNOWN);
-				try {
-					ScaConnection newConnection = GraphitiModelMap.this.create(conn);
-					connectionMap.setScaConnection(newConnection);
-					return Status.OK_STATUS;
-				} catch (final InvalidPort e) {
-					delete(conn);
-					connections.remove(connectionMap.getKey());
-					return new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
-				} catch (final OccupiedPort e) {
-					delete(conn);
-					connections.remove(connectionMap.getKey());
-					return new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
-				} finally {
-					if (connections.get(connectionMap.getKey()) == null) {
-						delete(conn);
-					}
-					subMonitor.done();
-				}
-			}
-
-		};
-		job.schedule();
-	}
-
-	/**
-	 * New ScaConnection was recently added and this method will now add
-	 * a SadConnectInterface to the SofwareAssembly of the Graphiti Diagram.
-	 * @param conn
-	 */
-	public void add(@NonNull final ScaConnection conn) {
-		// Ignore connections at the waveform level
-		if (conn.getPort().eContainer() instanceof ScaWaveform) {
-			return;
-		}
-
-		final ConnectionMapEntry connectionMap = new ConnectionMapEntry();
-		connectionMap.setScaConnection(conn);
-		synchronized (connections) {
-			if (connections.get(connectionMap.getKey()) != null) {
-				return;
-			} else {
-				connections.put(connectionMap.getKey(), connectionMap);
-			}
-		}
-		Job job = new Job("Adding connection " + conn.getId()) {
-
-			@Override
-			@NonNull
-			protected IStatus run(IProgressMonitor monitor) {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, "Adding connection " + conn.getId(), IProgressMonitor.UNKNOWN);
-				SadConnectInterface newSadInterface = null;
-				try {
-					newSadInterface = GraphitiModelMap.this.create(conn);
-					if (newSadInterface == null) {
-						connections.remove(connectionMap.getKey());
-						return Status.CANCEL_STATUS;
-					}
-					connectionMap.setProfile(newSadInterface);
-					return Status.OK_STATUS;
-				} catch (CoreException e) {
-					connections.remove(connectionMap.getKey());
-					return new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
-				} finally {
-					if (connections.get(connectionMap.getKey()) == null) {
-						delete(newSadInterface);
-					}
-					subMonitor.done();
-				}
-			}
-
-		};
-		job.schedule();
-	}
-
-	/**
-	 * Create SadComponentInstantiation from the provided LocalScaComponent. Add the SadComponentInstantiation
-	 * to the diagram
-	 * @param newValue
-	 * @return
-	 * @throws CoreException
-	 */
-	@NonNull
-	private SadComponentInstantiation create(@NonNull final LocalScaComponent newValue) throws CoreException {
-
-		// get SoftPkg
-		newValue.fetchAttributes(null);
-		final SoftPkg spd = newValue.fetchProfileObject(null);
-		if (spd == null) {
-			throw new IllegalStateException("Unable to load New Component's SPD");
-		}
-
-		// setup for transaction in diagram
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final Diagram diagram = provider.getDiagram();
-		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-
-		// Create Component in transaction
-		final SadComponentInstantiation[] sadComponentInstantiations = new SadComponentInstantiation[1];
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-
-				// create component feature
-				ComponentCreateFeature createComponentFeature = new ComponentCreateFeature(featureProvider, spd, newValue.getImplementationID());
+				ComponentCreateFeature createComponentFeature = new ComponentCreateFeature(featureProvider, newComponent.getProfileObj(), null);
 				CreateContext createContext = new CreateContext();
-				createContext.putProperty(ComponentCreateFeature.OVERRIDE_USAGE_NAME, newValue.getName());
-				createContext.putProperty(ComponentCreateFeature.OVERRIDE_INSTANTIATION_ID, newValue.getInstantiationIdentifier());
-				createContext.setTargetContainer(diagram);
+				createContext.putProperty(ComponentCreateFeature.OVERRIDE_USAGE_NAME, newComponent.getName());
+				createContext.putProperty(ComponentCreateFeature.OVERRIDE_INSTANTIATION_ID, newComponent.getInstantiationIdentifier());
+				createContext.setTargetContainer(featureProvider.getDiagramTypeProvider().getDiagram());
 				final Object[] objects = createComponentFeature.create(createContext);
-				sadComponentInstantiations[0] = (SadComponentInstantiation) objects[0];
-
-				// The LocalSCAComponent already exists, so enable it here.
-				RHContainerShape shape = DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiations[0], RHContainerShape.class);
-				shape.setEnabled(true);
+				compInst = (ComponentInstantiation) objects[0];
 			}
-		});
-
-		return sadComponentInstantiations[0];
+		};
 	}
 
-	@Override
-	protected LocalAbstractComponent launch(String id, DataType[] initConfiguration, URI spdURI, String implID, String runMode) throws CoreException {
-		LocalScaWaveform localWaveform = (LocalScaWaveform) this.waveform;
-		return localWaveform.launch(id, initConfiguration, spdURI, implID, runMode);
-	}
-
-	/**
-	 * Create LocalScaComponent for corresponding SadConnectInterface
-	 * @param conn
-	 * @return
-	 * @throws InvalidPort
-	 * @throws OccupiedPort
-	 */
-	@Nullable
-	private ScaConnection create(@NonNull final SadConnectInterface conn) throws InvalidPort, OccupiedPort {
-		SadComponentInstantiation inst = ScaEcoreUtils.getFeature(conn, GraphitiModelMap.CONN_INST_PATH);
-		final ScaComponent sourceComp = get(inst);
-		if (sourceComp == null) {
+	protected UsesPortStub findSource(ScaConnection newValue) {
+		final SadComponentInstantiation sourceComponent = getComponentInstantiation((ScaComponent) newValue.getPort().eContainer());
+		if (sourceComponent == null) {
 			return null;
 		}
-		sourceComp.fetchPorts(null);
-		final ScaUsesPort usesPort = (ScaUsesPort) sourceComp.getScaPort(conn.getUsesPort().getUsesIdentifier());
-		org.omg.CORBA.Object targetObj = null;
-		if (conn.getComponentSupportedInterface() != null) {
-			final ScaComponent targetComp = get((SadComponentInstantiation) conn.getComponentSupportedInterface().getComponentInstantiationRef().getInstantiation());
-			if (targetComp != null) {
-				targetObj = targetComp.getCorbaObj();
-			}
-		} else if (conn.getProvidesPort() != null) {
-			final ScaComponent targetComp = get(conn.getProvidesPort().getComponentInstantiationRef().getInstantiation());
-			if (targetComp != null) {
-				targetComp.fetchPorts(null);
-				final ScaPort< ? , ? > targetPort = targetComp.getScaPort(conn.getProvidesPort().getProvidesIdentifier());
-				if (targetPort != null) {
-					targetObj = targetPort.getCorbaObj();
-				}
-			}
-		}
-		final String connId = conn.getId();
-
-		if (connId != null) {
-			if (targetObj != null) {
-				usesPort.connectPort(targetObj, connId);
-			}
-			for (final ScaConnection newConn : usesPort.fetchConnections(null)) {
-				if (connId.equals(newConn.getId())) {
-					return newConn;
-				}
+		for (final UsesPortStub stub : sourceComponent.getUses()) {
+			if (stub.getName() != null && stub.getName().equals(newValue.getPort().getName())) {
+				return stub;
 			}
 		}
 		return null;
 	}
 
-	/**
-	 * Create SadConnectInterface for corresponding ScaConnection
-	 * @param newValue
-	 * @return
-	 * @throws CoreException
-	 */
-	@Nullable
-	private SadConnectInterface create(@NonNull final ScaConnection newValue) throws CoreException {
-		UsesPortStub source = null;
-		final SadComponentInstantiation sourceComponent = get((ScaComponent) newValue.getPort().eContainer());
-		if (sourceComponent != null) {
-			for (final UsesPortStub stub : sourceComponent.getUses()) {
-				if (stub.getName() != null && stub.getName().equals(newValue.getPort().getName())) {
-					source = stub;
-					break;
-				}
+	protected ConnectionTarget findTarget(ScaConnection newValue) {
+		// Iterate port containers looking for a provides ports which may match
+		List<ScaComponent> components = this.waveform.getComponentsCopy();
+		for (final ScaComponent portContainer : components) {
+			if (!portContainer.isSetPorts()) {
+				portContainer.fetchPorts(null);
 			}
-		}
-
-		ConnectionTarget target = null;
-		out: for (final ScaComponent c : this.waveform.getComponents()) {
-			if (c.getObj()._is_equivalent(newValue.getData().port)) {
-				SadComponentInstantiation sci = get((ScaComponent) c);
-				if (sci != null) {
-					target = sci.getInterfaceStub();
-				}
-				break;
-			}
-			for (final ScaPort< ? , ? > p : c.fetchPorts(null)) {
-				if (p instanceof ScaProvidesPort && p.getObj()._is_equivalent(newValue.getData().port)) {
-					final SadComponentInstantiation comp = get((ScaComponent) c);
-					if (comp != null) {
-						for (final ProvidesPortStub provides : comp.getProvides()) {
-							if (provides.getName().equals(p.getName())) {
-								target = provides;
-								break out;
-							}
+			for (final ScaPort< ? , ? > port : portContainer.getPorts()) {
+				if (port instanceof ScaProvidesPort && port.getObj()._is_equivalent(newValue.getData().port)) {
+					final SadComponentInstantiation compInst = getComponentInstantiation(portContainer);
+					if (compInst == null) {
+						continue;
+					}
+					for (final ProvidesPortStub provides : compInst.getProvides()) {
+						if (provides.getName().equals(port.getName())) {
+							return provides;
 						}
 					}
 				}
 			}
 		}
 
-		// setup for transaction in diagram
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final Diagram diagram = provider.getDiagram();
-		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-
-		// get anchors from business objects
-		final Anchor sourceAnchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, source, Anchor.class);
-		final Anchor targetAnchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, target, Anchor.class);
-
-		// Create Component in transaction
-		final SadConnectInterface[] sadConnectInterfaces = new SadConnectInterface[1];
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				// create connection feature
-				CreateConnectionContext createConnectionContext = new CreateConnectionContext();
-				createConnectionContext.putProperty(SADConnectInterfacePattern.OVERRIDE_CONNECTION_ID, newValue.getId());
-				createConnectionContext.setSourceAnchor(sourceAnchor);
-				createConnectionContext.setTargetAnchor(targetAnchor);
-				ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
-				for (ICreateConnectionFeature createConnectionFeature : createConnectionFeatures) {
-					if (createConnectionFeature.canCreate(createConnectionContext)) {
-						Connection connection = createConnectionFeature.create(createConnectionContext);
-						// get business object for newly created diagram connection
-						sadConnectInterfaces[0] = (SadConnectInterface) DUtil.getBusinessObject(connection);
-						break;
-					}
+		// Iterate anything that could be a component supported interface looking for a match
+		for (final ScaComponent csiTarget : components) {
+			if (csiTarget.getObj()._is_equivalent(newValue.getData().port)) {
+				SadComponentInstantiation compInst = getComponentInstantiation(csiTarget);
+				if (compInst != null) {
+					return compInst.getInterfaceStub();
 				}
-
+				break;
 			}
-		});
-
-		return sadConnectInterfaces[0];
-	}
-
-	/**
-	 * Delete ScaConnection from local waveform
-	 * @param oldConnection
-	 * @throws InvalidPort
-	 */
-	private void delete(@Nullable final ScaConnection oldConnection) throws InvalidPort {
-		if (oldConnection == null) {
-			return;
 		}
-		if (oldConnection.getPort() != null && !oldConnection.getPort().isDisposed()) {
-			oldConnection.getPort().disconnectPort(oldConnection);
-		}
+
+		return null;
 	}
 
 	@Nullable
-	public SadComponentInstantiation get(@Nullable final ScaComponent comp) {
+	/* package */ SadComponentInstantiation getComponentInstantiation(@Nullable final ScaComponent comp) {
 		if (comp == null) {
 			return null;
 		}
@@ -478,7 +213,7 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	}
 
 	@Nullable
-	public ScaComponent get(@Nullable final SadComponentInstantiation compInst) {
+	private ScaComponent get(@Nullable final ComponentInstantiation compInst) {
 		if (compInst == null) {
 			return null;
 		}
@@ -490,40 +225,27 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 		}
 	}
 
-	@Nullable
-	public ScaConnection get(@Nullable final SadConnectInterface conn) {
-		if (conn == null) {
-			return null;
-		}
-		ConnectionMapEntry connectionMap = connections.get(ConnectionMapEntry.getKey(conn));
-		if (connectionMap != null) {
-			return connectionMap.getScaConnection();
-		} else {
-			return null;
-		}
+	protected CorbaObjWrapper< ? > getCorbaObjWrapper(ComponentInstantiation compInst) {
+		return get(compInst);
 	}
 
-	@Nullable
-	public SadConnectInterface get(@Nullable final ScaConnection conn) {
-		if (conn == null) {
-			return null;
-		}
-		ConnectionMapEntry connectionMap = connections.get(ConnectionMapEntry.getKey(conn));
-		if (connectionMap != null) {
-			return connectionMap.getProfile();
-		} else {
-			return null;
-		}
-	}
-
-	@Nullable
-	private TransactionalEditingDomain getEditingDomain() {
-		return this.editor.getDiagramEditor().getEditingDomain();
+	protected ScaPortContainer getPortContainer(ComponentInstantiation portContainer) {
+		return get(portContainer);
 	}
 
 	/**
-	 * Called when we remove LocalScaComponent from the local waveform.
-	 * This method removes SadComponentInstantiation from the diagram
+	 * Adds a mapping between the SCA model object and diagram XML model object
+	 * @param comp
+	 * @param inst
+	 */
+	public void put(@NonNull ScaComponent comp, @NonNull SadComponentInstantiation inst) {
+		NodeMapEntry nodeMapEntry = new NodeMapEntry(comp, inst);
+		nodes.put(nodeMapEntry.getKey(), nodeMapEntry);
+	}
+
+	/**
+	 * Called when an existing {@link ScaComponent} is removed from the SCA model. Removes the PictogramElement from the
+	 * diagram.
 	 * @param comp
 	 */
 	public void remove(@NonNull final ScaComponent comp) {
@@ -539,16 +261,16 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	}
 
 	/**
-	 * Called when we remove SadComponentInstantiation from the diagram.
-	 * This method removes LocalScaComponent from the local waveform
-	 * @param comp
+	 * Called when a {@link SadComponentInstantiation} is removed from the diagram's XML model. Asynchronously triggers
+	 * a call to <code>releaseObject()</code>.
+	 * @param compInst
 	 */
-	public void remove(final SadComponentInstantiation comp) {
-		if (comp == null) {
+	public void remove(final SadComponentInstantiation compInst) {
+		if (compInst == null) {
 			return;
 		}
 
-		final NodeMapEntry nodeMapEntry = nodes.remove(NodeMapEntry.getKey(comp));
+		final NodeMapEntry nodeMapEntry = nodes.remove(NodeMapEntry.getKey(compInst));
 		if (nodeMapEntry == null) {
 			return;
 		}
@@ -559,57 +281,12 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 		}
 	}
 
-	/**
-	 * Called when we remove SadConnectInterface from the diagram.
-	 * This method removes ScaConnection from the local waveform
-	 * @param conn
-	 */
-	public void remove(@NonNull final SadConnectInterface conn) {
-		final ConnectionMapEntry connectionMap = connections.remove(ConnectionMapEntry.getKey(conn));
-		if (connectionMap == null) {
-			return;
-		}
-		final ScaConnection oldConnection = connectionMap.getScaConnection();
-		if (oldConnection != null) {
-			Job job = new Job("Disconnect connection " + conn.getId()) {
-
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					SubMonitor subMonitor = SubMonitor.convert(monitor, "Disconnect connection " + conn.getId(), IProgressMonitor.UNKNOWN);
-					try {
-						delete(oldConnection);
-						return Status.OK_STATUS;
-					} catch (InvalidPort e) {
-						return new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Problems while removing connection " + conn.getId(), e);
-					} finally {
-						subMonitor.done();
-					}
-				}
-
-			};
-			job.schedule();
-		}
-	}
+	////////////////////////////////////////////////////
+	// Reflecting status
+	////////////////////////////////////////////////////
 
 	/**
-	 * Called when we remove ScaConnection from the local waveform.
-	 * This method removes SadConnectInterface from the diagram
-	 * @param conn
-	 */
-	public void remove(@NonNull final ScaConnection conn) {
-		final ConnectionMapEntry connectionMap = connections.remove(ConnectionMapEntry.getKey(conn));
-		if (connectionMap == null) {
-			return;
-		}
-		final SadConnectInterface oldSadInterface = connectionMap.getProfile();
-		if (oldSadInterface != null) {
-			delete(oldSadInterface);
-		}
-
-	}
-
-	/**
-	 * Paints the Chalkboard diagram component appropriate color
+	 * Updates the pictogram element's start/stop state.
 	 * @param scaComponent
 	 * @param started
 	 */
@@ -619,47 +296,12 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 		if (nodeMapEntry == null) {
 			return;
 		}
-		final SadComponentInstantiation sadComponentInstantiation = nodeMapEntry.getProfile();
-
-		// get pictogram for component
-		Job job = new UIJob("Update started state: " + scaComponent.getInstantiationIdentifier()) {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-				final Diagram diagram = provider.getDiagram();
-				final RHContainerShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, RHContainerShape.class);
-				if (componentShape == null) {
-					return Status.CANCEL_STATUS;
-				}
-
-				NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
-					@Override
-					public void execute() {
-						componentShape.setStarted(resolveStarted);
-					}
-				});
-				return Status.OK_STATUS;
-			}
-		};
-		job.setSystem(true);
-		job.schedule();
-	}
-
-	private void updateEnabledState(final SadComponentInstantiation component, final boolean enabled) {
-		getEditingDomain().getCommandStack().execute(new NonDirtyingCommand() {
-			@Override
-			public void execute() {
-				Diagram diagram = editor.getDiagramEditor().getDiagramTypeProvider().getDiagram();
-				RHContainerShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, component, RHContainerShape.class);
-				if (componentShape != null) {
-					componentShape.setEnabled(enabled);
-				}
-			}
-		});
+		final ComponentInstantiation componentInstantiation = nodeMapEntry.getProfile();
+		updateStateStopState(componentInstantiation, resolveStarted);
 	}
 
 	/**
-	 * Modifies the diagram to reflect component runtime status
+	 * Updates pictogram elements to reflect runtime status.
 	 */
 	public void reflectRuntimeStatus() {
 		synchronized (nodes) {
@@ -677,59 +319,16 @@ public class GraphitiModelMap extends AbstractGraphitiModelMap {
 	}
 
 	/**
-	 * Updates the color of the component shape to reflect error state
+	 * Updates the pictogram element's {@link IStatus}.
 	 * @param scaComponent
 	 * @param status
 	 */
 	public void reflectErrorState(ScaComponent scaComponent, final IStatus status) {
-		final NodeMapEntry nodeMapEntry = nodes.get(NodeMapEntry.getKey((LocalScaComponent) scaComponent));
+		final NodeMapEntry nodeMapEntry = nodes.get(NodeMapEntry.getKey(scaComponent));
 		if (nodeMapEntry == null) {
 			return;
 		}
-		final SadComponentInstantiation sadComponentInstantiation = nodeMapEntry.getProfile();
-
-		Job job = new UIJob("Update error state: " + scaComponent.getInstantiationIdentifier()) {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-				final Diagram diagram = provider.getDiagram();
-				final RHContainerShape componentShape = DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, RHContainerShape.class);
-				if (componentShape == null) {
-					return Status.CANCEL_STATUS;
-				}
-
-				NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
-					@Override
-					public void execute() {
-						componentShape.setIStatusSeverity(status.getSeverity());
-					}
-				});
-				return Status.OK_STATUS;
-			}
-		};
-		job.setSystem(true);
-		job.schedule();
-	}
-
-	/**
-	 * @param con
-	 * @param sadCon
-	 */
-	public void put(@NonNull ScaConnection con, @NonNull SadConnectInterface sadCon) {
-		ConnectionMapEntry connectionMap = new ConnectionMapEntry();
-		connectionMap.setScaConnection(con);
-		connectionMap.setProfile(sadCon);
-		connections.put(connectionMap.getKey(), connectionMap);
-	}
-
-	/**
-	 * @param comp
-	 * @param inst
-	 */
-	public void put(@NonNull ScaComponent comp, @NonNull SadComponentInstantiation inst) {
-		NodeMapEntry nodeMapEntry = new NodeMapEntry();
-		nodeMapEntry.setScaComponent(comp);
-		nodeMapEntry.setProfile(inst);
-		nodes.put(nodeMapEntry.getKey(), nodeMapEntry);
+		final ComponentInstantiation componentInstantiation = nodeMapEntry.getProfile();
+		updateErrorState(componentInstantiation, status);
 	}
 }
