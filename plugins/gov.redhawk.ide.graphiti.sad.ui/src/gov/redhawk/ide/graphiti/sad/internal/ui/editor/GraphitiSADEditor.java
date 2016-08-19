@@ -33,6 +33,9 @@ import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
+/**
+ * A multi-page editor for SAD files. Includes a Graphiti diagram.
+ */
 public class GraphitiSADEditor extends AbstractGraphitiSADEditor {
 
 	private ResourceListener nameListener;

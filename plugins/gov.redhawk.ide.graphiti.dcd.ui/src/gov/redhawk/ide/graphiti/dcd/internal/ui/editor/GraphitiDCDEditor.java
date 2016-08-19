@@ -33,6 +33,9 @@ import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
+/**
+ * A multi-page editor for DCD files. Includes a Graphiti diagram.
+ */
 public class GraphitiDCDEditor extends AbstractGraphitiDCDEditor {
 
 	private ResourceListener nameListener;

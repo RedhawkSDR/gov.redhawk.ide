@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -23,15 +22,14 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 
-import gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDcdModelMap;
 import gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDeviceManagerExplorerEditor;
+import gov.redhawk.core.graphiti.dcd.ui.modelmap.GraphitiDCDModelMap;
 import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
-import gov.redhawk.ide.graphiti.dcd.internal.ui.GraphitiDCDLocalModelMap;
-import gov.redhawk.ide.graphiti.dcd.internal.ui.GraphitiDcdModelMapInitializerCommand;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDeviceManagerSandboxDiagramEditor;
+import gov.redhawk.ide.graphiti.dcd.ui.internal.modelmap.GraphitiDCDLocalModelMap;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaDeviceManager;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -47,10 +45,10 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 
 	private Resource mainResource;
 	private boolean isSandboxDeviceManager = false;
-	private GraphitiDcdModelMap modelMap;
+	private GraphitiDCDModelMap modelMap;
 
 	@Override
-	protected GraphitiDcdModelMap createModelMapInstance() {
+	protected GraphitiDCDModelMap createModelMapInstance() {
 		modelMap = new GraphitiDCDLocalModelMap(this, getDeviceManager());
 		return modelMap;
 	}
@@ -124,15 +122,5 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 	@Override
 	protected AbstractGraphitiDiagramEditor createDiagramEditor() {
 		return new GraphitiDeviceManagerSandboxDiagramEditor(getEditingDomain());
-	}
-
-	@Override
-	protected Command createModelInitializeCommand() {
-		if (isSandboxDeviceManager) {
-			DeviceConfiguration dcd = DeviceConfiguration.Util.getDeviceConfiguration(super.getMainResource());
-			return new GraphitiDcdModelMapInitializerCommand(modelMap, dcd, getDeviceManager());
-		} else {
-			return super.createModelInitializeCommand();
-		}
 	}
 }

@@ -42,7 +42,6 @@ Bundle-ActivationPolicy: lazy
 Export-Package: gov.redhawk.ide.graphiti.dcd.ext,
  gov.redhawk.ide.graphiti.dcd.ext.impl,
  gov.redhawk.ide.graphiti.dcd.ext.util,
- gov.redhawk.ide.graphiti.dcd.internal.ui,
  gov.redhawk.ide.graphiti.dcd.internal.ui.editor,
  gov.redhawk.ide.graphiti.dcd.ui,
  gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns,

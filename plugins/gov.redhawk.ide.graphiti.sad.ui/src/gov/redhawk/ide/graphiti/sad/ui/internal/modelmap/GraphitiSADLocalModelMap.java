@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  */
-package gov.redhawk.ide.graphiti.dcd.internal.ui;
+package gov.redhawk.ide.graphiti.sad.ui.internal.modelmap;
 
 import java.util.Map;
 
@@ -20,35 +20,35 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.jdt.annotation.NonNull;
 
 import CF.DataType;
+import gov.redhawk.core.graphiti.sad.ui.modelmap.GraphitiSADModelMap;
+import gov.redhawk.core.graphiti.sad.ui.modelmap.SADNodeMapEntry;
 import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
-import gov.redhawk.ide.debug.LocalAbstractComponent;
-import gov.redhawk.ide.debug.LocalScaDeviceManager;
-import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
-import gov.redhawk.ide.graphiti.internal.ui.AbstractGraphitiModelMap;
+import gov.redhawk.core.graphiti.ui.modelmap.AbstractGraphitiModelMap;
+import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
-import gov.redhawk.model.sca.ScaDevice;
-import gov.redhawk.model.sca.ScaDeviceManager;
-import gov.redhawk.model.sca.ScaService;
+import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.sca.util.SubMonitor;
-import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
-import mil.jpeojtrs.sca.dcd.impl.DcdComponentInstantiationImpl;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
-public class GraphitiDCDLocalModelMap extends GraphitiDcdModelMap {
+public class GraphitiSADLocalModelMap extends GraphitiSADModelMap {
 
-	public GraphitiDCDLocalModelMap(AbstractGraphitiMultiPageEditor editor, ScaDeviceManager deviceManager) {
-		super(editor, deviceManager);
-		Assert.isTrue(deviceManager instanceof LocalScaDeviceManager, "This model map only supports local (sandbox) device managers");
+	public GraphitiSADLocalModelMap(AbstractGraphitiMultiPageEditor editor, ScaWaveform waveform) {
+		super(editor, waveform);
+		Assert.isTrue(waveform instanceof LocalScaWaveform, "This model map only supports local (sandbox) waveforms");
 	}
 
 	@Override
-	public void add(final DcdComponentInstantiation compInst) {
-		final DcdNodeMapEntry nodeMapEntry = new DcdNodeMapEntry();
+	public void add(@NonNull final SadComponentInstantiation compInst) {
+		final SADNodeMapEntry nodeMapEntry = new SADNodeMapEntry();
 		nodeMapEntry.setProfile(compInst);
-		final Map<String, DcdNodeMapEntry> nodes = getNodes();
+		final Map<String, SADNodeMapEntry> nodes = getNodes();
 		synchronized (nodes) {
 			if (nodes.get(nodeMapEntry.getKey()) != null) {
 				return;
@@ -57,26 +57,22 @@ public class GraphitiDCDLocalModelMap extends GraphitiDcdModelMap {
 			}
 		}
 
-		final String implID = ((DcdComponentInstantiationImpl) compInst).getImplID();
+		final String implID = ((SadComponentInstantiation) compInst).getImplID();
 		Job job = new Job("Launching " + compInst.getUsageName()) {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + compInst.getUsageName(), IProgressMonitor.UNKNOWN);
-				LocalAbstractComponent newComp = null;
+				LocalScaComponent newComp = null;
 				try {
-					newComp = GraphitiDCDLocalModelMap.this.launch(compInst, implID);
-					if (newComp instanceof ScaDevice< ? >) {
-						nodeMapEntry.setScaDevice((ScaDevice< ? >) newComp);
-					} else if (newComp instanceof ScaService) {
-						nodeMapEntry.setScaService((ScaService) newComp);
-					}
+					newComp = GraphitiSADLocalModelMap.this.launch(compInst, implID);
+					nodeMapEntry.setScaComponent(newComp);
 					updateEnabledState(compInst, true);
 					getEditor().refreshSelectedObject(compInst);
 					return Status.OK_STATUS;
 				} catch (final CoreException e) {
 					nodes.remove(nodeMapEntry.getKey());
-					return new Status(e.getStatus().getSeverity(), DCDUIGraphitiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e);
+					return new Status(e.getStatus().getSeverity(), SADUIGraphitiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e);
 				} finally {
 					if (nodes.get(nodeMapEntry.getKey()) == null) {
 						delete(compInst);
@@ -91,12 +87,12 @@ public class GraphitiDCDLocalModelMap extends GraphitiDcdModelMap {
 
 	/**
 	 * Launch an instance of the specified SPD.
-	 * @param compInst The instantiation as per the DCD
+	 * @param compInst The instantiation as per the SAD
 	 * @param implID The implementation to launch, or null for any
 	 * @throws CoreException
 	 */
-	protected LocalAbstractComponent launch(final DcdComponentInstantiation compInst, final String implID) throws CoreException {
-		LocalScaDeviceManager localDeviceManager = (LocalScaDeviceManager) getDeviceManager();
+	protected LocalScaComponent launch(final SadComponentInstantiation compInst, final String implID) throws CoreException {
+		LocalScaWaveform localWaveform = (LocalScaWaveform) getWaveform();
 		DataType[] initConfiguration = getInitialProperties(compInst);
 		final SoftPkg spd = ScaEcoreUtils.getFeature(compInst, AbstractGraphitiModelMap.COMP_INST_TO_SPD_PATH);
 		if (spd == null) {
@@ -104,6 +100,6 @@ public class GraphitiDCDLocalModelMap extends GraphitiDcdModelMap {
 		}
 		final URI spdURI = spd.eResource().getURI();
 
-		return localDeviceManager.launch(compInst.getId(), initConfiguration, spdURI, implID, ILaunchManager.RUN_MODE);
+		return localWaveform.launch(compInst.getId(), initConfiguration, spdURI, implID, ILaunchManager.RUN_MODE);
 	}
 }

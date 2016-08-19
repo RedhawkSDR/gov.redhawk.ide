@@ -47,9 +47,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: gov.redhawk.ide.graphiti.ext,
  gov.redhawk.ide.graphiti.ext.impl,
  gov.redhawk.ide.graphiti.ext.util,
- gov.redhawk.ide.graphiti.internal.ui;
-  x-friends:="gov.redhawk.ide.graphiti.sad.ui,
-   gov.redhawk.ide.graphiti.dcd.ui",
  gov.redhawk.ide.graphiti.ui,
  gov.redhawk.ide.graphiti.ui.adapters,
  gov.redhawk.ide.graphiti.ui.diagram,

@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -23,17 +22,15 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 
-import gov.redhawk.core.graphiti.sad.ui.editor.GraphitiModelMap;
 import gov.redhawk.core.graphiti.sad.ui.editor.GraphitiWaveformExplorerEditor;
+import gov.redhawk.core.graphiti.sad.ui.modelmap.GraphitiSADModelMap;
 import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
 import gov.redhawk.ide.debug.LocalSca;
-import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
-import gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiSADLocalModelMap;
-import gov.redhawk.ide.graphiti.sad.debug.internal.ui.SadGraphitiModelInitializerCommand;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformSandboxDiagramEditor;
+import gov.redhawk.ide.graphiti.sad.ui.internal.modelmap.GraphitiSADLocalModelMap;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -49,10 +46,10 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 
 	private Resource mainResource;
 	private boolean isSandboxChalkboardWaveform = false;
-	private GraphitiModelMap modelMap;
+	private GraphitiSADModelMap modelMap;
 
 	@Override
-	protected GraphitiModelMap createModelMapInstance() {
+	protected GraphitiSADModelMap createModelMapInstance() {
 		modelMap = new GraphitiSADLocalModelMap(this, getWaveform());
 		return modelMap;
 	}
@@ -128,18 +125,8 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 	}
 
 	@Override
-	protected Command createModelInitializeCommand() {
-		if (isSandboxChalkboardWaveform) {
-			SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(super.getMainResource());
-			return new SadGraphitiModelInitializerCommand(modelMap, sad, (LocalScaWaveform) getWaveform());
-		} else {
-			return super.createModelInitializeCommand();
-		}
-	}
-
-	@Override
 	public void doSaveAs() {
-		final NewWaveformFromLocalWizard wizard = new NewWaveformFromLocalWizard(SoftwareAssembly.Util.getSoftwareAssembly(getMainResource()));
+		final NewWaveformFromLocalWizard wizard = new NewWaveformFromLocalWizard(getSoftwareAssembly());
 		final WizardDialog dialog = new WizardDialog(getSite().getShell(), wizard);
 		dialog.open();
 	}
