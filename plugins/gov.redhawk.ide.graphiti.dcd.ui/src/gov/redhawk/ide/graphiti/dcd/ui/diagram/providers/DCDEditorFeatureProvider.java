@@ -14,6 +14,7 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IReconnectionFeature;
 import org.eclipse.graphiti.features.context.IReconnectionContext;
 
+import gov.redhawk.core.graphiti.dcd.ui.diagram.providers.DCDGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect.DCDReconnectFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;

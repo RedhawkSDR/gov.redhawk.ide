@@ -12,6 +12,8 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
 
+import gov.redhawk.core.graphiti.dcd.ui.diagram.providers.DCDDiagramTypeProvider;
+
 public class DCDEditorDiagramTypeProvider extends DCDDiagramTypeProvider {
 
 	public static final String PROVIDER_ID = "gov.redhawk.ide.graphiti.dcd.ui.DCDEditorDiagramTypeProvider";

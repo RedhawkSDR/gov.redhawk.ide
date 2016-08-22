@@ -15,6 +15,7 @@ import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
+import gov.redhawk.core.graphiti.dcd.ui.diagram.providers.DevMgrExplorerFeatureProvider;
 import gov.redhawk.core.graphiti.dcd.ui.ext.DeviceShape;
 import gov.redhawk.core.graphiti.dcd.ui.ext.ServiceShape;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DeviceReleaseFeature;

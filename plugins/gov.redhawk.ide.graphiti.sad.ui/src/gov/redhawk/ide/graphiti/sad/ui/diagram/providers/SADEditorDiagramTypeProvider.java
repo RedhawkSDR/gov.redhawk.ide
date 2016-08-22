@@ -12,13 +12,15 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
 
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
 
-public class SADEditorTypeProvider extends SADDiagramTypeProvider {
+import gov.redhawk.core.graphiti.sad.ui.diagram.providers.SADDiagramTypeProvider;
 
-	public static final String PROVIDER_ID = "gov.redhawk.ide.graphiti.sad.ui.SADEditorTypeProvider";
+public class SADEditorDiagramTypeProvider extends SADDiagramTypeProvider {
+
+	public static final String PROVIDER_ID = "gov.redhawk.ide.graphiti.sad.ui.SADEditorDiagramTypeProvider";
 
 	private IToolBehaviorProvider[] toolBehaviorProviders;
 
-	public SADEditorTypeProvider() {
+	public SADEditorDiagramTypeProvider() {
 		super();
 		setFeatureProvider(new SADEditorFeatureProvider(this));
 	}

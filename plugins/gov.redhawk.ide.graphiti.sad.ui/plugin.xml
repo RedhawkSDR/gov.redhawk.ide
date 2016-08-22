@@ -14,8 +14,8 @@
    <extension
          point="org.eclipse.graphiti.ui.diagramTypeProviders">
       <diagramTypeProvider
-            class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADEditorTypeProvider"
-            id="gov.redhawk.ide.graphiti.sad.ui.SADEditorTypeProvider"
+            class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADEditorDiagramTypeProvider"
+            id="gov.redhawk.ide.graphiti.sad.ui.SADEditorDiagramTypeProvider"
             name="SAD Editor Diagram Type Provider">
          <diagramType
                id="gov.redhawk.ide.graphiti.sad.ui.SADDiagramEditor">
@@ -28,8 +28,8 @@
          </imageProvider>
       </diagramTypeProvider>
       <diagramTypeProvider
-            class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformSandboxTypeProvider"
-            id="gov.redhawk.ide.graphiti.sad.ui.WaveformSandboxTypeProvider"
+            class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformSandboxDiagramTypeProvider"
+            id="gov.redhawk.ide.graphiti.sad.ui.WaveformSandboxDiagramTypeProvider"
             name="Sandbox Waveform Diagram Type Provider">
          <diagramType
                id="gov.redhawk.ide.graphiti.sad.ui.SADDiagramEditor">

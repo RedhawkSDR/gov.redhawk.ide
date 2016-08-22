@@ -15,6 +15,7 @@ import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
+import gov.redhawk.core.graphiti.sad.ui.diagram.providers.WaveformExplorerFeatureProvider;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.ComponentReleaseFeature;
 

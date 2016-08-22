@@ -24,6 +24,7 @@ import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
+import gov.redhawk.core.graphiti.sad.ui.diagram.providers.SADGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.DecrementStartOrderFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.IncrementStartOrderFeature;
