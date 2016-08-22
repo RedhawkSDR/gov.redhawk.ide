@@ -17,7 +17,7 @@ import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
+import gov.redhawk.core.graphiti.sad.ui.diagram.feature.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractPaletteToolBehaviorProvider;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;

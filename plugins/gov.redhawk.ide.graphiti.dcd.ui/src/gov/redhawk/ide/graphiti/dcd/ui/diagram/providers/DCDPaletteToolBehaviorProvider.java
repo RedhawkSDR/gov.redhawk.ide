@@ -17,8 +17,8 @@ import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeature;
+import gov.redhawk.core.graphiti.dcd.ui.diagram.feature.DeviceCreateFeature;
+import gov.redhawk.core.graphiti.dcd.ui.diagram.feature.ServiceCreateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractPaletteToolBehaviorProvider;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.ServicesContainer;
