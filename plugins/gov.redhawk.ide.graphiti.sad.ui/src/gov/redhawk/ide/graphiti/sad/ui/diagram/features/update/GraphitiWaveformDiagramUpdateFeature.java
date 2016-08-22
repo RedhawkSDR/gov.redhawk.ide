@@ -24,8 +24,8 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 
+import gov.redhawk.core.graphiti.sad.ui.utils.SADUtils;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.features.update.AbstractDiagramUpdateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterface;
@@ -174,7 +174,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 			// return true.
 			Diagram diagram = (Diagram) pe;
 			SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
-			ComponentPattern.organizeStartOrder(sad, diagram, getFeatureProvider());
+			SADUtils.organizeStartOrder(sad, diagram, getFeatureProvider());
 
 			// Defer to the base class for most updates
 			return super.update(context);

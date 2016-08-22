@@ -17,8 +17,8 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
+import gov.redhawk.core.graphiti.sad.ui.utils.SADUtils;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -85,10 +85,10 @@ public class IncrementStartOrderFeature extends AbstractComponentInstantiationFe
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		// get current we are swapping start order with
-		final SadComponentInstantiation swapCI = ComponentPattern.getComponentInstantiationViaStartOrder(sad, ci.getStartOrder().add(BigInteger.ONE));
+		final SadComponentInstantiation swapCI = SADUtils.getComponentInstantiationViaStartOrder(sad, ci.getStartOrder().add(BigInteger.ONE));
 
 		// swap start orders, also handle assembly controller changes
-		ComponentPattern.swapStartOrder(sad, getFeatureProvider(), ci, swapCI);
+		SADUtils.swapStartOrder(sad, getFeatureProvider(), ci, swapCI);
 
 		// force pictogram objects to update
 		updatePictogramElement(componentShape);
