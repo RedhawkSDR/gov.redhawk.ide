@@ -24,6 +24,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
 
+import gov.redhawk.core.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
 import gov.redhawk.diagram.util.FindByStubUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
