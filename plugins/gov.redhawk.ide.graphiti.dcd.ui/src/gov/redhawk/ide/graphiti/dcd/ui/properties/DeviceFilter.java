@@ -10,9 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.properties;
 
-import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
-
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+
+import gov.redhawk.core.graphiti.dcd.ui.ext.DeviceShape;
 
 /**
  * 

@@ -45,7 +45,7 @@ import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.zest.layouts.dataStructures.BendPoint;
 import org.eclipse.zest.layouts.exampleStructures.SimpleNode;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;

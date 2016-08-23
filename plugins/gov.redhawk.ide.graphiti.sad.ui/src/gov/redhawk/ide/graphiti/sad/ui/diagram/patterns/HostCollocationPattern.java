@@ -10,11 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
+import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
 import gov.redhawk.core.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.core.graphiti.ui.diagram.patterns.UpdateAction;
 import gov.redhawk.core.graphiti.ui.util.StyleUtil;
 import gov.redhawk.core.graphiti.ui.util.UpdateUtil;
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 

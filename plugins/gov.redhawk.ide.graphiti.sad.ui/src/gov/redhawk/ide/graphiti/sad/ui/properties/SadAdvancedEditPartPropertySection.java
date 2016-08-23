@@ -13,7 +13,7 @@ package gov.redhawk.ide.graphiti.sad.ui.properties;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef.EditPart;
 
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.ui.properties.AdvancedEditPartPropertySection;
 import gov.redhawk.model.sca.ScaComponent;
 

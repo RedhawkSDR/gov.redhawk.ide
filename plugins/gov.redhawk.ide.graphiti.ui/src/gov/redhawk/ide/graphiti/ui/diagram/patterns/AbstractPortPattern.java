@@ -28,9 +28,9 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.services.Graphiti;
 
+import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.core.graphiti.ui.util.StyleUtil;
 import gov.redhawk.core.graphiti.ui.util.UpdateUtil;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
 abstract class AbstractPortPattern< E extends EObject > extends AbstractPattern {
@@ -204,7 +204,7 @@ abstract class AbstractPortPattern< E extends EObject > extends AbstractPattern 
 	protected FixPointAnchor createPortAnchor(ContainerShape portShape, int x) {
 		FixPointAnchor fixPointAnchor = DUtil.createOverlayAnchor(portShape, x);
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createPlainRectangle(fixPointAnchor);
-		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, RHContainerShapeImpl.GA_FIX_POINT_ANCHOR_RECTANGLE);
+		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, RHContainerShape.GA_FIX_POINT_ANCHOR_RECTANGLE);
 		fixPointAnchorRectangle.setFilled(false);
 		fixPointAnchorRectangle.setLineVisible(false);
 		layoutAnchor(portShape);

@@ -85,9 +85,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
+import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.diagram.util.InterfacesUtil;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.IDiagramUtilHelper;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
@@ -1102,8 +1101,8 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @return
 	 */
 	public static boolean isSuperPort(ContainerShape portContainer) {
-		boolean isSuperProvides = DUtil.doesPictogramContainProperty(portContainer, new String[] { RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE });
-		boolean isSuperUses = DUtil.doesPictogramContainProperty(portContainer, new String[] { RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE });
+		boolean isSuperProvides = DUtil.doesPictogramContainProperty(portContainer, new String[] { RHContainerShape.SUPER_PROVIDES_PORTS_RECTANGLE });
+		boolean isSuperUses = DUtil.doesPictogramContainProperty(portContainer, new String[] { RHContainerShape.SUPER_USES_PORTS_RECTANGLE });
 		return (isSuperProvides || isSuperUses);
 	}
 

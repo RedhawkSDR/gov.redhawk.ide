@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.UsesDeviceFrontEndTunerWizard;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;

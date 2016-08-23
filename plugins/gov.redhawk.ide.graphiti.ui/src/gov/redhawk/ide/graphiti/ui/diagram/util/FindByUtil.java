@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.util;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;

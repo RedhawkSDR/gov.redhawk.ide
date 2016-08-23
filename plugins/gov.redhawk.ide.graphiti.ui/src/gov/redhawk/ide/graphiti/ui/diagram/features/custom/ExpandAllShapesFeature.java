@@ -10,13 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+
+import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 
 public class ExpandAllShapesFeature extends AbstractCustomFeature {
 

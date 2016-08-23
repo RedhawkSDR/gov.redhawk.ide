@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.properties;
 
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 

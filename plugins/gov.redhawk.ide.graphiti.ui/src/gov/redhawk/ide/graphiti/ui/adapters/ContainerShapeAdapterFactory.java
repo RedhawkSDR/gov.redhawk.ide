@@ -15,8 +15,8 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 
+import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.ide.debug.LocalLaunch;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaAbstractComponent;
 import gov.redhawk.model.sca.ScaComponent;
