@@ -39,9 +39,6 @@ Require-Bundle: gov.redhawk.ide.dcd.ui,
  gov.redhawk.core.graphiti.dcd.ui,
  gov.redhawk.ide.debug.ui
 Bundle-ActivationPolicy: lazy
-Export-Package: gov.redhawk.ide.graphiti.dcd.ext,
- gov.redhawk.ide.graphiti.dcd.ext.impl,
- gov.redhawk.ide.graphiti.dcd.ext.util,
- gov.redhawk.ide.graphiti.dcd.internal.ui.editor,
+Export-Package: gov.redhawk.ide.graphiti.dcd.internal.ui.editor,
  gov.redhawk.ide.graphiti.dcd.ui,
  gov.redhawk.ide.graphiti.dcd.ui.diagram.providers
