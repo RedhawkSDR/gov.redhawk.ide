@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
@@ -29,6 +30,7 @@ import gov.redhawk.ide.dcd.internal.ui.editor.NodeOverviewPage;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDCDDiagramEditor;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
 import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
@@ -182,5 +184,14 @@ public class GraphitiDCDEditor extends AbstractGraphitiDCDEditor {
 	@Override
 	protected AbstractGraphitiDiagramEditor createDiagramEditor() {
 		return new GraphitiDCDDiagramEditor(getEditingDomain());
+	}
+
+	@Override
+	public void doSave(IProgressMonitor monitor) {
+		final CleanUpComponentFilesAction cleanAction = new CleanUpComponentFilesAction();
+		cleanAction.setRoot(getDeviceConfiguration());
+		cleanAction.run();
+
+		super.doSave(monitor);
 	}
 }
