@@ -12,15 +12,10 @@ package gov.redhawk.ide.graphiti.ui.diagram.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.datatypes.ILocation;
 import org.eclipse.graphiti.features.IAddFeature;
@@ -28,17 +23,13 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.ILayoutFeature;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
-import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
-import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
-import org.eclipse.graphiti.features.custom.ICustomFeature;
-import org.eclipse.graphiti.internal.datatypes.impl.DimensionImpl;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.AbstractText;
@@ -55,8 +46,6 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.ui.editor.DiagramBehavior;
-import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -69,7 +58,6 @@ import org.eclipse.ui.PlatformUI;
 
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.diagram.util.InterfacesUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.wizards.SuperPortConnectionWizard;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -81,7 +69,6 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 
@@ -98,125 +85,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String DIAGRAM_CONTEXT_LOCAL = "local";
 	public static final String DIAGRAM_CONTEXT_TARGET_SDR = "target-sdr";
 	public static final String DIAGRAM_CONTEXT_EXPLORER = "explorer";
-
-	public static final int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 100;
-	public static final int DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING = 5;
-	public static final int DIAGRAM_SHAPE_ROOT_VERTICAL_PADDING = 50;
-
-	// do this because we need to pass it to layout diagram, assumes we already have shapes drawn of a certain
-	// size and that we are just moving them
-	public static IDimension calculateDiagramBounds(Diagram diagram) {
-
-		// get all shapes in diagram, components, findby's etc
-		List<RHContainerShape> rootShapes = new ArrayList<RHContainerShape>();
-		for (Shape s : diagram.getChildren()) {
-			// RHContainerShape
-			if (s instanceof RHContainerShape) {
-				RHContainerShape rhContainerShape = (RHContainerShape) s;
-				// if it has no provides ports or it has ports WITH NO CONNECTIONS than its a root in the tree
-				if (rhContainerShape.getProvidesPortStubs() != null
-					&& (rhContainerShape.getProvidesPortStubs().size() < 1 || getIncomingConnectionsContainedInContainerShape(rhContainerShape).size() < 1)) {
-					rootShapes.add(rhContainerShape);
-				}
-			}
-		}
-
-		// combine dimensions of each root tree to determine total dimension required to house all shapes in diagram
-		int height = 0;
-		int width = 0;
-		for (RHContainerShape s : rootShapes) {
-			IDimension childTreeDimension = calculateTreeDimensions(s);
-			height += childTreeDimension.getHeight();
-			// use largest width
-			width = (childTreeDimension.getWidth() > width) ? childTreeDimension.getWidth() : width;
-		}
-		// add padding between roots
-		height += DIAGRAM_SHAPE_ROOT_VERTICAL_PADDING * rootShapes.size() - 1;
-
-		return new DimensionImpl(width, height);
-	}
-
-	/**
-	 * Returns dimensions required to contain all shapes aligned in a horizontal tree diagram
-	 * beginning with the provided root shape: rhContainerShape
-	 * @param rhContainerShape
-	 * @return
-	 */
-	public static IDimension calculateTreeDimensions(RHContainerShape rhContainerShape) {
-		return calculateTreeDimensions(rhContainerShape, new HashSet<RHContainerShape>());
-	}
-
-	/**
-	 * Internal method used by {@link #calculateTreeDimensions(RHContainerShape)}.
-	 * @param rhContainerShape
-	 * @return
-	 */
-	private static IDimension calculateTreeDimensions(RHContainerShape rhContainerShape, Set<RHContainerShape> visitedShapes) {
-		// Keep track of the shape we're visiting; if we've been here, we're in a circular recursion
-		if (!visitedShapes.add(rhContainerShape)) {
-			return null;
-		}
-
-		int height = rhContainerShape.getGraphicsAlgorithm().getHeight();
-		int width = rhContainerShape.getGraphicsAlgorithm().getWidth();
-		int childWidth = 0;
-		int childHeight = 0;
-
-		List<Connection> outs = getOutgoingConnectionsContainedInContainerShape(rhContainerShape);
-		for (Connection conn : outs) {
-			RHContainerShape targetRHContainerShape = ScaEcoreUtils.getEContainerOfType(conn.getEnd(), RHContainerShape.class);
-			IDimension childDimension = calculateTreeDimensions(targetRHContainerShape, visitedShapes);
-			if (childDimension == null) {
-				continue;
-			}
-			childHeight += childDimension.getHeight() + DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING;
-			// use largest width but don't add
-			childWidth = (childDimension.getWidth() > childWidth) ? childDimension.getWidth() : childWidth;
-		}
-		if (outs.size() > 0) {
-			width += childWidth + DIAGRAM_SHAPE_HORIZONTAL_PADDING;
-		}
-		// choose the largest of parent height or combined child height
-		height = (childHeight > height) ? childHeight : height;
-
-		return new DimensionImpl(width, height);
-	}
-
-	/**
-	 * Return all incoming connections originating from within the provided ContainerShape
-	 * @param containerShape
-	 * @return
-	 */
-	public static List<Connection> getIncomingConnectionsContainedInContainerShape(ContainerShape containerShape) {
-		List<Connection> connections = new ArrayList<Connection>();
-		Diagram diagram = findDiagram(containerShape);
-		for (Connection conn : diagram.getConnections()) {
-			for (PictogramElement e : Graphiti.getPeService().getAllContainedPictogramElements(containerShape)) {
-				if (e == conn.getEnd()) {
-					connections.add(conn);
-				}
-			}
-		}
-		return connections;
-	}
-
-	/**
-	 * Return all outgoing connections originating from within the provided ContainerShape
-	 * @param containerShape
-	 * @return
-	 */
-	public static List<Connection> getOutgoingConnectionsContainedInContainerShape(ContainerShape containerShape) {
-		List<Connection> connections = new ArrayList<Connection>();
-		Diagram diagram = findDiagram(containerShape);
-		for (Connection conn : diagram.getConnections()) {
-			for (PictogramElement e : Graphiti.getPeService().getAllContainedPictogramElements(containerShape)) {
-				if (e == conn.getStart()) {
-					connections.add(conn);
-				}
-			}
-		}
-		return connections;
-	}
 
 	/**
 	 * Returns the SoftwareAssembly for the provided diagram
@@ -985,30 +853,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	public static String getDiagramContext(Diagram diagram) {
 		return Graphiti.getPeService().getPropertyValue(diagram, DIAGRAM_CONTEXT);
-	}
-
-	public static void layout(DiagramEditor diagramEditor) {
-		Diagram diagram = diagramEditor.getDiagramTypeProvider().getDiagram();
-		if (isDiagramTargetSdr(diagram) || isDiagramRuntime(diagram)) {
-			DiagramBehavior diagramBehavior = diagramEditor.getDiagramBehavior();
-			IFeatureProvider featureProvider = diagramEditor.getDiagramTypeProvider().getFeatureProvider();
-
-			final ICustomContext context = new CustomContext(new PictogramElement[] { diagram });
-			ICustomFeature[] features = featureProvider.getCustomFeatures(context);
-			for (final ICustomFeature feature : features) {
-				if (feature instanceof LayoutDiagramFeature) {
-					TransactionalEditingDomain ed = diagramBehavior.getEditingDomain();
-					TransactionalCommandStack cs = (TransactionalCommandStack) ed.getCommandStack();
-					cs.execute(new RecordingCommand(ed) {
-
-						@Override
-						protected void doExecute() {
-							((LayoutDiagramFeature) feature).execute(context);
-						}
-					});
-				}
-			}
-		}
 	}
 
 	/**

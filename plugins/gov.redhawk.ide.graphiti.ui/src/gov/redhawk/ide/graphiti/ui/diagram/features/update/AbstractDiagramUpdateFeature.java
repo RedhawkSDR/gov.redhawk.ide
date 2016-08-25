@@ -37,7 +37,6 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
-import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.FindByUtil;
