@@ -29,6 +29,7 @@ import gov.redhawk.ide.dcd.internal.ui.editor.DevicesPage;
 import gov.redhawk.ide.dcd.internal.ui.editor.NodeOverviewPage;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDCDDiagramEditor;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDEditorDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
 import mil.jpeojtrs.sca.dcd.DcdPackage;
@@ -100,10 +101,6 @@ public class GraphitiDCDEditor extends AbstractGraphitiDCDEditor {
 		}
 	}
 
-	public GraphitiDCDEditor() {
-		super();
-	}
-
 	@Override
 	public void dispose() {
 		if (this.nameListener != null) {
@@ -111,16 +108,6 @@ public class GraphitiDCDEditor extends AbstractGraphitiDCDEditor {
 			this.nameListener = null;
 		}
 		super.dispose();
-	}
-
-	@Override
-	protected String getDiagramContext(Resource dcdResource) {
-		// If the SCA file system scheme is in use that means the file is from the Target SDR.
-		if (ScaFileSystemConstants.SCHEME.equals(dcdResource.getURI().scheme())) {
-			return DUtil.DIAGRAM_CONTEXT_TARGET_SDR;
-		} else {
-			return DUtil.DIAGRAM_CONTEXT_DESIGN;
-		}
 	}
 
 	@Override
@@ -153,6 +140,38 @@ public class GraphitiDCDEditor extends AbstractGraphitiDCDEditor {
 		return retVal;
 	}
 
+	////////////////////////////////////////////////////
+	// 1. createDiagramEditor() (#2 in super class)
+	////////////////////////////////////////////////////
+
+	@Override
+	protected AbstractGraphitiDiagramEditor createDiagramEditor() {
+		return new GraphitiDCDDiagramEditor(getEditingDomain());
+	}
+
+	////////////////////////////////////////////////////
+	// 3. createDiagramInput() (#2 in super class)
+	////////////////////////////////////////////////////
+
+	@Override
+	protected String getDiagramTypeProviderID() {
+		return DCDEditorDiagramTypeProvider.PROVIDER_ID;
+	}
+
+	@Override
+	protected String getDiagramContext() {
+		// If the SCA file system scheme is in use that means the file is from the Target SDR.
+		if (ScaFileSystemConstants.SCHEME.equals(getMainResource().getURI().scheme())) {
+			return DUtil.DIAGRAM_CONTEXT_TARGET_SDR;
+		} else {
+			return DUtil.DIAGRAM_CONTEXT_DESIGN;
+		}
+	}
+
+	////////////////////////////////////////////////////
+	// Other
+	////////////////////////////////////////////////////
+
 	@Override
 	public void updateTitle() {
 		String name = null;
@@ -179,11 +198,6 @@ public class GraphitiDCDEditor extends AbstractGraphitiDCDEditor {
 			items.add(getDeviceConfiguration().getPartitioning());
 		}
 		return items;
-	}
-
-	@Override
-	protected AbstractGraphitiDiagramEditor createDiagramEditor() {
-		return new GraphitiDCDDiagramEditor(getEditingDomain());
 	}
 
 	@Override

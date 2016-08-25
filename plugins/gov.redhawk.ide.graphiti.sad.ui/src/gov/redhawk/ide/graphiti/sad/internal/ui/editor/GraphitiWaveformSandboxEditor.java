@@ -30,6 +30,7 @@ import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformSandboxDiagramEditor;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformSandboxDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.sad.ui.internal.modelmap.GraphitiSADLocalModelMap;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaWaveform;
@@ -47,12 +48,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 	private Resource mainResource;
 	private boolean isSandboxChalkboardWaveform = false;
 	private GraphitiSADModelMap modelMap;
-
-	@Override
-	protected GraphitiSADModelMap createModelMapInstance() {
-		modelMap = new GraphitiSADLocalModelMap(this, getWaveform());
-		return modelMap;
-	}
 
 	@Override
 	protected void setInput(IEditorInput input) {
@@ -94,16 +89,6 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 	}
 
 	@Override
-	public String getDiagramContext(Resource sadResource) {
-		return DUtil.DIAGRAM_CONTEXT_LOCAL;
-	}
-
-	@Override
-	public Resource getMainResource() {
-		return (isSandboxChalkboardWaveform) ? mainResource : super.getMainResource();
-	}
-
-	@Override
 	protected void createModel() {
 		if (isSandboxChalkboardWaveform) {
 			mainResource = getEditingDomain().getResourceSet().createResource(ScaDebugInstance.getLocalSandboxWaveformURI());
@@ -120,9 +105,46 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 	}
 
 	@Override
+	public Resource getMainResource() {
+		return (isSandboxChalkboardWaveform) ? mainResource : super.getMainResource();
+	}
+
+	////////////////////////////////////////////////////
+	// 1. createDiagramEditor()
+	////////////////////////////////////////////////////
+
+	@Override
 	protected AbstractGraphitiDiagramEditor createDiagramEditor() {
 		return new GraphitiWaveformSandboxDiagramEditor(getEditingDomain());
 	}
+
+	////////////////////////////////////////////////////
+	// 2. initModelMap()
+	////////////////////////////////////////////////////
+
+	@Override
+	protected GraphitiSADModelMap createModelMapInstance() {
+		modelMap = new GraphitiSADLocalModelMap(this, getWaveform());
+		return modelMap;
+	}
+
+	////////////////////////////////////////////////////
+	// 3. createDiagramInput()
+	////////////////////////////////////////////////////
+
+	@Override
+	public String getDiagramTypeProviderID() {
+		return WaveformSandboxDiagramTypeProvider.PROVIDER_ID;
+	}
+
+	@Override
+	public String getDiagramContext() {
+		return DUtil.DIAGRAM_CONTEXT_LOCAL;
+	}
+
+	////////////////////////////////////////////////////
+	// Other
+	////////////////////////////////////////////////////
 
 	@Override
 	public void doSaveAs() {

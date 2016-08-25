@@ -29,6 +29,7 @@ import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDeviceManagerSandboxDiagramEditor;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DevMgrSandboxDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.dcd.ui.internal.modelmap.GraphitiDCDLocalModelMap;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaDeviceManager;
@@ -46,12 +47,6 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 	private Resource mainResource;
 	private boolean isSandboxDeviceManager = false;
 	private GraphitiDCDModelMap modelMap;
-
-	@Override
-	protected GraphitiDCDModelMap createModelMapInstance() {
-		modelMap = new GraphitiDCDLocalModelMap(this, getDeviceManager());
-		return modelMap;
-	}
 
 	@Override
 	protected void setInput(IEditorInput input) {
@@ -94,16 +89,6 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 	}
 
 	@Override
-	public String getDiagramContext(Resource dcdResource) {
-		return DUtil.DIAGRAM_CONTEXT_LOCAL;
-	}
-
-	@Override
-	public Resource getMainResource() {
-		return (isSandboxDeviceManager) ? mainResource : super.getMainResource();
-	}
-
-	@Override
 	protected void createModel() {
 		if (isSandboxDeviceManager) {
 			mainResource = getEditingDomain().getResourceSet().createResource(ScaDebugInstance.getLocalSandboxDeviceManagerURI());
@@ -120,7 +105,40 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 	}
 
 	@Override
+	public Resource getMainResource() {
+		return (isSandboxDeviceManager) ? mainResource : super.getMainResource();
+	}
+
+	////////////////////////////////////////////////////
+	// 1. createDiagramEditor()
+	////////////////////////////////////////////////////
+
+	@Override
 	protected AbstractGraphitiDiagramEditor createDiagramEditor() {
 		return new GraphitiDeviceManagerSandboxDiagramEditor(getEditingDomain());
+	}
+
+	////////////////////////////////////////////////////
+	// 2. initModelMap()
+	////////////////////////////////////////////////////
+
+	@Override
+	protected GraphitiDCDModelMap createModelMapInstance() {
+		modelMap = new GraphitiDCDLocalModelMap(this, getDeviceManager());
+		return modelMap;
+	}
+
+	////////////////////////////////////////////////////
+	// 3. createDiagramInput()
+	////////////////////////////////////////////////////
+
+	@Override
+	protected String getDiagramTypeProviderID() {
+		return DevMgrSandboxDiagramTypeProvider.PROVIDER_ID;
+	}
+
+	@Override
+	public String getDiagramContext() {
+		return DUtil.DIAGRAM_CONTEXT_LOCAL;
 	}
 }

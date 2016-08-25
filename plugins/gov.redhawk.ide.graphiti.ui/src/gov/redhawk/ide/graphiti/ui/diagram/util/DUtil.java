@@ -10,37 +10,19 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.datatypes.ILocation;
-import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.ILayoutFeature;
@@ -87,11 +69,9 @@ import org.eclipse.ui.PlatformUI;
 
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.diagram.util.InterfacesUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.IDiagramUtilHelper;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.wizards.SuperPortConnectionWizard;
-import gov.redhawk.sca.efs.ScaFileSystemPlugin;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
@@ -102,7 +82,6 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 
@@ -943,112 +922,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	// convenient method for getting business object for PictogramElement
 	public static EObject getBusinessObject(PictogramElement pe) {
 		return GraphitiUi.getLinkService().getBusinessObjectForLinkedPictogramElement(pe);
-	}
-
-	public static URI getDiagramResourceURI(final IDiagramUtilHelper options, final Resource resource) throws IOException {
-		if (resource != null) {
-			final URI uri = resource.getURI();
-			if (uri.isPlatformResource()) {
-				final IFile file = options.getResource(resource);
-				return DUtil.getRelativeDiagramResourceURI(options, file);
-			} else {
-				return DUtil.getTemporaryDiagramResourceURI(options, uri);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Initialize sad diagram.
-	 * 
-	 * @param b
-	 */
-	private static URI getRelativeDiagramResourceURI(final IDiagramUtilHelper options, final IFile file) {
-		final IFile diagramFile = file.getParent().getFile(
-			new Path(file.getName().substring(0, file.getName().length() - options.getSemanticFileExtension().length()) + options.getDiagramFileExtension()));
-		final URI uri = URI.createPlatformResourceURI(diagramFile.getFullPath().toString(), true);
-		return uri;
-	}
-
-	/**
-	 * Initialize sad diagram.
-	 * 
-	 * @param b
-	 * @throws IOException
-	 */
-	private static URI getTemporaryDiagramResourceURI(final IDiagramUtilHelper options, final URI uri) throws IOException {
-		final String name = uri.lastSegment();
-		String tmpName = "rh_" + name.substring(0, name.length() - options.getSemanticFileExtension().length());
-		File tempDir = ScaFileSystemPlugin.getDefault().getTempDirectory();
-		final File tempFile = File.createTempFile(tmpName, options.getDiagramFileExtension(), tempDir);
-		tempFile.deleteOnExit();
-
-		final URI retVal = URI.createURI(tempFile.toURI().toString());
-
-		return retVal;
-	}
-
-	/**
-	 * 
-	 */
-	public static void initializeDiagramResource(final IDiagramUtilHelper options, final String diagramTypeId, final String diagramTypeProviderId,
-		final URI diagramURI, final Resource sadResource) throws IOException, CoreException {
-		if (diagramURI.isPlatform()) {
-			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(diagramURI.toPlatformString(true)));
-
-			file.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
-
-			if (!file.exists()) {
-				final IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-
-					@Override
-					public void run(final IProgressMonitor monitor) throws CoreException {
-						final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-						try {
-							DUtil.populateDiagram(options, diagramTypeId, diagramTypeProviderId, diagramURI, sadResource, buffer);
-						} catch (final IOException e) {
-							// PASS
-						}
-						file.create(new ByteArrayInputStream(buffer.toByteArray()), true, monitor);
-					}
-
-				};
-				final ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRuleFactory().createRule(file);
-
-				ResourcesPlugin.getWorkspace().run(operation, rule, 0, null);
-			}
-		} else {
-			DUtil.populateDiagram(options, diagramTypeId, diagramTypeProviderId, diagramURI, sadResource, null);
-		}
-	}
-
-	// creates new diagram from provided model resource
-	private static void populateDiagram(final IDiagramUtilHelper options, final String diagramTypeId, final String diagramTypeProviderId, final URI diagramURI,
-		final Resource resource, final OutputStream buffer) throws IOException {
-		// Create Resource
-		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		final Resource diagramResource = resourceSet.createResource(diagramURI);
-
-		// Create Diagram and add to Resource
-		// TODO: grid units could be passed to IPeCreateService.createDiagram(...) rather than being changed later
-		final String diagramName = diagramURI.lastSegment();
-		Diagram diagram = Graphiti.getPeCreateService().createDiagram(diagramTypeId, diagramName, true);
-		diagramResource.getContents().add(diagram);
-
-		// TODO:we will want to move this logic somewhere else
-		IDiagramTypeProvider dtp = GraphitiUi.getExtensionManager().createDiagramTypeProvider(diagram, diagramTypeProviderId);
-		IFeatureProvider featureProvider = dtp.getFeatureProvider();
-
-		// iterate over each component, both in an out of host collocations
-		// passing in assembly controller and external ports information
-
-		// WE WANT OUR UPDATE diagram capabilities to handle things like this though right?
-
-		if (buffer != null) {
-			diagramResource.save(buffer, options.getSaveOptions());
-		} else {
-			diagramResource.save(options.getSaveOptions());
-		}
 	}
 
 	/**

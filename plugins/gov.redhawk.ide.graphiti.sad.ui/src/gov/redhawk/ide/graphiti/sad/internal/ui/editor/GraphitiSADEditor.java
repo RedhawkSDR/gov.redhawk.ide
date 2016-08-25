@@ -27,6 +27,7 @@ import gov.redhawk.core.graphiti.sad.ui.editor.AbstractGraphitiSADEditor;
 import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiSADDiagramEditor;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADEditorDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
 import gov.redhawk.ide.sad.internal.ui.editor.SadOverviewPage;
@@ -100,10 +101,6 @@ public class GraphitiSADEditor extends AbstractGraphitiSADEditor {
 		}
 	}
 
-	public GraphitiSADEditor() {
-		super();
-	}
-
 	@Override
 	public void dispose() {
 		if (this.nameListener != null) {
@@ -111,16 +108,6 @@ public class GraphitiSADEditor extends AbstractGraphitiSADEditor {
 			this.nameListener = null;
 		}
 		super.dispose();
-	}
-
-	@Override
-	protected String getDiagramContext(Resource sadResource) {
-		// If the SCA file system scheme is in use that means the file is from the Target SDR.
-		if (ScaFileSystemConstants.SCHEME.equals(sadResource.getURI().scheme())) {
-			return DUtil.DIAGRAM_CONTEXT_TARGET_SDR;
-		} else {
-			return DUtil.DIAGRAM_CONTEXT_DESIGN;
-		}
 	}
 
 	@Override
@@ -153,6 +140,38 @@ public class GraphitiSADEditor extends AbstractGraphitiSADEditor {
 		return page;
 	}
 
+	////////////////////////////////////////////////////
+	// 1. createDiagramEditor() (#2 in super class)
+	////////////////////////////////////////////////////
+
+	@Override
+	protected AbstractGraphitiDiagramEditor createDiagramEditor() {
+		return new GraphitiSADDiagramEditor(getEditingDomain());
+	}
+
+	////////////////////////////////////////////////////
+	// 3. createDiagramInput() (#2 in super class)
+	////////////////////////////////////////////////////
+
+	@Override
+	protected String getDiagramTypeProviderID() {
+		return SADEditorDiagramTypeProvider.PROVIDER_ID;
+	}
+
+	@Override
+	protected String getDiagramContext() {
+		// If the SCA file system scheme is in use that means the file is from the Target SDR.
+		if (ScaFileSystemConstants.SCHEME.equals(getMainResource().getURI().scheme())) {
+			return DUtil.DIAGRAM_CONTEXT_TARGET_SDR;
+		} else {
+			return DUtil.DIAGRAM_CONTEXT_DESIGN;
+		}
+	}
+
+	////////////////////////////////////////////////////
+	// Other
+	////////////////////////////////////////////////////
+
 	@Override
 	public void updateTitle() {
 		String name = null;
@@ -179,11 +198,6 @@ public class GraphitiSADEditor extends AbstractGraphitiSADEditor {
 			myList.add(getSoftwareAssembly().getPartitioning());
 		}
 		return myList;
-	}
-
-	@Override
-	protected AbstractGraphitiDiagramEditor createDiagramEditor() {
-		return new GraphitiSADDiagramEditor(getEditingDomain());
 	}
 
 	@Override
