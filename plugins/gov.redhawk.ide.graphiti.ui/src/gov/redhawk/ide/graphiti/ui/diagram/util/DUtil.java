@@ -33,17 +33,10 @@ import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
-import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.wizards.SuperPortConnectionWizard;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
-import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -501,97 +494,5 @@ public class DUtil extends gov.redhawk.core.graphiti.ui.util.DUtil {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Add source and target values to ConnectInterface and return
-	 * assume UsesPortStub is the first anchor, ConnectionTarget for second anchor
-	 * return null if either source or target not found
-	 * @param anchor1
-	 * @param anchor2
-	 * @return
-	 */
-	public static ConnectInterface< ? , ? , ? > assignAnchorObjectsToConnection(ConnectInterface< ? , ? , ? > connectInterface, Anchor anchor1, Anchor anchor2) {
-
-		if (anchor1 == null || anchor2 == null) {
-			return null;
-		}
-
-		// get business objects for both anchors
-		EList<EObject> anchorObjects1 = anchor1.getParent().getLink().getBusinessObjects();
-		EList<EObject> anchorObjects2 = anchor2.getParent().getLink().getBusinessObjects();
-
-		UsesPortStub source = null;
-		ConnectionTarget target = null;
-
-		// Check to ensure the first anchor is a UsesPortStub and the second is a ConnectionTarget
-		if (anchorObjects1.size() == 0 || anchorObjects2.size() == 0) {
-			return null;
-		}
-		for (EObject sourceObj : anchorObjects1) {
-			if (!(sourceObj instanceof UsesPortStub)) {
-				return null;
-			}
-		}
-		for (EObject targetObj : anchorObjects2) {
-			if (!(targetObj instanceof ConnectionTarget)) {
-				return null;
-			}
-		}
-
-		List<UsesPortStub> possibleSources = new ArrayList<UsesPortStub>();
-		List<ConnectionTarget> possibleTargets = new ArrayList<ConnectionTarget>();
-
-		if (anchorObjects1.size() == 1 && anchorObjects2.size() == 1) {
-			// Always attempt to honor direct connections
-			possibleSources.add((UsesPortStub) anchorObjects1.get(0));
-			possibleTargets.add((ConnectionTarget) anchorObjects2.get(0));
-		} else {
-			// If either side is a super port, then build a list of possible connections
-			for (EObject sourceObj : anchorObjects1) {
-				for (EObject targetObj : anchorObjects2) {
-					if (InterfacesUtil.areSuggestedMatch((UsesPortStub) sourceObj, targetObj)) {
-						if (!possibleSources.contains(sourceObj)) {
-							possibleSources.add((UsesPortStub) sourceObj);
-						}
-						if (!possibleTargets.contains(targetObj)) {
-							possibleTargets.add((ConnectionTarget) targetObj);
-						}
-					}
-				}
-			}
-		}
-
-		if (possibleSources.size() > 1 || possibleTargets.size() > 1) {
-			// If more than one connection is possible, display a wizard to complete the action
-			SuperPortConnectionWizard wizard = new SuperPortConnectionWizard(possibleSources, possibleTargets);
-			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-			WizardDialog dialog = new WizardDialog(shell, wizard);
-			int retVal = dialog.open();
-
-			if (retVal == Window.OK) {
-				// Get user selections
-				source = wizard.getPage().getSource();
-				target = wizard.getPage().getTarget();
-			} else {
-				return null;
-			}
-		} else if (!possibleSources.isEmpty() && !possibleTargets.isEmpty()) {
-			// If only one connection is possible, just go ahead and do it
-			source = (UsesPortStub) possibleSources.get(0);
-			target = (ConnectionTarget) possibleTargets.get(0);
-		}
-
-		// source
-		connectInterface.setSource(source);
-		// target
-		connectInterface.setTarget(target);
-
-		// only return if we have source/target set
-		if (source == null || target == null) {
-			return null;
-		}
-
-		return connectInterface;
 	}
 }
