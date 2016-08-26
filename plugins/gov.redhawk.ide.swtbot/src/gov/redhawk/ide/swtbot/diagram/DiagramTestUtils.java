@@ -823,8 +823,7 @@ public class DiagramTestUtils {
 	 * @return
 	 */
 	public static String regexStringForComponent(ComponentShape componentShape) {
-		Object bo = DUtil.getBusinessObject(componentShape);
-		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
+		SadComponentInstantiation ci = DUtil.getBusinessObject(componentShape, SadComponentInstantiation.class);
 		String componentinstantiation = "<componentinstantiation id=\"" + ci.getUsageName() + "\""
 			+ ((ci.getStartOrder() != null) ? " startorder=\"" + ci.getStartOrder() + "\">" : ">");
 		String usagename = "<usagename>" + ci.getUsageName() + "</usagename>";
