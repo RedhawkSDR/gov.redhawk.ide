@@ -23,7 +23,6 @@ import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
-import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -44,26 +43,6 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 
 public class DUtil extends gov.redhawk.core.graphiti.ui.util.DUtil {
-
-	/**
-	 * Returns true if the provided context contains a pictogram element with one of the provided property values.
-	 * False otherwise.
-	 * @param context
-	 * @param propertyKeys
-	 * @return
-	 */
-	public static boolean doesPictogramContainProperty(PictogramElement pe, String[] propertyValues) {
-		if (pe != null && pe.getProperties() != null) {
-			for (Property p : pe.getProperties()) {
-				for (String propValue : propertyValues) {
-					if (p.getValue().equals(propValue)) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
 
 	/**
 	 * Returns all of the shape children recursively
@@ -451,17 +430,6 @@ public class DUtil extends gov.redhawk.core.graphiti.ui.util.DUtil {
 	// convenient method for getting diagram for a ContainerShape
 	public static Diagram findDiagram(ContainerShape containerShape) {
 		return Graphiti.getPeService().getDiagramForShape(containerShape);
-	}
-
-	/**
-	 * Returns true if the portContainer is a super port
-	 * @param portContainer - The port container to be tested
-	 * @return
-	 */
-	public static boolean isSuperPort(ContainerShape portContainer) {
-		boolean isSuperProvides = DUtil.doesPictogramContainProperty(portContainer, new String[] { RHContainerShape.SUPER_PROVIDES_PORTS_RECTANGLE });
-		boolean isSuperUses = DUtil.doesPictogramContainProperty(portContainer, new String[] { RHContainerShape.SUPER_USES_PORTS_RECTANGLE });
-		return (isSuperProvides || isSuperUses);
 	}
 
 	/**

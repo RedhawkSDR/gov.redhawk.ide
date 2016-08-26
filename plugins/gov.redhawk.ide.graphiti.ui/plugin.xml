@@ -22,93 +22,26 @@
             id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
       </imageProvider>
    </extension>
+
+   <!-- We add LocalLaunch to the adapter's capabilities -->
    <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart"
-            class="gov.redhawk.ide.graphiti.ui.adapters.ContainerShapeAdapterFactory">
-         <adapter
-               type="gov.redhawk.model.sca.ScaDevice">
-         </adapter>
-         <adapter
-               type="gov.redhawk.model.sca.ScaComponent">
-         </adapter>
-         <adapter
-               type="gov.redhawk.model.sca.ScaAbstractComponent">
-         </adapter>
-         <adapter
-               type="gov.redhawk.model.sca.ScaPropertyContainer">
-         </adapter>
-         <adapter
-               type="gov.redhawk.model.sca.ScaPortContainer">
-         </adapter>
-         <adapter
-               type="gov.redhawk.model.sca.CorbaObjWrapper">
-         </adapter>
+            class="gov.redhawk.core.graphiti.ui.adapters.ContainerShapeAdapterFactory">
          <adapter
                type="gov.redhawk.ide.debug.LocalLaunch">
          </adapter>
-         <adapter
-               type="CF.ResourceOperations">
-         </adapter>
-         <adapter
-               type="CF.LifeCycleOperations">
-         </adapter>
-         <adapter
-               type="CF.LogConfigurationOperations">
-         </adapter>
       </factory>
       <factory
-            adaptableType="gov.redhawk.ide.graphiti.ext.RHContainerShape"
-            class="gov.redhawk.ide.graphiti.ui.adapters.ContainerShapeAdapterFactory">
-         <adapter
-               type="gov.redhawk.model.sca.ScaDevice">
-         </adapter>
-         <adapter
-               type="gov.redhawk.model.sca.ScaComponent">
-         </adapter>
-         <adapter
-               type="gov.redhawk.model.sca.ScaAbstractComponent">
-         </adapter>
-         <adapter
-               type="gov.redhawk.model.sca.ScaPropertyContainer">
-         </adapter>
-         <adapter
-               type="gov.redhawk.model.sca.ScaPortContainer">
-         </adapter>
-         <adapter
-               type="gov.redhawk.model.sca.CorbaObjWrapper">
-         </adapter>
+            adaptableType="gov.redhawk.core.graphiti.ui.ext.RHContainerShape"
+            class="gov.redhawk.core.graphiti.ui.adapters.ContainerShapeAdapterFactory">
          <adapter
                type="gov.redhawk.ide.debug.LocalLaunch">
-         </adapter>
-         <adapter
-               type="CF.ResourceOperations">
-         </adapter>
-         <adapter
-               type="CF.LifeCycleOperations">
-         </adapter>
-         <adapter
-               type="CF.LogConfigurationOperations">
-         </adapter>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.graphiti.ui.internal.parts.AdvancedAnchorEditPart"
-            class="gov.redhawk.ide.graphiti.ui.adapters.PortEditPartAdapterFactory">
-         <adapter
-               type="gov.redhawk.model.sca.ScaProvidesPort">
-         </adapter>
-         <adapter
-               type="gov.redhawk.model.sca.ScaUsesPort">
-         </adapter>
-         <adapter
-               type="gov.redhawk.model.sca.ScaPort">
-         </adapter>
-         <adapter
-               type="mil.jpeojtrs.sca.scd.AbstractPort">
          </adapter>
       </factory>
    </extension>
+
    <extension
          point="org.eclipse.ui.commands">
       <command
