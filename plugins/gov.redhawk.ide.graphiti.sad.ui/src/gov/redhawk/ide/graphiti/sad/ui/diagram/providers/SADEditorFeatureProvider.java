@@ -99,17 +99,21 @@ public class SADEditorFeatureProvider extends SADGraphitiFeatureProvider {
 
 				// Determine if this port is already external
 				if (businessObject instanceof ProvidesPortStub) {
+					String portName = ((ProvidesPortStub) businessObject).getName();
+					EObject portContainer = ((ProvidesPortStub) businessObject).eContainer();
 					for (Port p : externalPortList) {
-						if (((ProvidesPortStub) businessObject).getName().equals(p.getProvidesIdentifier())
-							&& ((ProvidesPortStub) businessObject).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
+						if (portName.equals(p.getProvidesIdentifier()) && portContainer.equals(p.getComponentInstantiationRef().getInstantiation())) {
 							mark = false;
+							break;
 						}
 					}
 				} else if (businessObject instanceof UsesPortStub) {
+					String portName = ((UsesPortStub) businessObject).getName();
+					EObject portContainer = ((UsesPortStub) businessObject).eContainer();
 					for (Port p : externalPortList) {
-						if (((UsesPortStub) businessObject).getName().equals(p.getUsesIdentifier())
-							&& ((UsesPortStub) businessObject).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
+						if (portName.equals(p.getUsesIdentifier()) && portContainer.equals(p.getComponentInstantiationRef().getInstantiation())) {
 							mark = false;
+							break;
 						}
 					}
 				}
