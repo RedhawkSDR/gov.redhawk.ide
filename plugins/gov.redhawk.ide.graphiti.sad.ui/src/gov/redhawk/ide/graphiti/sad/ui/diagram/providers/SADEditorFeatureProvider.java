@@ -23,6 +23,7 @@ import org.eclipse.graphiti.features.context.IReconnectionContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.pattern.IPattern;
 
 import gov.redhawk.core.graphiti.sad.ui.diagram.providers.SADGraphitiFeatureProvider;
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
@@ -35,6 +36,8 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect.SADReconnectFe
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DialogEditingFeatureForPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
@@ -70,21 +73,30 @@ public class SADEditorFeatureProvider extends SADGraphitiFeatureProvider {
 
 	@Override
 	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
-		ICustomFeature[] parentCustomFeatures = super.getCustomFeatures(context);
-		List<ICustomFeature> retList = new ArrayList<ICustomFeature>(Arrays.asList(parentCustomFeatures));
+		List<ICustomFeature> features = new ArrayList<ICustomFeature>(Arrays.asList(super.getCustomFeatures(context)));
 
 		Diagram diagram = getDiagramTypeProvider().getDiagram();
 		PictogramElement[] pes = context.getPictogramElements();
 		if (pes == null || pes.length == 0) {
-			return retList.toArray(new ICustomFeature[retList.size()]);
+			return features.toArray(new ICustomFeature[features.size()]);
 		}
 		EObject businessObject = DUtil.getBusinessObject(pes[0]);
 
-		if (pes[0] instanceof RHContainerShape && businessObject instanceof SadComponentInstantiation) {
-			// Design-time-only component features
-			retList.add(new SetAsAssemblyControllerFeature(this));
-			retList.add(new IncrementStartOrderFeature(this));
-			retList.add(new DecrementStartOrderFeature(this));
+		if (pes[0] instanceof RHContainerShape) {
+			if (businessObject instanceof SadComponentInstantiation) {
+				// Design-time-only component features
+				features.add(new SetAsAssemblyControllerFeature(this));
+				features.add(new IncrementStartOrderFeature(this));
+				features.add(new DecrementStartOrderFeature(this));
+			}
+
+			IPattern pattern = getPatternForPictogramElement(pes[0]);
+			if (pattern instanceof IDialogEditingPattern) {
+				IDialogEditingPattern dialogEditing = (IDialogEditingPattern) pattern;
+				if (dialogEditing.canDialogEdit(context)) {
+					features.add(new DialogEditingFeatureForPattern(this, dialogEditing));
+				}
+			}
 		}
 
 		// Design-time-only port features
@@ -121,13 +133,13 @@ public class SADEditorFeatureProvider extends SADGraphitiFeatureProvider {
 
 			// Add the mark external feature
 			if (mark) {
-				retList.add(new MarkExternalPortFeature(this));
+				features.add(new MarkExternalPortFeature(this));
 			} else {
-				retList.add(new MarkNonExternalPortFeature(this));
+				features.add(new MarkNonExternalPortFeature(this));
 			}
 		}
 
-		return retList.toArray(new ICustomFeature[retList.size()]);
+		return features.toArray(new ICustomFeature[features.size()]);
 	}
 
 	@Override
