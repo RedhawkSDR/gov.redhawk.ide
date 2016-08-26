@@ -36,7 +36,6 @@ import CF.DataType;
 import gov.redhawk.core.graphiti.ui.diagram.providers.IDecoratorProvider;
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
-import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaPort;
