@@ -25,10 +25,13 @@
                id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor">
          </diagramType>
          <imageProvider
-               id="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.deviceImageProvider">
+               id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
          </imageProvider>
          <imageProvider
-               id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
+               id="gov.redhawk.core.graphiti.dcd.ui.DeviceManagerImageProvider">
+         </imageProvider>
+         <imageProvider
+               id="gov.redhawk.core.graphiti.ui.ImageProvider">
          </imageProvider>
       </diagramTypeProvider>
       <diagramTypeProvider
@@ -39,19 +42,15 @@
                id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor">
          </diagramType>
          <imageProvider
-               id="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.deviceImageProvider">
-         </imageProvider>
-         <imageProvider
                id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
          </imageProvider>
+         <imageProvider
+               id="gov.redhawk.core.graphiti.dcd.ui.DeviceManagerImageProvider">
+         </imageProvider>
+         <imageProvider
+               id="gov.redhawk.core.graphiti.ui.ImageProvider">
+         </imageProvider>
       </diagramTypeProvider>
-   </extension>
-   <extension
-         point="org.eclipse.graphiti.ui.imageProviders">
-      <imageProvider
-            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider"
-            id="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.deviceImageProvider">
-      </imageProvider>
    </extension>
   
    <extension
@@ -60,7 +59,7 @@
             class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDCDEditor"
             contributorClass="gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
             default="true"
-            icon="icons/DcdEditor.gif"
+            icon="icons/DCDEditor.gif"
             id="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor"
             name="Node Editor">
          <contentTypeBinding
@@ -71,7 +70,7 @@
             class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDeviceManagerSandboxEditor"
             contributorClass="gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
             default="true"
-            icon="icons/full/obj16/ScaDeviceManager.gif"
+            icon="icons/DeviceManagerSandboxEditor.gif"
             id="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox"
             name="Chalkboard">
       </editor>

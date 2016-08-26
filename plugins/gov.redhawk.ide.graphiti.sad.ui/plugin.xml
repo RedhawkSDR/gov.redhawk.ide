@@ -26,6 +26,12 @@
          <imageProvider
                id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
          </imageProvider>
+         <imageProvider
+               id="gov.redhawk.core.graphiti.sad.ui.WaveformImageProvider">
+         </imageProvider>
+         <imageProvider
+               id="gov.redhawk.core.graphiti.ui.ImageProvider">
+         </imageProvider>
       </diagramTypeProvider>
       <diagramTypeProvider
             class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformSandboxDiagramTypeProvider"
@@ -39,6 +45,12 @@
          </imageProvider>
          <imageProvider
                id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
+         </imageProvider>
+         <imageProvider
+               id="gov.redhawk.core.graphiti.sad.ui.WaveformImageProvider">
+         </imageProvider>
+         <imageProvider
+               id="gov.redhawk.core.graphiti.ui.ImageProvider">
          </imageProvider>
       </diagramTypeProvider>
    </extension>
@@ -132,7 +144,7 @@
             class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiSADEditor"
             contributorClass="gov.redhawk.core.graphiti.sad.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
             default="true"
-            icon="icons/SadEditor.gif"
+            icon="icons/SADEditor.gif"
             id="gov.redhawk.ide.graphiti.sad.ui.editor.presentation.SadEditorID"
             name="Waveform Editor">
          <contentTypeBinding
@@ -143,7 +155,7 @@
             class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformSandboxEditor"
             contributorClass="gov.redhawk.core.graphiti.sad.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
             default="true"
-            icon="icons/redhawk16.gif"
+            icon="icons/WaveformSandboxEditor.gif"
             id="gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca"
             name="Chalkboard">
       </editor>

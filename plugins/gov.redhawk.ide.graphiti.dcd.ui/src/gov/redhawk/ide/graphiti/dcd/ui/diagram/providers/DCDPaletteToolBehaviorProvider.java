@@ -19,6 +19,7 @@ import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 
 import gov.redhawk.core.graphiti.dcd.ui.diagram.feature.DeviceCreateFeature;
 import gov.redhawk.core.graphiti.dcd.ui.diagram.feature.ServiceCreateFeature;
+import gov.redhawk.core.graphiti.dcd.ui.diagram.providers.DeviceManagerImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractPaletteToolBehaviorProvider;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.ServicesContainer;
@@ -49,16 +50,16 @@ public abstract class DCDPaletteToolBehaviorProvider extends AbstractPaletteTool
 
 	@Override
 	protected void refreshPalette() {
-		refreshCompartmentEntry(deviceCompartment, getDevicesContainer(), NodeImageProvider.IMG_SCA_DEVICE);
-		refreshCompartmentEntry(serviceCompartment, getServicesContainer(), NodeImageProvider.IMG_SCA_SERVICE);
+		refreshCompartmentEntry(deviceCompartment, getDevicesContainer(), DeviceManagerImageProvider.IMG_DEVICE);
+		refreshCompartmentEntry(serviceCompartment, getServicesContainer(), DeviceManagerImageProvider.IMG_SERVICE);
 	}
 
 	@Override
 	protected ICreateFeature getCreateFeature(SoftPkg spd, String implId, String iconId) {
-		if (iconId == NodeImageProvider.IMG_SCA_DEVICE) {
+		if (iconId == DeviceManagerImageProvider.IMG_DEVICE) {
 			return new DeviceCreateFeature(getFeatureProvider(), spd, implId);
 		}
-		if (iconId == NodeImageProvider.IMG_SCA_SERVICE) {
+		if (iconId == DeviceManagerImageProvider.IMG_SERVICE) {
 			return new ServiceCreateFeature(getFeatureProvider(), spd, implId);
 		}
 		return null;

@@ -18,6 +18,7 @@ import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 
 import gov.redhawk.core.graphiti.sad.ui.diagram.feature.ComponentCreateFeature;
+import gov.redhawk.core.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractPaletteToolBehaviorProvider;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
@@ -43,7 +44,7 @@ public abstract class SADPaletteToolBehaviorProvider extends AbstractPaletteTool
 
 	@Override
 	protected void refreshPalette() {
-		refreshCompartmentEntry(componentCompartment, getComponentsContainer(), WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
+		refreshCompartmentEntry(componentCompartment, getComponentsContainer(), ImageProvider.IMG_SPD);
 	}
 
 	@Override

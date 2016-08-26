@@ -18,6 +18,7 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 
+import gov.redhawk.core.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.core.resourcefactory.ComponentDesc;
 import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
@@ -98,7 +99,7 @@ public class WaveformSandboxToolBehaviorProvider extends SADPaletteToolBehaviorP
 
 				// Filter out devices and services, and apply name filter
 				if (ComponentType.RESOURCE.getLiteral().equals(compDesc.getComponentType())) {
-					addToolToCompartment(workspaceCompartment, compDesc.getSoftPkg(), WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
+					addToolToCompartment(workspaceCompartment, compDesc.getSoftPkg(), ImageProvider.IMG_SPD);
 				}
 			}
 		}
