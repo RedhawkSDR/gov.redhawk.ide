@@ -36,7 +36,7 @@ Require-Bundle: gov.redhawk.ide.dcd.ui,
  mil.jpeojtrs.sca.spd,
  gov.redhawk.ide.debug.ui.diagram,
  gov.redhawk.core.graphiti.ui,
- gov.redhawk.core.graphiti.dcd.ui,
+ gov.redhawk.core.graphiti.dcd.ui;visibility:=reexport,
  gov.redhawk.ide.debug.ui
 Bundle-ActivationPolicy: lazy
 Export-Package: gov.redhawk.ide.graphiti.dcd.internal.ui.editor,
