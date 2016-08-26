@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.ui.diagram.util;
 
 import java.util.ArrayList;
@@ -16,51 +16,32 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.datatypes.ILocation;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.ILayoutFeature;
-import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
-import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
-import org.eclipse.graphiti.features.context.impl.AddContext;
-import org.eclipse.graphiti.features.context.impl.LayoutContext;
-import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.mm.Property;
-import org.eclipse.graphiti.mm.PropertyContainer;
-import org.eclipse.graphiti.mm.algorithms.AbstractText;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.styles.Point;
-import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
-import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
-import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.wizards.SuperPortConnectionWizard;
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.FindBy;
@@ -68,60 +49,8 @@ import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-public class DUtil { // SUPPRESS CHECKSTYLE INLINE
-
-	// These are property key/value pairs that help us resize an existing shape by properly identifying
-	// graphicsAlgorithms
-	public static final String GA_TYPE = "GAType"; // key for gA types
-
-	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove
-	// etc.)
-	public static final String SHAPE_TYPE = "ShapeType"; // key for Shape types
-
-	public static final String DIAGRAM_CONTEXT = "DiagramContext"; // key for Diagram contexts
-	public static final String DIAGRAM_CONTEXT_DESIGN = "design";
-	public static final String DIAGRAM_CONTEXT_LOCAL = "local";
-	public static final String DIAGRAM_CONTEXT_TARGET_SDR = "target-sdr";
-	public static final String DIAGRAM_CONTEXT_EXPLORER = "explorer";
-
-	/**
-	 * Returns the SoftwareAssembly for the provided diagram
-	 * @param featureProvider
-	 * @param diagram
-	 * @return
-	 */
-	public static SoftwareAssembly getDiagramSAD(Diagram diagram) {
-		return (SoftwareAssembly) DUtil.getBusinessObject(diagram, SoftwareAssembly.class);
-	}
-
-	/**
-	 * Returns the DeviceConfiguration for the provided diagram
-	 * @param featureProvider
-	 * @param diagram
-	 * @return
-	 */
-	public static DeviceConfiguration getDiagramDCD(Diagram diagram) {
-		return (DeviceConfiguration) DUtil.getBusinessObject(diagram, DeviceConfiguration.class);
-	}
-
-	/**
-	 * @returns the IEditorPart for the active editor
-	 * Useful for getting the edit part for the GraphitiSadMultiPageScaEditor and the LocalGraphitiSadMultiPageScaEditor
-	 */
-	public static IEditorPart getActiveEditor() {
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-	}
-
-	public static Object[] getSelectedEditParts() {
-		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss = (StructuredSelection) selection;
-			return ss.toArray();
-		}
-		return null;
-	}
+public class DUtil extends gov.redhawk.core.graphiti.ui.util.DUtil {
 
 	/**
 	 * Returns true if the provided context contains a pictogram element with one of the provided property values.
@@ -144,18 +73,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Returns true if the provided context contains a pictogram element with one of the provided property values.
-	 * False otherwise.
-	 * @param context
-	 * @param propertyKeys
-	 * @return
-	 */
-	public static boolean doesPictogramContainProperty(IPictogramElementContext context, String[] propertyValues) {
-		PictogramElement pe = context.getPictogramElement();
-		return doesPictogramContainProperty(pe, propertyValues);
-	}
-
-	/**
 	 * Returns all of the shape children recursively
 	 * @param diagramElement
 	 * @return
@@ -171,50 +88,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 				children.addAll(collectShapeChildren(c));
 			}
 		}
-		return children;
-	}
-
-	/**
-	 * Returns all of the children contained within the provided PropertyContainer and their children recursively.
-	 * @param diagramElement
-	 * @return
-	 */
-	public static List<PropertyContainer> collectPropertyContainerChildren(PropertyContainer diagramElement) {
-
-		List<PropertyContainer> children = new ArrayList<PropertyContainer>();
-		children.add(diagramElement);
-
-		// if containershape, collect children recursively
-		if (diagramElement instanceof ContainerShape) {
-			ContainerShape cs = (ContainerShape) diagramElement;
-			for (Shape c : cs.getChildren()) {
-				children.addAll(collectPropertyContainerChildren(c));
-			}
-			for (Anchor a : cs.getAnchors()) {
-				children.addAll(collectPropertyContainerChildren(a));
-			}
-			if (cs.getGraphicsAlgorithm() != null) {
-				children.addAll(collectPropertyContainerChildren(cs.getGraphicsAlgorithm()));
-			}
-			// if containershape, collect children recursively
-		} else if (diagramElement instanceof GraphicsAlgorithm) {
-			GraphicsAlgorithm ga = (GraphicsAlgorithm) diagramElement;
-			for (GraphicsAlgorithm c : ga.getGraphicsAlgorithmChildren()) {
-				children.addAll(collectPropertyContainerChildren(c));
-			}
-		} else if (diagramElement instanceof Shape) {
-			Shape shape = (Shape) diagramElement;
-			children.add(shape.getGraphicsAlgorithm());
-		} else if (diagramElement instanceof AnchorContainer) {
-			AnchorContainer anchorContainer = (AnchorContainer) diagramElement;
-			for (Anchor a : anchorContainer.getAnchors()) {
-				children.addAll(collectPropertyContainerChildren(a));
-			}
-		} else if (diagramElement instanceof Anchor) {
-			Anchor anchor = (Anchor) diagramElement;
-			children.add(anchor.getGraphicsAlgorithm());
-		}
-
 		return children;
 	}
 
@@ -255,91 +128,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		} else {
 			pe.getLink().getBusinessObjects().addAll(eObjects);
 		}
-	}
-
-	/**
-	 * Finds a child shape with the given property key/value pair non-recursively.
-	 *
-	 * @param containerShape
-	 * @param propertyName
-	 * @param propertyValue
-	 * @return
-	 */
-	public static Shape findChildShapeByProperty(ContainerShape containerShape, String propertyName, String propertyValue) {
-		if (containerShape != null) {
-			for (Shape child : containerShape.getChildren()) {
-				if (propertyValue.equals(Graphiti.getPeService().getPropertyValue(child, propertyName))) {
-					return child;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Finds a child graphics algorithm with the given property key/value pair non-recursively.
-	 *
-	 * @param ga
-	 * @param propertyName
-	 * @param propertyValue
-	 * @return
-	 */
-	public static GraphicsAlgorithm findChildGraphicsAlgorithmByProperty(GraphicsAlgorithm ga, String propertyName, String propertyValue) {
-		if (ga != null) {
-			for (GraphicsAlgorithm child : ga.getGraphicsAlgorithmChildren()) {
-				if (propertyValue.equals(Graphiti.getPeService().getPropertyValue(child, propertyName))) {
-					return child;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Return first matched child with property value
-	 * @param diagramElement
-	 * @return
-	 */
-	public static PropertyContainer findFirstPropertyContainer(PropertyContainer diagramElement, String propertyValue) {
-
-		PropertyContainer p = null;
-
-		if (DUtil.isPropertyElementType(diagramElement, propertyValue)) {
-			return diagramElement;
-		}
-
-		// if containershape, iterate through children recursively
-		if (diagramElement instanceof ContainerShape) {
-			ContainerShape cs = (ContainerShape) diagramElement;
-			for (Shape c : cs.getChildren()) {
-				p = findFirstPropertyContainer(c, propertyValue);
-				if (p != null) {
-					return p;
-				}
-			}
-			if (cs.getGraphicsAlgorithm() != null) {
-				p = findFirstPropertyContainer(cs.getGraphicsAlgorithm(), propertyValue);
-				if (p != null) {
-					return p;
-				}
-			}
-			// if GraphicsAlgorithm, iterate through children recursively
-		} else if (diagramElement instanceof GraphicsAlgorithm) {
-			GraphicsAlgorithm ga = (GraphicsAlgorithm) diagramElement;
-			for (GraphicsAlgorithm c : ga.getGraphicsAlgorithmChildren()) {
-				p = findFirstPropertyContainer(c, propertyValue);
-				if (p != null) {
-					return p;
-				}
-			}
-		} else if (diagramElement instanceof Shape) {
-			Shape shape = (Shape) diagramElement;
-			if (DUtil.isPropertyElementType(shape.getGraphicsAlgorithm(), propertyValue)) {
-				return shape.getGraphicsAlgorithm();
-			}
-		}
-
-		return null;
 	}
 
 	/**
@@ -513,24 +301,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Returns true if the property container contains a property key {@link #GA_TYPE} or {@link #SHAPE_TYPE} with value
-	 * <code>propertyValue</code>
-	 * @param pc
-	 * @param propertyValue
-	 * @return
-	 */
-	public static boolean isPropertyElementType(PropertyContainer pc, String propertyValue) {
-		if (pc != null) {
-			for (Property p : pc.getProperties()) {
-				if ((GA_TYPE.equals(p.getKey()) || SHAPE_TYPE.equals(p.getKey())) && propertyValue.equals(p.getValue())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Returns all ContainerShapes with the provided property value
 	 * @param containerShape
 	 * @param propertyValue
@@ -548,20 +318,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 			}
 		}
 		return children;
-	}
-
-	public static RHContainerShape getParentRhContainerShape(EObject childShape) {
-		RHContainerShape rhContainerShape = null;
-		if (childShape.eContainer() instanceof RHContainerShape) {
-			rhContainerShape = (RHContainerShape) childShape.eContainer();
-		} else {
-			if (childShape.eContainer() == null) {
-				return null;
-			}
-			rhContainerShape = getParentRhContainerShape(childShape.eContainer());
-		}
-
-		return rhContainerShape;
 	}
 
 	/**
@@ -583,26 +339,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Add PictogramElement via feature for the provided object.
-	 * Relies on the framework determining which feature should be used and whether it can be added to diagram
-	 * @param featureProvider
-	 * @param object
-	 * @return
-	 */
-	public static PictogramElement addShapeViaFeature(IFeatureProvider featureProvider, ContainerShape targetContainer, Object object) {
-		AddContext addContext = new AddContext();
-		addContext.setNewObject(object);
-		addContext.setTargetContainer(targetContainer);
-		addContext.setX(0);
-		addContext.setY(0);
-		IAddFeature addFeature = featureProvider.getAddFeature(addContext);
-		if (addFeature.canAdd(addContext)) {
-			return addFeature.add(addContext);
-		}
-		return null;
-	}
-
-	/**
 	 * Update PictogramElement via feature
 	 * Relies on the framework determining which feature should be used and whether it can be added to diagram
 	 * @param featureProvider
@@ -614,35 +350,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		IUpdateFeature updateFeature = featureProvider.getUpdateFeature(updateContext);
 		if (updateFeature.canUpdate(updateContext)) {
 			return updateFeature.update(updateContext);
-		}
-		return false;
-	}
-
-	/**
-	 * Remove PictogramElement via feature for the provided object
-	 * @param featureProvider
-	 * @param pe
-	 */
-	public static void removeShapeViaFeature(IFeatureProvider featureProvider, PictogramElement pe) {
-		RemoveContext removeContext = new RemoveContext(pe);
-		IRemoveFeature removeFeature = featureProvider.getRemoveFeature(removeContext);
-		if (removeFeature != null) {
-			removeFeature.remove(removeContext);
-		}
-	}
-
-	/**
-	 * Layout PictogramElement via feature
-	 * Relies on the framework determining which feature should be used and whether it lay out the shape
-	 * @param featureProvider
-	 * @param pe
-	 * @return true if layout was applied
-	 */
-	public static boolean layoutShapeViaFeature(IFeatureProvider featureProvider, PictogramElement pe) {
-		LayoutContext updateContext = new LayoutContext(pe);
-		ILayoutFeature layoutFeature = featureProvider.getLayoutFeature(updateContext);
-		if (layoutFeature != null && layoutFeature.canLayout(updateContext)) {
-			return layoutFeature.layout(updateContext);
 		}
 		return false;
 	}
@@ -662,21 +369,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		IAddFeature addFeature = featureProvider.getAddFeature(addConnectionContext);
 		if (addFeature.canAdd(addConnectionContext)) {
 			return addFeature.add(addConnectionContext);
-		}
-		return null;
-	}
-
-	/**
-	 * Returns Business object of specified class type if it exists
-	 * @param pe
-	 * @param cls
-	 * @return
-	 */
-	public static < T > T getBusinessObject(PictogramElement pe, Class<T> cls) {
-		for (EObject eObj : Graphiti.getLinkService().getAllBusinessObjectsForLinkedPictogramElement(pe)) {
-			if (cls.isInstance(eObj)) {
-				return cls.cast(eObj);
-			}
 		}
 		return null;
 	}
@@ -747,25 +439,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Returns the PictogramElement of class pictogramClass who is linked to business object eObj
-	 * @param diagram
-	 * @param eObj
-	 * @param pictogramClass
-	 * @return
-	 */
-	public static < T > T getPictogramElementForBusinessObject(Diagram diagram, EObject eObj, Class<T> pictogramClass) {
-		List<PictogramElement> pes = Graphiti.getLinkService().getPictogramElements(diagram, eObj);
-		if (pes != null && pes.size() > 0) {
-			for (PictogramElement p : pes) {
-				if (pictogramClass.isInstance(p)) {
-					return pictogramClass.cast(p);
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Return true if target is HostCollocation ContainerShape
 	 * @param context
 	 */
@@ -787,55 +460,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		return Graphiti.getPeService().getDiagramForShape(containerShape);
 	}
 
-	// convenient method for getting business object for PictogramElement
-	public static EObject getBusinessObject(PictogramElement pe) {
-		return GraphitiUi.getLinkService().getBusinessObjectForLinkedPictogramElement(pe);
-	}
-
-	/**
-	 * Determines if this is a runtime diagram.
-	 * @param diagram
-	 * @return
-	 */
-	public static boolean isDiagramRuntime(final Diagram diagram) {
-		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_LOCAL) || getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_EXPLORER);
-	}
-
-	/**
-	 * Determines if the diagram is running in explorer mode.
-	 */
-	public static boolean isDiagramExplorer(final Diagram diagram) {
-		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_EXPLORER);
-	}
-
-	/**
-	 * Determines if the diagram is a design-time diagram for a file in the target SDR (usually these editors are
-	 * read-only).
-	 * @param diagram
-	 * @return
-	 */
-	public static boolean isDiagramTargetSdr(final Diagram diagram) {
-		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_TARGET_SDR);
-	}
-
-	/**
-	 * Determines if the diagram is a design-time diagram for file in the workspace.
-	 * @param diagram
-	 * @return
-	 */
-	public static boolean isDiagramWorkpace(final Diagram diagram) {
-		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_DESIGN);
-	}
-
-	/**
-	 * Determines if the diagram is read-only (only applies to design-time).
-	 * @param diagram
-	 * @return
-	 */
-	public static boolean isDiagramReadOnly(Diagram diagram) {
-		return isDiagramTargetSdr(diagram);
-	}
-
 	/**
 	 * Returns true if the portContainer is a super port
 	 * @param portContainer - The port container to be tested
@@ -845,14 +469,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		boolean isSuperProvides = DUtil.doesPictogramContainProperty(portContainer, new String[] { RHContainerShape.SUPER_PROVIDES_PORTS_RECTANGLE });
 		boolean isSuperUses = DUtil.doesPictogramContainProperty(portContainer, new String[] { RHContainerShape.SUPER_USES_PORTS_RECTANGLE });
 		return (isSuperProvides || isSuperUses);
-	}
-
-	/**
-	 * Returns the property value that indicates the mode the diagram is operating in.
-	 * @param diagram
-	 */
-	public static String getDiagramContext(Diagram diagram) {
-		return Graphiti.getPeService().getPropertyValue(diagram, DIAGRAM_CONTEXT);
 	}
 
 	/**
@@ -977,160 +593,5 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 
 		return connectInterface;
-	}
-
-	/**
-	 * Deletes a PictogramElement from its Diagram without doing a cross-reference search. The default PeService
-	 * implementation of deletePictogramElement() recursively deletes all of the children of a container using
-	 * EcoreUtil.delete(), which searches the entire resource set for references and removes them as well. This
-	 * quickly becomes an expensive operation as the graph grows, and in our case, should be unnecessary.
-	 * @param pe the pictogram element to delete
-	 */
-	public static void fastDeletePictogramElement(PictogramElement pe) {
-		if (pe instanceof Connection) {
-			DUtil.fastDeleteConnection((Connection) pe);
-		} else {
-			// Recursively remove any connections or links
-			DUtil.unlinkPictogramElement(pe);
-
-			// Remove directly from the parent; as long as there are no cross-references, this effectively deletes all
-			// children as well
-			ContainerShape container = (ContainerShape) pe.eContainer();
-			container.getChildren().remove(pe);
-		}
-	}
-
-	/**
-	 * Deletes a Connection from its Diagram without doing a cross-reference search.
-	 * @see {@link #deletePictogramElement(PictogramElement)}
-	 * @param connection the connection to delete
-	 */
-	public static void fastDeleteConnection(Connection connection) {
-		// Connections may be referenced by their endpoints, so remove them from the anchors if necessary
-		Anchor end = connection.getEnd();
-
-		if (end != null) {
-			end.getIncomingConnections().remove(connection);
-		}
-		Anchor start = connection.getStart();
-		if (start != null) {
-			start.getOutgoingConnections().remove(connection);
-		}
-
-		// FindBy objects have Graphiti Property reference to connections, so check if we need to remove this.
-		String connectionId = null;
-		for (EObject obj : connection.getLink().getBusinessObjects()) {
-			if (obj instanceof ConnectInterface< ? , ? , ? >) {
-				ConnectInterface< ? , ? , ? > ci = (ConnectInterface< ? , ? , ? >) obj;
-				connectionId = ci.getId();
-				break;
-			}
-		}
-		if (connectionId != null && getParentRhContainerShape(start) != null) {
-			RHContainerShape rhShape = getParentRhContainerShape(start);
-			EList<Property> properties = rhShape.getProperties();
-			for (int i = 0; i < properties.size(); i++) {
-				if (connectionId.equals(properties.get(i).getValue())) {
-					properties.remove(i);
-				}
-			}
-		}
-		if (connectionId != null && getParentRhContainerShape(end) != null) {
-			RHContainerShape rhShape = getParentRhContainerShape(end);
-			EList<Property> properties = rhShape.getProperties();
-			for (int i = 0; i < properties.size(); i++) {
-				if (connectionId.equals(properties.get(i).getValue())) {
-					properties.remove(i);
-				}
-			}
-		}
-
-		// The diagram may be null, if the connection is no longer part of one
-		Diagram diagram = connection.getParent();
-		if (diagram != null) {
-			diagram.getPictogramLinks().remove(connection.getLink());
-			diagram.getConnections().remove(connection);
-		}
-	}
-
-	/**
-	 * Internal method to recursively removes all business object links from a PictogramElement and its children.
-	 * Used by {@link #fastDeletePictogramElement(PictogramElement)}.
-	 * @param pe the pictogram element to unlink
-	 */
-	private static void unlinkPictogramElement(PictogramElement pe) {
-		if (pe instanceof AnchorContainer) {
-			// Remove business objects links from anchors
-			for (Anchor anchor : ((AnchorContainer) pe).getAnchors()) {
-				DUtil.unlinkPictogramElement(anchor);
-			}
-		}
-
-		// The diagram holds references to all the of links as well
-		Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pe);
-		diagram.getPictogramLinks().remove(pe.getLink());
-
-		// Recursively unlink children
-		if (pe instanceof ContainerShape) {
-			for (Shape child : ((ContainerShape) pe).getChildren()) {
-				DUtil.unlinkPictogramElement(child);
-			}
-		}
-	}
-
-	/**
-	 * Calculates the width and height of the given text in the font of the given text. Unlike Graphiti's layout
-	 * service, this method takes the text's style into account when getting the font.
-	 * @param text the {@link AbstractText} to calculate the rendering size for
-	 * @return
-	 */
-	public static IDimension calculateTextSize(AbstractText text) {
-		return GraphitiUi.getUiLayoutService().calculateTextSize(text.getValue(), Graphiti.getGaService().getFont(text, true));
-	}
-
-	/**
-	 * Creates a {@link FixPointAnchor} overlay for a shape, with the anchor point vertically centered at horizontal
-	 * position x. The returned anchor has no graphics algorithm.
-	 *
-	 * @param parentShape shape on which to overlay anchor
-	 * @param x horizontal anchor point
-	 * @return new anchor
-	 */
-	public static FixPointAnchor createOverlayAnchor(Shape parentShape, int x) {
-		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(parentShape);
-		IDimension parentSize = Graphiti.getGaLayoutService().calculateSize(parentShape.getGraphicsAlgorithm());
-		Point point = StylesFactory.eINSTANCE.createPoint();
-		point.setX(x);
-		point.setY(parentSize.getHeight() / 2);
-		fixPointAnchor.setLocation(point);
-		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
-		fixPointAnchor.setReferencedGraphicsAlgorithm(parentShape.getGraphicsAlgorithm());
-		return fixPointAnchor;
-	}
-
-	/**
-	 * Checks whether a @{link GraphicsAlgorithm} is visible (i.e, will draw something).
-	 *
-	 * @param ga GraphicsAlgorithm to check
-	 * @return true if ga is visible, false if it is not
-	 */
-	public static boolean isVisible(GraphicsAlgorithm ga) {
-		return ga.getLineVisible() || ga.getFilled();
-	}
-
-	/**
-	 * Updates whether a @{link GraphicsAlgorithm} is visible (i.e, will draw something).
-	 *
-	 * @param ga GraphicsAlgorithm to modify
-	 * @param visible new visibility of ga
-	 * @return true if the visibility changed, false if it was already set
-	 */
-	public static boolean setVisible(GraphicsAlgorithm ga, boolean visible) {
-		if (DUtil.isVisible(ga) != visible) {
-			ga.setFilled(visible);
-			ga.setLineVisible(visible);
-			return true;
-		}
-		return false;
 	}
 }
