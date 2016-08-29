@@ -11,32 +11,61 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram;
 
+import java.util.List;
+
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.EditPartViewer;
-import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.ui.actions.ActionRegistry;
+import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.platform.IConfigurationProvider;
 import org.eclipse.jface.util.TransferDropTargetListener;
 
 import gov.redhawk.core.graphiti.ui.diagram.providers.BasicContextMenuProvider;
 import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
+import gov.redhawk.core.graphiti.ui.editor.RHDiagramBehavior;
+import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteBehavior;
 
 public class GraphitiDCDDiagramEditor extends AbstractGraphitiDiagramEditor {
 
+	private EditingDomain editingDomain;
+
 	public GraphitiDCDDiagramEditor(EditingDomain editingDomain) {
 		super(editingDomain);
+		this.editingDomain = editingDomain;
 		addContext("gov.redhawk.core.graphiti.dcd.ui.contexts.explorer");
 	}
 
 	@Override
-	protected TransferDropTargetListener createDropTargetListener(GraphicalViewer viewer, DiagramBehavior behavior) {
-		return new DiagramDropTargetListener(viewer, behavior);
-	}
+	protected DiagramBehavior createDiagramBehavior() {
+		return new RHDiagramBehavior(this, (TransactionalEditingDomain) editingDomain) {
 
-	@Override
-	protected ContextMenuProvider createContextMenuProvider(EditPartViewer viewer, ActionRegistry registry, IConfigurationProvider configurationProvider) {
-		return new BasicContextMenuProvider(viewer, registry, configurationProvider);
+			@Override
+			protected DefaultPaletteBehavior createPaletteBehaviour() {
+				final DefaultPaletteBehavior paletteBehavior = new RHGraphitiPaletteBehavior(this);
+				return paletteBehavior;
+			}
+
+			@Override
+			protected List<TransferDropTargetListener> createBusinessObjectDropTargetListeners() {
+				List<TransferDropTargetListener> retVal = super.createBusinessObjectDropTargetListeners();
+
+				// Add custom drop target listener if provided
+				TransferDropTargetListener dropTargetListener = new DiagramDropTargetListener(getDiagramContainer().getGraphicalViewer(), this);
+				retVal.add(0, dropTargetListener);
+
+				return retVal;
+			}
+
+			@Override
+			protected ContextMenuProvider createContextMenuProvider() {
+				EditPartViewer viewer = getDiagramContainer().getGraphicalViewer();
+				ActionRegistry registry = getDiagramContainer().getActionRegistry();
+				IConfigurationProvider configurationProvider = getConfigurationProvider();
+				return new BasicContextMenuProvider(viewer, registry, configurationProvider);
+			}
+		};
 	}
 }
