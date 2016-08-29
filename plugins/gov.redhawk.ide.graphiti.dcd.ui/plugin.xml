@@ -87,16 +87,10 @@
    <extension
          point="org.eclipse.ui.contexts">
       <context
-            description="In a REDHAWK Graphiti DCD Diagram editor"
-            id="gov.redhawk.ide.dcd.graphiti.ui.contexts.diagram"
-            name="RH Graphiti DCD Diagram"
-            parentId="org.eclipse.graphiti.ui.diagramEditor">
-      </context>
-      <context
-            description="In the REDHAWK Graphiti DCD Sandbox editor"
-            id="gov.redhawk.ide.dcd.graphiti.ui.contexts.sandbox"
-            name="RH Graphiti DCD Sandbox"
-            parentId="gov.redhawk.ide.dcd.graphiti.ui.contexts.diagram">
+            description="Redhawk device manager sandbox diagram"
+            id="gov.redhawk.ide.graphiti.dcd.ui.contexts.sandbox"
+            name="Redhawk device manager sandbox diagram"
+            parentId="gov.redhawk.core.graphiti.dcd.ui.contexts.explorer">
       </context>
    </extension>
    <extension

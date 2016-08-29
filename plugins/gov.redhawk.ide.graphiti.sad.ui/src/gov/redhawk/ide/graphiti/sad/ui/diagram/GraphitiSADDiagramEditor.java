@@ -26,7 +26,7 @@ public class GraphitiSADDiagramEditor extends AbstractGraphitiDiagramEditor {
 
 	public GraphitiSADDiagramEditor(EditingDomain editingDomain) {
 		super(editingDomain);
-		addContext("gov.redhawk.ide.graphiti.sad.ui.contexts.diagram");
+		addContext("gov.redhawk.core.graphiti.sad.ui.contexts.explorer");
 	}
 
 	@Override

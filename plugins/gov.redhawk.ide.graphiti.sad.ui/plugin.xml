@@ -118,26 +118,14 @@
       <extension
             point="org.eclipse.ui.contexts">
          <context
-               description="In a REDHAWK Graphiti diagram editor"
-               id="gov.redhawk.ide.graphiti.sad.ui.contexts.diagram"
-               name="RH Graphiti Diagram"
-               parentId="org.eclipse.graphiti.ui.diagramEditor">
-         </context>
-         <context
-               description="In the REDHAWK Graphiti Chalkboard editor"
+               description="Redhawk waveform sandbox diagram"
                id="gov.redhawk.ide.graphiti.sad.ui.contexts.sandbox"
-               name="RH Graphiti Chalkboard"
-               parentId="gov.redhawk.ide.graphiti.sad.ui.contexts.diagram">
+               name="Redhawk waveform sandbox diagram"
+               parentId="gov.redhawk.core.graphiti.sad.ui.contexts.explorer">
          </context>
       </extension>
       <extension
             point="org.eclipse.ui.bindings">
-         <key
-               commandId="org.eclipse.gef.zoom_in"
-               contextId="gov.redhawk.ide.graphiti.sad.ui.contexts.diagram"
-               schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-               sequence="CTRL++">
-         </key>
          <key
                commandId="org.eclipse.ui.file.saveAs"
                contextId="gov.redhawk.ide.graphiti.sad.ui.contexts.sandbox"
