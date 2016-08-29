@@ -58,7 +58,6 @@ Export-Package: gov.redhawk.ide.graphiti.sad.internal.ui.editor,
  gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom,
  gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete,
  gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect,
- gov.redhawk.ide.graphiti.sad.ui.diagram.features.update,
  gov.redhawk.ide.graphiti.sad.ui.diagram.patterns,
  gov.redhawk.ide.graphiti.sad.ui.diagram.providers,
  gov.redhawk.ide.graphiti.sad.ui.properties

@@ -305,8 +305,8 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 	public static List<RHContainerShape> getAllFindByShapes(ContainerShape containerShape) {
 		List<RHContainerShape> children = new ArrayList<RHContainerShape>();
 		if (containerShape instanceof RHContainerShape) {
-			Object obj = DUtil.getBusinessObject(containerShape);
-			if (obj != null && obj instanceof FindByStub) {
+			FindByStub findByStub = DUtil.getBusinessObject(containerShape, FindByStub.class);
+			if (findByStub != null) {
 				children.add((RHContainerShape) containerShape);
 			}
 		} else {

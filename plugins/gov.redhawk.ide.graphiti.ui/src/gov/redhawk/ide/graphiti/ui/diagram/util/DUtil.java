@@ -17,11 +17,9 @@ import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.datatypes.ILocation;
-import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
-import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -35,7 +33,6 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
-import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -324,72 +321,6 @@ public class DUtil extends gov.redhawk.core.graphiti.ui.util.DUtil {
 			return updateFeature.update(updateContext);
 		}
 		return false;
-	}
-
-	/**
-	 * Add PictogramElement Connection via feature for the provided object and anchors.
-	 * Relies on the framework determining which feature should be used and whether it can be added to diagram
-	 * @param featureProvider
-	 * @param object
-	 * @param sourceAnchor
-	 * @param targetAnchor
-	 * @return
-	 */
-	public static PictogramElement addConnectionViaFeature(IFeatureProvider featureProvider, Object object, Anchor sourceAnchor, Anchor targetAnchor) {
-		AddConnectionContext addConnectionContext = new AddConnectionContext(sourceAnchor, targetAnchor);
-		addConnectionContext.setNewObject(object);
-		IAddFeature addFeature = featureProvider.getAddFeature(addConnectionContext);
-		if (addFeature.canAdd(addConnectionContext)) {
-			return addFeature.add(addConnectionContext);
-		}
-		return null;
-	}
-
-	/**
-	 * Lookup SourceAnchor for connection. Examines uses ports on Components as well as FindBys
-	 * @param sadConnectInterface
-	 * @param diagram
-	 * @return
-	 */
-	public static Anchor lookupSourceAnchor(ConnectInterface< ? , ? , ? > sadConnectInterface, Diagram diagram) {
-		// lookup sourceAnchor
-		PictogramElement sourceAnchorPe = DUtil.getPictogramElementForBusinessObject(diagram, sadConnectInterface.getSource(), Anchor.class);
-		if (sourceAnchorPe != null) {
-			return (Anchor) sourceAnchorPe;
-		} else {
-			// All components have been created so source Anchor is likely null because provides findBy
-			// <uses><findby>something</findby></uses>
-			// or something is wrong with the xml
-			if (sadConnectInterface.getUsesPort() != null && sadConnectInterface.getUsesPort().getFindBy() != null) {
-				FindBy findBy = (FindBy) sadConnectInterface.getUsesPort().getFindBy();
-
-				// iterate through all FindByStub objects stored in diagram and set sourceAnchor that matches findBy
-				List<RHContainerShape> findByContainerShapes = AbstractFindByPattern.getAllFindByShapes(diagram);
-				for (RHContainerShape findByShape : findByContainerShapes) {
-					FindByStub findByStub = (FindByStub) DUtil.getBusinessObject(findByShape);
-
-					// determine findBy match
-					if (AbstractFindByPattern.doFindByObjectsMatch(findBy, findByStub)) {
-
-						// determine which usesPortStub we are targeting
-						UsesPortStub usesPortStub = null;
-						for (UsesPortStub p : findByStub.getUses()) {
-							if (p != null && sadConnectInterface.getUsesPort().getUsesIdentifier() != null
-								&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIdentifier())) {
-								usesPortStub = p;
-							}
-						}
-
-						// determine port anchor for FindByMatch
-						if (usesPortStub != null) {
-							PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, Anchor.class);
-							return (Anchor) pe;
-						}
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 	/**

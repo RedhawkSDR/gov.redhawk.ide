@@ -1,33 +1,30 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.diagram.features.update;
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
+package gov.redhawk.ide.graphiti.sad.ui.internal.diagram.features;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 
 import gov.redhawk.core.graphiti.sad.ui.utils.SADUtils;
+import gov.redhawk.core.graphiti.ui.util.DUtil;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
-import gov.redhawk.ide.graphiti.ui.diagram.features.update.AbstractDiagramUpdateFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.features.update.AbstractDesignDiagramUpdateFeature;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterface;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
@@ -44,22 +41,16 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.UsesDevice;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
-public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateFeature {
+/**
+ * Performs updates of SAD design-time diagrams. Some code is duplicated in WaveformUpdateDiagramFeature.
+ */
+public class SADUpdateDiagramFeature extends AbstractDesignDiagramUpdateFeature {
 
-	public GraphitiWaveformDiagramUpdateFeature(IFeatureProvider fp) {
+	public SADUpdateDiagramFeature(IFeatureProvider fp) {
 		super(fp);
 	}
 
-	@Override
-	protected boolean doesModelObjectExist(EObject object) {
-		if (object instanceof UsesDeviceStub) {
-			// Check the uses device reference of the stub
-			object = ((UsesDeviceStub) object).getUsesDevice();
-		}
-		return super.doesModelObjectExist(object);
-	}
-
-	protected boolean hasParentChanged(Shape shape) {
+	private boolean hasParentChanged(Shape shape) {
 		EObject bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape);
 		if (bo instanceof SadComponentInstantiation) {
 			HostCollocation collocation = ScaEcoreUtils.getEContainerOfType(bo, HostCollocation.class);
@@ -86,7 +77,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		return false;
 	}
 
-	protected UsesDeviceStub getUsesDeviceStub(UsesDevice usesDevice, Diagram diagram) {
+	private UsesDeviceStub getUsesDeviceStub(UsesDevice usesDevice, Diagram diagram) {
 		for (UsesDeviceStub usesDeviceStub : getDiagramStubs(diagram, UsesDeviceStub.class)) {
 			if (usesDeviceStub.getUsesDevice() == usesDevice) {
 				return usesDeviceStub;
@@ -95,6 +86,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		return null;
 	}
 
+	@Override
 	protected List<EObject> getObjectsToAdd(Diagram diagram) {
 		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
 		// Find any component instantiations that are in the SAD but do not have an associated shape
@@ -129,39 +121,14 @@ public class GraphitiWaveformDiagramUpdateFeature extends AbstractDiagramUpdateF
 		return addedChildren;
 	}
 
+	@Override
 	protected List<ConnectInterface< ? , ? , ? >> getModelConnections(Diagram diagram) {
 		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
-		List<ConnectInterface < ? , ? , ? >> connections = new ArrayList<ConnectInterface< ? , ? , ? >>();
+		List<ConnectInterface< ? , ? , ? >> connections = new ArrayList<ConnectInterface< ? , ? , ? >>();
 		if (sad.getConnections() != null) {
 			connections.addAll(sad.getConnections().getConnectInterface());
 		}
 		return connections;
-	}
-
-	/**
-	 * Updates the Diagram to reflect the underlying business model
-	 * Make sure all elements in sad model (hosts/components/findby) are accounted for as
-	 * children of diagram, if they aren't then add them, if they are then check to see if
-	 * they need to be updated, if they exist in the diagram yet not in the model, remove them
-	 * @param context
-	 * @param performUpdate
-	 * @return
-	 * @throws CoreException
-	 * @deprecated This isn't used any more
-	 */
-	@Deprecated
-	public Reason internalUpdate(IUpdateContext context, boolean performUpdate) throws CoreException {
-		if (!performUpdate) {
-			// Match return type; this method should return IReason, but does not
-			IReason reason = updateNeeded(context);
-			return new Reason(reason.toBoolean(), reason.getText());
-		} else {
-			if (update(context)) {
-				return new Reason(true, "Update successful");
-			} else {
-				return new Reason(false, "No updates required");
-			}
-		}
 	}
 
 	@Override

@@ -15,15 +15,19 @@ import java.util.List;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IReconnectionFeature;
+import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IReconnectionContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.IPattern;
 
 import gov.redhawk.core.graphiti.dcd.ui.diagram.providers.DCDGraphitiFeatureProvider;
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect.DCDReconnectFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.internal.diagram.features.DCDUpdateDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DialogEditingFeatureForPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
@@ -46,6 +50,15 @@ public class DCDEditorFeatureProvider extends DCDGraphitiFeatureProvider {
 		addPattern(new FindByEventChannelPattern());
 		addPattern(new FindByServicePattern());
 		addPattern(new FindByCORBANamePattern());
+	}
+
+	@Override
+	public IUpdateFeature getUpdateFeature(IUpdateContext context) {
+		if (context.getPictogramElement() instanceof Diagram) {
+			return new DCDUpdateDiagramFeature(this);
+		}
+
+		return super.getUpdateFeature(context);
 	}
 
 	@Override
