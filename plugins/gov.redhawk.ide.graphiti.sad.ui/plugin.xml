@@ -63,78 +63,16 @@
    </extension>
 
    <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
-      <propertyContributor
-            contributorId="SADDiagram.PropertyContributor"
-            labelProvider="gov.redhawk.ide.graphiti.ui.diagram.providers.RHGraphitiDiagramLabelProvider">
-         <propertyCategory
-               category="Graphiti">
-         </propertyCategory>
-         <propertyCategory
-               category="advanced">
-         </propertyCategory>
-      </propertyContributor>
-   </extension>
-
-   <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
-      <propertyTabs
-            contributorId="SADDiagram.PropertyContributor">
-
-
-         <propertyTab
-             category="Graphiti"
-             id="property.tab.ComponentProperties"
-             label="Component Properties"/>
-         <propertyTab
-               category="Graphiti"
-               id="gov.redhawk.ide.graphiti.sad.ui.propertyTab.portDetails"
-               label="Port Details">
-         </propertyTab>
-         <propertyTab
-               category="advanced"
-               id="property.tab.ScaAdvanced"
-               label="Advanced">
-         </propertyTab>
-
-     </propertyTabs>
-   </extension>
-
-   <extension
          point="org.eclipse.ui.views.properties.tabbed.propertySections">
       <propertySections contributorId="SADDiagram.PropertyContributor">
-
-
          <propertySection
-               class="gov.redhawk.ide.graphiti.ui.properties.ComponentPropertiesSection"
-               filter="gov.redhawk.ide.graphiti.sad.ui.properties.ComponentFilter"
-               id="property.section.ComponentProperties"
-               tab="property.tab.ComponentProperties">
-         </propertySection>
-         <propertySection
-               afterSection="001_portDetailsPropertySection"
-               class="gov.redhawk.sca.ui.properties.PortDetailsPropertySection"
-               filter="gov.redhawk.ide.graphiti.ui.properties.PortFilter"
-               id="gov.redhawk.ide.graphiti.sad.ui.propertySection.PortDetails"
-               tab="gov.redhawk.ide.graphiti.sad.ui.propertyTab.portDetails">
-         </propertySection>
-
-
-         <propertySection
-               afterSection="010_portInterfacePropertySection"
+               afterSection="200"
                class="gov.redhawk.ide.graphiti.sad.ui.properties.PortInterfacePropertiesSection"
                enablesFor="1"
-               filter="gov.redhawk.ide.graphiti.ui.properties.PortFilter"
+               filter="gov.redhawk.core.graphiti.ui.properties.PortFilter"
                id="property.section.PortInterface"
-               tab="gov.redhawk.ide.graphiti.sad.ui.propertyTab.portDetails">
+               tab="gov.redhawk.core.graphiti.sad.ui.propertyTab.portDetails">
          </propertySection>
-         <propertySection
-               class="gov.redhawk.ide.graphiti.sad.ui.properties.SadAdvancedEditPartPropertySection"
-               filter="gov.redhawk.ide.graphiti.sad.ui.properties.SadAdvancedFilter"
-               id="property.section.ScaAdvanced"
-               tab="property.tab.ScaAdvanced">
-         </propertySection>
-
       </propertySections>
    </extension>
 
