@@ -21,6 +21,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.editors.text.TextEditor;
 
 import gov.redhawk.core.graphiti.sad.ui.editor.GraphitiWaveformExplorerEditor;
 import gov.redhawk.core.graphiti.sad.ui.modelmap.GraphitiSADModelMap;
@@ -145,6 +146,12 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEdito
 	////////////////////////////////////////////////////
 	// Other
 	////////////////////////////////////////////////////
+
+	@Override
+	public TextEditor createTextEditor(IEditorInput input) {
+		// No text editor for sandbox editors
+		return null;
+	}
 
 	@Override
 	public void doSaveAs() {

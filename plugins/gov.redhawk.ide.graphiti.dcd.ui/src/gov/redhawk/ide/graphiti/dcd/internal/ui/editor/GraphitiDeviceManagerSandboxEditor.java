@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.editors.text.TextEditor;
 
 import gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDeviceManagerExplorerEditor;
 import gov.redhawk.core.graphiti.dcd.ui.modelmap.GraphitiDCDModelMap;
@@ -140,5 +141,15 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 	@Override
 	public String getDiagramContext() {
 		return DUtil.DIAGRAM_CONTEXT_LOCAL;
+	}
+
+	////////////////////////////////////////////////////
+	// Other
+	////////////////////////////////////////////////////
+
+	@Override
+	public TextEditor createTextEditor(IEditorInput input) {
+		// No text editor for sandbox editors
+		return null;
 	}
 }
