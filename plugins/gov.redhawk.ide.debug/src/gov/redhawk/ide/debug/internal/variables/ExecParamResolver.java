@@ -10,6 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.variables;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+
 import gov.redhawk.ide.debug.SpdLauncherUtil;
 import gov.redhawk.ide.debug.variables.AbstractLauncherResolver;
 import gov.redhawk.model.sca.ScaAbstractProperty;
@@ -17,18 +24,10 @@ import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaFactory;
 import gov.redhawk.model.sca.ScaSimpleProperty;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * Provides the command-line arguments for a {@link SoftPkg}'s exec param properties.
@@ -41,11 +40,12 @@ public class ExecParamResolver extends AbstractLauncherResolver {
 		if (spd.getPropertyFile() != null && spd.getPropertyFile().getProperties() != null) {
 			final ScaComponent tmp = ScaFactory.eINSTANCE.createScaComponent();
 			tmp.setProfileObj(spd);
+
 			for (final ScaAbstractProperty< ? > prop : tmp.fetchProperties(null)) {
 				prop.setIgnoreRemoteSet(true);
 			}
-			ScaLaunchConfigurationUtil.loadProperties(config, tmp);
 
+			ScaLaunchConfigurationUtil.loadProperties(config, tmp);
 			final Map<String, Object> execParams = new HashMap<String, Object>();
 			for (final ScaAbstractProperty< ? > prop : tmp.getProperties()) {
 				if (prop instanceof ScaSimpleProperty && prop.getDefinition() != null) {

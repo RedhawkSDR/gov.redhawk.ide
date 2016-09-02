@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,10 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -50,6 +47,7 @@ import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
+import gov.redhawk.ide.debug.SadLauncherUtil;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
@@ -65,14 +63,9 @@ import gov.redhawk.sca.util.SubMonitor;
 import mil.jpeojtrs.sca.partitioning.ComponentProperties;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
-import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
-import mil.jpeojtrs.sca.prf.SimpleRef;
+import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
-import mil.jpeojtrs.sca.sad.ExternalProperties;
-import mil.jpeojtrs.sca.sad.ExternalProperty;
-import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -89,29 +82,23 @@ public class LocalApplicationFactory {
 	private final LocalSca localSca;
 	private final String mode;
 	private final ILaunch launch;
-	private final DataType[] assemblyConfig;
-	private final DataType[] assemblyExec;
+	private final Map<String, List<DataType>> commandLineProps;
+	private final Map<String, List<DataType>> configProps;
 	private final NotifyingNamingContext namingContext;
 
-	public LocalApplicationFactory(final LocalSca localSca) {
-		this.implMap = null;
-		this.localSca = localSca;
-		this.mode = ILaunchManager.RUN_MODE;
-		this.launch = null;
-		this.assemblyExec = null;
-		this.assemblyConfig = null;
-		this.namingContext = this.localSca.getRootContext();
-	}
+	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
+		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 
 	public LocalApplicationFactory(final Map<String, String> implMap, final LocalSca localSca, final String mode, final ILaunch launch,
-		final DataType[] assemblyExec, final DataType[] assemblyConfig) {
+		final Map<String, List<DataType>> commandLineProps, final Map<String, List<DataType>> configProps) {
 		this.implMap = implMap;
 		this.localSca = localSca;
 		this.mode = mode;
 		this.launch = launch;
-		this.assemblyExec = assemblyExec;
-		this.assemblyConfig = assemblyConfig;
 		this.namingContext = this.localSca.getRootContext();
+		this.commandLineProps = commandLineProps;
+		this.configProps = configProps;
 	}
 
 	public static NotifyingNamingContext createWaveformContext(NotifyingNamingContext parent, String name) throws CoreException {
@@ -122,15 +109,25 @@ public class LocalApplicationFactory {
 				retVal = NamingContextExtHelper.narrow(parent.bind_new_context(Name.toName(adjustedName)));
 			} catch (AlreadyBound e) {
 				adjustedName = name + "_" + i;
-			} catch (NotFound e) {
-				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
-			} catch (CannotProceed e) {
-				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
-			} catch (InvalidName e) {
-				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
+			} catch (NotFound | CannotProceed | InvalidName e) {
+				throw new CoreException(
+					new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
 			}
 		}
 		return parent.findContext(retVal);
+	}
+
+	public static void bindApp(final ApplicationImpl app) throws CoreException {
+		app.getStreams().getOutStream().println("Binding application...");
+		try {
+			NamingContextExt context = app.getWaveformContext();
+			NameComponent[] name = Name.toName(app.name());
+			org.omg.CORBA.Object obj = app.getLocalWaveform().getCorbaObj();
+			context.bind(name, obj);
+			app.getStreams().getOutStream().println("Done Binding application.");
+		} catch (final NotFound | CannotProceed | InvalidName | AlreadyBound | SystemException e) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to bind application to context " + e.getMessage(), e));
+		}
 	}
 
 	/**
@@ -151,8 +148,7 @@ public class LocalApplicationFactory {
 		String adjustedName = name;
 
 		// Try and narrow to the given name. If an already bound exception occurs, append _ + i to the end and try again
-		// until
-		// we've found a good name.
+		// until we've found a good name.
 		ApplicationImpl app = null;
 		LocalScaWaveform waveform = null;
 		try {
@@ -189,26 +185,23 @@ public class LocalApplicationFactory {
 
 			final ScaWaveform tmpWaveform = waveform;
 			ScaModelCommand.execute(this.localSca, new ScaModelCommand() {
-
 				@Override
 				public void execute() {
 					LocalApplicationFactory.this.localSca.getWaveforms().add(tmpWaveform);
 				}
 			});
-
 			progress.worked(1);
 
 			progress.subTask("Launch components");
 			launchComponents(progress.newChild(90), app, sad);
 
 			progress.subTask("Configure components");
-			configureComponents(app, sad, this.assemblyConfig);
+			configureComponents(app, sad);
 			progress.worked(4);
 
 			progress.subTask("Create connections");
 			createConnections(app, sad);
 			progress.worked(3);
-
 
 		} catch (final SystemException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
@@ -217,7 +210,7 @@ public class LocalApplicationFactory {
 				app.setLaunching(false);
 			}
 		}
-		
+
 		if (app != null && waveform != null) {
 			progress.subTask("Refresh");
 			SubMonitor subTask = progress.newChild(1);
@@ -233,15 +226,41 @@ public class LocalApplicationFactory {
 		return waveform;
 	}
 
-	private String getImplId(final SadComponentInstantiation comp) {
-		String retVal = null;
-		if (this.implMap != null) {
-			retVal = this.implMap.get(comp.getId());
+	/**
+	 * Launches each component of the waveform
+	 *
+	 * @param monitor
+	 * @param app
+	 * @param sad
+	 * @param config
+	 * @throws CoreException
+	 */
+	protected void launchComponents(IProgressMonitor monitor, final ApplicationImpl app, final SoftwareAssembly sad) throws CoreException {
+		final List<SadComponentInstantiation> instantiations = SadLauncherUtil.getComponentInstantiations(sad);
+		final SubMonitor progress = SubMonitor.convert(monitor, instantiations.size());
+
+		app.getStreams().getOutStream().println("Launching components...");
+		for (final SadComponentInstantiation comp : instantiations) {
+			progress.subTask(String.format("Launch component instance '%s'", comp.getUsageName()));
+
+			URI spdUri = getSpdURI(comp);
+			if (spdUri != null) {
+				LocalScaComponent localComp = app.launch(comp.getUsageName(), comp.getId(), this.commandLineProps.get(comp.getId()).toArray(new DataType[0]),
+					spdUri, getImplId(comp), this.mode);
+				if (localComp != null) {
+					TransactionalEditingDomain localEditingDomain = TransactionUtil.getEditingDomain(localComp);
+					if (localEditingDomain != null) {
+						localEditingDomain.getCommandStack().execute(
+							SetCommand.create(localEditingDomain, localComp, ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, comp));
+					}
+				}
+			} else {
+				String errorMsg = String.format("Failed to find SPD for component: %s", comp.getUsageName());
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
+			}
+			app.getStreams().getOutStream().println("\n");
+			progress.worked(1);
 		}
-		if (retVal == null) {
-			retVal = comp.getPlacement().getComponentFileRef().getFile().getSoftPkg().getImplementation().get(0).getId();
-		}
-		return retVal;
 	}
 
 	/**
@@ -252,12 +271,12 @@ public class LocalApplicationFactory {
 	 * @param assemblyConfig
 	 * @throws CoreException
 	 */
-	protected void configureComponents(final ApplicationImpl app, final SoftwareAssembly sad, final DataType[] assemblyConfig) {
+	protected void configureComponents(final ApplicationImpl app, final SoftwareAssembly sad) {
 		app.getStreams().getOutStream().println("Configuring Components...");
 		for (final ScaComponent comp : app.getLocalWaveform().getComponents()) {
 			try {
 				app.getStreams().getOutStream().println("Configuring component: " + comp.getName());
-				configureComponent(app, comp, sad, assemblyConfig);
+				configureComponent(app, comp, sad);
 				app.getStreams().getOutStream().println("");
 			} catch (final InvalidConfiguration e) {
 				String msg = CFErrorFormatter.format(e, "component " + comp.getName());
@@ -269,62 +288,74 @@ public class LocalApplicationFactory {
 		}
 	}
 
-	/**
-	 * Launches each component of the waveform
-	 *
-	 * @param monitor
-	 * @param app
-	 * @param sad
-	 * @param config
-	 * @throws CoreException
-	 */
-	protected void launchComponents(IProgressMonitor monitor, final ApplicationImpl app, final SoftwareAssembly sad) throws CoreException {
-		final List<SadComponentInstantiation> instantiations = getComponentInstantiations(sad);
-		final SubMonitor progress = SubMonitor.convert(monitor, instantiations.size());
+	private void configureComponent(ApplicationImpl app, final ScaComponent comp, final SoftwareAssembly sad)
+		throws InvalidConfiguration, PartialConfiguration {
+		DataType[] configuration = getConfiguration(comp);
+		final ApplicationOutputStream outStream = app.getStreams().getOutStream();
+		if (configuration == null || configuration.length == 0) {
+			outStream.println("\tNo configuration.");
+			return;
+		}
 
-		app.getStreams().getOutStream().println("Launching components...");
-		for (final SadComponentInstantiation comp : instantiations) {
-			progress.subTask(String.format("Launch component instance '%s'", comp.getUsageName()));
-
-			URI spdUri = getSpdURI(comp);
-			if (spdUri == null) {
-				String errorMsg = String.format("Failed to find SPD for component: %s", comp.getUsageName());
-				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
-			} else {
-				LocalScaComponent localComp = app.launch(comp.getUsageName(), null, createExecParam(comp), spdUri, getImplId(comp), this.mode);
-				if (localComp != null) {
-					TransactionalEditingDomain localEditingDomain = TransactionUtil.getEditingDomain(localComp);
-					if (localEditingDomain != null) {
-						localEditingDomain.getCommandStack().execute(SetCommand.create(localEditingDomain, localComp, ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, comp));
+		if (this.configProps.get(comp.getIdentifier()) != null) {
+			List<DataType> compOverrideList = this.configProps.get(comp.getIdentifier());
+			for (DataType overrideProperty : compOverrideList) {
+				for (DataType compSadProperty : configuration) {
+					if (overrideProperty.id.equals(compSadProperty.id)) {
+						compSadProperty.value = overrideProperty.value;
+						outStream.println(LocalApplicationFactory.toString(overrideProperty));
+						break;
 					}
 				}
 			}
-
-			app.getStreams().getOutStream().println("\n");
-			progress.worked(1);
 		}
+
+		comp.configure(configuration);
+		comp.fetchProperties(null);
 	}
 
-	public static void bindApp(final ApplicationImpl app) throws CoreException {
-		app.getStreams().getOutStream().println("Binding application...");
-		try {
-			NamingContextExt context = app.getWaveformContext();
-			NameComponent[] name = Name.toName(app.name());
-			org.omg.CORBA.Object obj = app.getLocalWaveform().getCorbaObj();
-			context.bind(name, obj);
-			app.getStreams().getOutStream().println("Done Binding application.");
-		} catch (final NotFound e) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to bind application to context " + e.getMessage(), e));
-		} catch (final CannotProceed e) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to bind application to context " + e.getMessage(), e));
-		} catch (final InvalidName e) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to bind application to context " + e.getMessage(), e));
-		} catch (final AlreadyBound e) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to bind application to context " + e.getMessage(), e));
-		} catch (final SystemException e) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to bind application to context " + e.getMessage(), e));
+	/** Gets Component's properties, override with values from Waveform (SAD) */
+	private DataType[] getConfiguration(final ScaComponent comp) {
+		final Map<String, DataType> retVal = new HashMap<String, DataType>();
+		comp.fetchProperties(null);
+		for (final ScaAbstractProperty< ? > prop : comp.getProperties()) {
+			if (prop.getDefinition() instanceof Simple && ((Simple) prop.getDefinition()).isCommandLine()) {
+				continue;
+			}
+
+			if (PropertiesUtil.canConfigure(prop.getDefinition())) {
+				retVal.put(prop.getId(), new DataType(prop.getId(), prop.toAny()));
+			}
+		}
+		final ScaWaveform waveform = comp.getWaveform();
+		final SoftwareAssembly sad = waveform.getProfileObj();
+		SadComponentInstantiation compInst = null;
+
+		for (final SadComponentInstantiation ci : SadLauncherUtil.getComponentInstantiations(sad)) {
+			if (ci.getId().equals(comp.getInstantiationIdentifier())) {
+				compInst = ci;
+				break;
+			}
 		}
 
+		if (compInst == null) {
+			throw new IllegalStateException("Unable to find component instantiation");
+		}
+
+		final ComponentProperties sadProps = compInst.getComponentProperties();
+		if (sadProps != null) {
+			// Override default values with values from SAD
+			for (final Entry entry : sadProps.getProperties()) {
+				if (entry.getValue() instanceof AbstractPropertyRef< ? >) {
+					final AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
+					if (retVal.containsKey(ref.getRefID())) {
+						retVal.put(ref.getRefID(), new DataType(ref.getRefID(), ref.toAny()));
+					}
+				}
+
+			}
+		}
+		return retVal.values().toArray(new DataType[retVal.size()]);
 	}
 
 	private void createConnections(final ApplicationImpl app, final SoftwareAssembly sad) throws CoreException {
@@ -383,38 +414,25 @@ public class LocalApplicationFactory {
 		}
 	}
 
-	private void configureComponent(ApplicationImpl app, final ScaComponent comp, final SoftwareAssembly sad, final DataType[] assemblyConfig) throws InvalidConfiguration, PartialConfiguration {
-		DataType[] configuration = getConfiguration(comp);
-		final ApplicationOutputStream outStream = app.getStreams().getOutStream();
-		if (configuration == null || configuration.length == 0) {
-			outStream.println("\tNo configuration.");
-			return;
+	private String getImplId(final SadComponentInstantiation comp) {
+		String retVal = null;
+		if (this.implMap != null) {
+			retVal = this.implMap.get(comp.getId());
 		}
-		final boolean isAssemblyController = isAssemblyController(comp.getComponentInstantiation());
-		if (assemblyConfig != null && assemblyConfig.length > 0 && isAssemblyController) {
-			// apply user property overrides (in assemblyConfig)
-			for (DataType userOverrideProperty : assemblyConfig) {
-				for (DataType compSadProperty : configuration) {
-					if (userOverrideProperty.id.equals(compSadProperty.id)) {
-						compSadProperty.value = userOverrideProperty.value;
-						break;
-					}
-				}
-			}
+		if (retVal == null) {
+			retVal = comp.getPlacement().getComponentFileRef().getFile().getSoftPkg().getImplementation().get(0).getId();
 		}
-		final ExternalProperties externalProperties = sad.getExternalProperties();
-		for (DataType t : configuration) {
-			if (externalProperties != null) {
-				for (ExternalProperty extProp: externalProperties.getProperties()) {
-					if (t.id.equals(extProp.getExternalPropID()) && extProp.getCompRefID().equals(comp.getName())) {
-						t.id = extProp.getPropID();
-					}
-				}
-			}
-			outStream.println(LocalApplicationFactory.toString(t));
+		return retVal;
+	}
+
+	@Nullable
+	private URI getSpdURI(@Nullable final SadComponentInstantiation comp) {
+		final SoftPkg spd = ScaEcoreUtils.getFeature(comp, LocalApplicationFactory.SPD_PATH);
+		if (spd != null && spd.eResource() != null) {
+			return spd.eResource().getURI();
+		} else {
+			return null;
 		}
-		comp.configure(configuration);
-		comp.fetchProperties(null);
 	}
 
 	public static String toString(DataType t) {
@@ -460,104 +478,5 @@ public class LocalApplicationFactory {
 		} else {
 			return "\t" + t.id + " = " + value;
 		}
-	}
-
-	/** Gets Component's properties, override with values from Waveform (SAD) */
-	private DataType[] getConfiguration(final ScaComponent comp) {
-		final Map<String, DataType> retVal = new HashMap<String, DataType>();
-		comp.fetchProperties(null);
-		for (final ScaAbstractProperty< ? > prop : comp.getProperties()) {
-			if (PropertiesUtil.canConfigure(prop.getDefinition())) {
-				retVal.put(prop.getId(), new DataType(prop.getId(), prop.toAny()));
-			}
-		}
-		final ScaWaveform waveform = comp.getWaveform();
-		final SoftwareAssembly sad = waveform.getProfileObj();
-		SadComponentInstantiation compInst = null;
-
-		for (final SadComponentInstantiation ci : getComponentInstantiations(sad)) {
-			if (ci.getId().equals(comp.getInstantiationIdentifier())) {
-				compInst = ci;
-				break;
-			}
-		}
-
-		if (compInst == null) {
-			throw new IllegalStateException("Unable to find component instantiation");
-		}
-
-		final ComponentProperties sadProps = compInst.getComponentProperties();
-		if (sadProps != null) {
-			// 2. Override default values with values from SAD
-			for (final Entry entry : sadProps.getProperties()) {
-				if (entry.getValue() instanceof AbstractPropertyRef< ? >) {
-					final AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
-					if (retVal.containsKey(ref.getRefID())) {
-						retVal.put(ref.getRefID(), new DataType(ref.getRefID(), ref.toAny()));
-					}
-				}
-
-			}
-		}
-		return retVal.values().toArray(new DataType[retVal.size()]);
-	}
-
-	private List<SadComponentInstantiation> getComponentInstantiations(final SoftwareAssembly sad) {
-		final List<SadComponentInstantiation> retVal = new ArrayList<SadComponentInstantiation>();
-		if (sad.getPartitioning() != null) {
-			for (final SadComponentPlacement cp : sad.getPartitioning().getComponentPlacement()) {
-				retVal.addAll(cp.getComponentInstantiation());
-			}
-			for (final HostCollocation hc : sad.getPartitioning().getHostCollocation()) {
-				for (final SadComponentPlacement cp : hc.getComponentPlacement()) {
-					retVal.addAll(cp.getComponentInstantiation());
-				}
-			}
-		}
-		return retVal;
-	}
-
-	private static final EStructuralFeature[] PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
-
-	@Nullable
-	private URI getSpdURI(@Nullable final SadComponentInstantiation comp) {
-		final SoftPkg spd = ScaEcoreUtils.getFeature(comp, LocalApplicationFactory.PATH);
-		if (spd != null && spd.eResource() != null) {
-			return spd.eResource().getURI();
-		} else {
-			return null;
-		}
-	}
-
-	private DataType[] createExecParam(final SadComponentInstantiation comp) {
-		if (this.assemblyExec != null && isAssemblyController(comp)) {
-			return this.assemblyExec;
-		}
-		final ComponentProperties props = comp.getComponentProperties();
-		final List<DataType> retVal = new ArrayList<DataType>();
-		if (props != null) {
-			for (final Entry entry : props.getProperties()) {
-				if (entry.getValue() instanceof SimpleRef) {
-					final SimpleRef ref = (SimpleRef) entry.getValue();
-					if (ref.getProperty().isKind(PropertyConfigurationType.EXECPARAM)) {
-						retVal.add(new DataType(ref.getRefID(), ref.toAny()));
-					}
-				}
-			}
-		}
-		return retVal.toArray(new DataType[retVal.size()]);
-	}
-
-	private boolean isAssemblyController(final SadComponentInstantiation comp) {
-		if (comp == null) {
-			return false;
-		}
-		final SoftwareAssembly sad = (SoftwareAssembly) EcoreUtil.getRootContainer(comp);
-		if (sad.getAssemblyController() != null) {
-			return sad.getAssemblyController().getComponentInstantiationRef().getInstantiation() == comp;
-		}
-		return false;
 	}
 }

@@ -10,18 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.wizards;
 
-import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
-import gov.redhawk.ide.debug.ui.LaunchUtil;
-import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
-import gov.redhawk.ide.sdr.WaveformsContainer;
-import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
-import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.lang.reflect.InvocationTargetException;
-
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,6 +22,14 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
+import gov.redhawk.ide.debug.ui.LaunchUtil;
+import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
+import gov.redhawk.ide.sdr.WaveformsContainer;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 /**
  * This wizard handles launching a waveform with advanced settings. The user can set property values, auto-start the
@@ -74,6 +73,7 @@ public class LaunchLocalWaveformWizard extends Wizard {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						ILaunchConfigurationWorkingCopy config = LaunchUtil.createLaunchConfiguration(sad);
+						
 						ScaLaunchConfigurationUtil.saveProperties(config, propertiesPage.getPropertyContainer());
 
 						config.setAttribute(ScaLaunchConfigurationConstants.ATT_START, isAutoStart());

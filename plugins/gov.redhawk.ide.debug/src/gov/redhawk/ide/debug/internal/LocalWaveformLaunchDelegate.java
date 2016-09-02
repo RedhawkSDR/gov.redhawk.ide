@@ -10,47 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import gov.redhawk.ide.debug.LocalSca;
-import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.SadLauncherUtil;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.model.sca.ScaAbstractProperty;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaFactory;
-import gov.redhawk.model.sca.ScaPackage;
-import gov.redhawk.model.sca.ScaSimpleProperty;
-import gov.redhawk.model.sca.ScaSimpleSequenceProperty;
-import gov.redhawk.model.sca.ScaStructProperty;
-import gov.redhawk.model.sca.ScaStructSequenceProperty;
-import gov.redhawk.model.sca.impl.ScaFactoryImpl;
-import gov.redhawk.model.sca.util.StartJob;
-import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
-import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
-import gov.redhawk.sca.util.SubMonitor;
-
-import java.beans.XMLDecoder;
-import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.prf.AbstractProperty;
-import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
-import mil.jpeojtrs.sca.prf.Simple;
-import mil.jpeojtrs.sca.prf.SimpleSequence;
-import mil.jpeojtrs.sca.prf.Struct;
-import mil.jpeojtrs.sca.prf.StructSequence;
-import mil.jpeojtrs.sca.sad.ExternalProperty;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadPackage;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -61,14 +26,53 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 
 import CF.DataType;
+import gov.redhawk.ide.debug.LocalSca;
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.SadLauncherUtil;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.model.sca.ScaAbstractProperty;
+import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaFactory;
+import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.model.sca.util.StartJob;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
+import gov.redhawk.sca.util.SubMonitor;
+import mil.jpeojtrs.sca.partitioning.ComponentProperties;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.prf.SimpleRef;
+import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
+import mil.jpeojtrs.sca.sad.ExternalProperty;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
  * An Eclipse launch delegate which handles launching a SoftwareAssembly locally in the Sandbox.
  */
 public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate implements ILaunchConfigurationDelegate2 {
+
+	/**
+	 * Map of components with command-line properties<br/>
+	 * Key --> component instantiation ID<br />
+	 * Value --> DataType property</br>
+	 */
+	private final Map<String, List<DataType>> commandLineProps = new HashMap<String, List<DataType>>();
+
+	/**
+	 * Map of components with either CONFIGURE or PROPERTY kinds<br/>
+	 * Key --> component instantiation ID<br />
+	 * Value --> DataType property</br>
+	 */
+	private final Map<String, List<DataType>> configProps = new HashMap<String, List<DataType>>();
+
+	private static final int WORK_GET_LOCAL_SCA = 1, WORK_FETCH_PROPS = 1, WORK_CREATE_WAVEFORM = 10;
 
 	private static final EStructuralFeature[] SAD_TO_ASSEMBLY_CONTROLLER_SPD = new EStructuralFeature[] {
 		SadPackage.Literals.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER, SadPackage.Literals.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF,
@@ -78,21 +82,11 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 
 	@Override
 	public void launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
-		final int WORK_GET_LOCAL_SCA = 1, WORK_FETCH_PROPS = 1;
-		final int WORK_CREATE_WAVEFORM = 10;
 		SubMonitor progress = SubMonitor.convert(monitor, WORK_GET_LOCAL_SCA + WORK_FETCH_PROPS + WORK_CREATE_WAVEFORM);
 
-		final boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
-
-		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(progress.newChild(WORK_GET_LOCAL_SCA));
 		final Map<String, String> implMap = SadLauncherUtil.getImplementationMap(configuration);
-
-		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		final Resource sadResource = resourceSet.getResource(ScaLaunchConfigurationUtil.getProfileURI(configuration), true);
+		final Resource sadResource = ScaResourceFactoryUtil.createResourceSet().getResource(ScaLaunchConfigurationUtil.getProfileURI(configuration), true);
 		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(sadResource);
-		final String name = sad.getName();
-		final List<DataType> assemblyConfig = new ArrayList<DataType>();
-		final List<DataType> assemblyExec = new ArrayList<DataType>();
 
 		// Validate all XML before doing anything else
 		IStatus status = SadLauncherUtil.validateAllXML(sad);
@@ -100,67 +94,34 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 			throw new CoreException(status);
 		}
 
-		// Find the assembly controller
-		SoftPkg assemblySoftPkg = ScaEcoreUtils.getFeature(sad, LocalWaveformLaunchDelegate.SAD_TO_ASSEMBLY_CONTROLLER_SPD);
-		if (assemblySoftPkg != null) {
-			// Load properties from the launch configuration that belong to the assembly controller
-			final ScaComponent assemblyController = ScaFactory.eINSTANCE.createScaComponent();
-			assemblyController.setProfileObj(assemblySoftPkg);
-			for (final ScaAbstractProperty< ? > prop : assemblyController.fetchProperties(progress.newChild(WORK_FETCH_PROPS))) {
-				prop.setIgnoreRemoteSet(true);
-			}
-			ScaLaunchConfigurationUtil.loadProperties(configuration, assemblyController);
-			for (final ScaAbstractProperty< ? > prop : assemblyController.getProperties()) {
-				if (!prop.isDefaultValue() && prop.getDefinition() != null
-					&& prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY, PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
-					assemblyConfig.add(prop.getProperty());
-				}
-			}
-		}
+		// Clear property maps
+		commandLineProps.clear();
+		configProps.clear();
 
-		// Collect external properties
-		final Map<String, AbstractProperty> extProps = new HashMap<String, AbstractProperty>();
+		// Load waveform properties from the sad.xml
+		final ScaWaveform scaWaveform = ScaFactory.eINSTANCE.createScaWaveform();
+		scaWaveform.setProfileObj(sad);
+		scaWaveform.fetchProperties(progress.newChild(WORK_FETCH_PROPS));
+
+		// Load user override values for the waveform
+		ScaLaunchConfigurationUtil.loadProperties(configuration, scaWaveform);
+
+		updateAssemblyControllerProperties(sad, scaWaveform, progress);
+
 		if (sad.getExternalProperties() != null) {
-			for (ExternalProperty extProp : sad.getExternalProperties().getProperties()) {
-				SadComponentInstantiation inst = sad.getComponentInstantiation(extProp.getCompRefID());
-				if (inst == null) {
-					continue;
-				}
-				AbstractProperty absProp = inst.getPlacement().getComponentFileRef().getFile().getSoftPkg().getPropertyFile().getProperties().getProperty(
-					extProp.getPropID());
-				if (absProp == null) {
-					continue;
-				}
-				extProps.put(extProp.resolveExternalID(), absProp);
-			}
+			updateExternalProperties(sad, scaWaveform);
 		}
 
-		// TODO: This looks messy and duplicates code in ScaLaunchConfigurationUtil.loadProperties()
-		final String properties = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROPERTIES, (String) null);
-		if (properties != null) {
-			final XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(properties.getBytes()));
-			final Map< ? , ? > propMap = (Map< ? , ? >) decoder.readObject();
-			decoder.close();
-			ScaFactory propFactory = ScaFactoryImpl.init();
-			for (Object key : propMap.keySet()) {
-				if (extProps.containsKey(key)) {
-					AbstractProperty prop = (AbstractProperty) extProps.get(key);
-					ScaAbstractProperty< ? > newProp = makeScaProperty(propFactory, prop);
-					final Object value = propMap.get(key);
-					setValue(newProp, value);
-					if (!newProp.isDefaultValue() && newProp.getDefinition() != null
-						&& newProp.getDefinition().isKind(PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
-						newProp.setId((String) key);
-						assemblyConfig.add(newProp.getProperty());
-					}
-				}
-			}
-		}
-		final LocalApplicationFactory factory = new LocalApplicationFactory(implMap, localSca, mode, launch,
-			assemblyExec.toArray(new DataType[assemblyExec.size()]), assemblyConfig.toArray(new DataType[assemblyConfig.size()]));
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("DDD_HHmmssSSS");
+		updateNonExternalCmdLineValues(sad);
+
+		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(progress.newChild(WORK_GET_LOCAL_SCA));
+		final LocalApplicationFactory factory = new LocalApplicationFactory(implMap, localSca, mode, launch, commandLineProps, configProps);
+
 		try {
-			final LocalScaWaveform app = factory.create(sad, name + "_" + dateFormat.format(new Date()), progress.newChild(WORK_CREATE_WAVEFORM));
+			final SimpleDateFormat dateFormat = new SimpleDateFormat("DDD_HHmmssSSS");
+			final LocalScaWaveform app = factory.create(sad, sad.getName() + "_" + dateFormat.format(new Date()), progress.newChild(WORK_CREATE_WAVEFORM));
+
+			boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 			if (start) {
 				final StartJob job = new StartJob(app.getName(), app);
 				job.schedule();
@@ -171,54 +132,130 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		}
 	}
 
-	private ScaAbstractProperty< ? > makeScaProperty(final ScaFactory factory, final AbstractProperty oldProp) {
-		ScaAbstractProperty< ? > newProp = null;
-		if (oldProp instanceof Simple) {
-			newProp = factory.createScaSimpleProperty();
-			((ScaSimpleProperty) newProp).setDefinition((Simple) oldProp);
-		} else if (oldProp instanceof SimpleSequence) {
-			newProp = factory.createScaSimpleSequenceProperty();
-			((ScaSimpleSequenceProperty) newProp).setDefinition((SimpleSequence) oldProp);
-		} else if (oldProp instanceof Struct) {
-			newProp = factory.createScaStructProperty();
-			((ScaStructProperty) newProp).setDefinition((Struct) oldProp);
-		} else if (oldProp instanceof StructSequence) {
-			newProp = factory.createScaStructSequenceProperty();
-			((ScaStructSequenceProperty) newProp).setDefinition((StructSequence) oldProp);
-		} else {
-			return null;
-		}
-		newProp.fromAny(oldProp.toAny());
-		return newProp;
-	}
+	/**
+	 * Update assembly controller properties to reflect <i>"user > sad > prf"</i>, where user provided values take
+	 * precedence over sad.xml values, which take precedence over prf.xml values.
+	 * 
+	 * @param sad
+	 * @param scaWaveform
+	 * @param progress
+	 */
+	private void updateAssemblyControllerProperties(SoftwareAssembly sad, ScaWaveform scaWaveform, SubMonitor progress) {
+		// Find the assembly controller SPD
+		SoftPkg assemblySoftPkg = ScaEcoreUtils.getFeature(sad, LocalWaveformLaunchDelegate.SAD_TO_ASSEMBLY_CONTROLLER_SPD);
 
-	private void setStructValue(ScaStructProperty struct, Map< ? , ? > valMap) {
-		for (ScaAbstractProperty< ? > field : struct.getFields()) {
-			if (valMap.containsKey(field.getId())) {
-				Object value = valMap.get(field.getId());
-				setValue(field, value);
+		// Load assembly controllers properties from the prf.xml
+		final ScaComponent assemblyController = ScaFactory.eINSTANCE.createScaComponent();
+		assemblyController.setProfileObj(assemblySoftPkg);
+		assemblyController.fetchProperties(progress.newChild(WORK_FETCH_PROPS));
+
+		// Update assembly controllers properties
+		List<DataType> acCommandLineProps = new ArrayList<DataType>();
+		List<DataType> acConfigProps = new ArrayList<DataType>();
+		for (ScaAbstractProperty< ? > prop : assemblyController.getProperties()) {
+			DataType property = scaWaveform.getProperty(prop.getId()).getProperty();
+			if (PropertiesUtil.isCommandLine(prop.getDefinition())) {
+				acCommandLineProps.add(property);
+			} else if (PropertiesUtil.canConfigure(prop.getDefinition())) {
+				acConfigProps.add(property);
 			}
 		}
+		String controllerInstId = sad.getAssemblyController().getComponentInstantiationRef().getInstantiation().getId();
+		commandLineProps.put(controllerInstId, acCommandLineProps);
+		configProps.put(controllerInstId, acConfigProps);
 	}
 
-	private void setValue(ScaAbstractProperty< ? > property, Object value) {
-		switch (property.eClass().getClassifierID()) {
-		case ScaPackage.SCA_SIMPLE_PROPERTY:
-			((ScaSimpleProperty) property).setValue(value);
-			break;
-		case ScaPackage.SCA_SIMPLE_SEQUENCE_PROPERTY:
-			((ScaSimpleSequenceProperty) property).setValue((Object[]) value);
-			break;
-		case ScaPackage.SCA_STRUCT_PROPERTY:
-			setStructValue((ScaStructProperty) property, (Map< ? , ? >) value);
-			break;
-		case ScaPackage.SCA_STRUCT_SEQUENCE_PROPERTY:
-			for (Object obj : (List< ? >) value) {
-				setStructValue(((ScaStructSequenceProperty) property).createScaStructProperty(), (Map< ? , ? >) obj);
+	/**
+	 * Update external properties to reflect <i>"user > sad > prf"</i>, where user provided values take
+	 * precedence over sad.xml values, which take precedence over prf.xml values.
+	 * 
+	 * @param sad
+	 * @param scaWaveform
+	 */
+	private void updateExternalProperties(SoftwareAssembly sad, ScaWaveform scaWaveform) {
+		for (ExternalProperty extProp : sad.getExternalProperties().getProperties()) {
+			SadComponentInstantiation inst = sad.getComponentInstantiation(extProp.getCompRefID());
+
+			// We've already added all of the assembly controller's properties, so skip this
+			if (sad.getAssemblyController().getComponentInstantiationRef().getInstantiation() == inst) {
+				continue;
 			}
-			break;
-		default:
-			throw new IllegalArgumentException("Invalid property");
+
+			// Check if we've already recorded a property against this component
+			List<DataType> extCommandLineProps;
+			if (commandLineProps.get(inst.getId()) != null) {
+				extCommandLineProps = commandLineProps.get(inst.getId());
+			} else {
+				extCommandLineProps = new ArrayList<DataType>();
+			}
+
+			List<DataType> extConfigProps;
+			if (configProps.get(inst.getId()) != null) {
+				extConfigProps = configProps.get(inst.getId());
+			} else {
+				extConfigProps = new ArrayList<DataType>();
+			}
+
+			// Update component properties
+			ScaAbstractProperty< ? > abstractProp = scaWaveform.getProperty(extProp.getExternalPropID());
+			DataType dt = scaWaveform.getProperty(extProp.getExternalPropID()).getProperty();
+
+			// We need the DataType ID to be the PRF_ID, not the ExternalPropID. This matters when the
+			// ApplicationFactory is creating the launch config.
+			dt.id = extProp.getPropID();
+			if (PropertiesUtil.isCommandLine(abstractProp.getDefinition())) {
+				extCommandLineProps.add(dt);
+			} else if (PropertiesUtil.canConfigure(abstractProp.getDefinition())) {
+				extConfigProps.add(dt);
+			}
+			commandLineProps.put(inst.getId(), extCommandLineProps);
+			configProps.put(inst.getId(), extConfigProps);
+		}
+	}
+
+	/**
+	 * At this point, we have only updated values for properties that belong to the assembly controller, or that are
+	 * marked explicitly as external. We need to check for property value overrides in the sad.xml for non-external
+	 * properties.
+	 * @param comp
+	 */
+	private void updateNonExternalCmdLineValues(final SoftwareAssembly sad) {
+
+		List<SadComponentInstantiation> instantiations = SadLauncherUtil.getComponentInstantiations(sad);
+		for (SadComponentInstantiation comp : instantiations) {
+
+			// A List of all command-line property overrides associated with the component,
+			// which gets populated in LocalWaveformLaunchDelegate.launch()
+			List<DataType> compCommandLineProps = this.commandLineProps.get(comp.getId());
+			if (compCommandLineProps == null) {
+				compCommandLineProps = new ArrayList<DataType>();
+			}
+
+			// Pulling out all the properties ID's from the previous list for easy comparison below
+			List<String> modifiedProps = new ArrayList<String>();
+			for (DataType prop : compCommandLineProps) {
+				modifiedProps.add(prop.id);
+			}
+
+			final ComponentProperties props = comp.getComponentProperties();
+			if (props == null) {
+				return;
+			}
+
+			for (final Entry entry : props.getProperties()) {
+				// Only simple properties can be command-line properties
+				if (!(entry.getValue() instanceof SimpleRef)) {
+					continue;
+				}
+				final SimpleRef ref = (SimpleRef) entry.getValue();
+
+				// Look for non-external command-line properties and make sure these get added to commandLineProps
+				if (PropertiesUtil.isCommandLine(ref.getProperty()) && !modifiedProps.contains(ref.getRefID())) {
+					compCommandLineProps.add(new DataType(ref.getRefID(), ref.toAny()));
+				}
+			}
+
+			this.commandLineProps.put(comp.getId(), compCommandLineProps);
 		}
 	}
 }

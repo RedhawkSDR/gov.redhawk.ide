@@ -1467,53 +1467,43 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 	@Override
 	public LogEvent[] retrieve_records(IntHolder howMany, int startingRecord) {
-		// TODO Auto-generated method stub
 		return new LogEvent[0];
 	}
 
 	@Override
 	public LogEvent[] retrieve_records_by_date(IntHolder howMany, long toTimeStamp) {
-		// TODO Auto-generated method stub
 		return new LogEvent[0];
 	}
 
 	@Override
 	public LogEvent[] retrieve_records_from_date(IntHolder howMany, long fromTimeStamp) {
-		// TODO Auto-generated method stub
 		return new LogEvent[0];
 	}
 
 	@Override
 	public int log_level() {
-		// TODO Auto-generated method stub
 		return -1;
 	}
 
 	@Override
 	public void log_level(int newLogLevel) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void setLogLevel(String loggerId, int newLevel) throws UnknownIdentifier {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public String getLogConfig() {
-		// TODO Auto-generated method stub
 		return "";
 	}
 
 	@Override
 	public void setLogConfig(String configContents) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void setLogConfigURL(String configUrl) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public boolean isDelegate() {
@@ -1532,5 +1522,4 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			notifyAll();
 		}
 	}
-
 }
