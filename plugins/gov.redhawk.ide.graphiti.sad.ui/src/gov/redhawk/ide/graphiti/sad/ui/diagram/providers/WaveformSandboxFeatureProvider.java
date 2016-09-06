@@ -10,6 +10,7 @@
  */
 package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class WaveformSandboxFeatureProvider extends WaveformExplorerFeatureProvi
 			}
 		}
 
-		List<ICustomFeature> features = Arrays.asList(super.getContextButtonPadFeatures(context));
+		List<ICustomFeature> features = new ArrayList<ICustomFeature>(Arrays.asList(super.getContextButtonPadFeatures(context)));
 		features.add(new ShowConsoleFeature(this));
 		return features.toArray(new ICustomFeature[features.size()]);
 	}
