@@ -10,9 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -25,9 +23,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreValidator;
 
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
-import mil.jpeojtrs.sca.sad.HostCollocation;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -83,24 +78,6 @@ public final class SadLauncherUtil {
 		} else {
 			return Status.OK_STATUS;
 		}
-	}
-
-	/**
-	 * @since 8.3
-	 */
-	public static List<SadComponentInstantiation> getComponentInstantiations(final SoftwareAssembly sad) {
-		final List<SadComponentInstantiation> retVal = new ArrayList<SadComponentInstantiation>();
-		if (sad.getPartitioning() != null) {
-			for (final SadComponentPlacement cp : sad.getPartitioning().getComponentPlacement()) {
-				retVal.addAll(cp.getComponentInstantiation());
-			}
-			for (final HostCollocation hc : sad.getPartitioning().getHostCollocation()) {
-				for (final SadComponentPlacement cp : hc.getComponentPlacement()) {
-					retVal.addAll(cp.getComponentInstantiation());
-				}
-			}
-		}
-		return retVal;
 	}
 
 	private static boolean validateNoXMLErrors(EObject object) {

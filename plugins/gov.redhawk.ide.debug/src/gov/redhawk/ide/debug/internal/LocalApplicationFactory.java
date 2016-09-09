@@ -47,7 +47,6 @@ import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
-import gov.redhawk.ide.debug.SadLauncherUtil;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
@@ -236,7 +235,7 @@ public class LocalApplicationFactory {
 	 * @throws CoreException
 	 */
 	protected void launchComponents(IProgressMonitor monitor, final ApplicationImpl app, final SoftwareAssembly sad) throws CoreException {
-		final List<SadComponentInstantiation> instantiations = SadLauncherUtil.getComponentInstantiations(sad);
+		final List<SadComponentInstantiation> instantiations = sad.getAllComponentInstantiations();
 		final SubMonitor progress = SubMonitor.convert(monitor, instantiations.size());
 
 		app.getStreams().getOutStream().println("Launching components...");
@@ -276,7 +275,7 @@ public class LocalApplicationFactory {
 		for (final ScaComponent comp : app.getLocalWaveform().getComponents()) {
 			try {
 				app.getStreams().getOutStream().println("Configuring component: " + comp.getName());
-				configureComponent(app, comp, sad);
+				configureComponent(app, comp);
 				app.getStreams().getOutStream().println("");
 			} catch (final InvalidConfiguration e) {
 				String msg = CFErrorFormatter.format(e, "component " + comp.getName());
@@ -288,8 +287,7 @@ public class LocalApplicationFactory {
 		}
 	}
 
-	private void configureComponent(ApplicationImpl app, final ScaComponent comp, final SoftwareAssembly sad)
-		throws InvalidConfiguration, PartialConfiguration {
+	private void configureComponent(ApplicationImpl app, final ScaComponent comp) throws InvalidConfiguration, PartialConfiguration {
 		DataType[] configuration = getConfiguration(comp);
 		final ApplicationOutputStream outStream = app.getStreams().getOutStream();
 		if (configuration == null || configuration.length == 0) {
@@ -331,7 +329,7 @@ public class LocalApplicationFactory {
 		final SoftwareAssembly sad = waveform.getProfileObj();
 		SadComponentInstantiation compInst = null;
 
-		for (final SadComponentInstantiation ci : SadLauncherUtil.getComponentInstantiations(sad)) {
+		for (final SadComponentInstantiation ci : sad.getAllComponentInstantiations()) {
 			if (ci.getId().equals(comp.getInstantiationIdentifier())) {
 				compInst = ci;
 				break;

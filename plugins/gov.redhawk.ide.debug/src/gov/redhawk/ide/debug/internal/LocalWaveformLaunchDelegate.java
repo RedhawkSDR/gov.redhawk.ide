@@ -26,7 +26,6 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 
 import CF.DataType;
 import gov.redhawk.ide.debug.LocalSca;
@@ -72,7 +71,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 	 */
 	private final Map<String, List<DataType>> configProps = new HashMap<String, List<DataType>>();
 
-	private static final int WORK_GET_LOCAL_SCA = 1, WORK_FETCH_PROPS = 1, WORK_CREATE_WAVEFORM = 10;
+	private static final int WORK_GET_LOCAL_SCA = 1, WORK_FETCH_PROPS = 1, WORK_CREATE_WAVEFORM = 10, WORK_UPDATE_AC = 1;
 
 	private static final EStructuralFeature[] SAD_TO_ASSEMBLY_CONTROLLER_SPD = new EStructuralFeature[] {
 		SadPackage.Literals.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER, SadPackage.Literals.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF,
@@ -82,7 +81,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 
 	@Override
 	public void launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
-		SubMonitor progress = SubMonitor.convert(monitor, WORK_GET_LOCAL_SCA + WORK_FETCH_PROPS + WORK_CREATE_WAVEFORM);
+		SubMonitor progress = SubMonitor.convert(monitor, WORK_GET_LOCAL_SCA + WORK_FETCH_PROPS + WORK_CREATE_WAVEFORM + WORK_UPDATE_AC);
 
 		final Map<String, String> implMap = SadLauncherUtil.getImplementationMap(configuration);
 		final Resource sadResource = ScaResourceFactoryUtil.createResourceSet().getResource(ScaLaunchConfigurationUtil.getProfileURI(configuration), true);
@@ -106,7 +105,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		// Load user override values for the waveform
 		ScaLaunchConfigurationUtil.loadProperties(configuration, scaWaveform);
 
-		updateAssemblyControllerProperties(sad, scaWaveform, progress);
+		updateAssemblyControllerProperties(sad, scaWaveform, progress.newChild(WORK_UPDATE_AC));
 
 		if (sad.getExternalProperties() != null) {
 			updateExternalProperties(sad, scaWaveform);
@@ -147,7 +146,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		// Load assembly controllers properties from the prf.xml
 		final ScaComponent assemblyController = ScaFactory.eINSTANCE.createScaComponent();
 		assemblyController.setProfileObj(assemblySoftPkg);
-		assemblyController.fetchProperties(progress.newChild(WORK_FETCH_PROPS));
+		assemblyController.fetchProperties(progress);
 
 		// Update assembly controllers properties
 		List<DataType> acCommandLineProps = new ArrayList<DataType>();
@@ -177,7 +176,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 			SadComponentInstantiation inst = sad.getComponentInstantiation(extProp.getCompRefID());
 
 			// We've already added all of the assembly controller's properties, so skip this
-			if (sad.getAssemblyController().getComponentInstantiationRef().getInstantiation() == inst) {
+			if (SoftwareAssembly.Util.isAssemblyController(inst)) {
 				continue;
 			}
 
@@ -221,7 +220,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 	 */
 	private void updateNonExternalCmdLineValues(final SoftwareAssembly sad) {
 
-		List<SadComponentInstantiation> instantiations = SadLauncherUtil.getComponentInstantiations(sad);
+		List<SadComponentInstantiation> instantiations = sad.getAllComponentInstantiations();
 		for (SadComponentInstantiation comp : instantiations) {
 
 			// A List of all command-line property overrides associated with the component,
@@ -242,13 +241,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 				return;
 			}
 
-			for (final Entry entry : props.getProperties()) {
-				// Only simple properties can be command-line properties
-				if (!(entry.getValue() instanceof SimpleRef)) {
-					continue;
-				}
-				final SimpleRef ref = (SimpleRef) entry.getValue();
-
+			for (final SimpleRef ref : props.getSimpleRef()) {
 				// Look for non-external command-line properties and make sure these get added to commandLineProps
 				if (PropertiesUtil.isCommandLine(ref.getProperty()) && !modifiedProps.contains(ref.getRefID())) {
 					compCommandLineProps.add(new DataType(ref.getRefID(), ref.toAny()));
