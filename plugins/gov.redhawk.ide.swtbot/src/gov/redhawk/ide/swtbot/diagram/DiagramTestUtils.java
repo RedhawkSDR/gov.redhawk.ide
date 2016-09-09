@@ -805,7 +805,7 @@ public class DiagramTestUtils {
 	/** Helper method to open Sandbox Device Manager Graphiti Chalkboard Diagram */
 	public static RHBotGefEditor openNodeChalkboardDiagram(SWTWorkbenchBot gefBot) {
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, new String[]{ "Sandbox" }, "Device Manager", DiagramType.GRAPHITI_CHALKBOARD);
-		RHBotGefEditor editor = new RHSWTGefBot().rhGefEditor("Device Manager Chalkboard");
+		RHBotGefEditor editor = new RHSWTGefBot().rhGefEditor("Device Manager");
 		return editor;
 	}
 	
