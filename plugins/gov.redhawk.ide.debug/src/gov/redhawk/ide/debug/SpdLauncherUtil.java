@@ -66,6 +66,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -849,7 +850,7 @@ public final class SpdLauncherUtil {
 		TreeIterator<EObject> allContents = object.eResource().getAllContents();
 		boolean modelIsValid = true;
 		while (allContents.hasNext()) {
-			boolean validatorResult = EcoreValidator.INSTANCE.validate(allContents.next(), null, null);
+			boolean validatorResult = EcoreValidator.INSTANCE.validate(allContents.next(), new BasicDiagnostic(), null);
 			modelIsValid = modelIsValid && validatorResult;
 		}
 		return modelIsValid;
