@@ -410,15 +410,6 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * @deprecated Use {@link #terminate()}
-	 */
-	@Deprecated
-	public static void terminateFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
-		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, node);
-		treeItemEntry.contextMenu("Terminate").click();
-	}
-
-	/**
 	 * Waits for the specified resource to be present and <b>not</b> decorated as started in the explorer view.
 	 * @param bot
 	 * @param nodeParentPath The parent elements in the tree above the node
