@@ -655,12 +655,13 @@ public final class StandardTestActions {
 				@Override
 				public void run() {
 					Shell s = Display.getCurrent().getActiveShell();
-					if (s == PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()) {
+					if (s == null) {
+						dialogsClosed[0] = true;
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setActive();
+					} else if (s == PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()) {
 						dialogsClosed[0] = true;
 					} else {
-						if (s != null) {
-							s.dispose();
-						}
+						s.dispose();
 					}
 				}
 
