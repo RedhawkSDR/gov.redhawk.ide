@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -244,7 +245,11 @@ public class LocalApplicationFactory {
 
 			URI spdUri = getSpdURI(comp);
 			if (spdUri != null) {
-				LocalScaComponent localComp = app.launch(comp.getUsageName(), comp.getId(), this.commandLineProps.get(comp.getId()).toArray(new DataType[0]),
+				List<DataType> propertyList = this.commandLineProps.get(comp.getId());
+				if (propertyList == null) {
+					propertyList = new ArrayList<DataType>();
+				}
+				LocalScaComponent localComp = app.launch(comp.getUsageName(), comp.getId(), propertyList.toArray(new DataType[0]),
 					spdUri, getImplId(comp), this.mode);
 				if (localComp != null) {
 					TransactionalEditingDomain localEditingDomain = TransactionUtil.getEditingDomain(localComp);
