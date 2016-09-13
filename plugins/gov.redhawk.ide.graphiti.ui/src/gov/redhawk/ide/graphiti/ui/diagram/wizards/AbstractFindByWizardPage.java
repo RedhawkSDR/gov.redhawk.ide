@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.wizards;
 
+import java.util.Arrays;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -191,6 +193,11 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 					return;
 				}
 				if (portName != null && !portName.isEmpty() && !("").equals(portName)) {
+					java.util.List<String> portNames = Arrays.asList(portList.getItems());
+					if (portNames.contains(portName)) {
+						return;
+					}
+
 					portList.add(portName);
 					portNameText.setText("");
 					getDbc().updateModels();
@@ -211,9 +218,7 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 					}
 					getDbc().updateModels();
 				}
-				if (portList.getItemCount() <= 0) {
-					deleteBtn.setEnabled(false);
-				}
+				deleteBtn.setEnabled(false);
 			}
 		};
 		return listener;
