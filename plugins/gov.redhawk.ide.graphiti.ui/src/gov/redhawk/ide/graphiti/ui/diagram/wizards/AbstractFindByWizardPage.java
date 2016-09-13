@@ -33,15 +33,14 @@ import gov.redhawk.ide.graphiti.ui.diagram.wizards.FindByCORBANameWizardPage.COR
 
 public abstract class AbstractFindByWizardPage extends WizardPage {
 
-	protected DataBindingContext dbc;
-	protected Button usesPortAddBtn, usesPortDeleteBtn, providesPortAddBtn, providesPortDeleteBtn;
-	protected Text usesPortNameText, providesPortNameText;
-	protected List usesPortList, providesPortList;
-	protected Composite composite;
+	private DataBindingContext dbc;
+	private Button usesPortAddBtn, usesPortDeleteBtn, providesPortAddBtn, providesPortDeleteBtn;
+	private Text usesPortNameText, providesPortNameText;
+	private List usesPortList, providesPortList;
+	private Composite dialogComposite;
 
 	protected AbstractFindByWizardPage(String pageName, String title) {
 		super(pageName, title, null);
-
 		dbc = new DataBindingContext();
 	}
 
@@ -49,26 +48,41 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 
 	protected abstract Object getModel();
 
-	protected abstract String validateAll();
+	protected String validateAll() {
+		String err;
+		if (usesPortNameText != null) {
+			err = validText("Port", usesPortNameText);
+			if (err != null) {
+				return err;
+			}
+		}
+		if (providesPortNameText != null) {
+			err = validText("Port", providesPortNameText);
+			if (err != null) {
+				return err;
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public void createControl(Composite parent) {
 		// Create main page composite
-		WizardPageSupport.create(this, dbc);
-		this.composite = new Composite(parent, SWT.NONE);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		composite.setLayout(new GridLayout(1, false));
+		WizardPageSupport.create(this, getDbc());
+		this.dialogComposite = new Composite(parent, SWT.NONE);
+		dialogComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		dialogComposite.setLayout(new GridLayout(1, false));
 
 		createNameSection();
 		createPortsSection();
 
-		setControl(composite);
-		dbc.updateModels();
+		setControl(dialogComposite);
+		getDbc().updateModels();
 	}
 
 	private void createPortsSection() {
 		// port group
-		final Group portOptions = new Group(composite, SWT.NONE);
+		final Group portOptions = new Group(dialogComposite, SWT.NONE);
 		portOptions.setLayout(new GridLayout(2, true));
 		portOptions.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		portOptions.setText("Port(s) to use for connections");
@@ -136,7 +150,7 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 		portComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return portComposite;
 	}
-	
+
 	private Text addPortNameText(Composite portComposite) {
 		final Text portNameText = new Text(portComposite, SWT.BORDER);
 		GridData layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, true, 1, 1);
@@ -164,7 +178,7 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 		portList.setLayoutData(listLayout);
 
 		Object model = getModel();
-		dbc.bindList(WidgetProperties.items().observe(portList), BeanProperties.list(model.getClass(), propertyName).observe(model));
+		getDbc().bindList(WidgetProperties.items().observe(portList), BeanProperties.list(model.getClass(), propertyName).observe(model));
 		return portList;
 	}
 
@@ -179,7 +193,7 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 				if (portName != null && !portName.isEmpty() && !("").equals(portName)) {
 					portList.add(portName);
 					portNameText.setText("");
-					dbc.updateModels();
+					getDbc().updateModels();
 				}
 			}
 		};
@@ -195,7 +209,7 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 					for (String selection : selections) {
 						portList.remove(selection);
 					}
-					dbc.updateModels();
+					getDbc().updateModels();
 				}
 				if (portList.getItemCount() <= 0) {
 					deleteBtn.setEnabled(false);
@@ -224,4 +238,14 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 		}
 		return null;
 	}
+
+	// Getters
+	public Composite getDialogComposite() {
+		return dialogComposite;
+	}
+
+	public DataBindingContext getDbc() {
+		return dbc;
+	}
+
 }

@@ -107,20 +107,20 @@ public class FindByCORBANameWizardPage extends AbstractFindByWizardPage {
 
 	protected void createNameSection() {
 		// CORBA Name
-		Label corbaNameLabel = new Label(composite, SWT.NONE);
+		Label corbaNameLabel = new Label(getDialogComposite(), SWT.NONE);
 		corbaNameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		corbaNameLabel.setText("Component Name:");
 
-		corbaNameText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
+		corbaNameText = new Text(getDialogComposite(), SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		corbaNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		corbaNameText.setToolTipText("The name of the component as it appears in the naming service");
 		corbaNameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				dbc.updateModels();
+				getDbc().updateModels();
 			}
 		});
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(corbaNameText),
+		getDbc().bindValue(WidgetProperties.text(SWT.Modify).observe(corbaNameText),
 			BeanProperties.value(model.getClass(), CORBANameModel.CORBA_NAME).observe(model), new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
 				@Override
 				public IStatus validate(Object value) {
@@ -143,10 +143,8 @@ public class FindByCORBANameWizardPage extends AbstractFindByWizardPage {
 		String errCORBA = FindByCORBANamePattern.validate("CORBA", corbaNameText.getText());
 		if (errCORBA != null) {
 			return errCORBA;
-		} else if ((usesPortNameText != null && usesPortNameText.getText().contains(" "))
-			|| (providesPortNameText != null && providesPortNameText.getText().contains(" "))) {
-			return "Port name must not include spaces";
 		}
-		return null;
+
+		return super.validateAll();
 	}
 }
