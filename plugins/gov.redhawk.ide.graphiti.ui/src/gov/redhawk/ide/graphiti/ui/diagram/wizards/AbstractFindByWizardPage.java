@@ -137,36 +137,6 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 		return portComposite;
 	}
 	
-	
-	/**
-	 *  enable/disable port fields
-	 */
-	protected void setPortSectionActive(boolean setActive) {
-		if (setActive) {
-			usesPortNameText.setEnabled(true);
-			usesPortAddBtn.setEnabled(true);
-			usesPortList.setEnabled(true);
-			providesPortNameText.setEnabled(true);
-			providesPortAddBtn.setEnabled(true);
-			providesPortList.setEnabled(true);
-		} else {
-			usesPortNameText.setEnabled(false);
-			usesPortAddBtn.setEnabled(false);
-			usesPortList.setEnabled(false);
-			usesPortDeleteBtn.setEnabled(false);
-			providesPortNameText.setEnabled(false);
-			providesPortAddBtn.setEnabled(false);
-			providesPortList.setEnabled(false);
-			providesPortDeleteBtn.setEnabled(false);
-		}
-	}
-	
-	protected void clearPortLists() {
-		usesPortList.removeAll();
-		providesPortList.removeAll();
-		dbc.updateModels();
-	}
-
 	private Text addPortNameText(Composite portComposite) {
 		final Text portNameText = new Text(portComposite, SWT.BORDER);
 		GridData layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, true, 1, 1);

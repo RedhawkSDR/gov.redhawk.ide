@@ -45,7 +45,6 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 
 		public static final String ENABLE_SERVICE_NAME = "enableServiceName";
 		public static final String ENABLE_SERVICE_TYPE = "enableServiceType";
-		public static final String SERVICE_SUPPORTS_PORTS = "serviceTypeSupportsPorts";
 		public static final String SERVICE_NAME = "serviceName";
 		public static final String SERVICE_TYPE = "serviceType";
 		public static final String USES_PORT_NAMES = "usesPortNames";
@@ -55,7 +54,6 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 
 		private boolean enableServiceName = true;
 		private boolean enableServiceType;
-		private boolean serviceTypeSupportsPorts;
 		private String serviceName;
 		private String serviceType;
 		private List<String> usesPortNames = new ArrayList<String>();
@@ -63,16 +61,6 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 
 
 		public ServiceModel() {
-		}
-
-		public boolean getServiceTypeSupportsPorts() {
-			return serviceTypeSupportsPorts;
-		}
-
-		public void setServiceTypeSupportsPorts(boolean serviceTypeSupportsPorts) {
-			final boolean oldValue = this.serviceTypeSupportsPorts;
-			this.serviceTypeSupportsPorts = serviceTypeSupportsPorts;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, ServiceModel.SERVICE_SUPPORTS_PORTS, oldValue, serviceTypeSupportsPorts));
 		}
 
 		public boolean getEnableServiceName() {
@@ -172,7 +160,6 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		updateEnablePortsFields();
 	}
 
 	@Override
@@ -217,9 +204,6 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				serviceNameText.setEnabled(serviceNameBtn.getSelection());
-				if (serviceNameBtn.getSelection()) {
-					updateEnablePortsFields();
-				}
 				dbc.updateModels();
 			}
 		});
@@ -274,14 +258,6 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 				IdlInterfaceDcl result = IdlInterfaceSelectionDialog.open(getShell(), IdlFilter.ALL_WITH_MODULE);
 				if (result != null) {
 					serviceTypeText.setText(result.getRepId());
-					// if the interface selected inherits from PortSupplier than allow user to
-					// specify port information
-					if (extendsPortSupplier(result)) {
-						model.setServiceTypeSupportsPorts(true);
-					} else {
-						model.setServiceTypeSupportsPorts(false);
-					}
-					updateEnablePortsFields();
 				}
 			}
 		});
@@ -291,9 +267,6 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				serviceTypeBrowseBtn.setEnabled(serviceTypeBtn.getSelection());
 				serviceTypeText.setEnabled(serviceTypeBtn.getSelection());
-				if (serviceTypeBtn.getSelection()) {
-					updateEnablePortsFields();
-				}
 				dbc.updateModels();
 			}
 		});
@@ -329,40 +302,6 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 		return null;
 	}
 
-	/*************************************************************
-	 ****** FindBy Wizard Logic Specific to FindBy Service *******
-	 ************************************************************/
-	/**
-	 * Return true if interface extends PortSupplier interface
-	 * @param idlInterfaceDcl
-	 * @return
-	 */
-	public boolean extendsPortSupplier(IdlInterfaceDcl idlInterfaceDcl) {
-		boolean extendsPortSupplier = false;
-		if (idlInterfaceDcl.getInheritedInterfaces() != null) {
-			if (idlInterfaceDcl.getRepId().startsWith("IDL:CF/PortSupplier")) {
-				return true;
-			}
-			for (IdlInterfaceDcl inheritedInterface : idlInterfaceDcl.getInheritedInterfaces()) {
-				extendsPortSupplier = extendsPortSupplier(inheritedInterface);
-				if (extendsPortSupplier) {
-					return true;
-				}
-			}
-		}
-		return extendsPortSupplier;
-	}
-	
-	// enable/disable port fields
-	public void updateEnablePortsFields() {
-		if (model.getEnableServiceName() || model.getEnableServiceType() && model.getServiceTypeSupportsPorts()) {
-			setPortSectionActive(true);
-		} else 	if (validateAll() == null) {
-			clearPortLists();
-			setPortSectionActive(false);
-		}
-	}
-	
 	// Validate service name fields
 	private String validService(String valueType, Text valueText, Button btn) {
 		if (btn != null && btn.getSelection()) {
