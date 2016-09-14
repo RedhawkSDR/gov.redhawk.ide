@@ -10,9 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.core.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
+import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
+import gov.redhawk.core.graphiti.ui.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -304,8 +305,8 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 	public static List<RHContainerShape> getAllFindByShapes(ContainerShape containerShape) {
 		List<RHContainerShape> children = new ArrayList<RHContainerShape>();
 		if (containerShape instanceof RHContainerShape) {
-			Object obj = DUtil.getBusinessObject(containerShape);
-			if (obj != null && obj instanceof FindByStub) {
+			FindByStub findByStub = DUtil.getBusinessObject(containerShape, FindByStub.class);
+			if (findByStub != null) {
 				children.add((RHContainerShape) containerShape);
 			}
 		} else {

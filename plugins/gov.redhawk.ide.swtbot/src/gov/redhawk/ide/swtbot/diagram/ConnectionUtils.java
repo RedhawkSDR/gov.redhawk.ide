@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.junit.Assert;
 
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.core.graphiti.ui.util.StyleUtil;
 
 public class ConnectionUtils {
 

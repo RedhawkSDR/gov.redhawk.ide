@@ -45,23 +45,19 @@ Require-Bundle: gov.redhawk.validation;bundle-version="1.0.0",
  idl.bulkio,
  gov.redhawk.prf.ui,
  gov.redhawk.sca.model,
- mil.jpeojtrs.sca.scd
+ mil.jpeojtrs.sca.scd,
+ gov.redhawk.core.graphiti.ui,
+ gov.redhawk.core.graphiti.sad.ui;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: gov.redhawk.ide.graphiti.sad.debug.internal.ui;x-internal:=true,
- gov.redhawk.ide.graphiti.sad.ext,
- gov.redhawk.ide.graphiti.sad.ext.impl,
- gov.redhawk.ide.graphiti.sad.ext.util,
- gov.redhawk.ide.graphiti.sad.internal.ui.editor,
+Export-Package: gov.redhawk.ide.graphiti.sad.internal.ui.editor,
  gov.redhawk.ide.graphiti.sad.ui,
  gov.redhawk.ide.graphiti.sad.ui.diagram,
- gov.redhawk.ide.graphiti.sad.ui.diagram.features.create,
  gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom,
  gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete,
  gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect,
- gov.redhawk.ide.graphiti.sad.ui.diagram.features.update,
  gov.redhawk.ide.graphiti.sad.ui.diagram.patterns,
  gov.redhawk.ide.graphiti.sad.ui.diagram.providers,
  gov.redhawk.ide.graphiti.sad.ui.properties

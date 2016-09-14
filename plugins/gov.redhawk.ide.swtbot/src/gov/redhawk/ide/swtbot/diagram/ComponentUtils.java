@@ -13,16 +13,14 @@ package gov.redhawk.ide.swtbot.diagram;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
+import gov.redhawk.core.graphiti.ui.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.util.PluginUtil;
-import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
@@ -53,14 +51,11 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 * @return
 	 */
 	public static boolean isAssemblyController(ComponentShape componentShape) {
-		Diagram diagram = DUtil.findDiagram(componentShape);
-		final SoftwareAssembly sad = DUtil.getBusinessObject(diagram, SoftwareAssembly.class);
-		AssemblyController ac = sad.getAssemblyController();
-		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
-		if (ac != null && ac.getComponentInstantiationRef() != null) {
-			return ac.getComponentInstantiationRef().getRefid().equals(ci.getId());
+		SadComponentInstantiation ci = DUtil.getBusinessObject(componentShape, SadComponentInstantiation.class);
+		if (ci == null) {
+			return false;
 		}
-		return false;
+		return SoftwareAssembly.Util.isAssemblyController(ci);
 	}
 
 	public static boolean isAssemblyController(SWTBotGefEditPart gefEditPart) {

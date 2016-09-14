@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.annotation.Nullable;
@@ -104,7 +105,11 @@ public class ScaDebugPlugin extends Plugin {
 	 * @since 6.0
 	 */
 	public LocalSca getLocalSca(IProgressMonitor monitor) throws CoreException {
-		ScaDebugInstance.INSTANCE.init(null);
+		SubMonitor progress = SubMonitor.convert(monitor);
+		if (!ScaDebugInstance.INSTANCE.isInit()) {
+			ScaDebugInstance.INSTANCE.init(progress);
+		}
+		progress.done();
 		return ScaDebugInstance.INSTANCE.getLocalSca();
 	}
 	

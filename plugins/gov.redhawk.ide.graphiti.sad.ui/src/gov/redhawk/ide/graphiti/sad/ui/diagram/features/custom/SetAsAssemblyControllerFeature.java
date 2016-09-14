@@ -22,8 +22,8 @@ import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
+import gov.redhawk.core.graphiti.sad.ui.utils.SADUtils;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -112,7 +112,7 @@ public class SetAsAssemblyControllerFeature extends AbstractComponentInstantiati
 				if (newAssemblyCI.getStartOrder() != null) {
 					newAssemblyCI.setStartOrder(BigInteger.ZERO);
 				}
-				ComponentPattern.organizeStartOrder(sad, getDiagram(), getFeatureProvider());
+				SADUtils.organizeStartOrder(sad, getDiagram(), getFeatureProvider());
 			}
 		});
 

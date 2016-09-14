@@ -57,13 +57,11 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Assert;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultiPageEditor;
+import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
+import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
+import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
+import gov.redhawk.core.graphiti.ui.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
-import gov.redhawk.ide.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 import gov.redhawk.logging.ui.LogLevels;
@@ -202,7 +200,7 @@ public class DiagramTestUtils {
 		// editing will fail to activate.
 		final int gaX = ga.getX() + ga.getWidth() / 2;
 		final int gaY = ga.getY() + ga.getHeight() / 2;
-		GraphitiWaveformMultiPageEditor diagramEditor = (GraphitiWaveformMultiPageEditor) editor.getReference().getEditor(false);
+		AbstractGraphitiMultiPageEditor diagramEditor = (AbstractGraphitiMultiPageEditor) editor.getReference().getEditor(false);
 		final DiagramBehavior diagramBehavior = diagramEditor.getDiagramEditor().getDiagramBehavior();
 		diagramBehavior.getMouseLocation().setLocation(gaX, gaY);
 
@@ -825,8 +823,7 @@ public class DiagramTestUtils {
 	 * @return
 	 */
 	public static String regexStringForComponent(ComponentShape componentShape) {
-		Object bo = DUtil.getBusinessObject(componentShape);
-		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
+		SadComponentInstantiation ci = DUtil.getBusinessObject(componentShape, SadComponentInstantiation.class);
 		String componentinstantiation = "<componentinstantiation id=\"" + ci.getUsageName() + "\""
 			+ ((ci.getStartOrder() != null) ? " startorder=\"" + ci.getStartOrder() + "\">" : ">");
 		String usagename = "<usagename>" + ci.getUsageName() + "</usagename>";
@@ -1103,7 +1100,7 @@ public class DiagramTestUtils {
 
 			@Override
 			public boolean test() throws Exception {
-				RHContainerShapeImpl componentShape = (RHContainerShapeImpl) editor.getEditPart(componentName).part().getModel();
+				RHContainerShape componentShape = (RHContainerShape) editor.getEditPart(componentName).part().getModel();
 				GraphicsAlgorithm ga = componentShape.getInnerContainerShape().getGraphicsAlgorithm();
 				lastStyle = ga.getStyle().getId();
 				return state.getStyleId().equals(lastStyle);

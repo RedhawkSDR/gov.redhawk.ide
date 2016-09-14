@@ -22,8 +22,8 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
+import gov.redhawk.core.graphiti.sad.ui.utils.SADUtils;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -90,7 +90,7 @@ public class MarkExternalPortFeature extends AbstractCustomFeature {
 				// object changes in some way.
 				if (sad.getExternalPorts() == null) {
 					sad.setExternalPorts(SadFactory.eINSTANCE.createExternalPorts());
-					for (ComponentShape cShape : ComponentPattern.getAllComponentShapes(diagram)) {
+					for (ComponentShape cShape : SADUtils.getAllComponentShapes(diagram)) {
 						cShape.getLink().getBusinessObjects().add(sad.getExternalPorts());
 					}
 				}

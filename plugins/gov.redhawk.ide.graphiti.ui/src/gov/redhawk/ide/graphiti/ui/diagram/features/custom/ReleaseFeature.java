@@ -17,7 +17,7 @@ import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
 import CF.LifeCycleOperations;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.model.sca.util.ReleaseJob;
 
 public abstract class ReleaseFeature extends DefaultDeleteFeature {

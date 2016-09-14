@@ -41,29 +41,17 @@ Require-Bundle: org.eclipse.ui,
  gov.redhawk.ide.ui,
  gov.redhawk.ide.sdr,
  gov.redhawk.monitor;bundle-version="1.0.0",
- org.eclipse.jdt.annotation;bundle-version="[1.1.0,2.0.0)"
+ org.eclipse.jdt.annotation;bundle-version="[1.1.0,2.0.0)",
+ gov.redhawk.core.graphiti.ui;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: gov.redhawk.ide.graphiti.ext,
- gov.redhawk.ide.graphiti.ext.impl,
- gov.redhawk.ide.graphiti.ext.util,
- gov.redhawk.ide.graphiti.internal.ui;
-  x-friends:="gov.redhawk.ide.graphiti.sad.ui,
-   gov.redhawk.ide.graphiti.dcd.ui",
- gov.redhawk.ide.graphiti.ui,
- gov.redhawk.ide.graphiti.ui.adapters,
- gov.redhawk.ide.graphiti.ui.diagram,
+Export-Package: gov.redhawk.ide.graphiti.ui,
  gov.redhawk.ide.graphiti.ui.diagram.dialogs,
  gov.redhawk.ide.graphiti.ui.diagram.features.custom,
- gov.redhawk.ide.graphiti.ui.diagram.features.layout,
- gov.redhawk.ide.graphiti.ui.diagram.features.remove,
  gov.redhawk.ide.graphiti.ui.diagram.features.update,
  gov.redhawk.ide.graphiti.ui.diagram.patterns,
- gov.redhawk.ide.graphiti.ui.diagram.preferences,
  gov.redhawk.ide.graphiti.ui.diagram.providers,
  gov.redhawk.ide.graphiti.ui.diagram.util,
- gov.redhawk.ide.graphiti.ui.editor,
- gov.redhawk.ide.graphiti.ui.palette,
- gov.redhawk.ide.graphiti.ui.properties
+ gov.redhawk.ide.graphiti.ui.palette
 Bundle-ActivationPolicy: lazy
 Import-Package: gov.redhawk.model.sca,
  gov.redhawk.model.sca.commands,

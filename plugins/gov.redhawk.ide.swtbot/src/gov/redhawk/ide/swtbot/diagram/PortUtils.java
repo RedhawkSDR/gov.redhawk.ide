@@ -25,8 +25,8 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Assert;
 
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.ProvidesPortPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.UsesPortPattern;
+import gov.redhawk.core.graphiti.ui.diagram.patterns.ProvidesPortPattern;
+import gov.redhawk.core.graphiti.ui.diagram.patterns.UsesPortPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
 @SuppressWarnings("restriction")

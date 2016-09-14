@@ -10,8 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.diagram;
 
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeature;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.gef.EditPartViewer;
@@ -27,6 +25,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
+
+import gov.redhawk.core.graphiti.dcd.ui.diagram.feature.DeviceCreateFeature;
+import gov.redhawk.core.graphiti.dcd.ui.diagram.feature.ServiceCreateFeature;
 
 public class DiagramDropTargetListener extends AbstractTransferDropTargetListener {
 

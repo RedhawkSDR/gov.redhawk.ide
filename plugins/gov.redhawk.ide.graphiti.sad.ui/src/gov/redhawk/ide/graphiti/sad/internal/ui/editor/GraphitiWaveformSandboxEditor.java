@@ -10,65 +10,158 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.internal.ui.editor;
 
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.graphiti.ui.editor.DiagramEditor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.editors.text.TextEditor;
 
+import gov.redhawk.core.graphiti.sad.ui.editor.GraphitiWaveformExplorerEditor;
+import gov.redhawk.core.graphiti.sad.ui.modelmap.GraphitiSADModelMap;
+import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
+import gov.redhawk.ide.debug.LocalSca;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.ScaDebugInstance;
+import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformSandboxDiagramEditor;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformSandboxDiagramTypeProvider;
+import gov.redhawk.ide.graphiti.sad.ui.internal.modelmap.GraphitiSADLocalModelMap;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.ui.SadUiActivator;
+import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import mil.jpeojtrs.sca.sad.SadFactory;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+/**
+ * The multi-page sandbox editor for waveforms ({@link ScaWaveform}). Includes a Graphiti diagram.
+ */
 public class GraphitiWaveformSandboxEditor extends GraphitiWaveformExplorerEditor {
+
 	public static final String EDITOR_ID = "gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca";
 
+	private Resource mainResource;
+	private boolean isSandboxChalkboardWaveform = false;
+	private GraphitiSADModelMap modelMap;
+
 	@Override
-	public String getDiagramContext(Resource sadResource) {
-		return DUtil.DIAGRAM_CONTEXT_LOCAL;
+	protected void setInput(IEditorInput input) {
+		if (input instanceof URIEditorInput) {
+			URIEditorInput uriInput = (URIEditorInput) input;
+			if (!uriInput.getURI().equals(ScaDebugInstance.getLocalSandboxWaveformURI())) {
+				throw new IllegalStateException("Waveform sandbox editor opened with invalid input: " + uriInput.getURI());
+			}
+
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+			try {
+				dialog.run(true, true, new IRunnableWithProgress() {
+
+					@Override
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						monitor.beginTask("Starting Sandbox...", IProgressMonitor.UNKNOWN);
+						try {
+							LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(monitor);
+							setWaveform(localSca.getSandboxWaveform());
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
+						}
+
+					}
+				});
+			} catch (InvocationTargetException e) {
+				throw new IllegalStateException("Failed to setup sandbox", e);
+			} catch (InterruptedException e) {
+				throw new IllegalStateException("Sandbox setup canceled, can not load editor.");
+			}
+
+			if (getWaveform() == null) {
+				throw new IllegalStateException("Failed to setup sandbox, null sandbox chalkboard.");
+			}
+			isSandboxChalkboardWaveform = true;
+		}
+
+		super.setInput(input);
 	}
 
 	@Override
-	protected void addPages() {
-		// Only creates the other pages if there is something that can be edited
-		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
-			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
-			try {
-				final Resource sadResource = getMainResource();
-
-				final DiagramEditor editor = createDiagramEditor();
-				setDiagramEditor(editor);
-
-				initModelMap();
-
-				final IEditorInput input = createDiagramInput(sadResource);
-				int pageIndex = addPage(editor, input);
-				setPageText(pageIndex, "Diagram");
-
-				// set layout for diagram editors
-				DUtil.layout(editor);
-
-				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
-
-				// reflect runtime aspects here
-				this.modelMap.reflectRuntimeStatus();
-
-				// set layout for sandbox editors
-				DUtil.layout(editor);
-			} catch (final PartInitException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-					StatusManager.LOG | StatusManager.SHOW);
-			} catch (final IOException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-					StatusManager.LOG | StatusManager.SHOW);
-			} catch (final CoreException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-					StatusManager.LOG | StatusManager.SHOW);
-			}
+	protected void createModel() {
+		if (isSandboxChalkboardWaveform) {
+			mainResource = getEditingDomain().getResourceSet().createResource(ScaDebugInstance.getLocalSandboxWaveformURI());
+			final SoftwareAssembly sad = SadFactory.eINSTANCE.createSoftwareAssembly();
+			getEditingDomain().getCommandStack().execute(new ScaModelCommand() {
+				@Override
+				public void execute() {
+					mainResource.getContents().add(sad);
+				}
+			});
+		} else {
+			super.createModel();
 		}
+	}
+
+	@Override
+	public Resource getMainResource() {
+		return (isSandboxChalkboardWaveform) ? mainResource : super.getMainResource();
+	}
+
+	////////////////////////////////////////////////////
+	// 1. createDiagramEditor()
+	////////////////////////////////////////////////////
+
+	@Override
+	protected AbstractGraphitiDiagramEditor createDiagramEditor() {
+		return new GraphitiWaveformSandboxDiagramEditor(getEditingDomain());
+	}
+
+	////////////////////////////////////////////////////
+	// 2. initModelMap()
+	////////////////////////////////////////////////////
+
+	@Override
+	protected GraphitiSADModelMap createModelMapInstance() {
+		modelMap = new GraphitiSADLocalModelMap(this, getWaveform());
+		return modelMap;
+	}
+
+	////////////////////////////////////////////////////
+	// 3. createDiagramInput()
+	////////////////////////////////////////////////////
+
+	@Override
+	public String getDiagramTypeProviderID() {
+		return WaveformSandboxDiagramTypeProvider.PROVIDER_ID;
+	}
+
+	@Override
+	public String getDiagramContext() {
+		return DUtil.DIAGRAM_CONTEXT_LOCAL;
+	}
+
+	////////////////////////////////////////////////////
+	// Other
+	////////////////////////////////////////////////////
+
+	@Override
+	public TextEditor createTextEditor(IEditorInput input) {
+		// No text editor for sandbox editors
+		return null;
+	}
+
+	@Override
+	public void doSaveAs() {
+		final NewWaveformFromLocalWizard wizard = new NewWaveformFromLocalWizard(getSoftwareAssembly());
+		final WizardDialog dialog = new WizardDialog(getSite().getShell(), wizard);
+		dialog.open();
+	}
+
+	@Override
+	public boolean isSaveAsAllowed() {
+		return true;
 	}
 }

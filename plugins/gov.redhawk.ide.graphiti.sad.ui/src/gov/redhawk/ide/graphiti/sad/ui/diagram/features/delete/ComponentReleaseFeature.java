@@ -12,8 +12,8 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
+import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ReleaseFeature;
 
 public class ComponentReleaseFeature extends ReleaseFeature {

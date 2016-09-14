@@ -18,50 +18,48 @@
    <extension
          point="org.eclipse.graphiti.ui.diagramTypeProviders">
       <diagramTypeProvider
-            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramTypeProvider"
-            id="gov.redhawk.ide.graphiti.dcd.ui.FactoryProvider"
-            name="FactoryProvider">
+            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDEditorDiagramTypeProvider"
+            id="gov.redhawk.ide.graphiti.dcd.ui.DCDEditorDiagramTypeProvider"
+            name="DCD Editor Diagram Type Provider">
          <diagramType
                id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor">
          </diagramType>
          <imageProvider
-               id="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.deviceImageProvider">
+               id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
          </imageProvider>
+         <imageProvider
+               id="gov.redhawk.core.graphiti.dcd.ui.DeviceManagerImageProvider">
+         </imageProvider>
+         <imageProvider
+               id="gov.redhawk.core.graphiti.ui.ImageProvider">
+         </imageProvider>
+      </diagramTypeProvider>
+      <diagramTypeProvider
+            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DevMgrSandboxDiagramTypeProvider"
+            id="gov.redhawk.ide.graphiti.dcd.ui.DevMgrSandboxDiagramTypeProvider"
+            name="Sandbox Device Manager Diagram Type Provider">
+         <diagramType
+               id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor">
+         </diagramType>
          <imageProvider
                id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
          </imageProvider>
+         <imageProvider
+               id="gov.redhawk.core.graphiti.dcd.ui.DeviceManagerImageProvider">
+         </imageProvider>
+         <imageProvider
+               id="gov.redhawk.core.graphiti.ui.ImageProvider">
+         </imageProvider>
       </diagramTypeProvider>
-   </extension>
-   <extension
-         point="org.eclipse.graphiti.ui.diagramTypes">
-      <diagramType
-            id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor"
-            name="DCD Diagram"
-            type="DCDDiagram">
-      </diagramType>
-   </extension>
-   <extension
-         point="org.eclipse.graphiti.ui.imageProviders">
-      <imageProvider
-            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider"
-            id="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.deviceImageProvider">
-      </imageProvider>
    </extension>
   
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor"
-            contributorClass="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
+            class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDCDEditor"
+            contributorClass="gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
             default="true"
-            icon="icons/full/obj16/ScaDeviceManager.gif"
-            id="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox"
-            name="Chalkboard">
-      </editor>
-      <editor
-            class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditor"
-            contributorClass="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
-            default="true"
+            icon="icons/DCDEditor.gif"
             id="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor"
             name="Node Editor">
          <contentTypeBinding
@@ -69,154 +67,17 @@
          </contentTypeBinding>
       </editor>
       <editor
-            class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdExplorerEditor"
+            class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDeviceManagerSandboxEditor"
+            contributorClass="gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
             default="true"
-            id="gov.redhawk.ide.graphiti.dcd.ui.editor.dcdExplorer"
-            name="Node Explorer">
+            icon="icons/DeviceManagerSandboxEditor.gif"
+            id="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox"
+            name="Chalkboard">
       </editor>
    </extension>
 
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated RHGraphitiDevice -->
-      <package
-            uri="http://www.redhawk.gov/model/rhdevicegext/1.0.0"
-            class="gov.redhawk.ide.graphiti.dcd.ext.RHDeviceGxPackage"
-            genModel="model/RHGraphitiDevice.xcore"/>
-   </extension>
-
-   <extension point="org.eclipse.emf.ecore.content_parser">
-      <!-- @generated RHGraphitiDevice -->
-      <parser
-            contentTypeIdentifier="http://www.redhawk.gov/model/rhdevicegext/1.0.0"
-            class="org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl"/>
-   </extension>
-
-   <extension point="org.eclipse.core.contenttype.contentTypes">
-      <!-- @generated RHGraphitiDevice -->
-      <content-type
-            base-type="org.eclipse.emf.ecore.xmi"
-            file-extensions="rhdevicegx"
-            id="http://www.redhawk.gov/model/rhdevicegext/1.0.0"
-            name="%_UI_RHDeviceGx_content_type"
-            priority="normal">
-         <describer class="org.eclipse.emf.ecore.xmi.impl.RootXMLContentHandlerImpl$Describer">
-            <parameter name="namespace" value="http://www.redhawk.gov/model/rhdevicegext/1.0.0"/>
-            <parameter name="kind" value="xmi"/>
-         </describer>
-      </content-type>
-   </extension>
-   <extension
-         point="org.eclipse.ui.navigator.navigatorContent">
-      <commonFilter
-            activeByDefault="true"
-            description="Filters .dcd_GDiagram resources"
-            id="gov.redhawk.ide.graphiti.dcd.ui.commonFilter.gdiagram"
-            name=".dcd_GDiagram resources">
-         <filterExpression>
-            <and>
-               <adapt
-                     type="org.eclipse.core.resources.IResource">
-                  <test
-                        property="org.eclipse.core.resources.name"
-                        value="*.dcd_GDiagram">
-                  </test>
-               </adapt>
-            </and></filterExpression>
-      </commonFilter>
-   </extension>
-   <extension
-         point="org.eclipse.ui.navigator.viewer">
-      <viewerContentBinding
-            viewerId="org.eclipse.ui.navigator.ProjectExplorer">
-         <includes>
-            <contentExtension
-                  pattern="gov.redhawk.ide.graphiti.dcd.ui.commonFilter.gdiagram">
-            </contentExtension>
-         </includes>
-      </viewerContentBinding>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
-      <propertyContributor
-            contributorId="DCDDiagram.PropertyContributor"
-            labelProvider="gov.redhawk.ide.graphiti.ui.diagram.providers.RHGraphitiDiagramLabelProvider">
-         <propertyCategory
-               category="Graphiti">
-         </propertyCategory>
-         <propertyCategory
-               category="advanced">
-         </propertyCategory>
-      </propertyContributor>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
-      <propertyTabs
-            contributorId="DCDDiagram.PropertyContributor">
-         <propertyTab
-               category="Graphiti"
-               id="property.tab.DeviceProperties"
-               label="Device Properties">
-         </propertyTab>
-         <propertyTab
-               category="Graphiti"
-               id="property.tab.ServiceProperties"
-               label="Service Properties">
-         </propertyTab>
-         <propertyTab
-               category="Graphiti"
-               id="gov.redhawk.ide.graphiti.dcd.ui.propertyTab.portDetails"
-               label="Port Details">
-         </propertyTab>
-         <propertyTab
-               category="advanced"
-               id="property.tab.ScaAdvanced"
-               label="Advanced">
-         </propertyTab>
-      </propertyTabs>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertySections">
-      <propertySections
-            contributorId="DCDDiagram.PropertyContributor">
-         <propertySection
-               class="gov.redhawk.ide.graphiti.ui.properties.ComponentPropertiesSection"
-               filter="gov.redhawk.ide.graphiti.dcd.ui.properties.DeviceFilter"
-               id="property.section.DeviceProperties"
-               tab="property.tab.DeviceProperties">
-         </propertySection>
-         <propertySection
-               class="gov.redhawk.ide.graphiti.ui.properties.ComponentPropertiesSection"
-               filter="gov.redhawk.ide.graphiti.dcd.ui.properties.ServiceFilter"
-               id="property.section.ServiceProperties"
-               tab="property.tab.ServiceProperties">
-         </propertySection>
-         <propertySection
-               class="gov.redhawk.ide.graphiti.dcd.ui.properties.DcdAdvancedEditPartPropertySection"
-               filter="gov.redhawk.ide.graphiti.dcd.ui.properties.DcdAdvancedFilter"
-               id="property.section.ScaAdvanced"
-               tab="property.tab.ScaAdvanced">
-         </propertySection>
-         <propertySection
-               afterSection="001_portDetailsPropertySection"
-               class="gov.redhawk.sca.ui.properties.PortDetailsPropertySection"
-               filter="gov.redhawk.ide.graphiti.ui.properties.PortFilter"
-               id="gov.redhawk.ide.graphiti.dcd.ui.propertySection.PortDetails"
-               tab="gov.redhawk.ide.graphiti.dcd.ui.propertyTab.portDetails">
-         </propertySection>
-      </propertySections>
-   </extension>
    <extension
          point="gov.redhawk.sca.ui.scaContentTypes">
-      <contentTypeBinding
-            contentTypeId="mil.jpeojtrs.sca.dcd.contentType"
-            editorId="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor"
-            priority="HIGHEST">
-      </contentTypeBinding>
-      <contentTypeBinding
-            contentTypeId="gov.redhawk.ui.dcd.contentType"
-            editorId="gov.redhawk.ide.graphiti.dcd.ui.editor.dcdExplorer"
-            priority="HIGHEST">
-      </contentTypeBinding>
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.localDcd"
             editorId="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox"
@@ -226,44 +87,14 @@
    <extension
          point="org.eclipse.ui.contexts">
       <context
-            description="In a REDHAWK Graphiti DCD Diagram editor"
-            id="gov.redhawk.ide.dcd.graphiti.ui.contexts.diagram"
-            name="RH Graphiti DCD Diagram"
-            parentId="org.eclipse.graphiti.ui.diagramEditor">
-      </context>
-      <context
-            description="In the REDHAWK Graphiti DCD Sandbox editor"
-            id="gov.redhawk.ide.dcd.graphiti.ui.contexts.sandbox"
-            name="RH Graphiti DCD Sandbox"
-            parentId="gov.redhawk.ide.dcd.graphiti.ui.contexts.diagram">
+            description="Redhawk device manager sandbox diagram"
+            id="gov.redhawk.ide.graphiti.dcd.ui.contexts.sandbox"
+            name="Redhawk device manager sandbox diagram"
+            parentId="gov.redhawk.core.graphiti.dcd.ui.contexts.explorer">
       </context>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor?after=org.eclipse.gef.group.rest">
-         <command
-               commandId="gov.redhawk.ide.graphiti.ui.showPropertiesView"
-               label="Show Properties"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:gov.redhawk.ide.graphiti.dcd.ui.editor.dcdExplorer?after=org.eclipse.gef.group.rest">
-         <command
-               commandId="gov.redhawk.ide.graphiti.ui.showPropertiesView"
-               label="Show Properties"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-            </visibleWhen>
-         </command>
-      </menuContribution>
       <menuContribution
             allPopups="false"
             locationURI="popup:gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox?after=org.eclipse.gef.group.rest">

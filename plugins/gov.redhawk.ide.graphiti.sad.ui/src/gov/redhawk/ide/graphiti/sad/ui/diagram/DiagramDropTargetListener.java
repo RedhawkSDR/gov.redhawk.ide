@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram;
 
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.gef.EditPartViewer;
@@ -26,6 +25,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
+
+import gov.redhawk.core.graphiti.sad.ui.diagram.feature.ComponentCreateFeature;
 
 public class DiagramDropTargetListener extends AbstractTransferDropTargetListener {
 
