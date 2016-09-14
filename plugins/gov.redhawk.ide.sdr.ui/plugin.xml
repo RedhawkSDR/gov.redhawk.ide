@@ -230,6 +230,9 @@
                     <instanceof
                           value="gov.redhawk.ide.sdr.WaveformsSubContainer">
                     </instanceof>
+                    <instanceof
+                          value="gov.redhawk.ide.sdr.NodesSubContainer">
+                    </instanceof>
                  </or>
               </iterate>
            </visibleWhen>
@@ -403,6 +406,9 @@
                  </instanceof>
                  <instanceof
                        value="gov.redhawk.ide.sdr.WaveformsSubContainer">
+                 </instanceof>
+                 <instanceof
+                       value="gov.redhawk.ide.sdr.NodesSubContainer">
                  </instanceof>
               </or>
            </iterate>

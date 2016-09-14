@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
+import gov.redhawk.ide.sdr.NodesSubContainer;
 import gov.redhawk.ide.sdr.WaveformsSubContainer;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -63,6 +64,8 @@ public class DeleteHandler extends AbstractHandler {
 					recursiveAddToDeleteMap((ComponentsSubContainer) obj, deleteMap);
 				} else if (obj instanceof WaveformsSubContainer) {
 					recursiveAddToDeleteMap((WaveformsSubContainer) obj, deleteMap);
+				} else if (obj instanceof NodesSubContainer) {
+					recursiveAddToDeleteMap((NodesSubContainer) obj, deleteMap);
 				}
 			}
 			Job deleteJob = createDeleteJob(deleteMap, event);
@@ -91,6 +94,15 @@ public class DeleteHandler extends AbstractHandler {
 		}
 	}
 
+	private void recursiveAddToDeleteMap(NodesSubContainer container, Map<String, URI> deleteMap) {
+		for (NodesSubContainer subContainer : container.getSubContainers()) {
+			recursiveAddToDeleteMap(subContainer, deleteMap);
+		}
+		for (DeviceConfiguration dcd : container.getNodes()) {
+			deleteMap.put(dcd.getName(), dcd.eResource().getURI());
+		}
+	}
+
 	private Job createDeleteJob(Map<String, URI> deleteMap, ExecutionEvent event) {
 		String objectNames = "";
 		final List<URI> objectURIs = new ArrayList<URI>();
@@ -106,7 +118,8 @@ public class DeleteHandler extends AbstractHandler {
 		}
 		final String deleteMessageString = objectNames.trim();
 
-		if (!MessageDialog.openQuestion(HandlerUtil.getActiveShell(event), "Delete", "Are you sure you want to delete the following:\n" + deleteMessageString)) {
+		if (!MessageDialog.openQuestion(HandlerUtil.getActiveShell(event), "Delete",
+			"Are you sure you want to delete the following:\n" + deleteMessageString)) {
 			return null;
 		}
 
