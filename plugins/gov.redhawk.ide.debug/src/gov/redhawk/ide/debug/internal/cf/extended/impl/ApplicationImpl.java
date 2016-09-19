@@ -363,7 +363,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			for (ScaComponent component : sortedSet) {
 				// With the exception of the assembly controller, don't start things that have a component
 				// instantiation but don't have a start order (i.e. they're defined in a SAD without a start order)
-				if (component != assemblyController && component.getComponentInstantiation() != null && component.getComponentInstantiation().getStartOrder() == null) {
+				if (component != assemblyController && component.getComponentInstantiation() != null
+					&& component.getComponentInstantiation().getStartOrder() == null) {
 					continue;
 				}
 				this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
@@ -1391,7 +1392,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			config.setAttribute(LaunchVariables.COMPONENT_IDENTIFIER, compId);
 		}
 
-		// Initial properties
+		// Property overrides
 		if (initConfiguration != null) {
 			final ScaComponent propHolder = ScaFactory.eINSTANCE.createScaComponent();
 			propHolder.setProfileURI(spdURI);
@@ -1461,7 +1462,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	@Override
-	public <T> T getAdapter(Class<T> adapter) {
+	public < T > T getAdapter(Class<T> adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 

@@ -26,6 +26,7 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 
 import CF.DataType;
 import gov.redhawk.ide.debug.LocalSca;
@@ -42,8 +43,7 @@ import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 import gov.redhawk.sca.util.SubMonitor;
 import mil.jpeojtrs.sca.partitioning.ComponentProperties;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.prf.SimpleRef;
-import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
+import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadPackage;
@@ -58,18 +58,11 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate implements ILaunchConfigurationDelegate2 {
 
 	/**
-	 * Map of components with command-line properties<br/>
+	 * Map of component's properties<br/>
 	 * Key --> component instantiation ID<br />
 	 * Value --> DataType property</br>
 	 */
-	private final Map<String, List<DataType>> commandLineProps = new HashMap<String, List<DataType>>();
-
-	/**
-	 * Map of components with either CONFIGURE or PROPERTY kinds<br/>
-	 * Key --> component instantiation ID<br />
-	 * Value --> DataType property</br>
-	 */
-	private final Map<String, List<DataType>> configProps = new HashMap<String, List<DataType>>();
+	private final Map<String, List<DataType>> componentPropertyMap = new HashMap<String, List<DataType>>();
 
 	private static final int WORK_GET_LOCAL_SCA = 1, WORK_FETCH_PROPS = 1, WORK_CREATE_WAVEFORM = 10, WORK_UPDATE_AC = 1;
 
@@ -93,9 +86,8 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 			throw new CoreException(status);
 		}
 
-		// Clear property maps
-		commandLineProps.clear();
-		configProps.clear();
+		// Clear property map
+		componentPropertyMap.clear();
 
 		// Load waveform properties from the sad.xml
 		final ScaWaveform scaWaveform = ScaFactory.eINSTANCE.createScaWaveform();
@@ -111,10 +103,10 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 			updateExternalProperties(sad, scaWaveform);
 		}
 
-		updateNonExternalCmdLineValues(sad);
+		updateNonExternalProperties(sad);
 
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(progress.newChild(WORK_GET_LOCAL_SCA));
-		final LocalApplicationFactory factory = new LocalApplicationFactory(implMap, localSca, mode, launch, commandLineProps, configProps);
+		final LocalApplicationFactory factory = new LocalApplicationFactory(implMap, localSca, mode, launch, componentPropertyMap);
 
 		try {
 			final SimpleDateFormat dateFormat = new SimpleDateFormat("DDD_HHmmssSSS");
@@ -149,19 +141,13 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		assemblyController.fetchProperties(progress);
 
 		// Update assembly controllers properties
-		List<DataType> acCommandLineProps = new ArrayList<DataType>();
-		List<DataType> acConfigProps = new ArrayList<DataType>();
+		List<DataType> acProps = new ArrayList<DataType>();
 		for (ScaAbstractProperty< ? > prop : assemblyController.getProperties()) {
 			DataType property = scaWaveform.getProperty(prop.getId()).getProperty();
-			if (PropertiesUtil.isCommandLine(prop.getDefinition())) {
-				acCommandLineProps.add(property);
-			} else if (PropertiesUtil.canConfigure(prop.getDefinition())) {
-				acConfigProps.add(property);
-			}
+			acProps.add(property);
 		}
 		String controllerInstId = sad.getAssemblyController().getComponentInstantiationRef().getInstantiation().getId();
-		commandLineProps.put(controllerInstId, acCommandLineProps);
-		configProps.put(controllerInstId, acConfigProps);
+		componentPropertyMap.put(controllerInstId, acProps);
 	}
 
 	/**
@@ -180,35 +166,23 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 				continue;
 			}
 
-			// Check if we've already recorded a property against this component
-			List<DataType> extCommandLineProps;
-			if (commandLineProps.get(inst.getId()) != null) {
-				extCommandLineProps = commandLineProps.get(inst.getId());
+			// Check if we've previously recorded properties against this component
+			List<DataType> externalProps;
+			if (componentPropertyMap.get(inst.getId()) != null) {
+				externalProps = componentPropertyMap.get(inst.getId());
 			} else {
-				extCommandLineProps = new ArrayList<DataType>();
+				externalProps = new ArrayList<DataType>();
 			}
 
-			List<DataType> extConfigProps;
-			if (configProps.get(inst.getId()) != null) {
-				extConfigProps = configProps.get(inst.getId());
-			} else {
-				extConfigProps = new ArrayList<DataType>();
-			}
-
-			// Update component properties
-			ScaAbstractProperty< ? > abstractProp = scaWaveform.getProperty(extProp.getExternalPropID());
+			// Get the updated component property
 			DataType dt = scaWaveform.getProperty(extProp.getExternalPropID()).getProperty();
 
-			// We need the DataType ID to be the PRF_ID, not the ExternalPropID. This matters when the
-			// ApplicationFactory is creating the launch config.
+			// We need the DataType ID to be the PRF_ID, not the ExternalPropID.
+			// This matters when the ApplicationFactory is creating the launch configuration.
 			dt.id = extProp.getPropID();
-			if (PropertiesUtil.isCommandLine(abstractProp.getDefinition())) {
-				extCommandLineProps.add(dt);
-			} else if (PropertiesUtil.canConfigure(abstractProp.getDefinition())) {
-				extConfigProps.add(dt);
-			}
-			commandLineProps.put(inst.getId(), extCommandLineProps);
-			configProps.put(inst.getId(), extConfigProps);
+
+			externalProps.add(dt);
+			componentPropertyMap.put(inst.getId(), externalProps);
 		}
 	}
 
@@ -218,37 +192,42 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 	 * properties.
 	 * @param comp
 	 */
-	private void updateNonExternalCmdLineValues(final SoftwareAssembly sad) {
+	private void updateNonExternalProperties(final SoftwareAssembly sad) {
 
 		List<SadComponentInstantiation> instantiations = sad.getAllComponentInstantiations();
 		for (SadComponentInstantiation comp : instantiations) {
 
-			// A List of all command-line property overrides associated with the component,
-			// which gets populated in LocalWaveformLaunchDelegate.launch()
-			List<DataType> compCommandLineProps = this.commandLineProps.get(comp.getId());
-			if (compCommandLineProps == null) {
-				compCommandLineProps = new ArrayList<DataType>();
+			// Check what properties we've previously recorded against this component
+			List<DataType> props = this.componentPropertyMap.get(comp.getId());
+			if (props == null) {
+				props = new ArrayList<DataType>();
 			}
 
 			// Pulling out all the properties ID's from the previous list for easy comparison below
 			List<String> modifiedProps = new ArrayList<String>();
-			for (DataType prop : compCommandLineProps) {
+			for (DataType prop : props) {
 				modifiedProps.add(prop.id);
 			}
 
-			final ComponentProperties props = comp.getComponentProperties();
-			if (props == null) {
-				return;
+			// If this is null, then that means there is no sad.xml override
+			final ComponentProperties instProps = comp.getComponentProperties();
+			if (instProps == null) {
+				continue;
 			}
 
-			for (final SimpleRef ref : props.getSimpleRef()) {
-				// Look for non-external command-line properties and make sure these get added to commandLineProps
-				if (PropertiesUtil.isCommandLine(ref.getProperty()) && !modifiedProps.contains(ref.getRefID())) {
-					compCommandLineProps.add(new DataType(ref.getRefID(), ref.toAny()));
+			// Look for non-external properties and make sure these get added to the componentPropertyMap
+			for (final Entry entry : instProps.getProperties()) {
+				if (!(entry.getValue() instanceof AbstractPropertyRef< ? >)) {
+					continue;
+				}
+
+				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
+				if (!modifiedProps.contains(ref.getRefID()) && ref.getProperty() != null) {
+					props.add(new DataType(ref.getRefID(), ref.toAny()));
 				}
 			}
 
-			this.commandLineProps.put(comp.getId(), compCommandLineProps);
+			this.componentPropertyMap.put(comp.getId(), props);
 		}
 	}
 }

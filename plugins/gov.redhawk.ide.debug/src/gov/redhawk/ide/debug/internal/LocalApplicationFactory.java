@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
@@ -42,8 +41,6 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 import CF.DataType;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
-import CF.PropertySetPackage.InvalidConfiguration;
-import CF.PropertySetPackage.PartialConfiguration;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
@@ -52,7 +49,6 @@ import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
 import gov.redhawk.model.sca.RefreshDepth;
-import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaPort;
@@ -60,11 +56,7 @@ import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.SubMonitor;
-import mil.jpeojtrs.sca.partitioning.ComponentProperties;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
-import mil.jpeojtrs.sca.prf.Simple;
-import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -82,8 +74,7 @@ public class LocalApplicationFactory {
 	private final LocalSca localSca;
 	private final String mode;
 	private final ILaunch launch;
-	private final Map<String, List<DataType>> commandLineProps;
-	private final Map<String, List<DataType>> configProps;
+	private final Map<String, List<DataType>> componentPropertyMap;
 	private final NotifyingNamingContext namingContext;
 
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
@@ -91,14 +82,13 @@ public class LocalApplicationFactory {
 		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 
 	public LocalApplicationFactory(final Map<String, String> implMap, final LocalSca localSca, final String mode, final ILaunch launch,
-		final Map<String, List<DataType>> commandLineProps, final Map<String, List<DataType>> configProps) {
+		final Map<String, List<DataType>> componentPropertyMap) {
 		this.implMap = implMap;
 		this.localSca = localSca;
 		this.mode = mode;
 		this.launch = launch;
 		this.namingContext = this.localSca.getRootContext();
-		this.commandLineProps = commandLineProps;
-		this.configProps = configProps;
+		this.componentPropertyMap = componentPropertyMap;
 	}
 
 	public static NotifyingNamingContext createWaveformContext(NotifyingNamingContext parent, String name) throws CoreException {
@@ -195,10 +185,6 @@ public class LocalApplicationFactory {
 			progress.subTask("Launch components");
 			launchComponents(progress.newChild(90), app, sad);
 
-			progress.subTask("Configure components");
-			configureComponents(app, sad);
-			progress.worked(4);
-
 			progress.subTask("Create connections");
 			createConnections(app, sad);
 			progress.worked(3);
@@ -245,12 +231,12 @@ public class LocalApplicationFactory {
 
 			URI spdUri = getSpdURI(comp);
 			if (spdUri != null) {
-				List<DataType> propertyList = this.commandLineProps.get(comp.getId());
-				if (propertyList == null) {
-					propertyList = new ArrayList<DataType>();
+				List<DataType> componentProps = this.componentPropertyMap.get(comp.getId());
+				if (componentProps == null) {
+					componentProps = new ArrayList<DataType>();
 				}
-				LocalScaComponent localComp = app.launch(comp.getUsageName(), comp.getId(), propertyList.toArray(new DataType[0]),
-					spdUri, getImplId(comp), this.mode);
+				LocalScaComponent localComp = app.launch(comp.getUsageName(), comp.getId(), componentProps.toArray(new DataType[0]), spdUri, getImplId(comp),
+					this.mode);
 				if (localComp != null) {
 					TransactionalEditingDomain localEditingDomain = TransactionUtil.getEditingDomain(localComp);
 					if (localEditingDomain != null) {
@@ -265,100 +251,6 @@ public class LocalApplicationFactory {
 			app.getStreams().getOutStream().println("\n");
 			progress.worked(1);
 		}
-	}
-
-	/**
-	 * Performs the initial configure call on each component in the waveform
-	 *
-	 * @param app
-	 * @param sad
-	 * @param assemblyConfig
-	 * @throws CoreException
-	 */
-	protected void configureComponents(final ApplicationImpl app, final SoftwareAssembly sad) {
-		app.getStreams().getOutStream().println("Configuring Components...");
-		for (final ScaComponent comp : app.getLocalWaveform().getComponents()) {
-			try {
-				app.getStreams().getOutStream().println("Configuring component: " + comp.getName());
-				configureComponent(app, comp);
-				app.getStreams().getOutStream().println("");
-			} catch (final InvalidConfiguration e) {
-				String msg = CFErrorFormatter.format(e, "component " + comp.getName());
-				app.getStreams().getErrStream().println(msg);
-			} catch (final PartialConfiguration e) {
-				String msg = CFErrorFormatter.format(e, "component " + comp.getName());
-				app.getStreams().getErrStream().println(msg);
-			}
-		}
-	}
-
-	private void configureComponent(ApplicationImpl app, final ScaComponent comp) throws InvalidConfiguration, PartialConfiguration {
-		DataType[] configuration = getConfiguration(comp);
-		final ApplicationOutputStream outStream = app.getStreams().getOutStream();
-		if (configuration == null || configuration.length == 0) {
-			outStream.println("\tNo configuration.");
-			return;
-		}
-
-		if (this.configProps.get(comp.getIdentifier()) != null) {
-			List<DataType> compOverrideList = this.configProps.get(comp.getIdentifier());
-			for (DataType overrideProperty : compOverrideList) {
-				for (DataType compSadProperty : configuration) {
-					if (overrideProperty.id.equals(compSadProperty.id)) {
-						compSadProperty.value = overrideProperty.value;
-						outStream.println(LocalApplicationFactory.toString(overrideProperty));
-						break;
-					}
-				}
-			}
-		}
-
-		comp.configure(configuration);
-		comp.fetchProperties(null);
-	}
-
-	/** Gets Component's properties, override with values from Waveform (SAD) */
-	private DataType[] getConfiguration(final ScaComponent comp) {
-		final Map<String, DataType> retVal = new HashMap<String, DataType>();
-		comp.fetchProperties(null);
-		for (final ScaAbstractProperty< ? > prop : comp.getProperties()) {
-			if (prop.getDefinition() instanceof Simple && ((Simple) prop.getDefinition()).isCommandLine()) {
-				continue;
-			}
-
-			if (PropertiesUtil.canConfigure(prop.getDefinition())) {
-				retVal.put(prop.getId(), new DataType(prop.getId(), prop.toAny()));
-			}
-		}
-		final ScaWaveform waveform = comp.getWaveform();
-		final SoftwareAssembly sad = waveform.getProfileObj();
-		SadComponentInstantiation compInst = null;
-
-		for (final SadComponentInstantiation ci : sad.getAllComponentInstantiations()) {
-			if (ci.getId().equals(comp.getInstantiationIdentifier())) {
-				compInst = ci;
-				break;
-			}
-		}
-
-		if (compInst == null) {
-			throw new IllegalStateException("Unable to find component instantiation");
-		}
-
-		final ComponentProperties sadProps = compInst.getComponentProperties();
-		if (sadProps != null) {
-			// Override default values with values from SAD
-			for (final Entry entry : sadProps.getProperties()) {
-				if (entry.getValue() instanceof AbstractPropertyRef< ? >) {
-					final AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
-					if (retVal.containsKey(ref.getRefID())) {
-						retVal.put(ref.getRefID(), new DataType(ref.getRefID(), ref.toAny()));
-					}
-				}
-
-			}
-		}
-		return retVal.values().toArray(new DataType[retVal.size()]);
 	}
 
 	private void createConnections(final ApplicationImpl app, final SoftwareAssembly sad) throws CoreException {
