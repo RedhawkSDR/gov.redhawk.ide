@@ -485,9 +485,9 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until Component displays in REDHAWK Explorer
-	 * @param componentName
+	 * @deprecated Use {@link #waitUntilNodeAppearsInScaExplorer(SWTWorkbenchBot, String[], String)}
 	 */
+	@Deprecated
 	public static void waitUntilComponentDisplaysInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, final String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
