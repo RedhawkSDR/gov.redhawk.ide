@@ -13,6 +13,7 @@ package gov.redhawk.ide.codegen.jet;
 
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.ide.codegen.util.ProjectCreator;
 import java.util.List;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
@@ -54,10 +55,11 @@ public class TopLevelSadRpmSpecTemplate
   protected final String TEXT_11 = "\"" + NL + "%__install -m 644 ";
   protected final String TEXT_12 = " $RPM_BUILD_ROOT%{_prefix}";
   protected final String TEXT_13 = "/";
-  protected final String TEXT_14 = NL + NL + "%files" + NL + "%defattr(-,redhawk,redhawk)" + NL + "%dir %{_prefix}";
-  protected final String TEXT_15 = NL + "%{_prefix}";
-  protected final String TEXT_16 = "/";
-  protected final String TEXT_17 = NL;
+  protected final String TEXT_14 = NL + NL + "%files" + NL + "%defattr(-,redhawk,redhawk)";
+  protected final String TEXT_15 = NL;
+  protected final String TEXT_16 = NL + "%{_prefix}";
+  protected final String TEXT_17 = "/";
+  protected final String TEXT_18 = NL;
 
   public String generate(Object argument) throws CoreException
   {
@@ -87,6 +89,7 @@ public class TopLevelSadRpmSpecTemplate
     
     final List<ComponentFile> componentFiles = sad.getComponentFiles().getComponentFile();
     final String waveformSubDir = "/dom/waveforms/" + sad.getName().replace('.', '/');
+    final String directoryBlock = ProjectCreator.createDirectoryBlock("%dir %{_prefix}/dom/waveforms/" + sad.getName().replace('.', '/'));
 
     stringBuffer.append(TEXT_1);
     stringBuffer.append(sad.getName());
@@ -128,12 +131,13 @@ public class TopLevelSadRpmSpecTemplate
     stringBuffer.append(TEXT_13);
     stringBuffer.append(ModelUtil.getResource(sad).getName());
     stringBuffer.append(TEXT_14);
-    stringBuffer.append(waveformSubDir);
     stringBuffer.append(TEXT_15);
-    stringBuffer.append(waveformSubDir);
+    stringBuffer.append(directoryBlock);
     stringBuffer.append(TEXT_16);
-    stringBuffer.append(ModelUtil.getResource(sad).getName());
+    stringBuffer.append(waveformSubDir);
     stringBuffer.append(TEXT_17);
+    stringBuffer.append(ModelUtil.getResource(sad).getName());
+    stringBuffer.append(TEXT_18);
     return stringBuffer.toString();
   }
 }

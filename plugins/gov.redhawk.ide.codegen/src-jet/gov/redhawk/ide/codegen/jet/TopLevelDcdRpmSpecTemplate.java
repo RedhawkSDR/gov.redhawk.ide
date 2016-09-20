@@ -12,6 +12,7 @@
 package gov.redhawk.ide.codegen.jet;
 
 import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.ide.codegen.util.ProjectCreator;
 import java.util.Collections;
 import java.util.List;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -47,10 +48,11 @@ public class TopLevelDcdRpmSpecTemplate
   protected final String TEXT_10 = "\"" + NL + "%__install -m 644 ";
   protected final String TEXT_11 = " $RPM_BUILD_ROOT%{_prefix}";
   protected final String TEXT_12 = "/";
-  protected final String TEXT_13 = NL + NL + "%files" + NL + "%defattr(-,redhawk,redhawk)" + NL + "%dir %{_prefix}";
-  protected final String TEXT_14 = NL + "%{_prefix}";
-  protected final String TEXT_15 = "/";
-  protected final String TEXT_16 = NL;
+  protected final String TEXT_13 = NL + NL + "%files" + NL + "%defattr(-,redhawk,redhawk)";
+  protected final String TEXT_14 = NL;
+  protected final String TEXT_15 = NL + "%{_prefix}";
+  protected final String TEXT_16 = "/";
+  protected final String TEXT_17 = NL;
 
   public String generate(Object argument) throws CoreException
   {
@@ -69,6 +71,7 @@ public class TopLevelDcdRpmSpecTemplate
     	componentFiles = devCfg.getComponentFiles().getComponentFile();
     }
     final String nodeSubDir = "/dev/nodes/" + devCfg.getName().replace('.', '/');
+    final String directoryBlock = ProjectCreator.createDirectoryBlock("%dir %{_prefix}/dom/nodes/" + devCfg.getName().replace('.', '/'));
 
     stringBuffer.append(TEXT_1);
     stringBuffer.append(devCfg.getName());
@@ -106,12 +109,13 @@ public class TopLevelDcdRpmSpecTemplate
     stringBuffer.append(TEXT_12);
     stringBuffer.append(ModelUtil.getResource(devCfg).getName());
     stringBuffer.append(TEXT_13);
-    stringBuffer.append(nodeSubDir);
     stringBuffer.append(TEXT_14);
-    stringBuffer.append(nodeSubDir);
+    stringBuffer.append(directoryBlock);
     stringBuffer.append(TEXT_15);
-    stringBuffer.append(ModelUtil.getResource(devCfg).getName());
+    stringBuffer.append(nodeSubDir);
     stringBuffer.append(TEXT_16);
+    stringBuffer.append(ModelUtil.getResource(devCfg).getName());
+    stringBuffer.append(TEXT_17);
     return stringBuffer.toString();
   }
 }

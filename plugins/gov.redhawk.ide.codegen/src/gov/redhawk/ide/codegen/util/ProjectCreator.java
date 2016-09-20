@@ -598,4 +598,39 @@ public abstract class ProjectCreator {
 		}
 	}
 
+	/**
+	 * @since 11.0
+	 */
+	public static String createDirectoryBlock(String subDirectory) {
+		final String WAVEFORMS = "waveforms", NODES = "nodes";
+		StringBuilder builder = new StringBuilder();
+
+		// Preserve the existing prefix, as this is specific to the project type
+		String pathPrefix;
+		if (subDirectory.contains(WAVEFORMS)) {
+			pathPrefix = subDirectory.substring(0, subDirectory.indexOf(WAVEFORMS) + WAVEFORMS.length());
+		} else if (subDirectory.contains(NODES)) {
+			pathPrefix = subDirectory.substring(0, subDirectory.indexOf(NODES) + NODES.length());
+		} else {
+			return subDirectory;
+		}
+
+		// Making the assumption that the prefix includes the first three elements of the array
+		String[] textArray = subDirectory.split("/");
+		textArray = Arrays.copyOfRange(textArray, 3, textArray.length);
+
+		// Add lines to the directory block for each folder in the path
+		String pathSuffix = "";
+		for (int i = 0; i < textArray.length; i++) {
+			pathSuffix = pathSuffix + "/" + textArray[i];
+			if (i == textArray.length - 1) {
+				builder.append(pathPrefix + pathSuffix);
+			} else {
+				builder.append(pathPrefix + pathSuffix + "\n");
+			}
+		}
+
+		// Return the formated block
+		return builder.toString();
+	}
 }
