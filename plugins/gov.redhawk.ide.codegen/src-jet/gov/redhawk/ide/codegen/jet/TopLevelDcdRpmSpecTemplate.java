@@ -71,7 +71,7 @@ public class TopLevelDcdRpmSpecTemplate
     	componentFiles = devCfg.getComponentFiles().getComponentFile();
     }
     final String nodeSubDir = "/dev/nodes/" + devCfg.getName().replace('.', '/');
-    final String directoryBlock = ProjectCreator.createDirectoryBlock("%dir %{_prefix}/dom/nodes/" + devCfg.getName().replace('.', '/'));
+    final String directoryBlock = ProjectCreator.createDirectoryBlock("%dir %{_prefix}/dev/nodes/" + devCfg.getName().replace('.', '/'));
 
     stringBuffer.append(TEXT_1);
     stringBuffer.append(devCfg.getName());

@@ -599,7 +599,11 @@ public abstract class ProjectCreator {
 	}
 
 	/**
-	 * @since 11.0
+	 * Used to build out the .spec file directory block for namespaced resources. For example:<br/>
+	 * %dir %{_prefix}/dom/waveforms/this<br/>
+	 * %dir %{_prefix}/dom/waveforms/this/is<br/>
+	 * %dir %{_prefix}/dom/waveforms/this/is/namespaced<br/>
+	 * @since 11.1
 	 */
 	public static String createDirectoryBlock(String subDirectory) {
 		final String WAVEFORMS = "waveforms", NODES = "nodes";
