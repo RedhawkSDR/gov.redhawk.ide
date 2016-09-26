@@ -270,7 +270,12 @@ public class LocalApplicationFactory {
 								connection.getId());
 							throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
 						}
-						target = componentForPort.getScaPort(providesId).getCorbaObj();
+						if (componentForPort.getScaPort(providesId) == null) {
+							app.getStreams().getErrStream().println(
+								componentForPort.getInstantiationIdentifier() + " does not contain a port of name: " + providesId);
+						} else {
+							target = componentForPort.getScaPort(providesId).getCorbaObj();
+						}
 					}
 				} else if (connection.getComponentSupportedInterface() != null) {
 					final String componentRefId = connection.getComponentSupportedInterface().getComponentInstantiationRef().getRefid();
@@ -293,7 +298,9 @@ public class LocalApplicationFactory {
 					}
 					final ScaComponent component = app.getLocalWaveform().getScaComponent(connection.getUsesPort().getComponentInstantiationRef().getRefid());
 					final ScaPort< ? , ? > port = component.getScaPort(usesID);
-					if (port instanceof ScaUsesPort) {
+					if (port == null) {
+						app.getStreams().getErrStream().println(component.getInstantiationIdentifier() + " does not contain a port of name: " + usesID);
+					} else if (port instanceof ScaUsesPort) {
 						final ScaUsesPort usesPort = (ScaUsesPort) port;
 						try {
 							usesPort.connectPort(target, connection.getId());
