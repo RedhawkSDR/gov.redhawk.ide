@@ -85,10 +85,12 @@ public class TopLevelDcdRpmSpecTemplate
     
     for (ComponentFile compFile : componentFiles) {
         SoftPkg softPkg = compFile.getSoftPkg();
+        if (softPkg != null) {
         
     stringBuffer.append(TEXT_6);
     stringBuffer.append(softPkg.getName());
     
+        }
     }
 
     stringBuffer.append(TEXT_7);

@@ -48,7 +48,9 @@ Requires: <%=devMgrName%>
 Requires:<%
     for (ComponentFile compFile : componentFiles) {
         SoftPkg softPkg = compFile.getSoftPkg();
+        if (softPkg != null) {
         %> <%=softPkg.getName()%><%
+        }
     }
 %>
 BuildArch: noarch
