@@ -216,12 +216,15 @@ public final class SpdLauncherUtil {
 			}
 
 			// Configure properties
-			try {
-				scaComp.configure(configureProps.toArray(new DataType[configureProps.size()]));
-			} catch (final PartialConfiguration e) {
-				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
-			} catch (final InvalidConfiguration e) {
-				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
+			// NOTE: Devices are configured as part of Register Device
+			if (type != ComponentType.DEVICE) {
+				try {
+					scaComp.configure(configureProps.toArray(new DataType[configureProps.size()]));
+				} catch (final PartialConfiguration e) {
+					LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
+				} catch (final InvalidConfiguration e) {
+					LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
+				}
 			}
 			progress.worked(WORK_GENERAL);
 		} else {
@@ -567,13 +570,10 @@ public final class SpdLauncherUtil {
 			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
 				ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
 			if (timeout < 0 || ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
-				// In debug-mode wait they may have placed a break-point
-				// that is delaying registration so wait forever
-				final LocalAbstractComponent newComponent = future.get();
-				return newComponent;
+				// In debug-mode wait they may have placed a break-point that is delaying registration, so wait forever
+				return future.get();
 			} else {
-				final LocalAbstractComponent newComponent = future.get(timeout, TimeUnit.SECONDS);
-				return newComponent;
+				return future.get(timeout, TimeUnit.SECONDS);
 			}
 		} catch (final InterruptedException e1) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Interrupted waiting for device to start. " + deviceLabel, e1));

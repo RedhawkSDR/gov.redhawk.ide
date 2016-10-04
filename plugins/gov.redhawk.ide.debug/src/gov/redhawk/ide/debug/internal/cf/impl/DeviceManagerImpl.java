@@ -78,6 +78,7 @@ import gov.redhawk.model.sca.ScaService;
 import gov.redhawk.sca.efs.WrappedFileStore;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 import gov.redhawk.sca.util.PluginUtil;
+import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
@@ -324,6 +325,24 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			registeringDevice.initialize();
 		} catch (final InitializeError e) {
 			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "device " + deviceLabel), ConsoleColor.STDERR);
+		}
+
+		// Configure - Find configurable properties that aren't set to their default
+		List<DataType> configureProps = new ArrayList<DataType>();
+		for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
+			if (!prop.isDefaultValue() && !prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY)
+				&& PropertiesUtil.canConfigure(prop.getDefinition())) {
+				configureProps.add(new DataType(prop.getId(), prop.toAny()));
+			}
+		}
+
+		String description = String.format("device %s", launch.getAttribute(LaunchVariables.DEVICE_LABEL));
+		try {
+			registeringDevice.configure(configureProps.toArray(new DataType[configureProps.size()]));
+		} catch (final PartialConfiguration e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
+		} catch (final InvalidConfiguration e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
 		}
 
 		// Register the device and refresh the model so it notices it
