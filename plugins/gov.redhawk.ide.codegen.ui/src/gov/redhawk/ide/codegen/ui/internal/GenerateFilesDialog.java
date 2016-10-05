@@ -324,7 +324,7 @@ public class GenerateFilesDialog extends Dialog {
 			if (!element.getDoItDefault()) {
 				MessageDialog dialog = new MessageDialog(getShell(), getShell().getText(), null,
 					"The 'SYSTEM' file '" + element.getFilename() + "' has been modified and may contain code that was written by the user.\n\n"
-						+ "It is recommended you overwrite this file.\n\n"
+						+ "It is recommended you do not overwrite this file.\n\n"
 						+ "Do you want to overwrite this file?", MessageDialog.QUESTION, new String[] { "Yes", "No" }, 1);
 				if (dialog.open() == 0) {
 					askedSystemFileGenerate = true;
