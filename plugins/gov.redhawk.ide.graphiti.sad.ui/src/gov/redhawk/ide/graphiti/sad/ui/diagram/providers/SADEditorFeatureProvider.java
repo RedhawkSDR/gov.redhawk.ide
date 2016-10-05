@@ -11,7 +11,7 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
@@ -85,7 +85,8 @@ public class SADEditorFeatureProvider extends SADGraphitiFeatureProvider {
 
 	@Override
 	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
-		List<ICustomFeature> features = new ArrayList<ICustomFeature>(Arrays.asList(super.getCustomFeatures(context)));
+		List<ICustomFeature> features = new ArrayList<>();
+		Collections.addAll(features, super.getCustomFeatures(context));
 
 		Diagram diagram = getDiagramTypeProvider().getDiagram();
 		PictogramElement[] pes = context.getPictogramElements();

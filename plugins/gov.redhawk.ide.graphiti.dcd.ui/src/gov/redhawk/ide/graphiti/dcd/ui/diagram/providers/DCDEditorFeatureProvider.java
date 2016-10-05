@@ -10,7 +10,8 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
@@ -63,7 +64,8 @@ public class DCDEditorFeatureProvider extends DCDGraphitiFeatureProvider {
 
 	@Override
 	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
-		List<ICustomFeature> features = Arrays.asList(super.getCustomFeatures(context));
+		List<ICustomFeature> features = new ArrayList<>();
+		Collections.addAll(features, super.getCustomFeatures(context));
 
 		PictogramElement[] pes = context.getPictogramElements();
 		if (pes != null && pes.length == 1) {
