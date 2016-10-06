@@ -326,17 +326,19 @@ public final class StandardTestActions {
 			createExistingProject(record);
 		} catch (InvocationTargetException | InterruptedException e) {
 			throw new CoreException(new Status(Status.ERROR, SwtBotActivator.PLUGIN_ID, "Failed to import existing project: " + path, e));
+		} catch (CoreException e) {
+			throw new CoreException(new Status(Status.ERROR, SwtBotActivator.PLUGIN_ID, "Failed to import existing project: " + path, e));
 		}
 	}
 
 	/**
-	 * Create the project described in record. If it is successful return true.
-	 *
+	 * Create the project described in record.
 	 * @param record
-	 * @return boolean <code>true</code> if successful
+	 * @throws InvocationTargetException
 	 * @throws InterruptedException
+	 * @throws CoreException
 	 */
-	private static boolean createExistingProject(final ProjectRecord record) throws InvocationTargetException, InterruptedException {
+	private static void createExistingProject(final ProjectRecord record) throws InvocationTargetException, InterruptedException, CoreException {
 		String projectName = record.getProjectName();
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProject project = workspace.getRoot().getProject(projectName);
@@ -366,7 +368,7 @@ public final class StandardTestActions {
 			// validate the location of the project being copied
 			IStatus result = ResourcesPlugin.getWorkspace().validateProjectLocationURI(project, locationURI);
 			if (!result.isOK()) {
-				throw new InvocationTargetException(new CoreException(result));
+				throw new CoreException(result);
 			}
 
 			importSource = new File(locationURI);
@@ -379,12 +381,8 @@ public final class StandardTestActions {
 			record.description = desc;
 		}
 
-		try {
-			project.create(record.description, new NullProgressMonitor());
-			project.open(IResource.BACKGROUND_REFRESH, new NullProgressMonitor());
-		} catch (CoreException e) {
-			throw new InvocationTargetException(e);
-		}
+		project.create(record.description, new NullProgressMonitor());
+		project.open(IResource.NONE, new NullProgressMonitor());
 
 		// import operation to import project files if copy checkbox is selected
 		if (importSource != null) {
@@ -406,11 +404,9 @@ public final class StandardTestActions {
 			operation.run(new NullProgressMonitor());
 			IStatus status = operation.getStatus();
 			if (!status.isOK()) {
-				throw new InvocationTargetException(new CoreException(status));
+				throw new CoreException(status);
 			}
 		}
-
-		return true;
 	}
 
 	/**
