@@ -255,7 +255,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		String deviceId = registeringDevice.identifier();
 		String deviceLabel = registeringDevice.label();
 
-		// Iterate all launches for find the current launch
+		// Iterate all launches until we find this device's ILaunch, then load its properties
 		ILaunch launch = null;
 		ScaDevice<Device> propHolder = null;
 		for (ILaunch candidateLaunch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
@@ -327,22 +327,25 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "device " + deviceLabel), ConsoleColor.STDERR);
 		}
 
-		// Configure - Find configurable properties that aren't set to their default
-		List<DataType> configureProps = new ArrayList<DataType>();
-		for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
-			if (!prop.isDefaultValue() && !prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY)
-				&& PropertiesUtil.canConfigure(prop.getDefinition())) {
-				configureProps.add(new DataType(prop.getId(), prop.toAny()));
+		// If we have properties available
+		if (propHolder != null) {
+			// Configure - Find configurable properties that aren't set to their default
+			List<DataType> configureProps = new ArrayList<DataType>();
+			for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
+				if (!prop.isDefaultValue() && !prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY)
+					&& PropertiesUtil.canConfigure(prop.getDefinition())) {
+					configureProps.add(new DataType(prop.getId(), prop.toAny()));
+				}
 			}
-		}
 
-		String description = String.format("device %s", launch.getAttribute(LaunchVariables.DEVICE_LABEL));
-		try {
-			registeringDevice.configure(configureProps.toArray(new DataType[configureProps.size()]));
-		} catch (final PartialConfiguration e) {
-			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
-		} catch (final InvalidConfiguration e) {
-			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
+			String description = String.format("device %s", launch.getAttribute(LaunchVariables.DEVICE_LABEL));
+			try {
+				registeringDevice.configure(configureProps.toArray(new DataType[configureProps.size()]));
+			} catch (final PartialConfiguration e) {
+				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
+			} catch (final InvalidConfiguration e) {
+				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
+			}
 		}
 
 		// Register the device and refresh the model so it notices it
