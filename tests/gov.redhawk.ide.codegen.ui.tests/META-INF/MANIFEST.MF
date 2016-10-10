@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests
+Bundle-SymbolicName: gov.redhawk.ide.codegen.ui.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.junit,
+ gov.redhawk.ide.codegen.jet,
+ gov.redhawk.ide.codegen,
+ mil.jpeojtrs.sca.sad,
+ mil.jpeojtrs.sca.sad.tests,
+ org.eclipse.core.runtime,
+ mil.jpeojtrs.sca.dcd

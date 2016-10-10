@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This file is protected by Copyright.
+    Please refer to the COPYRIGHT file distributed with this source distribution.
+
+    This file is part of REDHAWK IDE.
+
+    All rights reserved.  This program and the accompanying materials are made available under
+    the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html.
+-->
+<!DOCTYPE softwareassembly PUBLIC "-//JTRS//DTD SCA SAD V2.2.2//EN" "softwareassembly.dtd">
+<softwareassembly id="DCE:df4f0e1c-a242-4b76-ae1d-bef1b63cedfe"
+	name="GenericSadFile" version="Alpha">
+	<description>A simple waveform, at least it started as one</description>
+	<componentfiles>
+		<componentfile id="Basic_AC_d05f7b78-a149-424e-a771-a8e183405b9e" type="SPD">
+			<localfile name="/components/basic_assembly_controller/basic_assembly_controller.spd.xml" />
+		</componentfile>
+		<componentfile id="DontExit_5dca8882-ea70-4e15-9e86-727250f5cd1b" type="SPD">
+			<localfile name="/components/DontExist/DontExist.spd.xml" />
+		</componentfile>
+	</componentfiles>
+	<partitioning>
+		<componentplacement>
+			<componentfileref refid="Basic_AC_d05f7b78-a149-424e-a771-a8e183405b9e" />
+			<componentinstantiation id="Basic_AC_1" startorder="0">
+				<usagename>Basic_AC_1</usagename>
+				<findcomponent>
+					<namingservice name="Basic_AC_1"/>
+				</findcomponent>
+			</componentinstantiation>
+		</componentplacement>
+		<componentplacement>
+			<componentfileref refid="DontExit_5dca8882-ea70-4e15-9e86-727250f5cd1b" />
+			<componentinstantiation id="Dont_Exist_1" startorder="1">
+				<usagename>Dont_Exist_1</usagename>
+				<findcomponent>
+					<namingservice name="Dont_Exist_1"/>
+				</findcomponent>
+			</componentinstantiation>
+		</componentplacement>
+	</partitioning>
+	<assemblycontroller>
+		<componentinstantiationref refid="Basic_AC_1" />
+	</assemblycontroller>
+</softwareassembly>
