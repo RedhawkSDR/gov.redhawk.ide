@@ -84,7 +84,7 @@ public class TopLevelSadRpmSpecTemplate
     		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG
     		);
     if (controller == null){
-	    throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenActivator.PLUGIN_ID, "Unable to get assembly controller. Check your SAD file and target SDR."));
+	    throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenActivator.PLUGIN_ID, "Unable to get assembly controller. Check your SAD file and Target SDR."));
     }
     
     final List<ComponentFile> componentFiles = sad.getComponentFiles().getComponentFile();
@@ -110,6 +110,8 @@ public class TopLevelSadRpmSpecTemplate
     stringBuffer.append(TEXT_7);
     stringBuffer.append(softPkg.getName());
     
+        } else {
+          throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenActivator.PLUGIN_ID, "Unable to locate component file. Check your SAD file and Target SDR."));
         }
     }
 

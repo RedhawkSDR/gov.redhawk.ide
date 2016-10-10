@@ -11,6 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.codegen.jet;
 
+import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import java.util.Collections;
@@ -19,6 +20,8 @@ import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @generated
@@ -90,6 +93,8 @@ public class TopLevelDcdRpmSpecTemplate
     stringBuffer.append(TEXT_6);
     stringBuffer.append(softPkg.getName());
     
+        } else {
+          throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenActivator.PLUGIN_ID, "Unable to locate component file. Check your SAD file and Target SDR."));
         }
     }
 
