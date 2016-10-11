@@ -21,6 +21,7 @@ import gov.redhawk.ide.debug.impl.commands.LocalMergeServicesCommand;
 import gov.redhawk.ide.debug.internal.cf.impl.DeviceManagerImpl;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDevice;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.impl.ScaDeviceManagerImpl;
 import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
@@ -37,8 +38,12 @@ import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.transaction.RunnableWithResult;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jdt.annotation.NonNull;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
@@ -508,7 +513,12 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	@Override
 	public void shutdown() {
-		getDevices().clear();
+		ScaModelCommand.execute(this, new ScaModelCommand() {
+			@Override
+			public void execute() {
+				getDevices().clear();
+			}
+		});
 	}
 
 	@Override
