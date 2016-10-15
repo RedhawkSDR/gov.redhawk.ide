@@ -26,7 +26,7 @@ Export-Package: gov.redhawk.ide.codegen,
  gov.redhawk.ide.codegen.impl,
  gov.redhawk.ide.codegen.internal;x-internal:=true,
  gov.redhawk.ide.codegen.internal.validation;x-internal:=true,
- gov.redhawk.ide.codegen.jet,
+ gov.redhawk.ide.codegen.jet;x-friends:="gov.redhawk.ide.codegen.ui.tests",
  gov.redhawk.ide.codegen.util
 Bundle-Localization: plugin
 Bundle-Vendor: %Bundle-Provider.0
