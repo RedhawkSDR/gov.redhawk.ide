@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Statistics UI
 Bundle-SymbolicName: gov.redhawk.statistics.ui;singleton:=true
-Bundle-Version: 2.0.3.qualifier
+Bundle-Version: 2.0.0.qualifier
 Bundle-Activator: gov.redhawk.statistics.ui.StatisticsPlugin
 Require-Bundle: org.eclipse.ui;bundle-version="3.8.2",
  gov.redhawk.bulkio.util;bundle-version="1.0.0",
