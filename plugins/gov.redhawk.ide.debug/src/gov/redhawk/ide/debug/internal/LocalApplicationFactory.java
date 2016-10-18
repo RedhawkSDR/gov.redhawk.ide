@@ -92,15 +92,17 @@ public class LocalApplicationFactory {
 	}
 
 	public static NotifyingNamingContext createWaveformContext(NotifyingNamingContext parent, String name) throws CoreException {
-		NamingContextExt retVal = null;
-		
-		// Need to escape all '.' characters in namespaced waveforms
+		// We need to escape all '.' characters in namespaced waveforms as they have specific meaning in the CORBA
+		// naming service
 		String adjustedName = name.replaceAll("\\.", "\\\\.");
-		for (int i = 2; retVal == null; i++) {
+
+		// The framework always adds "_n" to the end of the requested name, where n is one of {1, 2, 3, ...}.
+		NamingContextExt retVal = null;
+		for (int i = 1; retVal == null; i++) {
 			try {
-				retVal = NamingContextExtHelper.narrow(parent.bind_new_context(Name.toName(adjustedName)));
+				retVal = NamingContextExtHelper.narrow(parent.bind_new_context(Name.toName(adjustedName + "_" + i)));
 			} catch (AlreadyBound e) {
-				adjustedName = name + "_" + i;
+				// PASS - we'll try another name
 			} catch (NotFound | CannotProceed | InvalidName e) {
 				throw new CoreException(
 					new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
@@ -138,7 +140,6 @@ public class LocalApplicationFactory {
 	 */
 	public LocalScaWaveform create(final SoftwareAssembly sad, String name, final IProgressMonitor monitor) throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, 100);
-		String adjustedName = name;
 
 		// Try and narrow to the given name. If an already bound exception occurs, append _ + i to the end and try again
 		// until we've found a good name.
@@ -153,9 +154,9 @@ public class LocalApplicationFactory {
 			waveform.setProfile(profile);
 			waveform.setLaunch(this.launch);
 			waveform.setMode(this.launch.getLaunchMode());
-			waveform.setNamingContext(LocalApplicationFactory.createWaveformContext(namingContext, adjustedName));
+			waveform.setNamingContext(LocalApplicationFactory.createWaveformContext(namingContext, name));
 
-			app = new ApplicationImpl(waveform, appId, adjustedName);
+			app = new ApplicationImpl(waveform, appId, name);
 			app.setLaunching(true);
 			this.launch.addProcess(app);
 			waveform.setLocalApp(app);
@@ -193,7 +194,7 @@ public class LocalApplicationFactory {
 			progress.worked(3);
 
 		} catch (final SystemException e) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + name + " " + e.getMessage(), e));
 		} finally {
 			if (app != null) {
 				app.setLaunching(false);
