@@ -93,7 +93,9 @@ public class LocalApplicationFactory {
 
 	public static NotifyingNamingContext createWaveformContext(NotifyingNamingContext parent, String name) throws CoreException {
 		NamingContextExt retVal = null;
-		String adjustedName = name;
+		
+		// Need to escape all '.' characters in namespaced waveforms
+		String adjustedName = name.replaceAll("\\.", "\\\\.");
 		for (int i = 2; retVal == null; i++) {
 			try {
 				retVal = NamingContextExtHelper.narrow(parent.bind_new_context(Name.toName(adjustedName)));
@@ -107,11 +109,12 @@ public class LocalApplicationFactory {
 		return parent.findContext(retVal);
 	}
 
+	// Need to escape all '.' characters in namespaced waveforms
 	public static void bindApp(final ApplicationImpl app) throws CoreException {
 		app.getStreams().getOutStream().println("Binding application...");
 		try {
 			NamingContextExt context = app.getWaveformContext();
-			NameComponent[] name = Name.toName(app.name());
+			NameComponent[] name = Name.toName(app.name().replaceAll("\\.", "\\\\."));
 			org.omg.CORBA.Object obj = app.getLocalWaveform().getCorbaObj();
 			context.bind(name, obj);
 			app.getStreams().getOutStream().println("Done Binding application.");
