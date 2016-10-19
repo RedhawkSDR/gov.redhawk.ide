@@ -13,8 +13,10 @@ package gov.redhawk.ide.sad.generator.newwaveform;
 
 import org.junit.Assert;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.DceUuidUtil;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -23,24 +25,34 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.junit.Test;
 
+import gov.redhawk.ide.builders.SCABuilder;
+
 /**
  * A class to test {@link WaveformProjectCreatorTest}.
  */
 public class WaveformProjectCreatorTest {
 
 	/**
-	 * Tests creating a project
-	 * 
-	 * @throws IOException
+	 * Tests creating an empty project.
+	 * IDE-1707 Ensure ScaProjectNature was configured, adding the SCA builder
 	 */
 	@Test
-	public void testCreateEmptyProject() throws CoreException {
+	public void createEmptyProject() throws CoreException {
 		final IProject project = WaveformProjectCreator.createEmptyProject("waveformProjectTest", null, new NullProgressMonitor());
+
 		Assert.assertNotNull(project);
 		Assert.assertTrue("waveformProjectTest".equals(project.getName()));
+		boolean found = false;
+		for (ICommand command : project.getDescription().getBuildSpec()) {
+			if (command.getBuilderName().equals(SCABuilder.ID)) {
+				found = true;
+			}
+		}
+		Assert.assertTrue("SCA builder not found", found);
+
 		project.delete(true, new NullProgressMonitor());
 	}
-	
+
 	/**
 	 * Tests creating the waveform files
 	 * 
@@ -51,13 +63,14 @@ public class WaveformProjectCreatorTest {
 		final IProject project = WaveformProjectCreator.createEmptyProject("waveformProjectTest", null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
 		Assert.assertTrue("waveformProjectTest".equals(project.getName()));
-		
-		WaveformProjectCreator.createWaveformFiles(project, "waveformProjectTest", null, new NullProgressMonitor());
+
+		WaveformProjectCreator.createWaveformFiles(project, DceUuidUtil.createDceUUID(), null, new NullProgressMonitor());
 		final IFile sadFile = project.getFile("waveformProjectTest.sad.xml");
 		Assert.assertTrue(sadFile.exists());
-		
+
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		final SoftwareAssembly wave = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(URI.createPlatformResourceURI("/waveformProjectTest/waveformProjectTest.sad.xml", true), true));
+		final SoftwareAssembly wave = SoftwareAssembly.Util.getSoftwareAssembly(
+			resourceSet.getResource(URI.createPlatformResourceURI("/waveformProjectTest/waveformProjectTest.sad.xml", true), true));
 		Assert.assertEquals(project.getName(), wave.getName());
 
 		project.delete(true, new NullProgressMonitor());

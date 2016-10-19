@@ -11,12 +11,14 @@
 
 package gov.redhawk.ide.spd.tests;
 
+import gov.redhawk.ide.builders.SCABuilder;
 import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -41,17 +43,27 @@ public class ComponentProjectCreatorTest {
 	private static final String COMPONENT_PROJECT_TEST = "componentProjectTest";
 
 	/**
-	 * Tests creating a project
+	 * Tests creating an empty project.
+	 * IDE-1707 Ensure ScaProjectNature was configured, adding the SCA builder
 	 */
 	@Test
-	public void testCreateEmptyProject() throws CoreException {
+	public void createEmptyProject() throws CoreException {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(ComponentProjectCreatorTest.COMPONENT_PROJECT_TEST);
 		if (project.exists()) {
 			project.delete(true, new NullProgressMonitor());
 		}
 		project = ComponentProjectCreator.createEmptyProject(ComponentProjectCreatorTest.COMPONENT_PROJECT_TEST, null, new NullProgressMonitor());
+
 		Assert.assertNotNull(project);
 		Assert.assertTrue(ComponentProjectCreatorTest.COMPONENT_PROJECT_TEST.equals(project.getName()));
+		boolean found = false;
+		for (ICommand command : project.getDescription().getBuildSpec()) {
+			if (command.getBuilderName().equals(SCABuilder.ID)) {
+				found = true;
+			}
+		}
+		Assert.assertTrue("SCA builder not found", found);
+
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		if (project.exists()) {
 			project.delete(true, new NullProgressMonitor());

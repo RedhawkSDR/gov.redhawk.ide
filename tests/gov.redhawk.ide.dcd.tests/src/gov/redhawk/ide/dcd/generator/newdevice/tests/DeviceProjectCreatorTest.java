@@ -8,18 +8,9 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 package gov.redhawk.ide.dcd.generator.newdevice.tests;
 
-import gov.redhawk.ide.dcd.generator.newdevice.DeviceProjectCreator;
-import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
-import mil.jpeojtrs.sca.prf.PrfPackage;
-import mil.jpeojtrs.sca.scd.Interface;
-import mil.jpeojtrs.sca.scd.ScdPackage;
-import mil.jpeojtrs.sca.scd.SupportsInterface;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.SpdPackage;
-
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -35,6 +26,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import gov.redhawk.ide.builders.SCABuilder;
+import gov.redhawk.ide.dcd.generator.newdevice.DeviceProjectCreator;
+import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
+import mil.jpeojtrs.sca.prf.PrfPackage;
+import mil.jpeojtrs.sca.scd.Interface;
+import mil.jpeojtrs.sca.scd.ScdPackage;
+import mil.jpeojtrs.sca.scd.SupportsInterface;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdPackage;
+
 /**
  * A class to test {@link DeviceProjectCreatorTest}.
  */
@@ -44,13 +45,23 @@ public class DeviceProjectCreatorTest {
 	private static final String PROJECT_NAME = "deviceProjectTest";
 
 	/**
-	 * Tests creating a project
+	 * Tests creating an empty project.
+	 * IDE-1707 Ensure ScaProjectNature was configured, adding the SCA builder
 	 */
 	@Test
-	public void testCreateEmptyProject() throws CoreException {
+	public void createEmptyProject() throws CoreException {
 		final IProject project = DeviceProjectCreator.createEmptyProject(DeviceProjectCreatorTest.PROJECT_NAME, null, new NullProgressMonitor());
+
 		Assert.assertNotNull(project);
 		Assert.assertTrue("deviceProjectTest".equals(project.getName()));
+		boolean found = false;
+		for (ICommand command : project.getDescription().getBuildSpec()) {
+			if (command.getBuilderName().equals(SCABuilder.ID)) {
+				found = true;
+			}
+		}
+		Assert.assertTrue("SCA builder not found", found);
+
 		project.delete(true, new NullProgressMonitor());
 	}
 
@@ -94,16 +105,16 @@ public class DeviceProjectCreatorTest {
 		Assert.assertTrue(scdFile.exists());
 
 		final IFolder testFolder = project.getFolder("tests");
-		
+
 		String msg = "Test files are now created by the Jinja code generators, files must not exist.";
 		// If the folder exists make sure it is empty.
 		if (testFolder.exists()) {
 			Assert.assertTrue(msg, testFolder.members().length == 0);
 		}
-		
+
 		final ResourceSet resourceSet = new ResourceSetImpl();
-		final SoftPkg dev = SoftPkg.Util.getSoftPkg(resourceSet.getResource(
-			URI.createPlatformResourceURI("/deviceProjectTest/deviceProjectTest.spd.xml", true), true));
+		final SoftPkg dev = SoftPkg.Util.getSoftPkg(
+			resourceSet.getResource(URI.createPlatformResourceURI("/deviceProjectTest/deviceProjectTest.spd.xml", true), true));
 		Assert.assertEquals(project.getName(), dev.getName());
 		Assert.assertEquals("Author", dev.getAuthor().get(0).getName().get(0));
 		Assert.assertEquals("executabledevice", dev.getDescriptor().getComponent().getComponentType());

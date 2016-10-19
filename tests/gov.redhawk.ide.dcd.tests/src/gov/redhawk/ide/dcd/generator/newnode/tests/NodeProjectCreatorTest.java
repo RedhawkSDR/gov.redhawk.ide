@@ -11,19 +11,21 @@
 
 package gov.redhawk.ide.dcd.generator.newnode.tests;
 
+import gov.redhawk.ide.builders.SCABuilder;
 import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
 
 import org.junit.Assert;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.Test;
 
 /**
@@ -32,18 +34,26 @@ import org.junit.Test;
 public class NodeProjectCreatorTest {
 
 	/**
-	 * Tests creating a project
-	 * 
-	 * @throws IOException
+	 * Tests creating an empty project.
+	 * IDE-1707 Ensure ScaProjectNature was configured, adding the SCA builder
 	 */
 	@Test
-	public void testCreateEmptyProject() throws CoreException {
+	public void createEmptyProject() throws CoreException {
 		final IProject project = NodeProjectCreator.createEmptyProject("nodeProjectTest", null, new NullProgressMonitor());
+
 		Assert.assertNotNull(project);
 		Assert.assertTrue("nodeProjectTest".equals(project.getName()));
+		boolean found = false;
+		for (ICommand command : project.getDescription().getBuildSpec()) {
+			if (command.getBuilderName().equals(SCABuilder.ID)) {
+				found = true;
+			}
+		}
+		Assert.assertTrue("SCA builder not found", found);
+
 		project.delete(true, new NullProgressMonitor());
 	}
-	
+
 	/**
 	 * Tests creating the device files
 	 * 
@@ -60,7 +70,7 @@ public class NodeProjectCreatorTest {
 		final IFile dcdFile = project.getFile("DeviceManager.dcd.xml");
 		Assert.assertTrue(dcdFile.exists());
 		
-		final ResourceSet resourceSet = new ResourceSetImpl();
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		final DeviceConfiguration dev = DeviceConfiguration.Util.getDeviceConfiguration(resourceSet.getResource(URI.createPlatformResourceURI("/nodeProjectTest/DeviceManager.dcd.xml", true), true));
 		Assert.assertEquals(project.getName(), dev.getName());
 		Assert.assertEquals("REDHAWK_DEV/REDHAWK_DEV", dev.getDomainManager().getNamingService().getName());

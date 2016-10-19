@@ -97,27 +97,20 @@ public abstract class ProjectCreator {
 		natureIds.addAll(Arrays.asList(additionalNatureIDs));
 		natureIds.add(ScaProjectNature.ID);
 
-		// Get the root workspace
-		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-
-		// This creates the new project
-		final IProject project = root.getProject(projectName);
-
-		// Create an empty project description
-		final IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());
-
+		// Create and open the new project
+		final IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		final IProject project = workspaceRoot.getProject(projectName);
+		IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());
 		if (projectLocation != null) {
 			description.setLocationURI(projectLocation);
 		}
-
-		description.setNatureIds(natureIds.toArray(new String[natureIds.size()]));
-
-		// Don't use the create with description because it does not cause
-		// natures to be configured
 		project.create(description, progress.newChild(1));
-
-		// Open the project
 		project.open(progress.newChild(1));
+
+		// Add natures post-creation; otherwise they won't get configured
+		description = project.getDescription();
+		description.setNatureIds(natureIds.toArray(new String[natureIds.size()]));
+		project.setDescription(description, progress.newChild(1));
 
 		return project;
 	}

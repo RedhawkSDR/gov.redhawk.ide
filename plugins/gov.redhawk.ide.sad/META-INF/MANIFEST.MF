@@ -12,5 +12,5 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.6.0",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.sad,
- gov.redhawk.ide.sad.generator.newwaveform;x-internal:=true
+ gov.redhawk.ide.sad.generator.newwaveform;x-friends:="gov.redhawk.ide.sad.tests"
 Bundle-Vendor: %Bundle-Vendor

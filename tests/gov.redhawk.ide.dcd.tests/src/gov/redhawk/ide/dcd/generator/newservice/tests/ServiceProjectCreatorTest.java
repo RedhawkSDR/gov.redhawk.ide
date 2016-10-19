@@ -12,6 +12,7 @@
 package gov.redhawk.ide.dcd.generator.newservice.tests;
 
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
+import gov.redhawk.ide.builders.SCABuilder;
 import gov.redhawk.ide.dcd.generator.newdevice.DeviceProjectCreator;
 import gov.redhawk.ide.dcd.generator.newservice.ServiceProjectCreator;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
@@ -22,6 +23,7 @@ import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -37,15 +39,23 @@ import org.junit.Test;
 public class ServiceProjectCreatorTest {
 
 	/**
-	 * Tests creating a project
-	 * 
-	 * @throws IOException
+	 * Tests creating an empty project.
+	 * IDE-1707 Ensure ScaProjectNature was configured, adding the SCA builder
 	 */
 	@Test
-	public void testCreateEmptyProject() throws CoreException {
+	public void createEmptyProject() throws CoreException {
 		final IProject project = ServiceProjectCreator.createEmptyProject("serviceProjectTest", null, new NullProgressMonitor());
+
 		Assert.assertNotNull(project);
 		Assert.assertTrue("serviceProjectTest".equals(project.getName()));
+		boolean found = false;
+		for (ICommand command : project.getDescription().getBuildSpec()) {
+			if (command.getBuilderName().equals(SCABuilder.ID)) {
+				found = true;
+			}
+		}
+		Assert.assertTrue("SCA builder not found", found);
+
 		project.delete(true, new NullProgressMonitor());
 	}
 
