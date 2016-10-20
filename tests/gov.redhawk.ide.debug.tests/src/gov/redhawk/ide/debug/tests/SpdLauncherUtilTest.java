@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gov.redhawk.ide.debug.SpdLauncherUtil;
@@ -27,13 +28,18 @@ public class SpdLauncherUtilTest {
 	private static final String PLUGIN_ID = "gov.redhawk.ide.debug.tests";
 	private static final String TEST_SDR_PATH = "testFiles/sdr";
 
+	private static SdrRoot sdrRoot;
+
+	@BeforeClass
+	public static void loadSdrRoot() throws URISyntaxException, IOException {
+		sdrRoot = SdrPluginLoader.getSdrRoot(PLUGIN_ID, TEST_SDR_PATH);
+	}
+
 	/**
 	 * IDE-1445 Test that XML validation catches missing PRF and SCD files that are referenced.
 	 */
 	@Test
-	public void validateAllXML_SpdMissingPrfAndScd() throws URISyntaxException, IOException {
-		SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(PLUGIN_ID, TEST_SDR_PATH);
-
+	public void validateAllXML_SpdMissingPrfAndScd() {
 		SoftPkg spd = getSpd(sdrRoot, "SpdMissingPrfAndScd");
 		IStatus status = SpdLauncherUtil.validateAllXML(spd);
 		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
@@ -49,9 +55,7 @@ public class SpdLauncherUtilTest {
 	 * IDE-1445 Test that XML validation catches errors in the SPD file.
 	 */
 	@Test
-	public void validateAllXML_SpdWithErrors() throws URISyntaxException, IOException {
-		SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(PLUGIN_ID, TEST_SDR_PATH);
-
+	public void validateAllXML_SpdWithErrors() {
 		SoftPkg spd = getSpd(sdrRoot, "SpdWithErrors");
 		IStatus status = SpdLauncherUtil.validateAllXML(spd);
 		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
@@ -65,9 +69,7 @@ public class SpdLauncherUtilTest {
 	 * IDE-1445 Test that XML validation catches errors in dependencies (PRFs, SCDs).
 	 */
 	@Test
-	public void validateAllXML_SpdWithPrfAndScdErrors() throws URISyntaxException, IOException {
-		SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(PLUGIN_ID, TEST_SDR_PATH);
-
+	public void validateAllXML_SpdWithPrfAndScdErrors() {
 		SoftPkg spd = getSpd(sdrRoot, "SpdWithPrfAndScdErrors");
 		IStatus status = SpdLauncherUtil.validateAllXML(spd);
 		Assert.assertEquals(IStatus.ERROR, status.getSeverity());

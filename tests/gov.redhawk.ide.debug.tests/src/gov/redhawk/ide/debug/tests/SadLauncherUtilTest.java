@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gov.redhawk.ide.debug.SadLauncherUtil;
@@ -27,13 +28,18 @@ public class SadLauncherUtilTest {
 	private static final String PLUGIN_ID = "gov.redhawk.ide.debug.tests";
 	private static final String TEST_SDR_PATH = "testFiles/sdr";
 
+	private static SdrRoot sdrRoot;
+
+	@BeforeClass
+	public static void loadSdrRoot() throws URISyntaxException, IOException {
+		sdrRoot = SdrPluginLoader.getSdrRoot(PLUGIN_ID, TEST_SDR_PATH);
+	}
+
 	/**
 	 * IDE-1445 Test that XML validation catches errors in the SAD file.
 	 */
 	@Test
-	public void validateAllXML_sadWithErrors() throws URISyntaxException, IOException {
-		SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(PLUGIN_ID, TEST_SDR_PATH);
-
+	public void validateAllXML_sadWithErrors() {
 		SoftwareAssembly sad = getSad(sdrRoot, "sadWithErrors");
 		IStatus status = SadLauncherUtil.validateAllXML(sad);
 		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
@@ -49,9 +55,7 @@ public class SadLauncherUtilTest {
 	 * IDE-1445 Test that XML validation catches errors with/in dependencies (SPDs, PRFs, SCDs).
 	 */
 	@Test
-	public void validateAllXML_sadWithComponentsWithErrors() throws URISyntaxException, IOException {
-		SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(PLUGIN_ID, TEST_SDR_PATH);
-
+	public void validateAllXML_sadWithComponentsWithErrors() {
 		SoftwareAssembly sad = getSad(sdrRoot, "sadWithComponentsWithErrors");
 		IStatus status = SadLauncherUtil.validateAllXML(sad);
 		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
@@ -73,9 +77,7 @@ public class SadLauncherUtilTest {
 	 * IDE-1444 Test that invalid source/target port names in a connection are caught by the validator.
 	 */
 	@Test
-	public void validateAllXML_invalidPortName() throws URISyntaxException, IOException {
-		SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(PLUGIN_ID, TEST_SDR_PATH);
-
+	public void validateAllXML_invalidPortName() {
 		SoftwareAssembly sad = getSad(sdrRoot, "invalidPortName");
 		IStatus status = SadLauncherUtil.validateAllXML(sad);
 		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
