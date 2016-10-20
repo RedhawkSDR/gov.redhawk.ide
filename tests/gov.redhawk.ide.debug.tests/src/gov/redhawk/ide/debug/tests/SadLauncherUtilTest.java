@@ -69,6 +69,26 @@ public class SadLauncherUtilTest {
 		Assert.assertEquals("Missing component SPD for component id4 (/components/MissingSpd/MissingSpd.spd.xml)", status.getChildren()[4].getMessage());
 	}
 
+	/**
+	 * IDE-1444 Test that invalid source/target port names in a connection are caught by the validator.
+	 */
+	@Test
+	public void validateAllXML_invalidPortName() throws URISyntaxException, IOException {
+		SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(PLUGIN_ID, TEST_SDR_PATH);
+
+		SoftwareAssembly sad = getSad(sdrRoot, "invalidPortName");
+		IStatus status = SadLauncherUtil.validateAllXML(sad);
+		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
+		Assert.assertEquals("There are errors in the SAD file", status.getMessage());
+		Assert.assertEquals(2, status.getChildren().length);
+
+		Assert.assertTrue(status.getChildren()[0].getMessage().contains("ValidSourceReference"));
+		Assert.assertTrue(status.getChildren()[0].getMessage().contains("connection_1"));
+
+		Assert.assertTrue(status.getChildren()[1].getMessage().contains("ValidTargetReference"));
+		Assert.assertTrue(status.getChildren()[1].getMessage().contains("connection_1"));
+	}
+
 	private SoftwareAssembly getSad(SdrRoot sdrRoot, String name) {
 		for (SoftwareAssembly sad : sdrRoot.getWaveformsContainer().getWaveforms()) {
 			if (name.equals(sad.getName())) {

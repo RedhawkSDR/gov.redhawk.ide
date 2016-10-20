@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softwareassembly PUBLIC "-//JTRS//DTD SCA V2.2.2 SAD//EN" "softwareassembly.dtd">
+<softwareassembly id="DCE:71438cbc-ac58-4c6b-82f4-cc5dc0e3e2b6" name="invalidPortName">
+  <componentfiles>
+    <componentfile id="SigGen_d05b94a4-ca48-461f-8057-fa091a072cd8" type="SPD">
+      <localfile name="/components/rh/SigGen/SigGen.spd.xml"/>
+    </componentfile>
+    <componentfile id="DataConverter_3c7397ac-9b25-4b7d-aac8-1ddc140ecd44" type="SPD">
+      <localfile name="/components/rh/DataConverter/DataConverter.spd.xml"/>
+    </componentfile>
+  </componentfiles>
+  <partitioning>
+    <componentplacement>
+      <componentfileref refid="SigGen_d05b94a4-ca48-461f-8057-fa091a072cd8"/>
+      <componentinstantiation id="SigGen_1">
+        <usagename>SigGen_1</usagename>
+        <findcomponent>
+          <namingservice name="SigGen_1"/>
+        </findcomponent>
+      </componentinstantiation>
+    </componentplacement>
+    <componentplacement>
+      <componentfileref refid="DataConverter_3c7397ac-9b25-4b7d-aac8-1ddc140ecd44"/>
+      <componentinstantiation id="DataConverter_1" startorder="1">
+        <usagename>DataConverter_1</usagename>
+        <findcomponent>
+          <namingservice name="DataConverter_1"/>
+        </findcomponent>
+      </componentinstantiation>
+    </componentplacement>
+  </partitioning>
+  <assemblycontroller>
+    <componentinstantiationref refid="SigGen_1"/>
+  </assemblycontroller>
+  <connections>
+    <connectinterface id="connection_1">
+      <usesport>
+        <usesidentifier>badid1</usesidentifier>
+        <componentinstantiationref refid="SigGen_1"/>
+      </usesport>
+      <providesport>
+        <providesidentifier>badid2</providesidentifier>
+        <componentinstantiationref refid="DataConverter_1"/>
+      </providesport>
+    </connectinterface>
+  </connections>
+</softwareassembly>
