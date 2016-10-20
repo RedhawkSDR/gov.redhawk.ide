@@ -11,6 +11,7 @@
     http://www.eclipse.org/legal/epl-v10.html.
 -->
 <softpkg id="DCE:b3bc7ad3-e919-4267-8971-ae0be5067085" name="SpdWithErrors" type="sca_compliant">
+  <!-- missing author -->
   <implementation id="cpp">
     <code type="Executable">
       <localfile name="cpp/SpdWithErrors"/>
@@ -19,4 +20,3 @@
     <os name="Linux"/>
   </implementation>
 </softpkg>
-

@@ -27,19 +27,46 @@ public class SadLauncherUtilTest {
 	private static final String PLUGIN_ID = "gov.redhawk.ide.debug.tests";
 	private static final String TEST_SDR_PATH = "testFiles/sdr";
 
+	/**
+	 * IDE-1445 Test that XML validation catches errors in the SAD file.
+	 */
 	@Test
-	public void validateAllXML() throws URISyntaxException, IOException {
+	public void validateAllXML_sadWithErrors() throws URISyntaxException, IOException {
 		SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(PLUGIN_ID, TEST_SDR_PATH);
 
 		SoftwareAssembly sad = getSad(sdrRoot, "sadWithErrors");
 		IStatus status = SadLauncherUtil.validateAllXML(sad);
 		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
-		Assert.assertEquals(0, status.getChildren().length);
+		Assert.assertEquals("There are errors in the SAD file", status.getMessage());
+		Assert.assertEquals(2, status.getChildren().length);
 
-		sad = getSad(sdrRoot, "sadWithComponentsWithErrors");
-		status = SadLauncherUtil.validateAllXML(sad);
+		Assert.assertTrue(status.getChildren()[0].getMessage().contains("componentFile"));
+
+		Assert.assertTrue(status.getChildren()[1].getMessage().contains("componentInstantiationRef"));
+	}
+
+	/**
+	 * IDE-1445 Test that XML validation catches errors with/in dependencies (SPDs, PRFs, SCDs).
+	 */
+	@Test
+	public void validateAllXML_sadWithComponentsWithErrors() throws URISyntaxException, IOException {
+		SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(PLUGIN_ID, TEST_SDR_PATH);
+
+		SoftwareAssembly sad = getSad(sdrRoot, "sadWithComponentsWithErrors");
+		IStatus status = SadLauncherUtil.validateAllXML(sad);
 		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
-		Assert.assertEquals(6, status.getChildren().length);
+		Assert.assertEquals("Some XML file(s) have errors", status.getMessage());
+		Assert.assertEquals(5, status.getChildren().length);
+
+		Assert.assertEquals("Errors in SPD for component SpdWithErrors", status.getChildren()[0].getMessage());
+
+		Assert.assertEquals("Errors in SPD for component SpdMissingPrfAndScd", status.getChildren()[1].getMessage());
+
+		Assert.assertEquals("Errors in PRF for component SpdWithPrfAndScdErrors (SpdWithPrfAndScdErrors.prf.xml)", status.getChildren()[2].getMessage());
+
+		Assert.assertEquals("Errors in SCD for component SpdWithPrfAndScdErrors (SpdWithPrfAndScdErrors.scd.xml)", status.getChildren()[3].getMessage());
+
+		Assert.assertEquals("Missing component SPD for component id4 (/components/MissingSpd/MissingSpd.spd.xml)", status.getChildren()[4].getMessage());
 	}
 
 	private SoftwareAssembly getSad(SdrRoot sdrRoot, String name) {

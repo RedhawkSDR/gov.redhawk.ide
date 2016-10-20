@@ -67,11 +67,11 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.BasicDiagnostic;
-import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.EcoreValidator;
+import org.eclipse.emf.ecore.util.Diagnostician;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TCKind;
@@ -95,6 +95,12 @@ import CF.ResourcePackage.StartError;
  * @since 4.0
  */
 public final class SpdLauncherUtil {
+
+	/**
+	 * The status code for indicating errors with XML files related to the SPD (e.g. PRF, SCD, etc) instead of the SPD itself. 
+	 * @since 8.3
+	 */
+	public static final int ERR_CODE_RELATED_XML = 1;
 
 	private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool(new NamedThreadFactory(SpdLauncherUtil.class.getName()));
 	private static final Debug DEBUG_ARGS = new Debug(ScaDebugPlugin.getInstance(), "LauncherArgs");
@@ -801,23 +807,22 @@ public final class SpdLauncherUtil {
 	 * @since 8.3
 	 */
 	public static IStatus validateAllXML(SoftPkg spd) {
-		if (!validateNoXMLErrors(spd)) {
-			String msg = String.format("Errors in SPD for component %s", spd.getName());
-			return new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg);
+		// Check SPD. Return immediately if there are errors.
+		IStatus status = validateXML(spd, String.format("Errors in SPD for component %s", spd.getName()));
+		if (status.getSeverity() >= IStatus.ERROR) {
+			return status;
 		}
 
-		MultiStatus multiStatus = new MultiStatus(ScaDebugPlugin.ID, 0, "Some XML file(s) have errors", null);
+		MultiStatus multiStatus = new MultiStatus(ScaDebugPlugin.ID, ERR_CODE_RELATED_XML, "Some XML file(s) have errors", null);
 
 		// Check PRF if applicable
 		if (spd.getPropertyFile() != null) {
 			Properties prf = spd.getPropertyFile().getProperties();
 			String prfFilePath = spd.getPropertyFile().getLocalFile().getName();
-			if (prf == null) {
-				String msg = String.format("Missing PRF for component %s (%s)", spd.getName(), prfFilePath);
-				multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
-			} else if (!validateNoXMLErrors(prf)) {
-				String msg = String.format("Errors in PRF for component %s (%s)", spd.getName(), prfFilePath);
-				multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
+			String msg = String.format("Errors in PRF for component %s (%s)", spd.getName(), prfFilePath);
+			status = validateXML(prf, msg);
+			if (status.getSeverity() >= IStatus.ERROR) {
+				multiStatus.add(status);
 			}
 		}
 
@@ -825,16 +830,14 @@ public final class SpdLauncherUtil {
 		if (spd.getDescriptor() != null) {
 			SoftwareComponent scd = spd.getDescriptor().getComponent();
 			String scdFilePath = spd.getDescriptor().getLocalfile().getName();
-			if (scd == null) {
-				String msg = String.format("Missing SCD for component %s (%s)", spd.getName(), scdFilePath);
-				multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
-			} else if (!validateNoXMLErrors(scd)) {
-				String msg = String.format("Errors in SCD for component %s (%s)", spd.getName(), scdFilePath);
-				multiStatus.add(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg));
+			String msg = String.format("Errors in SCD for component %s (%s)", spd.getName(), scdFilePath);
+			status = validateXML(scd, msg);
+			if (status.getSeverity() >= IStatus.ERROR) {
+				multiStatus.add(status);
 			}
 		}
 
-		if (!multiStatus.isOK()) {
+		if (multiStatus.getSeverity() >= IStatus.ERROR) {
 			return multiStatus;
 		} else {
 			return Status.OK_STATUS;
@@ -842,18 +845,25 @@ public final class SpdLauncherUtil {
 	}
 
 	/**
-	 * Check for EMF validation errors on an EObject and its children.
-	 * @param object
+	 * Check for EMF validation <b>errors</b> on an {@link EObject} and its children within a
+	 * {@link org.eclipse.emf.ecore.resource.Resource Resource}.
+	 * @param eObject
+	 * @param errorMsg The error message to use in the returned status
 	 * @return
 	 */
-	static boolean validateNoXMLErrors(EObject object) {
-		TreeIterator<EObject> allContents = object.eResource().getAllContents();
-		boolean modelIsValid = true;
-		while (allContents.hasNext()) {
-			boolean validatorResult = EcoreValidator.INSTANCE.validate(allContents.next(), new BasicDiagnostic(), null);
-			modelIsValid = modelIsValid && validatorResult;
-		}
-		return modelIsValid;
+	private static IStatus validateXML(EObject eObject, String errorMsg) {
+		BasicDiagnostic diagnostic = new BasicDiagnostic(ScaDebugPlugin.ID, 0, errorMsg, null) {
+
+			@Override
+			public void add(Diagnostic diagnostic) {
+				if (diagnostic != null && diagnostic.getSeverity() < IStatus.ERROR) {
+					return;
+				}
+				super.add(diagnostic);
+			}
+		};
+		Diagnostician.INSTANCE.validate(eObject, diagnostic);
+		return BasicDiagnostic.toIStatus(diagnostic);
 	}
 
 	/**

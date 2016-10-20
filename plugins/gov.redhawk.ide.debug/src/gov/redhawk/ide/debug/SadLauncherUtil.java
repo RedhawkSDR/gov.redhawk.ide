@@ -18,9 +18,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.BasicDiagnostic;
+import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreValidator;
+import org.eclipse.emf.ecore.util.Diagnostician;
 
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -47,9 +48,10 @@ public final class SadLauncherUtil {
 	 * @since 8.3
 	 */
 	public static IStatus validateAllXML(SoftwareAssembly sad) {
-		// Check SAD - throw immediately if there are errors
-		if (!validateNoXMLErrors(sad)) {
-			return new Status(IStatus.ERROR, ScaDebugPlugin.ID, "There are errors in the SAD file");
+		// Check SAD. Return immediately if there are errors.
+		IStatus status = validateXML(sad, "There are errors in the SAD file");
+		if (status.getSeverity() >= IStatus.ERROR) {
+			return status;
 		}
 
 		// Check each referenced component
@@ -63,9 +65,9 @@ public final class SadLauncherUtil {
 				continue;
 			}
 
-			IStatus status = SpdLauncherUtil.validateAllXML(spd);
-			if (!status.isOK()) {
-				if (status.isMultiStatus()) {
+			status = SpdLauncherUtil.validateAllXML(spd);
+			if (status.getSeverity() >= IStatus.ERROR) {
+				if (status.isMultiStatus() && status.getCode() == SpdLauncherUtil.ERR_CODE_RELATED_XML) {
 					multiStatus.addAll(status);
 				} else {
 					multiStatus.add(status);
@@ -73,20 +75,32 @@ public final class SadLauncherUtil {
 			}
 		}
 
-		if (!multiStatus.isOK()) {
+		if (multiStatus.getSeverity() >= IStatus.ERROR) {
 			return multiStatus;
 		} else {
 			return Status.OK_STATUS;
 		}
 	}
 
-	private static boolean validateNoXMLErrors(EObject object) {
-		TreeIterator<EObject> allContents = object.eResource().getAllContents();
-		boolean modelIsValid = true;
-		while (allContents.hasNext()) {
-			boolean validatorResult = EcoreValidator.INSTANCE.validate(allContents.next(), null, null);
-			modelIsValid = modelIsValid && validatorResult;
-		}
-		return modelIsValid;
+	/**
+	 * Check for EMF validation <b>errors</b> on an {@link EObject} and its children within a
+	 * {@link org.eclipse.emf.ecore.resource.Resource Resource}.
+	 * @param eObject
+	 * @param errorMsg The error message to use in the returned status
+	 * @return
+	 */
+	private static IStatus validateXML(EObject eObject, String errorMsg) {
+		BasicDiagnostic diagnostic = new BasicDiagnostic(ScaDebugPlugin.ID, 0, errorMsg, null) {
+
+			@Override
+			public void add(Diagnostic diagnostic) {
+				if (diagnostic != null && diagnostic.getSeverity() < IStatus.ERROR) {
+					return;
+				}
+				super.add(diagnostic);
+			}
+		};
+		Diagnostician.INSTANCE.validate(eObject, diagnostic); 
+		return BasicDiagnostic.toIStatus(diagnostic);
 	}
 }
