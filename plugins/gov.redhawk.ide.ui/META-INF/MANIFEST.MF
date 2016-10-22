@@ -35,9 +35,10 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  gov.redhawk.ide.dcd;bundle-version="2.1.0",
  gov.redhawk.ui.views.namebrowser;bundle-version="1.2.0",
  org.eclipse.jdt.core,
- org.eclipse.jdt.ui
+ org.eclipse.jdt.ui,
+ gov.redhawk.ui.views.event;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: gov.redhawk.ide.internal.ui.handlers,
  gov.redhawk.ide.internal.ui.perspective;x-internal:=true,
  gov.redhawk.ide.ui,

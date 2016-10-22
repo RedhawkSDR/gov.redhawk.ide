@@ -113,6 +113,15 @@ public class ViewUtils {
 	}
 
 	/**
+	 * Return Event View
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getEventView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.ui.views.event.eventViewer");
+	}
+
+	/**
 	 * Return Snapshot dialog
 	 * @param bot
 	 * @return

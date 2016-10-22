@@ -10,16 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.internal.ui.handlers;
 
-import gov.redhawk.ide.internal.ui.event.EventView;
-import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
-import gov.redhawk.model.sca.ScaDomainManager;
-import gov.redhawk.model.sca.ScaEventChannel;
-import gov.redhawk.ui.views.namebrowser.view.BindingNode;
-
 import java.util.concurrent.Callable;
-
-import mil.jpeojtrs.sca.util.CorbaUtils;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -31,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -41,6 +33,14 @@ import org.omg.CosEventChannelAdmin.EventChannelHelper;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
+
+import gov.redhawk.ui.views.event.EventView;
+import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
+import gov.redhawk.model.sca.ScaDomainManager;
+import gov.redhawk.model.sca.ScaEventChannel;
+import gov.redhawk.ui.views.namebrowser.view.BindingNode;
+import mil.jpeojtrs.sca.util.CorbaUtils;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 /**
  * @since 9.1
@@ -177,6 +177,9 @@ public class EventChannelListenerHandler extends AbstractHandler {
 				view.setPartName(shortName);
 				view.setTitleToolTip(shortName);
 			}
+			
+			// Show the Properties view whenever the Event View is opened
+			page.showView(IPageLayout.ID_PROP_SHEET);
 		}
 
 		return view;

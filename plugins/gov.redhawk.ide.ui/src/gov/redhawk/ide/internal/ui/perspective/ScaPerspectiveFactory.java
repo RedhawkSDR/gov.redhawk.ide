@@ -10,16 +10,16 @@
  *******************************************************************************/
 package gov.redhawk.ide.internal.ui.perspective;
 
-import gov.redhawk.ide.internal.ui.event.EventView;
-import gov.redhawk.sca.ui.views.ScaExplorer;
-import gov.redhawk.ui.port.nxmplot.PlotActivator;
-import gov.redhawk.ui.views.namebrowser.view.NameBrowserView;
-
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
+
+import gov.redhawk.ui.views.event.EventView;
+import gov.redhawk.sca.ui.views.ScaExplorer;
+import gov.redhawk.ui.port.nxmplot.PlotActivator;
+import gov.redhawk.ui.views.namebrowser.view.NameBrowserView;
 
 /**
  * A factory for creating ScaPerspective objects.
@@ -59,8 +59,6 @@ public class ScaPerspectiveFactory implements IPerspectiveFactory {
 		bottom.addView(IPageLayout.ID_PROP_SHEET);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 		bottom.addView(ScaPerspectiveFactory.CONSOLE_VIEW_ID);
-		bottom.addPlaceholder(EventView.ID);
-		bottom.addPlaceholder(EventView.ID + ":*");
 		bottom.addPlaceholder(IPageLayout.ID_PROGRESS_VIEW); // <-- workaround fix for Eclipse e4 BUG 441723
 		bottom.addPlaceholder("gov.redhawk.bulkio.ui.sridata.view:*");
 		bottom.addPlaceholder("gov.redhawk.datalist.ui.views.DataListView:*");
@@ -73,7 +71,10 @@ public class ScaPerspectiveFactory implements IPerspectiveFactory {
 		IPlaceholderFolderLayout plotFolder = layout.createPlaceholderFolder("plotFolder", IPageLayout.BOTTOM, 0.50f, editorArea);
 		plotFolder.addPlaceholder(PlotActivator.VIEW_PLOT_2 + ":*");
 
+		// The following view should open in their own part stack
 		layout.addPlaceholder("gov.redhawk.ui.port.playaudio.view", IPageLayout.BOTTOM, 0.50f, editorArea);
+		layout.addPlaceholder(EventView.ID, IPageLayout.BOTTOM, 0.50f, editorArea);
+		layout.addPlaceholder(EventView.ID + ":*", IPageLayout.BOTTOM, 0.50f, editorArea);
 	}
 
 }
