@@ -190,12 +190,6 @@ public final class SpdLauncherUtil {
 		// Set the profile object, if applicable
 		if (newComponent instanceof ProfileObjectWrapper< ? >) {
 			final ProfileObjectWrapper< ? > obj = (ProfileObjectWrapper< ? >) newComponent;
-			ScaModelCommand.execute(newComponent, new ScaModelCommand() {
-				@Override
-				public void execute() {
-					obj.setProfileURI(spd.eResource().getURI());
-				}
-			});
 			obj.fetchProfileObject(progress.newChild(WORK_GENERAL));
 		} else {
 			progress.notWorked(WORK_GENERAL);
