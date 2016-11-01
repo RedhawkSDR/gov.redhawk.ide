@@ -20,6 +20,7 @@ import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -58,7 +59,10 @@ public class ProfileNameVariableResolver extends AbstractLauncherResolver implem
 		}
 		URI uri = spd.eResource().getURI();
 		List<String> list = uri.segmentsList();
-		if (list.size() >= 2) {
+		if (uri.toString().contains(root)) {
+			List<String> subList = list.subList(list.indexOf(root), list.size()); 
+			return "/" + StringUtils.join(subList, "/");
+		} else if (list.size() >= 2) {
 			return "/" + root + "/" + list.get(list.size() - 2) + "/" + list.get(list.size() - 1);
 		} else {
 			return "/" + root + "/" + list.get(list.size() - 1);
