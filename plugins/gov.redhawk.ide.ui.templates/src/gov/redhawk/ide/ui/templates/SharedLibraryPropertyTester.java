@@ -14,7 +14,6 @@ package gov.redhawk.ide.ui.templates;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
@@ -23,15 +22,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
+/**
+ * Perhaps confusingly, this property tester returns <b>false</b> if the {@link IFile} for the SPD passed to it is a
+ * shared library, and true otherwise.
+ */
 public class SharedLibraryPropertyTester extends PropertyTester {
 
-	private static final String IS_SHARED_LIBRARY = "isSharedLibrary";
-
-	/**
-	 * 
-	 */
 	public SharedLibraryPropertyTester() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -44,8 +41,7 @@ public class SharedLibraryPropertyTester extends PropertyTester {
 		final SoftPkg spd = (SoftPkg) resourceSet.getEObject(spdUri, true);
 
 		if (spd != null) {
-			CodeFileType spdType = spd.getImplementation().get(0).getCode().getType();
-			if (CodeFileType.SHARED_LIBRARY.equals(spdType)) {
+			if (spd.getImplementation().get(0).isSharedLibrary()) {
 				return false;
 			}
 		}

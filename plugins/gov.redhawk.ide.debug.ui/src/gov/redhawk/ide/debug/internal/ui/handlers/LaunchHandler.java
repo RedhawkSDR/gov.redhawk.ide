@@ -23,8 +23,6 @@ import gov.redhawk.ide.sdr.impl.ServicesContainerImpl;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.spd.Code;
-import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
@@ -219,46 +217,19 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 				if (obj instanceof SoftPkg) {
 					SoftPkg spd = (SoftPkg) obj;
 					for (Implementation impl : spd.getImplementation()) {
-						enabled = checkImpl(impl);
-						if (!enabled) {
+						if (!impl.isExecutable()) {
 							break out;
 						}
 					}
 				} else if (obj instanceof Implementation) {
 					Implementation impl = (Implementation) obj;
-					enabled = checkImpl(impl);
-					if (!enabled) {
+					if (!impl.isExecutable()) {
 						break out;
 					}
 				}
 			}
 			setBaseEnabled(enabled);
 		}
-	}
-
-	/**
-	 * Checks if the implementation is something than can be run (i.e. it's not a shared library or something).
-	 * @param impl
-	 * @return
-	 */
-	private boolean checkImpl(Implementation impl) {
-		if (impl.getCode() != null) {
-			Code code = impl.getCode();
-			CodeFileType type = code.getType();
-			if (type != null) {
-				switch (type) {
-				case EXECUTABLE:
-					return true;
-				case DRIVER:
-				case KERNEL_MODULE:
-				case NODE_BOOTER:
-				case SHARED_LIBRARY:
-				default:
-					return false;
-				}
-			}
-		}
-		return false;
 	}
 
 	/**

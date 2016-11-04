@@ -36,7 +36,6 @@ import org.eclipse.emf.common.util.URI;
 import org.osgi.framework.Bundle;
 
 import gov.redhawk.ide.sdr.IdeSdrActivator;
-import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Dependency;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -162,7 +161,7 @@ public abstract class AbstractEnvMap implements IEnvMap {
 
 			// We choose the first implementation, and add to the result list (pre-order)
 			Implementation currentImpl = currentSpd.getImplementation().get(0);
-			if (currentImpl.getCode().getType() != CodeFileType.SHARED_LIBRARY) {
+			if (!currentImpl.isSharedLibrary()) {
 				continue;
 			}
 			depImpls.add(currentImpl);

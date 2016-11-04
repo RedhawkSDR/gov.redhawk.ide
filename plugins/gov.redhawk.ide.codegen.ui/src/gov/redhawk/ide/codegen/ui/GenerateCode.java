@@ -566,7 +566,7 @@ public final class GenerateCode {
 			}
 
 			// Don't validate SCD or PRF if project is a Shared Library
-			if (!CodeFileType.SHARED_LIBRARY.equals(projectType)) {
+			if (!impl.isSharedLibrary()) {
 				// Check SCD file
 				final String scdFileName = ModelUtil.getScdFileName(softPkg);
 				if (scdFileName == null) {

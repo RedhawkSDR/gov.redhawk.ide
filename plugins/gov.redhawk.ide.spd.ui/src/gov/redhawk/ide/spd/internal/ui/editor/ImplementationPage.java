@@ -12,7 +12,6 @@
 package gov.redhawk.ide.spd.internal.ui.editor;
 
 import gov.redhawk.ui.editor.ScaFormPage;
-import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.util.SpdResourceImpl;
@@ -88,7 +87,7 @@ public class ImplementationPage extends ScaFormPage implements IViewerProvider {
 		for (EObject i : spdResource.getContents()) {
 			if (i instanceof SoftPkg) {
 				for (Implementation impl : ((SoftPkg) i).getImplementation()) {
-					if (CodeFileType.SHARED_LIBRARY.equals(impl.getCode().getType())) {
+					if (impl.isSharedLibrary()) {
 						return true;
 					}
 				}

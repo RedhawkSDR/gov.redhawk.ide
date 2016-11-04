@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -64,7 +63,6 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.scd.SupportsInterface;
-import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
@@ -1450,35 +1448,26 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	private void addResource(EditingDomain domain, final SoftPkg softPkg, final SoftwareComponent component) {
 		// END GENERATED CODE
 		if (component != null) {
-			boolean isDevice = false;
 			for (final SupportsInterface iface : component.getComponentFeatures().getSupportsInterface()) {
 				if (iface.getRepId().startsWith("IDL:CF/Device") || iface.getRepId().startsWith("IDL:CF/LoadableDevice")
 					|| iface.getRepId().startsWith("IDL:CF/ExecutableDevice") || iface.getRepId().startsWith("IDL:CF/AggregateDevice")) {
-					isDevice = true;
-					break;
+					if (DEBUG.enabled) {
+						DEBUG.message("Component \"{0}\" forced to be device based on supported interfaces.  Component should be of type \"device\".",
+							softPkg.getName());
+					}
+					addDevice(domain, softPkg, component);
+					return;
 				}
 			}
+		}
 
-			if (isDevice) {
-				if (DEBUG.enabled) {
-					DEBUG.message("Component \"{0}\" forced to be device based on supported interfaces.  Component should be of type \"device\".",
-						softPkg.getName());
-				}
-				addDevice(domain, softPkg, component);
-			} else {
-				EList<Implementation> impl = softPkg.getImplementation();
-				if (!impl.isEmpty() && CodeFileType.SHARED_LIBRARY.equals(impl.get(0).getCode().getType())) {
-					domain.getCommandStack().execute(new AddCommand(domain, getSharedLibrariesContainer().getComponents(), softPkg));
-				} else {
-					domain.getCommandStack().execute(new AddCommand(domain, getComponentsContainer().getComponents(), softPkg));
-				}
-			}
-		} else {
-			EList<Implementation> impl = softPkg.getImplementation();
-			if (!impl.isEmpty() && CodeFileType.SHARED_LIBRARY.equals(impl.get(0).getCode().getType())) {
-				domain.getCommandStack().execute(new AddCommand(domain, getSharedLibrariesContainer().getComponents(), softPkg));
-			} else {
+		for (Implementation impl : softPkg.getImplementation()) {
+			if (impl.isExecutable()) {
 				domain.getCommandStack().execute(new AddCommand(domain, getComponentsContainer().getComponents(), softPkg));
+				return;
+			} else if (impl.isSharedLibrary()) {
+				domain.getCommandStack().execute(new AddCommand(domain, getSharedLibrariesContainer().getComponents(), softPkg));
+				return;
 			}
 		}
 		// BEGIN GENERATED CODE

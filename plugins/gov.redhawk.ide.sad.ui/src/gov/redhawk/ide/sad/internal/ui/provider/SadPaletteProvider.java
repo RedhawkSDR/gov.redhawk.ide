@@ -21,8 +21,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import mil.jpeojtrs.sca.spd.Code;
-import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -43,15 +41,10 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * @since 4.0
- * 
  */
 public class SadPaletteProvider extends DefaultPaletteProvider {
 
-	/**
-	 * 
-	 */
 	public SadPaletteProvider() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -107,18 +100,7 @@ public class SadPaletteProvider extends DefaultPaletteProvider {
 		final SoftPkg[] componentsArray = components.toArray(new SoftPkg[components.size()]);
 		spdLoop: for (final SoftPkg spd : componentsArray) {
 			for (Implementation impl : spd.getImplementation()) {
-				Code code = impl.getCode();
-				if (code == null) {
-					continue spdLoop;
-				}
-				CodeFileType type = code.getType();
-				if (type == null) {
-					continue spdLoop;
-				} 
-				switch (type) {
-				case EXECUTABLE:
-					break;
-				default:
+				if (!impl.isExecutable()) {
 					continue spdLoop;
 				}
 			}
