@@ -40,8 +40,6 @@ import gov.redhawk.ide.graphiti.ui.palette.PaletteTreeEntry;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
-import mil.jpeojtrs.sca.spd.Code;
-import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -170,27 +168,15 @@ public abstract class AbstractPaletteToolBehaviorProvider extends AbstractToolBe
 			spds = new ArrayList<SoftPkg>();
 		}
 		for (SoftPkg spd : spds) {
-			if (isExecutable(spd)) {
-				addToolToCompartment(compartmentEntry, spd, iconId);
+			for (Implementation impl : spd.getImplementation()) {
+				if (impl.isExecutable()) {
+					addToolToCompartment(compartmentEntry, spd, iconId);
+					break;
+				}
 			}
 		}
 
 		sort(compartmentEntry.getToolEntries());
-	}
-
-	private boolean isExecutable(SoftPkg spd) {
-		for (Implementation impl : spd.getImplementation()) {
-			Code code = impl.getCode();
-			if (code == null) {
-				return false;
-			}
-			CodeFileType type = code.getType();
-			if (type == null) {
-				return false;
-			}
-			return type == CodeFileType.EXECUTABLE;
-		}
-		return false;
 	}
 
 	/**

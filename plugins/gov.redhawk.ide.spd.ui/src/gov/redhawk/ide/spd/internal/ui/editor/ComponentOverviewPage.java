@@ -19,7 +19,6 @@ import gov.redhawk.ide.spd.ui.editor.AuthorsSection;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
-import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -326,7 +325,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		for (EObject i : spdResource.getContents()) {
 			if (i instanceof SoftPkg) {
 				for (Implementation impl : ((SoftPkg) i).getImplementation()) {
-					if (CodeFileType.SHARED_LIBRARY.equals(impl.getCode().getType())) {
+					if (impl.isSharedLibrary()) {
 						return true;
 					}
 				}
