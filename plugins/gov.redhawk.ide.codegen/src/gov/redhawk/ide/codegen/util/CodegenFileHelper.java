@@ -166,9 +166,9 @@ public class CodegenFileHelper {
 		} else {
 			result = softPkg.getName();
 		}
-		int index = result.indexOf('.');
+		int index = result.lastIndexOf('.');
 		if (index > 0) {
-			result = result.substring(index);
+			result = result.substring(index + 1);
 		}
 		
 		// Cleanup the name
