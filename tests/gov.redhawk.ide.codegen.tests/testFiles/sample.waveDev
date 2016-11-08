@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<codegen:WaveDevSettings xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:codegen="http://www.redhawk.gov/model/codegen">
+  <implSettings key="DCE:726800a4-8af7-47b0-ba37-77952254b144">
+    <value name="cpp_python_cpp_impl1" outputDir="cpp_python_cpp_impl1" template="src/" generatorId="gov.redhawk.ide.codegen.jet.cplusplus.CplusplusGenerator">
+      <properties id="queued_ports" value="true"/>
+      <properties id="memcpy_buffer" value="true"/>
+    </value>
+  </implSettings>
+</codegen:WaveDevSettings>

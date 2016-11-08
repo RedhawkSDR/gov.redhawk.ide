@@ -233,7 +233,7 @@
         <module>tests/gov.redhawk.ide.spd.tests</module>
         <module>tests/gov.redhawk.mfile.parser.tests</module>
         <module>tests/gov.redhawk.spd.validation.tests</module>
-	<module>tests/gov.redhawk.ide.codegen.ui.tests</module>
+        <module>tests/gov.redhawk.ide.codegen.tests</module>
 
         <module>releng/p2</module>
       </modules>
