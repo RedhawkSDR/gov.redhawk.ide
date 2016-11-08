@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.codegen.ui.tests;
+package gov.redhawk.ide.codegen.tests;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -31,6 +31,7 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 import mil.jpeojtrs.sca.util.SdrURIHandler;
 
+@SuppressWarnings("restriction")
 public class GenerateSpecFileTest {
 
 	@Test
@@ -76,7 +77,7 @@ public class GenerateSpecFileTest {
 	private Resource getResource(URI uri) throws URISyntaxException {
 
 		ResourceSet resourceSet = new ResourceSetImpl();
-		URL url = FileLocator.find(Platform.getBundle("gov.redhawk.ide.codegen.ui.tests"), new Path("sdr"), null);
+		URL url = FileLocator.find(Platform.getBundle("gov.redhawk.ide.codegen.tests"), new Path("sdr"), null);
 		SdrURIHandler handler = new SdrURIHandler(URI.createURI(url.toURI().toString()));
 		resourceSet.getURIConverter().getURIHandlers().add(0, handler);
 		return resourceSet.getResource(uri, true);

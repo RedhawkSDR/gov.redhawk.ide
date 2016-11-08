@@ -19,13 +19,12 @@
     <relativePath>../..</relativePath>
   </parent>
   <groupId>gov.redhawk.ide</groupId>
-  <artifactId>gov.redhawk.ide.codegen.ui.tests</artifactId>
+  <artifactId>gov.redhawk.ide.codegen.tests</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
-
+  
   <properties>
     <sonar.sources></sonar.sources>
     <sonar.tests>src</sonar.tests>
   </properties>
-
 </project>
