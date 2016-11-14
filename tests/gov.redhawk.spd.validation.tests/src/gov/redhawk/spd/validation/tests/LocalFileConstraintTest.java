@@ -13,6 +13,7 @@ package gov.redhawk.spd.validation.tests;
 import gov.redhawk.spd.internal.validation.LocalFileConstraint;
 import org.junit.Assert;
 import mil.jpeojtrs.sca.spd.Code;
+import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.LocalFile;
 import mil.jpeojtrs.sca.spd.SpdFactory;
 
@@ -65,16 +66,25 @@ public class LocalFileConstraintTest {
 		IStatus status = this.constraint.validate(context);
 		Assert.assertEquals(status.getMessage(), IStatus.OK, status.getSeverity());
 	}
-	
+
 	@Test
 	public void testCode() throws Exception {
 		Code code = this.provider.createWorkspaceSoftPkgResource().getImplementation().get(0).getCode();
 		LocalFile file = SpdFactory.eINSTANCE.createLocalFile();
-		file.setName("test");
+		file.setName("test.so");
 		code.setLocalFile(file);
+		code.setEntryPoint("test.so");
+
+		/** Should error because the test file does not exist in the project */
+		// Check 'Executable' code type
 		IValidationContext context = new TestValidationContext(LocalFileConstraint.CODE_ID, code);
-		//Should error because the test file does not exist in the project
 		IStatus status = this.constraint.validate(context);
+		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
+
+		// Check 'SharedLibrary' code type
+		code.setType(CodeFileType.SHARED_LIBRARY);
+		context = new TestValidationContext(LocalFileConstraint.CODE_ID, code);
+		status = this.constraint.validate(context);
 		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
 	}
 
