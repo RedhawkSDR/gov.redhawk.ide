@@ -13,6 +13,7 @@ package gov.redhawk.ide.swtbot;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
@@ -58,6 +59,13 @@ public class ViewUtils {
 		} catch (WidgetNotFoundException e) {
 			return false;
 		}
+	}
+
+	public static void checkErrorLogIsEmpty(SWTGefBot bot) {
+		bot.menu("Window").menu("Show View").menu("Error Log").click();
+		SWTBotView errorLogView = bot.viewById("org.eclipse.pde.runtime.LogView");
+		SWTBotTree tree = errorLogView.bot().tree();
+		Assert.assertTrue("Errors were reported in Error Log View", tree.getAllItems().length == 0);
 	}
 
 	/**
