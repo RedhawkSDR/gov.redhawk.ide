@@ -281,7 +281,8 @@ public class LocalApplicationFactory {
 							target = componentForPort.getScaPort(providesId).getCorbaObj();
 						}
 					}
-				} else if (connection.getComponentSupportedInterface() != null) {
+				} else if (connection.getComponentSupportedInterface() != null
+					&& connection.getComponentSupportedInterface().getComponentInstantiationRef() != null) {
 					final String componentRefId = connection.getComponentSupportedInterface().getComponentInstantiationRef().getRefid();
 					final ScaComponent component = app.getLocalWaveform().getScaComponent(componentRefId);
 					if (component == null) {
