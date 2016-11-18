@@ -10,27 +10,37 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.impl.commands;
 
-import gov.redhawk.ide.debug.ScaDebugFactory;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.model.sca.commands.ScaWaveformMergeComponentsCommand;
-
 import org.eclipse.core.runtime.IStatus;
 
 import CF.ComponentType;
+import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.ScaDebugFactory;
+import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.commands.ScaWaveformMergeComponentsCommand;
 
 /**
+ * Used when updating the components belonging to a sandbox waveform.
  * @since 2.0
- * 
  */
 public class LocalScaWaveformMergeComponentsCommand extends ScaWaveformMergeComponentsCommand {
 
-	public LocalScaWaveformMergeComponentsCommand(final ScaWaveform provider, final ComponentType[] compTypes, final IStatus componentStatus) {
+	public LocalScaWaveformMergeComponentsCommand(final LocalScaWaveform provider, final ComponentType[] compTypes, final IStatus componentStatus) {
 		super(provider, compTypes, componentStatus);
 	}
 
+	/**
+	 * @deprecated Use {@link #createComponent(String, String, org.omg.CORBA.Object)}
+	 */
+	@Deprecated
 	@Override
 	protected ScaComponent createComponent() {
 		return ScaDebugFactory.eINSTANCE.createLocalScaComponent();
+	}
+
+	protected ScaComponent createComponent(String identifier, String softwareProfile, org.omg.CORBA.Object componentObject) {
+		LocalScaComponent component = ScaDebugFactory.eINSTANCE.createLocalScaComponent();
+		setAttributes(component, identifier, softwareProfile, componentObject);
+		return component;
 	}
 }

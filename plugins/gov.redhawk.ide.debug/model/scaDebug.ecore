@@ -130,6 +130,12 @@
         eType="#//NotifyingNamingContext" transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="localApp" ordered="false"
         unique="false" eType="#//AttrApplicationOperations" transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="domainWaveform" eType="ecore:EClass ../../gov.redhawk.sca.model/model/sca.ecore#//ScaWaveform"
+        transient="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The waveform being proxied from a domain"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalScaComponent" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaComponent #//LocalAbstractComponent"/>
   <eClassifiers xsi:type="ecore:EClass" name="LocalScaDeviceManager" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaDeviceManager #//LocalLaunch">

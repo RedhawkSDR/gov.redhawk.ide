@@ -32,6 +32,7 @@ import CF.DataType;
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getNamingContext <em>Naming Context</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getDomainWaveform <em>Domain Waveform</em>}</li>
  * </ul>
  *
  * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaWaveform()
@@ -95,6 +96,33 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	 * @generated
 	 */
 	void setLocalApp(ApplicationOperations value);
+
+	/**
+	 * Returns the value of the '<em><b>Domain Waveform</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * The waveform being proxied from a domain
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Domain Waveform</em>' reference.
+	 * @see #setDomainWaveform(ScaWaveform)
+	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaWaveform_DomainWaveform()
+	 * @model transient="true"
+	 * @generated
+	 */
+	ScaWaveform getDomainWaveform();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaWaveform#getDomainWaveform <em>Domain Waveform</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Domain Waveform</em>' reference.
+	 * @see #getDomainWaveform()
+	 * @generated
+	 */
+	void setDomainWaveform(ScaWaveform value);
 
 	/**
 	 * <!-- begin-user-doc -->

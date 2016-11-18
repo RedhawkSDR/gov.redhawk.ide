@@ -47,9 +47,11 @@ import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.impl.commands.LocalScaWaveformMergeComponentsCommand;
+import gov.redhawk.ide.debug.impl.commands.ProxyScaWaveformMergeComponentsCommand;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.impl.ScaWaveformImpl;
 import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
@@ -66,6 +68,7 @@ import gov.redhawk.sca.util.SilentJob;
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getMode <em>Mode</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getNamingContext <em>Naming Context</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLocalApp <em>Local App</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getDomainWaveform <em>Domain Waveform</em>}</li>
  * </ul>
  *
  * @generated
@@ -140,6 +143,17 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @ordered
 	 */
 	protected ApplicationOperations localApp = LOCAL_APP_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getDomainWaveform() <em>Domain Waveform</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @see #getDomainWaveform()
+	 * @generated
+	 * @ordered
+	 */
+	protected ScaWaveform domainWaveform;
 
 	private OrbSession session = OrbSession.createSession();
 
@@ -333,6 +347,48 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		}
 	}
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ScaWaveform getDomainWaveform() {
+		if (domainWaveform != null && domainWaveform.eIsProxy()) {
+			InternalEObject oldDomainWaveform = (InternalEObject) domainWaveform;
+			domainWaveform = (ScaWaveform) eResolveProxy(oldDomainWaveform);
+			if (domainWaveform != oldDomainWaveform) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, ScaDebugPackage.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM, oldDomainWaveform,
+						domainWaveform));
+			}
+		}
+		return domainWaveform;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ScaWaveform basicGetDomainWaveform() {
+		return domainWaveform;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDomainWaveform(ScaWaveform newDomainWaveform) {
+		ScaWaveform oldDomainWaveform = domainWaveform;
+		domainWaveform = newDomainWaveform;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM, oldDomainWaveform, domainWaveform));
+	}
+
 	@Override
 	public void unsetProfile() {
 	}
@@ -363,6 +419,10 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			return basicGetNamingContext();
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			return getLocalApp();
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM:
+			if (resolve)
+				return getDomainWaveform();
+			return basicGetDomainWaveform();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -386,6 +446,9 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			return;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			setLocalApp((ApplicationOperations) newValue);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM:
+			setDomainWaveform((ScaWaveform) newValue);
 			return;
 		}
 		super.eSet(featureID, newValue);
@@ -411,6 +474,9 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			setLocalApp(LOCAL_APP_EDEFAULT);
 			return;
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM:
+			setDomainWaveform((ScaWaveform) null);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -431,6 +497,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			return namingContext != null;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			return LOCAL_APP_EDEFAULT == null ? localApp != null : !LOCAL_APP_EDEFAULT.equals(localApp);
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM:
+			return domainWaveform != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -522,7 +590,12 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	@Override
 	protected Command createMergeComponentsCommand(final ComponentType[] compTypes, final IStatus status) {
-		return new LocalScaWaveformMergeComponentsCommand(this, compTypes, status);
+		// Is this a domain waveform that has been opened with the sandbox?
+		if (getDomainWaveform() != null) {
+			return new ProxyScaWaveformMergeComponentsCommand(this, compTypes, status);
+		} else {
+			return new LocalScaWaveformMergeComponentsCommand(this, compTypes, status);
+		}
 	}
 
 	@Override

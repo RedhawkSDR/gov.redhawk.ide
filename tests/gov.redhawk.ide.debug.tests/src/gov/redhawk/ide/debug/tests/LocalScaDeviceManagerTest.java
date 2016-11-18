@@ -104,7 +104,7 @@ public class LocalScaDeviceManagerTest extends TestCase {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see gov.redhawk.ide.debug.LocalScaDeviceManager#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String)
-	 * @generated
+	 * @generated NOT
 	 */
 	public void testLaunch__String_DataType_URI_String_String() {
 		// PASS - This would be difficult/impossible to test in a unit test environment

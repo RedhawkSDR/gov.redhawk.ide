@@ -800,13 +800,22 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_WAVEFORM__LOCAL_APP = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 3;
 	/**
+	 * The feature id for the '<em><b>Domain Waveform</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 4;
+	/**
 	 * The number of structural features of the '<em>Local Sca Waveform</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA_WAVEFORM_FEATURE_COUNT = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 4;
+	int LOCAL_SCA_WAVEFORM_FEATURE_COUNT = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 5;
 	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl <em>Local Sca Component</em>}' class.
 	 * <!-- begin-user-doc -->
@@ -2629,6 +2638,18 @@ public interface ScaDebugPackage extends EPackage {
 	EAttribute getLocalScaWaveform_LocalApp();
 
 	/**
+	 * Returns the meta object for the reference '{@link gov.redhawk.ide.debug.LocalScaWaveform#getDomainWaveform <em>Domain Waveform</em>}'.
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Domain Waveform</em>'.
+	 * @see gov.redhawk.ide.debug.LocalScaWaveform#getDomainWaveform()
+	 * @see #getLocalScaWaveform()
+	 * @generated
+	 */
+	EReference getLocalScaWaveform_DomainWaveform();
+
+	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.debug.LocalScaComponent <em>Local Sca Component</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3113,6 +3134,14 @@ public interface ScaDebugPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute LOCAL_SCA_WAVEFORM__LOCAL_APP = eINSTANCE.getLocalScaWaveform_LocalApp();
+		/**
+		 * The meta object literal for the '<em><b>Domain Waveform</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * @since 9.0
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM = eINSTANCE.getLocalScaWaveform_DomainWaveform();
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl <em>Local Sca Component</em>}' class.
 		 * <!-- begin-user-doc -->
