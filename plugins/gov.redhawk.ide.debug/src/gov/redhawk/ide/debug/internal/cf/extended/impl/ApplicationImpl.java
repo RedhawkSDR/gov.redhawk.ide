@@ -513,18 +513,17 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 	protected void unbind() {
 		if (this.waveformContext != null) {
-
 			if (this.waveformContext.eContainer() instanceof NotifyingNamingContext) {
 				this.streams.getOutStream().println("Unbinding application");
 				try {
 					NotifyingNamingContext localSCANamingContext = (NotifyingNamingContext) this.waveformContext.eContainer();
-					localSCANamingContext.unbind(Name.toName(this.name));
-				} catch (NotFound e) {
-					this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
-				} catch (CannotProceed e) {
-					this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
-				} catch (InvalidName e) {
-					this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
+					localSCANamingContext.unbind(Name.toName(this.waveformContext.getFullName()));
+				} catch (final NotFound e) {
+					this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+				} catch (final CannotProceed e) {
+					this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+				} catch (final InvalidName e) {
+					this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
 				}
 			}
 			ScaDebugPlugin debugInstance = ScaDebugPlugin.getInstance();
@@ -532,15 +531,16 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				final NamingContextExt context = getWaveformContext();
 				if (context != null) {
 					try {
-						context.unbind(Name.toName(this.name));
-					} catch (final NotFound e) {
-						this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
-					} catch (final CannotProceed e) {
-						this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
-					} catch (final InvalidName e) {
-						this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+						// Ugly code intended to handle namespaced applications (which must have dots escaped)
+						context.unbind(Name.toName(this.name.replaceAll("\\.", "\\\\.")));
+					} catch (NotFound e) {
+						this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
+					} catch (CannotProceed e) {
+						this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
+					} catch (InvalidName e) {
+						this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
 					} catch (final SystemException e) {
-						this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+						this.streams.getErrStream().println("Error while unbinding waveform :\n" + e);
 					}
 				}
 			}
