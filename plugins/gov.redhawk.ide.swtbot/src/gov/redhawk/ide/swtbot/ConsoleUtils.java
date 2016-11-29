@@ -115,6 +115,18 @@ public class ConsoleUtils {
 	}
 
 	/**
+	 * Checks to see if the console contains the supplied text
+	 * @param bot
+	 * @param text
+	 * @return
+	 */
+	public static boolean checkConsoleContents(SWTWorkbenchBot bot, String titleText, final String text) {
+		SWTBotView view = showConsole(bot, titleText);
+		String consoleContents = view.bot().styledText(0).getText();
+		return consoleContents.contains(text);
+	}
+
+	/**
 	 * Terminate a process via the console's terminate button
 	 * @param bot
 	 * @param processName The text to look for somewhere in the console's title
