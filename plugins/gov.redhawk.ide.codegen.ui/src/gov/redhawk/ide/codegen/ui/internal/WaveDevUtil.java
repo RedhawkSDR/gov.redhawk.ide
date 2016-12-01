@@ -23,6 +23,7 @@ import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 import gov.redhawk.ide.ui.wizard.IRedhawkImportProjectWizardAssist;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 
 import java.io.IOException;
 
@@ -47,74 +48,17 @@ public class WaveDevUtil {
 	 * @throws CoreException
 	 */
 	public static WaveDevSettings generateWaveDev(SoftPkg softPkg) throws CoreException {
-
 		WaveDevSettings waveDev = CodegenFactory.eINSTANCE.createWaveDevSettings();
 
 		// Recreate the basic settings for each implementation
 		// This makes assumptions that the defaults are selected for everything
 		for (final Implementation impl : softPkg.getImplementation()) {
-			final ImplementationSettings settings = CodegenFactory.eINSTANCE.createImplementationSettings();
-			final String lang = impl.getProgrammingLanguage().getName();
-			// Find the code generator if specified, otherwise pick the first
-			// one returned by the registry
-			ICodeGeneratorDescriptor codeGenDesc = null;
-			final ICodeGeneratorDescriptor[] codeGens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(lang);
-			if (codeGens.length > 0) {
-				codeGenDesc = codeGens[0];
-			}
-
-			if (codeGenDesc != null) {
-				final IScaComponentCodegen generator = codeGenDesc.getGenerator();
-
-				// Assume that there is <name>[/].+<other> format for the entry point
-				// Pick out <name> for both the output directory and settings name
-				final String lf = impl.getCode().getEntryPoint();
-
-				// Set the generator, settings name and output directory
-				settings.setGeneratorId(generator.getClass().getCanonicalName());
-				settings.setOutputDir(lf.substring(0, lf.lastIndexOf('/')));
-
-				// pick the first selectable and defaultable template returned by the registry
-				ITemplateDesc templateDesc = null;
-				final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(settings.getGeneratorId());
-				for (final ITemplateDesc itd : templates) {
-					if (itd.isSelectable() && !itd.notDefaultableGenerator()) {
-						templateDesc = itd;
-						break;
-					}
-				}
-				// If we found the template, use it
-				if (templateDesc != null) {
-					// Set the properties to their default values
-					for (final IPropertyDescriptor prop : templateDesc.getPropertyDescriptors()) {
-						final Property p = CodegenFactory.eINSTANCE.createProperty();
-						p.setId(prop.getKey());
-						p.setValue(prop.getDefaultValue());
-						settings.getProperties().add(p);
-					}
-					// Set the template
-					settings.setTemplate(templateDesc.getId());
-					for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
-						if (assistant.handlesLanguage(lang)) {
-							settings.setTemplate(assistant.getDefaultTemplate());
-							break;
-						}
-					}
-				}
-			}
-
-			for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
-				if (assistant.handlesLanguage(lang)) {
-					assistant.setupWaveDev(softPkg.getName(), settings);
-					break;
-				}
-			}
-			waveDev.getImplSettings().put(impl.getId(), settings);
+			generateImplSettings(waveDev, impl);
 		}
 
 		// Create the URI to the .wavedev file
-		final org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createPlatformResourceURI(softPkg.getName() + "/." + softPkg.getName()
-			+ ".wavedev", false);
+		final org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createPlatformResourceURI(
+			softPkg.getName() + "/." + softPkg.getName() + ".wavedev", false);
 		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 		final Resource res = set.createResource(uri);
 
@@ -127,6 +71,81 @@ public class WaveDevUtil {
 		}
 
 		return waveDev;
+	}
+
+	/**
+	 * Creates {@link ImplementationSettings} for an {@link Implementation} using some assumptions.
+	 * @param waveDev The wavedev file to add settings to
+	 * @param impl The implementation for which to generate settings
+	 * @throws CoreException
+	 */
+	public static ImplementationSettings generateImplSettings(final WaveDevSettings waveDev, final Implementation impl) throws CoreException {
+		final ImplementationSettings settings = CodegenFactory.eINSTANCE.createImplementationSettings();
+		final String lang = impl.getProgrammingLanguage().getName();
+		// Find the code generator if specified, otherwise pick the first
+		// one returned by the registry
+		ICodeGeneratorDescriptor codeGenDesc = null;
+		final ICodeGeneratorDescriptor[] codeGens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(lang);
+		if (codeGens.length > 0) {
+			codeGenDesc = codeGens[0];
+		}
+
+		if (codeGenDesc != null) {
+			final IScaComponentCodegen generator = codeGenDesc.getGenerator();
+
+			// Assume that there is <name>[/].+<other> format for the entry point
+			// Pick out <name> for both the output directory and settings name
+			final String lf = impl.getCode().getEntryPoint();
+
+			// Set the generator, settings name and output directory
+			settings.setGeneratorId(generator.getClass().getCanonicalName());
+			settings.setOutputDir(lf.substring(0, lf.lastIndexOf('/')));
+
+			// pick the first selectable and defaultable template returned by the registry
+			ITemplateDesc templateDesc = null;
+			final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(settings.getGeneratorId());
+			for (final ITemplateDesc itd : templates) {
+				if (itd.isSelectable() && !itd.notDefaultableGenerator()) {
+					templateDesc = itd;
+					break;
+				}
+			}
+			// If we found the template, use it
+			if (templateDesc != null) {
+				// Set the properties to their default values
+				for (final IPropertyDescriptor prop : templateDesc.getPropertyDescriptors()) {
+					final Property p = CodegenFactory.eINSTANCE.createProperty();
+					p.setId(prop.getKey());
+					p.setValue(prop.getDefaultValue());
+					settings.getProperties().add(p);
+				}
+				// Set the template
+				settings.setTemplate(templateDesc.getId());
+				for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
+					if (assistant.handlesLanguage(lang)) {
+						settings.setTemplate(assistant.getDefaultTemplate());
+						break;
+					}
+				}
+			}
+		}
+
+		for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
+			if (assistant.handlesLanguage(lang)) {
+				assistant.setupWaveDev(impl.getSoftPkg().getName(), settings);
+				break;
+			}
+		}
+
+		ScaModelCommand.execute(waveDev, new ScaModelCommand() {
+
+			@Override
+			public void execute() {
+				waveDev.getImplSettings().put(impl.getId(), settings);
+			}
+		});
+
+		return settings;
 	}
 
 	/**
