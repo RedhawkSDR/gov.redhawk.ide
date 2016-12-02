@@ -220,7 +220,7 @@ public class CodegenUtil {
 	}
 
 	public static WaveDevSettings loadWaveDevSettings(final SoftPkg softpkg) {
-		if (softpkg == null) {
+		if (softpkg == null || softpkg.eResource() == null) {
 			return null;
 		}
 		final URI settingsUri = CodegenUtil.getWaveDevSettingsURI(softpkg.eResource().getURI());
