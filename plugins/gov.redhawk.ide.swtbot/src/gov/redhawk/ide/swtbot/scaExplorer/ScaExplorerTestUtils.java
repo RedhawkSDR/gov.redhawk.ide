@@ -258,7 +258,7 @@ public class ScaExplorerTestUtils {
 		bot.sleep(WIZARD_POST_MODAL_PROGRESS_DELAY);
 
 		// Find our waveform and select. Again, selection will trigger a modal progress context.
-		SWTBotTreeItem treeItem = StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList(waveform));
+		SWTBotTreeItem treeItem = StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList(waveform.split("\\.")));
 		treeItem.select();
 		wizardBot.waitUntil(new WaitForModalContext());
 		bot.sleep(WIZARD_POST_MODAL_PROGRESS_DELAY);

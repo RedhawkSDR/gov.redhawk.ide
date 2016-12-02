@@ -135,7 +135,7 @@ public class DeprecatedCodegenUtil {
 			}
 		} else {
 			// try to auto-generate implementation settings
-			ImplementationSettings generatedImplSettings = WaveDevUtil.generateWaveDev(impl.getSoftPkg()).getImplSettings().get(impl.getId());
+			ImplementationSettings generatedImplSettings = WaveDevUtil.generateImplSettings(waveDev, impl);
 			if (generatedImplSettings != null) {
 				ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(generatedImplSettings.getGeneratorId());
 				if (generator != null) {

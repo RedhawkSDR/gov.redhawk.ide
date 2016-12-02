@@ -92,11 +92,9 @@ public class CodegenUtil {
 	 * @return the wavedev settings uri
 	 */
 	public static URI getWaveDevSettingsURI(final URI spdResourceUri) {
-		URI uri = spdResourceUri;
-		String name = uri.lastSegment();
+		String name = spdResourceUri.lastSegment();
 		name = name.substring(0, name.length() - 7);
-		uri = uri.trimSegments(1);
-		uri = uri.appendSegment("." + name + "wavedev");
+		URI uri = spdResourceUri.trimSegments(1).appendSegment("." + name + "wavedev");
 		return uri;
 	}
 
@@ -121,24 +119,22 @@ public class CodegenUtil {
 	 * 
 	 * @return the wavedev settings uri
 	 * @since 9.0
+	 * @deprecated Use {@link #getWaveDevSettingsURI(URI)} and append the fragment
 	 */
+	@Deprecated
 	public static URI getSettingsURI(final SoftPkg softpkg) {
 		if ((softpkg == null) || (softpkg.eResource() == null)) {
 			return null;
 		}
 		URI uri = softpkg.eResource().getURI();
-		final String[] segments = uri.segments();
-		String name = segments[segments.length - 1];
-		name = name.substring(0, name.length() - 7);
-		uri = uri.trimSegments(1);
-		uri = uri.appendSegment("." + name + "wavedev").appendFragment("/");
-		return uri;
+		return getWaveDevSettingsURI(uri).appendFragment("/");
 	}
 
 	/**
-	 * 
-	 * @param impl The implementation to get Implementation Settings from
-	 * @return implSettings Return the Implementation Settings associated with the Implementation that was passed in
+	 * Gets {@link ImplementationSettings} associated with an {@link Implementation}. A new .wavedev file is created if
+	 * it doesn't already exist and this is a workspace project.
+	 * @param impl The implementation for which to get {@link ImplementationSettings}
+	 * @return implSettings The settings, or null if none could be found
 	 */
 	public static ImplementationSettings getImplementationSettings(final Implementation impl) {
 		final WaveDevSettings waveSettings = CodegenUtil.getWaveDevSettings(impl);
@@ -151,8 +147,9 @@ public class CodegenUtil {
 	}
 
 	/**
-	 * 
-	 * @param impl The implementation to get Wave Dev Settings from
+	 * Gets {@link WaveDevSettings} associated with an {@link Implementation}. A new .wavedev file is created if it
+	 * doesn't already exist and this is a workspace project.
+	 * @param impl The implementation to use when finding the {@link WaveDevSettings}
 	 * @return waveDevSettings Return the Wave Dev Settings associated with the Implementation that was passed in
 	 * @since 9.0
 	 */
@@ -167,23 +164,31 @@ public class CodegenUtil {
 		final URI uri = CodegenUtil.getWaveDevSettingsURI(impl.eResource().getURI());
 		Resource waveDevResource = null;
 		if (uri.isPlatform()) {
+			// Create the wavedev file if it doesn't already exist
 			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(uri.toPlatformString(true)));
-			if (file.exists()) {
-				waveDevResource = resourceSet.getResource(uri, true);
-			} else {
+			if (!file.exists()) {
 				final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 				waveDevResource = set.createResource(uri, CodegenPackage.eCONTENT_TYPE);
-				WaveDevSettings retVal = CodegenFactory.eINSTANCE.createWaveDevSettings();
-				waveDevResource.getContents().add(retVal);
+				WaveDevSettings settings = CodegenFactory.eINSTANCE.createWaveDevSettings();
+				waveDevResource.getContents().add(settings);
 				try {
 					waveDevResource.save(null);
 				} catch (final IOException e1) {
 					if (DEBUG.enabled) {
 						DEBUG.catching("Unable to save resource: " + file, e1);
 					}
+					return null;
 				}
-				return retVal;
+
+				// If the wavedev is in the resource set unload it (it needs to be re-loaded from disk)
+				waveDevResource = resourceSet.getResource(uri, false);
+				if (waveDevResource != null && waveDevResource.isLoaded()) {
+					waveDevResource.unload();
+				}
 			}
+
+			// Load the wavedev into the resource set
+			waveDevResource = resourceSet.getResource(uri, true);
 		} else {
 			try {
 				waveDevResource = resourceSet.getResource(uri, true);
@@ -215,12 +220,15 @@ public class CodegenUtil {
 	}
 
 	public static WaveDevSettings loadWaveDevSettings(final SoftPkg softpkg) {
-		final URI settingsUri = CodegenUtil.getSettingsURI(softpkg);
+		if (softpkg == null || softpkg.eResource() == null) {
+			return null;
+		}
+		final URI settingsUri = CodegenUtil.getWaveDevSettingsURI(softpkg.eResource().getURI());
 		if ((settingsUri == null) || !settingsUri.isPlatform()) {
 			return null;
 		}
 		final EObjectImpl proxy = (EObjectImpl) EcoreFactory.eINSTANCE.createEObject();
-		proxy.eSetProxyURI(settingsUri);
+		proxy.eSetProxyURI(settingsUri.appendFragment("/"));
 		final EObject obj = EcoreUtil.resolve(proxy, softpkg);
 		if (obj instanceof WaveDevSettings) {
 			return (WaveDevSettings) obj;

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
@@ -105,10 +108,35 @@ public class MarkExternalPortFeature extends AbstractCustomFeature {
 				} else if (portStub instanceof UsesPortStub) {
 					port.setUsesIdentifier(((UsesPortStub) portStub).getName());
 				}
+				setExternalPortName(port);
 				sad.getExternalPorts().getPort().add(port);
 
 				// Add the external port as a business object on the anchor
 				anchor.getLink().getBusinessObjects().add(port);
+			}
+
+			// Make sure there are not duplicate external port names
+			private void setExternalPortName(Port port) {
+				String portName = (port.getProvidesIdentifier() != null) ? port.getProvidesIdentifier() : port.getUsesIdentifier();
+				List<String> currentExtNames = new ArrayList<String>();
+				if (sad.getExternalPorts() != null) {
+					for (Port extPort : sad.getExternalPorts().getPort()) {
+						if (extPort.getExternalName() != null) {
+							currentExtNames.add(extPort.getExternalName());
+						} else {
+							currentExtNames.add((extPort.getProvidesIdentifier() != null) ? extPort.getProvidesIdentifier() : extPort.getUsesIdentifier());
+						}
+					}
+				}
+
+				String extName = portName;
+				int nameIncrement = 1;
+				while ((currentExtNames.contains(extName))) {
+					extName = String.format("%s_%d", portName, nameIncrement++);
+				}
+				if (!(extName.equals(portName))) {
+					port.setExternalName(extName);
+				}
 			}
 		});
 
@@ -116,4 +144,5 @@ public class MarkExternalPortFeature extends AbstractCustomFeature {
 		ContainerShape portShape = ((Shape) anchor.getParent()).getContainer();
 		updatePictogramElement(portShape);
 	}
+
 }

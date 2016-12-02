@@ -21,6 +21,9 @@ import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
@@ -77,6 +80,7 @@ public class AddExternalPortAction extends Action {
 	private void addPort() {
 		final EditingDomain localEditingDomain = getEditingDomain();
 		Command command = null;
+		// TODO IDE-1224 - Changes should go either here or in createPort(below)
 		final Port port = createPort();
 
 		if (this.softwareAssembly.getExternalPorts() == null) {
@@ -95,6 +99,7 @@ public class AddExternalPortAction extends Action {
 		final SadComponentInstantiationRef ref = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
 		ref.setInstantiation(this.componentInstantiation);
 		port.setComponentInstantiationRef(ref);
+
 		if (this.componentPort instanceof ProvidesPortStub) {
 			final ProvidesPortStub providesPort = (ProvidesPortStub) this.componentPort;
 			port.setProvidesIdentifier(providesPort.getProvides().getProvidesName());
@@ -103,10 +108,37 @@ public class AddExternalPortAction extends Action {
 			port.setUsesIdentifier(usesPort.getUses().getUsesName());
 		} else if (this.componentPort instanceof ComponentSupportedInterfaceStub) {
 			final ComponentSupportedInterfaceStub compPort = (ComponentSupportedInterfaceStub) this.componentPort;
-			// FIXME:  I don't understand why we even need the specific interface here?
+			// FIXME: I don't understand why we even need the specific interface here?
 			port.setSupportedIdentifier(ResourceHelper.id());
 		}
+
+		setExternalPortName(port);
+
 		port.setDescription(this.portDescription);
 		return port;
+	}
+
+	// Make sure there are not duplicate external port names
+	private void setExternalPortName(Port port) {
+		String portName = (port.getProvidesIdentifier() != null) ? port.getProvidesIdentifier() : port.getUsesIdentifier();
+		List<String> currentExtNames = new ArrayList<String>();
+		if (this.softwareAssembly.getExternalPorts() != null) {
+			for (Port extPort : this.softwareAssembly.getExternalPorts().getPort()) {
+				if (extPort.getExternalName() != null) {
+					currentExtNames.add(extPort.getExternalName());
+				} else {
+					currentExtNames.add((extPort.getProvidesIdentifier() != null) ? extPort.getProvidesIdentifier() : extPort.getUsesIdentifier());
+				}
+			}
+		}
+
+		String extName = portName;
+		int nameIncrement = 1;
+		while ((currentExtNames.contains(extName))) {
+			extName = String.format("%s_%d", portName, nameIncrement++);
+		}
+		if (!(extName.equals(portName))) {
+			port.setExternalName(extName);
+		}
 	}
 }

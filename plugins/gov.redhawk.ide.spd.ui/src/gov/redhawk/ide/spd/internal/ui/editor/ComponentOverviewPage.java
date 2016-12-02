@@ -272,17 +272,17 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 			this.scdResource = spd.getDescriptor().getComponent().eResource();
 			addResourceListener(this.scdResource);
 			refresh(this.scdResource);
-		}
-		// Adding the wavDev to the list of tracked resources. This will allow it to be updated when external
-		// forces (From the Generate Code methods) update the CRC32s contained within the File.
-		// This was to fix Bug # 21
-		final URI wavDevUri = CodegenUtil.getSettingsURI(spd);
-		if (wavDevUri != null && wavDevUri.isPlatform()) {
-			IPath wavDevPath = new Path(wavDevUri.toPlatformString(true));
-			this.wavDevResource = ResourcesPlugin.getWorkspace().getRoot().getFile(wavDevPath);
-			this.getEditor().getResourceTracker().addTrackedResource(wavDevResource);
-		}
 
+			// Adding the wavDev to the list of tracked resources. This will allow it to be updated when external
+			// forces (From the Generate Code methods) update the CRC32s contained within the File.
+			// This was to fix Bug # 21
+			final URI wavDevUri = CodegenUtil.getWaveDevSettingsURI(input.getURI());
+			if (wavDevUri != null && wavDevUri.isPlatform()) {
+				IPath wavDevPath = new Path(wavDevUri.toPlatformString(true));
+				this.wavDevResource = ResourcesPlugin.getWorkspace().getRoot().getFile(wavDevPath);
+				this.getEditor().getResourceTracker().addTrackedResource(wavDevResource);
+			}
+		}
 	}
 
 	/**

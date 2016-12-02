@@ -54,6 +54,7 @@ public class LocalScaWaveformItemProvider extends ScaWaveformItemProvider {
 
 			addModePropertyDescriptor(object);
 			addNamingContextPropertyDescriptor(object);
+			addDomainWaveformPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -81,6 +82,20 @@ public class LocalScaWaveformItemProvider extends ScaWaveformItemProvider {
 			getString("_UI_LocalScaWaveform_namingContext_feature"),
 			getString("_UI_PropertyDescriptor_description", "_UI_LocalScaWaveform_namingContext_feature", "_UI_LocalScaWaveform_type"),
 			ScaDebugPackage.Literals.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT, false, false, true, null, null, null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Domain Waveform feature.
+	 * <!-- begin-user-doc -->
+	 * @since 2.1
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addDomainWaveformPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_LocalScaWaveform_domainWaveform_feature"),
+			getString("_UI_PropertyDescriptor_description", "_UI_LocalScaWaveform_domainWaveform_feature", "_UI_LocalScaWaveform_type"),
+			ScaDebugPackage.Literals.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM, true, false, true, null, null, null));
 	}
 
 	/**

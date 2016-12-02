@@ -244,6 +244,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 
 		// Create the new local proxy for the waveform
 		final LocalScaWaveform localScaWaveform = createLocalScaWaveform();
+		localScaWaveform.setDomainWaveform(domainWaveform);
 		localScaWaveform.setNamingContext(context);
 		localScaWaveform.setProfile(profile);
 		final ApplicationImpl localApp = new ApplicationImpl(localScaWaveform, identifier, name, application);
