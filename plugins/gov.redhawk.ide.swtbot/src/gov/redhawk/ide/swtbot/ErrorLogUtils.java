@@ -39,4 +39,8 @@ public class ErrorLogUtils {
 		SWTBotTree tree = errorLogView.bot().tree();
 		Assert.assertTrue("Errors were reported in Error Log View", tree.getAllItems().length == 0);
 	}
+
+	public static void closeView(SWTGefBot bot) {
+		bot.viewById("org.eclipse.pde.runtime.LogView").close();
+	}
 }
