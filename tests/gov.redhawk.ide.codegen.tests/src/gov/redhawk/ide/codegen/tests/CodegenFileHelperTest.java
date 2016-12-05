@@ -19,7 +19,7 @@ import gov.redhawk.ide.codegen.util.CodegenFileHelper;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdFactory;
 
-public class CodegenFileHelperTests {
+public class CodegenFileHelperTest {
 
 	/**
 	 * Check that CodegenFileHelper handles namespaced projects correctly
