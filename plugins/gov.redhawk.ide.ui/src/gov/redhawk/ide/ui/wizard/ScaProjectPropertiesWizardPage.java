@@ -10,12 +10,15 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.wizard;
 
-import gov.redhawk.ui.validation.ProjectNameValidator;
-import mil.jpeojtrs.sca.util.DceUuidUtil;
-
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -23,6 +26,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+
+import gov.redhawk.ui.validation.ProjectNameValidator;
+import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 /**
  * @since 8.0
@@ -175,8 +181,6 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 
 	@Override
 	protected boolean validatePage() {
-		ProjectNameValidator nameValidator = new ProjectNameValidator();
-
 		if (!super.validatePage()) {
 			return false;
 		}
@@ -184,37 +188,50 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 		IStatus status = Status.OK_STATUS;
 		if (this.contentsGroup != null) {
 			status = this.contentsGroup.validateGroup();
-		}
-		if (!status.isOK()) {
-			setMessage(status);
-			if (this.getWizard() instanceof IImportWizard) {
-				((IImportWizard) this.getWizard()).importSelected("");
-			}
-			return false;
-		} else {
-			if (this.getWizard() instanceof IImportWizard) {
-				String path = "";
-				if (this.contentsGroup != null && !this.contentsGroup.isCreateNewResource()) {
-					path = this.contentsGroup.getExistingResourcePath().toOSString();
+			if (!status.isOK()) {
+				setMessage(status);
+				if (this.getWizard() instanceof IImportWizard) {
+					((IImportWizard) this.getWizard()).importSelected("");
 				}
-				((IImportWizard) this.getWizard()).importSelected(path);
+				return false;
 			}
+		}
 
+		if (this.getWizard() instanceof IImportWizard) {
+			String path = "";
+			if (this.contentsGroup != null && !this.contentsGroup.isCreateNewResource()) {
+				path = this.contentsGroup.getExistingResourcePath().toOSString();
+			}
+			((IImportWizard) this.getWizard()).importSelected(path);
 		}
 
 		if (this.showComponentIDGroup) {
 			status = this.idGroup.validateGroup();
+			if (!status.isOK()) {
+				setMessage(status);
+				return false;
+			}
 		}
 
-		if (!status.isOK()) {
-			setMessage(status);
-			return false;
-		}
+		ProjectNameValidator nameValidator = new ProjectNameValidator();
 		status = nameValidator.validate(getProjectName());
 		if (!status.isOK()) {
 			setMessage(status);
 			return false;
 		}
+
+		// Final check - if the target location exists and contains files, warn the user but allow it
+		try {
+			IFileStore fileStore = EFS.getStore(getLocationURI());
+			IFileInfo info = fileStore.fetchInfo();
+			if (info.exists() && info.isDirectory() && fileStore.childNames(EFS.NONE, new NullProgressMonitor()).length > 0) {
+				setMessage("The specified location already exists and contains files. They will become part of this project.", DialogPage.WARNING);
+			}
+		} catch (CoreException e) {
+			setMessage("Unable to check location: " + e.toString());
+			return false;
+		}
+
 		return true;
 	}
 
