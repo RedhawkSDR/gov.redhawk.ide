@@ -91,7 +91,7 @@
       </editor>
       <editor
             class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformSandboxEditor"
-            contributorClass="gov.redhawk.core.graphiti.sad.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
+            contributorClass="gov.redhawk.core.graphiti.sad.ui.editor.GraphitiWaveformRuntimeActionBarContributor"
             default="true"
             icon="icons/WaveformSandboxEditor.gif"
             id="gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca"
