@@ -10,27 +10,44 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
+import org.omg.CORBA.ORB;
+import org.omg.PortableServer.POA;
+import org.omg.PortableServer.POAPackage.ServantNotActive;
+import org.omg.PortableServer.POAPackage.WrongPolicy;
 
+import CF.FileSystem;
+import CF.FileSystemHelper;
+import CF.FileSystemPOA;
+import CF.FileSystemPOATie;
 import CF.ResourceFactoryOperations;
+import gov.redhawk.core.filemanager.filesystem.JavaFileSystem;
 import gov.redhawk.core.resourcefactory.AbstractResourceFactoryProvider;
 import gov.redhawk.core.resourcefactory.ComponentDesc;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
+import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.debug.SpdResourceFactory;
+import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.MutexRule;
+import gov.redhawk.sca.util.OrbSession;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 /**
@@ -40,6 +57,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 
 	private static final MutexRule RULE = new MutexRule(SdrResourceFactoryProvider.class);
 	private static final String SDR_CATEGORY = "SDR";
+	private static final String DEPS_DIR = "/deps";
 
 	private class SPDListener extends AdapterImpl {
 
@@ -76,6 +94,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		}
 	};
 
+	private OrbSession session;
 	private final Map<EObject, ResourceDesc> resourceMap = Collections.synchronizedMap(new HashMap<EObject, ResourceDesc>());
 	private SdrRoot root;
 	private SPDListener componentsListener;
@@ -84,32 +103,68 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 	private boolean disposed;
 
 	public SdrResourceFactoryProvider() {
-		SdrUiPlugin sdrPlugin = SdrUiPlugin.getDefault();
-		if (sdrPlugin != null) {
-			this.root = sdrPlugin.getTargetSdrRoot();
+		SdrUiPlugin plugin = SdrUiPlugin.getDefault();
+		this.root = plugin.getTargetSdrRoot();
+		if (this.root == null) {
+			return;
 		}
-		if (this.root != null) {
-			this.componentsListener = new SPDListener();
-			this.devicesListener = new SPDListener();
-			this.serviceListener = new SPDListener();
-			ScaModelCommand.execute(this.root, new ScaModelCommand() {
 
-				@Override
-				public void execute() {
-					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getComponentsContainer().getComponents()) {
-						addResource(spd, SpdResourceFactory.createResourceFactory(spd));
-					}
-					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getDevicesContainer().getComponents()) {
-						addResource(spd, SpdResourceFactory.createResourceFactory(spd));
-					}
-					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getServicesContainer().getComponents()) {
-						addResource(spd, SpdResourceFactory.createResourceFactory(spd));
-					}
-					SdrResourceFactoryProvider.this.root.getComponentsContainer().eAdapters().add(SdrResourceFactoryProvider.this.componentsListener);
-					SdrResourceFactoryProvider.this.root.getDevicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.devicesListener);
-					SdrResourceFactoryProvider.this.root.getServicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.serviceListener);
+		IPath domPath = plugin.getTargetSdrDomPath();
+		if (domPath != null) {
+			addVirtualMount(domPath.append(DEPS_DIR), DEPS_DIR);
+		}
+
+		this.componentsListener = new SPDListener();
+		this.devicesListener = new SPDListener();
+		this.serviceListener = new SPDListener();
+		ScaModelCommand.execute(this.root, new ScaModelCommand() {
+
+			@Override
+			public void execute() {
+				for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getComponentsContainer().getComponents()) {
+					addResource(spd, SpdResourceFactory.createResourceFactory(spd));
 				}
-			});
+				for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getDevicesContainer().getComponents()) {
+					addResource(spd, SpdResourceFactory.createResourceFactory(spd));
+				}
+				for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getServicesContainer().getComponents()) {
+					addResource(spd, SpdResourceFactory.createResourceFactory(spd));
+				}
+				SdrResourceFactoryProvider.this.root.getComponentsContainer().eAdapters().add(SdrResourceFactoryProvider.this.componentsListener);
+				SdrResourceFactoryProvider.this.root.getDevicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.devicesListener);
+				SdrResourceFactoryProvider.this.root.getServicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.serviceListener);
+			}
+		});
+	}
+
+	/**
+	 * Adds a virtual mount for a location in the file system
+	 * @throws CoreException
+	 */
+	private void addVirtualMount(IPath sourceDir, String mountLocation) {
+		// Ignore if file doesn't exist
+		File dir = sourceDir.toFile();
+		if (!dir.exists()) {
+			return;
+		}
+
+		if (session == null) {
+			session = OrbSession.createSession(ResourceFactoryPlugin.ID);
+		}
+		ORB orb = session.getOrb();
+		POA poa;
+		try {
+			poa = session.getPOA();
+		} catch (CoreException e) {
+			ScaDebugUiPlugin.log(e);
+			return;
+		}
+		FileSystemPOA fsPoa = new FileSystemPOATie(new JavaFileSystem(orb, poa, dir));
+		try {
+			FileSystem domDepsFs = FileSystemHelper.narrow(poa.servant_to_reference(fsPoa));
+			addFileSystemMount(domDepsFs, mountLocation);
+		} catch (ServantNotActive | WrongPolicy e) {
+			ScaDebugUiPlugin.log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Unable to create virtual mount " + mountLocation, e));
 		}
 	}
 
@@ -138,6 +193,8 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		} finally {
 			Job.getJobManager().endRule(RULE);
 		}
+
+		// Stop listening for changes
 		ScaModelCommand.execute(this.root, new ScaModelCommand() {
 			@Override
 			public void execute() {
@@ -147,12 +204,22 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			}
 		});
 		this.root = null;
+
+		// Remove resource descriptions
 		synchronized (this.resourceMap) {
 			for (final ResourceDesc desc : this.resourceMap.values()) {
 				removeResourceDesc(desc);
 			}
 			this.resourceMap.clear();
 		}
-	}
 
+		// Remove file system mounts
+		removeFileSystemMount(DEPS_DIR);
+
+		// Dispose session
+		if (session != null) {
+			session.dispose();
+			session = null;
+		}
+	}
 }
