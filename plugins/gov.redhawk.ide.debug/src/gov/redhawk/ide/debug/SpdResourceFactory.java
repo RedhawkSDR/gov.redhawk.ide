@@ -11,19 +11,14 @@
 package gov.redhawk.ide.debug;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.transaction.RunnableWithResult;
 
 import CF.DataType;
 import CF.ErrorNumberType;
@@ -32,11 +27,10 @@ import CF.ResourceFactoryPackage.CreateResourceFailure;
 import CF.ResourceFactoryPackage.InvalidResourceId;
 import CF.ResourceFactoryPackage.ShutdownFailure;
 import gov.redhawk.model.sca.ScaAbstractComponent;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaDevice;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
+import mil.jpeojtrs.sca.spd.CodeFileType;
+import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
@@ -61,10 +55,39 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 	}
 
 	/**
-	 * @since 6.0
+	 * @since 9.0
+	 * @throws IllegalArgumentException The component type (per the SCD) isn't supported
 	 */
-	public LocalScaWaveform getChalkboard(IProgressMonitor monitor) throws CoreException {
-		return ScaDebugPlugin.getInstance().getLocalSca(monitor).getSandboxWaveform();
+	public static SpdResourceFactory createResourceFactory(SoftPkg spd) {
+		ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
+		switch (type) {
+		case RESOURCE:
+			checkExecutable(spd);
+			return new LocalComponentFactory(spd);
+		case DEVICE:
+			return new LocalDeviceFactory(spd);
+		case SERVICE:
+			return new SpdResourceFactory(spd);
+		default:
+			String errorMsg = String.format("Invalid component type '%s'", type);
+			throw new IllegalArgumentException(errorMsg);
+		}
+	}
+
+	private static void checkExecutable(SoftPkg spd) {
+		for (Implementation impl : spd.getImplementation()) {
+			if (impl.getCode() != null && CodeFileType.EXECUTABLE.equals(impl.getCode().getType())) {
+				return;
+			}
+		}
+		throw new IllegalArgumentException("Resource has no executable implementation");
+	}
+
+	/**
+	 * @since 9.0
+	 */
+	protected URI getSpdUri() {
+		return spdURI;
 	}
 
 	@Override
@@ -72,131 +95,92 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		return this.identifier;
 	}
 
-	private SoftPkg loadSpd() {
+	/**
+	 * @since 9.0
+	 */
+	protected SoftPkg loadSpd() {
 		ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		Resource spdResource = resourceSet.getResource(spdURI, true);
 		return SoftPkg.Util.getSoftPkg(spdResource);
 	}
 
-	protected LocalScaComponent getComponent(final String instantiationID) throws CoreException {
-		final LocalScaWaveform chalkboard = getChalkboard(null);
-		try {
-			return ScaModelCommand.runExclusive(chalkboard, new RunnableWithResult.Impl<LocalScaComponent>() {
+	/**
+	 * @since 9.0
+	 */
+	protected List<ScaAbstractComponent< ? >> getLaunched() {
+		return launched;
+	}
 
-				@Override
-				public void run() {
-					for (final ScaComponent comp : chalkboard.getComponents()) {
-						if (instantiationID.equals(comp.getInstantiationIdentifier())) {
-							setResult((LocalScaComponent) comp);
-							return;
-						}
-					}
-
+	/**
+	 * @since 9.0
+	 */
+	protected ScaAbstractComponent< ? > getResource(String resourceId) {
+		String resourceIdPrefix = resourceId + ":";
+		synchronized (launched) {
+			Iterator<ScaAbstractComponent< ? >> iter = this.launched.iterator();
+			while (iter.hasNext()) {
+				ScaAbstractComponent< ? > comp = iter.next();
+				if (comp.isDisposed()) {
+					iter.remove();
+					continue;
 				}
-
-			});
-		} catch (final InterruptedException e) {
-			// PASS
+				if (!comp.isSetIdentifier()) {
+					continue;
+				}
+				String id = comp.getIdentifier();
+				if (id.equals(resourceId) || id.startsWith(resourceIdPrefix)) {
+					return comp;
+				}
+			}
 		}
 		return null;
 	}
 
 	@Override
-	public void releaseResource(final String resourceId) throws InvalidResourceId {
-		LocalScaComponent comp;
-		try {
-			comp = getComponent(resourceId);
-		} catch (CoreException e1) {
-			throw new InvalidResourceId("Failed to find component or sandbox.");
-		}
-		if (comp != null) {
-			try {
-				comp.releaseObject();
-			} catch (final ReleaseError e) {
-				// PASS
-			}
-		} else {
+	public void releaseResource(String resourceId) throws InvalidResourceId {
+		ScaAbstractComponent< ? > comp = getResource(resourceId);
+		if (comp == null) {
 			throw new InvalidResourceId("No resource of id: " + resourceId);
 		}
+		try {
+			comp.releaseObject();
+		} catch (ReleaseError e) {
+			// PASS
+		}
+		launched.remove(comp);
 	}
 
 	@Override
 	public void shutdown() throws ShutdownFailure {
 		synchronized (this.launched) {
-			for (final ScaAbstractComponent< ? > comp : this.launched) {
+			Iterator<ScaAbstractComponent< ? >> iter = this.launched.iterator();
+			while (iter.hasNext()) {
+				ScaAbstractComponent< ? > comp = iter.next();
 				if (comp.isDisposed()) {
-					continue;
-				}
-				try {
-					comp.releaseObject();
-				} catch (final ReleaseError e) {
-					// PASS
+					iter.remove();
 				}
 			}
-			this.launched.clear();
+			// SCA 2.2.2, 3.1.3.1.7.5.3.5 - Exception if all resources have not been released
+			if (!this.launched.isEmpty()) {
+				throw new ShutdownFailure("Some resources have not been released");
+			}
 		}
+		super.shutdown();
 	}
 
+	/**
+	 * @since 9.0
+	 */
 	@Override
-	protected CF.Resource createInstance(final String compID, final DataType[] qualifiers, final String launchMode) throws CreateResourceFailure {
-		try {
-			LocalScaComponent comp = getComponent(compID);
-			if (comp != null) {
-				return comp.getObj();
-			}
-		} catch (CoreException e2) {
-			throw new CreateResourceFailure(ErrorNumberType.CF_ENODEV, "Failed to find chalkboard.");
-		}
-
-		String implementationID = null;
-		final List<DataType> params = new ArrayList<DataType>(Arrays.asList(qualifiers));
-		for (final Iterator<DataType> i = params.iterator(); i.hasNext();) {
-			final DataType t = i.next();
-			if ("__implementationID".equals(t.id)) {
-				final String value = t.value.extract_string();
-				implementationID = value;
-				i.remove();
-			}
-		}
-
+	protected CF.Resource createInstance(final String compID, final DataType[] qualifiers, final String launchMode, String implementation)
+		throws CreateResourceFailure {
 		final SoftPkg spd = loadSpd();
-
-		if (implementationID == null) {
-			if (!spd.getImplementation().isEmpty()) {
-				implementationID = spd.getImplementation().get(0).getId();
-			} else {
-				throw new CreateResourceFailure(ErrorNumberType.CF_EINVAL, "No implementations for component: " + identifier());
-			}
-		}
-
 		ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
 		switch (type) {
 		case SERVICE:
-			// Because the service's CORBA type can be anything, we can't just return a CF.Resource
-			// Currently that means there's no way to use this interface to launch a service at present
 			throw new CreateResourceFailure(ErrorNumberType.CF_ENOTSUP, "Launching services is not supported");
-		case DEVICE:
-			try {
-				LocalScaDeviceManager devMgr = ScaDebugPlugin.getInstance().getLocalSca(null).getSandboxDeviceManager();
-				LocalAbstractComponent absComponent = devMgr.launch(compID, params.toArray(new DataType[params.size()]), spdURI, implementationID, launchMode);
-				ScaDevice< ? > dev = (ScaDevice< ? >) absComponent;
-				this.launched.add(dev);
-				return dev.fetchNarrowedObject(null);
-			} catch (CoreException e) {
-				ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to create instance.", e));
-				throw new CreateResourceFailure(ErrorNumberType.CF_EFAULT, "Failed to launch: " + identifier() + " " + e.getMessage());
-			}
 		default:
-			try {
-				LocalScaWaveform chalkboard = getChalkboard(null);
-				final LocalScaComponent component = chalkboard.launch(compID, params.toArray(new DataType[params.size()]), spdURI.trimFragment(),
-					implementationID, launchMode);
-				this.launched.add(component);
-				return component.fetchNarrowedObject(null);
-			} catch (CoreException e) {
-				ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to create instance.", e));
-				throw new CreateResourceFailure(ErrorNumberType.CF_EFAULT, "Failed to launch: " + identifier() + " " + e.getMessage());
-			}
+			throw new CreateResourceFailure(ErrorNumberType.CF_ENOTSUP, "Launching this component type is not supported");
 		}
 	}
 
