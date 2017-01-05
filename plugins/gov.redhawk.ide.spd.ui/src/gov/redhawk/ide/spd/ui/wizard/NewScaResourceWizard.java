@@ -347,7 +347,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	 * @param page The page who's index you are looking for
 	 * @return
 	 */
-	private int getWizardPageIndex(IWizardPage page) {
+	protected int getWizardPageIndex(IWizardPage page) {
 		IWizard pageWizard = page.getWizard();
 
 		IWizardPage[] allPages = pageWizard.getPages();

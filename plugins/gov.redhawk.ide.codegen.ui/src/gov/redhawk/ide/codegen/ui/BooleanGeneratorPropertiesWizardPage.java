@@ -711,5 +711,9 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 	public ImplementationSettings getImplSettings() {
 		return this.implSettings;
 	}
-	
+
+	protected ComboViewer getTemplateViewer() {
+		return templateViewer;
+	}
+
 }
