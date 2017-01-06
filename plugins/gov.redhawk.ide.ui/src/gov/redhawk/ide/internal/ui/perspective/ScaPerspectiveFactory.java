@@ -16,7 +16,6 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
-import gov.redhawk.ui.views.event.EventView;
 import gov.redhawk.sca.ui.views.ScaExplorer;
 import gov.redhawk.ui.port.nxmplot.PlotActivator;
 import gov.redhawk.ui.views.namebrowser.view.NameBrowserView;
@@ -30,6 +29,8 @@ public class ScaPerspectiveFactory implements IPerspectiveFactory {
 	private static final String PDE_ERROR_LOG_VIEW_ID = "org.eclipse.pde.runtime.LogView";
 
 	private static final String CONSOLE_VIEW_ID = "org.eclipse.ui.console.ConsoleView";
+
+	private static final String EVENT_VIEW_ID = "gov.redhawk.ui.views.event.eventViewer";
 
 	@Override
 	public void createInitialLayout(final IPageLayout layout) {
@@ -73,8 +74,8 @@ public class ScaPerspectiveFactory implements IPerspectiveFactory {
 
 		// The following view should open in their own part stack
 		layout.addPlaceholder("gov.redhawk.ui.port.playaudio.view", IPageLayout.BOTTOM, 0.50f, editorArea);
-		layout.addPlaceholder(EventView.ID, IPageLayout.BOTTOM, 0.50f, editorArea);
-		layout.addPlaceholder(EventView.ID + ":*", IPageLayout.BOTTOM, 0.50f, editorArea);
+		layout.addPlaceholder(EVENT_VIEW_ID, IPageLayout.BOTTOM, 0.50f, editorArea);
+		layout.addPlaceholder(EVENT_VIEW_ID + ":*", IPageLayout.BOTTOM, 0.50f, editorArea);
 	}
 
 }
