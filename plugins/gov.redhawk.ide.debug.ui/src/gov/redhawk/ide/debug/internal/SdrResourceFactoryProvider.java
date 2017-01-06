@@ -10,7 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,7 +60,6 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 
 	private static final MutexRule RULE = new MutexRule(SdrResourceFactoryProvider.class);
 	private static final String SDR_CATEGORY = "SDR";
-	private static final String DEPS_DIR = "/deps";
 
 	private class SPDListener extends AdapterImpl {
 
@@ -110,8 +112,22 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		}
 
 		IPath domPath = plugin.getTargetSdrDomPath();
-		if (domPath != null) {
-			addVirtualMount(domPath.append(DEPS_DIR), DEPS_DIR);
+		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
+			@Override
+			public boolean accept(Path entry) {
+				// Accept directories that don't start with a dot
+				return Files.isDirectory(entry) && !entry.getFileName().toString().startsWith(".");
+			}
+		};
+		if (domPath != null && domPath.toFile().exists()) {
+			try {
+				for (Path path : Files.newDirectoryStream(domPath.toFile().toPath(), filter)) {
+					addVirtualMount(path);
+				}
+			} catch (IOException e) {
+				ScaDebugUiPlugin.log(
+					new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Error while mounting SDRROOT/dom directories into sandbox file manager", e));
+			}
 		}
 
 		this.componentsListener = new SPDListener();
@@ -139,15 +155,11 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 
 	/**
 	 * Adds a virtual mount for a location in the file system
+	 * @param dir
 	 * @throws CoreException
 	 */
-	private void addVirtualMount(IPath sourceDir, String mountLocation) {
-		// Ignore if file doesn't exist
-		File dir = sourceDir.toFile();
-		if (!dir.exists()) {
-			return;
-		}
-
+	private void addVirtualMount(Path dir) {
+		String mountPoint = dir.getFileSystem().getSeparator() + dir.getFileName().toString();
 		if (session == null) {
 			session = OrbSession.createSession(ResourceFactoryPlugin.ID);
 		}
@@ -159,12 +171,12 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			ScaDebugUiPlugin.log(e);
 			return;
 		}
-		FileSystemPOA fsPoa = new FileSystemPOATie(new JavaFileSystem(orb, poa, dir));
+		FileSystemPOA fsPoa = new FileSystemPOATie(new JavaFileSystem(orb, poa, dir.toFile()));
 		try {
 			FileSystem domDepsFs = FileSystemHelper.narrow(poa.servant_to_reference(fsPoa));
-			addFileSystemMount(domDepsFs, mountLocation);
+			addFileSystemMount(domDepsFs, mountPoint);
 		} catch (ServantNotActive | WrongPolicy e) {
-			ScaDebugUiPlugin.log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Unable to create virtual mount " + mountLocation, e));
+			ScaDebugUiPlugin.log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Unable to create virtual mount " + mountPoint, e));
 		}
 	}
 
@@ -214,7 +226,9 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		}
 
 		// Remove file system mounts
-		removeFileSystemMount(DEPS_DIR);
+		for (String mount : getFileSystemMounts().keySet()) {
+			removeFileSystemMount(mount);
+		}
 
 		// Dispose session
 		if (session != null) {
