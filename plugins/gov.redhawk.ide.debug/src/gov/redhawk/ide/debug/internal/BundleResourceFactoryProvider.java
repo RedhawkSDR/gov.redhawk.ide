@@ -60,9 +60,6 @@ public class BundleResourceFactoryProvider extends AbstractResourceFactoryProvid
 	private final List<FactoryDescEntry> spdBundleFactories = new ArrayList<FactoryDescEntry>();
 	private final ExtensionTracker tracker;
 
-	/**
-	 * 
-	 */
 	public BundleResourceFactoryProvider() {
 		final IExtensionRegistry reg = Platform.getExtensionRegistry();
 
@@ -108,14 +105,12 @@ public class BundleResourceFactoryProvider extends AbstractResourceFactoryProvid
 		if (spd == null) {
 			throw new IllegalArgumentException("Failed to find SPD: " + uri);
 		}
-		entry.desc = new ComponentDesc(spd, new SpdResourceFactory(spd));
+
+		entry.desc = new ComponentDesc(spd, SpdResourceFactory.createResourceFactory(spd));
 		entry.desc.setCategory(BUNDLE_CATEGORY);
 		return entry.desc;
 	}
 
-	/* (non-Javadoc)
-	 * @see gov.redhawk.core.resourcefactory.IResourceFactoryProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		for (FactoryDescEntry entry : this.spdBundleFactories) {

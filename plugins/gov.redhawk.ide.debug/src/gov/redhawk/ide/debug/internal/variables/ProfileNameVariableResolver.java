@@ -10,62 +10,34 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.variables;
 
-import gov.redhawk.ide.debug.ILauncherVariableResolver;
-import gov.redhawk.ide.debug.variables.AbstractLauncherResolver;
-
-import java.util.List;
-
-import mil.jpeojtrs.sca.scd.ComponentType;
-import mil.jpeojtrs.sca.scd.SoftwareComponent;
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.emf.common.util.URI;
 
+import gov.redhawk.ide.debug.ILauncherVariableResolver;
+import gov.redhawk.ide.debug.variables.AbstractLauncherResolver;
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+
 /**
- * Provides the profile name (path to the spd.xml file rooted in the domain/device manager file system).
+ * Provides the profile name (path to the spd.xml file within the appropriate CF:FileSystem).
+ * @see gov.redhawk.core.resourcefactory.ResourceDesc#createProfile()
  */
 public class ProfileNameVariableResolver extends AbstractLauncherResolver implements ILauncherVariableResolver {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl)
 		throws CoreException {
-		SoftwareComponent scd = null;
-		if (spd.getDescriptor() != null) {
-			scd = spd.getDescriptor().getComponent();
-		}
-		ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(scd);
-		String root;
-		switch (type) {
-		case SERVICE:
-			root = "services";
-			break;
-		case DEVICE:
-			root = "devices";
-			break;
-		case RESOURCE:
-			root = "components";
-			break;
-		default:
-			root = "components";
-			break;
-		}
+		// Note: We generally only expect file URIs, which are simply mapped to an absolute file path
 		URI uri = spd.eResource().getURI();
-		List<String> list = uri.segmentsList();
-		if (uri.toString().contains(root)) {
-			List<String> subList = list.subList(list.indexOf(root), list.size()); 
-			return "/" + StringUtils.join(subList, "/");
-		} else if (list.size() >= 2) {
-			return "/" + root + "/" + list.get(list.size() - 2) + "/" + list.get(list.size() - 1);
+		if (uri.isFile()) {
+			return uri.toFileString();
+		} else if (uri.isPlatformPlugin()) {
+			return new Path("/bundle").append(uri.toPlatformString(true)).toString();
 		} else {
-			return "/" + root + "/" + list.get(list.size() - 1);
+			return new Path(uri.scheme()).append(uri.path()).toString();
 		}
 	}
 }

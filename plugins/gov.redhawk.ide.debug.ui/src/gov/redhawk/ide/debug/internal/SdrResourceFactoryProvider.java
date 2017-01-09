@@ -10,32 +10,48 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import gov.redhawk.core.resourcefactory.AbstractResourceFactoryProvider;
-import gov.redhawk.core.resourcefactory.ComponentDesc;
-import gov.redhawk.core.resourcefactory.ResourceDesc;
-import gov.redhawk.ide.debug.SpdResourceFactory;
-import gov.redhawk.ide.sdr.SdrPackage;
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
-import gov.redhawk.sca.util.MutexRule;
-
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
+import org.omg.CORBA.ORB;
+import org.omg.PortableServer.POA;
+import org.omg.PortableServer.POAPackage.ServantNotActive;
+import org.omg.PortableServer.POAPackage.WrongPolicy;
 
+import CF.FileSystem;
+import CF.FileSystemHelper;
+import CF.FileSystemPOA;
+import CF.FileSystemPOATie;
 import CF.ResourceFactoryOperations;
+import gov.redhawk.core.filemanager.filesystem.JavaFileSystem;
+import gov.redhawk.core.resourcefactory.AbstractResourceFactoryProvider;
+import gov.redhawk.core.resourcefactory.ComponentDesc;
+import gov.redhawk.core.resourcefactory.ResourceDesc;
+import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
+import gov.redhawk.ide.debug.SpdResourceFactory;
+import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
+import gov.redhawk.ide.sdr.SdrPackage;
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.sca.util.MutexRule;
+import gov.redhawk.sca.util.OrbSession;
+import mil.jpeojtrs.sca.spd.SoftPkg;
 
 /**
  * Provides descriptions of resources in the SDRROOT which can be launched in the sandbox.
@@ -58,11 +74,11 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			if (msg.getFeature() == SdrPackage.Literals.SOFT_PKG_REGISTRY__COMPONENTS) {
 				switch (msg.getEventType()) {
 				case Notification.ADD:
-					addResource((SoftPkg) msg.getNewValue(), new SpdResourceFactory((SoftPkg) msg.getNewValue()));
+					addResource((SoftPkg) msg.getNewValue(), SpdResourceFactory.createResourceFactory((SoftPkg) msg.getNewValue()));
 					break;
 				case Notification.ADD_MANY:
 					for (final Object obj : (Collection< ? >) msg.getNewValue()) {
-						addResource((SoftPkg) obj, new SpdResourceFactory((SoftPkg) obj));
+						addResource((SoftPkg) obj, SpdResourceFactory.createResourceFactory((SoftPkg) obj));
 					}
 					break;
 				case Notification.REMOVE:
@@ -80,89 +96,87 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		}
 	};
 
-	private final Adapter waveformsListener = new AdapterImpl() {
-		@Override
-		public void notifyChanged(final org.eclipse.emf.common.notify.Notification msg) {
-			if (disposed) {
-				if (msg.getNotifier() instanceof Notifier) {
-					((Notifier) msg.getNotifier()).eAdapters().remove(this);
-				}
-				return;
-			}
-			if (msg.getFeature() == SdrPackage.Literals.WAVEFORMS_CONTAINER__WAVEFORMS) {
-				switch (msg.getEventType()) {
-				case Notification.ADD:
-					// TODO Add SDR Waveform Factory
-					//					addResource((SoftwareAssembly) msg.getNewValue(), new SdrWaveformFactory((SoftwareAssembly) msg.getNewValue()));
-					break;
-				case Notification.ADD_MANY:
-					// TODO Add SDR Waveform Factory
-					//					for (final Object obj : (Collection< ? >) msg.getNewValue()) {
-					//						addResource((SoftwareAssembly) obj, new SdrWaveformFactory((SoftwareAssembly) obj));
-					//					}
-					break;
-				case Notification.REMOVE:
-					removeResource((SoftwareAssembly) msg.getOldValue());
-					break;
-				case Notification.REMOVE_MANY:
-					for (final Object obj : (Collection< ? >) msg.getOldValue()) {
-						removeResource((SoftwareAssembly) obj);
-					}
-					break;
-				default:
-					break;
-				}
-			}
-		}
-	};
+	private OrbSession session;
 	private final Map<EObject, ResourceDesc> resourceMap = Collections.synchronizedMap(new HashMap<EObject, ResourceDesc>());
 	private SdrRoot root;
 	private SPDListener componentsListener;
-	private SPDListener sharedLibraryListener;
 	private SPDListener devicesListener;
 	private SPDListener serviceListener;
 	private boolean disposed;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public SdrResourceFactoryProvider() {
-		SdrUiPlugin sdrPlugin = SdrUiPlugin.getDefault();
-		if (sdrPlugin != null) {
-			this.root = sdrPlugin.getTargetSdrRoot();
+		SdrUiPlugin plugin = SdrUiPlugin.getDefault();
+		this.root = plugin.getTargetSdrRoot();
+		if (this.root == null) {
+			return;
 		}
-		if (this.root != null) {
-			this.componentsListener = new SPDListener();
-			this.sharedLibraryListener = new SPDListener();
-			this.devicesListener = new SPDListener();
-			this.serviceListener = new SPDListener();
-			ScaModelCommand.execute(this.root, new ScaModelCommand() {
 
-				@Override
-				public void execute() {
-					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getComponentsContainer().getComponents()) {
-						addResource(spd, new SpdResourceFactory(spd));
-					}
-					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getSharedLibrariesContainer().getComponents()) {
-						addResource(spd, new SpdResourceFactory(spd));
-					}
-					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getDevicesContainer().getComponents()) {
-						addResource(spd, new SpdResourceFactory(spd));
-					}
-					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getServicesContainer().getComponents()) {
-						addResource(spd, new SpdResourceFactory(spd));
-					}
-					// TODO Add SDR Waveform Factory
-					//					for (final SoftwareAssembly sad : SdrResourceFactoryProvider.this.root.getWaveformsContainer().getWaveforms()) {
-					//						addResource(sad, new SdrWaveformFactory(sad));
-					//					}
-					SdrResourceFactoryProvider.this.root.getComponentsContainer().eAdapters().add(SdrResourceFactoryProvider.this.componentsListener);
-					SdrResourceFactoryProvider.this.root.getSharedLibrariesContainer().eAdapters().add(SdrResourceFactoryProvider.this.sharedLibraryListener);
-					SdrResourceFactoryProvider.this.root.getDevicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.devicesListener);
-					SdrResourceFactoryProvider.this.root.getServicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.serviceListener);
-					SdrResourceFactoryProvider.this.root.getWaveformsContainer().eAdapters().add(SdrResourceFactoryProvider.this.waveformsListener);
+		IPath domPath = plugin.getTargetSdrDomPath();
+		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
+			@Override
+			public boolean accept(Path entry) {
+				// Accept directories that don't start with a dot
+				return Files.isDirectory(entry) && !entry.getFileName().toString().startsWith(".");
+			}
+		};
+		if (domPath != null && domPath.toFile().exists()) {
+			try {
+				for (Path path : Files.newDirectoryStream(domPath.toFile().toPath(), filter)) {
+					addVirtualMount(path);
 				}
-			});
+			} catch (IOException e) {
+				ScaDebugUiPlugin.log(
+					new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Error while mounting SDRROOT/dom directories into sandbox file manager", e));
+			}
+		}
+
+		this.componentsListener = new SPDListener();
+		this.devicesListener = new SPDListener();
+		this.serviceListener = new SPDListener();
+		ScaModelCommand.execute(this.root, new ScaModelCommand() {
+
+			@Override
+			public void execute() {
+				for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getComponentsContainer().getComponents()) {
+					addResource(spd, SpdResourceFactory.createResourceFactory(spd));
+				}
+				for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getDevicesContainer().getComponents()) {
+					addResource(spd, SpdResourceFactory.createResourceFactory(spd));
+				}
+				for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getServicesContainer().getComponents()) {
+					addResource(spd, SpdResourceFactory.createResourceFactory(spd));
+				}
+				SdrResourceFactoryProvider.this.root.getComponentsContainer().eAdapters().add(SdrResourceFactoryProvider.this.componentsListener);
+				SdrResourceFactoryProvider.this.root.getDevicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.devicesListener);
+				SdrResourceFactoryProvider.this.root.getServicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.serviceListener);
+			}
+		});
+	}
+
+	/**
+	 * Adds a virtual mount for a location in the file system
+	 * @param dir
+	 * @throws CoreException
+	 */
+	private void addVirtualMount(Path dir) {
+		String mountPoint = dir.getFileSystem().getSeparator() + dir.getFileName().toString();
+		if (session == null) {
+			session = OrbSession.createSession(ResourceFactoryPlugin.ID);
+		}
+		ORB orb = session.getOrb();
+		POA poa;
+		try {
+			poa = session.getPOA();
+		} catch (CoreException e) {
+			ScaDebugUiPlugin.log(e);
+			return;
+		}
+		FileSystemPOA fsPoa = new FileSystemPOATie(new JavaFileSystem(orb, poa, dir.toFile()));
+		try {
+			FileSystem domDepsFs = FileSystemHelper.narrow(poa.servant_to_reference(fsPoa));
+			addFileSystemMount(domDepsFs, mountPoint);
+		} catch (ServantNotActive | WrongPolicy e) {
+			ScaDebugUiPlugin.log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Unable to create virtual mount " + mountPoint, e));
 		}
 	}
 
@@ -180,9 +194,6 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void dispose() {
 		Job.getJobManager().beginRule(RULE, null);
@@ -194,18 +205,35 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		} finally {
 			Job.getJobManager().endRule(RULE);
 		}
-		this.root.getComponentsContainer().eAdapters().remove(this.componentsListener);
-		this.root.getSharedLibrariesContainer().eAdapters().remove(this.sharedLibraryListener);
-		this.root.getDevicesContainer().eAdapters().remove(this.devicesListener);
-		this.root.getServicesContainer().eAdapters().remove(this.serviceListener);
-		this.root.getWaveformsContainer().eAdapters().remove(this.waveformsListener);
+
+		// Stop listening for changes
+		ScaModelCommand.execute(this.root, new ScaModelCommand() {
+			@Override
+			public void execute() {
+				root.getComponentsContainer().eAdapters().remove(componentsListener);
+				root.getDevicesContainer().eAdapters().remove(devicesListener);
+				root.getServicesContainer().eAdapters().remove(serviceListener);
+			}
+		});
 		this.root = null;
+
+		// Remove resource descriptions
 		synchronized (this.resourceMap) {
 			for (final ResourceDesc desc : this.resourceMap.values()) {
 				removeResourceDesc(desc);
 			}
 			this.resourceMap.clear();
 		}
-	}
 
+		// Remove file system mounts
+		for (String mount : getFileSystemMounts().keySet()) {
+			removeFileSystemMount(mount);
+		}
+
+		// Dispose session
+		if (session != null) {
+			session.dispose();
+			session = null;
+		}
+	}
 }
