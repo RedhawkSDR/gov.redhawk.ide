@@ -69,7 +69,7 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		case SERVICE:
 			return new SpdResourceFactory(spd);
 		default:
-			String errorMsg = String.format("Invalid component type '%s'", type);
+			String errorMsg = String.format("Invalid component type '%s' for SPD '%s'", type, spd.getName());
 			throw new IllegalArgumentException(errorMsg);
 		}
 	}
