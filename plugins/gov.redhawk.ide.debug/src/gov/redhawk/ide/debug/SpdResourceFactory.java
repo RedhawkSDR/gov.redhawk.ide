@@ -59,6 +59,10 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 	 * @throws IllegalArgumentException The component type (per the SCD) isn't supported
 	 */
 	public static SpdResourceFactory createResourceFactory(SoftPkg spd) {
+		if (spd.getDescriptor() == null) {
+			String errorMsg = "Cannot create a resource factory for SPD '%s' which has no SCD";
+			throw new IllegalArgumentException(errorMsg);
+		}
 		ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
 		switch (type) {
 		case RESOURCE:

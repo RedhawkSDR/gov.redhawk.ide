@@ -14,14 +14,17 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.notify.Notification;
@@ -74,11 +77,27 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			if (msg.getFeature() == SdrPackage.Literals.SOFT_PKG_REGISTRY__COMPONENTS) {
 				switch (msg.getEventType()) {
 				case Notification.ADD:
-					addResource((SoftPkg) msg.getNewValue(), SpdResourceFactory.createResourceFactory((SoftPkg) msg.getNewValue()));
+					try {
+						SoftPkg spd = (SoftPkg) msg.getNewValue();
+						SpdResourceFactory resFactory = SpdResourceFactory.createResourceFactory(spd);
+						addResource(spd, resFactory);
+					} catch (IllegalArgumentException e) {
+						ScaDebugUiPlugin.log(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, "Invalid SPD file was not added to the sandbox", e));
+					}
 					break;
 				case Notification.ADD_MANY:
+					MultiStatus status = new MultiStatus(ScaDebugUiPlugin.PLUGIN_ID, 0, "Invalid SPD file(s) were not added to the sandbox", null);
 					for (final Object obj : (Collection< ? >) msg.getNewValue()) {
-						addResource((SoftPkg) obj, SpdResourceFactory.createResourceFactory((SoftPkg) obj));
+						SoftPkg spd = (SoftPkg) obj;
+						try {
+							SpdResourceFactory resFactory = SpdResourceFactory.createResourceFactory(spd);
+							addResource(spd, resFactory);
+						} catch (IllegalArgumentException e) {
+							status.add(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, e.toString(), e));
+						}
+					}
+					if (!status.isOK()) {
+						ScaDebugUiPlugin.log(status);
 					}
 					break;
 				case Notification.REMOVE:
@@ -137,18 +156,24 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 
 			@Override
 			public void execute() {
-				for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getComponentsContainer().getComponents()) {
-					addResource(spd, SpdResourceFactory.createResourceFactory(spd));
-				}
-				for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getDevicesContainer().getComponents()) {
-					addResource(spd, SpdResourceFactory.createResourceFactory(spd));
-				}
-				for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getServicesContainer().getComponents()) {
-					addResource(spd, SpdResourceFactory.createResourceFactory(spd));
+				MultiStatus status = new MultiStatus(ScaDebugUiPlugin.PLUGIN_ID, 0, "Invalid SPD file(s) were not added to the sandbox", null);
+				List<SoftPkg> spds = new ArrayList<>(SdrResourceFactoryProvider.this.root.getComponentsContainer().getComponents());
+				spds.addAll(SdrResourceFactoryProvider.this.root.getDevicesContainer().getComponents());
+				spds.addAll(SdrResourceFactoryProvider.this.root.getServicesContainer().getComponents());
+				for (final SoftPkg spd : spds) {
+					try {
+						SpdResourceFactory resFactory = SpdResourceFactory.createResourceFactory(spd);
+						addResource(spd, resFactory);
+					} catch (IllegalArgumentException e) {
+						status.add(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, e.toString(), e));
+					}
 				}
 				SdrResourceFactoryProvider.this.root.getComponentsContainer().eAdapters().add(SdrResourceFactoryProvider.this.componentsListener);
 				SdrResourceFactoryProvider.this.root.getDevicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.devicesListener);
 				SdrResourceFactoryProvider.this.root.getServicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.serviceListener);
+				if (!status.isOK()) {
+					ScaDebugUiPlugin.log(status);
+				}
 			}
 		});
 	}
