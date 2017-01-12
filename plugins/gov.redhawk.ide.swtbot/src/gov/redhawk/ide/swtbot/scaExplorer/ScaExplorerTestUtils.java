@@ -191,30 +191,39 @@ public class ScaExplorerTestUtils {
 	 * @param bot
 	 * @param domainName The name of the domain manager to launch
 	 * @param deviceMgrName The name of the device manager to launch, or null for none
+	 * @deprecated Use {@link #launchDomainViaWizard(SWTWorkbenchBot, String, String[])}
 	 */
+	@Deprecated
 	public static void launchDomain(SWTWorkbenchBot bot, String domainName, final String deviceMgrName) {
-		SWTBotView scaExplorerView = bot.viewByTitle("REDHAWK Explorer");
-		SWTBotTreeItem targetSDRTreeItem = scaExplorerView.bot().tree().getTreeItem("Target SDR");
-		targetSDRTreeItem.contextMenu("Launch Domain ...").click();
-
-		SWTBotShell wizardShell = bot.shell("Launch Domain Manager");
-		final SWTBot wizardBot = wizardShell.bot();
-		wizardShell.activate();
-
-		// Enter the Domain Name text
-		wizardBot.text(0).setText(domainName);
-
-		// Select device manager to launch
-		if (deviceMgrName != null) {
-			StandardTestActions.selectNamespacedTreeItem(wizardBot, wizardBot.tree(), deviceMgrName);
+		if (deviceMgrName == null) {
+			launchDomainViaWizard(bot, domainName);
+		} else {
+			launchDomainViaWizard(bot, domainName, deviceMgrName);
 		}
+	}
+
+	/**
+	 * Launch a domain manager and optionally device manager(s) via wizard. Does not wait for the domain to connect.
+	 * @param bot
+	 * @param domainName The name of the domain manager to launch
+	 * @param deviceManagers The name(s) of the device manager(s) to launch
+	 */
+	public static void launchDomainViaWizard(SWTWorkbenchBot bot, String domainName, final String... deviceManagers) {
+		SWTBot viewBot = bot.viewByTitle("REDHAWK Explorer").bot();
+		SWTBotTreeItem treeItem = viewBot.tree().getTreeItem("Target SDR").select();
+		treeItem.contextMenu("Launch Domain ...").click();
+		SWTBotShell shell = bot.shell("Launch Domain Manager");
+
+		// Enter domain name, select device managers
+		shell.bot().textWithLabel("Domain Name: ").setText(domainName);
+		bot.waitWhile(Conditions.treeHasRows(shell.bot().tree(), 0));
+		StandardTestActions.selectNamespacedTreeItems(viewBot, shell.bot().tree(), deviceManagers);
 
 		// Wait for validation
 		bot.sleep(250);
 
-		// Close wizard
-		SWTBotButton okButton = wizardBot.button("OK");
-		okButton.click();
+		shell.bot().button("OK").click();
+		bot.waitUntil(Conditions.shellCloses(shell));
 	}
 
 	/**
