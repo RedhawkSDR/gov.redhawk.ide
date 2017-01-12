@@ -18,6 +18,8 @@ import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 
+import gov.redhawk.ide.swtbot.condition.SelectIDL;
+
 public class ComponentUtils {
 
 	/** private to prevent instantiation since all functions are static. */
