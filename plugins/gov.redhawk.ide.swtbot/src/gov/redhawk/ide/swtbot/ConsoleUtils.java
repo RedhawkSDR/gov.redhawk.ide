@@ -22,6 +22,7 @@ import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarToggleButton;
+import org.eclipse.ui.console.ConsolePlugin;
 import org.hamcrest.Description;
 import org.junit.Assert;
 
@@ -64,8 +65,9 @@ public class ConsoleUtils {
 
 		// Cycle through the consoles
 		consoleButton.click();
-		for (String newConsoleText = view.bot().label().getText(); !consoleText.equals(newConsoleText); newConsoleText = view.bot().label().getText()) {
-			consoleTitles.add(newConsoleText);
+		for (int i = 1; i < ConsolePlugin.getDefault().getConsoleManager().getConsoles().length; i++) {
+			consoleText = view.bot().label().getText();
+			consoleTitles.add(consoleText);
 			consoleButton.click();
 		}
 		return consoleTitles.toArray(new String[consoleTitles.size()]);

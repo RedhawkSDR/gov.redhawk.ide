@@ -60,7 +60,7 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 	 */
 	public static SpdResourceFactory createResourceFactory(SoftPkg spd) {
 		if (spd.getDescriptor() == null) {
-			String errorMsg = "Cannot create a resource factory for SPD '%s' which has no SCD";
+			String errorMsg = String.format("Cannot create a resource factory for SPD '%s' which has no SCD", spd.getName());
 			throw new IllegalArgumentException(errorMsg);
 		}
 		ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
