@@ -10,22 +10,20 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotCanvas;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
-import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList.ListElement;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.Assert;
 
 @SuppressWarnings("restriction")
 public class ViewUtils {
@@ -257,40 +255,32 @@ public class ViewUtils {
 		});
 	}
 
-	public static SWTBotTree selectPropertiesTab(SWTWorkbenchBot bot, String label) {
-		Matcher<TabbedPropertyList> matcher = new BaseMatcher<TabbedPropertyList>() {
+	public static SWTBotTree selectPropertiesTab(SWTWorkbenchBot bot, final String label) {
+		// Matcher for a tab in the property tab list
+		Matcher<TabbedPropertyList.ListElement> matcher = new BaseMatcher<TabbedPropertyList.ListElement>() {
 			@Override
 			public boolean matches(Object item) {
-				if (item instanceof TabbedPropertyList) {
-					return true;
+				if (!(item instanceof TabbedPropertyList.ListElement)) {
+					return false;
 				}
-				return false;
+				TabbedPropertyList.ListElement listElement = (TabbedPropertyList.ListElement) item;
+				return label.equals(listElement.getTabItem().getText());
 			}
 
 			@Override
 			public void describeTo(Description description) {
-				description.appendText("Of type TabbedPropertyList");
+				description.appendText("Of type TabbedPropertyList.ListElement with text " + label);
 			}
-
 		};
+
+		// Open the properties view, find the tab
 		SWTBotView view = bot.viewById(PROPERTIES_VIEW_ID);
 		view.show();
-		TabbedPropertyList list = (TabbedPropertyList) view.bot().widget(matcher);
+		final TabbedPropertyList.ListElement listElement = (TabbedPropertyList.ListElement) view.bot().widget(matcher);
 
-		for (int index = 0; index < list.getNumberOfElements(); index++) {
-			final TabbedPropertyList.ListElement element = (ListElement) list.getElementAt(index);
-			if (label.equals(element.getTabItem().getText())) {
-				Display.getDefault().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						element.setSelected(true);
-					}
-				});
-				return view.bot().tree();
-			}
-		}
+		// Convert to Canvas (parent type), then click with SWTBot
+		new SWTBotCanvas(listElement).click();
 
-		Assert.fail(String.format("Could not find properties tab '%s'", label));
-		return null;
+		return view.bot().tree();
 	}
 }
