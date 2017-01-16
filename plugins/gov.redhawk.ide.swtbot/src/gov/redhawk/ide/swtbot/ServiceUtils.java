@@ -10,10 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import java.util.Arrays;
+
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
-import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 
 /**
@@ -21,9 +21,9 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
  */
 public class ServiceUtils {
 
-	public static final String SERVICE_MENU_NAME = "REDHAWK Service Project";
+	public static final String NEW_SERVICE_WIZARD_NAME = "REDHAWK Service Project";
+	private static final long CREATE_NEW_PROJECT_DELAY = 10000;
 
-	/** private to prevent instantiation since all functions are static. */
 	private ServiceUtils() {
 	}
 
@@ -35,24 +35,7 @@ public class ServiceUtils {
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
 		final SWTBot wizardBot = wizardShell.bot();
-		wizardBot.waitUntil(new DefaultCondition() {
-
-			@Override
-			public String getFailureMessage() {
-				return "Could not find menu option for: " + SERVICE_MENU_NAME;
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				try {
-					wizardBot.tree().getTreeItem("REDHAWK").expand().getNode(SERVICE_MENU_NAME).select();
-					return true;
-				} catch (WidgetNotFoundException e) {
-					return false;
-				}
-			}
-
-		});
+		StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList("REDHAWK", NEW_SERVICE_WIZARD_NAME)).select();
 		wizardBot.button("Next >").click();
 
 		wizardBot.textWithLabel("Project name:").setText(serviceProjectName);
@@ -63,6 +46,6 @@ public class ServiceUtils {
 		wizardBot.button("Next >").click();
 		wizardBot.button("Finish").click();
 		
-		bot.waitUntil(Conditions.shellCloses(wizardShell));
+		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
 	}
 }

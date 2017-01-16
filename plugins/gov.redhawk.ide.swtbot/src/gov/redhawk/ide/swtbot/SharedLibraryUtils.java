@@ -15,35 +15,35 @@ import java.util.Arrays;
 import org.eclipse.swtbot.eclipse.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
-/**
- * 
- */
 public class SharedLibraryUtils {
 
-	public static final String SHARED_LIBRARY_MENU_NAME = "REDHAWK Shared Library Project";
+	public static final String NEW_SHARED_LIBRARY_WIZARD_NAME = "REDHAWK Shared Library Project";
+	private static final long CREATE_NEW_PROJECT_DELAY = 10000;
 
-	/** private to prevent instantiation since all functions are static. */
 	private SharedLibraryUtils() {
 	}
 
+	/**
+	 * Create a Redhawk shared library project using the new project wizard.
+	 * @param bot
+	 * @param sharedLibraryProjectName
+	 * @param projectType
+	 */
 	public static void createSharedLibraryProject(SWTBot bot, String sharedLibraryProjectName, String projectType) {
 		StandardTestActions.configurePyDev(bot);
 
-		bot.menu().menu("File", "New", "Project...").click();
+		bot.menu("File").menu("New").menu("Project...").click();
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
 		final SWTBot wizardBot = wizardShell.bot();
-
-		SWTBotTreeItem treeItem = StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList("REDHAWK", SHARED_LIBRARY_MENU_NAME));
-		treeItem.select();
+		StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList("REDHAWK", NEW_SHARED_LIBRARY_WIZARD_NAME)).select();
 		wizardBot.button("Next >").click();
 
 		wizardBot.textWithLabel("Project name:").setText(sharedLibraryProjectName);
 		wizardBot.comboBoxWithLabel("Type:").setSelection(projectType);
 		wizardBot.button("Finish").click();
 
-		bot.waitUntil(Conditions.shellCloses(wizardShell));
+		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
 	}
 }

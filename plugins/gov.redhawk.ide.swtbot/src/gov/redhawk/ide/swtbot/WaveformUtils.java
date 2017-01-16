@@ -22,25 +22,24 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class WaveformUtils {
 
-	/** private to prevent instantiation since all functions are static. */
+	public static final String NEW_WAVEFORM_WIZARD_NAME = "REDHAWK Waveform Project";
+	private static final long CREATE_NEW_PROJECT_DELAY = 10000;
+
 	private WaveformUtils() {
 	}
 
 	/**
-	 * Creates a new waveform using File > New > Other... > REDHAWK Waveform Project wizard
-	 * @param bot - the executing SWTBot
+	 * Create a Redhawk waveform using the new project wizard.
+	 * @param bot
 	 * @param waveformName
+	 * @param assemblyController
 	 */
 	public static void createNewWaveform(SWTBot bot, String waveformName, String assemblyController) {
-		// Open the new waveform project wizard
-		bot.menu().menu("File", "New", "Other...").click();
-		SWTBotShell wizardShell = bot.shell("New");
-		SWTBot wizardBot = wizardShell.bot();
+		bot.menu("File").menu("New").menu("Project...").click();
+		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
-
-		SWTBotTreeItem treeItem = StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(),
-			Arrays.asList("REDHAWK", "REDHAWK Waveform Project"));
-		treeItem.select();
+		final SWTBot wizardBot = wizardShell.bot();
+		StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList("REDHAWK", NEW_WAVEFORM_WIZARD_NAME)).select();
 		wizardBot.button("Next >").click();
 
 		// Enter the name for the new waveform
@@ -54,7 +53,7 @@ public class WaveformUtils {
 
 		// Close wizard
 		wizardBot.button("Finish").click();
-		bot.waitUntil(Conditions.shellCloses(wizardShell));
+		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
 	}
 
 	/**
