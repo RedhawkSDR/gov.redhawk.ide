@@ -719,11 +719,19 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 					errorMessages.add(msg);
 				}
 			}
+			if (this.componentHost != null && this.componentHost.exists()) {
+				this.componentHost.releaseObject();
+				componentHost = null;
+			}
 			if (errorMessages.size() > 0) {
 				throw new ReleaseError("Errors occurred releasing component(s)", errorMessages.toArray(new String[errorMessages.size()]));
 			}
 		} else {
 			super.releaseObject();
+			if (this.componentHost != null && this.componentHost.exists()) {
+				this.componentHost.releaseObject();
+				componentHost = null;
+			}
 		}
 	}
 
