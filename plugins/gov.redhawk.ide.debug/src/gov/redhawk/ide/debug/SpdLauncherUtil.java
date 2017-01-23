@@ -10,28 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
-import gov.redhawk.ide.debug.internal.LaunchLogger;
-import gov.redhawk.ide.debug.internal.jobs.TerminateJob;
-import gov.redhawk.ide.debug.variables.LaunchVariables;
-import gov.redhawk.model.sca.IRefreshable;
-import gov.redhawk.model.sca.ProfileObjectWrapper;
-import gov.redhawk.model.sca.RefreshDepth;
-import gov.redhawk.model.sca.ScaAbstractProperty;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaDevice;
-import gov.redhawk.model.sca.ScaFactory;
-import gov.redhawk.model.sca.ScaPropertyContainer;
-import gov.redhawk.model.sca.ScaService;
-import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
-import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
-import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
-import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
-import gov.redhawk.sca.util.Debug;
-import gov.redhawk.sca.util.ORBUtil;
-import gov.redhawk.sca.util.OrbSession;
-import gov.redhawk.sca.util.SubMonitor;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,16 +22,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import mil.jpeojtrs.sca.prf.Properties;
-import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
-import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
-import mil.jpeojtrs.sca.scd.ComponentType;
-import mil.jpeojtrs.sca.scd.SoftwareComponent;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.CFErrorFormatter;
-import mil.jpeojtrs.sca.util.NamedThreadFactory;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -81,13 +49,42 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import CF.DataType;
 import CF.Resource;
-import CF.ResourceHelper;
 import CF.ResourceOperations;
 import CF.LifeCyclePackage.InitializeError;
 import CF.PropertyEmitterPackage.AlreadyInitialized;
 import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
 import CF.ResourcePackage.StartError;
+import gov.redhawk.ide.debug.internal.LaunchLogger;
+import gov.redhawk.ide.debug.internal.jobs.TerminateJob;
+import gov.redhawk.ide.debug.variables.LaunchVariables;
+import gov.redhawk.model.sca.IRefreshable;
+import gov.redhawk.model.sca.ProfileObjectWrapper;
+import gov.redhawk.model.sca.RefreshDepth;
+import gov.redhawk.model.sca.ScaAbstractComponent;
+import gov.redhawk.model.sca.ScaAbstractProperty;
+import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaDevice;
+import gov.redhawk.model.sca.ScaFactory;
+import gov.redhawk.model.sca.ScaPropertyContainer;
+import gov.redhawk.model.sca.ScaService;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
+import gov.redhawk.sca.util.Debug;
+import gov.redhawk.sca.util.ORBUtil;
+import gov.redhawk.sca.util.OrbSession;
+import gov.redhawk.sca.util.SubMonitor;
+import mil.jpeojtrs.sca.prf.Properties;
+import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
+import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
+import mil.jpeojtrs.sca.scd.ComponentType;
+import mil.jpeojtrs.sca.scd.SoftwareComponent;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.CFErrorFormatter;
+import mil.jpeojtrs.sca.util.NamedThreadFactory;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
  * A collection of utility methods that help to launch a {@link SoftPkg}.
@@ -152,13 +149,13 @@ public final class SpdLauncherUtil {
 				description = String.format("service %s", launch.getAttribute(LaunchVariables.SERVICE_NAME));
 				break;
 			case RESOURCE:
-				comp = SpdLauncherUtil.postLaunchComponent(spd, launch, progress.newChild(WORK_FIND_CORBA_OBJ));
+				comp = SpdLauncherUtil.postLaunchResource(spd, launch, progress.newChild(WORK_FIND_CORBA_OBJ));
 				description = String.format("component %s", launch.getAttribute(LaunchVariables.NAME_BINDING));
 				break;
 			default:
 				String errorMsg = String.format("Unsupported component type during post-launch in the sandbox (%s) - treating as component", spd.getName());
 				ScaDebugPlugin.logWarning(errorMsg, null);
-				comp = SpdLauncherUtil.postLaunchComponent(spd, launch, progress.newChild(WORK_FIND_CORBA_OBJ));
+				comp = SpdLauncherUtil.postLaunchResource(spd, launch, progress.newChild(WORK_FIND_CORBA_OBJ));
 				break;
 			}
 		} catch (final CoreException e) {
@@ -261,22 +258,11 @@ public final class SpdLauncherUtil {
 		}
 	}
 
-	/**
-	 * Uses the naming context and name binding from the launch to resolve a reference to the component. The
-	 * {@link Resource#initializeProperties(DataType[])} and {@link Resource#initialize()} calls are performed and
-	 * a new model object is added to the model.
-	 * @param spd The {@link SoftPkg} for the component being launched
-	 * @param launch The launch that just occurred
-	 * @param monitor A progress monitor
-	 * @return A new model object for the component
-	 * @throws CoreException
-	 */
-	private static LocalAbstractComponent postLaunchComponent(SoftPkg spd, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
+	private static LocalAbstractComponent postLaunchResource(SoftPkg spd, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
 		final int WORK_WAIT_REGISTRATION = 10;
-		final int WORK_GENERAL = 1, WORK_INITIALIZE_PROPS = 1, WORK_INITIALIZE = 1, WORK_ADD_TO_MODEL = 1;
-		SubMonitor progress = SubMonitor.convert(monitor, "Wait for component to register",
-			WORK_WAIT_REGISTRATION + 2 * WORK_GENERAL + WORK_INITIALIZE_PROPS + WORK_INITIALIZE + WORK_ADD_TO_MODEL);
-
+		final int WORK_INITIALIZE_RESOURCE = 10;
+		SubMonitor progress = SubMonitor.convert(monitor, "Wait for component to register",	WORK_WAIT_REGISTRATION);
+		
 		final String nameBinding = launch.getAttribute(LaunchVariables.NAME_BINDING);
 		final String namingContextIOR = launch.getAttribute(LaunchVariables.NAMING_CONTEXT_IOR);
 		final String compID = launch.getAttribute(LaunchVariables.COMPONENT_IDENTIFIER);
@@ -285,11 +271,11 @@ public final class SpdLauncherUtil {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
 				"No naming context or name binding to locate component with, post launch failed. " + compID, null));
 		}
-
+		
 		// Wait for the component to be registered in the appropriate naming context of the naming service
-		final Future<Resource> future = SpdLauncherUtil.EXECUTOR.submit(new Callable<Resource>() {
+		final Future<org.omg.CORBA.Object> future = SpdLauncherUtil.EXECUTOR.submit(new Callable<org.omg.CORBA.Object>() {
 			@Override
-			public Resource call() throws Exception {
+			public org.omg.CORBA.Object call() throws Exception {
 				OrbSession session = OrbSession.createSession();
 
 				NamingContextExt namingContext = null;
@@ -315,13 +301,9 @@ public final class SpdLauncherUtil {
 						}
 					}
 
-					// TODO: With the NotifyingNamingContext, we could have direct EMF notification of the
-					// registration rather than polling:
-					// NotifyingNamingContext namingRef =
-					// ScaDebugPlugin.getInstance().getLocalSca().getRootContext().findContext(namingContext);
 					while (!launch.isTerminated()) {
 						try {
-							return ResourceHelper.narrow(namingContext.resolve_str(nameBinding));
+							return namingContext.resolve_str(nameBinding);
 						} catch (NotFound e) {
 							try {
 								Thread.sleep(100);
@@ -342,8 +324,8 @@ public final class SpdLauncherUtil {
 			}
 
 		});
-
-		Resource resource;
+		
+		org.omg.CORBA.Object corbaObj;
 		try {
 			// Invoke the Future to get the parent waveform and the Resource object
 			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
@@ -351,9 +333,9 @@ public final class SpdLauncherUtil {
 			if (timeout < 0 || ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
 				// In debug-mode wait they may have placed a break-point
 				// that is delaying registration so wait forever
-				resource = future.get();
+				corbaObj = future.get();
 			} else {
-				resource = future.get(timeout, TimeUnit.SECONDS);
+				corbaObj = future.get(timeout, TimeUnit.SECONDS);
 			}
 			progress.worked(WORK_WAIT_REGISTRATION);
 		} catch (final InterruptedException ex) {
@@ -367,10 +349,89 @@ public final class SpdLauncherUtil {
 			String msg = String.format("Timed out waiting for component %s to launch.", nameBinding);
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg, ex));
 		}
+		
+		LocalAbstractComponent resource;
+		// TODO: Hard-coded check for the ComponentHost, need a utility method for this
+		if (spd.getName().matches(".*ComponentHost.*")) {
+			resource = SpdLauncherUtil.postLaunchComponentHost(spd, launch, corbaObj, nameBinding, progress.newChild(WORK_INITIALIZE_RESOURCE));
+		} else {
+			resource = SpdLauncherUtil.postLaunchComponent(spd, launch, corbaObj, nameBinding, progress.newChild(WORK_INITIALIZE_RESOURCE));
+		}
+		return resource;
+	}
 
+	private static LocalScaExecutableDevice postLaunchComponentHost(SoftPkg spd, final ILaunch launch, final org.omg.CORBA.Object corbaObj,
+		String nameBinding, final IProgressMonitor monitor) throws CoreException {
+		final int WORK_GENERAL = 10, WORK_ADD_TO_MODEL = 1;
+		SubMonitor progress = SubMonitor.convert(monitor, "Wait for component to initialize", WORK_GENERAL + WORK_ADD_TO_MODEL);
+		
+		final LocalScaExecutableDevice componentHost = ScaDebugFactory.eINSTANCE.createLocalScaExecutableDevice();
+		componentHost.setCorbaObj(corbaObj);
+		componentHost.setLaunch(launch);
+		componentHost.setProfileURI(spd.eResource().getURI());
+		
+		// Load the properties from the PRF and override with values from the launch configuration
+		final ScaComponent propHolder = ScaFactory.eINSTANCE.createScaComponent();
+		propHolder.setProfileURI(spd.eResource().getURI());
+		propHolder.fetchProfileObject(progress.newChild(WORK_GENERAL));
+		propHolder.fetchProperties(progress.newChild(WORK_GENERAL));
+		ScaLaunchConfigurationUtil.loadProperties(launch.getLaunchConfiguration(), propHolder);
+		
+		initializeResource(componentHost, propHolder, launch, nameBinding, monitor);
+		
+		// Add the ComponentHost to its waveform
+		final String parentWaveformName = launch.getLaunchConfiguration().getAttribute(LaunchVariables.WAVEFORM_NAME, "");
+		if (parentWaveformName.isEmpty()) {
+			final LocalScaWaveform sandboxWaveform = ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform();
+			ScaModelCommand.execute(sandboxWaveform, new ScaModelCommand() {
+				@Override
+				public void execute() {
+					sandboxWaveform.setComponentHost(componentHost);
+				}
+			});
+		} else {
+			Boolean result = ScaModelCommandWithResult.execute(ScaDebugPlugin.getInstance().getLocalSca(), new ScaModelCommandWithResult<Boolean>() {
+				@Override
+				public void execute() {
+					for (LocalScaWaveform waveform : ScaDebugPlugin.getInstance().getLocalSca().getWaveforms()) {
+						if (parentWaveformName.equals(waveform.getName())) {
+							waveform.setComponentHost(componentHost);
+							setResult(true);
+							return;
+						}
+					}
+					setResult(false);
+				}
+			});
+			if (result == null || !result) {
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Unable to find the parent waveform for a launched component"));
+			}
+		}
+		progress.newChild(WORK_ADD_TO_MODEL);
+		
+		return componentHost;
+	}
+
+	/**
+	 * Uses the naming context and name binding from the launch to resolve a reference to the component. The
+	 * {@link Resource#initializeProperties(DataType[])} and {@link Resource#initialize()} calls are performed and
+	 * a new model object is added to the model.
+	 * @param spd The {@link SoftPkg} for the component being launched
+	 * @param launch The launch that just occurred
+	 * @param nameBinding 
+	 * @param corbaObj 
+	 * @param monitor A progress monitor
+	 * @return A new model object for the component
+	 * @throws CoreException
+	 */
+	private static LocalAbstractComponent postLaunchComponent(SoftPkg spd, final ILaunch launch, final org.omg.CORBA.Object corbaObj, final String nameBinding,
+		final IProgressMonitor monitor) throws CoreException {
+		final int WORK_GENERAL = 10, WORK_ADD_TO_MODEL = 1;
+		SubMonitor progress = SubMonitor.convert(monitor, "Wait for component to initialize", WORK_GENERAL + WORK_ADD_TO_MODEL);
+		
 		// Create the model object
 		final LocalScaComponent component = ScaDebugFactory.eINSTANCE.createLocalScaComponent();
-		component.setCorbaObj(resource);
+		component.setCorbaObj(corbaObj);
 		component.setName(nameBinding);
 		component.setProfileURI(spd.eResource().getURI());
 
@@ -380,52 +441,13 @@ public final class SpdLauncherUtil {
 		propHolder.fetchProfileObject(progress.newChild(WORK_GENERAL));
 		propHolder.fetchProperties(progress.newChild(WORK_GENERAL));
 		ScaLaunchConfigurationUtil.loadProperties(launch.getLaunchConfiguration(), propHolder);
-
-		// Collect non-null properties of type 'property' (but not type 'execparam')
-		List<DataType> initializeProps = new ArrayList<DataType>();
-		for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
-			if (PropertiesUtil.canInitialize(prop.getDefinition())) {
-				DataType dt = prop.getProperty();
-				if (dt.value != null && dt.value.type().kind() != TCKind.tk_null) {
-					initializeProps.add(dt);
-				}
-			}
-		}
-
-		// Initialize properties
-		try {
-			DataType[] initializePropsArray = initializeProps.toArray(new CF.DataType[initializeProps.size()]);
-			component.initializeProperties(initializePropsArray);
-		} catch (AlreadyInitialized e) {
-			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
-		} catch (InvalidConfiguration e) {
-			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
-		} catch (PartialConfiguration e) {
-			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
-		} catch (BAD_OPERATION e) {
-			String msg;
-			if (initializeProps.size() == 0) {
-				msg = String.format("Could not call initializeProperties on component %s in the sandbox (CORBA BAD_OPERATION). "
-					+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.", nameBinding);
-			} else {
-				msg = "Component has properties of kind 'property', but does not appear to support REDHAWK 2.0 API (CORBA BAD_OPERATION)";
-			}
-			LaunchLogger.INSTANCE.writeToConsole(launch, msg, ConsoleColor.STDERR);
-		}
-		progress.newChild(WORK_INITIALIZE_PROPS);
-
-		// Initialize
-		try {
-			component.initialize();
-		} catch (InitializeError e) {
-			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
-		}
-		progress.newChild(WORK_INITIALIZE);
+		
+		initializeResource(component, propHolder, launch, nameBinding, monitor);
 
 		// Add the component to its waveform
 		final String parentWaveformName = launch.getLaunchConfiguration().getAttribute(LaunchVariables.WAVEFORM_NAME, "");
 		if (parentWaveformName.isEmpty()) {
-			final ScaWaveform sandboxWaveform = ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform();
+			final LocalScaWaveform sandboxWaveform = ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform();
 			ScaModelCommand.execute(sandboxWaveform, new ScaModelCommand() {
 				@Override
 				public void execute() {
@@ -436,7 +458,7 @@ public final class SpdLauncherUtil {
 			Boolean result = ScaModelCommandWithResult.execute(ScaDebugPlugin.getInstance().getLocalSca(), new ScaModelCommandWithResult<Boolean>() {
 				@Override
 				public void execute() {
-					for (ScaWaveform waveform : ScaDebugPlugin.getInstance().getLocalSca().getWaveforms()) {
+					for (LocalScaWaveform waveform : ScaDebugPlugin.getInstance().getLocalSca().getWaveforms()) {
 						if (parentWaveformName.equals(waveform.getName())) {
 							waveform.getComponents().add(component);
 							setResult(true);
@@ -454,6 +476,54 @@ public final class SpdLauncherUtil {
 
 		return component;
 	}
+	
+	private static void initializeResource(ScaAbstractComponent resource, ScaComponent propHolder, final ILaunch launch, String nameBinding,
+		final IProgressMonitor monitor) {
+		final int WORK_INITIALIZE_PROPS = 1, WORK_INITIALIZE = 1;
+		SubMonitor progress = SubMonitor.convert(monitor, WORK_INITIALIZE_PROPS + WORK_INITIALIZE);
+		
+		// Collect non-null properties of type 'property' (but not type 'execparam')
+		List<DataType> initializeProps = new ArrayList<DataType>();
+		for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
+			if (PropertiesUtil.canInitialize(prop.getDefinition())) {
+				DataType dt = prop.getProperty();
+				if (dt.value != null && dt.value.type().kind() != TCKind.tk_null) {
+					initializeProps.add(dt);
+				}
+			}
+		}
+		
+		// Initialize properties
+		try {
+			DataType[] initializePropsArray = initializeProps.toArray(new CF.DataType[initializeProps.size()]);
+			resource.initializeProperties(initializePropsArray);
+		} catch (AlreadyInitialized e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
+		} catch (InvalidConfiguration e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
+		} catch (PartialConfiguration e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
+		} catch (BAD_OPERATION e) {
+			String msg;
+			if (initializeProps.size() == 0) {
+				msg = String.format("Could not call initializeProperties on component %s in the sandbox (CORBA BAD_OPERATION). "
+					+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.", nameBinding);
+			} else {
+				msg = "Component has properties of kind 'property', but does not appear to support REDHAWK 2.0 API (CORBA BAD_OPERATION)";
+			}
+			LaunchLogger.INSTANCE.writeToConsole(launch, msg, ConsoleColor.STDERR);
+		}
+		progress.newChild(WORK_INITIALIZE_PROPS);
+		
+		// Initialize
+		try {
+			resource.initialize();
+		} catch (InitializeError e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
+		}
+		progress.newChild(WORK_INITIALIZE);
+	}
+
 
 	/**
 	 * Locates a service that was just launched locally. The service name form the launch is matched against services
