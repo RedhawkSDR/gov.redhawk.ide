@@ -792,13 +792,22 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_WAVEFORM__NAMING_CONTEXT = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 2;
 	/**
+	 * The feature id for the '<em><b>Component Host</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_WAVEFORM__COMPONENT_HOST = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 3;
+	/**
 	 * The feature id for the '<em><b>Local App</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA_WAVEFORM__LOCAL_APP = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 3;
+	int LOCAL_SCA_WAVEFORM__LOCAL_APP = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 4;
 	/**
 	 * The feature id for the '<em><b>Domain Waveform</b></em>' reference.
 	 * <!-- begin-user-doc -->
@@ -807,7 +816,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 4;
+	int LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 5;
 	/**
 	 * The number of structural features of the '<em>Local Sca Waveform</em>' class.
 	 * <!-- begin-user-doc -->
@@ -815,7 +824,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA_WAVEFORM_FEATURE_COUNT = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 5;
+	int LOCAL_SCA_WAVEFORM_FEATURE_COUNT = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 6;
 	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl <em>Local Sca Component</em>}' class.
 	 * <!-- begin-user-doc -->
@@ -2626,6 +2635,18 @@ public interface ScaDebugPackage extends EPackage {
 	EReference getLocalScaWaveform_NamingContext();
 
 	/**
+	 * Returns the meta object for the reference '{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost <em>Component Host</em>}'.
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Component Host</em>'.
+	 * @see gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost()
+	 * @see #getLocalScaWaveform()
+	 * @generated
+	 */
+	EReference getLocalScaWaveform_ComponentHost();
+
+	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}'.
 	 * <!-- begin-user-doc -->
 	 * @since 3.0
@@ -3127,6 +3148,14 @@ public interface ScaDebugPackage extends EPackage {
 		 * @generated
 		 */
 		EReference LOCAL_SCA_WAVEFORM__NAMING_CONTEXT = eINSTANCE.getLocalScaWaveform_NamingContext();
+		/**
+		 * The meta object literal for the '<em><b>Component Host</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * @since 9.0
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference LOCAL_SCA_WAVEFORM__COMPONENT_HOST = eINSTANCE.getLocalScaWaveform_ComponentHost();
 		/**
 		 * The meta object literal for the '<em><b>Local App</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->

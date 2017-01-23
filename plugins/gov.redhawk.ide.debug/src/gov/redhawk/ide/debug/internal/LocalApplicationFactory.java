@@ -53,7 +53,6 @@ import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.SubMonitor;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
@@ -177,7 +176,7 @@ public class LocalApplicationFactory {
 			}
 			waveform.fetchProfileObject(null);
 
-			final ScaWaveform tmpWaveform = waveform;
+			final LocalScaWaveform tmpWaveform = waveform;
 			ScaModelCommand.execute(this.localSca, new ScaModelCommand() {
 				@Override
 				public void execute() {

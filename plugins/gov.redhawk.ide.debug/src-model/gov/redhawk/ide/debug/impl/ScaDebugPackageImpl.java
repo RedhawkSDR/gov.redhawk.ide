@@ -600,13 +600,23 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getLocalScaWaveform_ComponentHost() {
+		return (EReference) localScaWaveformEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
 	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public EAttribute getLocalScaWaveform_LocalApp() {
-		return (EAttribute) localScaWaveformEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) localScaWaveformEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -616,7 +626,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * @generated
 	 */
 	public EReference getLocalScaWaveform_DomainWaveform() {
-		return (EReference) localScaWaveformEClass.getEStructuralFeatures().get(2);
+		return (EReference) localScaWaveformEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -894,6 +904,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 
 		localScaWaveformEClass = createEClass(LOCAL_SCA_WAVEFORM);
 		createEReference(localScaWaveformEClass, LOCAL_SCA_WAVEFORM__NAMING_CONTEXT);
+		createEReference(localScaWaveformEClass, LOCAL_SCA_WAVEFORM__COMPONENT_HOST);
 		createEAttribute(localScaWaveformEClass, LOCAL_SCA_WAVEFORM__LOCAL_APP);
 		createEReference(localScaWaveformEClass, LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM);
 
@@ -998,7 +1009,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(localScaEClass, LocalSca.class, "LocalSca", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getLocalSca_Waveforms(), theScaPackage.getScaWaveform(), null, "waveforms", null, 0, -1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE,
+		initEReference(getLocalSca_Waveforms(), this.getLocalScaWaveform(), null, "waveforms", null, 0, -1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE,
 			IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getLocalSca_SandboxWaveform(), this.getLocalScaWaveform(), null, "sandboxWaveform", null, 1, 1, LocalSca.class, IS_TRANSIENT,
 			!IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1077,6 +1088,8 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 
 		initEClass(localScaWaveformEClass, LocalScaWaveform.class, "LocalScaWaveform", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getLocalScaWaveform_NamingContext(), this.getNotifyingNamingContext(), null, "namingContext", null, 1, 1, LocalScaWaveform.class,
+			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getLocalScaWaveform_ComponentHost(), this.getLocalScaExecutableDevice(), null, "componentHost", null, 0, 1, LocalScaWaveform.class,
 			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getLocalScaWaveform_LocalApp(), this.getAttrApplicationOperations(), "localApp", null, 0, 1, LocalScaWaveform.class, IS_TRANSIENT,
 			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);

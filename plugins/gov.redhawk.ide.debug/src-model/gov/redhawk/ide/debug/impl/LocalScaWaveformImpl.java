@@ -27,6 +27,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.omg.CORBA.SystemException;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
@@ -42,6 +43,7 @@ import CF.LifeCyclePackage.ReleaseError;
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.ide.debug.LocalScaExecutableDevice;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugPackage;
@@ -55,6 +57,8 @@ import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.impl.ScaWaveformImpl;
 import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -67,6 +71,7 @@ import gov.redhawk.sca.util.SilentJob;
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLaunch <em>Launch</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getMode <em>Mode</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getNamingContext <em>Naming Context</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getComponentHost <em>Component Host</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLocalApp <em>Local App</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getDomainWaveform <em>Domain Waveform</em>}</li>
  * </ul>
@@ -123,6 +128,17 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @ordered
 	 */
 	protected NotifyingNamingContext namingContext;
+
+	/**
+	 * The cached value of the '{@link #getComponentHost() <em>Component Host</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @see #getComponentHost()
+	 * @generated
+	 * @ordered
+	 */
+	protected LocalScaExecutableDevice componentHost;
 
 	/**
 	 * The default value of the '{@link #getLocalApp() <em>Local App</em>}' attribute.
@@ -289,6 +305,76 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public LocalScaExecutableDevice getComponentHost() {
+		if (componentHost != null && componentHost.eIsProxy()) {
+			InternalEObject oldComponentHost = (InternalEObject) componentHost;
+			componentHost = (LocalScaExecutableDevice) eResolveProxy(oldComponentHost);
+			if (componentHost != oldComponentHost) {
+				if (eNotificationRequired())
+					eNotify(
+						new ENotificationImpl(this, Notification.RESOLVE, ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST, oldComponentHost, componentHost));
+			}
+		}
+		return componentHost;
+	}
+
+	/**
+	 * Checks for and returns the existing ComponentHost contained by the waveform.  If no ComponentHost is found, launches a new 
+	 * one and returns that. 
+	 * @throws CoreException 
+	 * @since 9.0
+	 */
+	public synchronized LocalScaExecutableDevice fetchComponentHost(String mode, IProgressMonitor monitor) throws CoreException {
+		// TODO: Change from 'synchronized' to owning the lock ourselves
+
+		// Check to see if the CORBA object has died for some reason
+		if (componentHost != null && !componentHost.exists()) {
+			componentHost = null;
+		}
+
+		// If no ComponentHost exists, create and launch a new one
+		if (componentHost == null) {
+			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+			URI spdURI = URI.createFileURI("/var/redhawk/sdr/dom/mgr/rh/ComponentHost/ComponentHost.spd.xml");
+			final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
+
+			// TODO: compID should not be hard-coded.  But it should always be ComponentHost_1, correct?
+			String implID = spd.getImplementation().get(0).getId();
+			launch("ComponentHost_1", new DataType[0], spdURI, implID, mode);
+		}
+
+		return componentHost;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public LocalScaExecutableDevice basicGetComponentHost() {
+		return componentHost;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setComponentHost(LocalScaExecutableDevice newComponentHost) {
+		LocalScaExecutableDevice oldComponentHost = componentHost;
+		componentHost = newComponentHost;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST, oldComponentHost, componentHost));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
 	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -417,6 +503,10 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			if (resolve)
 				return getNamingContext();
 			return basicGetNamingContext();
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST:
+			if (resolve)
+				return getComponentHost();
+			return basicGetComponentHost();
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			return getLocalApp();
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM:
@@ -443,6 +533,9 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			return;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT:
 			setNamingContext((NotifyingNamingContext) newValue);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST:
+			setComponentHost((LocalScaExecutableDevice) newValue);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			setLocalApp((ApplicationOperations) newValue);
@@ -471,6 +564,9 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT:
 			setNamingContext((NotifyingNamingContext) null);
 			return;
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST:
+			setComponentHost((LocalScaExecutableDevice) null);
+			return;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			setLocalApp(LOCAL_APP_EDEFAULT);
 			return;
@@ -495,6 +591,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			return MODE_EDEFAULT == null ? mode != null : !MODE_EDEFAULT.equals(mode);
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT:
 			return namingContext != null;
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST:
+			return componentHost != null;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			return LOCAL_APP_EDEFAULT == null ? localApp != null : !LOCAL_APP_EDEFAULT.equals(localApp);
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM:

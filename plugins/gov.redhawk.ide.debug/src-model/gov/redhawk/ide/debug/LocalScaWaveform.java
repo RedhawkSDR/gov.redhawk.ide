@@ -14,6 +14,7 @@ package gov.redhawk.ide.debug;
 import gov.redhawk.model.sca.ScaWaveform;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -31,6 +32,7 @@ import CF.DataType;
  * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getNamingContext <em>Naming Context</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost <em>Component Host</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getDomainWaveform <em>Domain Waveform</em>}</li>
  * </ul>
@@ -67,6 +69,36 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	 * @generated
 	 */
 	void setNamingContext(NotifyingNamingContext value);
+
+	/**
+	 * Returns the value of the '<em><b>Component Host</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Component Host</em>' reference.
+	 * @see #setComponentHost(LocalScaExecutableDevice)
+	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaWaveform_ComponentHost()
+	 * @model transient="true"
+	 * @generated
+	 */
+	LocalScaExecutableDevice getComponentHost();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost <em>Component Host</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * @since 9.0
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Component Host</em>' reference.
+	 * @see #getComponentHost()
+	 * @generated
+	 */
+	void setComponentHost(LocalScaExecutableDevice value);
+
+	/**
+	 * @throws CoreException 
+	 * @since 9.0
+	 */
+	public LocalScaExecutableDevice fetchComponentHost(String mode, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the value of the '<em><b>Local App</b></em>' attribute.

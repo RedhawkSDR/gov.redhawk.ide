@@ -786,13 +786,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 	@Override
 	public String registerPropertyListener(org.omg.CORBA.Object obj, String[] propIds, float interval) throws UnknownProperties, InvalidObjectReference {
-		// TODO Auto-generated method stub
 		throw new IllegalStateException("Not implemented");
 	}
 
 	@Override
 	public void unregisterPropertyListener(String id) throws InvalidIdentifier {
-		// TODO Auto-generated method stub
 		throw new IllegalStateException("Not implemented");
 	}
 
@@ -1275,6 +1273,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		this.streams.getOutStream().println("\tLaunch configuration succeeded.");
 
+		// TODO: Use a utility method insetad of hardcoding.
+		// Skip postLaunch if the resource being launched is a componentHost
+		if (compId.matches(".*ComponentHost.*")) {
+			return null;
+		}
 		return postLaunch(subLaunch);
 	}
 
