@@ -22,11 +22,18 @@ import gov.redhawk.ide.swtbot.condition.SelectIDL;
 
 public class ComponentUtils {
 
-	/** private to prevent instantiation since all functions are static. */
+	public static final String NEW_COMPONENT_WIZARD_NAME = "REDHAWK Component Project";
+	private static final long CREATE_NEW_PROJECT_DELAY = 10000;
+
 	private ComponentUtils() {
 	}
 
-	/** create REDHAWK Component in Workspace using default location */
+	/**
+	 * Create a Redhawk component using the new project wizard.
+	 * @param bot
+	 * @param componentProjectName
+	 * @param progLanguage
+	 */
 	public static void createComponentProject(SWTBot bot, String componentProjectName, String progLanguage) {
 		StandardTestActions.configurePyDev(bot);
 
@@ -34,7 +41,7 @@ public class ComponentUtils {
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
 		final SWTBot wizardBot = wizardShell.bot();
-		StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList("REDHAWK", "REDHAWK Component Project")).select();
+		StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList("REDHAWK", NEW_COMPONENT_WIZARD_NAME)).select();
 		wizardBot.button("Next >").click();
 
 		wizardBot.textWithLabel("Project name:").setText(componentProjectName);
@@ -44,7 +51,7 @@ public class ComponentUtils {
 		wizardBot.button("Next >").click();
 		wizardBot.button("Finish").click();
 
-		bot.waitUntil(Conditions.shellCloses(wizardShell));
+		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
 	}
 
 	public static void addComponentPort(SWTBot editorBot, String portName, PortDirection portDirection) {

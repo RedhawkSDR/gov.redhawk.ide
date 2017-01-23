@@ -13,36 +13,38 @@ package gov.redhawk.ide.swtbot;
 
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
+import java.util.Arrays;
+
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class NodeUtils {
 
-	/** private to prevent instantiation since all functions are static. */
+	private static final String NEW_NODE_WIZARD_NAME = "REDHAWK Node Project";
+	private static final long CREATE_NEW_PROJECT_DELAY = 10000;
+
 	private NodeUtils() {
 	}
 
 	/**
-	 * Creates a new node project using File > New > Other... > Graphiti REDHAWK Node Project wizard
-	 * @param bot - the executing SWTBot
-	 * @param waveformName
+	 * Create a Redhawk node using the new project wizard.
+	 * @param bot
+	 * @param projectName
+	 * @param domainName
 	 */
 	public static void createNewNodeProject(SWTWorkbenchBot bot, String projectName, String domainName) {
 		// Open the new waveform project wizard
-		SWTBotMenu fileMenu = bot.menu("File");
-		SWTBotMenu newMenu = fileMenu.menu("New");
-		SWTBotMenu otherMenu = newMenu.menu("Other...");
-		otherMenu.click();
-		SWTBotShell wizardShell = bot.shell("New");
-		SWTBot wizardBot = wizardShell.bot();
+		bot.menu("File").menu("New").menu("Project...").click();
+		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
-		wizardBot.tree().getTreeItem("REDHAWK").expand().getNode("REDHAWK Node Project").select();
+		final SWTBot wizardBot = wizardShell.bot();
+		wizardShell.activate();
+		StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList("REDHAWK", NEW_NODE_WIZARD_NAME)).select();
 		wizardBot.button("Next >").click();
 
 		// Enter the name for the new waveform
@@ -55,7 +57,7 @@ public class NodeUtils {
 		SWTBotButton finishButton = wizardBot.button("Finish");
 		finishButton.click();
 
-		bot.waitUntil(Conditions.shellCloses(wizardShell));
+		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
 
 		// Set focus to Node
 		SWTBotEditor nodeEditor = bot.editorByTitle(projectName);

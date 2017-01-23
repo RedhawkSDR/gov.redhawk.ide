@@ -10,24 +10,26 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import java.util.Arrays;
+
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
-import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 
-/**
- * 
- */
 public class DeviceUtils {
 
-	public static final String DEVICE_MENU_NAME = "REDHAWK Device Project";
+	public static final String NEW_DEVICE_WIZARD_NAME = "REDHAWK Device Project";
+	private static final long CREATE_NEW_PROJECT_DELAY = 10000;
 
-	/** private to prevent instantiation since all functions are static. */
 	private DeviceUtils() {
 	}
-	
-	/** create REDHAWK Device in Workspace using default location */
+
+	/**
+	 * Create a Redhawk device using the new project wizard.
+	 * @param bot
+	 * @param deviceProjectName
+	 * @param progLanguage
+	 */
 	public static void createDeviceProject(SWTBot bot, String deviceProjectName, String progLanguage) {
 		StandardTestActions.configurePyDev(bot);
 
@@ -35,24 +37,7 @@ public class DeviceUtils {
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
 		final SWTBot wizardBot = wizardShell.bot();
-		wizardBot.waitUntil(new DefaultCondition() {
-
-			@Override
-			public String getFailureMessage() {
-				return "Could not find menu option for: " + DEVICE_MENU_NAME;
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				try {
-					wizardBot.tree().getTreeItem("REDHAWK").expand().getNode(DEVICE_MENU_NAME).select();
-					return true;
-				} catch (WidgetNotFoundException e) {
-					return false;
-				}
-			}
-
-		});
+		StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList("REDHAWK", NEW_DEVICE_WIZARD_NAME)).select();
 		wizardBot.button("Next >").click();
 
 		wizardBot.textWithLabel("Project name:").setText(deviceProjectName);
@@ -62,7 +47,7 @@ public class DeviceUtils {
 		wizardBot.button("Next >").click();
 		wizardBot.button("Finish").click();
 
-		bot.waitUntil(Conditions.shellCloses(wizardShell));
+		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
 	}
 
 }
