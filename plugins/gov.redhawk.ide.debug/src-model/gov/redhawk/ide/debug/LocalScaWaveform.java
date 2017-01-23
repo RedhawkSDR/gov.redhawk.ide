@@ -73,7 +73,7 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	/**
 	 * Returns the value of the '<em><b>Component Host</b></em>' reference.
 	 * <!-- begin-user-doc -->
-	 * @since 9.0
+	 * @since 10.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Component Host</em>' reference.
 	 * @see #setComponentHost(LocalScaExecutableDevice)
@@ -86,7 +86,7 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost <em>Component Host</em>}' reference.
 	 * <!-- begin-user-doc -->
-	 * @since 9.0
+	 * @since 10.0
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Component Host</em>' reference.
 	 * @see #getComponentHost()
@@ -96,7 +96,7 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 
 	/**
 	 * @throws CoreException 
-	 * @since 9.0
+	 * @since 10.0
 	 */
 	public LocalScaExecutableDevice fetchComponentHost(String mode, IProgressMonitor monitor) throws CoreException;
 

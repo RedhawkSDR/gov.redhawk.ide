@@ -794,7 +794,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Component Host</b></em>' reference.
 	 * <!-- begin-user-doc -->
-	 * @since 9.0
+	 * @since 10.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -2637,7 +2637,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for the reference '{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost <em>Component Host</em>}'.
 	 * <!-- begin-user-doc -->
-	 * @since 9.0
+	 * @since 10.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the reference '<em>Component Host</em>'.
 	 * @see gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost()
@@ -3151,7 +3151,7 @@ public interface ScaDebugPackage extends EPackage {
 		/**
 		 * The meta object literal for the '<em><b>Component Host</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
-		 * @since 9.0
+		 * @since 10.0
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
