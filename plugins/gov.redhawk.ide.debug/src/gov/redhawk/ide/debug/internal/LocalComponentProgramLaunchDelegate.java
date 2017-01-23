@@ -10,9 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import gov.redhawk.ide.debug.SpdLauncherUtil;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.externaltools.internal.launchConfigurations.ProgramLaunchDelegate;
 import org.eclipse.core.runtime.CoreException;
@@ -22,6 +19,9 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+
+import gov.redhawk.ide.debug.SpdLauncherUtil;
+import mil.jpeojtrs.sca.spd.SoftPkg;
 
 /**
  * An Eclipse launch delegate which handles launching a SoftPkg (component, device, etc) installed in the SDRROOT
@@ -33,10 +33,6 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 
 	@Override
 	public void launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
-		final int WORK_LAUNCH = 10;
-		final int WORK_POST_LAUNCH = 100;
-		SubMonitor subMonitor = SubMonitor.convert(monitor, WORK_LAUNCH + WORK_POST_LAUNCH);
-
 		// Validate all XML before doing anything else
 		final SoftPkg spd = SpdLauncherUtil.getSpd(configuration);
 		IStatus status = SpdLauncherUtil.validateAllXML(spd);
@@ -44,28 +40,38 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 			throw new CoreException(status);
 		}
 
+		// TODO: document what is going on here
 		final ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
 		insertProgramArguments(spd, launch, workingCopy);
 
 		try {
-			super.launch(workingCopy, mode, launch, subMonitor.newChild(WORK_LAUNCH));
-			SpdLauncherUtil.postLaunch(spd, workingCopy, mode, launch, subMonitor.newChild(WORK_POST_LAUNCH));
+			launchComponent(spd, workingCopy, mode, launch, monitor);
 		} finally {
 			if (monitor != null) {
 				monitor.done();
 			}
 		}
 	}
-	
+
+	protected void launchComponent(SoftPkg spd, ILaunchConfigurationWorkingCopy workingCopy, String mode, ILaunch launch, IProgressMonitor monitor)
+		throws CoreException {
+		final int WORK_LAUNCH = 10;
+		final int WORK_POST_LAUNCH = 100;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, WORK_LAUNCH + WORK_POST_LAUNCH);
+
+		super.launch(workingCopy, mode, launch, subMonitor.split(WORK_LAUNCH));
+		SpdLauncherUtil.postLaunch(spd, workingCopy, mode, launch, subMonitor.split(WORK_POST_LAUNCH));
+	}
+
 	@Override
-	protected boolean saveBeforeLaunch(ILaunchConfiguration configuration,
-			String mode, IProgressMonitor monitor) throws CoreException {
+	protected boolean saveBeforeLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		return true;
 	}
 
 	/**
 	 * Retrieves the command-line arguments for the executable from the launch configuration and expands variable
-	 * references. This ensures variables related to running the SoftPkg (naming context, exec params, etc) are expanded.
+	 * references. This ensures variables related to running the SoftPkg (naming context, exec params, etc) are
+	 * expanded.
 	 *
 	 * @param spd The SoftPkg being executed
 	 * @param launch The launch that's about to occur
@@ -85,5 +91,5 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return new ComponentLaunch(configuration, mode, null);
 	}
-	
+
 }
