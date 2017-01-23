@@ -15,6 +15,7 @@ import gov.redhawk.ide.debug.ScaDebugPlugin;
 
 import java.io.File;
 
+import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -29,14 +30,15 @@ import org.eclipse.emf.common.CommonPlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
-/**
- * 
- */
+@SuppressWarnings("restriction")
 public class DefaultComponentLaunchConfigurationFactory extends AbstractLaunchConfigurationFactory {
 
 	@Override
 	public boolean supports(final SoftPkg spd, final String implId) {
-		return true;
+		if (CodeFileType.EXECUTABLE.equals(spd.getImplementation().get(0).getCode().getType())) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

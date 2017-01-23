@@ -54,6 +54,12 @@
             id="gov.redhawk.ide.debug.launchConfigurationType.localWaveform"
             name="%launchWaveformConfigurationType.name">
       </launchConfigurationType>
+      <launchConfigurationType
+            delegate="gov.redhawk.ide.debug.internal.LocalContainedComponentProgramLaunchDelegate"
+            id="gov.redhawk.ide.debug.localContainedComponentProgram"
+            modes="run"
+            name="%launchContainedComponentConfigurationType.name">
+      </launchConfigurationType>
     </extension>
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
@@ -130,6 +136,11 @@
             factory="gov.redhawk.ide.debug.internal.DefaultComponentLaunchConfigurationFactory"
             id="gov.redhawk.ide.debug.defaultLaunchConfigurationFactory"
             launchConfigType="gov.redhawk.ide.debug.localComponentProgram">
+      </launchConfigurationFactory>
+      <launchConfigurationFactory
+            factory="gov.redhawk.ide.debug.internal.ContainedComponentLaunchConfigurationFactory"
+            id="gov.redhawk.ide.debug.sharedAddressLaunchConfigurationFactory"
+            launchConfigType="gov.redhawk.ide.debug.localContainedComponentProgram">
       </launchConfigurationFactory>
    </extension>
    <extension
