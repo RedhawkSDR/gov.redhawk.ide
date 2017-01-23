@@ -48,7 +48,7 @@ public interface LocalSca extends CorbaObjWrapper<Sandbox> {
 
 	/**
 	 * Returns the value of the '<em><b>Waveforms</b></em>' containment reference list.
-	 * The list contents are of type {@link gov.redhawk.model.sca.ScaWaveform}.
+	 * The list contents are of type {@link gov.redhawk.ide.debug.LocalScaWaveform}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Waveforms</em>' containment reference list isn't clear,
@@ -60,7 +60,7 @@ public interface LocalSca extends CorbaObjWrapper<Sandbox> {
 	 * @model containment="true" transient="true"
 	 * @generated
 	 */
-	EList<ScaWaveform> getWaveforms();
+	EList<LocalScaWaveform> getWaveforms();
 
 	/**
 	 * @since 6.0

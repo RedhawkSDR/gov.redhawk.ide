@@ -75,7 +75,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ScaWaveform> waveforms;
+	protected EList<LocalScaWaveform> waveforms;
 
 	/**
 	 * The cached value of the '{@link #getSandboxWaveform() <em>Sandbox Waveform</em>}' reference.
@@ -186,9 +186,9 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * @generated
 	 */
 	@Override
-	public EList<ScaWaveform> getWaveforms() {
+	public EList<LocalScaWaveform> getWaveforms() {
 		if (waveforms == null) {
-			waveforms = new EObjectContainmentEList<ScaWaveform>(ScaWaveform.class, this, ScaDebugPackage.LOCAL_SCA__WAVEFORMS);
+			waveforms = new EObjectContainmentEList<LocalScaWaveform>(LocalScaWaveform.class, this, ScaDebugPackage.LOCAL_SCA__WAVEFORMS);
 		}
 		return waveforms;
 	}
@@ -573,7 +573,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		switch (featureID) {
 		case ScaDebugPackage.LOCAL_SCA__WAVEFORMS:
 			getWaveforms().clear();
-			getWaveforms().addAll((Collection< ? extends ScaWaveform>) newValue);
+			getWaveforms().addAll((Collection< ? extends LocalScaWaveform>) newValue);
 			return;
 		case ScaDebugPackage.LOCAL_SCA__SANDBOX_WAVEFORM:
 			setSandboxWaveform((LocalScaWaveform) newValue);
