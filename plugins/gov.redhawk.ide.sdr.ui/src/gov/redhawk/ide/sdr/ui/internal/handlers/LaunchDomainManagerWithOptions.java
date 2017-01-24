@@ -108,7 +108,8 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 		final DomainManagerConfiguration dmd = sdrRoot.getDomainConfiguration();
 		if (dmd == null) {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "No Domain Configuration available."), StatusManager.SHOW);
+			String msg = "No domain manager configuration (DMD) file was found. Ensure both the domain manager and its descriptor are in the SDRROOT.";
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, msg), StatusManager.SHOW);
 			return;
 		}
 
