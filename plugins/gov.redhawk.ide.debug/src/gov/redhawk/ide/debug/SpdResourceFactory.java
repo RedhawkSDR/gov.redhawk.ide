@@ -80,7 +80,7 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 
 	private static void checkExecutable(SoftPkg spd) {
 		for (Implementation impl : spd.getImplementation()) {
-			if (impl.getCode() != null && CodeFileType.EXECUTABLE.equals(impl.getCode().getType())) {
+			if (impl.getCode() != null && impl.isExecutable()) {
 				return;
 			}
 		}
