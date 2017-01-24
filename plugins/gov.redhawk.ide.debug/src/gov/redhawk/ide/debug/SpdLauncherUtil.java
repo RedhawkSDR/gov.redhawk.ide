@@ -477,7 +477,7 @@ public final class SpdLauncherUtil {
 		return component;
 	}
 	
-	private static void initializeResource(ScaAbstractComponent resource, ScaComponent propHolder, final ILaunch launch, String nameBinding,
+	private static void initializeResource(ScaAbstractComponent< ? > resource, ScaComponent propHolder, final ILaunch launch, String nameBinding,
 		final IProgressMonitor monitor) {
 		final int WORK_INITIALIZE_PROPS = 1, WORK_INITIALIZE = 1;
 		SubMonitor progress = SubMonitor.convert(monitor, WORK_INITIALIZE_PROPS + WORK_INITIALIZE);

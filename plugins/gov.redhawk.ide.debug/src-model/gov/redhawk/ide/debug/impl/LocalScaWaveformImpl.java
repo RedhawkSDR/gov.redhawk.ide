@@ -13,6 +13,7 @@ package gov.redhawk.ide.debug.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -132,7 +133,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	/**
 	 * The cached value of the '{@link #getComponentHost() <em>Component Host</em>}' reference.
 	 * <!-- begin-user-doc -->
-	 * @since 9.0
+	 * @since 10.0
 	 * <!-- end-user-doc -->
 	 * @see #getComponentHost()
 	 * @generated
@@ -305,7 +306,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 9.0
+	 * @since 10.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -322,37 +323,40 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		return componentHost;
 	}
 
+	ReentrantLock lock = new ReentrantLock();
 	/**
 	 * Checks for and returns the existing ComponentHost contained by the waveform.  If no ComponentHost is found, launches a new 
 	 * one and returns that. 
 	 * @throws CoreException 
-	 * @since 9.0
+	 * @since 10.0
 	 */
-	public synchronized LocalScaExecutableDevice fetchComponentHost(String mode, IProgressMonitor monitor) throws CoreException {
-		// TODO: Change from 'synchronized' to owning the lock ourselves
-
-		// Check to see if the CORBA object has died for some reason
-		if (componentHost != null && !componentHost.exists()) {
-			componentHost = null;
+	public LocalScaExecutableDevice fetchComponentHost(String mode, IProgressMonitor monitor) throws CoreException {
+		lock.lock();
+		try {
+			// Check to see if the CORBA object has died for some reason
+			if (componentHost != null && !componentHost.exists()) {
+				componentHost = null;
+			}
+	
+			// If no ComponentHost exists, create and launch a new one
+			if (componentHost == null) {
+				final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+				URI spdURI = URI.createFileURI("/var/redhawk/sdr/dom/mgr/rh/ComponentHost/ComponentHost.spd.xml");
+				final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
+	
+				// TODO: compID should not be hard-coded.  But it should always be ComponentHost_1, correct?
+				String implID = spd.getImplementation().get(0).getId();
+				launch("ComponentHost_1", new DataType[0], spdURI, implID, mode);
+			}
+		} finally {
+			lock.unlock();
 		}
-
-		// If no ComponentHost exists, create and launch a new one
-		if (componentHost == null) {
-			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-			URI spdURI = URI.createFileURI("/var/redhawk/sdr/dom/mgr/rh/ComponentHost/ComponentHost.spd.xml");
-			final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
-
-			// TODO: compID should not be hard-coded.  But it should always be ComponentHost_1, correct?
-			String implID = spd.getImplementation().get(0).getId();
-			launch("ComponentHost_1", new DataType[0], spdURI, implID, mode);
-		}
-
 		return componentHost;
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 9.0
+	 * @since 10.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -362,7 +366,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 9.0
+	 * @since 10.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
