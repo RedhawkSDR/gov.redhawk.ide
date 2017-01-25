@@ -1273,9 +1273,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		this.streams.getOutStream().println("\tLaunch configuration succeeded.");
 
-		// TODO: Use a utility method insetad of hardcoding.
 		// Skip postLaunch if the resource being launched is a componentHost
-		if (compId.matches(".*ComponentHost.*")) {
+		if (SoftPkg.Util.isComponentHost(spdURI)) {
 			return null;
 		}
 		return postLaunch(subLaunch);

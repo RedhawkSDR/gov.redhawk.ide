@@ -341,7 +341,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			// If no ComponentHost exists, create and launch a new one
 			if (componentHost == null) {
 				final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-				URI spdURI = URI.createFileURI("/var/redhawk/sdr/dom/mgr/rh/ComponentHost/ComponentHost.spd.xml");
+				URI spdURI = URI.createFileURI(SoftPkg.Util.COMPONENT_HOST_URI);
 				final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 	
 				// TODO: compID should not be hard-coded.  But it should always be ComponentHost_1, correct?

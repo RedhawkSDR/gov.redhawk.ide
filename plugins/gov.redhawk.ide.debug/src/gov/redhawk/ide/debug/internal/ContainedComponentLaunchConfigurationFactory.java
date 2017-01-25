@@ -10,14 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 public class ContainedComponentLaunchConfigurationFactory extends DefaultComponentLaunchConfigurationFactory {
 
 	@Override
 	public boolean supports(final SoftPkg spd, final String implId) {
-		if (CodeFileType.SHARED_LIBRARY.equals(spd.getImplementation().get(0).getCode().getType())) {
+		if (SoftPkg.Util.isContainedComponent(spd)) {
 			return true;
 		}
 		return false;

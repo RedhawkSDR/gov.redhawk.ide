@@ -351,8 +351,7 @@ public final class SpdLauncherUtil {
 		}
 		
 		LocalAbstractComponent resource;
-		// TODO: Hard-coded check for the ComponentHost, need a utility method for this
-		if (spd.getName().matches(".*ComponentHost.*")) {
+		if (SoftPkg.Util.isComponentHost(spd.eResource().getURI())) {
 			resource = SpdLauncherUtil.postLaunchComponentHost(spd, launch, corbaObj, nameBinding, progress.newChild(WORK_INITIALIZE_RESOURCE));
 		} else {
 			resource = SpdLauncherUtil.postLaunchComponent(spd, launch, corbaObj, nameBinding, progress.newChild(WORK_INITIALIZE_RESOURCE));
@@ -360,7 +359,7 @@ public final class SpdLauncherUtil {
 		return resource;
 	}
 
-	private static LocalScaExecutableDevice postLaunchComponentHost(SoftPkg spd, final ILaunch launch, final org.omg.CORBA.Object corbaObj,
+	private static LocalScaExecutableDevice postLaunchComponentHost(final SoftPkg spd, final ILaunch launch, final org.omg.CORBA.Object corbaObj,
 		String nameBinding, final IProgressMonitor monitor) throws CoreException {
 		final int WORK_GENERAL = 10, WORK_ADD_TO_MODEL = 1;
 		SubMonitor progress = SubMonitor.convert(monitor, "Wait for component to initialize", WORK_GENERAL + WORK_ADD_TO_MODEL);
@@ -424,7 +423,7 @@ public final class SpdLauncherUtil {
 	 * @return A new model object for the component
 	 * @throws CoreException
 	 */
-	private static LocalAbstractComponent postLaunchComponent(SoftPkg spd, final ILaunch launch, final org.omg.CORBA.Object corbaObj, final String nameBinding,
+	private static LocalAbstractComponent postLaunchComponent(final SoftPkg spd, final ILaunch launch, final org.omg.CORBA.Object corbaObj, final String nameBinding,
 		final IProgressMonitor monitor) throws CoreException {
 		final int WORK_GENERAL = 10, WORK_ADD_TO_MODEL = 1;
 		SubMonitor progress = SubMonitor.convert(monitor, "Wait for component to initialize", WORK_GENERAL + WORK_ADD_TO_MODEL);
