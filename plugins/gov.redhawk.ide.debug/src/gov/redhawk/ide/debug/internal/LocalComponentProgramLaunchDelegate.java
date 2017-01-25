@@ -89,6 +89,12 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 	 */
 	@Override
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
+		// ComponentHost objects have a unique ILaunch
+		String launchProfile = configuration.getAttribute("gov.redhawk.sca.launch.profile", (String) null);
+		if (SoftPkg.Util.COMPONENT_HOST_URI.equals(launchProfile)) {
+			return new ComponentHostLaunch(configuration, mode, null);
+		}
+
 		return new ComponentLaunch(configuration, mode, null);
 	}
 

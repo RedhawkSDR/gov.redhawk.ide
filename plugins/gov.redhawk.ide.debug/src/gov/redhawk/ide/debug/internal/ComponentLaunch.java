@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
@@ -28,6 +30,7 @@ import gov.redhawk.ide.debug.variables.LaunchVariables;
 public class ComponentLaunch extends Launch {
 
 	private IProcess parent;
+	private ILaunch parentLaunch;
 
 	public ComponentLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
 		super(launchConfiguration, mode, locator);
@@ -38,6 +41,31 @@ public class ComponentLaunch extends Launch {
 	public void addProcess(IProcess process) {
 		super.addProcess(process);
 		setProcessLabel(process);
+	}
+
+	@Override
+	public boolean canTerminate() {
+		// Always allow components contained within a ComponentHost to be terminated
+		if (parentLaunch != null) {
+			return true;
+		}
+
+		return super.canTerminate();
+	}
+
+	@Override
+	public void terminate() throws DebugException {
+		// If a contained component is terminated, terminate the ComponentHost as well
+		if (parentLaunch != null) {
+			// Avoid an infinite loop
+			if (((ComponentHostLaunch) parentLaunch).isTerminating()) {
+				fireTerminate();
+			} else {
+				parentLaunch.terminate();
+			}
+			return;
+		}
+		super.terminate();
 	}
 
 	private void setProcessLabel(IProcess process) {
@@ -64,5 +92,15 @@ public class ComponentLaunch extends Launch {
 		for (IProcess process : this.getProcesses()) {
 			setProcessLabel(process);
 		}
+	}
+
+	/**
+	 * IDE-1665 - associates contained components with their component host. </br>
+	 * Setting this implicitly marks this component as a shared-address component.
+	 * @param parentLaunch
+	 */
+	public void setParent(ILaunch parentLaunch) {
+		this.parentLaunch = parentLaunch;
+		((ComponentHostLaunch) this.parentLaunch).getChildLaunchList().add(this);
 	}
 }

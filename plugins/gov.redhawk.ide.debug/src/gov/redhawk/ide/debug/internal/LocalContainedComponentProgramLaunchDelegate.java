@@ -71,7 +71,7 @@ public class LocalContainedComponentProgramLaunchDelegate extends LocalComponent
 		}
 
 		// Grab an existing component host, or launch a new one
-		LocalScaExecutableDevice componentHost = waveform.fetchComponentHost(mode, subMonitor.split(WORK_CONTAINER_LAUNCH));
+		final LocalScaExecutableDevice componentHost = waveform.fetchComponentHost(mode, subMonitor.split(WORK_CONTAINER_LAUNCH));
 		final ExecutableDevice execDev = CF.ExecutableDeviceHelper.narrow(componentHost.getCorbaObj());
 
 		// Get path to the component's .so
@@ -94,13 +94,15 @@ public class LocalContainedComponentProgramLaunchDelegate extends LocalComponent
 					return null;
 				}
 			}, subMonitor);
+
 			subMonitor.worked(WORK_LAUNCH);
 		} catch (InterruptedException e) {
 			throw new OperationCanceledException(e.getMessage());
 		}
-
 		SpdLauncherUtil.postLaunch(spd, workingCopy, mode, launch, subMonitor.split(WORK_POST_LAUNCH));
-
+		if (launch instanceof ComponentLaunch) {
+			((ComponentLaunch) launch).setParent(componentHost.getLaunch());
+		}
 	}
 
 	private DataType[] getComponentOptions(SoftPkg spd, ILaunch launch, ORB orb) {
