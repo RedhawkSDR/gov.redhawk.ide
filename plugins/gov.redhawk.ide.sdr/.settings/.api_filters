@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="gov.redhawk.ide.sdr" version="2">
+    <resource path="src/gov/redhawk/ide/sdr/util/AbstractEnvMap.java" type="gov.redhawk.ide.sdr.util.AbstractEnvMap">
+        <filter comment="expanded from protected to public static" id="421662840">
+            <message_arguments>
+                <message_argument value="gov.redhawk.ide.sdr.util.AbstractEnvMap"/>
+                <message_argument value="getDependencyImplementations(Implementation)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
