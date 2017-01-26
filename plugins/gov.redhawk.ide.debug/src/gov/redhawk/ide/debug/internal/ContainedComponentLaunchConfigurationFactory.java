@@ -16,9 +16,6 @@ public class ContainedComponentLaunchConfigurationFactory extends DefaultCompone
 
 	@Override
 	public boolean supports(final SoftPkg spd, final String implId) {
-		if (SoftPkg.Util.isContainedComponent(spd)) {
-			return true;
-		}
-		return false;
+		return SoftPkg.Util.isContainedComponent(spd.getImplementation(implId));
 	}
 }

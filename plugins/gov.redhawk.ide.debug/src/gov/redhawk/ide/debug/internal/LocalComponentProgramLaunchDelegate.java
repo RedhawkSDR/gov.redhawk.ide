@@ -26,6 +26,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 /**
  * An Eclipse launch delegate which handles launching a SoftPkg (component, device, etc) installed in the SDRROOT
  * locally in the Sandbox. It does not handle launching workspace projects (which are handled on a per-language basis).
+ * Shared-address-space components are handled by {@link LocalContainedComponentProgramLaunchDelegate}.
  */
 @SuppressWarnings("restriction")
 public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
@@ -40,7 +41,6 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 			throw new CoreException(status);
 		}
 
-		// TODO: document what is going on here
 		final ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
 		insertProgramArguments(spd, launch, workingCopy);
 
