@@ -71,24 +71,24 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	void setNamingContext(NotifyingNamingContext value);
 
 	/**
-	 * Returns the value of the '<em><b>Component Host</b></em>' reference.
+	 * Returns the value of the '<em><b>Component Host</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * @since 10.0
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Component Host</em>' reference.
+	 * @return the value of the '<em>Component Host</em>' containment reference.
 	 * @see #setComponentHost(LocalScaExecutableDevice)
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaWaveform_ComponentHost()
-	 * @model transient="true"
+	 * @model containment="true" transient="true"
 	 * @generated
 	 */
 	LocalScaExecutableDevice getComponentHost();
 
 	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost <em>Component Host</em>}' reference.
+	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost <em>Component Host</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * @since 10.0
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Component Host</em>' reference.
+	 * @param value the new value of the '<em>Component Host</em>' containment reference.
 	 * @see #getComponentHost()
 	 * @generated
 	 */

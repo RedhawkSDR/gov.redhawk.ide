@@ -1,14 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    This file is protected by Copyright.
-    Please refer to the COPYRIGHT file distributed with this source distribution.
-
-    This file is part of REDHAWK IDE.
-
-    All rights reserved.  This program and the accompanying materials are made available under
-    the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
-    http://www.eclipse.org/legal/epl-v10.html.
--->
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="debug" nsURI="http://redhawk.gov/sca/debug" nsPrefix="sca.debug">
   <eClassifiers xsi:type="ecore:EClass" name="LocalSca">
@@ -128,7 +118,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="namingContext" lowerBound="1"
         eType="#//NotifyingNamingContext" transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="componentHost" eType="#//LocalScaExecutableDevice"
-        transient="true"/>
+        transient="true" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="localApp" ordered="false"
         unique="false" eType="#//AttrApplicationOperations" transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="domainWaveform" eType="ecore:EClass ../../gov.redhawk.sca.model/model/sca.ecore#//ScaWaveform"

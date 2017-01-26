@@ -792,7 +792,7 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_WAVEFORM__NAMING_CONTEXT = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 2;
 	/**
-	 * The feature id for the '<em><b>Component Host</b></em>' reference.
+	 * The feature id for the '<em><b>Component Host</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * @since 10.0
 	 * <!-- end-user-doc -->
@@ -2635,11 +2635,11 @@ public interface ScaDebugPackage extends EPackage {
 	EReference getLocalScaWaveform_NamingContext();
 
 	/**
-	 * Returns the meta object for the reference '{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost <em>Component Host</em>}'.
+	 * Returns the meta object for the containment reference '{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost <em>Component Host</em>}'.
 	 * <!-- begin-user-doc -->
 	 * @since 10.0
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Component Host</em>'.
+	 * @return the meta object for the containment reference '<em>Component Host</em>'.
 	 * @see gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost()
 	 * @see #getLocalScaWaveform()
 	 * @generated
@@ -3149,7 +3149,7 @@ public interface ScaDebugPackage extends EPackage {
 		 */
 		EReference LOCAL_SCA_WAVEFORM__NAMING_CONTEXT = eINSTANCE.getLocalScaWaveform_NamingContext();
 		/**
-		 * The meta object literal for the '<em><b>Component Host</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Component Host</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * @since 10.0
 		 * <!-- end-user-doc -->

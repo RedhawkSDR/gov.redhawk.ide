@@ -13,17 +13,20 @@ package gov.redhawk.ide.debug.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -131,7 +134,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	protected NotifyingNamingContext namingContext;
 
 	/**
-	 * The cached value of the '{@link #getComponentHost() <em>Component Host</em>}' reference.
+	 * The cached value of the '{@link #getComponentHost() <em>Component Host</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * @since 10.0
 	 * <!-- end-user-doc -->
@@ -311,46 +314,6 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @generated
 	 */
 	public LocalScaExecutableDevice getComponentHost() {
-		if (componentHost != null && componentHost.eIsProxy()) {
-			InternalEObject oldComponentHost = (InternalEObject) componentHost;
-			componentHost = (LocalScaExecutableDevice) eResolveProxy(oldComponentHost);
-			if (componentHost != oldComponentHost) {
-				if (eNotificationRequired())
-					eNotify(
-						new ENotificationImpl(this, Notification.RESOLVE, ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST, oldComponentHost, componentHost));
-			}
-		}
-		return componentHost;
-	}
-
-	ReentrantLock lock = new ReentrantLock();
-	/**
-	 * Checks for and returns the existing ComponentHost contained by the waveform.  If no ComponentHost is found, launches a new 
-	 * one and returns that. 
-	 * @throws CoreException 
-	 * @since 10.0
-	 */
-	public LocalScaExecutableDevice fetchComponentHost(String mode, IProgressMonitor monitor) throws CoreException {
-		lock.lock();
-		try {
-			// Check to see if the CORBA object has died for some reason
-			if (componentHost != null && !componentHost.exists()) {
-				componentHost = null;
-			}
-	
-			// If no ComponentHost exists, create and launch a new one
-			if (componentHost == null) {
-				final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-				URI spdURI = URI.createFileURI(SoftPkg.Util.COMPONENT_HOST_URI);
-				final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
-	
-				// TODO: compID should not be hard-coded.  But it should always be ComponentHost_1, correct?
-				String implID = spd.getImplementation().get(0).getId();
-				launch("ComponentHost_1", new DataType[0], spdURI, implID, mode);
-			}
-		} finally {
-			lock.unlock();
-		}
 		return componentHost;
 	}
 
@@ -360,7 +323,63 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public LocalScaExecutableDevice basicGetComponentHost() {
+	public NotificationChain basicSetComponentHost(LocalScaExecutableDevice newComponentHost, NotificationChain msgs) {
+		LocalScaExecutableDevice oldComponentHost = componentHost;
+		componentHost = newComponentHost;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST, oldComponentHost,
+				newComponentHost);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	ReentrantLock lock = new ReentrantLock();
+
+	/**
+	 * Checks for and returns the existing ComponentHost contained by the waveform.  If no ComponentHost is found, launches a new 
+	 * one and returns that. 
+	 * @throws CoreException 
+	 * @since 10.0
+	 */
+	public LocalScaExecutableDevice fetchComponentHost(String mode, IProgressMonitor monitor) throws CoreException {
+
+		// If lock is held by another thread, keep checking for a cancellation call
+		try {
+			while (!lock.tryLock(500, TimeUnit.MILLISECONDS)) {
+				if (monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+			}
+		} catch (InterruptedException e) {
+			throw new OperationCanceledException(e.getMessage());
+		}
+
+		try {
+			// Check to see if the CORBA object has died for some reason
+			if (componentHost != null && !componentHost.exists()) {
+				componentHost = null;
+			}
+
+			if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
+
+			// If no ComponentHost exists, create and launch a new one
+			if (componentHost == null) {
+				final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+				URI spdURI = URI.createFileURI(SoftPkg.Util.COMPONENT_HOST_URI);
+				final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
+				String implID = spd.getImplementation().get(0).getId();
+				launch(spd.getName() + "_1", new DataType[0], spdURI, implID, mode);
+			}
+		} finally {
+			lock.unlock();
+		}
+
 		return componentHost;
 	}
 
@@ -371,10 +390,19 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @generated
 	 */
 	public void setComponentHost(LocalScaExecutableDevice newComponentHost) {
-		LocalScaExecutableDevice oldComponentHost = componentHost;
-		componentHost = newComponentHost;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST, oldComponentHost, componentHost));
+		if (newComponentHost != componentHost) {
+			NotificationChain msgs = null;
+			if (componentHost != null)
+				msgs = ((InternalEObject) componentHost).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST, null,
+					msgs);
+			if (newComponentHost != null)
+				msgs = ((InternalEObject) newComponentHost).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST, null,
+					msgs);
+			msgs = basicSetComponentHost(newComponentHost, msgs);
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST, newComponentHost, newComponentHost));
 	}
 
 	/**
@@ -508,9 +536,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 				return getNamingContext();
 			return basicGetNamingContext();
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST:
-			if (resolve)
-				return getComponentHost();
-			return basicGetComponentHost();
+			return getComponentHost();
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			return getLocalApp();
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM:
@@ -690,6 +716,20 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		// BEGIN GENERATED CODE
 	}
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST:
+			return basicSetComponentHost(null, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
 	@Override
 	protected Command createMergeComponentsCommand(final ComponentType[] compTypes, final IStatus status) {
 		// Is this a domain waveform that has been opened with the sandbox?
@@ -723,19 +763,14 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 					errorMessages.add(msg);
 				}
 			}
-			if (this.componentHost != null && this.componentHost.exists()) {
+			if (this.componentHost != null) {
 				this.componentHost.releaseObject();
-				componentHost = null;
 			}
 			if (errorMessages.size() > 0) {
 				throw new ReleaseError("Errors occurred releasing component(s)", errorMessages.toArray(new String[errorMessages.size()]));
 			}
 		} else {
 			super.releaseObject();
-			if (this.componentHost != null && this.componentHost.exists()) {
-				this.componentHost.releaseObject();
-				componentHost = null;
-			}
 		}
 	}
 
