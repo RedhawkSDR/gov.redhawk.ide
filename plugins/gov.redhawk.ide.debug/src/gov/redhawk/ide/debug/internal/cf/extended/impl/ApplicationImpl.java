@@ -86,6 +86,7 @@ import CF.ResourcePackage.StopError;
 import CF.TestableObjectPackage.UnknownTest;
 import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
 import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.ide.debug.LocalScaExecutableDevice;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
@@ -95,6 +96,7 @@ import gov.redhawk.ide.debug.internal.ComponentLaunch;
 import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.RefreshDepth;
+import gov.redhawk.model.sca.ScaAbstractComponent;
 import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
@@ -552,22 +554,26 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		// Shutdown each component
 		for (final ScaComponent component : this.waveform.getComponentsCopy()) {
 			if (component instanceof LocalScaComponent && ((LocalScaComponent) component).getLaunch() != null) {
-				release(component);
+				release(component, component.getName());
 			}
+		}
+		LocalScaExecutableDevice componentHost = this.waveform.getComponentHost();
+		if (componentHost != null) {
+			release(componentHost, componentHost.getLabel());
 		}
 		this.streams.getOutStream().println("Released components");
 	}
 
-	protected void release(final ScaComponent info) {
-		this.streams.getOutStream().println("\tReleasing component " + info.getName());
+	protected void release(final ScaAbstractComponent< ? > resource, String name) {
+		this.streams.getOutStream().println("\tReleasing component " + name);
 		try {
-			info.releaseObject();
+			resource.releaseObject();
 		} catch (ReleaseError e) {
-			String msg = "Problems while releasing component " + info.getName();
+			String msg = "Problems while releasing component " + name;
 			this.streams.getErrStream().println(msg);
-			this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + info.getName()));
-		} catch (final Exception e) {
-			String msg = "Problems while releasing component " + info.getName();
+			this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + name));
+		} catch (final SystemException e) {
+			String msg = "Problems while releasing component " + name;
 			this.streams.getErrStream().println(msg);
 			ScaDebugPlugin.logError(msg, e);
 		}
@@ -596,7 +602,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 						String msg = "Problems while disconnecting connection " + c.getId();
 						this.streams.getErrStream().println(msg);
 						this.streams.getErrStream().println(CFErrorFormatter.format(e, "connection " + c.getId()));
-					} catch (final Exception e) {
+					} catch (final SystemException e) {
 						String msg = "Problems while disconnecting connection " + c.getId();
 						this.streams.getErrStream().println(msg);
 						ScaDebugPlugin.logError(msg, e);
@@ -1148,7 +1154,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		final List<ConnectionInfo> oldConnections = getConnectionInfo(oldComponent);
 
 		disconnect(oldConnections);
-		release(oldComponent);
+		release(oldComponent, oldComponent.getName());
 		if (oldComponent.getLaunch() != null && oldComponent.getLaunch().canTerminate()) {
 			try {
 				oldComponent.getLaunch().terminate();
