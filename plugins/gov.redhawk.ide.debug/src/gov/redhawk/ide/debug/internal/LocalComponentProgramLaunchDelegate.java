@@ -85,7 +85,7 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 	}
 
 	/**
-	 * IDE-1054 Overridden to handle labels of process consoles the way we want
+	 * Overridden to handle labels of process consoles the way we want
 	 */
 	@Override
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {

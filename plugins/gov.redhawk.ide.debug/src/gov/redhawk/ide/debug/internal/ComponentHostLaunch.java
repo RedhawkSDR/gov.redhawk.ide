@@ -13,7 +13,6 @@ package gov.redhawk.ide.debug.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -24,7 +23,6 @@ import org.eclipse.debug.core.model.ISourceLocator;
 public class ComponentHostLaunch extends ComponentLaunch {
 
 	private List<ILaunch> childLaunchList;
-	private boolean isTerminating;
 
 	public ComponentHostLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
 		super(launchConfiguration, mode, locator);
@@ -32,18 +30,11 @@ public class ComponentHostLaunch extends ComponentLaunch {
 	}
 
 	@Override
-	public void terminate() throws DebugException {
-		isTerminating = true;
+	protected void fireTerminate() {
 		for (ILaunch launch : childLaunchList) {
-			launch.terminate();
+			((ComponentLaunch) launch).terminateContainedComponent();
 		}
-		super.terminate();
-		isTerminating = false;
-
-	}
-
-	public boolean isTerminating() {
-		return isTerminating;
+		super.fireTerminate();
 	}
 
 	public List<ILaunch> getChildLaunchList() {

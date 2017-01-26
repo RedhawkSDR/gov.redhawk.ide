@@ -23,8 +23,9 @@ import gov.redhawk.ide.debug.variables.LaunchVariables;
 /**
  * This class allows us to customize some aspects of our launches. Such as:
  * <ul>
- * <li>IDE-1054 Setting a custom process label (the name shown in the console view)</li>
+ * <li>Setting a custom process label (the name shown in the console view)</li>
  * <li>Displaying information about the process exit code in the console after termination</li>
+ * <li>Allows control over components contained within a component host</li>
  * </ul>
  */
 public class ComponentLaunch extends Launch {
@@ -45,27 +46,39 @@ public class ComponentLaunch extends Launch {
 
 	@Override
 	public boolean canTerminate() {
-		// Always allow components contained within a ComponentHost to be terminated
+		// Contained components defer to ComponentHost state
 		if (parentLaunch != null) {
-			return true;
+			return parentLaunch.canTerminate();
 		}
 
 		return super.canTerminate();
 	}
 
 	@Override
-	public void terminate() throws DebugException {
-		// If a contained component is terminated, terminate the ComponentHost as well
+	public boolean isTerminated() {
+		// Contained components defer to ComponentHost state
 		if (parentLaunch != null) {
-			// Avoid an infinite loop
-			if (((ComponentHostLaunch) parentLaunch).isTerminating()) {
-				fireTerminate();
-			} else {
-				parentLaunch.terminate();
-			}
+			return parentLaunch.isTerminated();
+		}
+
+		return super.isTerminated();
+	}
+
+	@Override
+	public void terminate() throws DebugException {
+		// If a contained component is terminated, terminate the ComponentHost instead.
+		if (parentLaunch != null) {
+			parentLaunch.terminate();
 			return;
 		}
 		super.terminate();
+	}
+
+	/**
+	 * Sends terminate event notification to allow component to be cleaned up in the ScaModel
+	 */
+	protected void terminateContainedComponent() {
+		fireTerminate();
 	}
 
 	private void setProcessLabel(IProcess process) {
@@ -95,7 +108,7 @@ public class ComponentLaunch extends Launch {
 	}
 
 	/**
-	 * IDE-1665 - associates contained components with their component host. </br>
+	 * Associates contained components with their component host. </br>
 	 * Setting this implicitly marks this component as a shared-address component.
 	 * @param parentLaunch
 	 */
