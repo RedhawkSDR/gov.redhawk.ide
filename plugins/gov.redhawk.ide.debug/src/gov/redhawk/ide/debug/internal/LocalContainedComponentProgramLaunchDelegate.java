@@ -10,10 +10,14 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,25 +28,33 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
 import org.omg.CORBA.Any;
-import org.omg.CORBA.ORB;
+import org.omg.CORBA.TCKind;
 
 import CF.DataType;
 import CF.ExecutableDevice;
 import gov.redhawk.ide.debug.LocalScaExecutableDevice;
 import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.SpdLauncherUtil;
+import gov.redhawk.ide.debug.internal.variables.ExecParamResolver;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
+import gov.redhawk.ide.sdr.util.AbstractEnvMap;
+import gov.redhawk.model.sca.ScaSimpleProperty;
 import gov.redhawk.model.sca.ScaWaveform;
 import mil.jpeojtrs.sca.spd.Code;
-import mil.jpeojtrs.sca.spd.Dependency;
+import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.CorbaUtils;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
+/**
+ * An Eclipse launch delegate which handles launching shared address-space components
+ */
 public class LocalContainedComponentProgramLaunchDelegate extends LocalComponentProgramLaunchDelegate {
 
 	@Override
@@ -50,8 +62,9 @@ public class LocalContainedComponentProgramLaunchDelegate extends LocalComponent
 		throws CoreException {
 		final int WORK_CONTAINER_LAUNCH = 10;
 		final int WORK_LAUNCH = 10;
+		final int WORK_DEPS = 1;
 		final int WORK_POST_LAUNCH = 100;
-		SubMonitor subMonitor = SubMonitor.convert(monitor, WORK_CONTAINER_LAUNCH + WORK_LAUNCH + WORK_POST_LAUNCH);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, WORK_CONTAINER_LAUNCH + WORK_LAUNCH + WORK_DEPS + WORK_POST_LAUNCH);
 
 		// Find the application we are working with
 		String waveformName = launch.getLaunchConfiguration().getAttribute(LaunchVariables.WAVEFORM_NAME, (String) null);
@@ -78,12 +91,11 @@ public class LocalContainedComponentProgramLaunchDelegate extends LocalComponent
 		String spdFileName = spd.eResource().getURI().lastSegment();
 		final String entryPoint = spd.eResource().getURI().toFileString().replace(spdFileName, "cpp/" + spd.getName() + ".so");
 
-		ORB orb = ORB.init();
-		// TODO: Get Component Options
-		final DataType[] options = getComponentOptions(spd, launch, orb);
-		final DataType[] parameters = getComponentParameters(launch, orb);
-		// TODO: Get Component Dependencies
-		final String[] deps = getComponentDependencies(spd, launch, orb);
+		String implID = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_IMPL_ID, (String) null);
+		Implementation impl = spd.getImplementation(implID);
+		final DataType[] options = getComponentOptions(spd, impl, launch);
+		final DataType[] parameters = getComponentParameters(spd, impl, launch);
+		final String[] deps = getComponentDependencies(impl, subMonitor.split(WORK_DEPS));
 
 		// Use ComponentHost to launch the component in a thread
 		try {
@@ -105,39 +117,30 @@ public class LocalContainedComponentProgramLaunchDelegate extends LocalComponent
 		}
 	}
 
-	private DataType[] getComponentOptions(SoftPkg spd, ILaunch launch, ORB orb) {
+	private DataType[] getComponentOptions(SoftPkg spd, Implementation impl, ILaunch launch) {
 		List<DataType> options = new ArrayList<DataType>();
 
-		// TODO: See Deployment.cpp getOptions()
-		// TODO: Affinity?
-		// TODO: Will these ever be populated?
-		Code code = spd.getImplementation().get(0).getCode();
+		Code code = impl.getCode();
 		if (code.getStackSize() != null) {
-			Any stackSize = orb.create_any();
-			stackSize.insert_longlong(code.getStackSize().longValue());
+			Any stackSize = AnyUtils.toAny(code.getStackSize(), TCKind.tk_ulong, false);
 			options.add(new DataType(ExecutableDevice.STACK_SIZE_ID, stackSize));
 		}
 		if (code.getPriority() != null) {
-			Any priority = orb.create_any();
-			priority.insert_longlong(code.getPriority().longValue());
+			Any priority = AnyUtils.toAny(code.getPriority(), TCKind.tk_ulong, false);
 			options.add(new DataType(ExecutableDevice.PRIORITY_ID, priority));
 		}
+
+		// TODO: Handle affinity
+
 		return options.toArray(new DataType[0]);
 	}
 
-	private DataType[] getComponentParameters(ILaunch launch, ORB orb) {
+	private DataType[] getComponentParameters(SoftPkg spd, Implementation impl, ILaunch launch) throws CoreException {
 
-		Any compId = orb.create_any();
-		compId.insert_string(launch.getAttribute(LaunchVariables.COMPONENT_IDENTIFIER));
-
-		Any nameBinding = orb.create_any();
-		nameBinding.insert_string(launch.getAttribute(LaunchVariables.NAME_BINDING));
-
-		Any profileName = orb.create_any();
-		profileName.insert_string(launch.getAttribute(LaunchVariables.PROFILE_NAME));
-
-		Any namingContextIOR = orb.create_any();
-		namingContextIOR.insert_string(launch.getAttribute(LaunchVariables.NAMING_CONTEXT_IOR));
+		Any compId = AnyUtils.toAny(launch.getAttribute(LaunchVariables.COMPONENT_IDENTIFIER), TCKind.tk_string, false);
+		Any nameBinding = AnyUtils.toAny(launch.getAttribute(LaunchVariables.NAME_BINDING), TCKind.tk_string, false);
+		Any profileName = AnyUtils.toAny(launch.getAttribute(LaunchVariables.PROFILE_NAME), TCKind.tk_string, false);
+		Any namingContextIOR = AnyUtils.toAny(launch.getAttribute(LaunchVariables.NAMING_CONTEXT_IOR), TCKind.tk_string, false);
 
 		List<DataType> parameters = new ArrayList<DataType>();
 		parameters.add(new DataType(LaunchVariables.COMPONENT_IDENTIFIER, compId));
@@ -145,26 +148,31 @@ public class LocalContainedComponentProgramLaunchDelegate extends LocalComponent
 		parameters.add(new DataType(LaunchVariables.PROFILE_NAME, profileName));
 		parameters.add(new DataType(LaunchVariables.NAMING_CONTEXT_IOR, namingContextIOR));
 
+		List<ScaSimpleProperty> execParamList = ExecParamResolver.getExecParams(launch.getLaunchConfiguration(), spd, impl);
+		for (ScaSimpleProperty simple : execParamList) {
+			parameters.add(new DataType(simple.getId(), simple.toAny()));
+		}
+
 		return parameters.toArray(new DataType[0]);
 	}
 
-	private String[] getComponentDependencies(SoftPkg spd, ILaunch launch, ORB orb) {
+	private String[] getComponentDependencies(Implementation impl, IProgressMonitor monitor) throws CoreException {
 		List<String> deps = new ArrayList<String>();
-		// TODO: How to find SDRROOT? Is there an existing method that can be used for this?
-		// We may need to provide the absolute location
-		// CF does relative path = e.g. /dom/deps/rh/dsp/cpp/lib
-		EList<Dependency> depList = spd.getImplementation().get(0).getDependency();
-		for (Dependency dep : depList) {
-			String localFile = ScaEcoreUtils.getFeature(dep, SpdPackage.Literals.DEPENDENCY__SOFT_PKG_REF, SpdPackage.Literals.SOFT_PKG_REF__LOCAL_FILE,
+
+		List<Implementation> implList = AbstractEnvMap.getDependencyImplementations(impl);
+		for (Implementation depImpl : implList) {
+			String depLocalFile = ScaEcoreUtils.getFeature(depImpl, SpdPackage.Literals.IMPLEMENTATION__CODE, SpdPackage.Literals.CODE__LOCAL_FILE,
 				SpdPackage.Literals.LOCAL_FILE__NAME);
-			IPath path = new Path("/var/redhawk/sdr/dom" + localFile);
-
-//			IPath path = new Path("../../../" + localFile);  // TODO: Relative also works.  
-			// Maybe check if starts with dep and use relative or absolute SDRROOT path? otherwise use what is in the
-			// spd.xml?
-			// Are sharedlibs required to be installed in a predefined location?
-
-			deps.add(path.removeLastSegments(1).append("cpp/lib").toString());
+			URI depSpdURI = depImpl.eResource().getURI();
+			IFileStore fileStore;
+			try {
+				fileStore = EFS.getStore(new java.net.URI(depSpdURI.toString()));
+			} catch (URISyntaxException e) {
+				throw new CoreException(new Status(Status.ERROR, ScaDebugPlugin.ID, e.getMessage(), e));
+			}
+			File file = fileStore.toLocalFile(EFS.NONE, monitor);
+			IPath depPath = new Path(file.getAbsolutePath()).removeLastSegments(1).append(depLocalFile);
+			deps.add(depPath.toString());
 		}
 
 		return deps.toArray(new String[0]);

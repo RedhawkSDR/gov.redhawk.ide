@@ -10,7 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.variables;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -37,6 +39,22 @@ public class ExecParamResolver extends AbstractLauncherResolver {
 	@Override
 	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl)
 		throws CoreException {
+
+		List<ScaSimpleProperty> simples = getExecParams(config, spd, impl);
+		Map<String, Object> execParams = new HashMap<>();
+		for (ScaSimpleProperty simple : simples) {
+			execParams.put(simple.getId(), simple.getValue());
+		}
+		final String retVal = SpdLauncherUtil.createExecParamString(execParams);
+		if (retVal != null && retVal.trim().length() != 0) {
+			return retVal;
+		}
+		return null;
+	}
+
+	public static List<ScaSimpleProperty> getExecParams(final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl) throws CoreException {
+		final List<ScaSimpleProperty> execParams = new ArrayList<>();
+
 		if (spd.getPropertyFile() != null && spd.getPropertyFile().getProperties() != null) {
 			final ScaComponent tmp = ScaFactory.eINSTANCE.createScaComponent();
 			tmp.setProfileObj(spd);
@@ -46,22 +64,16 @@ public class ExecParamResolver extends AbstractLauncherResolver {
 			}
 
 			ScaLaunchConfigurationUtil.loadProperties(config, tmp);
-			final Map<String, Object> execParams = new HashMap<String, Object>();
 			for (final ScaAbstractProperty< ? > prop : tmp.getProperties()) {
 				if (prop instanceof ScaSimpleProperty && prop.getDefinition() != null) {
 					if ((prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY) && ((Simple) prop.getDefinition()).isCommandLine())
 						|| prop.getDefinition().isKind(PropertyConfigurationType.EXECPARAM)) {
-						final ScaSimpleProperty simple = (ScaSimpleProperty) prop;
-						execParams.put(simple.getId(), simple.getValue());
+						execParams.add((ScaSimpleProperty) prop);
 					}
 				}
 			}
-			final String retVal = SpdLauncherUtil.createExecParamString(execParams);
-			if (retVal != null && retVal.trim().length() != 0) {
-				return retVal;
-			}
 		}
-		return null;
+		return execParams;
 	}
 
 }
