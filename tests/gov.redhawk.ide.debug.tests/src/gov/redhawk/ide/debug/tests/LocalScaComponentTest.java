@@ -16,6 +16,10 @@ import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
+import mil.jpeojtrs.sca.spd.CodeFileType;
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdFactory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -124,6 +128,16 @@ public class LocalScaComponentTest extends TestCase {
 			FakeResource resource = new FakeResource();
 			fixture.setObj(resource);
 			fixture.setLaunch(new FakeILaunch());
+			fixture.setImplementationID("cpp");
+
+			SoftPkg spd = SpdFactory.eINSTANCE.createSoftPkg();
+			fixture.setProfileObj(spd);
+
+			Implementation impl = SpdFactory.eINSTANCE.createImplementation();
+			impl.setCode(SpdFactory.eINSTANCE.createCode());
+			impl.setId("cpp");
+			impl.getCode().setType(CodeFileType.EXECUTABLE);
+			spd.getImplementation().add(impl);
 
 			// Call dispose
 			fixture.dispose();
