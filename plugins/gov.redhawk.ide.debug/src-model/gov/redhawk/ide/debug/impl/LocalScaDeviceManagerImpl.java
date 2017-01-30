@@ -18,6 +18,7 @@ import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.impl.commands.LocalMergeServicesCommand;
+import gov.redhawk.ide.debug.impl.commands.LocalScaDeviceManagerMergeDevicesCommand;
 import gov.redhawk.ide.debug.internal.cf.impl.DeviceManagerImpl;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDevice;
@@ -527,7 +528,16 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 		}
 	}
 
+	/**
+	 * @since 20.4
+	 */
 	@Override
+	protected Command createMergeDevicesCommand(Device[] devices, IStatus status) {
+		return new LocalScaDeviceManagerMergeDevicesCommand(this, devices, status);
+	}
+
+	@Override
+	@Deprecated
 	protected EClass getType(Device dev) {
 		EClass type = ScaDebugPackage.Literals.LOCAL_SCA_DEVICE;
 		if (dev._is_a(ExecutableDeviceHelper.id())) {
@@ -539,6 +549,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	}
 
 	@Override
+	@Deprecated
 	protected ScaDevice< ? > createType(EClass type) {
 		return (ScaDevice< ? >) ScaDebugFactory.eINSTANCE.create(type);
 	}
