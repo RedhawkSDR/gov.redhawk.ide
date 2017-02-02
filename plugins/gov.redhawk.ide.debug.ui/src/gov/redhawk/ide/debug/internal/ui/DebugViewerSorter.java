@@ -21,15 +21,12 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
- * 
+ * This class still extends {@link ViewerSorter} because of https://bugs.eclipse.org/bugs/show_bug.cgi?id=484248.
  */
+@SuppressWarnings("deprecation")
 public class DebugViewerSorter extends ViewerSorter {
 
-	/**
-	 * 
-	 */
 	public DebugViewerSorter() {
-
 	}
 
 	/**

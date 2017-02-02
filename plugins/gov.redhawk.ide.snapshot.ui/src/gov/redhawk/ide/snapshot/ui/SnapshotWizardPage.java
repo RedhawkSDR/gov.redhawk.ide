@@ -16,6 +16,7 @@ import gov.redhawk.ui.util.EmptyStringToNullConverter;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.resources.IResource;
@@ -38,8 +39,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -136,8 +137,10 @@ public class SnapshotWizardPage extends WizardPage {
 		fileTypeCombo.setContentProvider(ArrayContentProvider.getInstance()); // ArrayContentProvider does not store any state, therefore can re-use instances
 		IDataWriterDesc[] input = SnapshotActivator.getDataReceiverRegistry().getRecieverDescs();
 		fileTypeCombo.setInput(input);
-		fileTypeCombo.setSorter(new ViewerSorter()); // sort combo items alphabetically (this selects last item?)
-		context.bindValue(ViewerProperties.singleSelection().observe(fileTypeCombo), BeanProperties.value(settings.getClass(), "dataWriter").observe(settings));
+		fileTypeCombo.setComparator(new ViewerComparator()); // sort combo items alphabetically (this selects last item?)
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > dataWriterObservable = BeanProperties.value(settings.getClass(), "dataWriter").observe(settings);
+		context.bindValue(ViewerProperties.singleSelection().observe(fileTypeCombo), dataWriterObservable);
 		if (input.length > 0) {
 			fileTypeCombo.setSelection(new StructuredSelection(fileTypeCombo.getElementAt(0))); // select first sorted element
 		}
@@ -149,7 +152,9 @@ public class SnapshotWizardPage extends WizardPage {
 		// add check box to see if user wants to confirm overwrite of existing file(s)
 		final Button confirmOverwrite = new Button(parent, SWT.CHECK);
 		confirmOverwrite.setText("Confirm overwrite");
-		context.bindValue(WidgetProperties.selection().observe(confirmOverwrite), BeanProperties.value(settings.getClass(), "confirmOverwrite").observe(settings));
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > confirmOverwriteObservable = BeanProperties.value(settings.getClass(), "confirmOverwrite").observe(settings);
+		context.bindValue(WidgetProperties.selection().observe(confirmOverwrite), confirmOverwriteObservable);
 
 		// region to hold the different pages for saving to the workspace or the file system
 		fileFinder = new Group(parent, SWT.SHADOW_ETCHED_IN);
@@ -168,8 +173,10 @@ public class SnapshotWizardPage extends WizardPage {
 
 		// This binding must be defined after all controls have been configured, because its update strategy
 		// implementation calls setSaveLocation(), which depends on the controls being already configured
-		context.bindValue(WidgetProperties.selection().observe(workspaceCheck), BeanProperties.value(settings.getClass(), "saveToWorkspace").observe(settings),
-			createWsCheckUpdateStrategy(), createWsCheckUpdateStrategy());
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > saveToWorkspaceObservable = BeanProperties.value(settings.getClass(), "saveToWorkspace").observe(settings);
+		context.bindValue(WidgetProperties.selection().observe(workspaceCheck), saveToWorkspaceObservable, createWsCheckUpdateStrategy(),
+			createWsCheckUpdateStrategy());
 
 		restoreWidgetValues(settings);
 		
@@ -263,7 +270,9 @@ public class SnapshotWizardPage extends WizardPage {
 		fileNameTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 
 		UpdateValueStrategy fnameTargetToModelValidator = createFilenameT2MUpdateStrategy("File Name", false);
-		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, fileNameTxt), BeanProperties.value(settings.getClass(), "fileName").observe(settings),
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > filenameObservable = BeanProperties.value(settings.getClass(), "fileName").observe(settings);
+		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, fileNameTxt), filenameObservable,
 			fnameTargetToModelValidator, null);
 
 		// the browse button
@@ -292,7 +301,9 @@ public class SnapshotWizardPage extends WizardPage {
 		final Text fileNameTxt = new Text(comp, SWT.BORDER);
 
 		UpdateValueStrategy wkspFnameTargetToModelValidator = createFilenameT2MUpdateStrategy("Workspace File Name", true);
-		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, fileNameTxt), BeanProperties.value(settings.getClass(), "path").observe(settings),
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > pathObservable = BeanProperties.value(settings.getClass(), "path").observe(settings);
+		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, fileNameTxt), pathObservable,
 			wkspFnameTargetToModelValidator, null);
 
 		fileNameTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
@@ -307,7 +318,9 @@ public class SnapshotWizardPage extends WizardPage {
 		workbenchTree.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 1).hint(SWT.DEFAULT, 150).create());
 
 		UpdateValueStrategy wkspTreeTargetToModelValidator = createWorkspaceTreeT2MUpdateStrategy(workbenchTree);
-		context.bindValue(ViewerProperties.singleSelection().observe(workbenchTree), BeanProperties.value(settings.getClass(), "resource").observe(settings),
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? >resourceObservable = BeanProperties.value(settings.getClass(), "resource").observe(settings);
+		context.bindValue(ViewerProperties.singleSelection().observe(workbenchTree), resourceObservable,
 			wkspTreeTargetToModelValidator, null);
 		Object[] elements = contentProvider.getElements(ResourcesPlugin.getWorkspace().getRoot());
 		if (elements.length > 0) {

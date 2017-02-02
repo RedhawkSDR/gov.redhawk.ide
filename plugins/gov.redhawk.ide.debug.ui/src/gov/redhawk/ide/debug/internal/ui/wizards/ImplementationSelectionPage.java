@@ -24,16 +24,13 @@ import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-/**
- * 
- */
 public class ImplementationSelectionPage extends WizardPage {
 
 	private LaunchComponentWizard wizard;
@@ -45,9 +42,7 @@ public class ImplementationSelectionPage extends WizardPage {
 		this.wizard = wizard;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void createControl(Composite parent) {
 		Composite main = new Composite(parent, SWT.None);
@@ -74,7 +69,7 @@ public class ImplementationSelectionPage extends WizardPage {
 			}
 			
 		});
-		viewer.setSorter(new ViewerSorter() {
+		viewer.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (e1 instanceof Implementation && e2 instanceof Implementation) {

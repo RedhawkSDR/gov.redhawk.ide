@@ -126,6 +126,7 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void createControl(Composite parent) {
 

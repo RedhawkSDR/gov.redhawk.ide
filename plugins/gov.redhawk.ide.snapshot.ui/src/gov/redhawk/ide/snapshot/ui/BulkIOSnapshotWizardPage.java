@@ -17,6 +17,7 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
@@ -72,15 +73,18 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		captureCombo.setLabelProvider(new LabelProvider());
 		captureCombo.setContentProvider(ArrayContentProvider.getInstance()); // ArrayContentProvider does not store any state, therefore can re-use instances
 		captureCombo.setInput(CaptureMethod.values());
-		dataBindingCtx.bindValue(ViewerProperties.singleSelection().observe(captureCombo),
-			BeanProperties.value(bulkIOsettings.getClass(), BulkIOSnapshotSettings.PROP_CAPTURE_METHOD).observe(bulkIOsettings));
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > captureMethodObservable = BeanProperties.value(bulkIOsettings.getClass(), BulkIOSnapshotSettings.PROP_CAPTURE_METHOD).observe(bulkIOsettings);
+		dataBindingCtx.bindValue(ViewerProperties.singleSelection().observe(captureCombo), captureMethodObservable);
 
 		// === number of samples ===
 		samplesTxt = new Text(parent, SWT.BORDER);
 		samplesTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 		UpdateValueStrategy validateSamples = createSamplesValidatorStrategy(); // validator to ensure that invalid number of samples are caught and displayed
-		samplesBinding = dataBindingCtx.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, samplesTxt),
-			BeanProperties.value(bulkIOsettings.getClass(), BulkIOSnapshotSettings.PROP_SAMPLES).observe(bulkIOsettings), validateSamples, null);
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > samplesObservable = BeanProperties.value(bulkIOsettings.getClass(), BulkIOSnapshotSettings.PROP_SAMPLES).observe(bulkIOsettings);
+		samplesBinding = dataBindingCtx.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, samplesTxt), samplesObservable,
+			validateSamples, null);
 
 		// === units for number samples field ===
 		unitsLabel = new Label(parent, SWT.None);
@@ -101,8 +105,9 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		Text connectionIDField = new Text(parent, SWT.BORDER);
 		connectionIDField.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 		connectionIDField.setToolTipText("Custom Port connection ID to use vs a generated one.");
-		dataBindingCtx.bindValue(WidgetProperties.text(SWT.Modify).observe(connectionIDField),
-			BeanProperties.value(bulkIOsettings.getClass(), BulkIOSnapshotSettings.PROP_CONNECTION_ID).observe(bulkIOsettings));
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > connectionIdObservable = BeanProperties.value(bulkIOsettings.getClass(), BulkIOSnapshotSettings.PROP_CONNECTION_ID).observe(bulkIOsettings);
+		dataBindingCtx.bindValue(WidgetProperties.text(SWT.Modify).observe(connectionIDField), connectionIdObservable);
 
 		// === create output control widgets ==
 		createOutputControls(parent);

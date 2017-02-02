@@ -161,6 +161,7 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 		super.createControl(parent);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void createNameSection() {
 		Composite dialogComposite = getDialogComposite();

@@ -23,6 +23,7 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
@@ -99,9 +100,9 @@ public class LaunchDomainManagerWithOptionsDialog extends ElementTreeSelectionDi
 	public static final String NON_DEFAULT_ERR = "This name is registered against a non-default name server and cannot be launched";
 	public static final String DUPLICATE_NAME = "Domain of this name is in use, please select a different name.";
 
-	private WritableList nodes = new WritableList();
-	private WritableValue nodeDebugLevel = new WritableValue(DebugLevel.Info, DebugLevel.class);
-	private WritableValue nodeArguments = new WritableValue();
+	private WritableList<DeviceConfiguration> nodes = new WritableList<DeviceConfiguration>();
+	private WritableValue<DebugLevel> nodeDebugLevel = new WritableValue<DebugLevel>(DebugLevel.Info, DebugLevel.class);
+	private WritableValue<String> nodeArguments = new WritableValue<String>();
 
 	private final DomainManagerLaunchConfiguration model;
 
@@ -233,8 +234,9 @@ public class LaunchDomainManagerWithOptionsDialog extends ElementTreeSelectionDi
 		data.horizontalSpan = 2;
 		text.setLayoutData(data);
 
-		this.nameBinding = this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
-			PojoProperties.value(this.model.getClass(), DomainManagerLaunchConfiguration.PROP_DOMAIN_NAME).observe(this.model),
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > domainNameObservable = PojoProperties.value(this.model.getClass(), DomainManagerLaunchConfiguration.PROP_DOMAIN_NAME).observe(this.model);
+		this.nameBinding = this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text), domainNameObservable,
 			new UpdateValueStrategy().setAfterConvertValidator(new DomainValidator()), null);
 
 		text.addModifyListener(new ModifyListener() {
@@ -251,15 +253,18 @@ public class LaunchDomainManagerWithOptionsDialog extends ElementTreeSelectionDi
 		debugViewer.setContentProvider(new ArrayContentProvider());
 		debugViewer.setInput(DebugLevel.values());
 		debugViewer.getControl().setLayoutData(data);
-		this.context.bindValue(ViewersObservables.observeSingleSelection(debugViewer),
-			PojoProperties.value(this.model.getClass(), DomainManagerLaunchConfiguration.PROP_DEBUG_LEVEL).observe(this.model));
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > debugLevelObservable = PojoProperties.value(this.model.getClass(), DomainManagerLaunchConfiguration.PROP_DEBUG_LEVEL).observe(
+			this.model);
+		this.context.bindValue(ViewersObservables.observeSingleSelection(debugViewer), debugLevelObservable);
 
 		label = new Label(domainManagerGroup, SWT.NONE);
 		label.setText("Arguments:");
 		text = new Text(domainManagerGroup, SWT.BORDER);
 		text.setLayoutData(data);
-		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
-			PojoProperties.value(this.model.getClass(), DomainManagerLaunchConfiguration.PROP_ARGUMENTS).observe(this.model));
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > argumentsObservable = PojoProperties.value(this.model.getClass(), DomainManagerLaunchConfiguration.PROP_ARGUMENTS).observe(this.model);
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text), argumentsObservable);
 
 		final Group deviceManagerGroup = new Group(composite, SWT.NONE);
 
@@ -719,10 +724,9 @@ public class LaunchDomainManagerWithOptionsDialog extends ElementTreeSelectionDi
 
 	public List<DeviceManagerLaunchConfiguration> getDeviceManagerLaunchConfigurations() {
 		List<DeviceManagerLaunchConfiguration> retVal = new ArrayList<DeviceManagerLaunchConfiguration>();
-		for (Object node : this.nodes) {
-			DeviceConfiguration dcd = (DeviceConfiguration) node;
-			DeviceManagerLaunchConfiguration conf = new DeviceManagerLaunchConfiguration(model.getDomainName(), dcd, (DebugLevel) nodeDebugLevel.getValue(),
-				(String) nodeArguments.getValue(), null);
+		for (DeviceConfiguration dcd : this.nodes) {
+			DeviceManagerLaunchConfiguration conf = new DeviceManagerLaunchConfiguration(model.getDomainName(), dcd, nodeDebugLevel.getValue(),
+				nodeArguments.getValue(), null);
 			retVal.add(conf);
 		}
 		return retVal;

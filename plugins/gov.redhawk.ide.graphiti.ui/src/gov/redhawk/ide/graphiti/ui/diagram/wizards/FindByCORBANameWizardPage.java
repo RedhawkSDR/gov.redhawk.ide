@@ -105,6 +105,7 @@ public class FindByCORBANameWizardPage extends AbstractFindByWizardPage {
 		model = new CORBANameModel();
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void createNameSection() {
 		// CORBA Name
 		Label corbaNameLabel = new Label(getDialogComposite(), SWT.NONE);

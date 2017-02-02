@@ -41,7 +41,7 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 	private final List<Sample> dataBuffer = new LinkedList<Sample>();
 	private int dimension = 1;
 	private final ScaUsesPort port;
-	private final ListenerList listeners = new ListenerList();
+	private final ListenerList<IDataBufferListener> listeners = new ListenerList<IDataBufferListener>();
 
 	private List<Object> cached;
 

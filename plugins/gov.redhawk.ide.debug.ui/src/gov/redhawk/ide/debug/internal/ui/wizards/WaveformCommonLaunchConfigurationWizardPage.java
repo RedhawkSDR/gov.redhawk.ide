@@ -14,9 +14,6 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 
-/**
- * 
- */
 public class WaveformCommonLaunchConfigurationWizardPage extends CommonLaunchConfigurationWizardPage {
 	private DataBindingContext dbc = new DataBindingContext();
 	private LaunchLocalWaveformWizard wizard;
@@ -25,6 +22,7 @@ public class WaveformCommonLaunchConfigurationWizardPage extends CommonLaunchCon
 		this.wizard = wizard;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void bindControls() {
 		dbc.bindValue(WidgetProperties.selection().observe(getStartButton()), BeanProperties.value(wizard.getClass(), "autoStart").observe(wizard));

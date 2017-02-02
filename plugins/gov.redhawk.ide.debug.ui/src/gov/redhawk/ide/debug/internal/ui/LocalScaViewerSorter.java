@@ -23,15 +23,12 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
- * 
+ * This class still extends {@link ViewerSorter} because of https://bugs.eclipse.org/bugs/show_bug.cgi?id=484248.
  */
+@SuppressWarnings("deprecation")
 public class LocalScaViewerSorter extends ViewerSorter {
 
-	/**
-	 * 
-	 */
 	public LocalScaViewerSorter() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -39,7 +36,6 @@ public class LocalScaViewerSorter extends ViewerSorter {
 	 */
 	public LocalScaViewerSorter(Collator collator) {
 		super(collator);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

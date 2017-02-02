@@ -63,7 +63,7 @@ public class BooleanGeneratorPropertiesComposite extends BaseGeneratorProperties
 	private static final int TOOLTIP_OFFSET = 5;
 
 	private CheckboxTableViewer propertiesViewer;
-	private HashMap<ImplementationSettings, WritableSet> setMap;
+	private HashMap<ImplementationSettings, WritableSet<Property>> setMap;
 	private Binding propBinding;
 
 	/**
@@ -222,15 +222,15 @@ public class BooleanGeneratorPropertiesComposite extends BaseGeneratorProperties
 	@Override
 	protected void createPropertyBinding() {
 		if (this.setMap == null) {
-			this.setMap = new HashMap<ImplementationSettings, WritableSet>();
+			this.setMap = new HashMap<ImplementationSettings, WritableSet<Property>>();
 		} else {
 			this.getContext().removeBinding(this.propBinding);
 			this.setMap.remove(this.getImplSettings());
 		}
 
-		final WritableSet mySet;
+		final WritableSet<Property> mySet;
 		if (!this.setMap.containsKey(this.getImplSettings())) {
-			mySet = new WritableSet();
+			mySet = new WritableSet<Property>();
 
 			for (final Property prop : this.getImplSettings().getProperties()) {
 				if ("TRUE".equalsIgnoreCase(prop.getValue())) {
@@ -238,9 +238,9 @@ public class BooleanGeneratorPropertiesComposite extends BaseGeneratorProperties
 				}
 			}
 
-			mySet.addSetChangeListener(new ISetChangeListener() {
+			mySet.addSetChangeListener(new ISetChangeListener<Property>() {
 				@Override
-				public void handleSetChange(final SetChangeEvent event) {
+				public void handleSetChange(final SetChangeEvent<? extends Property> event) {
 					for (final Object obj : event.diff.getRemovals()) {
 						final Property p = (Property) obj;
 						final Command command = SetCommand.create(BooleanGeneratorPropertiesComposite.this.getEditingDomain(), p,

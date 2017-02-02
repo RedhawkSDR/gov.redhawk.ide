@@ -39,9 +39,6 @@ import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-/**
- * 
- */
 public class SoftwareAssemblySelectionPage extends WizardPage {
 
 	private LaunchLocalWaveformWizard wizard;
@@ -54,9 +51,7 @@ public class SoftwareAssemblySelectionPage extends WizardPage {
 		this.wizard = wizard;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void createControl(Composite parent) {
 		Composite main = new Composite(parent, SWT.None);
@@ -74,7 +69,7 @@ public class SoftwareAssemblySelectionPage extends WizardPage {
 			}
 		});
 		viewer.setLabelProvider(new SdrNavigatorLabelProvider());
-		viewer.setSorter(new SdrViewerSorter());
+		viewer.setComparator(new SdrViewerSorter());
 
 		Group descriptionGroup = new Group(main, SWT.None);
 		descriptionGroup.setText("Description");

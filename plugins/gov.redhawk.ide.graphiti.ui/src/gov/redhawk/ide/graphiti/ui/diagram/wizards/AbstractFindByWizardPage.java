@@ -14,6 +14,7 @@ import java.util.Arrays;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.wizard.WizardPage;
@@ -180,7 +181,9 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 		portList.setLayoutData(listLayout);
 
 		Object model = getModel();
-		getDbc().bindList(WidgetProperties.items().observe(portList), BeanProperties.list(model.getClass(), propertyName).observe(model));
+		@SuppressWarnings("unchecked")
+		IObservableList< ? > modelObservableList = BeanProperties.list(model.getClass(), propertyName).observe(model);
+		getDbc().bindList(WidgetProperties.items().observe(portList), modelObservableList);
 		return portList;
 	}
 

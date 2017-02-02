@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -265,7 +266,9 @@ public class PortsWizardPage extends WizardPage {
 		GridData listLayout = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		listLayout.heightHint = 80;
 		portList.setLayoutData(listLayout);
-		dbc.bindList(WidgetProperties.items().observe(portList), BeanProperties.list(model.getClass(), propertyName).observe(model));
+		@SuppressWarnings("unchecked")
+		IObservableList< ? > modelObservableList = BeanProperties.list(model.getClass(), propertyName).observe(model);
+		dbc.bindList(WidgetProperties.items().observe(portList), modelObservableList);
 		return portList;
 	}
 

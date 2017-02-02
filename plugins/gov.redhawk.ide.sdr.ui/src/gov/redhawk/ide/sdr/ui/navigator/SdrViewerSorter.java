@@ -18,14 +18,12 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
+ * This class still extends {@link ViewerSorter} because of https://bugs.eclipse.org/bugs/show_bug.cgi?id=484248.
  * @since 4.2
- * 
  */
+@SuppressWarnings("deprecation")
 public class SdrViewerSorter extends ViewerSorter {
 
-	/**
-	 * 
-	 */
 	public SdrViewerSorter() {
 	}
 

@@ -315,14 +315,14 @@ public class DataReaderComposite extends Composite {
 	}
 
 	public void setTextBindings(ScaComponent input, String id, Widget value) {
-		IObservableValue scaProperty = SCAObservables.observeSimpleProperty(input, id);
-		IObservableValue cPanelProperty = WidgetProperties.text(SWT.Modify).observeDelayed(500, value);
+		IObservableValue< ? > scaProperty = SCAObservables.observeSimpleProperty(input, id);
+		IObservableValue< ? > cPanelProperty = WidgetProperties.text(SWT.Modify).observeDelayed(500, value);
 		context.bindValue(cPanelProperty, scaProperty);
 	}
 
 	public void setComboBindings(ScaComponent input, String id, Widget value) {
-		IObservableValue scaProperty = SCAObservables.observeSimpleProperty(input, id);
-		IObservableValue cPanelProperty = WidgetProperties.selection().observeDelayed(500, value);
+		IObservableValue< ? > scaProperty = SCAObservables.observeSimpleProperty(input, id);
+		IObservableValue< ? > cPanelProperty = WidgetProperties.selection().observeDelayed(500, value);
 		context.bindValue(cPanelProperty, scaProperty);
 	}
 

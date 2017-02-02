@@ -104,12 +104,12 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 
 	private class AllRequiredPropertiesValidator extends ValidationStatusProvider {
 
-		private final WritableValue status;
-		private final IObservableList targets;
-		private final IObservableList models;
+		private final WritableValue<IStatus> status;
+		private final IObservableList< ? > targets;
+		private final IObservableList< ? > models;
 
 		public AllRequiredPropertiesValidator() {
-			this.status = new WritableValue();
+			this.status = new WritableValue<IStatus>();
 			this.status.setValue(Status.OK_STATUS);
 			this.targets = Observables.emptyObservableList();
 			this.models = Observables.emptyObservableList();
@@ -169,7 +169,7 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 		 * {@inheritDoc}
 		 */
 		@Override
-		public IObservableList getModels() {
+		public IObservableList< ? > getModels() {
 			return this.models;
 		}
 
@@ -177,7 +177,7 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 		 * {@inheritDoc}
 		 */
 		@Override
-		public IObservableList getTargets() {
+		public IObservableList< ? > getTargets() {
 			return this.targets;
 		}
 
@@ -185,7 +185,7 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 		 * {@inheritDoc}
 		 */
 		@Override
-		public IObservableValue getValidationStatus() {
+		public IObservableValue<IStatus> getValidationStatus() {
 			return this.status;
 		}
 

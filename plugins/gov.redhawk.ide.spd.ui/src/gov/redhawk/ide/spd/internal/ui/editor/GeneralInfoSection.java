@@ -441,6 +441,7 @@ public class GeneralInfoSection extends ScaSection {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void refresh(final Resource resource) {
 		this.spdResource = resource;

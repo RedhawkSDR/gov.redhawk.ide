@@ -13,6 +13,7 @@ package gov.redhawk.ide.spd.internal.ui.editor.wizard;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFObservables;
@@ -283,8 +284,10 @@ public class DependencyWizardPage extends WizardPage {
 		final IEMFValueProperty propValuePath = EMFProperties.value(
 			FeaturePath.fromList(SpdPackage.Literals.DEPENDENCY__PROPERTY_REF, SpdPackage.Literals.PROPERTY_REF__VALUE));
 
-		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.refIdText), propRefIdPath.observe(this.dependency),
-			new EMFEmptyStringToNullUpdateValueStrategy(), null);
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > dependencyIdObservable = propRefIdPath.observe(this.dependency);
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.refIdText), dependencyIdObservable, new EMFEmptyStringToNullUpdateValueStrategy(),
+			null);
 
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(PropertyRef.class, String.class) {
@@ -302,9 +305,13 @@ public class DependencyWizardPage extends WizardPage {
 			}
 
 		});
-		this.context.bindValue(WidgetProperties.text(SWT.None).observe(this.propNameText), propRefIdPath.observe(this.dependency),
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > dependencyIdObservable2 = propRefIdPath.observe(this.dependency);
+		this.context.bindValue(WidgetProperties.text(SWT.None).observe(this.propNameText), dependencyIdObservable2,
 			new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), strategy);
-		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.valueText), propValuePath.observe(this.dependency),
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > dependencyValueObservable = propValuePath.observe(this.dependency);
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.valueText), dependencyValueObservable,
 			new EMFEmptyStringToNullUpdateValueStrategy(), null);
 
 		final EMFUpdateValueStrategy targetToModel = new EMFUpdateValueStrategy();
@@ -312,8 +319,9 @@ public class DependencyWizardPage extends WizardPage {
 		final EMFUpdateValueStrategy modelToTarget = new EMFUpdateValueStrategy();
 		modelToTarget.setConverter(new SoftPkgRefToViewer());
 		final IEMFValueProperty softPkgRef = EMFProperties.value(FeaturePath.fromList(SpdPackage.Literals.DEPENDENCY__SOFT_PKG_REF));
-		this.context.bindValue(ViewersObservables.observeSingleSelection(this.softPkgRefViewer), softPkgRef.observe(this.dependency), targetToModel,
-			modelToTarget);
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > dependencySoftPkgObservable = softPkgRef.observe(this.dependency);
+		this.context.bindValue(ViewersObservables.observeSingleSelection(this.softPkgRefViewer), dependencySoftPkgObservable, targetToModel, modelToTarget);
 
 		this.context.bindValue(WidgetProperties.text().observe(this.dependencyTypeComboViewer.getCombo()),
 			EMFObservables.observeValue(this.dependency, SpdPackage.Literals.DEPENDENCY__TYPE), new EMFEmptyStringToNullUpdateValueStrategy(), null);

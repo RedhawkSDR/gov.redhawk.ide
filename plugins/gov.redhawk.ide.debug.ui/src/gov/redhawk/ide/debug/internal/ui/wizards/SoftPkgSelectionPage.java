@@ -43,9 +43,6 @@ import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
-/**
- * 
- */
 public class SoftPkgSelectionPage extends WizardPage {
 
 	private LaunchComponentWizard wizard;
@@ -59,9 +56,7 @@ public class SoftPkgSelectionPage extends WizardPage {
 		this.wizard = wizard;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void createControl(Composite parent) {
 		Composite main = new Composite(parent, SWT.None);
@@ -106,7 +101,7 @@ public class SoftPkgSelectionPage extends WizardPage {
 				return false;
 			}
 		} });
-		viewer.setSorter(new SdrViewerSorter());
+		viewer.setComparator(new SdrViewerSorter());
 
 		Group descriptionGroup = new Group(main, SWT.None);
 		descriptionGroup.setText("Description");

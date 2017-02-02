@@ -53,23 +53,23 @@ public class DeployableScaExportWizard extends Wizard implements IExportWizard {
 	protected class DeployableScaExportWizardModel {
 
 		// CHECKSTYLE:OFF Keep these public so it's easy to connect databindings
-		public IObservableValue directoryExport = new WritableValue(false, Boolean.class);
+		public IObservableValue<Boolean> directoryExport = new WritableValue<Boolean>(false, Boolean.class);
 		// CHECKSTYLE:ON
 
 		// CHECKSTYLE:OFF Keep these public so it's easy to connect databindings
-		public IObservableValue directoryDestination = new WritableValue("", String.class);
+		public IObservableValue<String> directoryDestination = new WritableValue<String>("", String.class);
 		// CHECKSTYLE:ON
 
 		// CHECKSTYLE:OFF Keep these public so it's easy to connect databindings
-		public IObservableValue archiveExport = new WritableValue(false, Boolean.class);
+		public IObservableValue<Boolean> archiveExport = new WritableValue<Boolean>(false, Boolean.class);
 		// CHECKSTYLE:ON
 
 		// CHECKSTYLE:OFF Keep these public so it's easy to connect databindings
-		public IObservableValue archiveDestination = new WritableValue("", String.class);
+		public IObservableValue<String> archiveDestination = new WritableValue<String>("", String.class);
 		// CHECKSTYLE:ON
 
 		// CHECKSTYLE:OFF Keep these public so it's easy to connect databindings
-		public IObservableSet projectsToExport = new WritableSet(new ArrayList<IProject>(), IProject[].class);
+		public IObservableSet<IProject> projectsToExport = new WritableSet<IProject>(new ArrayList<IProject>(), IProject[].class);
 		// CHECKSTYLE:ON
 	}
 
@@ -110,8 +110,8 @@ public class DeployableScaExportWizard extends Wizard implements IExportWizard {
 		}
 
 		final Object[] toExport = this.model.projectsToExport.toArray();
-		if ((Boolean) this.model.directoryExport.getValue()) {
-			final IPath destDir = new Path((String) this.model.directoryDestination.getValue());
+		if (this.model.directoryExport.getValue()) {
+			final IPath destDir = new Path(this.model.directoryDestination.getValue());
 			if (destDir.toFile().isFile()) {
 				return false;
 			}
@@ -119,9 +119,9 @@ public class DeployableScaExportWizard extends Wizard implements IExportWizard {
 				destDir.toFile().mkdirs();
 			}
 			this.exporter = new FileStoreExporter(destDir);
-		} else if ((Boolean) this.model.archiveExport.getValue()) {
+		} else if (this.model.archiveExport.getValue()) {
 			try {
-				IPath zippath = new Path((String) this.model.archiveDestination.getValue());
+				IPath zippath = new Path(this.model.archiveDestination.getValue());
 				if (zippath.getFileExtension() == null) {
 					zippath = zippath.addFileExtension("zip");
 				}
@@ -220,7 +220,7 @@ public class DeployableScaExportWizard extends Wizard implements IExportWizard {
 					final IProject proj = (IProject) item;
 					try {
 						if (proj.hasNature(ScaProjectNature.ID)) {
-							this.model.projectsToExport.add(item);
+							this.model.projectsToExport.add(proj);
 						}
 					} catch (final CoreException e) {
 						RedhawkIDEUiPlugin.getDefault().getLog()

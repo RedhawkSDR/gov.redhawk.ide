@@ -125,6 +125,7 @@ public abstract class OptionsComposite {
 		createControl(main);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void createControl(Composite main) {
 		final Composite parent = new Composite(main, SWT.None);
 		parent.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
@@ -176,9 +177,9 @@ public abstract class OptionsComposite {
 			}), null);
 		ControlDecorationSupport.create(binding, SWT.TOP | SWT.LEFT);
 
-		final IObservableValue running = BeanProperties.value("running").observe(state);
-		final IObservableValue pType = BeanProperties.value("processType").observe(settings);
-		ComputedValue enabledSamples = new ComputedValue(Boolean.class) {
+		final IObservableValue< ? > running = BeanProperties.value("running").observe(state);
+		final IObservableValue< ? > pType = BeanProperties.value("processType").observe(settings);
+		ComputedValue<Object> enabledSamples = new ComputedValue<Object>(Boolean.class) {
 
 			@Override
 			protected Object calculate() {

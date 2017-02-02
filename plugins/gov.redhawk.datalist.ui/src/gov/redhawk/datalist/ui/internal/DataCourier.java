@@ -56,7 +56,7 @@ public class DataCourier {
 	};
 
 	private BulkIOType type;
-	private ListenerList listeners = new ListenerList();
+	private ListenerList<IDataCourierListener> listeners = new ListenerList<IDataCourierListener>();
 
 	public void addListener(IDataCourierListener listener) {
 		listeners.add(listener);

@@ -28,6 +28,7 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -147,7 +148,9 @@ public class ExternalPortsSection extends ScaSection {
 		final IEMFEditValueProperty inputValue = EMFEditProperties.value(getPage().getEditingDomain(), SadPackage.Literals.SOFTWARE_ASSEMBLY__EXTERNAL_PORTS);
 		final DataBindingContext context = this.getPage().getEditor().getDataBindingContext();
 
-		this.bindings.add(context.bindValue(ViewersObservables.observeInput(this.client.getPortViewer()), inputValue.observe(getWaveform())));
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > waveformExtPortsObservable = inputValue.observe(getWaveform());
+		this.bindings.add(context.bindValue(ViewersObservables.observeInput(this.client.getPortViewer()), waveformExtPortsObservable));
 	}
 
 }

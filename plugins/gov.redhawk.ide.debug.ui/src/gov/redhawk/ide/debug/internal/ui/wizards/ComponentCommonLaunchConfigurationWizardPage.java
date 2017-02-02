@@ -21,9 +21,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-/**
- * 
- */
 public class ComponentCommonLaunchConfigurationWizardPage extends CommonLaunchConfigurationWizardPage {
 
 	private DataBindingContext dbc = new DataBindingContext();
@@ -54,6 +51,7 @@ public class ComponentCommonLaunchConfigurationWizardPage extends CommonLaunchCo
 		levelCombo.setToolTipText("Set the debug logging level of the component.  Output will be visible in the console view.");
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void bindControls() {
 		if (getStartButton() != null) {

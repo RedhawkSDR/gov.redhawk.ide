@@ -31,8 +31,8 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.pde.ui.templates.BaseOptionTemplateSection;
 import org.eclipse.pde.ui.templates.TemplateOption;
 import org.eclipse.swt.SWT;
@@ -88,7 +88,7 @@ public class SdrResourceOption extends TemplateOption {
 
 		viewer.getViewer().setLabelProvider(new AdapterFactoryLabelProvider(adapterFactory));
 		viewer.getViewer().setContentProvider(new AdapterFactoryContentProvider(adapterFactory));
-		viewer.getViewer().setSorter(new ViewerSorter());
+		viewer.getViewer().setComparator(new ViewerComparator());
 		viewer.getViewer().addFilter(new ViewerFilter() {
 
 			@Override
