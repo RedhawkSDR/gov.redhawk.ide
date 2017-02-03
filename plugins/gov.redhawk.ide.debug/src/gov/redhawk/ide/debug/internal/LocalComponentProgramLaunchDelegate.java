@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 import gov.redhawk.ide.debug.SpdLauncherUtil;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 /**
@@ -89,9 +90,9 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 	 */
 	@Override
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
-		// ComponentHost objects have a unique ILaunch
-		String launchProfile = configuration.getAttribute("gov.redhawk.sca.launch.profile", (String) null);
-		if (SoftPkg.Util.COMPONENT_HOST_URI.equals(launchProfile)) {
+		// ComponentHost objects need to have a unique ILaunch
+		String launchProfile = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, (String) null);
+		if (SoftPkg.Util.getComponentHostURI().toFileString().equals(launchProfile)) {
 			return new ComponentHostLaunch(configuration, mode, null);
 		}
 

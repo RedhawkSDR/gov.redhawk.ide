@@ -371,10 +371,10 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			// If no ComponentHost exists, create and launch a new one
 			if (componentHost == null) {
 				final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-				URI spdURI = URI.createFileURI(SoftPkg.Util.COMPONENT_HOST_URI);
+				URI spdURI = SoftPkg.Util.getComponentHostURI();
 				final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 				String implID = spd.getImplementation().get(0).getId();
-				launch(spd.getName() + "_1", new DataType[0], spdURI, implID, mode);
+				launch(spd.getName() + "_" + System.currentTimeMillis(), new DataType[0], spdURI, implID, mode);
 			}
 		} finally {
 			lock.unlock();
