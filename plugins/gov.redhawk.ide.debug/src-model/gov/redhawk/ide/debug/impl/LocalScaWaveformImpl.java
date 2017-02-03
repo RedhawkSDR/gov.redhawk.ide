@@ -61,6 +61,7 @@ import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.impl.ScaWaveformImpl;
 import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
@@ -374,7 +375,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 				URI spdURI = SoftPkg.Util.getComponentHostURI();
 				final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 				String implID = spd.getImplementation().get(0).getId();
-				launch(spd.getName() + "_" + System.currentTimeMillis(), new DataType[0], spdURI, implID, mode);
+				String compID = SoftwareAssembly.Util.createComponentIdentifier(getProfileObj(), spd.getName());
+				launch(compID, new DataType[0], spdURI, implID, mode);
 			}
 		} finally {
 			lock.unlock();
