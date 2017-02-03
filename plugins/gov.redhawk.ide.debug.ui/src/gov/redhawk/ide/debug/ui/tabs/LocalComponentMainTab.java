@@ -46,15 +46,18 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
-/**
- * 
- */
 public class LocalComponentMainTab extends AbstractMainTab {
 
+	private static final String ID = "gov.redhawk.ide.debug.ui.LocalComponentMainTab";
 	private static final String DEFAULT_DEBUG_LEVEL = "Default";
 	private Text implText;
 	private Combo levelCombo;
 	private Button browseButton;
+
+	@Override
+	public String getId() {
+		return ID;
+	}
 
 	@Override
 	protected String getProfileExtension() {

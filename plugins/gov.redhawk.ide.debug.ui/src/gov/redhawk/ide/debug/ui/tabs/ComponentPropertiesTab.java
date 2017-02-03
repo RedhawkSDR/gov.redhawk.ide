@@ -21,10 +21,14 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
-/**
- * 
- */
 public class ComponentPropertiesTab extends AbstractPropertiesTab {
+
+	private static final String ID = "gov.redhawk.ide.debug.ui.ComponentPropertiesTab";
+
+	@Override
+	public String getId() {
+		return ID;
+	}
 
 	@Override
 	protected SoftPkg loadProfile(final ILaunchConfiguration configuration) {
