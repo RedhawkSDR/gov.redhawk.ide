@@ -29,6 +29,7 @@ import gov.redhawk.ide.debug.ILauncherVariableRegistry;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.variables.ExecParamResolver;
 import gov.redhawk.model.sca.ScaSimpleProperty;
+import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
@@ -114,10 +115,14 @@ public class ExecParamResolverTest {
 
 		Implementation impl = softPkg.getImplementation(IMPL_NAME);
 
-		List<ScaSimpleProperty> execParams = ExecParamResolver.getExecParams(launchConfig, softPkg, impl);
-		Assert.assertEquals(2, execParams.size());
-		for (ScaSimpleProperty execParam : execParams) {
-			Assert.assertTrue(execParam.getId().matches("cmdline.*"));
+		List<ScaSimpleProperty> props = ExecParamResolver.getExecParams(launchConfig, softPkg, impl);
+		Assert.assertEquals(6, props.size());
+		for (ScaSimpleProperty prop : props) {
+			if (prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY)) {
+				Assert.assertTrue(prop.getId().matches("cmdline.*"));
+			} else {
+				Assert.assertTrue(prop.getId().matches("execparam.*"));
+			}
 		}
 	}
 }

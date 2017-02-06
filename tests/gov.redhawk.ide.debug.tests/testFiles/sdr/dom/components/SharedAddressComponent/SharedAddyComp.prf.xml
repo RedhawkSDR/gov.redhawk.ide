@@ -11,14 +11,33 @@
     <kind kindtype="property"/>
     <action type="external"/>
   </simple>
-  <simple id="cmdline" mode="readonly" name="cmdline" type="string" commandline="true">
+  <simple id="cmdline" mode="readonly" type="string" commandline="true">
     <value>cmdline</value>
     <kind kindtype="property"/>
     <action type="external"/>
   </simple>
-  <simple id="cmdline2" mode="readwrite" name="cmdline2" type="string" commandline="true">
-    <value>cmdline2</value>
+  <simple id="cmdline_no_value" mode="readonly" type="string" commandline="true">
     <kind kindtype="property"/>
+    <action type="external"/>
+  </simple>
+  <simple id="execparam" mode="readwrite" type="string">
+    <value>execparam</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="execparam_no_value" mode="readwrite" type="string">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="execparam_with_config" mode="readwrite" type="string">
+    <value>execparam_with_config</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="execparam_with_config_no_value" mode="readwrite" type="string">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
     <action type="external"/>
   </simple>
 </properties>
