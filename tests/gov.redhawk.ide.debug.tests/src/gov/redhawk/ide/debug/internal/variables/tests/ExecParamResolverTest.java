@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.variables.tests;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -25,6 +27,9 @@ import gov.redhawk.ide.debug.ILaunchConfigurationFactoryRegistry;
 import gov.redhawk.ide.debug.ILauncherVariableDesc;
 import gov.redhawk.ide.debug.ILauncherVariableRegistry;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.variables.ExecParamResolver;
+import gov.redhawk.model.sca.ScaSimpleProperty;
+import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
@@ -88,5 +93,31 @@ public class ExecParamResolverTest {
 		Assert.assertTrue("Didn't find exec param 'commandline_property_with_value'",
 			execParams.contains("commandline_property_with_value \"commandline attribute\""));
 		Assert.assertFalse("Property 'commandline_property_no_value' should not have been passed", execParams.contains("commandline_property_no_value"));
+	}
+
+	/**
+	 * IDE-1827 - Ensure expected number of execParams are returned
+	 * @throws CoreException
+	 */
+	@Test
+	public void getExecParamsTest() throws CoreException {
+		final String SHARED_ADDRESS_COMP_SPD_PATH = "testFiles/sdr/dom/components/SharedAddressComponent/SharedAddyComp.spd.xml";
+		final String IMPL_NAME = "cpp";
+
+		ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+		URI spdUri = URI.createPlatformPluginURI("/" + PLUGIN_ID + "/" + SHARED_ADDRESS_COMP_SPD_PATH, true).appendFragment(SoftPkg.EOBJECT_PATH);
+		SoftPkg softPkg = (SoftPkg) resourceSet.getEObject(spdUri, true);
+
+		ILaunchConfigurationFactoryRegistry registry = ScaDebugPlugin.getInstance().getLaunchConfigurationFactoryRegistry();
+		ILaunchConfigurationFactory factory = registry.getFactory(softPkg, IMPL_NAME);
+		ILaunchConfiguration launchConfig = factory.createLaunchConfiguration("test", IMPL_NAME, softPkg);
+
+		Implementation impl = softPkg.getImplementation(IMPL_NAME);
+
+		List<ScaSimpleProperty> execParams = ExecParamResolver.getExecParams(launchConfig, softPkg, impl);
+		Assert.assertEquals(2, execParams.size());
+		for (ScaSimpleProperty execParam : execParams) {
+			Assert.assertTrue(execParam.getId().matches("cmdline.*"));
+		}
 	}
 }
