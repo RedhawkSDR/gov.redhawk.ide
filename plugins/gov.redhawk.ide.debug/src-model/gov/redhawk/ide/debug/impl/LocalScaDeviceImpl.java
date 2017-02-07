@@ -24,6 +24,9 @@ import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalScaDevice;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.internal.jobs.TerminateJob;
+import gov.redhawk.model.sca.ScaPackage;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.commands.SetLocalAttributeCommand;
 import gov.redhawk.model.sca.impl.ScaDeviceImpl;
 
 /**
@@ -443,6 +446,13 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 	public void unsetProfile() {
 		// END GENERATED CODE
 		// BEGIN GENERATED CODE
+	}
+
+	@Override
+	protected void fetchComponentInstantiation(String identifier) {
+		// No componentinstantiation element in a DCD exists, because this is the sandbox and its adhoc
+		ScaModelCommand command = new SetLocalAttributeCommand(this, null, ScaPackage.Literals.SCA_DEVICE__COMPONENT_INSTANTIATION, null);
+		ScaModelCommand.execute(this, command);
 	}
 
 } //LocalScaDeviceImpl
