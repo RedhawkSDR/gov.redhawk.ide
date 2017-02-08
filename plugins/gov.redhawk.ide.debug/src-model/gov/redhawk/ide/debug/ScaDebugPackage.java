@@ -1476,6 +1476,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_EXECUTABLE_DEVICE__DEV_MGR = ScaPackage.SCA_EXECUTABLE_DEVICE__DEV_MGR;
 	/**
+	 * The feature id for the '<em><b>Component Instantiation</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_EXECUTABLE_DEVICE__COMPONENT_INSTANTIATION = ScaPackage.SCA_EXECUTABLE_DEVICE__COMPONENT_INSTANTIATION;
+	/**
 	 * The feature id for the '<em><b>Launch</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1712,6 +1720,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_LOADABLE_DEVICE__DEV_MGR = ScaPackage.SCA_LOADABLE_DEVICE__DEV_MGR;
 	/**
+	 * The feature id for the '<em><b>Component Instantiation</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_LOADABLE_DEVICE__COMPONENT_INSTANTIATION = ScaPackage.SCA_LOADABLE_DEVICE__COMPONENT_INSTANTIATION;
+	/**
 	 * The feature id for the '<em><b>Launch</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1947,6 +1963,14 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA_DEVICE__DEV_MGR = ScaPackage.SCA_DEVICE__DEV_MGR;
+	/**
+	 * The feature id for the '<em><b>Component Instantiation</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_DEVICE__COMPONENT_INSTANTIATION = ScaPackage.SCA_DEVICE__COMPONENT_INSTANTIATION;
 	/**
 	 * The feature id for the '<em><b>Launch</b></em>' attribute.
 	 * <!-- begin-user-doc -->

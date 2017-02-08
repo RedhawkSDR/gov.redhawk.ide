@@ -158,15 +158,30 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * This method is used to launch a component locally in this waveform. Takes an IProgressMonitor to allow cancellation. 
+	 * @since 10.0
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * @param initConfiguration The initial configuration of the resource (properties including exec params, configure params, etc).
+	 * <!-- end-model-doc -->
+	 * @model exceptions="gov.redhawk.ide.debug.CoreException" initConfigurationDataType="gov.redhawk.model.sca.DataTypeArray" spdURIDataType="mil.jpeojtrs.sca.spd.URI" monitorDataType="gov.redhawk.model.sca.IProgressMonitor"
+	 * @generated
+	 */
+	LocalScaComponent launch(String id, DataType[] initConfiguration, URI spdURI, String implID, String mode, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * <!-- begin-user-doc -->
 	 * This method is used to launch a component locally in this waveform.
+	 * @deprecated Use {@link #launch(String, DataType[], URI, String, String, IProgressMonitor)}
 	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * @param initConfiguration The initial configuration of the resource (properties including exec params, configure params, etc).
 	 * <!-- end-model-doc -->
 	 * @model exceptions="gov.redhawk.ide.debug.CoreException" initConfigurationDataType="gov.redhawk.model.sca.DataTypeArray" spdURIDataType="mil.jpeojtrs.sca.spd.URI"
-	 * @generated
+	 * @generated NOT
 	 */
 	@NonNull
+	@Deprecated
 	LocalScaComponent launch(String id, DataType[] initConfiguration, URI spdURI, String implID, String mode) throws CoreException;
 } // LocalScaWaveform

@@ -1102,6 +1102,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		addEParameter(op, theSpdPackage.getURI(), "spdURI", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "implID", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "mode", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theScaPackage.getIProgressMonitor(), "monitor", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEException(op, this.getCoreException());
 
 		initEClass(localScaComponentEClass, LocalScaComponent.class, "LocalScaComponent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

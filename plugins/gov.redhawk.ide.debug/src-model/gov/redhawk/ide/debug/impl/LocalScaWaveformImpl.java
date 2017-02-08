@@ -61,6 +61,7 @@ import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.impl.ScaWaveformImpl;
 import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
+import gov.redhawk.sca.util.SubMonitor;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
@@ -73,12 +74,12 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLaunch <em>Launch</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getMode <em>Mode</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getNamingContext <em>Naming Context</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getComponentHost <em>Component Host</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLocalApp <em>Local App</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getDomainWaveform <em>Domain Waveform</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLaunch <em>Launch</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getMode <em>Mode</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getNamingContext <em>Naming Context</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getComponentHost <em>Component Host</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLocalApp <em>Local App</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getDomainWaveform <em>Domain Waveform</em>}</li>
  * </ul>
  *
  * @generated
@@ -341,17 +342,20 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	ReentrantLock lock = new ReentrantLock();
 
 	/**
-	 * Checks for and returns the existing ComponentHost contained by the waveform.  If no ComponentHost is found, launches a new 
-	 * one and returns that. 
-	 * @throws CoreException 
+	 * Checks for and returns the existing ComponentHost contained by the waveform. If no ComponentHost is found,
+	 * launches a new
+	 * one and returns that.
+	 * @throws CoreException
 	 * @since 10.0
 	 */
 	public LocalScaExecutableDevice fetchComponentHost(String mode, IProgressMonitor monitor) throws CoreException {
+		final int WORK_EXISTS = 1, WORK_LAUNCH = 5;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, WORK_EXISTS + WORK_LAUNCH);
 
 		// If lock is held by another thread, keep checking for a cancellation call
 		try {
 			while (!lock.tryLock(500, TimeUnit.MILLISECONDS)) {
-				if (monitor.isCanceled()) {
+				if (subMonitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
 			}
@@ -365,9 +369,10 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 				componentHost = null;
 			}
 
-			if (monitor.isCanceled()) {
+			if (subMonitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
+			subMonitor.worked(WORK_EXISTS);
 
 			// If no ComponentHost exists, create and launch a new one
 			if (componentHost == null) {
@@ -376,10 +381,11 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 				final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 				String implID = spd.getImplementation().get(0).getId();
 				String compID = SoftwareAssembly.Util.createComponentIdentifier(getProfileObj(), spd.getName());
-				launch(compID, new DataType[0], spdURI, implID, mode);
+				launch(compID, new DataType[0], spdURI, implID, mode, subMonitor.split(WORK_LAUNCH));
 			}
 		} finally {
 			lock.unlock();
+			subMonitor.done();
 		}
 
 		return componentHost;
@@ -696,20 +702,37 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @deprecated Use {@link #launch(String, DataType[], URI, String, String, IProgressMonitor)}
 	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	@Override
+	@Deprecated
 	@NonNull
 	public LocalScaComponent launch(final String compID, final DataType[] initConfiguration, final URI spdURI, final String implID, final String mode)
+		throws CoreException {
+		// END GENERATED CODE
+		return launch(compID, initConfiguration, spdURI, implID, mode, null);
+		// BEGIN GENERATED CODE
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 10.0
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@Override
+	@NonNull
+	public LocalScaComponent launch(String compID, DataType[] initConfiguration, URI spdURI, String implID, String mode, IProgressMonitor monitor)
 		throws CoreException {
 		// END GENERATED CODE
 		Assert.isNotNull(spdURI);
 		Assert.isNotNull(implID);
 		// TODO Fix this hack
 		if (getLocalApp() instanceof ApplicationImpl) {
-			return ((ApplicationImpl) getLocalApp()).launch(null, compID, initConfiguration, spdURI, implID, mode);
+			return ((ApplicationImpl) getLocalApp()).launch(null, compID, initConfiguration, spdURI, implID, mode, monitor);
 		} else if (getLocalApp() != null) {
 			throw new IllegalStateException("Unknown Application type " + getLocalApp());
 		} else {
@@ -815,4 +838,4 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		}
 	}
 
-} //LocalScaWaveformImpl
+} // LocalScaWaveformImpl

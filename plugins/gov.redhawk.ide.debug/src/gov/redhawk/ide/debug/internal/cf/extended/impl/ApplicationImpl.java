@@ -25,6 +25,7 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -107,6 +108,7 @@ import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.impl.ScaComponentImpl;
 import gov.redhawk.sca.efs.WrappedFileStore;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
+import gov.redhawk.sca.util.SubMonitor;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.ExternalProperties;
@@ -1247,7 +1249,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	/**
-	 * @deprecated Use {@link #launch(String, String, DataType[], URI, String, String)}
+	 * @deprecated Use {@link #launch(String, String, DataType[], URI, String, String, IProgressMonitor)}
 	 */
 	@Deprecated
 	public Resource launch(final String compId, final DataType[] initConfiguration, @NonNull final String spdURI, final String implId, final String mode)
@@ -1259,7 +1261,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			if (uri == null) {
 				throw new NullPointerException();
 			}
-			retVal = launch(null, compId, initConfiguration, uri, implId, mode);
+			retVal = launch(null, compId, initConfiguration, uri, implId, mode, null);
 		} catch (final CoreException e) {
 			this.getStreams().getErrStream().println("Failed to launch component " + compId);
 			this.getStreams().getErrStream().println(e.toString());
@@ -1268,12 +1270,24 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return retVal.getObj();
 	}
 
+	/**
+	 * @deprecated Use {@link #launch(String, String, DataType[], URI, String, String, IProgressMonitor)}
+	 */
+	@Deprecated
 	@NonNull
 	public LocalScaComponent launch(final String usageName, String compId, final DataType[] initConfiguration, @NonNull final URI spdURI, final String implId,
 		final String mode) throws CoreException {
-		ILaunchConfigurationWorkingCopy config = createLaunchConfig(usageName, compId, initConfiguration, spdURI, implId, mode);
+		return launch(usageName, null, initConfiguration, spdURI, implId, mode, null);
+	}
 
-		final ILaunch subLaunch = config.launch(mode, new NullProgressMonitor(), false);
+	public LocalScaComponent launch(final String usageName, String compId, final DataType[] initConfiguration, @NonNull final URI spdURI, final String implId,
+		final String mode, IProgressMonitor monitor) throws CoreException {
+		final int WORK_CONFIG = 1, WORK_LAUNCH = 3, WORK_POST_LAUNCH = 1;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + compId, WORK_CONFIG + WORK_LAUNCH + WORK_POST_LAUNCH);
+
+		ILaunchConfigurationWorkingCopy config = createLaunchConfig(usageName, compId, initConfiguration, spdURI, implId, mode, subMonitor.split(WORK_CONFIG));
+
+		final ILaunch subLaunch = config.launch(mode, subMonitor.split(WORK_LAUNCH), false);
 		if (subLaunch instanceof ComponentLaunch) {
 			((ComponentLaunch) subLaunch).setParent(this);
 		}
@@ -1281,28 +1295,29 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 		// Skip postLaunch if the resource being launched is a componentHost
 		if (SoftPkg.Util.isComponentHost(spdURI)) {
+			subMonitor.notWorked(WORK_POST_LAUNCH);
 			return null;
 		}
-		return postLaunch(subLaunch);
+		return postLaunch(subLaunch, subMonitor.split(WORK_POST_LAUNCH));
 	}
 
 	/**
-	 * @deprecated Use {@link #launch(String, String, DataType[], URI, String, String)}
+	 * @deprecated Use {@link #launch(String, String, DataType[], URI, String, String, IProgressMonitor)}
 	 */
 	@Deprecated
 	public LocalScaComponent launch(final String usageName, final DataType[] initConfiguration, @NonNull final URI spdURI, final String implId,
 		final String mode) throws CoreException {
-		return launch(usageName, null, initConfiguration, spdURI, implId, mode);
+		return launch(usageName, null, initConfiguration, spdURI, implId, mode, null);
 	}
 
 	/**
-	 * @deprecated Use {@link #launch(String, String, DataType[], URI, String, String)}
+	 * @deprecated Use {@link #launch(String, String, DataType[], URI, String, String, IProgressMonitor)}
 	 */
 	@Deprecated
 	@NonNull
 	public LocalScaComponent launch(@Nullable String usageName, @Nullable final String compId, @Nullable final String execParams, @NonNull URI spdURI,
 		@Nullable final String implId, @Nullable String mode) throws CoreException {
-		ILaunchConfigurationWorkingCopy config = createLaunchConfig(usageName, compId, null, spdURI, implId, mode);
+		ILaunchConfigurationWorkingCopy config = createLaunchConfig(usageName, compId, null, spdURI, implId, mode, null);
 		if (execParams != null && execParams.length() > 0) {
 			this.streams.getOutStream().println("\tExec params: " + execParams);
 			config.setAttribute(LaunchVariables.EXEC_PARAMS, execParams);
@@ -1316,11 +1331,14 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		this.streams.getOutStream().println("\tLaunch configuration succeeded.");
 
-		return postLaunch(subLaunch);
+		return postLaunch(subLaunch, null);
 	}
 
 	private ILaunchConfigurationWorkingCopy createLaunchConfig(String usageName, String compId, DataType[] initConfiguration, URI spdURI, String implId,
-		String mode) throws CoreException {
+		String mode, final IProgressMonitor monitor) throws CoreException {
+		final int WORK_ATTR = 1, WORK_PROFILE_OBJ = 1, WORK_PROPS = 1;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Creating launch configuration for " + compId, WORK_ATTR + WORK_PROFILE_OBJ + WORK_PROPS);
+
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 
 		// Use EFS to unwrap non-platform URIs; for example convert sca URI -> file URI
@@ -1399,13 +1417,14 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			this.streams.getOutStream().println("\tLaunching with id: " + compId);
 			config.setAttribute(LaunchVariables.COMPONENT_IDENTIFIER, compId);
 		}
+		subMonitor.worked(WORK_ATTR);
 
 		// Property overrides
 		if (initConfiguration != null) {
 			final ScaComponent propHolder = ScaFactory.eINSTANCE.createScaComponent();
 			propHolder.setProfileURI(spdURI);
-			propHolder.fetchProfileObject(new NullProgressMonitor());
-			propHolder.fetchProperties(new NullProgressMonitor());
+			propHolder.fetchProfileObject(subMonitor.split(WORK_PROFILE_OBJ));
+			propHolder.fetchProperties(subMonitor.split(WORK_PROPS));
 			for (DataType dt : initConfiguration) {
 				ScaAbstractProperty< ? > prop = propHolder.getProperty(dt.id);
 				if (prop != null) {
@@ -1428,12 +1447,15 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return config;
 	}
 
-	private LocalScaComponent postLaunch(ILaunch launch) throws CoreException {
+	private LocalScaComponent postLaunch(ILaunch launch, final IProgressMonitor monitor) throws CoreException {
+		final int WORK_ATTR = 1, WORK_POST_LAUNCH = 1;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Post-launch tasks", WORK_ATTR + WORK_POST_LAUNCH);
+
 		LocalScaComponent newComponent = null;
 		final String newCompId = launch.getAttribute(LaunchVariables.COMPONENT_IDENTIFIER);
 		if (newCompId != null) {
 			for (final ScaComponent comp : ApplicationImpl.this.waveform.getComponentsCopy()) {
-				comp.fetchAttributes(null);
+				comp.fetchAttributes(subMonitor.split(WORK_ATTR));
 				final String id = comp.getIdentifier();
 				if (id.equals(newCompId)) {
 					newComponent = (LocalScaComponent) comp;
@@ -1466,6 +1488,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				this.assemblyController = newComponent;
 			}
 		}
+
+		subMonitor.worked(WORK_POST_LAUNCH);
+		subMonitor.done();
 		return newComponent;
 	}
 

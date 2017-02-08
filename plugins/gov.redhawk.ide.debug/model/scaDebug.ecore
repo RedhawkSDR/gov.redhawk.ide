@@ -114,6 +114,7 @@
       <eParameters name="spdURI" eType="ecore:EDataType ../../mil.jpeojtrs.sca.spd/model/spd.ecore#//URI"/>
       <eParameters name="implID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eParameters name="mode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="monitor" eType="ecore:EDataType ../../gov.redhawk.sca.model/model/sca.ecore#//IProgressMonitor"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="namingContext" lowerBound="1"
         eType="#//NotifyingNamingContext" transient="true"/>
