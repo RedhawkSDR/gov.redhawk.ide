@@ -30,7 +30,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.emf.common.util.URI;
 import org.omg.CORBA.Any;
-import org.omg.CORBA.TCKind;
 
 import CF.DataType;
 import CF.ExecutableDevice;
@@ -122,11 +121,11 @@ public class LocalContainedComponentProgramLaunchDelegate extends LocalComponent
 
 		Code code = impl.getCode();
 		if (code.getStackSize() != null) {
-			Any stackSize = AnyUtils.toAny(code.getStackSize(), TCKind.tk_ulong, false);
+			Any stackSize = AnyUtils.toAny(code.getStackSize(), "ulong", false);
 			options.add(new DataType(ExecutableDevice.STACK_SIZE_ID, stackSize));
 		}
 		if (code.getPriority() != null) {
-			Any priority = AnyUtils.toAny(code.getPriority(), TCKind.tk_ulong, false);
+			Any priority = AnyUtils.toAny(code.getPriority(), "ulong", false);
 			options.add(new DataType(ExecutableDevice.PRIORITY_ID, priority));
 		}
 
@@ -137,10 +136,10 @@ public class LocalContainedComponentProgramLaunchDelegate extends LocalComponent
 
 	private DataType[] getComponentParameters(SoftPkg spd, Implementation impl, ILaunch launch) throws CoreException {
 
-		Any compId = AnyUtils.toAny(launch.getAttribute(LaunchVariables.COMPONENT_IDENTIFIER), TCKind.tk_string, false);
-		Any nameBinding = AnyUtils.toAny(launch.getAttribute(LaunchVariables.NAME_BINDING), TCKind.tk_string, false);
-		Any profileName = AnyUtils.toAny(launch.getAttribute(LaunchVariables.PROFILE_NAME), TCKind.tk_string, false);
-		Any namingContextIOR = AnyUtils.toAny(launch.getAttribute(LaunchVariables.NAMING_CONTEXT_IOR), TCKind.tk_string, false);
+		Any compId = AnyUtils.toAny(launch.getAttribute(LaunchVariables.COMPONENT_IDENTIFIER), "string", false);
+		Any nameBinding = AnyUtils.toAny(launch.getAttribute(LaunchVariables.NAME_BINDING), "string", false);
+		Any profileName = AnyUtils.toAny(launch.getAttribute(LaunchVariables.PROFILE_NAME), "string", false);
+		Any namingContextIOR = AnyUtils.toAny(launch.getAttribute(LaunchVariables.NAMING_CONTEXT_IOR), "string", false);
 
 		List<DataType> parameters = new ArrayList<DataType>();
 		parameters.add(new DataType(LaunchVariables.COMPONENT_IDENTIFIER, compId));
