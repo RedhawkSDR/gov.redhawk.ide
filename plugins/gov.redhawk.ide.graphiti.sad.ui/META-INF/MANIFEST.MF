@@ -47,7 +47,9 @@ Require-Bundle: gov.redhawk.validation;bundle-version="1.0.0",
  gov.redhawk.sca.model,
  mil.jpeojtrs.sca.scd,
  gov.redhawk.core.graphiti.ui,
- gov.redhawk.core.graphiti.sad.ui;visibility:=reexport
+ gov.redhawk.core.graphiti.sad.ui;visibility:=reexport,
+ org.eclipse.core.expressions,
+ org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName

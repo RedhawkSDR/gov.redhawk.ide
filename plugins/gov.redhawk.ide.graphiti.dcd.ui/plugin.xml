@@ -108,4 +108,28 @@
          </command>
       </menuContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs
+            contributorId="DCDDiagram.PropertyContributor">
+         <propertyTab
+               afterTab="gov.redhawk.core.graphiti.dcd.ui.propertyTab.properties"
+               category="Properties"
+               id="gov.redhawk.ide.graphiti.dcd.ui.propertyTab.requirements"
+               label="Requirements">
+         </propertyTab>
+      </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections
+            contributorId="DCDDiagram.PropertyContributor">
+         <propertySection
+               class="gov.redhawk.ide.graphiti.dcd.ui.properties.DcdRequirementsPropertySection"
+               filter="gov.redhawk.ide.graphiti.ui.properties.RequirementsTabFilter"
+               id="gov.redhawk.ide.graphiti.dcd.ui.propertySection.requirements"
+               tab="gov.redhawk.ide.graphiti.dcd.ui.propertyTab.requirements">
+         </propertySection>
+      </propertySections>
+   </extension>
 </plugin>

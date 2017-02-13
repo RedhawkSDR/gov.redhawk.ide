@@ -61,6 +61,18 @@
             id="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.imageProvider">
       </imageProvider>
    </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs
+            contributorId="SADDiagram.PropertyContributor">
+         <propertyTab
+               afterTab="gov.redhawk.core.graphiti.sad.ui.propertyTab.properties"
+               category="Properties"
+               id="gov.redhawk.ide.graphiti.sad.ui.propertyTab.requirements"
+               label="Requirements">
+         </propertyTab>
+      </propertyTabs>
+   </extension>
 
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertySections">
@@ -72,6 +84,13 @@
                filter="gov.redhawk.core.graphiti.ui.properties.PortFilter"
                id="property.section.PortInterface"
                tab="gov.redhawk.core.graphiti.sad.ui.propertyTab.portDetails">
+         </propertySection>
+         <propertySection
+               afterSection="gov.redhawk.ide.graphiti.sad.ui.propertySection.actions"
+               class="gov.redhawk.ide.graphiti.sad.ui.properties.SadRequirementsPropertySection"
+               filter="gov.redhawk.ide.graphiti.ui.properties.RequirementsTabFilter"
+               id="gov.redhawk.ide.graphiti.sad.ui.propertySection.requirements"
+               tab="gov.redhawk.ide.graphiti.sad.ui.propertyTab.requirements">
          </propertySection>
       </propertySections>
    </extension>

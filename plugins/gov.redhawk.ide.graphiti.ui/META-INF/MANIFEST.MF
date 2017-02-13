@@ -51,7 +51,8 @@ Export-Package: gov.redhawk.ide.graphiti.ui,
  gov.redhawk.ide.graphiti.ui.diagram.patterns,
  gov.redhawk.ide.graphiti.ui.diagram.providers,
  gov.redhawk.ide.graphiti.ui.diagram.util,
- gov.redhawk.ide.graphiti.ui.palette
+ gov.redhawk.ide.graphiti.ui.palette,
+ gov.redhawk.ide.graphiti.ui.properties
 Bundle-ActivationPolicy: lazy
 Import-Package: gov.redhawk.model.sca,
  gov.redhawk.model.sca.commands,
