@@ -45,7 +45,6 @@ Require-Bundle: org.eclipse.ui,
  gov.redhawk.core.graphiti.ui;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: gov.redhawk.ide.graphiti.ui,
- gov.redhawk.ide.graphiti.ui.diagram.dialogs,
  gov.redhawk.ide.graphiti.ui.diagram.features.custom,
  gov.redhawk.ide.graphiti.ui.diagram.features.update,
  gov.redhawk.ide.graphiti.ui.diagram.patterns,
