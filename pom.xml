@@ -30,7 +30,7 @@
     <mil.jpeojtrs.sca>http://download.redhawksdr.org/mil.jpeojtrs.sca/releases/2.1</mil.jpeojtrs.sca>
     <gov.redhawk.core>http://download.redhawksdr.org/gov.redhawk.core/releases/2.1</gov.redhawk.core>
     <swt-bot>http://download.eclipse.org/technology/swtbot/snapshots/</swt-bot>
-    <pydev>https://dl.bintray.com/fabioz/pydev/4.5.5/</pydev>
+    <pydev>https://dl.bintray.com/fabioz/pydev/5.5.0/</pydev>
     <!-- Sonar -->
     <sonar.language>java</sonar.language>
     <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
