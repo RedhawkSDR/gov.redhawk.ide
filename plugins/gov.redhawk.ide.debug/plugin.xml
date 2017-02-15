@@ -129,6 +129,12 @@
             resolver="gov.redhawk.ide.debug.internal.variables.ServiceNameLauncherVariable"
             supportsArgument="false">
       </variable>
+      <variable
+            description="Adds the deployment root if necessary for the component"
+            name="RH_DEPLOYMENT_ROOT"
+            resolver="gov.redhawk.ide.debug.internal.variables.RHDeploymentRootResolver"
+            supportsArgument="false">
+      </variable>
    </extension>
    <extension
          point="gov.redhawk.ide.debug.launchConfigurationFactories">

@@ -762,6 +762,8 @@ public final class SpdLauncherUtil {
 		retVal.append(LaunchVariables.NAMING_CONTEXT_IOR);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.NAMING_CONTEXT_IOR, null));
+		retVal.append(" ");
+		retVal.append(manager.generateVariableExpression(LaunchVariables.RH_DEPLOYMENT_ROOT, null));
 		return retVal.toString();
 	}
 

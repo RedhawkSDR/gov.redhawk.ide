@@ -28,6 +28,7 @@ public final class LaunchVariables {
 	public static final String COMPONENT_IDENTIFIER = "COMPONENT_IDENTIFIER";
 	public static final String EXEC_PARAMS = "EXEC_PARAMS";
 	public static final String DEBUG_LEVEL = "DEBUG_LEVEL";
+	public static final String RH_DEPLOYMENT_ROOT = "RH_DEPLOYMENT_ROOT";
 
 	public static final String DEVICE_MGR_IOR = "DEVICE_MGR_IOR";
 	public static final String PROFILE_NAME = "PROFILE_NAME";
