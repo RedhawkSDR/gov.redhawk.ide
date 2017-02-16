@@ -34,7 +34,7 @@ public class RequirementsTabFilter extends CompoundFilter {
 			@Override
 			protected boolean accept(PictogramElement pictogramElement) {
 				Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pictogramElement);
-				return DUtil.isDiagramWorkpace(diagram);
+				return DUtil.isDiagramWorkpace(diagram) || DUtil.isDiagramTargetSdr(diagram);
 			}
 		};
 
