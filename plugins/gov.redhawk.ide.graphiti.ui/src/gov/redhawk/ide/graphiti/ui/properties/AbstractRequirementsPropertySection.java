@@ -17,8 +17,11 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
@@ -46,6 +49,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import gov.redhawk.core.graphiti.ui.properties.AbstractPropertiesSection;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import mil.jpeojtrs.sca.dcd.DcdPackage;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.partitioning.Requirements;
@@ -64,11 +68,39 @@ public abstract class AbstractRequirementsPropertySection extends AbstractProper
 	private Button addButton;
 	private Button removeButton;
 
+	/** Maintain reference to the active component instantiation so we can remove our content adapter when necessary **/
+	private ComponentInstantiation activeComp;
+
+	/** Flag that can be set so that GUI driven changes don't create a loop with our adapter **/
+	private boolean userEdit = false;
+
 	/**
 	 * Get either the component or device {@link Requirements} model element, depending on context
 	 * @return
 	 */
 	protected abstract Requirements getSelectionRequirements();
+
+	private EContentAdapter contentAdapter = new EContentAdapter() {
+
+		@Override
+		public void notifyChanged(Notification notification) {
+			super.notifyChanged(notification);
+			if (userEdit) {
+				return;
+			}
+
+			if (!getTreeViewer().getTree().isDisposed()) {
+				getTreeViewer().setInput(getEObject());
+			}
+		}
+
+		@Override
+		protected void addAdapter(Notifier notifier) {
+			if (notifier instanceof Requirements || notifier instanceof Requires) {
+				super.addAdapter(notifier);
+			}
+		}
+	};
 
 	@Override
 	public void createControls(Composite parent, final TabbedPropertySheetPage tabbedPropertySheetPage) {
@@ -128,7 +160,10 @@ public abstract class AbstractRequirementsPropertySection extends AbstractProper
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Command command = createAddCommand();
+
+				userEdit = true;
 				getEditingDomain().getCommandStack().execute(command);
+				userEdit = false;
 				getTreeViewer().refresh();
 
 				// Automatically select the most recently added item
@@ -143,11 +178,13 @@ public abstract class AbstractRequirementsPropertySection extends AbstractProper
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Command command = createRemoveCommand();
-				command.canExecute();
 
 				// Table only allows a single selection, so safe to assume the item we want is at index[0]
 				int selIndex = getTreeViewer().getTree().indexOf(getTreeViewer().getTree().getSelection()[0]);
+
+				userEdit = true;
 				getEditingDomain().getCommandStack().execute(command);
+				userEdit = false;
 				getTreeViewer().refresh();
 
 				// Update the selection to be the preceding item if it exists, otherwise select the top item
@@ -230,13 +267,36 @@ public abstract class AbstractRequirementsPropertySection extends AbstractProper
 
 	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
+		if (activeComp != null && activeComp != getEObject()) {
+			contentAdapter.unsetTarget(activeComp);
+			activeComp.eAdapters().remove(contentAdapter);
+		}
+
 		super.setInput(part, selection);
+
+		// Update button state
 		updateControls();
+
+		if (activeComp != getEObject()) {
+			activeComp = (ComponentInstantiation) getEObject();
+			contentAdapter.setTarget(activeComp);
+			activeComp.eAdapters().add(contentAdapter);
+		}
 	}
 
 	@Override
 	public boolean shouldUseExtraSpace() {
 		return true;
+	}
+
+	@Override
+	public void dispose() {
+		if (activeComp != null) {
+			contentAdapter.unsetTarget(activeComp);
+			activeComp.eAdapters().remove(contentAdapter);
+		}
+
+		super.dispose();
 	}
 
 	@Override

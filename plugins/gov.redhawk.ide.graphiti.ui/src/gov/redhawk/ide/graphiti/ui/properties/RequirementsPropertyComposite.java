@@ -51,7 +51,7 @@ public class RequirementsPropertyComposite extends Composite {
 		init(this, treeStyle);
 	}
 
-	public void init(Composite parent, int treeStyle) {
+	private void init(Composite parent, int treeStyle) {
 		treeColumnLayout = new TreeColumnLayout();
 		parent.setLayout(treeColumnLayout);
 
@@ -65,7 +65,7 @@ public class RequirementsPropertyComposite extends Composite {
 	}
 
 	private TreeViewer createTreeViewer(Composite parent, int style) {
-		final Tree tree = new Tree(parent, style | SWT.FULL_SELECTION); // TODO: Do we want full_selection?
+		final Tree tree = new Tree(parent, style | SWT.FULL_SELECTION);
 		tree.setHeaderVisible(true);
 		tree.setLinesVisible(true);
 		return new TreeViewer(tree);
@@ -83,7 +83,6 @@ public class RequirementsPropertyComposite extends Composite {
 		column.setEditingSupport(createColumnEditingSupport(columnLabel));
 	}
 
-	// TODO: check if new value == old value, if so don't execute a command 
 	private EditingSupport createColumnEditingSupport(final String columnLabel) {
 		final TextCellEditor cellEditor = new TextCellEditor(treeViewer.getTree());
 
@@ -91,9 +90,7 @@ public class RequirementsPropertyComposite extends Composite {
 
 			@Override
 			protected void setValue(Object element, Object value) {
-				// Null or cast check here?
 				Requires requires = (Requires) element;
-				// TODO: Talk to Dan about editingDomain's
 				TransactionalEditingDomain editingDomain = TransactionUtil.getEditingDomain(requires);
 				if (editingDomain != null) {
 					EAttribute eAttribute = columnLabel.equals(KEY_COLUMN_LABEL) ? PartitioningPackage.Literals.REQUIRES__ID
