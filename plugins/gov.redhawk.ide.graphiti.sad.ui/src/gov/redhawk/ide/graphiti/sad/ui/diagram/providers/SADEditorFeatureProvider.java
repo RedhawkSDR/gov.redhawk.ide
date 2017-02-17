@@ -23,12 +23,12 @@ import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IReconnectionContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.IPattern;
 
 import gov.redhawk.core.graphiti.sad.ui.diagram.providers.SADGraphitiFeatureProvider;
-import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.DecrementStartOrderFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.IncrementStartOrderFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkExternalPortFeature;
@@ -95,7 +95,7 @@ public class SADEditorFeatureProvider extends SADGraphitiFeatureProvider {
 		}
 		EObject businessObject = DUtil.getBusinessObject(pes[0]);
 
-		if (pes[0] instanceof RHContainerShape) {
+		if (pes[0] instanceof ContainerShape) {
 			if (businessObject instanceof SadComponentInstantiation) {
 				// Design-time-only component features
 				features.add(new SetAsAssemblyControllerFeature(this));

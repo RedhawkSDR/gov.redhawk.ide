@@ -10,27 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
-import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
-import gov.redhawk.core.graphiti.ui.diagram.patterns.AbstractContainerPattern;
-import gov.redhawk.core.graphiti.ui.diagram.patterns.UpdateAction;
-import gov.redhawk.core.graphiti.ui.util.StyleUtil;
-import gov.redhawk.core.graphiti.ui.util.UpdateUtil;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import mil.jpeojtrs.sca.partitioning.FindByStub;
-import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
-import mil.jpeojtrs.sca.sad.HostCollocation;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentPlacement;
-import mil.jpeojtrs.sca.sad.SadFactory;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
@@ -44,6 +28,7 @@ import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
+import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
@@ -53,6 +38,7 @@ import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
 import org.eclipse.graphiti.features.context.impl.MoveShapeContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
+import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.func.IDirectEditing;
 import org.eclipse.graphiti.mm.algorithms.Image;
@@ -64,8 +50,27 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.ui.PlatformUI;
 
-public class HostCollocationPattern extends AbstractContainerPattern {
+import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
+import gov.redhawk.core.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.core.graphiti.ui.diagram.patterns.UpdateAction;
+import gov.redhawk.core.graphiti.ui.util.StyleUtil;
+import gov.redhawk.core.graphiti.ui.util.UpdateUtil;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.HostCollocationWizard;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
+import mil.jpeojtrs.sca.sad.HostCollocation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentPlacement;
+import mil.jpeojtrs.sca.sad.SadFactory;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+
+public class HostCollocationPattern extends AbstractContainerPattern implements IDialogEditingPattern {
 
 	public static final String NAME = "Host Collocation";
 
@@ -106,10 +111,7 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 	// THE FOLLOWING THREE METHODS DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
-		if (mainBusinessObject instanceof HostCollocation) {
-			return true;
-		}
-		return false;
+		return mainBusinessObject instanceof HostCollocation;
 	}
 
 	@Override
@@ -609,4 +611,26 @@ public class HostCollocationPattern extends AbstractContainerPattern {
 		updatePictogramElement(collocationShape);
 	}
 
+	@Override
+	public boolean canDialogEdit(ICustomContext context) {
+		return context.getPictogramElements() != null && context.getPictogramElements().length == 1;
+	}
+
+	@Override
+	public boolean dialogEdit(ICustomContext context) {
+		PictogramElement pe = context.getPictogramElements()[0];
+		HostCollocation hc = (HostCollocation) getBusinessObjectForPictogramElement(pe);
+		SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+
+		// Create and show the wizard. It performs all the work.
+		HostCollocationWizard wizard = new HostCollocationWizard(hc, sad.getUsesDeviceDependencies());
+		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+		int result = dialog.open();
+		return result == WizardDialog.OK;
+	}
+
+	@Override
+	public String getEditName() {
+		return NAME;
+	}
 }
