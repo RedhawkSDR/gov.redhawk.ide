@@ -87,11 +87,11 @@ public class LocalContainedComponentProgramLaunchDelegate extends LocalComponent
 		final ExecutableDevice execDev = CF.ExecutableDeviceHelper.narrow(componentHost.getCorbaObj());
 
 		// Get path to the component's .so
-		String spdFileName = spd.eResource().getURI().lastSegment();
-		final String entryPoint = spd.eResource().getURI().toFileString().replace(spdFileName, "cpp/" + spd.getName() + ".so");
-
 		String implID = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_IMPL_ID, (String) null);
 		Implementation impl = spd.getImplementation(implID);
+		String spdFileName = spd.eResource().getURI().lastSegment();
+		final String entryPoint = spd.eResource().getURI().toFileString().replace(spdFileName, impl.getCode().getEntryPoint());
+
 		final DataType[] options = getComponentOptions(spd, impl, launch);
 		final DataType[] parameters = getComponentParameters(spd, impl, launch);
 		final String[] deps = getComponentDependencies(impl, subMonitor.split(WORK_DEPS));
