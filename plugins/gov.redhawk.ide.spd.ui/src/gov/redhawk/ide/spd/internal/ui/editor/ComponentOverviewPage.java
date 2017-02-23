@@ -10,25 +10,17 @@
  *******************************************************************************/
 package gov.redhawk.ide.spd.internal.ui.editor;
 
-import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.ide.codegen.CodegenUtil;
-import gov.redhawk.ide.debug.ui.LaunchUtil;
-import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
-import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
-import gov.redhawk.ide.spd.ui.editor.AuthorsSection;
-import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
-import gov.redhawk.ui.editor.AbstractOverviewPage;
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
@@ -50,9 +42,27 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import gov.redhawk.common.ui.editor.FormLayoutFactory;
+import gov.redhawk.ide.codegen.CodegenUtil;
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.ComponentLaunch;
+import gov.redhawk.ide.debug.internal.ComponentProgramLaunchUtils;
+import gov.redhawk.ide.debug.ui.LaunchUtil;
+import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
+import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
+import gov.redhawk.ide.spd.ui.editor.AuthorsSection;
+import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
+import gov.redhawk.ui.editor.AbstractOverviewPage;
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+
 /**
  * The Class ComponentOverviewPage.
  */
+@SuppressWarnings("restriction")
 public class ComponentOverviewPage extends AbstractOverviewPage implements IViewerProvider {
 
 	/** The Constant PAGE_ID. */
@@ -250,6 +260,34 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 				if (config == null) {
 					config = newConfig.doSave();
 				}
+
+				// Get implementation
+				final SoftPkg spd = SoftPkg.Util.getSoftPkg(spdResource);
+				String implID = config.getAttribute(ScaDebugLaunchConstants.ATT_IMPL_ID, (String) null);
+				final Implementation impl = spd.getImplementation(implID);
+
+				// Shared address space components must be launched within a component host
+				if (SoftPkg.Util.isContainedComponent(impl)) {
+					final ILaunchConfigurationWorkingCopy workingCopy = config.getWorkingCopy();
+					Job job = new Job("Contained component overview tab launch") {
+
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							try {
+								launchContainedComponent(workingCopy, mode, spd, impl, monitor);
+							} catch (CoreException e) {
+								final Status status = new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e);
+								StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
+							}
+							return Status.OK_STATUS;
+						}
+					};
+					job.setUser(false);
+					job.schedule();
+					return;
+				}
+
+				// Legacy launch
 				DebugUITools.launch(config, mode);
 			} else {
 				LaunchUtil.launch(newConfig, mode);
@@ -258,6 +296,21 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 			final Status status = new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e);
 			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
 		}
+	}
+
+	private void launchContainedComponent(ILaunchConfigurationWorkingCopy workingCopy, String mode, SoftPkg spd, Implementation impl, IProgressMonitor monitor)
+		throws CoreException {
+
+		// Create component launch
+		ComponentLaunch launch = new ComponentLaunch(workingCopy, mode, null);
+		ComponentProgramLaunchUtils.insertProgramArguments(spd, launch, workingCopy);
+
+		LocalScaWaveform waveform = ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform();
+
+		ComponentProgramLaunchUtils.launch(waveform, workingCopy, launch, spd, impl, mode, monitor);
+
+		// Add the created ILaunch to the launch manager so that it receives notifications for things like terminate
+		DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
 	}
 
 	/**
@@ -316,10 +369,10 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks to see if the resource is a Softpackage Library
-	 * Important because a number of entry fields are omitted in the case of libraries 
+	 * Important because a number of entry fields are omitted in the case of libraries
 	 */
 	public boolean isSoftpackageLibrary() {
 		for (EObject i : spdResource.getContents()) {
@@ -340,7 +393,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	public Resource getScdResource() {
 		return this.scdResource;
 	}
-	
+
 	/**
 	 * @return the spdResource
 	 */
