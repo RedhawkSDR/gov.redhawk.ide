@@ -24,6 +24,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -47,7 +50,10 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import gov.redhawk.ide.natures.ScaComponentProjectNature;
 import gov.redhawk.ide.natures.ScaNodeProjectNature;
 import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
+import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.DceUuidUtil;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
  * @since 10.0
@@ -158,6 +164,9 @@ public class RenameFileParticipant extends RenameParticipant {
 			searchRequestor.createChange(pathPattern.getKey(), changeId, pathPattern.getValue(), newPath, oldPath, pm);
 		}
 
+		// Update DCE ID to keep project unique
+		addDceIdChange(searchRequestor, pm);
+
 		// If no changes were recorded, exit the function
 		if (searchRequestor.getChanges().isEmpty()) {
 			return null;
@@ -262,6 +271,51 @@ public class RenameFileParticipant extends RenameParticipant {
 		}
 
 		return pathPatternMap;
+	}
+
+	/**
+	 * Create an additional change request to update the value of the projects DCE UUID
+	 */
+	private void addDceIdChange(RenameFileSearchRequestor searchRequestor, IProgressMonitor pm) throws CoreException {
+		// Get project file
+		IFile file = getFile(this.getCurrentProject().getName().split("\\."));
+
+		// Get DEC ID
+		ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
+		URI uri = URI.createURI(file.getLocationURI().toString());
+		Resource resource = set.getResource(uri, true);
+		String dceId = getDceId(resource);
+
+		// Add the change to the searchRequestor
+		final String changeId = getArguments().getNewName();
+		final IResource[] roots = { this.currentProject };
+		final String[] fileNamePattern = { "*" + getFileExtension() };
+		FileTextSearchScope scope = FileTextSearchScope.newSearchScope(roots, fileNamePattern, true);
+		Pattern pattern = Pattern.compile(dceId);
+
+		searchRequestor.createChange(scope, changeId, pattern, DceUuidUtil.createDceUUID(), dceId, pm);
+	}
+
+	/**
+	 * @since 10.0
+	 */
+	protected IFile getFile(String[] segments) throws CoreException {
+		String fileName = segments[segments.length - 1] + getFileExtension();
+		return this.currentProject.getFile(fileName);
+	}
+
+	/**
+	 * @since 10.0
+	 */
+	protected String getFileExtension() throws CoreException {
+		return SpdPackage.FILE_EXTENSION;
+	}
+
+	/**
+	 * @since 10.0
+	 */
+	protected String getDceId(Resource resource) throws CoreException {
+		return SoftPkg.Util.getSoftPkg(resource).getId();
 	}
 
 	@Override

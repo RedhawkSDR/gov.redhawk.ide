@@ -15,15 +15,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 
 import gov.redhawk.ide.natures.ScaNodeProjectNature;
 import gov.redhawk.ide.natures.ScaWaveformProjectNature;
 import mil.jpeojtrs.sca.dcd.DcdPackage;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 /**
  * @since 10.0
@@ -39,8 +43,8 @@ public class RenameDiagramFileParticipant extends RenameFileParticipant {
 		 * - Value is the pattern we are using to find the text we want to replace
 		 */
 		Map<String[], String> filePatterns = new HashMap<String[], String>();
-		filePatterns.put(new String[] { "*" + SadPackage.FILE_EXTENSION }, "(?:softwareassembly.*)" + oldProjectName);
-		filePatterns.put(new String[] { "*" + DcdPackage.FILE_EXTENSION }, "(?:deviceconfiguration.*)" + oldProjectName);
+		filePatterns.put(new String[] { "*" + SadPackage.FILE_EXTENSION }, "(?:name.*)" + oldProjectName + "\"");
+		filePatterns.put(new String[] { "*" + DcdPackage.FILE_EXTENSION }, "(?:name.*)" + oldProjectName + "\"");
 
 		Map<FileTextSearchScope, Pattern> namePatternMap = super.createNamePatternMap();
 		for (Entry<String[], String> filePattern : filePatterns.entrySet()) {
@@ -50,6 +54,33 @@ public class RenameDiagramFileParticipant extends RenameFileParticipant {
 		}
 
 		return namePatternMap;
+	}
+
+	@Override
+	protected IFile getFile(String[] segments) throws CoreException {
+		if (getCurrentProject().hasNature(ScaWaveformProjectNature.ID)) {
+			return super.getFile(segments);
+		} else {
+			return getCurrentProject().getFile("DeviceManager" + getFileExtension());
+		}
+	}
+
+	@Override
+	protected String getFileExtension() throws CoreException {
+		if (getCurrentProject().hasNature(ScaWaveformProjectNature.ID)) {
+			return SadPackage.FILE_EXTENSION;
+		} else {
+			return DcdPackage.FILE_EXTENSION;
+		}
+	}
+
+	@Override
+	protected String getDceId(Resource resource) throws CoreException {
+		if (getCurrentProject().hasNature(ScaWaveformProjectNature.ID)) {
+			return SoftwareAssembly.Util.getSoftwareAssembly(resource).getId();
+		} else {
+			return DeviceConfiguration.Util.getDeviceConfiguration(resource).getId();
+		}
 	}
 
 	@Override
