@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softwarecomponent PUBLIC "-//JTRS//DTD SCA V2.2.2 SCD//EN" "softwarecomponent.dtd">
+<softwarecomponent>
+  <corbaversion>2.2</corbaversion>
+  <componentrepid repid="IDL:BULKIO/dataChar:1.0"/>
+  <componenttype>service</componenttype>
+  <componentfeatures>
+    <supportsinterface repid="IDL:BULKIO/dataChar:1.0" supportsname="dataChar"/>
+    <supportsinterface repid="IDL:BULKIO/ProvidesPortStatisticsProvider:1.0" supportsname="ProvidesPortStatisticsProvider"/>
+    <supportsinterface repid="IDL:BULKIO/updateSRI:1.0" supportsname="updateSRI"/>
+    <ports/>
+  </componentfeatures>
+  <interfaces>
+    <interface name="dataChar" repid="IDL:BULKIO/dataChar:1.0">
+      <inheritsinterface repid="IDL:BULKIO/ProvidesPortStatisticsProvider:1.0"/>
+      <inheritsinterface repid="IDL:BULKIO/updateSRI:1.0"/>
+    </interface>
+    <interface name="ProvidesPortStatisticsProvider" repid="IDL:BULKIO/ProvidesPortStatisticsProvider:1.0"/>
+    <interface name="updateSRI" repid="IDL:BULKIO/updateSRI:1.0"/>
+  </interfaces>
+</softwarecomponent>

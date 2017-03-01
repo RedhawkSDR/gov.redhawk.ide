@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
+<softpkg id="DCE:c6a0ccef-0612-4133-8a91-c58ddc47b820" name="service2" type="2.1.0">
+  <title></title>
+  <author>
+    <name>null</name>
+  </author>
+  <descriptor>
+    <localfile name="service2.scd.xml"/>
+  </descriptor>
+  <implementation id="python">
+    <description>The implementation contains descriptive information about the template for a software resource.</description>
+    <code type="Executable">
+      <localfile name="python"/>
+      <entrypoint>python/service2.py</entrypoint>
+    </code>
+    <programminglanguage name="Python"/>
+    <humanlanguage name="EN"/>
+    <runtime name="python" version="2.6.6"/>
+    <os name="Linux"/>
+  </implementation>
+</softpkg>
