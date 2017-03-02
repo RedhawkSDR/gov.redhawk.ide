@@ -59,6 +59,8 @@ public class UsesDeviceSelectionWizardPage extends WizardPage {
 
 	@Override
 	public void createControl(Composite parent) {
+		setInitialStatus();
+
 		initializeDialogUnits(parent);
 		adapterFactory = new SpdItemProviderAdapterFactory();
 
@@ -97,6 +99,13 @@ public class UsesDeviceSelectionWizardPage extends WizardPage {
 		createAddedTable(rightComposite);
 
 		hookButtonsAndTables();
+	}
+
+	private void setInitialStatus() {
+		if (usesDevices.isEmpty() && collocatedUsesDevices.isEmpty()) {
+			setErrorMessage("There are no uses devices in the SAD file");
+			setPageComplete(false);
+		}
 	}
 
 	private void createAvailableTable(Composite parent) {
