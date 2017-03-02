@@ -23,6 +23,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
@@ -667,8 +668,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 
 	@Override
 	protected void internalFetchChildren(IProgressMonitor monitor) throws InterruptedException {
-		// PASS
-
+		// Nothing to do
 	}
 
 	/**
@@ -692,6 +692,10 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 */
 	@Override
 	public List<ScaWaveform> fetchWaveforms(IProgressMonitor monitor) {
+		if (isDisposed()) {
+			return ECollections.emptyEList();
+		}
+
 		final List<ScaWaveform> retVal = new ArrayList<ScaWaveform>();
 		ScaModelCommand.execute(this, new ScaModelCommand() {
 
@@ -700,6 +704,9 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 				retVal.addAll(getWaveforms());
 			}
 		});
+		if (monitor != null) {
+			monitor.done();
+		}
 		return Collections.unmodifiableList(retVal);
 	}
 
