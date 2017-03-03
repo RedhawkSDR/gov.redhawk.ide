@@ -27,42 +27,4 @@
   <properties>
     <sonar.exclusions>src-jj/**/*</sonar.exclusions>
   </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>javacc-maven-plugin</artifactId>
-        <version>2.6</version>
-        <executions>
-          <execution>
-            <id>javacc</id>
-            <goals>
-              <goal>javacc</goal>
-            </goals>
-            <configuration>
-              <sourceDirectory>${basedir}/src-jj</sourceDirectory>
-              <outputDirectory>${basedir}/src-jj</outputDirectory>
-              <staleMillis>-1</staleMillis>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>2.5</version>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>${basedir}/src-jj</directory>
-              <includes>
-                <include>**/*.java</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
