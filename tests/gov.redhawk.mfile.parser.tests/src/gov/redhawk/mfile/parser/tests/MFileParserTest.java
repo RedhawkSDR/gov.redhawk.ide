@@ -20,11 +20,8 @@ import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * 
- */
 public class MFileParserTest {
-	
+
 	@Test
 	public void testParseDefaultValues() throws IOException, ParseException {
 		MFile file = parseFile("defaultValues.m");
@@ -38,7 +35,7 @@ public class MFileParserTest {
 		Assert.assertEquals("someProp", file.getFunction().getInputs().get(1));
 		Assert.assertEquals(4, file.getFunction().getInputDefaultValues().get("someProp"));
 		Assert.assertEquals("someProp1", file.getFunction().getInputs().get(2));
-		Assert.assertEquals(12, file.getFunction().getInputDefaultValues().get("someProp1"));
+		Assert.assertEquals(14, file.getFunction().getInputDefaultValues().get("someProp1"));
 		Assert.assertEquals("someProp2", file.getFunction().getInputs().get(3));
 		Assert.assertEquals(255, file.getFunction().getInputDefaultValues().get("someProp2"));
 		Assert.assertEquals("someProp3", file.getFunction().getInputs().get(4));
@@ -46,8 +43,7 @@ public class MFileParserTest {
 		Assert.assertEquals("someProp4", file.getFunction().getInputs().get(5));
 		Assert.assertEquals(55.5e55, file.getFunction().getInputDefaultValues().get("someProp4"));
 	}
-	
-	
+
 	@Test
 	public void testParseAmmod() throws IOException, ParseException {
 		MFile file = parseFile("ammod.m");
@@ -63,7 +59,7 @@ public class MFileParserTest {
 		Assert.assertEquals("sampleRate", file.getFunction().getInputs().get(2));
 		Assert.assertEquals("t0", file.getFunction().getInputs().get(3));
 	}
-	
+
 	@Test
 	public void testParseCompand() throws IOException, ParseException {
 		MFile file = parseFile("compand.m");
@@ -78,7 +74,7 @@ public class MFileParserTest {
 		Assert.assertEquals("V", file.getFunction().getInputs().get(2));
 		Assert.assertEquals("stype", file.getFunction().getInputs().get(3));
 	}
-	
+
 	@Test
 	public void testParseFmmod() throws IOException, ParseException {
 		MFile file = parseFile("fmmod.m");
@@ -496,6 +492,25 @@ public class MFileParserTest {
 		Assert.assertEquals("octaveTestComponent", file.getFunction().getName());
 		Assert.assertEquals(0, file.getFunction().getOutputs().size());
 		Assert.assertEquals(0, file.getFunction().getInputs().size());
+	}
+
+	@Test
+	public void testZeros() throws IOException, ParseException {
+		MFile file = parseFile("zeros.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+		Assert.assertEquals("zeros", file.getFunction().getName());
+
+		Assert.assertEquals(1, file.getFunction().getOutputs().size());
+		Assert.assertEquals("retval", file.getFunction().getOutputs().get(0));
+
+		Assert.assertEquals(3, file.getFunction().getInputs().size());
+		Assert.assertEquals("a", file.getFunction().getInputs().get(0));
+		Assert.assertEquals(0, file.getFunction().getInputDefaultValues().get("a"));
+		Assert.assertEquals("b", file.getFunction().getInputs().get(1));
+		Assert.assertEquals(1, file.getFunction().getInputDefaultValues().get("b"));
+		Assert.assertEquals("c", file.getFunction().getInputs().get(2));
+		Assert.assertEquals(0.25, file.getFunction().getInputDefaultValues().get("c"));
 	}
 
 	public MFile parseFile(String name) throws IOException, ParseException {

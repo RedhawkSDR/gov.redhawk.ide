@@ -1489,12 +1489,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 */
 	private void addService(EditingDomain domain, final SoftPkg softPkg, final SoftwareComponent component) {
 		// END GENERATED CODE
-		for (SoftPkg spd : getServicesContainer().getComponents()) {
-			if (PluginUtil.equals(spd.getId(), softPkg.getId())) {
-				// Skip it is already in the SDR
-				return;
-			}
-		}
 		domain.getCommandStack().execute(new AddCommand(domain, getServicesContainer().getComponents(), softPkg));
 		// BEGIN GENERATED CODE
 	}

@@ -902,7 +902,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 		// try remove an existing binding
 
-		final org.omg.CORBA.Object _o = ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<org.omg.CORBA.Object>() {
+		ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<org.omg.CORBA.Object>() {
 
 			@Override
 			public void execute() {
@@ -967,7 +967,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 		// try to remove an existing context binding
 
-		final org.omg.CORBA.Object _o = ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<org.omg.CORBA.Object>() {
+		ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<org.omg.CORBA.Object>() {
 
 			@Override
 			public void execute() {
@@ -1304,7 +1304,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 		if (ctx == null) {
 			if (getObjectMap().containsKey(n)) {
-				final org.omg.CORBA.Object o = ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<org.omg.CORBA.Object>() {
+				ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<org.omg.CORBA.Object>() {
 
 					@Override
 					public void execute() {
@@ -1315,7 +1315,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 					NotifyingNamingContextImpl.DEBUG.message("Unbound: " + n.toString());
 				}
 			} else if (getContextMap().containsKey(n)) {
-				final org.omg.CORBA.Object o = ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<org.omg.CORBA.Object>() {
+				ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<org.omg.CORBA.Object>() {
 
 					@Override
 					public void execute() {

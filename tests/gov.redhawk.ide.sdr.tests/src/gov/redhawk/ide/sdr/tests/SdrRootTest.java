@@ -388,15 +388,21 @@ public class SdrRootTest extends TestCase {
 	}
 
 	public void testDuplicateId_IDE_1121() throws URISyntaxException, IOException {
-		SdrRoot sdr = SdrPluginLoader.getSdrRoot(SdrTestsUtil.PLUGIN_ID, "testFiles/sdr2");
-		IStatus loadStatus = sdr.getLoadStatus();
-		Assert.assertTrue(loadStatus.getSeverity() == Status.ERROR);
-		for (IStatus child : loadStatus.getChildren()) {
-			if (child.getMessage() != null && child.getMessage().matches(".*" + "IDs should be unique.")) {
-				return;
+		String[] sdrs = { "testFiles/sdr_dupComponent", "testFiles/sdr_dupDevice", "testFiles/sdr_dupService", "testFiles/sdr_dupWaveform",
+			"testFiles/sdr_dupNode", "testFiles/sdr_dupSharedLibrary" };
+		
+		outerLoop: 
+		for (String sdr : sdrs) {
+			SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(SdrTestsUtil.PLUGIN_ID, sdr);
+			IStatus loadStatus = sdrRoot.getLoadStatus();
+			Assert.assertTrue(loadStatus.getSeverity() == Status.ERROR);
+			for (IStatus child : loadStatus.getChildren()) {
+				if (child.getMessage() != null && child.getMessage().matches(".*" + "IDs should be unique.")) {
+					continue outerLoop;
+				}
 			}
+			Assert.fail("Duplicate error message was not loaded");
 		}
-		Assert.fail("Duplicate error message was not loaded");
 	}
 
 } // SdrRootTest

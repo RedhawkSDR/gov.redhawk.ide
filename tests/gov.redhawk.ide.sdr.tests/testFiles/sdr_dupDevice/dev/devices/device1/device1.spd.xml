@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
+<softpkg id="DCE:92beb851-d62f-4810-9e24-df5acd0f5e5c" name="device1" type="2.1.0">
+  <title></title>
+  <author>
+    <name>null</name>
+  </author>
+  <propertyfile type="PRF">
+    <localfile name="device1.prf.xml"/>
+  </propertyfile>
+  <descriptor>
+    <localfile name="device1.scd.xml"/>
+  </descriptor>
+  <implementation id="python">
+    <description>The implementation contains descriptive information about the template for a software resource.</description>
+    <code type="Executable">
+      <localfile name="python"/>
+      <entrypoint>python/device1.py</entrypoint>
+    </code>
+    <programminglanguage name="Python"/>
+    <humanlanguage name="EN"/>
+    <runtime name="python" version="2.6.6"/>
+    <os name="Linux"/>
+  </implementation>
+</softpkg>

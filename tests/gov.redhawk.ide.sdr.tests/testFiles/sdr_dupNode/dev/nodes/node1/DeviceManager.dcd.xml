@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE deviceconfiguration PUBLIC "-//JTRS//DTD SCA V2.2.2 DCD//EN" "deviceconfiguration.dtd">
+<deviceconfiguration id="DCE:400fd792-9289-4741-bd28-a3594cab7ed3" name="node1">
+  <devicemanagersoftpkg>
+    <localfile name="/mgr/DeviceManager.spd.xml"/>
+  </devicemanagersoftpkg>
+  <componentfiles>
+    <componentfile id="GPP_3689f832-e4fc-40b3-934c-cdad5139c190" type="SPD">
+      <localfile name="/devices/GPP/GPP.spd.xml"/>
+    </componentfile>
+  </componentfiles>
+  <partitioning>
+    <componentplacement>
+      <componentfileref refid="GPP_3689f832-e4fc-40b3-934c-cdad5139c190"/>
+      <componentinstantiation id="node1:GPP_1">
+        <usagename>GPP_1</usagename>
+      </componentinstantiation>
+    </componentplacement>
+  </partitioning>
+  <domainmanager>
+    <namingservice name="REDHAWK_DEV/REDHAWK_DEV"/>
+  </domainmanager>
+</deviceconfiguration>

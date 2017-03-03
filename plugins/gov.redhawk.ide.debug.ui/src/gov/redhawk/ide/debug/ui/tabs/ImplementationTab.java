@@ -260,7 +260,8 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 	 */
 	@Override
 	public void setDefaults(final ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS, (Map<String, String>) Collections.EMPTY_MAP);
+		Map<String, String> emptyMap = Collections.emptyMap();
+		configuration.setAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS, emptyMap);
 		if (this.viewer != null) {
 			this.viewer.refresh();
 		}
