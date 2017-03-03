@@ -6,7 +6,7 @@ import java.util.*;
 import gov.redhawk.mfile.parser.model.*;
 
 public class MFileParser implements MFileParserConstants {
-  public static MFile parse(InputStream in, String encoding) throws ParseException
+  public static MFile parse(InputStream in, String encoding) throws ParseException, TokenMgrError
   {
     MFileParser parser = new MFileParser(in, encoding);
     return parser.mFile();
@@ -263,24 +263,6 @@ retVal.add(token.image);
     finally { jj_save(0, xla); }
   }
 
-  private boolean jj_3R_6()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_7()) {
-    jj_scanpos = xsp;
-    if (jj_3R_8()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_1()
- {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(14)) return true;
-    return false;
-  }
-
   private boolean jj_3R_10()
  {
     if (jj_scan_token(ID)) return true;
@@ -320,6 +302,24 @@ retVal.add(token.image);
   private boolean jj_3R_9()
  {
     if (jj_3R_10()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_6()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_7()) {
+    jj_scanpos = xsp;
+    if (jj_3R_8()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3_1()
+ {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(14)) return true;
     return false;
   }
 

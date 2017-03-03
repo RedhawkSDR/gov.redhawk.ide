@@ -6,7 +6,7 @@ import java.util.*;
 import gov.redhawk.mfile.parser.model.*;
 
 /** Token Manager. */
-@SuppressWarnings("unused")public class MFileParserTokenManager implements MFileParserConstants {
+@SuppressWarnings("unused")class MFileParserTokenManager implements MFileParserConstants {
 
   /** Debug output. */
   public  java.io.PrintStream debugStream = System.out;
