@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -171,16 +170,8 @@ public class ProxyScaComponentImpl extends LocalScaComponentImpl {
 	public String fetchIdentifier(IProgressMonitor monitor) {
 		// Cause target to fetch, then update ourself using that
 		SubMonitor progress = SubMonitor.convert(monitor, 2);
-
-		if (progress.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		target.fetchIdentifier(progress.newChild(1));
-
-		if (progress.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		return super.fetchIdentifier(progress.newChild(1));
+		target.fetchIdentifier(progress.split(1));
+		return super.fetchIdentifier(progress.split(1));
 	}
 
 	@Override
@@ -194,16 +185,8 @@ public class ProxyScaComponentImpl extends LocalScaComponentImpl {
 	public Boolean fetchStarted(IProgressMonitor monitor) {
 		// Cause target to fetch, then update ourself using that
 		SubMonitor progress = SubMonitor.convert(monitor, 2);
-
-		if (progress.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		target.fetchStarted(progress.newChild(1));
-
-		if (progress.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		return super.fetchStarted(progress.newChild(1));
+		target.fetchStarted(progress.split(1));
+		return super.fetchStarted(progress.split(1));
 	}
 
 	@Override
@@ -220,16 +203,8 @@ public class ProxyScaComponentImpl extends LocalScaComponentImpl {
 	public String fetchProfile(IProgressMonitor monitor) {
 		// Cause target to fetch, then update ourself using that
 		SubMonitor progress = SubMonitor.convert(monitor, 2);
-
-		if (progress.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		target.fetchProfile(progress.newChild(1));
-
-		if (progress.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		return super.fetchProfile(progress.newChild(1));
+		target.fetchProfile(progress.split(1));
+		return super.fetchProfile(progress.split(1));
 	}
 
 	@Override
@@ -274,32 +249,16 @@ public class ProxyScaComponentImpl extends LocalScaComponentImpl {
 	public EList<ScaAbstractProperty< ? >> fetchProperties(IProgressMonitor monitor) {
 		// Cause target to fetch, then update ourself using that
 		SubMonitor progress = SubMonitor.convert(monitor, 2);
-
-		if (progress.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		target.fetchProperties(progress.newChild(1));
-
-		if (progress.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		return super.fetchProperties(progress.newChild(1));
+		target.fetchProperties(progress.split(1));
+		return super.fetchProperties(progress.split(1));
 	}
 
 	@Override
 	public SoftPkg fetchProfileObject(IProgressMonitor monitor) {
 		// Cause target to fetch, then update ourself
 		SubMonitor progress = SubMonitor.convert(monitor, 2);
-
-		if (progress.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		target.fetchProfileObject(progress.newChild(1));
-
-		if (progress.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		return super.fetchProfileObject(progress.newChild(1));
+		target.fetchProfileObject(progress.split(1));
+		return super.fetchProfileObject(progress.split(1));
 	}
 
 	//////////////////////////////
