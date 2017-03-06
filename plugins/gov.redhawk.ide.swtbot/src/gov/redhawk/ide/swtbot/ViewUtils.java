@@ -25,6 +25,8 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
+
 @SuppressWarnings("restriction")
 public class ViewUtils {
 
@@ -126,6 +128,24 @@ public class ViewUtils {
 	 */
 	public static SWTBotView getPortMonitorView(SWTWorkbenchBot bot) {
 		return bot.viewById("gov.redhawk.ui.views.monitor.ports.PortMonitorView");
+	}
+
+	/**
+	 * Return the CORBA Name Browser view
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getCorbaNameBrowserView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.ui.views.namebrowserview");
+	}
+
+	/**
+	 * Return the Redhawk Explorer view
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getExplorerView(SWTWorkbenchBot bot) {
+		return bot.viewById(ScaExplorerTestUtils.SCA_EXPLORER_VIEW_ID);
 	}
 
 	/**
