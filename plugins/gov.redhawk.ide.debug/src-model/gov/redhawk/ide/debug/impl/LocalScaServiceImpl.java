@@ -15,12 +15,24 @@ import gov.redhawk.ide.debug.LocalAbstractComponent;
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalScaService;
 import gov.redhawk.ide.debug.ScaDebugPackage;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.jobs.TerminateJob;
+import gov.redhawk.model.sca.ScaPackage;
+import gov.redhawk.model.sca.commands.SetLocalAttributeCommand;
+import gov.redhawk.model.sca.commands.UnsetLocalAttributeCommand;
+import gov.redhawk.model.sca.commands.VersionedFeature.Transaction;
 import gov.redhawk.model.sca.impl.ScaServiceImpl;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
@@ -400,9 +412,10 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 		return result.toString();
 	}
 
+	// END GENERATED CODE
+
 	@Override
 	public void dispose() {
-		// END GENERATED CODE
 		// If we have a launch object (i.e. this IDE launched the object locally)
 		if (getLaunch() != null) {
 			Job terminateJob = new TerminateJob(getLaunch(), getName());
@@ -412,7 +425,36 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 		}
 
 		super.dispose();
-		// BEGIN GENERATED CODE
+	}
+
+	@Override
+	public URI fetchProfileURI(IProgressMonitor monitor) {
+		if (isDisposed()) {
+			return null;
+		}
+		if (isSetProfileURI()) {
+			return getProfileURI();
+		}
+
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Fetch profile URI.", 1);
+		ILaunch tmpLaunch = getLaunch();
+		URI uri = null;
+		if (tmpLaunch != null) {
+			ILaunchConfiguration launchConfig = tmpLaunch.getLaunchConfiguration();
+			Transaction transaction = getProfileURIVersionedFeature().createTransaction();
+			try {
+				uri = ScaLaunchConfigurationUtil.getProfileURI(launchConfig);
+				transaction.addCommand(new SetLocalAttributeCommand(this, uri, ScaPackage.Literals.PROFILE_OBJECT_WRAPPER__PROFILE_URI));
+			} catch (CoreException e) {
+				Status status = new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, e.getStatus().getMessage());
+				transaction.addCommand(new UnsetLocalAttributeCommand(this, status, ScaPackage.Literals.PROFILE_OBJECT_WRAPPER__PROFILE_URI));
+			}
+			transaction.commit();
+			subMonitor.worked(1);
+		}
+
+		subMonitor.done();
+		return getProfileURI();
 	}
 
 	/**
@@ -421,5 +463,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	@Override
 	public void unsetProfileURI() {
 	}
+
+	// BEGIN GENERATED CODE
 
 } //LocalScaServiceImpl
