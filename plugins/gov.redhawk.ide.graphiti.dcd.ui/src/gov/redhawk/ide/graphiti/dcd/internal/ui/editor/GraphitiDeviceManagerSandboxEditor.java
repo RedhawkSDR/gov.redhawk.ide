@@ -25,6 +25,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 
 import gov.redhawk.core.graphiti.dcd.ui.editor.GraphitiDeviceManagerExplorerEditor;
 import gov.redhawk.core.graphiti.dcd.ui.modelmap.GraphitiDCDModelMap;
+import gov.redhawk.core.graphiti.dcd.ui.modelmap.ScaDeviceManagerModelAdapter;
 import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
@@ -32,6 +33,7 @@ import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDeviceManagerSandboxDiagramEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DevMgrSandboxDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.dcd.ui.internal.modelmap.GraphitiDCDLocalModelMap;
+import gov.redhawk.ide.graphiti.dcd.ui.internal.modelmap.LocalScaDeviceManagerModelAdapter;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaDeviceManager;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -127,6 +129,11 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 	protected GraphitiDCDModelMap createModelMapInstance() {
 		modelMap = new GraphitiDCDLocalModelMap(this, getDeviceManager());
 		return modelMap;
+	}
+
+	@Override
+	protected ScaDeviceManagerModelAdapter getScaModelAdapter() {
+		return new LocalScaDeviceManagerModelAdapter(modelMap);
 	}
 
 	////////////////////////////////////////////////////
