@@ -418,6 +418,10 @@ public class ScaExplorerTestUtils {
 		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Terminate");
 	}
 
+	public static void shutdown(SWTWorkbenchBot bot, String[] nodeParentPath, String nodeName) {
+		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Shutdown");
+	}
+
 	/**
 	 * Waits for the specified resource to be present and <b>not</b> decorated as started in the explorer view.
 	 * @param bot
