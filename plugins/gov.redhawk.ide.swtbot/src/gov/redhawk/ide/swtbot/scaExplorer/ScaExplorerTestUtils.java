@@ -702,47 +702,51 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Launch component from REDHAWK Explorer TargetSDR
+	 * Launch component from REDHAWK Explorer Target SDR
 	 * @param bot The SWTBot
 	 * @param componentName The component's name
 	 * @param implementationId The implementation ID to be launched
 	 */
 	public static void launchComponentFromTargetSDR(SWTWorkbenchBot bot, String componentName, String implementationId) {
-		List<String> path = new ArrayList<String>();
-		Collections.addAll(path, "Target SDR", "Components");
-		Collections.addAll(path, componentName.split("\\."));
-		int last = path.size() - 1;
-		SWTBotTreeItem componentEntry = getTreeItemFromScaExplorer(bot, path.subList(0, last).toArray(new String[last]), path.get(last));
-		componentEntry.contextMenu().menu("Launch in Sandbox", implementationId).click();
+		launchFromTargetSDR(bot, "Components", componentName, implementationId);
 	}
 
 	/**
-	 * Launch component from REDHAWK Explorer TargetSDR
+	 * Launch device from REDHAWK Explorer Target SDR
 	 * @param bot The SWTBot
 	 * @param deviceName The device's name
 	 * @param implementationId The implementation ID to be launched
 	 */
 	public static void launchDeviceFromTargetSDR(SWTWorkbenchBot bot, String deviceName, String implementationId) {
-		List<String> path = new ArrayList<String>();
-		Collections.addAll(path, "Target SDR", "Devices");
-		Collections.addAll(path, deviceName.split("\\."));
-		int last = path.size() - 1;
-		SWTBotTreeItem deviceEntry = getTreeItemFromScaExplorer(bot, path.subList(0, last).toArray(new String[last]), path.get(last));
-		deviceEntry.contextMenu().menu("Launch in Sandbox", implementationId).click();
+		launchFromTargetSDR(bot, "Devices", deviceName, implementationId);
 	}
 
 	/**
-	 * Launch waveform from REDHAWK Explorer TargetSDR
-	 * @param componentName
-	 * @param componentLanguage
+	 * Launch service from REDHAWK Explorer Target SDR
+	 * @param bot The SWTBot
+	 * @param serviceName The service's name
+	 * @param implementationId The implementation ID to be launched
+	 */
+	public static void launchServiceFromTargetSDR(SWTWorkbenchBot bot, String serviceName, String implementationId) {
+		launchFromTargetSDR(bot, "Services", serviceName, implementationId);
+	}
+
+	/**
+	 * Launch waveform from REDHAWK Explorer Target SDR
+	 * @param bot The SWTBot
+	 * @param waveformName
 	 */
 	public static void launchWaveformFromTargetSDR(SWTWorkbenchBot bot, String waveformName) {
+		launchFromTargetSDR(bot, "Waveforms", waveformName, "Default");
+	}
+
+	private static void launchFromTargetSDR(SWTWorkbenchBot bot, String childFolder, String itemName, String childMenu) {
 		List<String> path = new ArrayList<String>();
-		Collections.addAll(path, "Target SDR", "Waveforms");
-		Collections.addAll(path, waveformName.split("\\."));
+		Collections.addAll(path, "Target SDR", childFolder);
+		Collections.addAll(path, itemName.split("\\."));
 		int last = path.size() - 1;
-		SWTBotTreeItem deviceEntry = getTreeItemFromScaExplorer(bot, path.subList(0, last).toArray(new String[last]), path.get(last));
-		deviceEntry.contextMenu().menu("Launch in Sandbox", "Default").click();
+		SWTBotTreeItem itemEntry = getTreeItemFromScaExplorer(bot, path.subList(0, last).toArray(new String[last]), path.get(last));
+		itemEntry.contextMenu().menu("Launch in Sandbox", childMenu).click();
 	}
 
 	/**
