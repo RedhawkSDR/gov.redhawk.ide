@@ -21,7 +21,6 @@ import gov.redhawk.ide.debug.impl.commands.LocalMergeServicesCommand;
 import gov.redhawk.ide.debug.internal.cf.impl.DeviceManagerImpl;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDevice;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.impl.ScaDeviceManagerImpl;
 import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
@@ -509,17 +508,15 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	@Override
 	public void shutdown() {
-		ScaModelCommand.execute(this, new ScaModelCommand() {
-			@Override
-			public void execute() {
-				getDevices().clear();
-			}
-		});
+		// Call shutdown, but don't remove ourself from the model (like our parent does)
+		DeviceManager devMgr = fetchNarrowedObject(null);
+		if (devMgr != null) {
+			devMgr.shutdown();
+		}
 	}
 
 	@Override
 	public void dispose() {
-		shutdown();
 		super.dispose();
 		if (session != null) {
 			session.dispose();
