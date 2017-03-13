@@ -39,7 +39,7 @@ public abstract class UITest {
 
 	private static final String PYDEV_BUNDLE = "org.python.pydev";
 	private static final String PYDEV_CHECK_SETTINGS = "CHECK_PREFERRED_PYDEV_SETTINGS";
-	private static final String PYDEV_FUNDING_SHOWN = "PYDEV_FUNDING_SHOWN_2016";
+	private static final String PYDEV_FUNDING_SHOW_AT_TIME = "PYDEV_FUNDING_SHOW_AT_TIME_2016";
 
 	protected SWTWorkbenchBot bot; // SUPPRESS CHECKSTYLE VisibilityModifier
 	private List<IPath> sdrDomCleanupPaths = null;
@@ -50,7 +50,7 @@ public abstract class UITest {
 		// Stop PyDev from generating pop-ups
 		ScopedPreferenceStore pydevPrefs = new ScopedPreferenceStore(InstanceScope.INSTANCE, PYDEV_BUNDLE);
 		pydevPrefs.setValue(PYDEV_CHECK_SETTINGS, false);
-		pydevPrefs.setValue(PYDEV_FUNDING_SHOWN, true);
+		pydevPrefs.setValue(PYDEV_FUNDING_SHOW_AT_TIME, 2000000000000L);
 
 		// Wait for the workbench to start, and close the intro
 		while (PlatformUI.getWorkbench().isStarting()) {
