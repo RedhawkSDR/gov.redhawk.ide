@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * An incremental builder that adds a top-level RPM spec file to waveforms and nodes.
- * @deprecated Spec file generation is now handled by invoking the GenerateCodeHandler
+ * @deprecated Spec file generation is now handled by invoking either GenerateNodeHandler or GenerateWaveformHandler
  */
 @Deprecated
 public class TopLevelRPMSpec extends IncrementalProjectBuilder {
