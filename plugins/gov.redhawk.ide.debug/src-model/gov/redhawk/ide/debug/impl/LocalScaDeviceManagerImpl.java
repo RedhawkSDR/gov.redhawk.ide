@@ -514,6 +514,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 			@Override
 			public void execute() {
 				getDevices().clear();
+				getServices().clear();
 			}
 		});
 	}

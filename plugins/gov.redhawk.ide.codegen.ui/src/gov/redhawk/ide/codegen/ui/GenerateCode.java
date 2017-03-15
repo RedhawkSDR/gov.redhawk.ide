@@ -108,7 +108,7 @@ public final class GenerateCode {
 	 * input. The process occurs in a job and is thus asynchronous.
 	 * <p/>
 	 * This entry point does not perform any deprecation checks, upgrades, etc. For that, see
-	 * {@link gov.redhawk.ide.codegen.ui.internal.command.GenerateCodeHandler}.
+	 * {@link gov.redhawk.ide.codegen.ui.internal.command.GenerateComponentHandler}.
 	 * @since 8.0
 	 */
 	public static void generate(final Shell shell, final List<Implementation> impls) {

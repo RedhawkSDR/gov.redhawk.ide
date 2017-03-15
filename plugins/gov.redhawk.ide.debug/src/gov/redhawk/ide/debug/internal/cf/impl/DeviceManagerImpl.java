@@ -12,11 +12,12 @@ package gov.redhawk.ide.debug.internal.cf.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -26,12 +27,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -90,7 +94,7 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 /**
  * This is the implementation of the sandbox's device manager. It is represented in the REDHAWK model by a {@link LocalScaDeviceManager}.
  */
-public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOperations {
+public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOperations, ILaunchesListener2 {
 
 	private final String profile;
 	private final String identifier;
@@ -98,22 +102,35 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	private final FileSystem fileSystem;
 
 	/**
-	 * The list of devices that have registered with the device manager.
+	 * A map containing the devices that have registered with the device manager. IORs are mapped to the {@link Device}
+	 * object.
+	 * <p/>
+	 * All access should be synchronized on the object.
 	 */
-	private List<Device> devices = Collections.synchronizedList(new ArrayList<Device>());
+	private Map<String, Device> devices = new HashMap<>();
 
 	/**
-	 * The list of service that have registered with the device manager.
+	 * This map enables us to take an {@link ILaunch} and find the {@link Device} in the {@link #devices} member.
+	 * <p/>
+	 * All access should be synchronized on the object.
 	 */
-	private List<ServiceType> services = Collections.synchronizedList(new ArrayList<ServiceType>());
+	private Map<ILaunch, String> launchToDeviceIor = new HashMap<>();
 
 	/**
-	 * Holds the initial properties to use for <code>initializeProperties</code> and <code>configure</code>. Maps
-	 * a device ID to a model object with the properties values and profile information.
+	 * A list containing the services that have registered with the device manager.
+	 * <p/>
+	 * All access should be synchronized on the object.
 	 */
-	private Map<String, ScaComponent> initialProperties = Collections.synchronizedMap(new HashMap<String, ScaComponent>());
+	private List<ServiceType> services = new ArrayList<>();
 
-	private final Job refreshJob;
+	/**
+	 * This map enables us to take an {@link ILaunch} and find the {@link Serivce} in the {@link #services} member.
+	 * <p/>
+	 * All access should be synchronized on the object.
+	 */
+	private Map<ILaunch, String> launchToServiceName = new HashMap<>();
+
+	private final Job refreshChildrenJob;
 	private LocalScaDeviceManager devMgrModelObj;
 
 	public DeviceManagerImpl(final String profile, final String identifier, final String name, final LocalScaDeviceManager devMgrModelObj,
@@ -124,19 +141,19 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		this.name = name;
 		this.fileSystem = fileSystem;
 		this.devMgrModelObj = devMgrModelObj;
-		refreshJob = new Job("Refreshing Device Manager") {
+		this.refreshChildrenJob = new Job("Refreshing Device Manager children") {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					devMgrModelObj.refresh(monitor, RefreshDepth.FULL);
-				} catch (InterruptedException e) {
-					return Status.CANCEL_STATUS;
-				}
+				SubMonitor progress = SubMonitor.convert(monitor, 2);
+				devMgrModelObj.fetchDevices(progress.newChild(1), RefreshDepth.NONE);
+				devMgrModelObj.fetchServices(progress.newChild(1), RefreshDepth.NONE);
 				return Status.OK_STATUS;
 			}
 
 		};
+
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 
 	@Override
@@ -202,46 +219,16 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	@Override
 	public Device[] registeredDevices() {
 		synchronized (devices) {
-			boolean changed = false;
-			for (Iterator<Device> iterator = devices.iterator(); iterator.hasNext();) {
-				Device d = iterator.next();
-				try {
-					if (d._non_existent()) {
-						iterator.remove();
-						changed = true;
-					}
-				} catch (SystemException e) {
-					iterator.remove();
-					changed = true;
-				}
-			}
-			if (changed) {
-				refreshJob.schedule();
-			}
-			return devices.toArray(new Device[devices.size()]);
+			Device[] deviceArray = devices.values().toArray(new Device[devices.size()]);
+			return deviceArray;
 		}
 	}
 
 	@Override
 	public ServiceType[] registeredServices() {
 		synchronized (services) {
-			boolean changed = false;
-			for (Iterator<ServiceType> iterator = services.iterator(); iterator.hasNext();) {
-				ServiceType type = iterator.next();
-				try {
-					if (type.serviceObject._non_existent()) {
-						iterator.remove();
-						changed = true;
-					}
-				} catch (SystemException e) {
-					iterator.remove();
-					changed = true;
-				}
-			}
-			if (changed) {
-				refreshJob.schedule();
-			}
-			return services.toArray(new ServiceType[services.size()]);
+			ServiceType[] serviceArray = services.toArray(new ServiceType[services.size()]);
+			return serviceArray;
 		}
 	}
 
@@ -251,7 +238,8 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			throw new InvalidObjectReference("Cannot register a null device reference");
 		}
 
-		// Collect some info from the device via CORBA calls
+		// Collect some info from the device. The latter two are CORBA calls.
+		String ior = registeringDevice.toString();
 		String deviceId = registeringDevice.identifier();
 		String deviceLabel = registeringDevice.label();
 
@@ -262,10 +250,10 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			// Find the launch by matching device id and/or label
 			String launchDevId = candidateLaunch.getAttribute(LaunchVariables.DEVICE_ID);
 			String launchDevLabel = candidateLaunch.getAttribute(LaunchVariables.DEVICE_LABEL);
-			if (launchDevId != null && !launchDevId.equals(deviceId)) {
+			if (launchDevId == null || !launchDevId.equals(deviceId)) {
 				continue;
 			}
-			if (launchDevLabel != null && !launchDevLabel.equals(deviceLabel)) {
+			if (launchDevLabel == null || !launchDevLabel.equals(deviceLabel)) {
 				continue;
 			}
 			launch = candidateLaunch;
@@ -282,6 +270,12 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 				propHolder = null;
 				ScaDebugPlugin.logError("Unable to retrieve properties for a device launch", e);
 			}
+
+			// Hold on to the launch -> IOR mapping
+			synchronized (launchToDeviceIor) {
+				launchToDeviceIor.put(launch, ior);
+			}
+
 			break;
 		}
 
@@ -349,50 +343,65 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		}
 
 		// Register the device and refresh the model so it notices it
-		devices.add(registeringDevice);
-		refreshJob.schedule();
+		synchronized (devices) {
+			devices.put(ior, registeringDevice);
+		}
+		refreshChildrenJob.schedule();
 	}
 
 	@Override
 	public void unregisterDevice(final Device registeredDevice) throws InvalidObjectReference {
 		if (registeredDevice == null) {
-			throw new InvalidObjectReference("Null reference", "Null reference");
+			String msg = "Cannot unregister a null device reference";
+			throw new InvalidObjectReference(msg, msg);
 		}
-		final String deviceId = registeredDevice.identifier();
-		if (deviceId == null) {
-			return;
-		}
+
+		String ior = registeredDevice.toString();
 		synchronized (devices) {
-			for (Iterator<Device> iterator = devices.iterator(); iterator.hasNext();) {
-				Device d = iterator.next();
-				if (d == registeredDevice || PluginUtil.equals(d.identifier(), deviceId)) {
-					iterator.remove();
-					return;
-				}
+			if (devices.remove(ior) == null) {
+				String msg = "Device is not registered";
+				throw new InvalidObjectReference(msg, msg);
 			}
 		}
-		refreshJob.schedule();
-		try {
-			registeredDevice.releaseObject();
-		} catch (ReleaseError e) {
-			throw new InvalidObjectReference("Release error", Arrays.toString(e.errorMessages));
-		}
+
+		refreshChildrenJob.schedule();
 	}
 
 	@Override
 	public void shutdown() {
-		for (ServiceType type : this.services.toArray(new ServiceType[services.size()])) {
+		// Kill all services
+		Set<ILaunch> launches;
+		synchronized (launchToServiceName) {
+			launches = new HashSet<>(launchToServiceName.keySet());
+		}
+		for (ILaunch launch : launches) {
 			try {
-				unregisterService(type.serviceObject, type.serviceName);
-			} catch (InvalidObjectReference e) {
-				ScaDebugPlugin.logError("Failed to release service " + type.serviceName, e);
+				launch.terminate();
+			} catch (DebugException e) {
+				// PASS
 			}
 		}
-		for (Device d : this.devices.toArray(new Device[devices.size()])) {
+
+		// Release all devices
+		Device[] deviceArray = registeredDevices();
+		for (Device device : deviceArray) {
 			try {
-				unregisterDevice(d);
-			} catch (InvalidObjectReference e) {
-				ScaDebugPlugin.logError("Failed to release device", e);
+				// TODO: Call with a timeout of 3 seconds to match CF behavior
+				device.releaseObject();
+			} catch (ReleaseError | SystemException e) {
+				// PASS
+			}
+		}
+
+		// Kill all devices
+		synchronized (launchToDeviceIor) {
+			launches = new HashSet<>(launchToDeviceIor.keySet());
+		}
+		for (ILaunch launch : launches) {
+			try {
+				launch.terminate();
+			} catch (DebugException e) {
+				// PASS
 			}
 		}
 	}
@@ -400,8 +409,25 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	@Override
 	public void registerService(final org.omg.CORBA.Object registeringService, final String name) throws InvalidObjectReference {
 		ServiceType type = new ServiceType(registeringService, name);
-		services.add(type);
-		refreshJob.schedule();
+
+		// Iterate all launches until we find this service's ILaunch
+		ILaunch launch = null;
+		for (ILaunch candidateLaunch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
+			// Find the launch by matching the service name
+			String launchServiceName = candidateLaunch.getAttribute(LaunchVariables.SERVICE_NAME);
+			if (launchServiceName == null || !launchServiceName.equals(name)) {
+				continue;
+			}
+			launch = candidateLaunch;
+
+			// Hold on to the launch -> name mapping
+			synchronized (launchToServiceName) {
+				launchToServiceName.put(launch, name);
+			}
+
+			break;
+		}
+
 		if (registeringService._is_a(LifeCycleHelper.id())) {
 			LifeCycle service = LifeCycleHelper.narrow(registeringService);
 			try {
@@ -410,33 +436,39 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 				throw new InvalidObjectReference("Initialize error", Arrays.toString(e.errorMessages));
 			}
 		}
+
+		// Register the service and refresh the model so it notices it
+		synchronized (services) {
+			services.add(type);
+		}
+		refreshChildrenJob.schedule();
 	}
 
 	@Override
 	public void unregisterService(final org.omg.CORBA.Object unregisteringService, final String name) throws InvalidObjectReference {
-		if (name == null) {
-			return;
+		if (unregisteringService == null) {
+			String msg = "Cannot unregister a null service reference";
+			throw new InvalidObjectReference(msg, msg);
 		}
+
 		synchronized (services) {
+			boolean found = false;
 			for (Iterator<ServiceType> iterator = services.iterator(); iterator.hasNext();) {
 				ServiceType type = iterator.next();
 				if (PluginUtil.equals(type.serviceName, name)) {
 					iterator.remove();
-					return;
+					found = true;
+					break;
 				}
 			}
-		}
 
-		refreshJob.schedule();
-
-		if (unregisteringService._is_a(LifeCycleHelper.id())) {
-			LifeCycle service = LifeCycleHelper.narrow(unregisteringService);
-			try {
-				service.releaseObject();
-			} catch (ReleaseError e) {
-				throw new InvalidObjectReference("Release error", Arrays.toString(e.errorMessages));
+			if (!found) {
+				String msg = String.format("Service '%s' is not registered", name);
+				throw new InvalidObjectReference(msg, msg);
 			}
 		}
+
+		refreshChildrenJob.schedule();
 	}
 
 	@Override
@@ -583,7 +615,6 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 						}
 					}
 					ScaLaunchConfigurationUtil.saveProperties(config, propHolder);
-					initialProperties.put(compId, propHolder);
 				}
 			}
 			break;
@@ -641,4 +672,51 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to find device/serivce after launch", null));
 	}
 
+	@Override
+	public void launchesRemoved(ILaunch[] launches) {
+	}
+
+	@Override
+	public void launchesAdded(ILaunch[] launches) {
+	}
+
+	@Override
+	public void launchesChanged(ILaunch[] launches) {
+	}
+
+	@Override
+	public void launchesTerminated(ILaunch[] launches) {
+		for (ILaunch launch : launches) {
+			String key;
+
+			// Attempt to find and remove a matching device
+			synchronized (launchToDeviceIor) {
+				key = launchToDeviceIor.remove(launch);
+			}
+			if (key != null) {
+				synchronized (devices) {
+					devices.remove(key);
+				}
+				continue;
+			}
+
+			// Attempt to find and remove a matching service
+			synchronized (launchToServiceName) {
+				key = launchToServiceName.remove(launch);
+			}
+			if (key != null) {
+				synchronized (services) {
+					ServiceType terminatedService = null;
+					for (ServiceType service : services) {
+						if (PluginUtil.equals(key, service.serviceName)) {
+							terminatedService = service;
+							break;
+						}
+					}
+					services.remove(terminatedService);
+				}
+				continue;
+			}
+		}
+	}
 }

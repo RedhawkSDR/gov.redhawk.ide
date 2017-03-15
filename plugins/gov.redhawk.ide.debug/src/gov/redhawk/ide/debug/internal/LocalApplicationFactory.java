@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
@@ -55,7 +54,7 @@ import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.SubMonitor;
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -64,7 +63,6 @@ import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.CFErrorFormatter;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 import mil.jpeojtrs.sca.util.QueryParser;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 public class LocalApplicationFactory {
@@ -75,10 +73,6 @@ public class LocalApplicationFactory {
 	private final ILaunch launch;
 	private final Map<String, List<DataType>> componentPropertyMap;
 	private final NotifyingNamingContext namingContext;
-
-	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 
 	public LocalApplicationFactory(final Map<String, String> implMap, final LocalSca localSca, final String mode, final ILaunch launch,
 		final Map<String, List<DataType>> componentPropertyMap) {
@@ -333,7 +327,7 @@ public class LocalApplicationFactory {
 
 	@Nullable
 	private URI getSpdURI(@Nullable final SadComponentInstantiation comp) {
-		final SoftPkg spd = ScaEcoreUtils.getFeature(comp, LocalApplicationFactory.SPD_PATH);
+		final SoftPkg spd = ComponentInstantiation.Util.getSpd(comp);
 		if (spd != null && spd.eResource() != null) {
 			return spd.eResource().getURI();
 		} else {
