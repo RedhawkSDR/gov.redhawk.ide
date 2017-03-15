@@ -155,6 +155,73 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="gov.redhawk.ide.codegen.ui.command.generatecomponent"
+               icon="icons/generate_code.gif"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <or>
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                        <test
+                              property="org.eclipse.core.resources.name"
+                              value="*.spd.xml">
+                        </test>
+                     </adapt>
+                     <instanceof
+                           value="mil.jpeojtrs.sca.spd.Implementation">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="gov.redhawk.ide.codegen.ui.command.generatewaveform"
+               icon="icons/generate_code.gif"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <test
+                           property="org.eclipse.core.resources.name"
+                           value="*.sad.xml">
+                     </test>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="gov.redhawk.ide.codegen.ui.command.generatenode"
+               icon="icons/generate_code.gif"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <test
+                           property="org.eclipse.core.resources.name"
+                           value="*.dcd.xml">
+                     </test>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="gov.redhawk.ide.codegen.ui.codegenPages">

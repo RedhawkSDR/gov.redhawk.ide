@@ -142,33 +142,13 @@
                icon="icons/generate_code.gif"
                style="push">
             <visibleWhen
-                  checkEnabled="true">
+                  checkEnabled="false">
                <with
                      variable="activeEditor">
                   <instanceof
                         value="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiSADEditor">
                   </instanceof>
                </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatewaveform"
-               icon="icons/generate_code.gif"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate>
-                  <adapt
-                        type="org.eclipse.core.resources.IResource">
-                     <test
-                           property="org.eclipse.core.resources.name"
-                           value="*.sad.xml">
-                     </test>
-                  </adapt>
-               </iterate>
             </visibleWhen>
          </command>
       </menuContribution>
