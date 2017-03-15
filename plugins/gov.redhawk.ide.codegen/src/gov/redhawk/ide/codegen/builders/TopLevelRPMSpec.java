@@ -29,7 +29,6 @@ public class TopLevelRPMSpec extends IncrementalProjectBuilder {
 	/**
 	 * The ID of the top level build script builder.
 	 */
-	// TODO: Search this ID, where is it being used?  Have we redirected everything correctly?
 	public static final String ID = "gov.redhawk.ide.codegen.builders.TopLevelRPMSpec";
 
 	public TopLevelRPMSpec() {
