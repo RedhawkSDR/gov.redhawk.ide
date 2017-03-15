@@ -39,7 +39,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
-import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
@@ -157,9 +156,6 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 							}
 							openEditorOn.refreshLocal(IResource.DEPTH_ONE, null);
 						}
-
-						// Setup automatic RPM spec file generation
-						CodegenUtil.addTopLevelRPMSpecBuilder(project, progress.newChild(1));
 					} finally {
 						monitor.done();
 					}

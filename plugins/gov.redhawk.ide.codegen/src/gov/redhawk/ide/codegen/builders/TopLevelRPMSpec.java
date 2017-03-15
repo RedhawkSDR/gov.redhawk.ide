@@ -17,6 +17,8 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import gov.redhawk.ide.codegen.CodegenUtil;
+
 /**
  * An incremental builder that adds a top-level RPM spec file to waveforms and nodes.
  * @deprecated Spec file generation is now handled by invoking either GenerateNodeHandler or GenerateWaveformHandler
@@ -34,11 +36,12 @@ public class TopLevelRPMSpec extends IncrementalProjectBuilder {
 	}
 
 	/**
-	 * @deprecated - From REDHAWK 2.0.5 - TopLevelRPMSpec builder is disabled.
+	 * @deprecated - TopLevelRPMSpec builder is deprecated.  For REDHAWK 2.1.1+ remove the builder from any referencing project.
 	 */
 	@Deprecated
 	@Override
 	protected IProject[] build(final int kind, @SuppressWarnings("rawtypes") final Map args, final IProgressMonitor monitor) throws CoreException {
+		CodegenUtil.removeDeprecatedBuilders(getProject(), monitor);
 		return null;
 	}
 }

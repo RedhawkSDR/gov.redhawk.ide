@@ -8,22 +8,13 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.codegen;
-
-import gov.redhawk.ide.codegen.builders.TopLevelBuildScript;
-import gov.redhawk.ide.codegen.builders.TopLevelRPMSpec;
-import gov.redhawk.ide.natures.ScaComponentProjectNature;
-import gov.redhawk.sca.util.Debug;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -45,6 +36,14 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+
+import gov.redhawk.ide.codegen.builders.TopLevelBuildScript;
+import gov.redhawk.ide.codegen.builders.TopLevelRPMSpec;
+import gov.redhawk.ide.natures.ScaComponentProjectNature;
+import gov.redhawk.sca.util.Debug;
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 public class CodegenUtil {
 	private static final Debug DEBUG = new Debug(RedhawkCodegenActivator.PLUGIN_ID, "codgenUtil");
@@ -102,11 +101,11 @@ public class CodegenUtil {
 	 * @since 9.0
 	 */
 	public static Command createAddImplementationSettingsCommand(final EditingDomain domain, final String implId, final ImplementationSettings settings,
-	        final WaveDevSettings waveDevSettings) {
+		final WaveDevSettings waveDevSettings) {
 		// XXX Is this right?!?
 		@SuppressWarnings("unchecked")
-		final BasicEMap.Entry<String, ImplementationSettings> entry = (Entry<String, ImplementationSettings>) EcoreUtil
-		        .create(CodegenPackage.Literals.IMPL_ID_TO_SETTINGS_MAP);
+		final BasicEMap.Entry<String, ImplementationSettings> entry = (Entry<String, ImplementationSettings>) EcoreUtil.create(
+			CodegenPackage.Literals.IMPL_ID_TO_SETTINGS_MAP);
 		entry.setKey(implId);
 		entry.setValue(settings);
 		return AddCommand.create(domain, waveDevSettings, CodegenPackage.Literals.WAVE_DEV_SETTINGS__IMPL_SETTINGS, Collections.singleton(entry));
@@ -250,7 +249,8 @@ public class CodegenUtil {
 	 * @since 6.0
 	 */
 	public static String getValidName(final String input) {
-		if (input == null) return null;
+		if (input == null)
+			return null;
 		final String name = input.replaceAll("[^A-Za-z0-9_]", "_");
 		return name;
 	}
@@ -297,8 +297,8 @@ public class CodegenUtil {
 	 * Adds the top level build script generator to a REDHAWK project, if applicable for the project type.
 	 * @param project The project to add the top level build script generator to
 	 * @param progress the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be reported and that the
-	 *  operation cannot be canceled.
+	 * to call done() on the given monitor. Accepts null, indicating that no progress should be reported and that the
+	 * operation cannot be canceled.
 	 * @throws CoreException A problem occurs adjusting the project description
 	 * @since 7.0
 	 * @deprecated Preserved for 1.8 codegen projects only. Does not apply to 1.9 and future.
@@ -339,25 +339,23 @@ public class CodegenUtil {
 	 * @since 11.0
 	 */
 	public static void removeDeprecatedBuilders(final IProject project, final IProgressMonitor progress) throws CoreException {
-		if (project.hasNature(ScaComponentProjectNature.ID)) {
-			final IProjectDescription desc = project.getDescription();
-			final ICommand[] oldCommands = desc.getBuildSpec();
-			final List<ICommand> newCommands = new ArrayList<ICommand>();
+		final IProjectDescription desc = project.getDescription();
+		final ICommand[] oldCommands = desc.getBuildSpec();
+		final List<ICommand> newCommands = new ArrayList<ICommand>();
 
-			// Keep everything except the two we don't want
-			for (ICommand command : oldCommands) {
-				String builderName = command.getBuilderName();
-				if (TopLevelBuildScript.ID.equals(builderName) || TopLevelRPMSpec.ID.equals(builderName)) {
-					continue;
-				}
-				newCommands.add(command);
+		// Keep everything except the two we don't want
+		for (ICommand command : oldCommands) {
+			String builderName = command.getBuilderName();
+			if (TopLevelBuildScript.ID.equals(builderName) || TopLevelRPMSpec.ID.equals(builderName)) {
+				continue;
 			}
+			newCommands.add(command);
+		}
 
-			// Only set the project description if we've modified it
-			if (oldCommands.length != newCommands.size()) {
-				desc.setBuildSpec(newCommands.toArray(new ICommand[newCommands.size()]));
-				project.setDescription(desc, progress);
-			}
+		// Only set the project description if we've modified it
+		if (oldCommands.length != newCommands.size()) {
+			desc.setBuildSpec(newCommands.toArray(new ICommand[newCommands.size()]));
+			project.setDescription(desc, progress);
 		}
 	}
 
@@ -366,8 +364,8 @@ public class CodegenUtil {
 	 * 
 	 * @param project The project to add the top level RPM spec file generator to
 	 * @param progress the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be reported and that the
-	 *  operation cannot be canceled.
+	 * to call done() on the given monitor. Accepts null, indicating that no progress should be reported and that the
+	 * operation cannot be canceled.
 	 * @throws CoreException A problem occurs adjusting the project description
 	 * @since 7.0
 	 */
@@ -396,7 +394,7 @@ public class CodegenUtil {
 
 	/**
 	 * This method returns true if the given programming language name can be
-	 * set to a primary implementation.  This is currently only valid for C++.
+	 * set to a primary implementation. This is currently only valid for C++.
 	 * @param progLangName the name of the programming language to check
 	 * @return true if the programming language can be set to a primary implementation
 	 * @since 9.0
@@ -445,8 +443,8 @@ public class CodegenUtil {
 					name = ep.substring(idx + 1);
 				} else if (idx == 0) {
 					name = softPkg.getName();
-				} 
-				
+				}
+
 				if (name == null) {
 					name = "";
 				}
@@ -462,26 +460,28 @@ public class CodegenUtil {
 					name = ep.substring(0, (slhIdx > 0) ? slhIdx : name.length()); // SUPPRESS CHECKSTYLE AvoidInline
 					outputDir = impl.getCode().getLocalFile().getName();
 				}
-				
+
 				// Set the generator, name and output directory
 				if (isEmpty(settings.getGeneratorId())) {
 					settings.setGeneratorId(generator.getClass().getCanonicalName());
 				}
-				
+
 				// TODO: Determine if there is a way to set the name of the new settings without causing issues
 //				if (isEmpty(settings.getName())) {
 //					settings.setName(name);
 //				}
-				
+
 				if (isEmpty(settings.getOutputDir())) {
 					settings.setOutputDir(outputDir);
 				}
 
 				if (isEmpty(settings.getTemplate())) {
-					// Find the template if specified, otherwise pick the first selectable and defaultable one returned by the registry
+					// Find the template if specified, otherwise pick the first selectable and defaultable one returned
+					// by the registry
 					ITemplateDesc templateDesc = null;
 					final String componentType = softPkg.getDescriptor().getComponent().getComponentType();
-					final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(settings.getGeneratorId(), componentType);
+					final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(
+						settings.getGeneratorId(), componentType);
 					for (final ITemplateDesc itd : templates) {
 						if (itd.isSelectable() && !itd.notDefaultableGenerator()) {
 							templateDesc = itd;
@@ -514,6 +514,6 @@ public class CodegenUtil {
 	}
 
 	private static boolean isEmpty(String str) {
-	    return (str == null) || "".equals(str.trim());
-    }
+		return (str == null) || "".equals(str.trim());
+	}
 }

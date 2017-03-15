@@ -43,7 +43,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
-import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectPropertiesWizardPage;
@@ -163,9 +162,6 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 						}
 						NewWaveformFromLocalWizard.this.openEditorOn.setContents(new ByteArrayInputStream(buffer.toByteArray()), true, false,
 							progress.newChild(1));
-
-						// Setup automatic RPM spec file generation
-						CodegenUtil.addTopLevelRPMSpecBuilder(project, progress.newChild(1));
 					} finally {
 						monitor.done();
 					}

@@ -41,7 +41,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
-import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
 import gov.redhawk.ide.dcd.ui.DcdUiActivator;
@@ -148,9 +147,6 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 							}
 							openEditorOn.refreshLocal(IResource.DEPTH_ONE, null);
 						}
-
-						// Setup automatic RPM spec file generation
-						CodegenUtil.addTopLevelRPMSpecBuilder(project, progress.newChild(1));
 					} finally {
 						monitor.done();
 					}
