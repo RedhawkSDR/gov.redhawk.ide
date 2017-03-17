@@ -138,7 +138,11 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 */
 	protected SandboxOperations sandbox = SANDBOX_EDEFAULT;
 
+	// END GENERATED CODE
+
 	private OrbSession session = OrbSession.createSession();
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -407,6 +411,8 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__SANDBOX, oldSandbox, sandbox));
 	}
 
+	// END GENERATED CODE
+
 	private final ILaunchesListener2 launchListener = new ILaunchesListener2() {
 
 		@Override
@@ -455,6 +461,8 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		}
 	};
 
+	// BEGIN GENERATED CODE
+
 	/**
 	 * @param sandboxRef 
 	 * @param fileManagerRef 
@@ -476,12 +484,16 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		// BEGIN GENERATED CODE
 	}
 
+	// END GENERATED CODE
+
 	/**
 	 * @since 4.0
 	 */
 	public OrbSession getSession() {
 		return session;
 	}
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -666,6 +678,8 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		return result.toString();
 	}
 
+	// END GENERATED CODE
+
 	@Override
 	protected void internalFetchChildren(IProgressMonitor monitor) throws InterruptedException {
 		// Nothing to do
@@ -709,5 +723,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		}
 		return Collections.unmodifiableList(retVal);
 	}
+
+	// BEGIN GENERATED CODE
 
 } //LocalScaImpl
