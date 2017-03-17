@@ -60,8 +60,8 @@ public class RenameFileSearchRequestor extends TextSearchRequestor {
 	 * @param scope - FileTextSearchScope: used to determine which files to apply the pattern to
 	 * @param changeId - String: ID used to used to track the change in the UI
 	 * @param pattern - Pattern: used to precisely determine which text elements should be considered for refactoring
-	 * @param oldText - String: text to be replaced
 	 * @param newText - String: text that will be replacing any oldName elements that are detected by the pattern
+	 * @param oldText - String: text to be replaced
 	 * @param pm - ProgressMonitor
 	 */
 	public void createChange(FileTextSearchScope scope, String changeId, Pattern pattern, String newText, String oldText, IProgressMonitor pm) {
@@ -99,7 +99,15 @@ public class RenameFileSearchRequestor extends TextSearchRequestor {
 		if (matchedFile.getName().endsWith(".spec") && originalText.contains("%dir")) {
 			replacementText = buildDirectoryBlock(originalText);
 		} else {
-			replacementText = originalText.replace(this.oldText, this.newText);
+			// Make sure we are not changing any part of the prefix
+			StringBuilder builder = new StringBuilder(originalText);
+			int startIndex = originalText.lastIndexOf(this.oldText);
+			if (startIndex != -1) {
+				builder.replace(startIndex, startIndex + this.oldText.length(), this.newText);
+				replacementText = builder.toString();
+			} else {
+				replacementText = originalText.replace(this.oldText, this.newText);
+			}
 		}
 
 		final ReplaceEdit edit = new ReplaceEdit(matchAccess.getMatchOffset(), matchAccess.getMatchLength(), replacementText);
@@ -123,7 +131,7 @@ public class RenameFileSearchRequestor extends TextSearchRequestor {
 		// Preserve the existing prefix, as this is specific to the project type
 		String[] textArray = originalText.split("\n");
 		String pathPrefix = textArray[textArray.length - 1];
-		pathPrefix = pathPrefix.substring(0, pathPrefix.indexOf(this.oldText) - 1);
+		pathPrefix = pathPrefix.substring(0, pathPrefix.lastIndexOf(this.oldText) - 1);
 
 		// Add lines to the directory block for each folder in the path
 		String[] newPathElements = this.newText.split("/");

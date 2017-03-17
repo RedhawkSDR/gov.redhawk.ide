@@ -261,8 +261,8 @@ public class RenameFileParticipant extends RenameParticipant {
 		filePatterns.put(new String[] { "*.spec" }, "(?<!\\%dir )(?:\\%\\{_sdrroot\\}.*)" + oldProjectPath + "(?!\\.)");
 
 		// Update the %dir declarations in .spec files. These are special cases that need to be handled
-		filePatterns.put(new String[] { "*.spec" }, "(?s:\\%dir \\%\\{_prefix\\}.*?)" + oldProjectPath);
-		filePatterns.put(new String[] { "*.spec" }, "(?s:\\%dir \\%\\{_sdrroot\\}.*?)" + oldProjectPath);
+		filePatterns.put(new String[] { "*.spec" }, "(?s:\\%dir \\%\\{_prefix\\}/(dom|dev)/(components|deps|devices|nodes|services|waveforms).*?)" + oldProjectPath);
+		filePatterns.put(new String[] { "*.spec" }, "(?s:\\%dir \\%\\{_sdrroot\\}/(dom|dev)/(components|deps|devices|nodes|services|waveforms).*?)" + oldProjectPath);
 
 		for (Entry<String[], String> filePattern : filePatterns.entrySet()) {
 			FileTextSearchScope scope = FileTextSearchScope.newSearchScope(roots, filePattern.getKey(), true);
