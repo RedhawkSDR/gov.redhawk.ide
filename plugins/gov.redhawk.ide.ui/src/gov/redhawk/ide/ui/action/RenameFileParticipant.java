@@ -297,7 +297,7 @@ public class RenameFileParticipant extends RenameParticipant {
 	}
 
 	/**
-	 * @since 10.0
+	 * @since 11.0
 	 */
 	protected IFile getFile(String[] segments) throws CoreException {
 		String fileName = segments[segments.length - 1] + getFileExtension();
@@ -305,14 +305,14 @@ public class RenameFileParticipant extends RenameParticipant {
 	}
 
 	/**
-	 * @since 10.0
+	 * @since 11.0
 	 */
 	protected String getFileExtension() throws CoreException {
 		return SpdPackage.FILE_EXTENSION;
 	}
 
 	/**
-	 * @since 10.0
+	 * @since 11.0
 	 */
 	protected String getDceId(Resource resource) throws CoreException {
 		return SoftPkg.Util.getSoftPkg(resource).getId();
