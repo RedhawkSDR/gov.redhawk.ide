@@ -442,7 +442,6 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 								// See if this is the model object we're looking for
 								final LocalLaunch scaLaunch = (LocalLaunch) obj;
 								if (scaLaunch.getLaunch() == launch) {
-									// TODO: Unset the CORBA Obj? Unset launch?
 									EcoreUtil.delete(scaLaunch);
 									return;
 								}

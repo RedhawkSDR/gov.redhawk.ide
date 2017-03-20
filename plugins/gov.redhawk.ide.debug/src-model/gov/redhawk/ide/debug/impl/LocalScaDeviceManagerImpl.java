@@ -509,6 +509,13 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	@Override
 	public void shutdown() {
+		// Call shutdown
+		DeviceManager devMgr = fetchNarrowedObject(null);
+		if (devMgr != null) {
+			devMgr.shutdown();
+		}
+
+		// Only remove our children from the model, not ourself
 		ScaModelCommand.execute(this, new ScaModelCommand() {
 			@Override
 			public void execute() {
@@ -520,7 +527,6 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	@Override
 	public void dispose() {
-		shutdown();
 		super.dispose();
 		if (session != null) {
 			session.dispose();
