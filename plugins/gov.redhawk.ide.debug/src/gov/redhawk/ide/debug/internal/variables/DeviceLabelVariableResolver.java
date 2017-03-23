@@ -17,6 +17,7 @@ import gov.redhawk.ide.debug.variables.AbstractLauncherResolver;
 import gov.redhawk.model.sca.ScaDevice;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.collections.FeatureMapList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
@@ -42,7 +43,7 @@ public class DeviceLabelVariableResolver extends AbstractLauncherResolver implem
 		for (int i = 1; true; i++) {
 			name = spd.getName() + "_" + i;
 			boolean contains = false;
-			for (final ScaDevice< ? > d : devMgr.getAllDevices()) {
+			for (final ScaDevice< ? > d : new FeatureMapList<>(devMgr.getDevices(), ScaDevice.class)) {
 				if (name.equals(d.fetchLabel(null))) {
 					contains = true;
 				}

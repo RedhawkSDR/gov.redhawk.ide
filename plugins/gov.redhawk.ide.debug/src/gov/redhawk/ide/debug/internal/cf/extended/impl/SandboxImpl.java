@@ -23,6 +23,7 @@ import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 import gov.redhawk.sca.util.OrbSession;
+import mil.jpeojtrs.sca.util.collections.FeatureMapList;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -100,7 +101,7 @@ public class SandboxImpl implements SandboxOperations {
 						desc.resource = cp.getObj();
 						retVal.add(desc);
 					}
-					for (final ScaDevice< ? > cp : SandboxImpl.this.localSca.getSandboxDeviceManager().getAllDevices()) {
+					for (final ScaDevice< ? > cp : new FeatureMapList<>(SandboxImpl.this.localSca.getSandboxDeviceManager().getDevices(), ScaDevice.class)) {
 						final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
 						desc.profile = cp.getProfileObj().eResource().getURI().path();
 						desc.resource = cp.getObj();
