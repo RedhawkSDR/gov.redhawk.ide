@@ -10,6 +10,7 @@
  */
 package gov.redhawk.ide.swtbot.condition;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 
 import gov.redhawk.ide.sdr.LoadState;
@@ -24,14 +25,30 @@ public class WaitForTargetSdrRootLoad extends DefaultCondition {
 
 	private LoadState lastObservedState;
 
+	private boolean jobRunning = false;
+
 	@Override
 	public boolean test() throws Exception {
 		lastObservedState = SdrUiPlugin.getDefault().getTargetSdrRoot().getState();
+
+		// Ensure the refresh job isn't queued / running
+		Job[] jobs = Job.getJobManager().find(null);
+		for (Job job : jobs) {
+			if ("RefreshSdrJob".equals(job.getClass().getSimpleName())) {
+				jobRunning = true;
+				return false;
+			}
+		}
+		jobRunning = false;
+
 		return lastObservedState == LoadState.LOADED;
 	}
 
 	@Override
 	public String getFailureMessage() {
+		if (jobRunning) {
+			return "Refresh job for target SDR was still running";
+		}
 		return String.format("Target SDR Root failed to load in model (state was %s)", lastObservedState);
 	}
 

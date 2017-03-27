@@ -31,10 +31,10 @@ import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.SpdLauncherUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaService;
 import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 import gov.redhawk.sca.util.PluginUtil;
+import mil.jpeojtrs.sca.util.collections.FeatureMapList;
 
 /**
  * Handles the "Terminate" action for anything launched locally in the sandbox.
@@ -79,8 +79,8 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 						@Override
 						public void run() {
 							List<LocalLaunch> launches = new ArrayList<>();
-							for (ScaDevice< ? > device : sandboxDevMgr.getAllDevices()) {
-								launches.add((LocalLaunch) device);
+							for (LocalLaunch localDevice : new FeatureMapList<>(sandboxDevMgr.getDevices(), LocalLaunch.class)) {
+								launches.add(localDevice);
 							}
 							for (ScaService service : sandboxDevMgr.getServices()) {
 								launches.add((LocalLaunch) service);

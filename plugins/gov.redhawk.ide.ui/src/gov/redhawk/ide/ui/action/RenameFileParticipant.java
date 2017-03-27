@@ -193,8 +193,11 @@ public class RenameFileParticipant extends RenameParticipant {
 			IPackageFragment[] packages = javaProject.getPackageFragments();
 			for (IPackageFragment pkg : packages) {
 				if (pkg.getKind() == IPackageFragmentRoot.K_SOURCE) {
-					if (pkg.getElementName().equals(oldName + ".java")) {
-						RenamePackageChange packageChange = new RenamePackageChange(pkg, newName + ".java", true);
+					// Java packages always begin with a lowercase letter, regardless of the project name
+					String oldNameLower = Character.toLowerCase(oldName.charAt(0)) + oldName.substring(1);
+					String newNameLower = Character.toLowerCase(newName.charAt(0)) + newName.substring(1);
+					if (!(oldNameLower.equals(newNameLower)) && pkg.getElementName().equals(oldNameLower + ".java")) {
+						RenamePackageChange packageChange = new RenamePackageChange(pkg, newNameLower + ".java", true);
 						result.add(packageChange);
 					}
 				}
@@ -220,7 +223,8 @@ public class RenameFileParticipant extends RenameParticipant {
 		Map<String[], String> filePatterns = new HashMap<String[], String>();
 		filePatterns.put(new String[] { "*" + SpdPackage.FILE_EXTENSION }, oldProjectName + "(?:.*type=)");
 		filePatterns.put(new String[] { "*.spec", "*.pc.in" }, "(?:Name:\\s*)" + oldProjectName);
-		filePatterns.put(new String[] { "*.java" }, "(?:package.*)" + oldProjectName);
+		// Java packages always begin with a lowercase letter, regardless of the project name
+		filePatterns.put(new String[] { "*.java" }, "(?:package.*)" + Character.toLowerCase(oldProjectName.charAt(0)) + oldProjectName.substring(1));
 		filePatterns.put(new String[] { "*.wavedev" }, "(?:properties.*)" + oldProjectName);
 		filePatterns.put(new String[] { "build.sh" }, "(?:-e.*)" + oldProjectName + "|(?:tmpdir.*)");
 		filePatterns.put(new String[] { "configure.ac" }, "(?:AC_INIT.*)" + oldProjectName);
