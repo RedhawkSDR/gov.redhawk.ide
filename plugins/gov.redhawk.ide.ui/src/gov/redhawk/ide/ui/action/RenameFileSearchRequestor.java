@@ -98,6 +98,10 @@ public class RenameFileSearchRequestor extends TextSearchRequestor {
 		String replacementText = "";
 		if (matchedFile.getName().endsWith(".spec") && originalText.contains("%dir")) {
 			replacementText = buildDirectoryBlock(originalText);
+		} else if (matchedFile.getName().matches(".*.java") && originalText.contains("package")) {
+			// Java packages always begin with a lowercase letter, regardless of the project name
+			String newTextLower = Character.toLowerCase(this.newText.charAt(0)) + this.newText.substring(1);
+			replacementText = originalText.replace(this.oldText, newTextLower);
 		} else {
 			// Make sure we are not changing any part of the prefix
 			StringBuilder builder = new StringBuilder(originalText);
