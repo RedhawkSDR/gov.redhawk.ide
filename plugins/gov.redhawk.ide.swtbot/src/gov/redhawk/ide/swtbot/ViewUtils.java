@@ -11,7 +11,6 @@
 package gov.redhawk.ide.swtbot;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
@@ -73,37 +72,6 @@ public class ViewUtils {
 		ConsoleUtils.disableAutoShowConsole(bot);
 	}
 
-	public static SWTBotView getConsoleView(SWTWorkbenchBot bot) {
-		return bot.viewById("org.eclipse.ui.console.ConsoleView");
-	}
-
-	/**
-	 * Return Plot View
-	 * @param bot
-	 * @return
-	 */
-	public static SWTBotView getPlotView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.ui.port.nxmplot.PlotView2");
-	}
-
-	/**
-	 * Gets the Problems view
-	 * @param bot
-	 * @return
-	 */
-	public static SWTBotView getProblemsView(SWTWorkbenchBot bot) {
-		return bot.viewById("org.eclipse.ui.views.ProblemView");
-	}
-
-	/**
-	 * Return SRI View
-	 * @param bot
-	 * @return
-	 */
-	public static SWTBotView getSRIView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.bulkio.ui.sridata.view");
-	}
-
 	/**
 	 * Return Audio View
 	 * @param bot
@@ -113,31 +81,8 @@ public class ViewUtils {
 		return bot.viewById("gov.redhawk.ui.port.playaudio.view");
 	}
 
-	/**
-	 * Return Data List View
-	 * @param bot
-	 * @return
-	 */
-	public static SWTBotView getDataListView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.datalist.ui.views.DataListView");
-	}
-
-	/**
-	 * Return Snapshot dialog
-	 * @param bot
-	 * @return
-	 */
-	public static SWTBotShell getSnapshotDialog(SWTWorkbenchBot bot) {
-		return bot.shell("Snapshot");
-	}
-
-	/**
-	 * Return Port Monitor View
-	 * @param bot
-	 * @return
-	 */
-	public static SWTBotView getPortMonitorView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.ui.views.monitor.ports.PortMonitorView");
+	public static SWTBotView getConsoleView(SWTWorkbenchBot bot) {
+		return bot.viewById("org.eclipse.ui.console.ConsoleView");
 	}
 
 	/**
@@ -150,12 +95,66 @@ public class ViewUtils {
 	}
 
 	/**
+	 * Return Data List View
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getDataListView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.datalist.ui.views.DataListView");
+	}
+
+	/**
 	 * Return the Redhawk Explorer view
 	 * @param bot
 	 * @return
 	 */
 	public static SWTBotView getExplorerView(SWTWorkbenchBot bot) {
 		return bot.viewById(ScaExplorerTestUtils.SCA_EXPLORER_VIEW_ID);
+	}
+
+	/**
+	 * Return Plot View
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getPlotView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.ui.port.nxmplot.PlotView2");
+	}
+
+	/**
+	 * Return Port Monitor View
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getPortMonitorView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.ui.views.monitor.ports.PortMonitorView");
+	}
+
+	/**
+	 * Gets the Problems view
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getProblemsView(SWTWorkbenchBot bot) {
+		return bot.viewById("org.eclipse.ui.views.ProblemView");
+	}
+
+	/**
+	 * Return Snapshot dialog
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotShell getSnapshotDialog(SWTWorkbenchBot bot) {
+		return bot.shell("Snapshot");
+	}
+
+	/**
+	 * Return SRI View
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getSRIView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.bulkio.ui.sridata.view");
 	}
 
 	/**
