@@ -30,7 +30,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import gov.redhawk.ide.swtbot.SwtBotActivator;
 
 /**
- * Waits for any currently running Eclipse auto-builds to complete
+ * Waits for one (not all) of the specified builds to complete.
  */
 public class WaitForBuild extends DefaultCondition {
 
@@ -67,6 +67,9 @@ public class WaitForBuild extends DefaultCondition {
 		this(BuildType.AUTO);
 	}
 
+	/**
+	 * @param buildTypes When any of the specified build type(s) complete, the condition is satisfied.
+	 */
 	public WaitForBuild(BuildType... buildTypes) {
 		this.buildTypes = new HashSet<>();
 		Collections.addAll(this.buildTypes, buildTypes);
