@@ -11,6 +11,7 @@
 package gov.redhawk.ide.swtbot;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
@@ -83,6 +84,15 @@ public class ViewUtils {
 	 */
 	public static SWTBotView getPlotView(SWTWorkbenchBot bot) {
 		return bot.viewById("gov.redhawk.ui.port.nxmplot.PlotView2");
+	}
+
+	/**
+	 * Gets the Problems view
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getProblemsView(SWTWorkbenchBot bot) {
+		return bot.viewById("org.eclipse.ui.views.ProblemView");
 	}
 
 	/**
