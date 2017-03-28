@@ -72,28 +72,6 @@ public class ViewUtils {
 		ConsoleUtils.disableAutoShowConsole(bot);
 	}
 
-	public static SWTBotView getConsoleView(SWTWorkbenchBot bot) {
-		return bot.viewById("org.eclipse.ui.console.ConsoleView");
-	}
-
-	/**
-	 * Return Plot View
-	 * @param bot
-	 * @return
-	 */
-	public static SWTBotView getPlotView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.ui.port.nxmplot.PlotView2");
-	}
-
-	/**
-	 * Return SRI View
-	 * @param bot
-	 * @return
-	 */
-	public static SWTBotView getSRIView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.bulkio.ui.sridata.view");
-	}
-
 	/**
 	 * Return Audio View
 	 * @param bot
@@ -101,6 +79,19 @@ public class ViewUtils {
 	 */
 	public static SWTBotView getAudioView(SWTWorkbenchBot bot) {
 		return bot.viewById("gov.redhawk.ui.port.playaudio.view");
+	}
+
+	public static SWTBotView getConsoleView(SWTWorkbenchBot bot) {
+		return bot.viewById("org.eclipse.ui.console.ConsoleView");
+	}
+
+	/**
+	 * Return the CORBA Name Browser view
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getCorbaNameBrowserView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.ui.views.namebrowserview");
 	}
 
 	/**
@@ -122,12 +113,21 @@ public class ViewUtils {
 	}
 
 	/**
-	 * Return Snapshot dialog
+	 * Return the Redhawk Explorer view
 	 * @param bot
 	 * @return
 	 */
-	public static SWTBotShell getSnapshotDialog(SWTWorkbenchBot bot) {
-		return bot.shell("Snapshot");
+	public static SWTBotView getExplorerView(SWTWorkbenchBot bot) {
+		return bot.viewById(ScaExplorerTestUtils.SCA_EXPLORER_VIEW_ID);
+	}
+
+	/**
+	 * Return Plot View
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getPlotView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.ui.port.nxmplot.PlotView2");
 	}
 
 	/**
@@ -140,21 +140,30 @@ public class ViewUtils {
 	}
 
 	/**
-	 * Return the CORBA Name Browser view
+	 * Gets the Problems view
 	 * @param bot
 	 * @return
 	 */
-	public static SWTBotView getCorbaNameBrowserView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.ui.views.namebrowserview");
+	public static SWTBotView getProblemsView(SWTWorkbenchBot bot) {
+		return bot.viewById("org.eclipse.ui.views.ProblemView");
 	}
 
 	/**
-	 * Return the Redhawk Explorer view
+	 * Return Snapshot dialog
 	 * @param bot
 	 * @return
 	 */
-	public static SWTBotView getExplorerView(SWTWorkbenchBot bot) {
-		return bot.viewById(ScaExplorerTestUtils.SCA_EXPLORER_VIEW_ID);
+	public static SWTBotShell getSnapshotDialog(SWTWorkbenchBot bot) {
+		return bot.shell("Snapshot");
+	}
+
+	/**
+	 * Return SRI View
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getSRIView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.bulkio.ui.sridata.view");
 	}
 
 	/**

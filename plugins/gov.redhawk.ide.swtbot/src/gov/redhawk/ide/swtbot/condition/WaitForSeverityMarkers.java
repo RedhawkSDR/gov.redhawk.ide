@@ -27,6 +27,11 @@ import gov.redhawk.ide.swtbot.SwtBotActivator;
  */
 public class WaitForSeverityMarkers implements ICondition {
 
+	/**
+	 * The recommended timeout when using this condition
+	 */
+	public static final long TIMEOUT = 15000;
+
 	private int maxMarkerSeverity;
 
 	private IWorkspaceRoot root;
