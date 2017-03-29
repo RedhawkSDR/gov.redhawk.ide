@@ -703,9 +703,25 @@ public final class StandardTestActions {
 	 * @param row
 	 * @param column
 	 * @param text
+	 * @param doubleClick
 	 * @see gov.redhawk.ide.swtbot.condition.WaitForCellValue#WaitForCellValue(SWTBotTable, int, int, String)
 	 */
 	public static void writeToCell(SWTBot bot, SWTBotTable table, final int row, final int column, final String text, final boolean doubleClick) {
+		writeToCell(bot, table, row, column, text, doubleClick, false);
+	}
+
+	/**
+	 * @param bot
+	 * @param table
+	 * @param row
+	 * @param column
+	 * @param text
+	 * @param doubleClick
+	 * @param shouldRepeat
+	 * @see gov.redhawk.ide.swtbot.condition.WaitForCellValue#WaitForCellValue(SWTBotTable, int, int, String, boolean)
+	 */
+	public static void writeToCell(SWTBot bot, SWTBotTable table, final int row, final int column, final String text, final boolean doubleClick,
+		final boolean shouldRepeat) {
 		if (doubleClick) {
 			table.doubleClick(row, column);
 		} else {
@@ -714,7 +730,28 @@ public final class StandardTestActions {
 
 		// Type in the cell editor when it appears
 		final SWTBotText cellEditor = new SWTBot(table.widget).text();
-		cellEditor.typeText(text);
+
+		// SwtBot Bug:
+		// cellEditor.typeText() occasionally begins typing to soon, resulting in the first character being omitted.
+		if (shouldRepeat) {
+			bot.waitUntil(new DefaultCondition() {
+
+				@Override
+				public boolean test() throws Exception {
+					cellEditor.selectAll();
+					cellEditor.typeText(text);
+					return text.equals(cellEditor.getText());
+				}
+
+				@Override
+				public String getFailureMessage() {
+					return "Cell editor did not receive focus";
+				}
+			});
+		} else {
+			cellEditor.typeText(text);
+		}
+
 		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
 		keyboard.pressShortcut(Keystrokes.CR);
 
