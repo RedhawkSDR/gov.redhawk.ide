@@ -10,16 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.condition;
 
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -37,13 +31,9 @@ public class WaitForBuild extends DefaultCondition {
 	public static final long TIMEOUT = 30000;
 
 	private long startingWaitTime = 0;
-	private long endingWaitTime = 0;
-
-	private IResourceChangeListener resourceListener;
-	private IJobChangeListener jobListener;
 
 	private BuildType buildType;
-	private boolean buildStarted = false;
+	private boolean firstTime = true;
 
 	public enum BuildType {
 		/**
@@ -76,39 +66,36 @@ public class WaitForBuild extends DefaultCondition {
 	public void init(SWTBot bot) {
 		super.init(bot);
 		startingWaitTime = System.currentTimeMillis();
-
-		switch (buildType) {
-		case AUTO:
-			attachAutoBuildListener();
-			buildStarted = isAutoBuildRunning();
-			break;
-		case CODEGEN:
-			attachGenerateCodeBuildListener();
-			buildStarted = isGenerateCodeBuildRunning();
-			break;
-		default:
-			throw new IllegalStateException();
-		}
 	}
 
 	@Override
 	public boolean test() throws Exception {
-		// If the build wasn't started, we're done
-		if (!buildStarted) {
-			removeListeners();
-			String msg = String.format("Eclipse build of type %s was not running", buildType.toString());
-			StatusManager.getManager().handle(new Status(IStatus.INFO, SwtBotActivator.PLUGIN_ID, msg), StatusManager.LOG);
-			return true;
+		boolean done;
+		switch (buildType) {
+		case AUTO:
+			done = !isAutoBuildRunning();
+			break;
+		case CODEGEN:
+			done = !isGenerateCodeBuildRunning();
+			break;
+		default:
+			done = false;
+			break;
 		}
 
-		// If the build was started, but hasn't finished
-		if (endingWaitTime == 0) {
+		if (!done) {
+			firstTime = false;
 			return false;
 		}
 
-		removeListeners();
-		String msg = String.format("Eclipse build of type %s completed in %f seconds", buildType.toString(), (endingWaitTime - startingWaitTime) / 1000.0);
-		StatusManager.getManager().handle(new Status(IStatus.INFO, SwtBotActivator.PLUGIN_ID, msg), StatusManager.LOG);
+		if (firstTime) {
+			String msg = String.format("Eclipse build of type %s was not running", buildType.toString());
+			StatusManager.getManager().handle(new Status(IStatus.INFO, SwtBotActivator.PLUGIN_ID, msg), StatusManager.LOG);
+		} else {
+			String msg = String.format("Eclipse build of type %s completed in %f seconds", buildType.toString(),
+				(System.currentTimeMillis() - startingWaitTime) / 1000.0);
+			StatusManager.getManager().handle(new Status(IStatus.INFO, SwtBotActivator.PLUGIN_ID, msg), StatusManager.LOG);
+		}
 		return true;
 	}
 
@@ -117,69 +104,18 @@ public class WaitForBuild extends DefaultCondition {
 		return jobs.length > 0;
 	}
 
-	private void attachAutoBuildListener() {
-		resourceListener = new IResourceChangeListener() {
-
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				if (event.getBuildKind() != IncrementalProjectBuilder.AUTO_BUILD) {
-					return;
-				}
-
-				if (endingWaitTime == 0) {
-					endingWaitTime = System.currentTimeMillis();
-				}
-				removeListeners();
-			}
-		};
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.PRE_BUILD | IResourceChangeEvent.POST_BUILD);
-	}
-
 	private boolean isGenerateCodeBuildRunning() {
 		Job[] jobs = Job.getJobManager().find(null);
 		for (Job job : jobs) {
-			if (isGenerateCodeBuildJob(job)) {
+			if (job.getClass().getName().startsWith("gov.redhawk.ide.codegen.ui.GenerateCode$") && job.getName().startsWith("Building Project")) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private void attachGenerateCodeBuildListener() {
-		jobListener = new JobChangeAdapter() {
-
-			@Override
-			public void done(IJobChangeEvent event) {
-				if (!event.getJob().getClass().getName().startsWith("gov.redhawk.ide.codegen.ui.GenerateCode$")
-					|| !event.getJob().getName().startsWith("Building Project")) {
-					return;
-				}
-
-				if (endingWaitTime == 0) {
-					endingWaitTime = System.currentTimeMillis();
-				}
-				removeListeners();
-			}
-		};
-		Job.getJobManager().addJobChangeListener(jobListener);
-	}
-
-	private boolean isGenerateCodeBuildJob(Job job) {
-		return job.getClass().getName().startsWith("gov.redhawk.ide.codegen.ui.GenerateCode$") && job.getName().startsWith("Building Project");
-	}
-
-	private void removeListeners() {
-		if (resourceListener != null) {
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
-		}
-		if (jobListener != null) {
-			Job.getJobManager().removeJobChangeListener(jobListener);
-		}
-	}
-
 	@Override
 	public String getFailureMessage() {
-		removeListeners();
 		return "An Eclipse build of type " + buildType.toString() + " did not complete";
 	}
 
