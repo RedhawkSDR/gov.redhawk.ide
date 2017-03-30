@@ -16,19 +16,20 @@ import gov.redhawk.ide.dcd.internal.ui.ScaIdeConstants;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
 
+import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.menus.IMenuService;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ImplementationPage.
  * @since 1.1
  */
-public class DevicesPage extends ScaFormPage {
+public class DevicesPage extends ScaFormPage implements IViewerProvider {
 
 	/** The Constant PAGE_ID. */
 	public static final String PAGE_ID = "devices"; //$NON-NLS-1$
@@ -38,32 +39,23 @@ public class DevicesPage extends ScaFormPage {
 	/**
 	 * Instantiates a new properties form page.
 	 * 
-	 * @param editor the editor
+	 * @param editor
 	 */
 	public DevicesPage(final SCAFormEditor editor) {
 		super(editor, DevicesPage.PAGE_ID, "Devices");
 		this.fBlock = new DevicesBlock(this);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public SCAFormEditor getEditor() {
 		return super.getEditor();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected String getHelpResource() {
 		return ScaIdeConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/node_editor/devices.htm"; //$NON-NLS-1$
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
@@ -85,12 +77,14 @@ public class DevicesPage extends ScaFormPage {
 		super.createFormContent(managedForm);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void refresh(final Resource resource) {
 		this.fBlock.refresh(resource);
+	}
+
+	@Override
+	public Viewer getViewer() {
+		return this.fBlock.getSection().getStructuredViewerPart().getViewer();
 	}
 
 }
