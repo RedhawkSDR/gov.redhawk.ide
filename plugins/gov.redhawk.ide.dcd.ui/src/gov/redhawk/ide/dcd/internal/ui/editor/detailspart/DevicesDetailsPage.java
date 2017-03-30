@@ -102,8 +102,7 @@ public class DevicesDetailsPage extends ScaDetails {
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 
-		// Align the master and details section headers (misalignment caused
-		// by section toolbar icons)
+		// Align the master and details section headers (misalignment caused by section toolbar icons)
 		getPage().alignSectionHeaders(this.fSection.getSection(), section);
 
 		this.deviceComposite = new ComponentPlacementComposite(section, SWT.NONE, toolkit, this.getEditor());
