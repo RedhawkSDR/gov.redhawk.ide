@@ -29,6 +29,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.condition.WaitForModalContext;
+import gov.redhawk.ide.swtbot.condition.WaitForOpenDiagramJobs;
 
 public class ScaExplorerTestUtils {
 
@@ -92,7 +93,16 @@ public class ScaExplorerTestUtils {
 		SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, treeItemName);
 		treeItem.select();
 		treeItem.contextMenu().menu("Open With", diagramType.getDiagramName()).click();
-		return treeItem.getText();
+		String itemText = treeItem.getText();
+		switch (diagramType) {
+		case GRAPHITI_CHALKBOARD:
+		case GRAPHITI_NODE_EXPLORER:
+		case GRAPHITI_WAVEFORM_EXPLORER:
+			bot.waitUntil(new WaitForOpenDiagramJobs(), WaitForOpenDiagramJobs.DEFAULT_TIMEOUT);
+			break;
+		default:
+		}
+		return itemText;
 	}
 
 	/**

@@ -20,6 +20,9 @@ import gov.redhawk.sca.ui.ScaUI;
  */
 public class WaitForOpenDiagramJobs extends DefaultCondition {
 
+	/**
+	 * Default timeout that should be used when opening runtime diagrams
+	 */
 	public static final long DEFAULT_TIMEOUT = 10000;
 
 	@Override
