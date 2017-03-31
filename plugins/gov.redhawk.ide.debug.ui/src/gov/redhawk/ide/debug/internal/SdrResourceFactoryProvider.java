@@ -140,8 +140,10 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		};
 		if (domPath != null && domPath.toFile().exists()) {
 			try {
-				for (Path path : Files.newDirectoryStream(domPath.toFile().toPath(), filter)) {
-					addVirtualMount(path);
+				try (DirectoryStream<Path> paths = Files.newDirectoryStream(domPath.toFile().toPath(), filter)) {
+					for (Path path : paths) {
+						addVirtualMount(path);
+					}
 				}
 			} catch (IOException e) {
 				ScaDebugUiPlugin.log(
