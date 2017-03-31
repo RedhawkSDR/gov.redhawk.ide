@@ -356,7 +356,6 @@ public class DcdActionBarContributor extends EditingDomainActionBarContributor i
 
 	@Override
 	public void init(final IActionBars actionBars) {
-		final IAction d = actionBars.getGlobalActionHandler(ActionFactory.DELETE.getId());
 		final IAction cu = actionBars.getGlobalActionHandler(ActionFactory.CUT.getId());
 		final IAction cp = actionBars.getGlobalActionHandler(ActionFactory.COPY.getId());
 		final IAction pt = actionBars.getGlobalActionHandler(ActionFactory.PASTE.getId());
