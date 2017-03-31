@@ -498,7 +498,6 @@ public class ImplementationsSection extends TreeSection implements IPropertyChan
 			command.append(AddCommand.create(this.getEditingDomain(), this.getSoftPkg(), SpdPackage.Literals.SOFT_PKG__IMPLEMENTATION, impl));
 			command.append(CodegenUtil.createAddImplementationSettingsCommand(this.getEditingDomain(), impl.getId(), settings, waveDevSettings));
 
-			final ICodeGeneratorDescriptor desc = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(settings.getGeneratorId());
 			Assert.isNotNull(settings);
 			Assert.isNotNull(impl);
 

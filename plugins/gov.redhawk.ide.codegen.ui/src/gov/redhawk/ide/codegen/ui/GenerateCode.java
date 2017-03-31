@@ -10,26 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen.ui;
 
-import gov.redhawk.ide.codegen.CodegenPackage;
-import gov.redhawk.ide.codegen.CodegenUtil;
-import gov.redhawk.ide.codegen.FileStatus;
-import gov.redhawk.ide.codegen.FileToCRCMap;
-import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
-import gov.redhawk.ide.codegen.IScaComponentCodegen;
-import gov.redhawk.ide.codegen.ITemplateDesc;
-import gov.redhawk.ide.codegen.ImplementationSettings;
-import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
-import gov.redhawk.ide.codegen.WaveDevSettings;
-import gov.redhawk.ide.codegen.ui.internal.GenerateFilesDialog;
-import gov.redhawk.ide.codegen.ui.internal.GeneratorConsole;
-import gov.redhawk.ide.codegen.ui.internal.GeneratorUtil;
-import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
-import gov.redhawk.ide.codegen.ui.preferences.CodegenPreferenceConstants;
-import gov.redhawk.ide.codegen.util.PropertyUtil;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
-import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.sca.util.SubMonitor;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,11 +28,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import mil.jpeojtrs.sca.spd.CodeFileType;
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.NamedThreadFactory;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -91,6 +66,29 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.framework.Version;
+
+import gov.redhawk.ide.codegen.CodegenPackage;
+import gov.redhawk.ide.codegen.CodegenUtil;
+import gov.redhawk.ide.codegen.FileStatus;
+import gov.redhawk.ide.codegen.FileToCRCMap;
+import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
+import gov.redhawk.ide.codegen.IScaComponentCodegen;
+import gov.redhawk.ide.codegen.ITemplateDesc;
+import gov.redhawk.ide.codegen.ImplementationSettings;
+import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
+import gov.redhawk.ide.codegen.WaveDevSettings;
+import gov.redhawk.ide.codegen.ui.internal.GenerateFilesDialog;
+import gov.redhawk.ide.codegen.ui.internal.GeneratorConsole;
+import gov.redhawk.ide.codegen.ui.internal.GeneratorUtil;
+import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
+import gov.redhawk.ide.codegen.ui.preferences.CodegenPreferenceConstants;
+import gov.redhawk.ide.codegen.util.PropertyUtil;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.sca.util.SubMonitor;
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.NamedThreadFactory;
 
 /**
  * This class is the primary entry point to code generation.
@@ -539,7 +537,6 @@ public final class GenerateCode {
 	 */
 	private static IStatus validate(final IProject project, final SoftPkg softPkg, Implementation impl, final WaveDevSettings waveDev) {
 		final MultiStatus retStatus = new MultiStatus(RedhawkCodegenUiActivator.PLUGIN_ID, IStatus.OK, "Validation problems prior to generating code", null);
-		CodeFileType projectType = softPkg.getImplementation().get(0).getCode().getType();
 
 		if (project == null) {
 			return new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Project does not exist");

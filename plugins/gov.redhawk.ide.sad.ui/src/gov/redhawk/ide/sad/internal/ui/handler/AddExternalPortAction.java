@@ -107,8 +107,6 @@ public class AddExternalPortAction extends Action {
 			final UsesPortStub usesPort = (UsesPortStub) this.componentPort;
 			port.setUsesIdentifier(usesPort.getUses().getUsesName());
 		} else if (this.componentPort instanceof ComponentSupportedInterfaceStub) {
-			final ComponentSupportedInterfaceStub compPort = (ComponentSupportedInterfaceStub) this.componentPort;
-			// FIXME: I don't understand why we even need the specific interface here?
 			port.setSupportedIdentifier(ResourceHelper.id());
 		}
 
