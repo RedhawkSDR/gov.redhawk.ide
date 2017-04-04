@@ -227,7 +227,9 @@ public class ScaExplorerTestUtils {
 		// Enter domain name, select device managers
 		shell.bot().textWithLabel("Domain Name: ").setText(domainName);
 		bot.waitWhile(Conditions.treeHasRows(shell.bot().tree(), 0));
-		StandardTestActions.selectNamespacedTreeItems(viewBot, shell.bot().tree(), deviceManagers);
+		if (deviceManagers != null) {
+			StandardTestActions.selectNamespacedTreeItems(viewBot, shell.bot().tree(), deviceManagers);
+		}
 
 		// Wait for validation
 		bot.sleep(250);
