@@ -54,6 +54,8 @@ import CF.InvalidObjectReference;
 import CF.LifeCycle;
 import CF.LifeCycleHelper;
 import CF.PropertiesHolder;
+import CF.PropertyEmitter;
+import CF.PropertySet;
 import CF.Resource;
 import CF.UnknownProperties;
 import CF.DeviceManagerPackage.ServiceType;
@@ -77,6 +79,7 @@ import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaFactory;
+import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.model.sca.ScaService;
 import gov.redhawk.sca.efs.WrappedFileStore;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
@@ -90,7 +93,8 @@ import mil.jpeojtrs.sca.util.DceUuidUtil;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
- * This is the implementation of the sandbox's device manager. It is represented in the REDHAWK model by a {@link LocalScaDeviceManager}.
+ * This is the implementation of the sandbox's device manager. It is represented in the REDHAWK model by a
+ * {@link LocalScaDeviceManager}.
  */
 public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOperations {
 
@@ -115,7 +119,8 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	private Map<ILaunch, String> launchToDeviceIor = new HashMap<>();
 
 	/**
-	 * A map containing the services that have registered with the device manager. Service name is mapped to the {@link ServiceType}.
+	 * A map containing the services that have registered with the device manager. Service name is mapped to the
+	 * {@link ServiceType}.
 	 * <p/>
 	 * All access should be synchronized on the object.
 	 */
@@ -277,39 +282,9 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			break;
 		}
 
-		// If we have properties available
+		// If we have properties available, call initializeProperties(...)
 		if (propHolder != null) {
-			// Collect non-null properties of type 'property' (but not type 'execparam')
-			List<DataType> initializeProps = new ArrayList<DataType>();
-			for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
-				if (PropertiesUtil.canInitialize(prop.getDefinition())) {
-					DataType dt = prop.getProperty();
-					if (dt.value != null && dt.value.type().kind() != TCKind.tk_null) {
-						initializeProps.add(dt);
-					}
-				}
-			}
-
-			// Initialize properties
-			try {
-				DataType[] initializePropsArray = initializeProps.toArray(new CF.DataType[initializeProps.size()]);
-				registeringDevice.initializeProperties(initializePropsArray);
-			} catch (AlreadyInitialized e) {
-				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "device " + deviceLabel), ConsoleColor.STDERR);
-			} catch (InvalidConfiguration e) {
-				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "device " + deviceLabel), ConsoleColor.STDERR);
-			} catch (PartialConfiguration e) {
-				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "device " + deviceLabel), ConsoleColor.STDERR);
-			} catch (BAD_OPERATION e) {
-				String msg;
-				if (initializeProps.size() == 0) {
-					msg = String.format("Could not call initializeProperties on device %s in the sandbox (CORBA BAD_OPERATION). "
-						+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.", deviceLabel);
-				} else {
-					msg = "Device has properties of kind 'property', but does not appear to support REDHAWK 2.0 API (CORBA BAD_OPERATION)";
-				}
-				LaunchLogger.INSTANCE.writeToConsole(launch, msg, ConsoleColor.STDERR);
-			}
+			initializeProperties(launch, "device " + deviceLabel, propHolder, registeringDevice);
 		}
 
 		// Initialize
@@ -319,25 +294,9 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "device " + deviceLabel), ConsoleColor.STDERR);
 		}
 
-		// If we have properties available
+		// If we have properties available, call configure(...)
 		if (propHolder != null) {
-			// Configure - Find configurable properties that aren't set to their default
-			List<DataType> configureProps = new ArrayList<DataType>();
-			for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
-				if (!prop.isDefaultValue() && !prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY)
-					&& PropertiesUtil.canConfigure(prop.getDefinition())) {
-					configureProps.add(new DataType(prop.getId(), prop.toAny()));
-				}
-			}
-
-			String description = String.format("device %s", launch.getAttribute(LaunchVariables.DEVICE_LABEL));
-			try {
-				registeringDevice.configure(configureProps.toArray(new DataType[configureProps.size()]));
-			} catch (final PartialConfiguration e) {
-				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
-			} catch (final InvalidConfiguration e) {
-				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, description), ConsoleColor.STDERR);
-			}
+			configure(launch, "device " + deviceLabel, propHolder, registeringDevice);
 		}
 
 		// Register the device and refresh the model so it notices it
@@ -459,6 +418,73 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		refreshChildrenJob.schedule();
 	}
 
+	/**
+	 * Calls {@link PropertyEmitter#initializeProperties(DataType[])}.
+	 * @param launch The device/service being launched
+	 * @param label A UI label for the item (e.g. "device Foo")
+	 * @param propHolder The SCA model object holding the loaded properties
+	 * @param propEmitter The {@link PropertyEmitter} that will get its properties initialized
+	 */
+	private void initializeProperties(ILaunch launch, String label, ScaPropertyContainer< ? , ? > propHolder, PropertyEmitter propEmitter) {
+		// Collect non-null properties of type 'property' (but not type 'execparam')
+		List<DataType> initializeProps = new ArrayList<DataType>();
+		for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
+			if (PropertiesUtil.canInitialize(prop.getDefinition())) {
+				DataType dt = prop.getProperty();
+				if (dt.value != null && dt.value.type().kind() != TCKind.tk_null) {
+					initializeProps.add(dt);
+				}
+			}
+		}
+
+		// Initialize properties
+		DataType[] initializePropsArray = initializeProps.toArray(new CF.DataType[initializeProps.size()]);
+		try {
+			propEmitter.initializeProperties(initializePropsArray);
+		} catch (AlreadyInitialized e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, label), ConsoleColor.STDERR);
+		} catch (InvalidConfiguration e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, label), ConsoleColor.STDERR);
+		} catch (PartialConfiguration e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, label), ConsoleColor.STDERR);
+		} catch (BAD_OPERATION e) {
+			String msg;
+			if (initializeProps.size() == 0) {
+				msg = String.format("Could not call initializeProperties on %s in the sandbox (CORBA BAD_OPERATION). "
+					+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.", label);
+			} else {
+				msg = "There are properties of kind 'property', but %s does not appear to support the REDHAWK 2.0 API (CORBA BAD_OPERATION)";
+			}
+			LaunchLogger.INSTANCE.writeToConsole(launch, msg, ConsoleColor.STDERR);
+		}
+	}
+
+	/**
+	 * Calls {@link PropertySet#configure(DataType[])}.
+	 * @param launch The device/service being launched
+	 * @param label A UI label for the item (e.g. "device Foo")
+	 * @param propHolder The SCA model object holding the loaded properties
+	 * @param propSet The {@link PropertySet} that will get its properties configured
+	 */
+	private void configure(ILaunch launch, String label, ScaPropertyContainer< ? , ? > propHolder, PropertySet propSet) {
+		// Configure - Find configurable properties that aren't set to their default
+		List<DataType> configureProps = new ArrayList<DataType>();
+		for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
+			if (!prop.isDefaultValue() && !prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY)
+				&& PropertiesUtil.canConfigure(prop.getDefinition())) {
+				configureProps.add(new DataType(prop.getId(), prop.toAny()));
+			}
+		}
+
+		try {
+			propSet.configure(configureProps.toArray(new DataType[configureProps.size()]));
+		} catch (final PartialConfiguration e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, label), ConsoleColor.STDERR);
+		} catch (final InvalidConfiguration e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, label), ConsoleColor.STDERR);
+		}
+	}
+
 	@Override
 	public String getComponentImplementationId(final String componentInstantiationId) {
 		// TODO
@@ -493,10 +519,11 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 
 			// Get the device CORBA object and return
 			if (abstractComponent instanceof ScaDevice) {
-				return ((ScaDevice<?>) abstractComponent).fetchNarrowedObject(new NullProgressMonitor());
+				return ((ScaDevice< ? >) abstractComponent).fetchNarrowedObject(new NullProgressMonitor());
 			} else {
 				abstractComponent.getLaunch().terminate();
-				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Launched softpkg is not a device and cannot be narrowed to CF.Resource", null));
+				IStatus status = new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Launched softpkg is not a device and cannot be narrowed to CF.Resource");
+				throw new CoreException(status);
 			}
 		} catch (final CoreException e) {
 			ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to launch device.", e));
@@ -523,10 +550,11 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		// Find the device and return
 		LocalAbstractComponent abstractComponent = postLaunch(launch);
 		if (abstractComponent instanceof ScaDevice) {
-			return ((ScaDevice<?>) abstractComponent).fetchNarrowedObject(new NullProgressMonitor());
+			return ((ScaDevice< ? >) abstractComponent).fetchNarrowedObject(new NullProgressMonitor());
 		} else {
 			launch.terminate();
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Launched softpkg is not a device and cannot be narrowed to CF.Resource", null));
+			IStatus status = new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Launched softpkg is not a device and cannot be narrowed to CF.Resource");
+			throw new CoreException(status);
 		}
 	}
 
