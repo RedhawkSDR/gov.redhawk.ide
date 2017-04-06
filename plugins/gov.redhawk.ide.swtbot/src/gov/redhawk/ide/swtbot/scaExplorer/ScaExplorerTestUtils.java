@@ -37,7 +37,7 @@ public class ScaExplorerTestUtils {
 	 * The delay after a wizard completes a modal progress context before it should accept input. See
 	 * {@link WizardDialog#RESTORE_ENTER_DELAY}.
 	 */
-	private static final int WIZARD_POST_MODAL_PROGRESS_DELAY = 500;
+	public static final int WIZARD_POST_MODAL_PROGRESS_DELAY = 500;
 
 	/**
 	 * How often the Redhawk data polling provider runs
