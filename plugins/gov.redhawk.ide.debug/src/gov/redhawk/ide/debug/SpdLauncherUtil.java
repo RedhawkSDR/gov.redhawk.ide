@@ -216,8 +216,8 @@ public final class SpdLauncherUtil {
 			}
 
 			// Configure properties
-			// NOTE: Devices are configured as part of Register Device
-			if (type != ComponentType.DEVICE) {
+			// NOTE:  Devices/services have been configured by the sandbox device manager already
+			if (type != ComponentType.DEVICE && type != ComponentType.SERVICE) {
 				try {
 					scaComp.configure(configureProps.toArray(new DataType[configureProps.size()]));
 				} catch (final PartialConfiguration e) {

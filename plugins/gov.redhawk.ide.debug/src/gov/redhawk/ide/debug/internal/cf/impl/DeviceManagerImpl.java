@@ -11,7 +11,6 @@
 package gov.redhawk.ide.debug.internal.cf.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -55,7 +54,9 @@ import CF.LifeCycle;
 import CF.LifeCycleHelper;
 import CF.PropertiesHolder;
 import CF.PropertyEmitter;
+import CF.PropertyEmitterHelper;
 import CF.PropertySet;
+import CF.PropertySetHelper;
 import CF.Resource;
 import CF.UnknownProperties;
 import CF.DeviceManagerPackage.ServiceType;
@@ -86,6 +87,7 @@ import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.scd.ComponentType;
+import mil.jpeojtrs.sca.scd.ScdFactory;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.CFErrorFormatter;
@@ -367,8 +369,10 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	public void registerService(final org.omg.CORBA.Object registeringService, final String name) throws InvalidObjectReference {
 		ServiceType type = new ServiceType(registeringService, name);
 
-		// Iterate all launches until we find this service's ILaunch
+		// Iterate all launches until we find this service's ILaunch, then determine its capabilities and load
 		ILaunch launch = null;
+		ScaService propHolder = null;
+		boolean supportsPropertySet = false, supportsPropertyEmitter = false, supportsLifeCycle = false;
 		for (ILaunch candidateLaunch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
 			// Find the launch by matching the service name
 			String launchServiceName = candidateLaunch.getAttribute(LaunchVariables.SERVICE_NAME);
@@ -376,6 +380,44 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 				continue;
 			}
 			launch = candidateLaunch;
+			ILaunchConfiguration launchConfig = candidateLaunch.getLaunchConfiguration();
+
+			// Load the profile
+			try {
+				propHolder = ScaFactory.eINSTANCE.createScaService();
+				propHolder.setProfileURI(ScaLaunchConfigurationUtil.getProfileURI(launchConfig));
+				propHolder.fetchProfileObject(new NullProgressMonitor());
+			} catch (CoreException e) {
+				propHolder = null;
+				String msg = String.format("Unable to load profile for service %s", name);
+				ScaDebugPlugin.logError(msg, e);
+			}
+
+			// See what the SCD says it supports
+			if (propHolder != null && propHolder.isSetProfileObj()) {
+				if (propHolder.isInstance(ScdFactory.eINSTANCE.createInterface(PropertyEmitterHelper.id()))) {
+					supportsPropertyEmitter = true;
+					supportsPropertySet = true;
+				} else if (propHolder.isInstance(ScdFactory.eINSTANCE.createInterface(PropertySetHelper.id()))) {
+					supportsPropertySet = true;
+				}
+				if (propHolder.isInstance(ScdFactory.eINSTANCE.createInterface(LifeCycleHelper.id()))) {
+					supportsLifeCycle = true;
+				}
+			}
+
+			// If properties are supported, prepare those
+			if (supportsPropertySet) {
+				propHolder.fetchProperties(new NullProgressMonitor());
+				try {
+					ScaLaunchConfigurationUtil.loadProperties(launchConfig, propHolder);
+				} catch (CoreException e) {
+					propHolder = null;
+					supportsPropertyEmitter = false;
+					supportsPropertySet = false;
+					ScaDebugPlugin.logError("Unable to determine properties for a service launch", e);
+				}
+			}
 
 			// Hold on to the launch -> name mapping
 			synchronized (launchToServiceName) {
@@ -385,13 +427,27 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			break;
 		}
 
-		if (registeringService._is_a(LifeCycleHelper.id())) {
-			LifeCycle service = LifeCycleHelper.narrow(registeringService);
+		// If we support PropertEmitter, call initializeProperties(...)
+		if (supportsPropertyEmitter) {
+			PropertyEmitter propertyEmitter = PropertyEmitterHelper.narrow(registeringService);
+			initializeProperties(launch, "service " + name, propHolder, propertyEmitter);
+		}
+
+		// If we support LifeCylce, call initialize()
+		if (supportsLifeCycle) {
 			try {
-				service.initialize();
-			} catch (InitializeError e) {
-				throw new InvalidObjectReference("Initialize error", Arrays.toString(e.errorMessages));
+				LifeCycle lifeCycle = LifeCycleHelper.narrow(registeringService);
+				lifeCycle.initialize();
+
+			} catch (final InitializeError e) {
+				LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "service " + name), ConsoleColor.STDERR);
 			}
+		}
+
+		// If we support PropertySet, call configure(...)
+		if (supportsPropertySet) {
+			PropertySet propertySet = PropertySetHelper.narrow(registeringService);
+			configure(launch, "service " + name, propHolder, propertySet);
 		}
 
 		// Register the service and refresh the model so it notices it
