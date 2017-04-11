@@ -35,10 +35,8 @@ public class DefaultComponentLaunchConfigurationFactory extends AbstractLaunchCo
 
 	@Override
 	public boolean supports(final SoftPkg spd, final String implId) {
-		if (CodeFileType.EXECUTABLE.equals(spd.getImplementation().get(0).getCode().getType())) {
-			return true;
-		}
-		return false;
+		CodeFileType type = spd.getImplementation().get(0).getCode().getType();
+		return CodeFileType.EXECUTABLE.equals(type);
 	}
 
 	@Override
