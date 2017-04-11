@@ -28,9 +28,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class DeviceLabelVariableResolver extends AbstractLauncherResolver implements ILauncherVariableResolver {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl)
 		throws CoreException {
