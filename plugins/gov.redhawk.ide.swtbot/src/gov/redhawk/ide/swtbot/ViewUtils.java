@@ -149,6 +149,15 @@ public class ViewUtils {
 	}
 
 	/**
+	 * Gets the project explorer view / package explorer view, as appropriate.
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getProjectView(SWTWorkbenchBot bot) {
+		return bot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
+	}
+
+	/**
 	 * Return Snapshot dialog
 	 * @param bot
 	 * @return

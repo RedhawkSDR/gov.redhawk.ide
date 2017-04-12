@@ -126,7 +126,7 @@
       <variable
             description="Generate a service name"
             name="SERVICE_NAME"
-            resolver="gov.redhawk.ide.debug.internal.variables.ServiceNameLauncherVariable"
+            resolver="gov.redhawk.ide.debug.internal.variables.ServiceNameVariableResolver"
             supportsArgument="false">
       </variable>
       <variable
