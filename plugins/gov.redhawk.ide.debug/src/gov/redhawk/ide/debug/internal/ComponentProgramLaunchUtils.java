@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.omg.CORBA.Any;
 
@@ -84,7 +85,7 @@ public class ComponentProgramLaunchUtils {
 	/**
 	 * Launch a shared address space component, first either retrieving or launching a component host
 	 */
-	public static void launch(LocalScaWaveform waveform, ILaunchConfigurationWorkingCopy workingCopy, ComponentLaunch launch, SoftPkg spd, Implementation impl,
+	public static void launch(LocalScaWaveform waveform, ILaunchConfigurationWorkingCopy workingCopy, ILaunch launch, SoftPkg spd, Implementation impl,
 		String mode, IProgressMonitor monitor) throws OperationCanceledException, CoreException {
 		final int WORK_CONTAINER_LAUNCH = 10, WORK_LAUNCH = 10, WORK_DEPS = 1, WORK_POST_LAUNCH = 100;
 		SubMonitor subMonitor = SubMonitor.convert(monitor, WORK_CONTAINER_LAUNCH + WORK_LAUNCH + WORK_DEPS + WORK_POST_LAUNCH);
@@ -127,7 +128,12 @@ public class ComponentProgramLaunchUtils {
 		}
 
 		SpdLauncherUtil.postLaunch(spd, workingCopy, mode, launch, subMonitor.split(WORK_POST_LAUNCH));
-		launch.setParent(componentHost.getLaunch());
+
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			((ComponentDebugLaunch) launch).setParent(componentHost.getLaunch());
+		} else {
+			((ComponentLaunch) launch).setParent(componentHost.getLaunch());
+		}
 	}
 
 	public static DataType[] getComponentOptions(SoftPkg spd, Implementation impl, ILaunch launch) {

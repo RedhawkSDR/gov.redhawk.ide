@@ -44,9 +44,7 @@
     <extension
           point="org.eclipse.debug.core.launchConfigurationTypes">
        <launchConfigurationType
-             delegate="gov.redhawk.ide.debug.internal.LocalComponentProgramLaunchDelegate"
              id="gov.redhawk.ide.debug.localComponentProgram"
-             modes="run"
              name="%launchComponentConfigurationType.name">
        </launchConfigurationType>
       <launchConfigurationType
@@ -55,7 +53,7 @@
             name="%launchWaveformConfigurationType.name">
       </launchConfigurationType>
       <launchConfigurationType
-            delegate="gov.redhawk.ide.debug.internal.LocalContainedComponentProgramLaunchDelegate"
+            delegate="gov.redhawk.ide.debug.internal.LocalContainedComponentLaunchDelegate"
             id="gov.redhawk.ide.debug.localContainedComponentProgram"
             modes="run"
             name="%launchContainedComponentConfigurationType.name">
@@ -170,6 +168,22 @@
             modes="run"
             name="%launchWaveformDelegate.name"
             type="gov.redhawk.ide.debug.launchConfigurationType.localWaveform">
+      </launchDelegate>
+      <launchDelegate
+            delegate="gov.redhawk.ide.debug.internal.LocalComponentLaunchDelegate"
+            id="gov.redhawk.ide.debug.launchDelegate.component"
+            modes="run"
+            name="%launchComponentDelegate.name"
+            type="gov.redhawk.ide.debug.localComponentProgram">
+      </launchDelegate>
+      <launchDelegate
+            delegate="gov.redhawk.ide.debug.internal.LocalComponentDebugLaunchDelegate"
+            id="gov.redhawk.ide.debug.launchDelegate.componentDebug"
+            modes="debug"
+            name="%launchComponentDelegateDebug.name"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+            type="gov.redhawk.ide.debug.localComponentProgram">
       </launchDelegate>
    </extension>
 </plugin>

@@ -28,7 +28,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 /**
  * An Eclipse launch delegate which handles launching shared address-space components
  */
-public class LocalContainedComponentProgramLaunchDelegate extends LocalComponentProgramLaunchDelegate {
+public class LocalContainedComponentLaunchDelegate extends LocalComponentLaunchDelegate {
 
 	@Override
 	protected void launchComponent(SoftPkg spd, ILaunchConfigurationWorkingCopy workingCopy, String mode, ILaunch launch, IProgressMonitor monitor)

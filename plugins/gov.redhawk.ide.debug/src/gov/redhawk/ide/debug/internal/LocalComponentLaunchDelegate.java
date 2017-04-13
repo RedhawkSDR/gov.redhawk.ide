@@ -26,10 +26,10 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 /**
  * An Eclipse launch delegate which handles launching a SoftPkg (component, device, etc) installed in the SDRROOT
  * locally in the Sandbox. It does not handle launching workspace projects (which are handled on a per-language basis).
- * Shared-address-space components are handled by {@link LocalContainedComponentProgramLaunchDelegate}.
+ * Shared-address-space components are handled by {@link LocalContainedComponentLaunchDelegate}.
  */
 @SuppressWarnings("restriction")
-public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
+public class LocalComponentLaunchDelegate extends ProgramLaunchDelegate {
 	public static final String ID = "gov.redhawk.ide.debug.localComponentProgram";
 
 	@Override
@@ -58,7 +58,6 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 		final int WORK_LAUNCH = 10;
 		final int WORK_POST_LAUNCH = 100;
 		SubMonitor subMonitor = SubMonitor.convert(monitor, WORK_LAUNCH + WORK_POST_LAUNCH);
-
 		super.launch(workingCopy, mode, launch, subMonitor.split(WORK_LAUNCH));
 		SpdLauncherUtil.postLaunch(spd, workingCopy, mode, launch, subMonitor.split(WORK_POST_LAUNCH));
 	}

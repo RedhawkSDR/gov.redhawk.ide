@@ -33,6 +33,7 @@ import CF.DataType;
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getNamingContext <em>Naming Context</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHost <em>Component Host</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHostDebug <em>Component Host Debug</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#getDomainWaveform <em>Domain Waveform</em>}</li>
  * </ul>
@@ -93,6 +94,30 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	 * @generated
 	 */
 	void setComponentHost(LocalScaExecutableDevice value);
+
+	/**
+	 * Returns the value of the '<em><b>Component Host Debug</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * @since 10.0
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Component Host Debug</em>' containment reference.
+	 * @see #setComponentHostDebug(LocalScaExecutableDevice)
+	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaWaveform_ComponentHostDebug()
+	 * @model containment="true" transient="true"
+	 * @generated
+	 */
+	LocalScaExecutableDevice getComponentHostDebug();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHostDebug <em>Component Host Debug</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * @since 10.0
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Component Host Debug</em>' containment reference.
+	 * @see #getComponentHostDebug()
+	 * @generated
+	 */
+	void setComponentHostDebug(LocalScaExecutableDevice value);
 
 	/**
 	 * @throws CoreException 

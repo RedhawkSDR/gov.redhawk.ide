@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -78,6 +79,7 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
  * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getMode <em>Mode</em>}</li>
  * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getNamingContext <em>Naming Context</em>}</li>
  * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getComponentHost <em>Component Host</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getComponentHostDebug <em>Component Host Debug</em>}</li>
  * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLocalApp <em>Local App</em>}</li>
  * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getDomainWaveform <em>Domain Waveform</em>}</li>
  * </ul>
@@ -145,6 +147,17 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @ordered
 	 */
 	protected LocalScaExecutableDevice componentHost;
+
+	/**
+	 * The cached value of the '{@link #getComponentHostDebug() <em>Component Host Debug</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * @since 10.0
+	 * <!-- end-user-doc -->
+	 * @see #getComponentHostDebug()
+	 * @generated
+	 * @ordered
+	 */
+	protected LocalScaExecutableDevice componentHostDebug;
 
 	/**
 	 * The default value of the '{@link #getLocalApp() <em>Local App</em>}' attribute.
@@ -339,8 +352,39 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		return msgs;
 	}
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 10.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public LocalScaExecutableDevice getComponentHostDebug() {
+		return componentHostDebug;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 10.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetComponentHostDebug(LocalScaExecutableDevice newComponentHostDebug, NotificationChain msgs) {
+		LocalScaExecutableDevice oldComponentHostDebug = componentHostDebug;
+		componentHostDebug = newComponentHostDebug;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST_DEBUG,
+				oldComponentHostDebug, newComponentHostDebug);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
+		}
+		return msgs;
+	}
+
 	ReentrantLock lock = new ReentrantLock();
 
+	// END GENERATED CODE
 	/**
 	 * Checks for and returns the existing ComponentHost contained by the waveform. If no ComponentHost is found,
 	 * launches a new
@@ -363,10 +407,20 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			throw new OperationCanceledException(e.getMessage());
 		}
 
+		LocalScaExecutableDevice tmpComponentHost;
 		try {
-			// Check to see if the CORBA object has died for some reason
-			if (componentHost != null && !componentHost.exists()) {
-				componentHost = null;
+			if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+				// Check to see if the CORBA object has died for some reason
+				if (componentHostDebug != null && !componentHostDebug.exists()) {
+					componentHostDebug = null;
+				}
+				tmpComponentHost = componentHostDebug;
+			} else {
+				// Check to see if the CORBA object has died for some reason
+				if (componentHost != null && !componentHost.exists()) {
+					componentHost = null;
+				}
+				tmpComponentHost = componentHost;
 			}
 
 			if (subMonitor.isCanceled()) {
@@ -375,7 +429,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			subMonitor.worked(WORK_EXISTS);
 
 			// If no ComponentHost exists, create and launch a new one
-			if (componentHost == null) {
+			if (tmpComponentHost == null) {
 				final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 				URI spdURI = SoftPkg.Util.getComponentHostURI();
 				final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
@@ -388,8 +442,13 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			subMonitor.done();
 		}
 
-		return componentHost;
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			return componentHostDebug;
+		} else {
+			return componentHost;
+		}
 	}
+	// BEGIN GENERATED CODE
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -411,6 +470,29 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 				msgs.dispatch();
 		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST, newComponentHost, newComponentHost));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 10.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setComponentHostDebug(LocalScaExecutableDevice newComponentHostDebug) {
+		if (newComponentHostDebug != componentHostDebug) {
+			NotificationChain msgs = null;
+			if (componentHostDebug != null)
+				msgs = ((InternalEObject) componentHostDebug).eInverseRemove(this,
+					EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST_DEBUG, null, msgs);
+			if (newComponentHostDebug != null)
+				msgs = ((InternalEObject) newComponentHostDebug).eInverseAdd(this,
+					EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST_DEBUG, null, msgs);
+			msgs = basicSetComponentHostDebug(newComponentHostDebug, msgs);
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST_DEBUG, newComponentHostDebug,
+				newComponentHostDebug));
 	}
 
 	/**
@@ -545,6 +627,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			return basicGetNamingContext();
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST:
 			return getComponentHost();
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST_DEBUG:
+			return getComponentHostDebug();
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			return getLocalApp();
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM:
@@ -574,6 +658,9 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			return;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST:
 			setComponentHost((LocalScaExecutableDevice) newValue);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST_DEBUG:
+			setComponentHostDebug((LocalScaExecutableDevice) newValue);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			setLocalApp((ApplicationOperations) newValue);
@@ -605,6 +692,9 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST:
 			setComponentHost((LocalScaExecutableDevice) null);
 			return;
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST_DEBUG:
+			setComponentHostDebug((LocalScaExecutableDevice) null);
+			return;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			setLocalApp(LOCAL_APP_EDEFAULT);
 			return;
@@ -631,6 +721,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			return namingContext != null;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST:
 			return componentHost != null;
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST_DEBUG:
+			return componentHostDebug != null;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			return LOCAL_APP_EDEFAULT == null ? localApp != null : !LOCAL_APP_EDEFAULT.equals(localApp);
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM:
@@ -751,6 +843,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		switch (featureID) {
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST:
 			return basicSetComponentHost(null, msgs);
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENT_HOST_DEBUG:
+			return basicSetComponentHostDebug(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}

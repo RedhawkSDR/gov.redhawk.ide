@@ -380,12 +380,17 @@ public final class SpdLauncherUtil {
 		
 		// Add the ComponentHost to its waveform
 		final String parentWaveformName = launch.getLaunchConfiguration().getAttribute(LaunchVariables.WAVEFORM_NAME, "");
+		final String mode = launch.getLaunchMode();
 		if (parentWaveformName.isEmpty()) {
 			final LocalScaWaveform sandboxWaveform = ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform();
 			ScaModelCommand.execute(sandboxWaveform, new ScaModelCommand() {
 				@Override
 				public void execute() {
-					sandboxWaveform.setComponentHost(componentHost);
+					if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+						sandboxWaveform.setComponentHostDebug(componentHost);
+					} else {
+						sandboxWaveform.setComponentHost(componentHost);
+					}
 				}
 			});
 		} else {
@@ -394,7 +399,11 @@ public final class SpdLauncherUtil {
 				public void execute() {
 					for (LocalScaWaveform waveform : ScaDebugPlugin.getInstance().getLocalSca().getWaveforms()) {
 						if (parentWaveformName.equals(waveform.getName())) {
-							waveform.setComponentHost(componentHost);
+							if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+								waveform.setComponentHostDebug(componentHost);
+							} else {
+								waveform.setComponentHost(componentHost);
+							}
 							setResult(true);
 							return;
 						}

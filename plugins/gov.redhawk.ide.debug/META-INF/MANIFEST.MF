@@ -43,6 +43,11 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  gov.redhawk.sca.efs;bundle-version="1.1.0",
  gov.redhawk.core.filemanager;bundle-version="1.0.0",
  org.eclipse.jdt.annotation;bundle-version="[1.1.0,2.0.0)";resolution:=optional,
- org.eclipse.core.jobs;bundle-version="3.7.0"
+ org.eclipse.core.jobs;bundle-version="3.7.0",
+ org.eclipse.cdt.dsf,
+ org.eclipse.cdt.dsf.gdb,
+ org.eclipse.cdt.launch,
+ org.eclipse.cdt.debug.core,
+ org.eclipse.cdt.core
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: gov.redhawk.ide.debug.ScaDebugPlugin
