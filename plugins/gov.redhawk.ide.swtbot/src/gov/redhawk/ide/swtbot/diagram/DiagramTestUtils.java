@@ -13,7 +13,6 @@ package gov.redhawk.ide.swtbot.diagram;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -43,7 +42,6 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
-import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.utils.SWTUtils;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
@@ -62,11 +60,11 @@ import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.core.graphiti.ui.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.condition.WaitForOpenDiagramJobs;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 import gov.redhawk.logging.ui.LogLevels;
-import gov.redhawk.sca.util.ScopedPreferenceAccessor;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
@@ -1071,12 +1069,7 @@ public class DiagramTestUtils {
 	 * @param state
 	 */
 	public static void waitForComponentState(SWTBot bot, SWTBotGefEditor editor, String componentName, ComponentState state) {
-		// TODO: This delay is usually necessary in code where a domain waveform has been opened in the chalkboard
-		// editor. This yields two different model objects, and if command is issued to one, the other doesn't update
-		// its state until it polls again. Once we fix that, we should drop this delay, and anywhere that depends on
-		// polling to update state should use an explicit delay.
-		long refreshInterval = new ScopedPreferenceAccessor(InstanceScope.INSTANCE, "gov.redhawk.sca.model.provider.refresh").getLong("refreshInterval");
-		waitForComponentState(bot, editor, componentName, state, refreshInterval + 5000);
+		waitForComponentState(bot, editor, componentName, state, StandardTestActions.LAUNCH_TIMEOUT);
 	}
 
 	/**
@@ -1118,7 +1111,7 @@ public class DiagramTestUtils {
 	}
 
 	public static void waitUntilComponentDisplaysInDiagram(SWTBot bot, final SWTBotGefEditor editor, final String componentName) {
-		waitUntilComponentDisplaysInDiagram(bot, editor, componentName, SWTBotPreferences.TIMEOUT);
+		waitUntilComponentDisplaysInDiagram(bot, editor, componentName, StandardTestActions.LAUNCH_TIMEOUT);
 	}
 
 	public static void waitUntilComponentDisplaysInDiagram(SWTBot bot, final SWTBotGefEditor editor, final String componentName, long timeout) {

@@ -94,6 +94,11 @@ import gov.redhawk.sca.util.OrbSession;
 
 public final class StandardTestActions {
 
+	/**
+	 * The standard amount of time before a launch times out in the sandbox.
+	 */
+	public static final long LAUNCH_TIMEOUT = 15000;
+
 	private static volatile boolean pydevSetup = false;
 
 	/** private to prevent instantiation since all functions are static. */
