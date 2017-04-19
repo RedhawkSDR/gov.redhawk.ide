@@ -13,12 +13,14 @@ package gov.redhawk.ide.dcd.generator.newservice;
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.dcd.IdeDcdPlugin;
+import gov.redhawk.ide.dcd.generator.newservice.PrfFileTemplate;
 import gov.redhawk.ide.natures.ScaComponentProjectNature;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
+import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 
@@ -29,6 +31,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+
+import CF.PropertySetHelper;
 
 public class ServiceProjectCreator extends ProjectCreator {
 	private ServiceProjectCreator() {
@@ -72,8 +76,11 @@ public class ServiceProjectCreator extends ProjectCreator {
 	 */
 	public static IFile createServiceFiles(final IProject project, final String spdName, final String spdID, 
 			final String authorName, final IdlLibrary library, final String serviceRepId, final IProgressMonitor monitor)
-	        throws CoreException {
+		throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, "Creating REDHAWK Service files", 2);
+
+		// Create a PRF file only if the selected IDL interface is PropertySet
+		boolean createPrf = PropertySetHelper.id().equals(serviceRepId);
 
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setProjectName(project.getName());
@@ -83,9 +90,12 @@ public class ServiceProjectCreator extends ProjectCreator {
 		args.setLibrary(library);
 		args.setRepId(serviceRepId);
 		args.setScdFile(spdName + ScdPackage.FILE_EXTENSION);
+		if (createPrf) {
+			args.setPrfFile(spdName + PrfPackage.FILE_EXTENSION);
+		}
 
 		// Generate file content from templates
-		final String spdContent = new SpdFileTemplate().generate(args);
+		final String spdContent = createPrf ? new SpdWithPrfFileTemplate().generate(args) : new SpdFileTemplate().generate(args);
 		final String scdContent = new ScdFileTemplate().generate(args);
 		progress.worked(1);
 
@@ -111,6 +121,19 @@ public class ServiceProjectCreator extends ProjectCreator {
 			scdFile.create(new ByteArrayInputStream(scdContent.getBytes("UTF-8")), true, progress.newChild(1));
 		} catch (final UnsupportedEncodingException e) {
 			throw new CoreException(new Status(IStatus.ERROR, IdeDcdPlugin.PLUGIN_ID, "Internal Error", e));
+		}
+
+		if (createPrf) {
+			final String prfContent = new PrfFileTemplate().generate(args);
+			final IFile prfFile = project.getFile(spdName + PrfPackage.FILE_EXTENSION);
+			if (prfFile.exists()) {
+				throw new CoreException(new Status(IStatus.ERROR, IdeDcdPlugin.PLUGIN_ID, "File " + prfFile.getName() + " already exists.", null));
+			}
+			try {
+				prfFile.create(new ByteArrayInputStream(prfContent.getBytes("UTF-8")), true, progress.newChild(1));
+			} catch (final UnsupportedEncodingException e) {
+				throw new CoreException(new Status(IStatus.ERROR, IdeDcdPlugin.PLUGIN_ID, "Internal Error", e));
+			}
 		}
 
 		return spdFile;

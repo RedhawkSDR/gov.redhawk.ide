@@ -1,0 +1,19 @@
+<%@ jet package="gov.redhawk.ide.dcd.generator.newservice" skeleton="../generator.skeleton"
+    class="SpdWithPrfFileTemplate" imports="gov.redhawk.ide.dcd.generator.newservice.GeneratorArgs"
+%>
+<% GeneratorArgs args = (GeneratorArgs)argument; %>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
+<softpkg id="<%=args.getSoftPkgId()%>" name="<%=args.getSoftPkgName()%>" type="sca_compliant">
+  <title/>
+  <author>
+    <name><%=args.getAuthorName()%></name>
+  </author>
+  <propertyfile type="PRF">
+    <localfile name="<%=args.getPrfFile()%>"/>
+  </propertyfile>
+  <descriptor>
+    <localfile name="<%=args.getScdFile()%>"/>
+  </descriptor>
+</softpkg>
+
