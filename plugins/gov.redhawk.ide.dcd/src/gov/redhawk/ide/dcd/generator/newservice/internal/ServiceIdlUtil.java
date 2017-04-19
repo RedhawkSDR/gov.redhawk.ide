@@ -90,7 +90,7 @@ public class ServiceIdlUtil {
 		return supportsInterfaces;
 	}
 
-	private static List<Interface> getInterfaces(IdlInterfaceDcl target) {
+	public static List<Interface> getInterfaces(IdlInterfaceDcl target) {
 		return getInterfaces(target, new HashSet<IdlInterfaceDcl>());
 	}
 

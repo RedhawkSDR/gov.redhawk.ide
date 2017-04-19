@@ -10,19 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.generator.newservice;
 
-import gov.redhawk.eclipsecorba.library.IdlLibrary;
-import gov.redhawk.ide.codegen.util.ProjectCreator;
-import gov.redhawk.ide.dcd.IdeDcdPlugin;
-import gov.redhawk.ide.dcd.generator.newservice.PrfFileTemplate;
-import gov.redhawk.ide.natures.ScaComponentProjectNature;
-
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-
-import mil.jpeojtrs.sca.prf.PrfPackage;
-import mil.jpeojtrs.sca.scd.ScdPackage;
-import mil.jpeojtrs.sca.spd.SpdPackage;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -33,6 +24,17 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 
 import CF.PropertySetHelper;
+import gov.redhawk.eclipsecorba.idl.Identifiable;
+import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
+import gov.redhawk.eclipsecorba.library.IdlLibrary;
+import gov.redhawk.ide.codegen.util.ProjectCreator;
+import gov.redhawk.ide.dcd.IdeDcdPlugin;
+import gov.redhawk.ide.dcd.generator.newservice.internal.ServiceIdlUtil;
+import gov.redhawk.ide.natures.ScaComponentProjectNature;
+import mil.jpeojtrs.sca.prf.PrfPackage;
+import mil.jpeojtrs.sca.scd.Interface;
+import mil.jpeojtrs.sca.scd.ScdPackage;
+import mil.jpeojtrs.sca.spd.SpdPackage;
 
 public class ServiceProjectCreator extends ProjectCreator {
 	private ServiceProjectCreator() {
@@ -45,8 +47,8 @@ public class ServiceProjectCreator extends ProjectCreator {
 	 * @param projectName The project name
 	 * @param projectLocation the location on disk to create the project
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * to call done() on the given monitor. Accepts null, indicating that no progress should be
+	 * reported and that the operation cannot be canceled.
 	 * @return The newly created project
 	 * @throws CoreException A problem occurs while creating the project
 	 */
@@ -69,18 +71,27 @@ public class ServiceProjectCreator extends ProjectCreator {
 	 * @param library The IDL library, if available, or null
 	 * @param serviceRepId The service's repid
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * to call done() on the given monitor. Accepts null, indicating that no progress should be
+	 * reported and that the operation cannot be canceled.
 	 * @return The newly created DCD file
 	 * @throws CoreException An error occurs while generating files
 	 */
-	public static IFile createServiceFiles(final IProject project, final String spdName, final String spdID, 
-			final String authorName, final IdlLibrary library, final String serviceRepId, final IProgressMonitor monitor)
-		throws CoreException {
+	public static IFile createServiceFiles(final IProject project, final String spdName, final String spdID, final String authorName, final IdlLibrary library,
+		final String serviceRepId, final IProgressMonitor monitor) throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, "Creating REDHAWK Service files", 2);
 
 		// Create a PRF file only if the selected IDL interface is PropertySet
-		boolean createPrf = PropertySetHelper.id().equals(serviceRepId);
+		boolean createPrf = false;
+		Identifiable ident = library.find(serviceRepId);
+		if (ident instanceof IdlInterfaceDcl) {
+			List<Interface> interfaces = ServiceIdlUtil.getInterfaces((IdlInterfaceDcl) ident);
+			for (Interface intf : interfaces) {
+				if (PropertySetHelper.id().equals(intf.getRepid())) {
+					createPrf = true;
+					break;
+				}
+			}
+		}
 
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setProjectName(project.getName());
