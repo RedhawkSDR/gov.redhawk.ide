@@ -666,7 +666,7 @@ public class ScaExplorerTestUtils {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		final SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-		final SWTBotTreeItem sigGenOutPortTreeItem = waveformTreeItem.expandNode(componentName, usesPortName);
+		final SWTBotTreeItem outPortTreeItem = waveformTreeItem.expandNode(componentName, usesPortName);
 
 		bot.waitUntil(new DefaultCondition() {
 			@Override
@@ -676,7 +676,7 @@ public class ScaExplorerTestUtils {
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = sigGenOutPortTreeItem.getItems();
+				SWTBotTreeItem[] items = outPortTreeItem.getItems();
 				for (SWTBotTreeItem item : items) {
 					if (item.getText().equals(connectionName)) {
 						return true;
@@ -696,7 +696,7 @@ public class ScaExplorerTestUtils {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		final SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-		final SWTBotTreeItem sigGenOutPortTreeItem = waveformTreeItem.expandNode(componentName, usesPortName);
+		final SWTBotTreeItem outPortTreeItem = waveformTreeItem.expandNode(componentName, usesPortName);
 
 		bot.waitUntil(new DefaultCondition() {
 			@Override
@@ -706,7 +706,7 @@ public class ScaExplorerTestUtils {
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = sigGenOutPortTreeItem.getItems();
+				SWTBotTreeItem[] items = outPortTreeItem.getItems();
 				for (SWTBotTreeItem item : items) {
 					if (item.getText().equals(connectionName)) {
 						return false;

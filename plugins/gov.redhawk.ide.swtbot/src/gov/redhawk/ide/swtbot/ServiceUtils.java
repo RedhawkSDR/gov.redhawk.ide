@@ -14,6 +14,7 @@ import java.util.Arrays;
 
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 
 /**
@@ -39,13 +40,37 @@ public class ServiceUtils {
 		wizardBot.button("Next >").click();
 
 		wizardBot.textWithLabel("Project name:").setText(serviceProjectName);
-		wizardBot.textWithLabel("Service Interface").setText(interfaceName);
+		setServiceIdl(bot, interfaceName);
+
 		wizardBot.button("Next >").click();
 
 		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection(progLanguage);
 		wizardBot.button("Next >").click();
 		wizardBot.button("Finish").click();
-		
+
 		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
+	}
+
+	public static void setServiceIdl(SWTBot bot, String interfaceName) {
+		final String shortName = interfaceName.substring(interfaceName.indexOf("/") + 1, interfaceName.lastIndexOf(":"));
+		final String folder = interfaceName.substring(interfaceName.indexOf(":") + 1, interfaceName.indexOf("/"));
+		bot.button("Browse...", 1).click();
+		SWTBotShell idlShell = bot.shell("Select an interface");
+		final SWTBot idlBot = idlShell.bot();
+		idlBot.text().typeText(interfaceName);
+		bot.waitUntil(new DefaultCondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				idlBot.tree().getTreeItem(folder).select(shortName);
+				return true;
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Could not find IDL in selection wizard";
+			}
+		});
+		idlBot.button("OK").click();
 	}
 }
