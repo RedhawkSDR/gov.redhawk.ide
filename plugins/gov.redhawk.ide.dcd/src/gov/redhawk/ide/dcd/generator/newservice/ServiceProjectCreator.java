@@ -106,7 +106,7 @@ public class ServiceProjectCreator extends ProjectCreator {
 		}
 
 		// Generate file content from templates
-		final String spdContent = createPrf ? new SpdWithPrfFileTemplate().generate(args) : new SpdFileTemplate().generate(args);
+		final String spdContent = (createPrf) ? new SpdWithPrfFileTemplate().generate(args) : new SpdFileTemplate().generate(args);
 		final String scdContent = new ScdFileTemplate().generate(args);
 		progress.worked(1);
 
