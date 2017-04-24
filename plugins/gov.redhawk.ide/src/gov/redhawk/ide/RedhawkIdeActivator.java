@@ -151,7 +151,15 @@ public class RedhawkIdeActivator extends Plugin {
 	}
 
 	/**
-	 * Get the IDL include paths from IDE preferences. Variable substitution in the paths occurs as follows:
+	 * @deprecated see {@link #getDefaultIdlIncludePath(boolean)}
+	 */
+	@Deprecated
+	public IPath[] getDefaultIdlIncludePath() {
+		return getDefaultIdlIncludePath(true);
+	}
+
+	/**
+	 * Get the IDL include paths from IDE preferences. If (shouldExand == true) variable substitution in the paths occurs as follows:
 	 * <p />
 	 * <ol>
 	 * <li>Eclipse variables are substituted</li>
@@ -160,8 +168,9 @@ public class RedhawkIdeActivator extends Plugin {
 	 * </ol>
 	 * 
 	 * @return The IDL include paths
+	 * @since 6.0
 	 */
-	public IPath[] getDefaultIdlIncludePath() {
+	public IPath[] getDefaultIdlIncludePath(boolean shouldExpand) {
 		final String prefValue = this.preferenceAccessor.getString(RedhawkIdePreferenceConstants.RH_IDE_IDL_INCLUDE_PATH_PREFERENCE);
 		final String[] values = prefValue.split(this.preferenceAccessor.getString(RedhawkIdePreferenceConstants.RH_IDE_IDL_INCLUDE_PATH_PREFERENCE_DELIMITER));
 		final ArrayList<IPath> retVal = new ArrayList<IPath>();
@@ -173,18 +182,19 @@ public class RedhawkIdeActivator extends Plugin {
 				continue;
 			}
 
-			// Let Eclipse perform any variable substitution it can
-			try {
-				values[i] = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(values[i], false);
-			} catch (final CoreException e) {
-				// This shouldn't happen ever (we ask for no error reports above)
-				logError("Unexpected error while resolving variables in preference node path (" + values[i] + ")", e);
-				continue;
+			if (shouldExpand) {
+				// Let Eclipse perform any variable substitution it can
+				try {
+					values[i] = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(values[i], false);
+				} catch (final CoreException e) {
+					// This shouldn't happen ever (we ask for no error reports above)
+					logError("Unexpected error while resolving variables in preference node path (" + values[i] + ")", e);
+					continue;
+				}
+
+				// Resolve remaining variable references using environment variables (special case for OSSIEHOME)
+				values[i] = PluginUtil.replaceEnvIn(values[i], override);
 			}
-
-			// Resolve remaining variable references using environment variables (special case for OSSIEHOME)
-			values[i] = PluginUtil.replaceEnvIn(values[i], override);
-
 			retVal.add(new Path(values[i]));
 		}
 		return retVal.toArray(new IPath[retVal.size()]);

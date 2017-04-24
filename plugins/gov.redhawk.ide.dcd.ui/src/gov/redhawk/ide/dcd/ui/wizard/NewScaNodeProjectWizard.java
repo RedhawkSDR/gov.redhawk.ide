@@ -53,7 +53,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
- * The Class NewScaDeviceProjectWizard.
+ * Wizard for creating new REDHAWK node projects.
  * @since 1.1
  */
 public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
@@ -84,13 +84,13 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean performFinish() {
+		if (!canFinish()) {
+			return false;
+		}
+
 		try {
-			getContainer().getCurrentPage().getControl().setEnabled(false);
 			// Find the working sets and where the new project should be located on disk
 			final IWorkingSet[] workingSets = this.nodePropertiesPage.getSelectedWorkingSets();
 			final boolean isCreateNewResource = this.nodePropertiesPage.isCreateNewResource();
@@ -166,8 +166,6 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 		} catch (final PartInitException e) {
 			// If the editor cannot be opened, still close the wizard
 			return true;
-		} finally {
-			getContainer().getCurrentPage().getControl().setEnabled(true);
 		}
 		return true;
 	}
@@ -181,17 +179,11 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void init(final IWorkbench arg0, final IStructuredSelection arg1) {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addPages() {
 		this.nodePropertiesPage = new ScaNodeProjectPropertiesWizardPage("");
@@ -203,9 +195,6 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 		addPage(this.nodeDevicesPage);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		this.fConfig = config;

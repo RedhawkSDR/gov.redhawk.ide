@@ -35,7 +35,7 @@ import gov.redhawk.eclipsecorba.library.util.RefreshIdlLibraryJob;
  * @since 1.1
  */
 public class IdlFilteredTree extends FilteredTree {
-	
+
 	private RefreshIdlLibraryJob refreshJob;
 
 	/**
@@ -58,12 +58,12 @@ public class IdlFilteredTree extends FilteredTree {
 		Assert.isNotNull(library);
 		TransactionalEditingDomain editingDomain = TransactionUtil.getEditingDomain(library);
 		Assert.isNotNull(editingDomain); // The library must be in an editing domain
-		
+
 		refreshJob = new RefreshIdlLibraryJob(library);
 		refreshJob.setUser(true);
-		
+
 		getPatternFilter().setIncludeLeadingWildcard(false);
-		
+
 		this.getFilterControl().addModifyListener(new ModifyListener() {
 
 			@Override
@@ -92,7 +92,7 @@ public class IdlFilteredTree extends FilteredTree {
 	 * @since 1.2
 	 */
 	public void setFilter(IdlFilter filter) {
-		this.getViewer().setFilters(new ViewerFilter[] { filter.getFilter() });
+		this.getViewer().setFilters(new ViewerFilter[] { filter.getFilter(), getPatternFilter() });
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class IdlFilteredTree extends FilteredTree {
 		super.createFilterControls(parent);
 
 		if (this.filterToolBar != null) {
-			
+
 			IAction refreshAction = new Action("", IAction.AS_PUSH_BUTTON) { //$NON-NLS-1$
 				/*
 				 * (non-Javadoc)
@@ -121,7 +121,7 @@ public class IdlFilteredTree extends FilteredTree {
 			ImageDescriptor desc = LibraryUIPlugin.getDefault().getImageDescriptor("icons/view-refresh.png");
 			refreshAction.setImageDescriptor(desc);
 			this.filterToolBar.add(refreshAction);
-			
+
 			filterToolBar.update(false);
 			// initially there is no text to clear
 			filterToolBar.getControl().setVisible(true);
@@ -131,15 +131,15 @@ public class IdlFilteredTree extends FilteredTree {
 	}
 
 	/**
-     * @since 1.1
-     */
+	 * @since 1.1
+	 */
 	protected void refresh() {
-	    refreshJob.schedule();
-    }
+		refreshJob.schedule();
+	}
 
 	@Override
 	protected void updateToolbar(boolean visible) {
-		
+
 	}
-	
+
 }

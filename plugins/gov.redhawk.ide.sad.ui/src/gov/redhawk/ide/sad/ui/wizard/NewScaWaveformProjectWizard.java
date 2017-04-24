@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
@@ -69,9 +70,6 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 		this.setNeedsProgressMonitor(true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addPages() {
 		this.waveformPropertiesPage = new ScaWaveformProjectPropertiesWizardPage("");
@@ -81,35 +79,36 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 		addPage(this.waveformACpage);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean canFinish() {
 		if (this.waveformPropertiesPage.isCreateNewResource()) {
 			return super.canFinish();
 		} else {
-			boolean isPropPageComplete = this.waveformPropertiesPage.isPageComplete();
-			boolean isControllerPageComplete = this.waveformACpage.isPageComplete();
-			return isPropPageComplete && isControllerPageComplete;
+			return this.waveformPropertiesPage.isPageComplete();
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public void init(final IWorkbench arg0, final IStructuredSelection arg1) {
+	public IWizardPage getNextPage(final IWizardPage page) {
+		if (this.waveformPropertiesPage.isCreateNewResource()) {
+			return super.getNextPage(page);
+		}
 
+		// Only 1 page
+		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
+	public void init(final IWorkbench arg0, final IStructuredSelection arg1) {
+	}
+
 	@Override
 	public boolean performFinish() {
+		if (!canFinish()) {
+			return false;
+		}
+
 		try {
-			getContainer().getCurrentPage().getControl().setEnabled(false);
 			// Find the working sets and where the new project should be located on disk
 			final IWorkingSet[] workingSets = this.waveformPropertiesPage.getSelectedWorkingSets();
 			final java.net.URI locationURI;
@@ -177,15 +176,11 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 		} catch (final PartInitException e) {
 			// If the editor cannot be opened, still close the wizard
 			return true;
-		} finally {
-			getContainer().getCurrentPage().getControl().setEnabled(true);
 		}
 		return true;
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * 
 	 * @since 1.1
 	 */
 	@Override
