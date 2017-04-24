@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
@@ -90,9 +91,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 		if (this.waveformPropertiesPage.isCreateNewResource()) {
 			return super.canFinish();
 		} else {
-			boolean isPropPageComplete = this.waveformPropertiesPage.isPageComplete();
-			boolean isControllerPageComplete = this.waveformACpage.isPageComplete();
-			return isPropPageComplete && isControllerPageComplete;
+			return this.waveformPropertiesPage.isPageComplete();
 		}
 	}
 
@@ -100,8 +99,17 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void init(final IWorkbench arg0, final IStructuredSelection arg1) {
+	public IWizardPage getNextPage(final IWizardPage page) {
+		if (this.waveformPropertiesPage.isCreateNewResource()) {
+			return super.getNextPage(page);
+		}
 
+		// Only 1 page
+		return null;
+	}
+
+	@Override
+	public void init(final IWorkbench arg0, final IStructuredSelection arg1) {
 	}
 
 	/**
