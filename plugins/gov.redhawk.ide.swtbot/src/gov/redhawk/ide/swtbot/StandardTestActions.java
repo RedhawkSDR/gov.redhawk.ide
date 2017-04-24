@@ -658,7 +658,7 @@ public final class StandardTestActions {
 					Shell s = Display.getCurrent().getActiveShell();
 					if (s == null) {
 						dialogsClosed[0] = true;
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setActive();
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().forceActive();
 					} else if (s == PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()) {
 						dialogsClosed[0] = true;
 					} else {
