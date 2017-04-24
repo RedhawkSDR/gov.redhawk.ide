@@ -54,7 +54,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
- * The Class NewScaDeviceProjectWizard.
+ * Wizard for creating new REDHAWK node projects.
  * @since 1.1
  */
 public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
@@ -85,9 +85,6 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean performFinish() {
 		if (!canFinish()) {
@@ -186,17 +183,11 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void init(final IWorkbench arg0, final IStructuredSelection arg1) {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addPages() {
 		this.nodePropertiesPage = new ScaNodeProjectPropertiesWizardPage("");
@@ -208,9 +199,6 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 		addPage(this.nodeDevicesPage);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		this.fConfig = config;

@@ -71,9 +71,6 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 		this.setNeedsProgressMonitor(true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addPages() {
 		this.waveformPropertiesPage = new ScaWaveformProjectPropertiesWizardPage("");
@@ -83,9 +80,6 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 		addPage(this.waveformACpage);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean canFinish() {
 		if (this.waveformPropertiesPage.isCreateNewResource()) {
@@ -95,9 +89,6 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public IWizardPage getNextPage(final IWizardPage page) {
 		if (this.waveformPropertiesPage.isCreateNewResource()) {
@@ -112,9 +103,6 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 	public void init(final IWorkbench arg0, final IStructuredSelection arg1) {
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean performFinish() {
 		if (!canFinish()) {
@@ -197,8 +185,6 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * 
 	 * @since 1.1
 	 */
 	@Override
