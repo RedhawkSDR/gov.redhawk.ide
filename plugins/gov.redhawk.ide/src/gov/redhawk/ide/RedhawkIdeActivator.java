@@ -168,7 +168,7 @@ public class RedhawkIdeActivator extends Plugin {
 	 * </ol>
 	 * 
 	 * @return The IDL include paths
-	 * @since 6.0
+	 * @since 6.1
 	 */
 	public IPath[] getDefaultIdlIncludePath(boolean shouldExpand) {
 		final String prefValue = this.preferenceAccessor.getString(RedhawkIdePreferenceConstants.RH_IDE_IDL_INCLUDE_PATH_PREFERENCE);
