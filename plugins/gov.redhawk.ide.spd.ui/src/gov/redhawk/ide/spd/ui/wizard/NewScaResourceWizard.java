@@ -587,6 +587,9 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	 */
 	@Override
 	public boolean performFinish() {
+		if (!canFinish()) {
+			return false;
+		}
 
 		this.updateEntryPoints();
 		final boolean isCreateNewResource = this.resourcePropertiesPage.isCreateNewResource();
