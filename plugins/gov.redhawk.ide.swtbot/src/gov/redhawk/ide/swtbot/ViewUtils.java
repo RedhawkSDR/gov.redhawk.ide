@@ -61,18 +61,6 @@ public class ViewUtils {
 	}
 
 	/**
-	 * Stop the Console View from popping up every time it gets pinged
-	 * Makes assumption on location of 'Show Standard Out' and 'Show Standard Error' buttons
-	 * @param bot
-	 * @return
-	 * @deprecated Use {@link ConsoleUtils#disableAutoShowConsole(SWTWorkbenchBot)}
-	 */
-	@Deprecated
-	public static void disableConsoleView(SWTWorkbenchBot bot) {
-		ConsoleUtils.disableAutoShowConsole(bot);
-	}
-
-	/**
 	 * Return Audio View
 	 * @param bot
 	 * @return
