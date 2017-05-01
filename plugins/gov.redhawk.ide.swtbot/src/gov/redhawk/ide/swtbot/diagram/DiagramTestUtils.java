@@ -30,7 +30,6 @@ import org.eclipse.graphiti.tb.IDecorator;
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
@@ -495,7 +494,7 @@ public class DiagramTestUtils {
 	 * @param portEditPart - The SWTBotGefEditPart of the port you are trying to get the anchor for
 	 * @return
 	 */
-	public static SWTBotGefEditPart getDiagramPortAnchor(@NonNull SWTBotGefEditPart portEditPart) {
+	public static SWTBotGefEditPart getDiagramPortAnchor(SWTBotGefEditPart portEditPart) {
 		Assert.assertNotNull(portEditPart);
 		EditPart part = portEditPart.part();
 		if (part != null && part.getModel() instanceof Anchor) {
