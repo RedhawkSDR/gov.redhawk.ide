@@ -432,7 +432,6 @@ public final class StandardTestActions {
 	 * @see gov.redhawk.ide.swtbot.condition.WaitForCellValue#WaitForCellValue(SWTBotTreeItem, int, String)
 	 */
 	public static void writeToCell(SWTBot bot, final SWTBotTreeItem item, final int column, final String text) {
-		item.select();
 		item.click(column);
 
 		// Get parent
