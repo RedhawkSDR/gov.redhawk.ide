@@ -1085,7 +1085,12 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		// Terminate the launch for each component
 		for (ScaComponent component : this.waveform.getComponentsCopy()) {
 			if (component instanceof LocalScaComponent) {
-				((LocalScaComponent) component).getLaunch().terminate();
+				String id = component.getIdentifier();
+				try {
+					((LocalScaComponent) component).getLaunch().terminate();
+				} catch (DebugException e) {
+					this.streams.getOutStream().println("Component " + id + " failed to terminate correctly");
+				}
 			}
 		}
 
