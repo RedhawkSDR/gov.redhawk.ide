@@ -14,12 +14,11 @@ import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.ui.internal.parts.IPictogramElementDelegate;
-import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
 import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.RGBA;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -33,6 +32,46 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 public class PortUtils {
 
 	private PortUtils() {
+	}
+
+	public enum PortState {
+		NORMAL_PROVIDES(new RGBA(255, 255, 255, 255)),
+		NORMAL_USES(new RGBA(0, 0, 0, 255)),
+		HIGHLIGHT_FOR_CONNECTION(new RGBA(0, 255, 0, 255)),
+		EXTERNAL_PORT(new RGBA(0, 0, 194, 255)),
+		MONITOR_DATA_GOOD(new RGBA(0, 255, 0, 255)),
+		MONITOR_DATA_BAD(new RGBA(255, 0, 0, 255));
+
+		private RGBA color;
+
+		private PortState(RGBA color) {
+			this.color = color;
+		}
+
+		public RGBA getColor() {
+			return color;
+		}
+	}
+
+	/**
+	 * Checks the styling of a port based on the state it should be in
+	 * @param portBot The bot for the port
+	 * @param portState The state the port should be in
+	 */
+	public static void assertPortStyling(SWTBotGefEditPart portBot, PortState portState) {
+		RGBA color = getPortColor(portBot);
+		Assert.assertEquals("Expected port color of " + portState.toString(), portState.getColor(), color);
+	}
+
+	/**
+	 * Get the port's actual displayed color (not its default color).
+	 * @param port The bot for the port
+	 */
+	public static RGBA getPortColor(SWTBotGefEditPart port) {
+		SWTBotGefEditPart childBot = port.children().get(0);
+		EditPart visibleEditPart = childBot.part();
+		IFigure visibleFigure = ((GraphicalEditPart) visibleEditPart).getFigure();
+		return visibleFigure.getBackgroundColor().getRGBA();
 	}
 
 	/**
@@ -85,47 +124,5 @@ public class PortUtils {
 				description.appendText("provides port edit parts");
 			}
 		});
-	}
-
-	public enum PortState {
-		NORMAL_PROVIDES,
-		NORMAL_USES,
-		HIGHLIGHT_FOR_CONNECTION,
-		EXTERNAL_PORT
-	}
-
-	/**
-	 * Checks the styling of a port based on the state it should be in
-	 * @param portBot The bot for the port (either container or the rectangle)
-	 * @param portState The state the port should be in
-	 */
-	public static void assertPortStyling(SWTBotGefEditPart portBot, PortState portState) {
-		// If this is the port container, get the port rectangle (child element)
-		GraphitiShapeEditPart graphitiEditPart = (GraphitiShapeEditPart) portBot.part();
-		PictogramElement pe = graphitiEditPart.getPictogramElement();
-		String propValue = Graphiti.getPeService().getPropertyValue(pe, DUtil.SHAPE_TYPE);
-		if (ProvidesPortPattern.SHAPE_PROVIDES_PORT_CONTAINER.equals(propValue) || UsesPortPattern.SHAPE_USES_PORT_CONTAINER.equals(propValue)) {
-			portBot = portBot.children().get(0);
-		}
-
-		IPictogramElementEditPart editPart = (IPictogramElementEditPart) portBot.part();
-		IPictogramElementDelegate delegate = editPart.getPictogramElementDelegate();
-		IFigure figure = delegate.getFigureForGraphicsAlgorithm(editPart.getPictogramElement().getGraphicsAlgorithm());
-		switch (portState) {
-		case NORMAL_PROVIDES:
-			Assert.assertEquals(new RGB(255, 255, 255), figure.getBackgroundColor().getRGB());
-			break;
-		case NORMAL_USES:
-			Assert.assertEquals(new RGB(0, 0, 0), figure.getBackgroundColor().getRGB());
-			break;
-		case HIGHLIGHT_FOR_CONNECTION:
-			Assert.assertEquals(new RGB(0, 255, 0), figure.getBackgroundColor().getRGB());
-			break;
-		case EXTERNAL_PORT:
-			Assert.assertEquals(new RGB(0, 0, 194), figure.getBackgroundColor().getRGB());
-			break;
-		default:
-			Assert.fail();
-		}
 	}
 }
