@@ -41,7 +41,7 @@ Prefix: %{_prefix}
 Name: <%=devCfg.getName()%>
 Summary: Node <%=devCfg.getName()%>
 Version: 1.0.0
-Release: 1
+Release: 1%{?dist}
 License: None
 Group: REDHAWK/Nodes
 Source: %{name}-%{version}.tar.gz
