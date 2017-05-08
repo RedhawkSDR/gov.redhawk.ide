@@ -67,7 +67,7 @@ public class LaunchDeviceManager extends AbstractHandler implements IHandler {
 			tmpDomMgr = (ScaDomainManager) result[0];
 		}
 		final ScaDomainManager domMgr = tmpDomMgr;
-		String domainName = (domMgr == null) ? "" : domMgr.getLabel();
+		String domainName = (domMgr == null) ? "" : domMgr.getName();
 
 		// Create launch configs
 		final List<DeviceManagerLaunchConfiguration> launchConfigs = new ArrayList<DeviceManagerLaunchConfiguration>();

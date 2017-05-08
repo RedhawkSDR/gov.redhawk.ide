@@ -1076,11 +1076,45 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 	@Override
 	public void terminate() throws DebugException {
-		try {
-			releaseObject();
-		} catch (final ReleaseError e) {
-			throw new DebugException(new Status(IStatus.WARNING, ScaDebugPlugin.ID, CFErrorFormatter.format(e, "waveform " + this.name), e));
+		if (this.terminated) {
+			return;
 		}
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			String msg = "Interrupted while waiting for application to launch";
+			ScaDebugPlugin.logError(msg, e);
+			// Attempt to continue since this is a cleanup function
+		}
+
+		this.terminated = true;
+		this.streams.getOutStream().println("Terminating Application...");
+
+		// Terminate the launch for each component
+		for (ScaComponent component : this.waveform.getComponentsCopy()) {
+			if (component instanceof LocalScaComponent) {
+				String id = component.getIdentifier();
+				try {
+					((LocalScaComponent) component).getLaunch().terminate();
+				} catch (DebugException e) {
+					this.streams.getOutStream().println("Component " + id + " failed to terminate correctly");
+				}
+			}
+		}
+
+		try {
+			unbind();
+		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
+			String msg = "Problems while terminating";
+			this.streams.getErrStream().println(msg);
+			this.streams.getErrStream().println(e.toString());
+			ScaDebugPlugin.logError(msg, e);
+		}
+
+		this.streams.getOutStream().println("Terminate finished");
+		this.assemblyController = null;
+		this.waveformContext = null;
+		fireTerminated();
 	}
 
 	@Override

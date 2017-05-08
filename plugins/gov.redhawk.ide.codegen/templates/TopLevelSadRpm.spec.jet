@@ -55,7 +55,7 @@ Prefix: %{_prefix}
 Name: <%=sad.getName()%>
 Summary: Waveform <%=sad.getName()%>
 Version: <%=(sad.getVersion() != null && sad.getVersion().trim().length() > 0) ? sad.getVersion() : "1.0.0"%>
-Release: 1
+Release: 1%{?dist}
 License: None
 Group: REDHAWK/Waveforms
 Source: %{name}-%{version}.tar.gz

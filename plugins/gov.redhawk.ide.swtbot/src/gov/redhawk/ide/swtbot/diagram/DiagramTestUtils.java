@@ -624,7 +624,8 @@ public class DiagramTestUtils {
 			ContainerShape containerShape = (ContainerShape) child.part().getModel();
 			Object bo = DUtil.getBusinessObject(containerShape);
 
-			// Only return objects of type ProvidesPortStub
+			// We're looking for the container of the provides ports (ProvidesPortStub). It will have all provides
+			// ports as its model objects.
 			if (bo == null || !(bo instanceof ProvidesPortStub)) {
 				continue;
 			}
