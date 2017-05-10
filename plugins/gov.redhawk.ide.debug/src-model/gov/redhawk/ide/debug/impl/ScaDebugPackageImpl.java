@@ -610,6 +610,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 10.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */

@@ -28,7 +28,7 @@ import gov.redhawk.ide.debug.variables.LaunchVariables;
  * <li>Allows control over components contained within a component host</li>
  * </ul>
  */
-public class ComponentLaunch extends Launch {
+public class ComponentLaunch extends Launch implements IComponentLaunch {
 
 	private IProcess parent;
 	private ILaunch parentLaunch;
@@ -74,13 +74,6 @@ public class ComponentLaunch extends Launch {
 		super.terminate();
 	}
 
-	/**
-	 * Sends terminate event notification to allow component to be cleaned up in the ScaModel
-	 */
-	protected void terminateContainedComponent() {
-		fireTerminate();
-	}
-
 	private void setProcessLabel(IProcess process) {
 		// Ideally, the console should be labeled with the usage name of the component/device
 		String label = getAttribute(LaunchVariables.DEVICE_LABEL);
@@ -100,6 +93,7 @@ public class ComponentLaunch extends Launch {
 		return " [" + parent.getLabel() + "] ";
 	}
 
+	@Override
 	public void setParent(IProcess parentProcess) {
 		parent = parentProcess;
 		for (IProcess process : this.getProcesses()) {
@@ -107,13 +101,14 @@ public class ComponentLaunch extends Launch {
 		}
 	}
 
-	/**
-	 * Associates contained components with their component host. </br>
-	 * Setting this implicitly marks this component as a shared-address component.
-	 * @param parentLaunch
-	 */
+	@Override
 	public void setParent(ILaunch parentLaunch) {
 		this.parentLaunch = parentLaunch;
-		((ComponentHostLaunch) this.parentLaunch).getChildLaunchList().add(this);
+		((IComponentHostLaunch) this.parentLaunch).getChildLaunchList().add(this);
+	}
+
+	@Override
+	public void terminateContainedComponent() {
+		fireTerminate();
 	}
 }

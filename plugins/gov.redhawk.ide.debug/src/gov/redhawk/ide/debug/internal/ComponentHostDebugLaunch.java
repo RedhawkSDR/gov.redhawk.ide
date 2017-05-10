@@ -17,7 +17,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ISourceLocator;
 
-public class ComponentHostDebugLaunch extends ComponentDebugLaunch {
+public class ComponentHostDebugLaunch extends ComponentDebugLaunch implements IComponentHostLaunch {
 
 	private List<ILaunch> childLaunchList;
 
@@ -29,11 +29,12 @@ public class ComponentHostDebugLaunch extends ComponentDebugLaunch {
 	@Override
 	protected void fireTerminate() {
 		for (ILaunch launch : childLaunchList) {
-			((ComponentDebugLaunch) launch).terminateContainedComponent();
+			((IComponentLaunch) launch).terminateContainedComponent();
 		}
 		super.fireTerminate();
 	}
 
+	@Override
 	public List<ILaunch> getChildLaunchList() {
 		return childLaunchList;
 	}

@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.omg.CORBA.Any;
 
@@ -128,12 +127,7 @@ public class ComponentProgramLaunchUtils {
 		}
 
 		SpdLauncherUtil.postLaunch(spd, workingCopy, mode, launch, subMonitor.split(WORK_POST_LAUNCH));
-
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			((ComponentDebugLaunch) launch).setParent(componentHost.getLaunch());
-		} else {
-			((ComponentLaunch) launch).setParent(componentHost.getLaunch());
-		}
+		((IComponentLaunch) launch).setParent(componentHost.getLaunch());
 	}
 
 	public static DataType[] getComponentOptions(SoftPkg spd, Implementation impl, ILaunch launch) {
