@@ -13,16 +13,18 @@ package gov.redhawk.ide.debug.internal;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.ISourceLocator;
 
-import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.SpdLauncherUtil;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -31,6 +33,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
  * launching a ComponentHost program as part of launching a shared-address-space component in debug mode from the
  * workspace.
  */
+@SuppressWarnings("restriction")
 public class LocalComponentDebugLaunchDelegate extends GdbLaunchDelegate {
 
 	@Override
@@ -49,14 +52,6 @@ public class LocalComponentDebugLaunchDelegate extends GdbLaunchDelegate {
 		// We used a working copy when constructing the ILaunch in getLaunch(ILaunchConfiguration, String)
 		ILaunchConfigurationWorkingCopy workingCopy = (ILaunchConfigurationWorkingCopy) launch.getLaunchConfiguration();
 		insertProgramArguments(spd, launch, workingCopy);
-
-		// TODO: Where should we _actually_ be setting program name
-		// Set the 'Program Name' attribute to the entry-point absolute path
-		String implID = workingCopy.getAttribute(ScaDebugLaunchConstants.ATT_IMPL_ID, (String) null);
-		String entryPoint = spd.getImplementation(implID).getCode().getEntryPoint();
-		String executable = spd.eResource().getURI().trimSegments(1).appendSegment(entryPoint).toFileString();
-		workingCopy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, executable);
-
 		ComponentProgramLaunchUtils.insertProgramArguments(spd, launch, workingCopy);
 
 		super.launch(workingCopy, mode, launch, subMonitor.split(WORK_LAUNCH));
@@ -70,14 +65,18 @@ public class LocalComponentDebugLaunchDelegate extends GdbLaunchDelegate {
 	 * We modify the configuration at launch time with dynamic information (such as the naming context).
 	 */
 	@Override
-	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
-		final ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
-		return super.getLaunch(workingCopy, mode);
-	}
-
-	@Override
 	protected GdbLaunch createGdbLaunch(ILaunchConfiguration configuration, String mode, ISourceLocator locator) throws CoreException {
-		return new ComponentHostDebugLaunch(configuration, mode, locator);
+		final ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
+
+		// Make sure launch config "ATTR_PROGRAM_NAME" attribute points to the executable location
+		// Otherwise GdbLaunchDelegate.checkBinaryDetails will fail
+		String programLocation = configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String) null);
+		if (programLocation == null) {
+			throw new CoreException(new Status(Status.ERROR, ScaDebugPlugin.ID, "Could not determine exectuable location"));
+		}
+		workingCopy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, programLocation);
+
+		return new ComponentHostDebugLaunch(workingCopy, mode, locator);
 	}
 
 	protected void insertProgramArguments(final SoftPkg spd, final ILaunch launch, final ILaunchConfigurationWorkingCopy configuration) throws CoreException {
