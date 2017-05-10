@@ -803,6 +803,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Component Host Debug</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
+	 * @since 10.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -2684,6 +2685,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for the containment reference '{@link gov.redhawk.ide.debug.LocalScaWaveform#getComponentHostDebug <em>Component Host Debug</em>}'.
 	 * <!-- begin-user-doc -->
+	 * @since 10.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Component Host Debug</em>'.
 	 * @see gov.redhawk.ide.debug.LocalScaWaveform#getComponentHostDebug()
@@ -3205,6 +3207,7 @@ public interface ScaDebugPackage extends EPackage {
 		/**
 		 * The meta object literal for the '<em><b>Component Host Debug</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
+		 * @since 10.0
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
