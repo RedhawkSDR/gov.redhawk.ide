@@ -63,7 +63,6 @@ import gov.redhawk.model.sca.impl.ScaWaveformImpl;
 import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
 import gov.redhawk.sca.util.SubMonitor;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
@@ -434,7 +433,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 				URI spdURI = SoftPkg.Util.getComponentHostURI();
 				final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 				String implID = spd.getImplementation().get(0).getId();
-				String compID = SoftwareAssembly.Util.createComponentIdentifier(getProfileObj(), spd.getName());
+				String compID = getComponentHostID(spd);
 				launch(compID, new DataType[0], spdURI, implID, mode, subMonitor.split(WORK_LAUNCH));
 			}
 		} finally {
@@ -448,6 +447,19 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			return componentHost;
 		}
 	}
+
+	private String getComponentHostID(SoftPkg spd) {
+		String baseName = spd.getName();
+		int baseNameIndex = baseName.lastIndexOf('.');
+		if (baseNameIndex != -1) {
+			baseName = baseName.substring(baseNameIndex + 1);
+		}
+
+		// We shouldn't ever have more than two ComponentHosts associated with a waveform.
+		String id = (componentHost == null && componentHostDebug == null) ? baseName + "_1" : baseName + "_2";
+		return id;
+	}
+
 	// BEGIN GENERATED CODE
 
 	/**
@@ -884,6 +896,9 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			}
 			if (this.componentHost != null) {
 				this.componentHost.releaseObject();
+			}
+			if (this.componentHostDebug != null) {
+				this.componentHostDebug.releaseObject();
 			}
 			if (errorMessages.size() > 0) {
 				throw new ReleaseError("Errors occurred releasing component(s)", errorMessages.toArray(new String[errorMessages.size()]));
