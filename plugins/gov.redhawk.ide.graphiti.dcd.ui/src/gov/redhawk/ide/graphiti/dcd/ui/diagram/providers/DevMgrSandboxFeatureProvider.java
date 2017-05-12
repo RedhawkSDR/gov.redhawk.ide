@@ -28,6 +28,7 @@ import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.core.graphiti.ui.util.DUtil;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DeviceReleaseFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TerminateFeature;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 
 public class DevMgrSandboxFeatureProvider extends DevMgrExplorerFeatureProvider {
@@ -47,6 +48,13 @@ public class DevMgrSandboxFeatureProvider extends DevMgrExplorerFeatureProvider 
 
 		List<ICustomFeature> features = new ArrayList<ICustomFeature>(Arrays.asList(super.getContextButtonPadFeatures(context)));
 		features.add(new ShowConsoleFeature(this));
+
+		// Add terminate feature for services, since they do not have the concept of release
+		for (PictogramElement pe : context.getPictogramElements()) {
+			if (pe instanceof ServiceShape) {
+				features.add(new TerminateFeature(this));
+			}
+		}
 		return features.toArray(new ICustomFeature[features.size()]);
 	}
 

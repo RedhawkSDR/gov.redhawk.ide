@@ -37,6 +37,7 @@ public class ImageProvider extends AbstractImageProvider implements IImageProvid
 	public static final String IMG_FIND_BY_DOMAIN_MANAGER = PREFIX + "findByDomainManager";
 	public static final String IMG_FIND_BY_FILE_MANAGER = PREFIX + "findByFileManager";
 	public static final String IMG_CONSOLE_VIEW = PREFIX + "consoleView";
+	public static final String IMG_TERMINATE = PREFIX + "terminate";
 	public static final String IMG_USES_DEVICE = PREFIX + "usesDevice";
 
 	// Both diagram and custom feature / pattern
@@ -51,6 +52,7 @@ public class ImageProvider extends AbstractImageProvider implements IImageProvid
 		addImageFilePath(IMG_FIND_BY_SERVICE, "icons/full/obj16/DomainFinder.gif");
 		addImageFilePath(IMG_FIND_BY, "icons/full/obj16/FindBy.gif");
 		addImageFilePath(IMG_CONSOLE_VIEW, "icons/full/obj16/ConsoleView.gif");
+		addImageFilePath(IMG_TERMINATE, "icons/full/obj16/Terminate.gif");
 		addImageFilePath(IMG_USES_DEVICE_FRONTEND_TUNER, "icons/full/obj16/ScaDevice.gif");
 		addImageFilePath(IMG_USES_DEVICE, "icons/full/obj16/ScaDevice.gif");
 	}
