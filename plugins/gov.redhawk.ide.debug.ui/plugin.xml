@@ -657,6 +657,19 @@
             </iterate>
          </activeWhen>
       </handler>
+      <handler
+            class="gov.redhawk.ide.debug.internal.ui.handlers.TerminateLocalLaunchHandler"
+            commandId="org.eclipse.ui.edit.delete">
+         <activeWhen>
+            <iterate
+                  ifEmpty="false"
+                  operator="or">
+               <adapt
+                     type="gov.redhawk.ide.debug.LocalScaService">
+               </adapt>
+            </iterate>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.elementFactories">
