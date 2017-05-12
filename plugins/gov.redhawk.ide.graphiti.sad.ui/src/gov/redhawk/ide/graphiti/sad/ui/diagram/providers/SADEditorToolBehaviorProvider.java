@@ -30,9 +30,12 @@ public class SADEditorToolBehaviorProvider extends SADPaletteToolBehaviorProvide
 	public SADEditorToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 
-		ConnectionValidationDecoratorProvider validator = new ConnectionValidationDecoratorProvider();
-		addDecoratorProvider(validator);
-		addToolTipDelegate(validator);
+		ConnectionValidationDecoratorProvider connValidator = new ConnectionValidationDecoratorProvider();
+		addDecoratorProvider(connValidator);
+		addToolTipDelegate(connValidator);
+		
+		HostCollocationDecoratorProvider hcDecorator = new HostCollocationDecoratorProvider();
+		addDecoratorProvider(hcDecorator);
 	}
 
 	@Override
