@@ -49,12 +49,6 @@ public class DevMgrSandboxFeatureProvider extends DevMgrExplorerFeatureProvider 
 		List<ICustomFeature> features = new ArrayList<ICustomFeature>(Arrays.asList(super.getContextButtonPadFeatures(context)));
 		features.add(new ShowConsoleFeature(this));
 
-		// Add terminate feature for services, since they do not have the concept of release
-		for (PictogramElement pe : context.getPictogramElements()) {
-			if (pe instanceof ServiceShape) {
-				features.add(new TerminateFeature(this));
-			}
-		}
 		return features.toArray(new ICustomFeature[features.size()]);
 	}
 
@@ -65,8 +59,8 @@ public class DevMgrSandboxFeatureProvider extends DevMgrExplorerFeatureProvider 
 			// Deleting a device should be handled by release
 			return new DeviceReleaseFeature(this);
 		} else if (pe instanceof ServiceShape) {
-			// Can't release a service
-			return null;
+			// Deleting a service should be handled by terminate
+			return new TerminateFeature(this);
 		}
 
 		return super.getDeleteFeature(context);
