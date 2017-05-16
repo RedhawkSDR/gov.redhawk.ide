@@ -63,7 +63,7 @@ public class AuthorsSection extends ScaSection {
 	 * @param parent the parent
 	 */
 	public AuthorsSection(final ScaFormPage page, final Composite parent) {
-		super(page, parent, ExpandableComposite.COMPACT | ExpandableComposite.TWISTIE);
+		super(page, parent, ExpandableComposite.COMPACT | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 

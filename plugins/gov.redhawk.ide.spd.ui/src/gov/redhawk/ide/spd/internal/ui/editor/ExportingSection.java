@@ -15,9 +15,9 @@ import gov.redhawk.ide.spd.internal.ui.SpdUIMessages;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
 import gov.redhawk.ui.editor.ScaSection;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -34,7 +34,7 @@ public class ExportingSection extends ScaSection {
 	 * @param parent the parent
 	 */
 	public ExportingSection(final AbstractOverviewPage page, final Composite parent) {
-		super(page, parent, SWT.None);
+		super(page, parent, ExpandableComposite.TITLE_BAR);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 

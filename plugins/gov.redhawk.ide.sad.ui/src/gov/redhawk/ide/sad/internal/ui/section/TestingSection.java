@@ -18,6 +18,7 @@ import gov.redhawk.ui.editor.ScaSection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
@@ -39,7 +40,7 @@ public class TestingSection extends ScaSection {
 	 * @param parent the parent
 	 */
 	public TestingSection(final AbstractOverviewPage page, final Composite parent) {
-		super(page, parent, Section.DESCRIPTION);
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 

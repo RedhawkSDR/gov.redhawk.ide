@@ -67,6 +67,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -152,7 +153,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 	 * @param parent the parent
 	 */
 	public DevicesSection(final DevicesPage page, final Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] { "Add...", "Remove" });
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR, new String[] { "Add...", "Remove" });
 		this.fHandleDefaultButton = false;
 	}
 

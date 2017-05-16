@@ -41,6 +41,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -55,7 +56,7 @@ public class ExternalPortsSection extends ScaSection {
 	private final List<Binding> bindings = new ArrayList<Binding>();
 
 	public ExternalPortsSection(final AbstractOverviewPage page, final Composite parent) {
-		super(page, parent, Section.DESCRIPTION);
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 

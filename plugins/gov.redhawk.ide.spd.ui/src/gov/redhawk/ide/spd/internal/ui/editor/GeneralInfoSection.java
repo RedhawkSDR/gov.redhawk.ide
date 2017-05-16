@@ -69,6 +69,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -93,7 +94,7 @@ public class GeneralInfoSection extends ScaSection {
 	 * @param parent the parent
 	 */
 	public GeneralInfoSection(final ComponentOverviewPage page, final Composite parent) {
-		super(page, parent, Section.DESCRIPTION);
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		createClient(getSection(), page.getEditor().getToolkit(), page);
 	}
 

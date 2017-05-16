@@ -38,6 +38,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.omg.CosEventChannelAdmin.EventChannelHelper;
@@ -94,7 +95,7 @@ public class PortsSection extends TreeSection {
 	};
 
 	public PortsSection(PortsBlock block, Composite parent) {
-		super(block.getPage(), parent, Section.DESCRIPTION, new String[] { "Add", "Remove" });
+		super(block.getPage(), parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR, new String[] { "Add", "Remove" });
 	}
 
 	@Override

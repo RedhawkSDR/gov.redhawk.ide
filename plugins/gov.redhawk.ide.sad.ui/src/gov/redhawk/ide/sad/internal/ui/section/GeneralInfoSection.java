@@ -55,6 +55,7 @@ import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -112,7 +113,7 @@ public class GeneralInfoSection extends ScaSection {
 	 * @param parent the parent
 	 */
 	public GeneralInfoSection(final SadOverviewPage page, final Composite parent) {
-		super(page, parent, Section.DESCRIPTION);
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 

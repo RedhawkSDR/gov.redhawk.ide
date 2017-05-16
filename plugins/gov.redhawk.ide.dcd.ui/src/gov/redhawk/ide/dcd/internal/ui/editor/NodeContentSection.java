@@ -16,6 +16,7 @@ import gov.redhawk.ui.editor.ScaSection;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -40,7 +41,7 @@ public class NodeContentSection extends ScaSection {
 	 * @param parent the parent
 	 */
 	public NodeContentSection(final AbstractOverviewPage page, final Composite parent) {
-		super(page, parent, Section.DESCRIPTION);
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
