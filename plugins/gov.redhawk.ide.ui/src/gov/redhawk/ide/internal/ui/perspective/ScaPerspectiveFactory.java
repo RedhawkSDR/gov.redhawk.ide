@@ -31,6 +31,8 @@ public class ScaPerspectiveFactory implements IPerspectiveFactory {
 
 	private static final String CONSOLE_VIEW_ID = "org.eclipse.ui.console.ConsoleView";
 
+	private static final String TM_TERMINAL_VIEW_ID = "org.eclipse.tm.terminal.view.ui.TerminalsView";
+
 	@Override
 	public void createInitialLayout(final IPageLayout layout) {
 		final String editorArea = layout.getEditorArea();
@@ -59,6 +61,7 @@ public class ScaPerspectiveFactory implements IPerspectiveFactory {
 		bottom.addView(IPageLayout.ID_PROP_SHEET);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 		bottom.addView(ScaPerspectiveFactory.CONSOLE_VIEW_ID);
+		bottom.addPlaceholder(TM_TERMINAL_VIEW_ID);
 		bottom.addPlaceholder(EventView.ID);
 		bottom.addPlaceholder(EventView.ID + ":*");
 		bottom.addPlaceholder(IPageLayout.ID_PROGRESS_VIEW); // <-- workaround fix for Eclipse e4 BUG 441723
