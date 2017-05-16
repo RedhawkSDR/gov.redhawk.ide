@@ -42,9 +42,7 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -90,9 +88,6 @@ public class InterfaceSection extends ScaSection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
 		section.setText("Interfaces");
@@ -131,6 +126,7 @@ public class InterfaceSection extends ScaSection {
 		final TableLayout tableLayout = new TableLayout();
 		tableLayout.addColumnData(new ColumnWeightData(20, 30, true)); // SUPPRESS CHECKSTYLE MagicNumber
 		tableLayout.addColumnData(new ColumnWeightData(30, 70, true)); // SUPPRESS CHECKSTYLE MagicNumber
+		table.setLayoutData(GridDataFactory.fillDefaults().span(1, 3).hint(100, 100).grab(true, true).create()); // SUPPRESS CHECKSTYLE MagicNumber
 		table.setLayout(tableLayout);
 
 		TableColumn column = new TableColumn(table, SWT.NULL);
@@ -142,51 +138,8 @@ public class InterfaceSection extends ScaSection {
 		this.interfaceViewer.setColumnProperties(new String[] {
 		        ScdPackage.Literals.INTERFACE__NAME.getName(), ScdPackage.Literals.INTERFACE__REPID.getName()
 		});
-
-		table.setLayoutData(GridDataFactory.fillDefaults().span(1, 3).hint(100, 100).grab(true, true).create()); // SUPPRESS CHECKSTYLE MagicNumber
-		// final Button addButton = toolkit.createButton(tableComp, "Add...",
-		// SWT.PUSH);
-		// addButton.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL,
-		// SWT.TOP).create());
-		// addButton.addSelectionListener(new SelectionAdapter() {
-		// @Override
-		// public void widgetSelected(final SelectionEvent e) {
-		// handleAddInterface();
-		// }
-		// });
-		// final Button editButton = toolkit.createButton(tableComp, "Edit",
-		// SWT.PUSH);
-		// editButton.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL,
-		// SWT.TOP).create());
-		// editButton.setEnabled(false);
-		// editButton.addSelectionListener(new SelectionAdapter() {
-		// @Override
-		// public void widgetSelected(final SelectionEvent e) {
-		// handleEditInterface();
-		// }
-		// });
-		// final Button removeButton = toolkit.createButton(tableComp, "Remove",
-		// SWT.PUSH);
-		// removeButton.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL,
-		// SWT.TOP).create());
-		// removeButton.setEnabled(false);
-		// removeButton.addSelectionListener(new SelectionAdapter() {
-		// @Override
-		// public void widgetSelected(final SelectionEvent e) {
-		// handleRemoveInterface();
-		// }
-		// });
-
 		this.interfaceViewer.setContentProvider(new AdapterFactoryContentProvider(getAdapterFactory()));
 		this.interfaceViewer.setLabelProvider(new AdapterFactoryLabelProvider(getAdapterFactory()));
-		this.interfaceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(final SelectionChangedEvent event) {
-				// removeButton.setEnabled(!event.getSelection().isEmpty());
-				// editButton.setEnabled(!event.getSelection().isEmpty());
-			}
-		});
 
 		this.aggregateButton = new Button(tableComp, SWT.CHECK);
 		this.aggregateButton.setText("Aggregate Device");
@@ -334,9 +287,6 @@ public class InterfaceSection extends ScaSection {
 		return this.adapterFactory;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void refresh(final Resource resource) {
 		this.resource = resource;

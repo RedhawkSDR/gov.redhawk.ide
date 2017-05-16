@@ -89,17 +89,15 @@ import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 /**
- * The Class ComponentEditor.
+ * An editor for SPD files (components, devices, services).
  */
 public class ComponentEditor extends SCAFormEditor {
 
-	private static final EStructuralFeature[] PRF_PATH = new EStructuralFeature[] {
-	        SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE, SpdPackage.Literals.PROPERTY_FILE__PROPERTIES
-	};
+	private static final EStructuralFeature[] PRF_PATH = new EStructuralFeature[] { SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
+		SpdPackage.Literals.PROPERTY_FILE__PROPERTIES };
 
-	private static final EStructuralFeature[] SCD_PATH = new EStructuralFeature[] {
-	        SpdPackage.Literals.SOFT_PKG__DESCRIPTOR, SpdPackage.Literals.DESCRIPTOR__COMPONENT
-	};
+	private static final EStructuralFeature[] SCD_PATH = new EStructuralFeature[] { SpdPackage.Literals.SOFT_PKG__DESCRIPTOR,
+		SpdPackage.Literals.DESCRIPTOR__COMPONENT };
 	private ComponentOverviewPage overviewPage;
 	private PortsFormPage portsPage;
 	private PropertiesFormPage propertiesPage;
@@ -154,9 +152,6 @@ public class ComponentEditor extends SCAFormEditor {
 			}
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public void notifyChanged(final Notification msg) {
 			super.notifyChanged(msg);
@@ -203,9 +198,6 @@ public class ComponentEditor extends SCAFormEditor {
 		super();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getTitle() {
 		String name = null;
@@ -223,9 +215,6 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected IContentOutlinePage createContentOutline() {
 		return new ComponentOutlinePage(this);
@@ -240,9 +229,6 @@ public class ComponentEditor extends SCAFormEditor {
 		return ModelUtil.getSoftPkg(getMainResource());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void dispose() {
 		if (this.nameListener != null) {
@@ -313,7 +299,7 @@ public class ComponentEditor extends SCAFormEditor {
 
 		// Setup the listeners on the new PRF file in the sameway as in the setInput method above
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(this.getMainResource());
-		
+
 		spd.getPropertyFile().eAdapters().add(new EContentAdapter() {
 
 			@Override
@@ -328,9 +314,9 @@ public class ComponentEditor extends SCAFormEditor {
 				}
 			}
 		});
-	
+
 	}
-	
+
 	protected void createPrfInput(final SoftPkg spd) {
 		this.prfInput = null;
 		URI prfUri = getPrfURI();
@@ -371,9 +357,6 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void addPages() {
 		try {
@@ -383,7 +366,7 @@ public class ComponentEditor extends SCAFormEditor {
 			this.overviewPage = new ComponentOverviewPage(this);
 			this.addPage(this.overviewPage);
 			this.overviewPage.setInput(this.getMainResource());
-			
+
 			this.implementationPage = new ImplementationPage(this);
 			this.addPage(this.implementationPage);
 			this.implementationPage.setInput(getMainResource());
@@ -398,22 +381,19 @@ public class ComponentEditor extends SCAFormEditor {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, ComponentUiPlugin.getPluginId(), "Failed to add pages.", e));
 		}
 	}
-	
+
 	public ComponentOverviewPage getOverviewPage() {
 		return overviewPage;
 	}
-	
+
 	public ImplementationPage getImplementationPage() {
 		return implementationPage;
 	}
-	
+
 	public PortsFormPage getPortsPage() {
 		return portsPage;
 	}
 
-	/**
-	 * @return
-	 */
 	private URI getScdURI() {
 		final SoftwareComponent scd = ScaEcoreUtils.getFeature(getSoftPkg(), ComponentEditor.SCD_PATH);
 		if (scd != null && scd.eResource() != null) {
@@ -422,9 +402,6 @@ public class ComponentEditor extends SCAFormEditor {
 		return null;
 	}
 
-	/**
-	 * @return
-	 */
 	private URI getPrfURI() {
 		final Properties properties = ScaEcoreUtils.getFeature(getSoftPkg(), ComponentEditor.PRF_PATH);
 		if (properties != null && properties.eResource() != null) {
@@ -433,9 +410,6 @@ public class ComponentEditor extends SCAFormEditor {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected AdapterFactory getSpecificAdapterFactory() {
 		final ComposedAdapterFactory factory = new ComposedAdapterFactory();
@@ -445,16 +419,11 @@ public class ComponentEditor extends SCAFormEditor {
 		return factory;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getEditingDomainId() {
 		return "gov.redhawk.spd.editingDomainId";
 	}
 
-	/**
-	 */
 	public void replacePrf() {
 		if (this.prfEditor != null) {
 			this.prfEditor.setInput(this.prfInput);
@@ -464,8 +433,6 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
-	/**
-	 */
 	public void replaceScd() {
 		if (this.scdEditor != null) {
 			this.scdEditor.setInput(this.scdInput);
@@ -475,19 +442,15 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
-	/**
-	 */
 	private void removeControlMessages(Control c) {
 		this.getActivePageInstance().getManagedForm().getMessageManager().removeMessages(c);
 		if (c instanceof Composite) {
-			for (Control child: ((Composite) c).getChildren()) {
+			for (Control child : ((Composite) c).getChildren()) {
 				removeControlMessages(child);
 			}
 		}
 	}
-	
-	/**
-	 */
+
 	private void removePrfPage() {
 		if (this.propertiesPage != null || getPrfPageIndex() >= 0) {
 			Display.getDefault().asyncExec(new Runnable() {
@@ -517,8 +480,6 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
-	/**
-	 */
 	private void removeScdPage() {
 		if (this.portsPage != null || getScdPageIndex() >= 0) {
 			Display.getDefault().asyncExec(new Runnable() {
@@ -566,8 +527,6 @@ public class ComponentEditor extends SCAFormEditor {
 		return this.getPageIndex(this.spdEditor);
 	}
 
-	/**
-	 */
 	private void addPrfPages() {
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(this.getMainResource());
 
@@ -590,11 +549,10 @@ public class ComponentEditor extends SCAFormEditor {
 			}
 		}
 	}
-	
+
 	public PropertiesFormPage getPropertiesPage() {
 		return propertiesPage;
 	}
-	
 
 	private void addScdPages() {
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(this.getMainResource());
@@ -649,9 +607,6 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void gotoMarker(final IMarker marker) {
 
@@ -687,18 +642,13 @@ public class ComponentEditor extends SCAFormEditor {
 				this.setActivePage(this.overviewPage.getId());
 			}
 		} catch (final CoreException e) {
-			StatusManager.getManager().handle(new Status(IStatus.WARNING,
-			        ComponentUiPlugin.PLUGIN_ID,
-			        "Problems occured while trying to go to problem marker.",
-			        e),
-			        StatusManager.SHOW | StatusManager.LOG);
+			StatusManager.getManager().handle(
+				new Status(IStatus.WARNING, ComponentUiPlugin.PLUGIN_ID, "Problems occured while trying to go to problem marker.", e),
+				StatusManager.SHOW | StatusManager.LOG);
 		}
 		super.gotoMarker(marker);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected Notifier getRootValidationNotifier() {
 		return this.getEditingDomain().getResourceSet();
@@ -722,16 +672,11 @@ public class ComponentEditor extends SCAFormEditor {
 		return getSoftPkg().getPropertyFile();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isPersisted(final Resource resource) {
 		return super.isPersisted(resource);
 	}
 
-	/**
-	 */
 	private IFile getSpdFile() {
 		IFile spdFile = null;
 		if ((getEditorInput() != null) && (getEditorInput() instanceof IFileEditorInput)) {
@@ -740,8 +685,6 @@ public class ComponentEditor extends SCAFormEditor {
 		return spdFile;
 	}
 
-	/**
-	 */
 	private IFile getScdFile() {
 		IFile scdFile = null;
 		if ((getScdURI() != null) && getScdURI().isPlatformResource()) {
@@ -750,8 +693,6 @@ public class ComponentEditor extends SCAFormEditor {
 		return scdFile;
 	}
 
-	/**
-	 */
 	private IFile getPrfFile() {
 		IFile prfFile = null;
 		if ((getPrfURI() != null) && getPrfURI().isPlatformResource()) {
@@ -891,12 +832,9 @@ public class ComponentEditor extends SCAFormEditor {
 		validate();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void resourceChanged(final IResource resource, final IResourceDelta delta) {
-		//Make sure we don't call resource changed on a non spd resource
+		// Make sure we don't call resource changed on a non spd resource
 		if (this.isValidSpdResource(resource)) {
 			super.resourceChanged(resource, delta);
 			validate();

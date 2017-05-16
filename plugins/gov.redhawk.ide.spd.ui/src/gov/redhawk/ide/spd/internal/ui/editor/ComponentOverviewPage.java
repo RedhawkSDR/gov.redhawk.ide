@@ -60,7 +60,7 @@ import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 /**
- * The Class ComponentOverviewPage.
+ * Provides the "Overview" page in the SPD editor.
  */
 @SuppressWarnings("restriction")
 public class ComponentOverviewPage extends AbstractOverviewPage implements IViewerProvider {
@@ -68,7 +68,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	/** The Constant PAGE_ID. */
 	public static final String PAGE_ID = "componentOverview"; //$NON-NLS-1$
 	/** The Constant Toolbar ID. */
-	public static final String TOOLBAR_ID = "gov.redhawk.ide.spd.internal.ui.editor.overview.toolbar";
+	public static final String TOOLBAR_ID = "gov.redhawk.ide.spd.internal.ui.editor.overview.toolbar"; //$NON-NLS-1$
 	private GeneralInfoSection fInfoSection;
 	private InterfaceSection fInterfaceSection;
 	private ComponentContentSection componentContent;
@@ -89,17 +89,11 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		super(editor, ComponentOverviewPage.PAGE_ID, "Overview");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public ComponentEditor getEditor() {
 		return (ComponentEditor) super.getEditor();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
 
@@ -123,9 +117,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		manager.update(true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void dispose() {
 		this.removeResourceListener(this.scdResource);
@@ -200,7 +191,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	private void createGeneralInfoSection(final IManagedForm managedForm, final Composite left, final FormToolkit toolkit) {
 		this.fInfoSection = new GeneralInfoSection(this, left);
 		managedForm.addPart(this.fInfoSection);
-
 	}
 
 	/**
@@ -213,7 +203,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	private void createExportingSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
 		this.exportingSection = new ExportingSection(this, right);
 		managedForm.addPart(this.exportingSection);
-
 	}
 
 	/**
@@ -229,9 +218,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		managedForm.addPart(this.fInterfaceSection);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void linkActivated(final HyperlinkEvent e) {
 		final Object href = e.getHref();
@@ -313,9 +299,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setInput(final Resource input) {
 		super.setInput(input);
@@ -338,9 +321,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void refresh(final Resource resource) {
 		if (resource == null) {
