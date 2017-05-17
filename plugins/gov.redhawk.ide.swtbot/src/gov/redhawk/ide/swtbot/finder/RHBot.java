@@ -13,6 +13,8 @@ package gov.redhawk.ide.swtbot.finder;
 import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.allOf;
 import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.widgetOfType;
 import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withMnemonic;
+
+import gov.redhawk.ide.swtbot.finder.widgets.RHBotFormText;
 import gov.redhawk.ide.swtbot.finder.widgets.RHBotSection;
 
 import org.eclipse.swt.widgets.Widget;
@@ -20,6 +22,7 @@ import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.finders.ControlFinder;
 import org.eclipse.swtbot.swt.finder.finders.Finder;
 import org.eclipse.swtbot.swt.finder.finders.MenuFinder;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.Section;
 import org.hamcrest.Matcher;
 
@@ -85,4 +88,20 @@ public class RHBot extends SWTBot {
 		return new RHBotSection((Section) widget(matcher, index), matcher);
 	}
 
+	/**
+	 * @return a {@link RHBotFormText}
+	 */
+	public RHBotFormText formText() {
+		return formText(0);
+	}
+
+	/**
+	 * @param index the index of the widget.
+	 * @return a {@link RHBotFormText}
+	 */
+	public RHBotFormText formText(int index) {
+		@SuppressWarnings("unchecked")
+		Matcher<FormText> matcher = allOf(widgetOfType(FormText.class));
+		return new RHBotFormText(widget(matcher, index), matcher);
+	}
 }
