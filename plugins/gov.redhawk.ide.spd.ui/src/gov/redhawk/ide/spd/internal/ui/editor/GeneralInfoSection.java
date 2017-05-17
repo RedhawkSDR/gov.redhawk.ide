@@ -94,7 +94,7 @@ public class GeneralInfoSection extends ScaSection {
 	 * @param parent the parent
 	 */
 	public GeneralInfoSection(final ComponentOverviewPage page, final Composite parent) {
-		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
+		super(page, parent, ExpandableComposite.TITLE_BAR);
 		createClient(getSection(), page.getEditor().getToolkit(), page);
 	}
 
@@ -103,8 +103,6 @@ public class GeneralInfoSection extends ScaSection {
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		final TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
 		section.setLayoutData(data);
-
-		section.setDescription("This section describes general information about this resource.");
 
 		final IActionBars actionBars = getPage().getEditor().getEditorSite().getActionBars();
 		this.client = new GeneralInformationComposite(section, SWT.None, toolkit, actionBars, page.isSoftpackageLibrary());

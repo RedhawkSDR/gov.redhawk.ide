@@ -54,7 +54,6 @@ import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
 import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.ide.spd.ui.editor.AuthorsSection;
 import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -71,7 +70,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	public static final String TOOLBAR_ID = "gov.redhawk.ide.spd.internal.ui.editor.overview.toolbar"; //$NON-NLS-1$
 	private GeneralInfoSection fInfoSection;
 	private InterfaceSection fInterfaceSection;
-	private ComponentContentSection componentContent;
+	private ProjectDocumentationSection projectDocumentationSection;
 	private TestingSection testingSection;
 	private ExportingSection exportingSection;
 	private AuthorsSection fAuthorsSection;
@@ -100,7 +99,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		final ScrolledForm form = managedForm.getForm();
 		final FormToolkit toolkit = managedForm.getToolkit();
 
-		// TODO form.setImage();
 		form.setText("Overview");
 
 		fillBody(managedForm, toolkit);
@@ -147,9 +145,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		// The following sections don't make sense for libraries, since the don't have .prf or .scd
 		if (!isSoftpackageLibrary()) {
 			createInterfaceSection(managedForm, right, toolkit);
-
-			createComponentContentSection(managedForm, right, toolkit);
-
+			createProjectDocumentationSection(managedForm, right, toolkit);
 			createTestingSection(managedForm, right, toolkit);
 		}
 
@@ -170,15 +166,15 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	}
 
 	/**
-	 * Creates the component content section.
+	 * Creates the project documentation section.
 	 * 
 	 * @param managedForm the managed form
 	 * @param right the right
 	 * @param toolkit the toolkit
 	 */
-	private void createComponentContentSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
-		this.componentContent = new ComponentContentSection(this, right);
-		managedForm.addPart(this.componentContent);
+	private void createProjectDocumentationSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
+		this.projectDocumentationSection = new ProjectDocumentationSection(this, right);
+		managedForm.addPart(this.projectDocumentationSection);
 	}
 
 	/**
@@ -221,11 +217,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	@Override
 	public void linkActivated(final HyperlinkEvent e) {
 		final Object href = e.getHref();
-		if (ComponentContentSection.PROP_HREF.equals(href)) {
-			getEditor().setActivePage(PropertiesFormPage.PAGE_ID);
-		} else if (ComponentContentSection.IMPL_HREF.equals(href)) {
-			getEditor().setActivePage(ImplementationPage.PAGE_ID);
-		} else if (TestingSection.TESTING_HREF_LOCAL_LAUNCH.equals(href)) {
+		if (TestingSection.TESTING_HREF_LOCAL_LAUNCH.equals(href)) {
 			launch(ILaunchManager.RUN_MODE);
 		} else if (TestingSection.TESTING_HREF_LOCAL_DEBUG.equals(href)) {
 			launch(ILaunchManager.DEBUG_MODE);
@@ -332,8 +324,8 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 				this.fInterfaceSection.refresh(this.scdResource);
 			}
 		} else {
-			if (this.componentContent != null) {
-				this.componentContent.refresh(resource);
+			if (this.projectDocumentationSection != null) {
+				this.projectDocumentationSection.refresh(resource);
 			}
 			if (this.exportingSection != null) {
 				this.exportingSection.refresh(resource);
