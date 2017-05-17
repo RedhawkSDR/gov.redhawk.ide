@@ -10,17 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.internal.ui.editor;
 
-import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.ide.dcd.internal.ui.HelpContextIds;
-import gov.redhawk.ide.dcd.internal.ui.ScaIdeConstants;
-import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
-import gov.redhawk.ide.spd.ui.editor.AuthorsSection;
-import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.ui.editor.AbstractOverviewPage;
-import gov.redhawk.ui.editor.SCAFormEditor;
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.dcd.DeviceManagerSoftPkg;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.action.ToolBarManager;
@@ -36,16 +25,28 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.menus.IMenuService;
 
+import gov.redhawk.common.ui.editor.FormLayoutFactory;
+import gov.redhawk.ide.dcd.internal.ui.HelpContextIds;
+import gov.redhawk.ide.dcd.internal.ui.ScaIdeConstants;
+import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
+import gov.redhawk.ide.spd.ui.editor.AuthorsSection;
+import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.ui.editor.AbstractOverviewPage;
+import gov.redhawk.ui.editor.SCAFormEditor;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.dcd.DeviceManagerSoftPkg;
+
 /**
- * The Class NodeOverviewPage.
+ * Provides the "Overview" page in the DCD editor.
  * @since 1.1
  */
 public class NodeOverviewPage extends AbstractOverviewPage {
 
 	/** The Constant PAGE_ID. */
 	public static final String PAGE_ID = "nodeOverview"; //$NON-NLS-1$
-	private static final String TOOLBAR_ID = "gov.redhawk.ide.dcd.internal.ui.editor.overview.toolbar";
+	private static final String TOOLBAR_ID = "gov.redhawk.ide.dcd.internal.ui.editor.overview.toolbar"; //$NON-NLS-1$
 	private GeneralInfoSection fInfoSection;
+	private ProjectDocumentationSection projectDocumentationSection;
 	private NodeContentSection nodeContent;
 	private TestingSection testingSection;
 	private ExportingSection exportingSection;
@@ -62,25 +63,16 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 		super(editor, NodeOverviewPage.PAGE_ID, "Overview");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public SCAFormEditor getEditor() {
 		return super.getEditor();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected String getHelpResource() {
 		return ScaIdeConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/node_editor/overview.htm"; //$NON-NLS-1$
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
 		super.createFormContent(managedForm);
@@ -90,7 +82,7 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 		form.setText("Overview");
 		fillBody(managedForm, toolkit);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), HelpContextIds.NODE_OVERVIEW);
-		
+
 		final ToolBarManager manager = (ToolBarManager) form.getToolBarManager();
 		final IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
 		service.populateContributionManager(manager, "toolbar:" + NodeOverviewPage.TOOLBAR_ID);
@@ -113,20 +105,14 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 		left.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		createGeneralInfoSection(managedForm, left, toolkit);
-
-		// XXX Disable Authors Sections
-		// createAuthorsSection(managedForm, left, toolkit);
+		createProjectDocumentationSection(managedForm, left, toolkit);
 
 		final Composite right = toolkit.createComposite(body);
 		right.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-
 		createNodeContentSection(managedForm, right, toolkit);
-
 		createTestingSection(managedForm, right, toolkit);
-
 		createExportingSection(managedForm, right, toolkit);
-
 	}
 
 	/**
@@ -167,6 +153,19 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 	}
 
 	/**
+	 * Creates the project documentation section.
+	 * 
+	 * @param managedForm the managed form
+	 * @param left the left
+	 * @param toolkit the toolkit
+	 */
+	private void createProjectDocumentationSection(final IManagedForm managedForm, final Composite left, final FormToolkit toolkit) {
+		this.projectDocumentationSection = new ProjectDocumentationSection(this, left);
+		managedForm.addPart(this.projectDocumentationSection);
+		this.projectDocumentationSection.refresh(getInput());
+	}
+
+	/**
 	 * Creates the exporting section.
 	 * 
 	 * @param managedForm the managed form
@@ -179,9 +178,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void linkActivated(final HyperlinkEvent e) {
 		final Object href = e.getHref();
@@ -196,31 +192,20 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 			final WizardDialog dialog = new WizardDialog(getEditor().getSite().getShell(), wizard);
 			dialog.open();
 		}
-		// TODO Auto-generated method stub
-
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setInput(final Resource input) {
 		this.dcdResource = input;
 		super.setInput(input);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void dispose() {
 		removeResourceListener(this.spdResource);
 		super.dispose();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void refresh(final Resource resource) {
 		if (resource == null) {
