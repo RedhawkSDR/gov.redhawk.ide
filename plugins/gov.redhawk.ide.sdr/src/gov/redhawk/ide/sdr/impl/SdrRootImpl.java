@@ -1375,16 +1375,15 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading SPD " + spdFile.getName(), 2); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
-		final org.eclipse.emf.common.util.URI spdFileUri = org.eclipse.emf.common.util.URI.createURI(spdFile.toURI().toString()).appendFragment(
-			SoftPkg.EOBJECT_PATH);
+		final String spdFileUri = spdFile.toURI().toString();
 		SoftPkg softPkg;
 		try {
-			softPkg = (SoftPkg) domain.getResourceSet().getEObject(spdFileUri, true);
+			softPkg = SoftPkg.Util.getSoftPkg(domain.loadResource(spdFileUri));
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
-			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load SPD " + convertFileURI(spdFileUri), e);
+			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load SPD " + spdFileUri, e);
 		}
 		if (softPkg == null) {
-			Exception e = new Exception("Null SPD " + convertFileURI(spdFileUri));
+			Exception e = new Exception("Null SPD " + spdFileUri);
 			e.fillInStackTrace();
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, e.getMessage(), e);
 		}
@@ -1518,20 +1517,19 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading SAD " + sadFile.getName(), 2); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
-		final org.eclipse.emf.common.util.URI sadFileUri = org.eclipse.emf.common.util.URI.createURI(sadFile.toURI().toString()).appendFragment(
-			SoftwareAssembly.EOBJECT_PATH);
+		final String sadFileUri = sadFile.toURI().toString();
 		SoftwareAssembly sad;
 		try {
-			sad = (SoftwareAssembly) eResource().getResourceSet().getEObject(sadFileUri, true);
+			sad = SoftwareAssembly.Util.getSoftwareAssembly(domain.loadResource(sadFileUri));
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
-			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load SAD " + convertFileURI(sadFileUri), e);
+			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load SAD " + sadFileUri, e);
 		}
 		submonitor.worked(1);
 
 		IStatus retVal = Status.OK_STATUS;
 		for (SoftwareAssembly currentSad : getWaveformsContainer().getWaveforms()) {
 			if (PluginUtil.equals(currentSad.getId(), sad.getId())) {
-				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, convertFileURI(sadFileUri) + " duplicate ID of "
+				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, sadFileUri + " duplicate ID of "
 					+ convertFileURI(currentSad.eResource().getURI()) + ". IDs should be unique.");
 				break;
 			}
@@ -1554,19 +1552,18 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading DCD " + dcdFile.getName(), 2); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
-		final org.eclipse.emf.common.util.URI dcdFileURI = org.eclipse.emf.common.util.URI.createURI(dcdFile.toURI().toString()).appendFragment(
-			DeviceConfiguration.EOBJECT_PATH);
+		final String dcdFileURI = dcdFile.toURI().toString();
 		DeviceConfiguration dcd;
 		try {
-			dcd = (DeviceConfiguration) eResource().getResourceSet().getEObject(dcdFileURI, true);
+			dcd = DeviceConfiguration.Util.getDeviceConfiguration(domain.loadResource(dcdFileURI));
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
-			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load DCD " + convertFileURI(dcdFileURI), e);
+			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load DCD " + dcdFileURI, e);
 		}
 
 		IStatus retVal = Status.OK_STATUS;
 		for (DeviceConfiguration current : getNodesContainer().getNodes()) {
 			if (PluginUtil.equals(current.getId(), dcd.getId())) {
-				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, convertFileURI(dcdFileURI) + " duplicate ID of "
+				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, dcdFileURI + " duplicate ID of "
 					+ convertFileURI(current.eResource().getURI()) + ". IDs should be unique.");
 				break;
 			}
@@ -1588,22 +1585,18 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading DMD " + dmdFile.getName(), 1); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
-		if (eResource() == null || eResource().getResourceSet() == null) {
-			throw new IllegalStateException("Can not load a domain outside of a resource set.");
-		}
-		final org.eclipse.emf.common.util.URI dmdURI = org.eclipse.emf.common.util.URI.createURI(dmdFile.toURI().toString()).appendFragment(
-			DomainManagerConfiguration.EOBJECT_PATH);
+		final String dmdURI = dmdFile.toURI().toString();
 		DomainManagerConfiguration dmd;
 		try {
-			dmd = (DomainManagerConfiguration) eResource().getResourceSet().getEObject(dmdURI, true);
+			dmd = DomainManagerConfiguration.Util.getDomainManagerConfiguration(domain.loadResource(dmdURI));
 			submonitor.worked(1);
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
-			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load DMD " + convertFileURI(dmdURI), e);
+			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load DMD " + dmdURI, e);
 		}
 
 		IStatus retVal = Status.OK_STATUS;
 		if (getDomainConfiguration() != null) {
-			return new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, "Multiple DMD files found and only one supported.  Ignoring " + convertFileURI(dmdURI));
+			return new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, "Multiple DMD files found and only one supported.  Ignoring " + dmdURI);
 		}
 
 		domain.getCommandStack().execute(SetCommand.create(domain, this, SdrPackage.Literals.SDR_ROOT__DOMAIN_CONFIGURATION, dmd));

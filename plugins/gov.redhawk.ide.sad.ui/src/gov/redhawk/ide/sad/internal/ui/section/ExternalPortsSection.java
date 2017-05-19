@@ -130,7 +130,7 @@ public class ExternalPortsSection extends ScaSection {
 
 	private SoftwareAssembly getWaveform() {
 		if (this.sadResource != null) {
-			return (SoftwareAssembly) this.sadResource.getEObject(SoftwareAssembly.EOBJECT_PATH);
+			return SoftwareAssembly.Util.getSoftwareAssembly(this.sadResource);
 		}
 		return null;
 	}

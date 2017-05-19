@@ -537,7 +537,7 @@ public abstract class ProjectCreator {
 		Assert.isTrue(spdFile.exists());
 		// Fill in the implementation's code settings (i.e. localfile, entrypoint, etc) using the code generator
 		// specified in the implementation settings
-		final SoftPkg eSpd = (SoftPkg) resourceSet.getEObject(spdUri, true);
+		final SoftPkg eSpd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdUri, true));
 		final WaveDevSettings wavedevSettings = (WaveDevSettings) resourceSet.getResource(waveDevUri, true).getEObject("/");
 		Assert.isNotNull(eSpd);
 		Assert.isNotNull(wavedevSettings);
