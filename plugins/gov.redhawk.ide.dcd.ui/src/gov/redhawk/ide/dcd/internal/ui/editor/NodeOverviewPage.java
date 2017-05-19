@@ -47,7 +47,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 	private static final String TOOLBAR_ID = "gov.redhawk.ide.dcd.internal.ui.editor.overview.toolbar"; //$NON-NLS-1$
 	private GeneralInfoSection fInfoSection;
 	private ProjectDocumentationSection projectDocumentationSection;
-	private NodeContentSection nodeContent;
 	private TestingSection testingSection;
 	private ExportingSection exportingSection;
 	private AuthorsSection fAuthorsSection;
@@ -78,7 +77,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 		super.createFormContent(managedForm);
 		final ScrolledForm form = managedForm.getForm();
 		final FormToolkit toolkit = managedForm.getToolkit();
-		// TODO form.setImage();
 		form.setText("Overview");
 		fillBody(managedForm, toolkit);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), HelpContextIds.NODE_OVERVIEW);
@@ -110,7 +108,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 		final Composite right = toolkit.createComposite(body);
 		right.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		createNodeContentSection(managedForm, right, toolkit);
 		createTestingSection(managedForm, right, toolkit);
 		createExportingSection(managedForm, right, toolkit);
 	}
@@ -125,18 +122,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 	private void createTestingSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
 		this.testingSection = new TestingSection(this, right);
 		managedForm.addPart(this.testingSection);
-	}
-
-	/**
-	 * Creates the node content section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param right the right
-	 * @param toolkit the toolkit
-	 */
-	private void createNodeContentSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
-		this.nodeContent = new NodeContentSection(this, right);
-		managedForm.addPart(this.nodeContent);
 	}
 
 	/**
@@ -181,11 +166,9 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 	@Override
 	public void linkActivated(final HyperlinkEvent e) {
 		final Object href = e.getHref();
-		if (NodeContentSection.DEVICE_HREF.equals(href)) {
-			getEditor().setActivePage(DevicesPage.PAGE_ID);
-		} else if (TestingSection.TESTING_HREF.equals(e.getHref())) {
+		if (TestingSection.TESTING_HREF.equals(href)) {
 			MessageDialog.openInformation(getEditor().getSite().getShell(), "Unsupported Operation", "Currently testing is unsupported.");
-		} else if ("export".equals(e.getHref())) {
+		} else if ("export".equals(href)) {
 			final DeployableScaExportWizard wizard = new DeployableScaExportWizard();
 			final IProject project = ModelUtil.getProject(getInput());
 			wizard.init(getEditor().getSite().getWorkbenchWindow().getWorkbench(), new StructuredSelection(project));
@@ -233,9 +216,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 			}
 			if (this.fInfoSection != null) {
 				this.fInfoSection.refresh(resource);
-			}
-			if (this.nodeContent != null) {
-				this.nodeContent.refresh(resource);
 			}
 			if (this.testingSection != null) {
 				this.testingSection.refresh(resource);

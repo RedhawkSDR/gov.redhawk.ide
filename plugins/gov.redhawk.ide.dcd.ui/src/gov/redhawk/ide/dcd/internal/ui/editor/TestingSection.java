@@ -43,17 +43,11 @@ public class TestingSection extends ScaSection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public AbstractOverviewPage getPage() {
 		return (AbstractOverviewPage) super.getPage();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
 		// There seems to be a bug that cuts off last letter. Even eclipse editors
@@ -90,17 +84,7 @@ public class TestingSection extends ScaSection {
 		imageHyperlink.addHyperlinkListener(this.getPage());
 
 		imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
-		imageHyperlink.setText("Launch a remote node");
-		imageHyperlink.setHref(TestingSection.TESTING_HREF);
-		imageHyperlink.addHyperlinkListener(this.getPage());
-
-		imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
 		imageHyperlink.setText("Launch a local node in debug mode");
-		imageHyperlink.setHref(TestingSection.TESTING_HREF);
-		imageHyperlink.addHyperlinkListener(this.getPage());
-
-		imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
-		imageHyperlink.setText("Launch a remote node in debug mode");
 		imageHyperlink.setHref(TestingSection.TESTING_HREF);
 		imageHyperlink.addHyperlinkListener(this.getPage());
 	}
