@@ -8,21 +8,15 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  */
-package gov.redhawk.ide.codegen.ui.utils;
+package gov.redhawk.ide.codegen.ui.internal;
 
 import org.eclipse.osgi.util.NLS;
 
-//BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
+public class Messages extends NLS {
+	private static final String BUNDLE_NAME = "gov.redhawk.ide.codegen.ui.internal.messages"; //$NON-NLS-1$
+	public static String Error_CantSave;
 
-/**
- * @since 9.2
- */
-/* package */ class Messages extends NLS {
-	private static final String BUNDLE_NAME = "gov.redhawk.ide.codegen.ui.utils.messages"; //$NON-NLS-1$
-	public static String DocumentationUtils_HeaderContents;
-	public static String DocumentationUtils_HeaderCreateError;
-	public static String DocumentationUtils_HeaderReadError;
-	public static String DocumentationUtils_OpenEditorError;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
@@ -31,5 +25,4 @@ import org.eclipse.osgi.util.NLS;
 	private Messages() {
 	}
 }
-
 // END GENERATED CODE
