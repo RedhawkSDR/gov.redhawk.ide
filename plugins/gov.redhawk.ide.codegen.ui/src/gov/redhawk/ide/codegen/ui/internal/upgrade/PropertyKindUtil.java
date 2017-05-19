@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen.ui.internal.upgrade;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,26 +18,19 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.transaction.RunnableWithResult;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.ResourceUtil;
 import org.osgi.framework.Version;
 
 import gov.redhawk.ide.codegen.IScaComponentCodegen;
 import gov.redhawk.ide.codegen.ImplementationSettings;
-import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.ide.codegen.ui.internal.GeneratorUtil;
+import gov.redhawk.ide.codegen.ui.internal.SaveXmlUtils;
 import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
@@ -145,8 +137,25 @@ public class PropertyKindUtil {
 					buttons, 2);
 				int result = dialog.open();
 				if (result == 2) {
-					upgradeProperties(prf);
-					save(parentProject, spd, prf);
+					// We make the changes in the UI thread because otherwise there are asynchronous changes that have
+					// to propagate to the UI thread (so that the EMF changes can update the XML editor's page).
+					RunnableWithResult<CoreException> runnable = new RunnableWithResult.Impl<CoreException>() {
+						@Override
+						public void run() {
+							upgradeProperties(prf);
+							try {
+								SaveXmlUtils.save(null, prf, null);
+							} catch (CoreException e) {
+								setResult(e);
+							}
+						}
+					};
+					shell.getDisplay().syncExec(runnable);
+
+					// Re-throw the exception if any
+					if (runnable.getResult() != null) {
+						throw runnable.getResult();
+					}
 					break;
 				} else if (result == 1) {
 					break;
@@ -339,48 +348,6 @@ public class PropertyKindUtil {
 			break;
 		default:
 			throw new IllegalArgumentException();
-		}
-	}
-
-	/**
-	 * Saves the properties file to disk. This will be done via an open SPD / PRF editor if possible, otherwise the
-	 * file will be saved directly and a change notification generated.
-	 * @param project The parent project
-	 * @param spd The SPD using the PRF
-	 * @param prf The PRF file to be saved
-	 * @throws CoreException
-	 */
-	private static void save(final IProject project, final SoftPkg spd, final Properties prf) throws CoreException {
-		// Our model object may / most likely belongs to an editor
-		RunnableWithResult<Boolean> saveViaEditor = new RunnableWithResult.Impl<Boolean>() {
-			@Override
-			public void run() {
-				// Look for a PRF editor
-				IEditorPart editorPart = ResourceUtil.findEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-					project.getFile(prf.eResource().getURI().lastSegment()));
-
-				// If no PRF editor, look for SPD editor
-				if (editorPart == null) {
-					editorPart = ResourceUtil.findEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-						project.getFile(spd.eResource().getURI().lastSegment()));
-				}
-
-				// If the editor is found and is dirty (i.e. it has our changes), save
-				if (editorPart != null && editorPart.isDirty()) {
-					editorPart.doSave(new NullProgressMonitor());
-					setResult(true);
-				}
-			}
-		};
-		Display.getDefault().syncExec(saveViaEditor);
-
-		// If we were unable to save via editor, save the resource directly
-		if (saveViaEditor.getResult() == null) {
-			try {
-				prf.eResource().save(null);
-			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, Messages.Error_CantSavePrf, e));
-			}
 		}
 	}
 }
