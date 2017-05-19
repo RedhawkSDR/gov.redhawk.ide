@@ -40,11 +40,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.edit.command.AddCommand;
@@ -55,15 +53,12 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.framework.Version;
 
@@ -80,15 +75,23 @@ import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.internal.GenerateFilesDialog;
 import gov.redhawk.ide.codegen.ui.internal.GeneratorConsole;
 import gov.redhawk.ide.codegen.ui.internal.GeneratorUtil;
+import gov.redhawk.ide.codegen.ui.internal.SaveXmlUtils;
 import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
 import gov.redhawk.ide.codegen.ui.preferences.CodegenPreferenceConstants;
+import gov.redhawk.ide.codegen.ui.utils.DocumentationUtils;
 import gov.redhawk.ide.codegen.util.PropertyUtil;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.util.SubMonitor;
+import mil.jpeojtrs.sca.prf.PrfDocumentRoot;
+import mil.jpeojtrs.sca.prf.Properties;
+import mil.jpeojtrs.sca.scd.ScdDocumentRoot;
+import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdDocumentRoot;
 import mil.jpeojtrs.sca.util.NamedThreadFactory;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 /**
  * This class is the primary entry point to code generation.
@@ -189,7 +192,7 @@ public final class GenerateCode {
 
 							@Override
 							public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-								return processImpls(implFileMap, monitor);
+								return processImpls(shell, implFileMap, monitor);
 							}
 						};
 						processJob.setUser(true);
@@ -209,7 +212,7 @@ public final class GenerateCode {
 		getFilesJob.schedule();
 	}
 
-	private static IStatus processImpls(Map<Implementation, String[]> implMap, IProgressMonitor monitor) throws CoreException {
+	private static IStatus processImpls(Shell shell, Map<Implementation, String[]> implMap, IProgressMonitor monitor) throws CoreException {
 		try {
 			SubMonitor progress = SubMonitor.convert(monitor, "Generating...", implMap.size() + 2);
 			final SoftPkg softPkg = (SoftPkg) implMap.entrySet().iterator().next().getKey().eContainer();
@@ -260,53 +263,56 @@ public final class GenerateCode {
 					retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Problem while generating CRCs for implementations", e));
 				}
 
+				// Gather some info to update the XML
 				ImplementationSettings implSettings = WaveDevUtil.getImplSettings(impl);
 				final IScaComponentCodegen generator = GeneratorUtil.getGenerator(implSettings);
 				final Version codeGenVersion = generator.getCodegenVersion();
+				String headerContents = DocumentationUtils.getHeaderContents(project);
+				SpdDocumentRoot spdRoot = ScaEcoreUtils.getEContainerOfType(softPkg, SpdDocumentRoot.class);
+				Properties prf = (softPkg.getPropertyFile() == null) ? null : softPkg.getPropertyFile().getProperties();
+				PrfDocumentRoot prfRoot = ScaEcoreUtils.getEContainerOfType(prf, PrfDocumentRoot.class);
+				SoftwareComponent scd = (softPkg.getDescriptor() == null) ? null : softPkg.getDescriptor().getComponent();
+				ScdDocumentRoot scdRoot = ScaEcoreUtils.getEContainerOfType(scd, ScdDocumentRoot.class);
 
-				if (new Version(1, 10, 0).compareTo(codeGenVersion) <= 0) {
-					// Set the version
-					ScaModelCommand.execute(softPkg, new ScaModelCommand() {
-						@Override
-						public void execute() {
-							softPkg.setType(generator.getCodegenVersion().toString());
+				RunnableWithResult<Void> runnable = new RunnableWithResult.Impl<Void>() {
+					public void run() {
+						if (new Version(1, 10, 0).compareTo(codeGenVersion) <= 0) {
+							// Set the SPD's type field to the code generator's version
+							ScaModelCommand.execute(softPkg, new ScaModelCommand() {
+								@Override
+								public void execute() {
+									softPkg.setType(generator.getCodegenVersion().toString());
+								}
+							});
 						}
-					});
 
-				}
-			}
+						// Apply header to XML files
+						if (spdRoot != null) {
+							DocumentationUtils.setXMLCommentHeader(domain, spdRoot.getMixed(), headerContents);
+						}
+						if (prfRoot != null) {
+							DocumentationUtils.setXMLCommentHeader(domain, prfRoot.getMixed(), headerContents);
+						}
+						if (scdRoot != null) {
+							DocumentationUtils.setXMLCommentHeader(domain, scdRoot.getMixed(), headerContents);
+						}
 
-			// Save updates to the SPD (codegen version) and wavedev (historically, file CRCs)
-			// Our model object may / most likely belongs to an editor
-			progress.setTaskName("Saving resource changes");
-			RunnableWithResult<Boolean> saveViaEditor = new RunnableWithResult.Impl<Boolean>() {
-				@Override
-				public void run() {
-					IEditorPart editorPart = ResourceUtil.findEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-						project.getFile(softPkg.eResource().getURI().lastSegment()));
-					if (editorPart != null && editorPart.isDirty()) {
-						editorPart.doSave(new NullProgressMonitor());
-						setResult(true);
-					}
-				}
-			};
-			Display.getDefault().syncExec(saveViaEditor);
+						// Save XML files (SPD, PRF, SCD) and wavedev
+						// This should include codegen version, header updates, file CRCs
+						try {
+							SaveXmlUtils.save(softPkg, prf, scd);
+						} catch (CoreException e) {
+							setStatus(new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save changes to XML", e));
+							return;
+						}
 
-			// If we were unable to save via editor, save the resources directly
-			if (saveViaEditor.getResult() == null) {
-				try {
-					softPkg.eResource().save(null);
-				} catch (IOException e) {
-					retStatus.add(new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Error when updating generator version", e));
-				}
-				try {
-					waveDev.eResource().save(null);
-					if (domain != null) {
-						((BasicCommandStack) domain.getCommandStack()).saveIsDone();
-						domain.getCommandStack().flush();
-					}
-				} catch (IOException e) {
-					retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save the updated implementation settings", e));
+						setStatus(Status.OK_STATUS);
+					};
+				};
+				shell.getDisplay().syncExec(runnable);
+
+				if (!runnable.getStatus().isOK()) {
+					return runnable.getStatus();
 				}
 			}
 
