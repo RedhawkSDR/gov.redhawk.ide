@@ -46,9 +46,8 @@ public class ProfileNameVariableResolverTest {
 		fixture = registry.getDesc("PROFILE_NAME");
 
 		ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		URI spdUri = URI.createPlatformPluginURI("/" + PLUGIN_ID + "/resources/simplecomponent/simplecomponent.spd.xml", true).appendFragment(
-			SoftPkg.EOBJECT_PATH);
-		softPkg = (SoftPkg) resourceSet.getEObject(spdUri, true);
+		URI spdUri = URI.createPlatformPluginURI("/" + PLUGIN_ID + "/resources/simplecomponent/simplecomponent.spd.xml", true);
+		softPkg = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdUri, true));
 	}
 
 	private String common() throws CoreException {

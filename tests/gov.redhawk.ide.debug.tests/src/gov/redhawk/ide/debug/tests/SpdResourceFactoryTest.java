@@ -27,8 +27,8 @@ public class SpdResourceFactoryTest {
 
 	private SoftPkg getSpd(String spdPath) {
 		ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		URI spdUri = URI.createPlatformPluginURI("/" + PLUGIN_ID + "/" + spdPath, true).appendFragment(SoftPkg.EOBJECT_PATH);
-		return (SoftPkg) resourceSet.getEObject(spdUri, true);
+		URI spdUri = URI.createPlatformPluginURI("/" + PLUGIN_ID + "/" + spdPath, true);
+		return SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdUri, true));
 	}
 
 	@Test(expected = IllegalArgumentException.class)

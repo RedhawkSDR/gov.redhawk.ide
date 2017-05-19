@@ -49,8 +49,8 @@ public class ExecParamResolverTest {
 	private String common(String spdPath, String implName) throws CoreException {
 		// Load SPD
 		ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		URI spdUri = URI.createPlatformPluginURI("/" + PLUGIN_ID + "/" + spdPath, true).appendFragment(SoftPkg.EOBJECT_PATH);
-		SoftPkg softPkg = (SoftPkg) resourceSet.getEObject(spdUri, true);
+		URI spdUri = URI.createPlatformPluginURI("/" + PLUGIN_ID + "/" + spdPath, true);
+		SoftPkg softPkg = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdUri, true));
 
 		// Create a launch configuration
 		ILaunchConfigurationFactoryRegistry registry = ScaDebugPlugin.getInstance().getLaunchConfigurationFactoryRegistry();
@@ -106,8 +106,8 @@ public class ExecParamResolverTest {
 		final String IMPL_NAME = "cpp";
 
 		ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		URI spdUri = URI.createPlatformPluginURI("/" + PLUGIN_ID + "/" + SHARED_ADDRESS_COMP_SPD_PATH, true).appendFragment(SoftPkg.EOBJECT_PATH);
-		SoftPkg softPkg = (SoftPkg) resourceSet.getEObject(spdUri, true);
+		URI spdUri = URI.createPlatformPluginURI("/" + PLUGIN_ID + "/" + SHARED_ADDRESS_COMP_SPD_PATH, true);
+		SoftPkg softPkg = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdUri, true));
 
 		ILaunchConfigurationFactoryRegistry registry = ScaDebugPlugin.getInstance().getLaunchConfigurationFactoryRegistry();
 		ILaunchConfigurationFactory factory = registry.getFactory(softPkg, IMPL_NAME);
