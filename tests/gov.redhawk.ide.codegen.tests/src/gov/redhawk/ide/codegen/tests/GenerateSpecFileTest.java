@@ -24,6 +24,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
+import gov.redhawk.ide.codegen.jet.DcdTemplateParameter;
+import gov.redhawk.ide.codegen.jet.SadTemplateParameter;
 import gov.redhawk.ide.codegen.jet.TopLevelDcdRpmSpecTemplate;
 import gov.redhawk.ide.codegen.jet.TopLevelSadRpmSpecTemplate;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -38,10 +40,11 @@ public class GenerateSpecFileTest {
 	public void missingSadSpdTest() throws URISyntaxException {
 		TopLevelSadRpmSpecTemplate sadSpecTemplate = TopLevelSadRpmSpecTemplate.create(null);
 		SoftwareAssembly sad = getSad("/waveforms/SpecFileTest/SpecFileTest.sad.xml");
+		SadTemplateParameter params = new SadTemplateParameter(sad, "Header comment");
 
 		// Test referencing a non-existent spd.xml
 		try {
-			sadSpecTemplate.generate(sad);
+			sadSpecTemplate.generate(params);
 			Assert.fail("Test is expected to throw a CoreException for referencing an non-existent spd.xml in the sad.xml ComponentFile block");
 		} catch (CoreException e) {
 			Assert.assertTrue(e.getMessage() != null && e.getMessage().matches(".*Unable to locate component file.*"));
@@ -53,10 +56,11 @@ public class GenerateSpecFileTest {
 	public void missingDcdSpdTest() throws URISyntaxException {
 		TopLevelDcdRpmSpecTemplate dcdSpecTemplate = TopLevelDcdRpmSpecTemplate.create(null);
 		DeviceConfiguration dcd = getDcd("/nodes/SpecFileTest/DeviceManager.dcd.xml");
+		DcdTemplateParameter params = new DcdTemplateParameter(dcd, "Header comment");
 
 		// Test referencing a non-existent spd.xml
 		try {
-			dcdSpecTemplate.generate(dcd);
+			dcdSpecTemplate.generate(params);
 			Assert.fail("Test is expected to throw a CoreException for referencing an non-existent spd.xml in the dcd.xml ComponentFile block");
 		} catch (CoreException e) {
 			Assert.assertTrue(e.getMessage() != null && e.getMessage().matches(".*Unable to locate component file.*"));
@@ -75,7 +79,6 @@ public class GenerateSpecFileTest {
 	}
 
 	private Resource getResource(URI uri) throws URISyntaxException {
-
 		ResourceSet resourceSet = new ResourceSetImpl();
 		URL url = FileLocator.find(Platform.getBundle("gov.redhawk.ide.codegen.tests"), new Path("sdr"), null);
 		SdrURIHandler handler = new SdrURIHandler(URI.createURI(url.toURI().toString()));
