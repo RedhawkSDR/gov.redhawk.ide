@@ -92,7 +92,7 @@ public class SpdValidationTestResourceProvider {
 		final ResourceSet set = new ResourceSetImpl();
 
 		// Load the spdFile and save the implementation
-		final SoftPkg softPkg = (SoftPkg) set.getEObject(spdUri, true);
+		final SoftPkg softPkg = SoftPkg.Util.getSoftPkg(set.getResource(spdUri, true));
 		final Implementation impl = SpdFactory.eINSTANCE.createImplementation();
 
 		impl.setCode(SpdFactory.eINSTANCE.createCode());
