@@ -767,13 +767,29 @@ public class ScaExplorerTestUtils {
 
 	/**
 	 * Waits for a TreeItem to exist in the REDHAWK Explorer.
-	 * @see #getTreeItemFromScaExplorer(SWTWorkbenchBot, String[], String).
+	 * @see #getTreeItemFromScaExplorer(SWTWorkbenchBot, String[], String)
+	 * @see #waitUntilNodeAppearsInScaExplorer(SWTWorkbenchBot, String[], String, long)
 	 * @param bot
 	 * @param nodeParentPath
 	 * @param nodeName
 	 * @return
 	 */
 	public static SWTBotTreeItem waitUntilNodeAppearsInScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
+		// 30 second wait, since projects build when exported
+		return waitUntilNodeAppearsInScaExplorer(bot, nodeParentPath, nodeName, 30000);
+	}
+
+	/**
+	 * Waits for a TreeItem to exist in the REDHAWK Explorer.
+	 * @see #getTreeItemFromScaExplorer(SWTWorkbenchBot, String[], String)
+	 * @param bot
+	 * @param nodeParentPath
+	 * @param nodeName
+	 * @param timeout
+	 * @return
+	 */
+	public static SWTBotTreeItem waitUntilNodeAppearsInScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName,
+		final long timeout) {
 		// 30 second wait, since projects build when exported
 		bot.waitUntil(new DefaultCondition() {
 
@@ -784,7 +800,8 @@ public class ScaExplorerTestUtils {
 				if (lastException != null) {
 					return "Failed waiting for a tree item in the explorer view: " + lastException.toString();
 				} else {
-					return String.format("Unknown failure while waiting for a tree item in the explorer view. Parent path: %s. Tree item: %s.", Arrays.deepToString(nodeParentPath), nodeName);
+					return String.format("Unknown failure while waiting for a tree item in the explorer view. Parent path: %s. Tree item: %s.",
+						Arrays.deepToString(nodeParentPath), nodeName);
 				}
 			}
 
@@ -799,7 +816,7 @@ public class ScaExplorerTestUtils {
 				lastException = null;
 				return true;
 			}
-		}, 30000);
+		}, timeout);
 
 		return getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
 	}
