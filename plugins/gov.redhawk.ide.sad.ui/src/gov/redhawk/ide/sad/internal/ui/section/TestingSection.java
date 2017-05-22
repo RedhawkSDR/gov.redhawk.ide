@@ -57,7 +57,7 @@ public class TestingSection extends ScaSection {
 	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
-		section.setText("Testing \t"); // append space and tab to workaround Eclipse Bug 408509
+		section.setText("Testing");
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		final TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
 		section.setLayoutData(data);
