@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.notify.Notification;
@@ -63,6 +64,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 
 	private static final MutexRule RULE = new MutexRule(SdrResourceFactoryProvider.class);
 	private static final String SDR_CATEGORY = "SDR";
+	private boolean debug;
 
 	private class SPDListener extends AdapterImpl {
 
@@ -82,7 +84,9 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 						SpdResourceFactory resFactory = SpdResourceFactory.createResourceFactory(spd);
 						addResource(spd, resFactory);
 					} catch (IllegalArgumentException e) {
-						ScaDebugUiPlugin.log(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, "Invalid SPD file was not added to the sandbox", e));
+						if (debug) {
+							ScaDebugUiPlugin.log(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, "Invalid SPD file was not added to the sandbox", e));
+						}
 					}
 					break;
 				case Notification.ADD_MANY:
@@ -96,7 +100,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 							status.add(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, e.toString(), e));
 						}
 					}
-					if (!status.isOK()) {
+					if (debug && !status.isOK()) {
 						ScaDebugUiPlugin.log(status);
 					}
 					break;
@@ -124,6 +128,9 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 	private boolean disposed;
 
 	public SdrResourceFactoryProvider() {
+		String debugOption = Platform.getDebugOption(ScaDebugUiPlugin.PLUGIN_ID + "/debug/" + this.getClass().getSimpleName());
+		debug = "true".equalsIgnoreCase(debugOption);
+
 		SdrUiPlugin plugin = SdrUiPlugin.getDefault();
 		this.root = plugin.getTargetSdrRoot();
 		if (this.root == null) {
@@ -173,7 +180,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 				SdrResourceFactoryProvider.this.root.getComponentsContainer().eAdapters().add(SdrResourceFactoryProvider.this.componentsListener);
 				SdrResourceFactoryProvider.this.root.getDevicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.devicesListener);
 				SdrResourceFactoryProvider.this.root.getServicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.serviceListener);
-				if (!status.isOK()) {
+				if (debug && !status.isOK()) {
 					ScaDebugUiPlugin.log(status);
 				}
 			}

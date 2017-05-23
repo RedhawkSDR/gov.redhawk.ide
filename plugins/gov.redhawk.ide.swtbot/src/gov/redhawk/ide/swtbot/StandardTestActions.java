@@ -507,6 +507,34 @@ public final class StandardTestActions {
 		});
 	}
 
+	public static void selectComboListFromCell(SWTBot bot, SWTBotTable table, final int row, final int column, final String text, final boolean doubleClick) {
+		if (doubleClick) {
+			table.doubleClick(row, column);
+		} else {
+			table.click(row, column);
+		}
+
+		// Select a value from the combo list box when it appears
+		final SWTBotCCombo cellEditor = new SWTBot(table.widget).ccomboBox();
+		cellEditor.setSelection(text);
+		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
+		keyboard.pressShortcut(Keystrokes.CR);
+
+		// Wait for cell editor to close
+		bot.waitUntil(new DefaultCondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return cellEditor.widget.isDisposed() || !(cellEditor.isActive() || cellEditor.isVisible());
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Cell editor did not disappear";
+			}
+		});
+	}
+
 	/**
 	 * @param bot
 	 * @param item

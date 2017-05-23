@@ -254,7 +254,7 @@ public class LocalApplicationFactory {
 		if (sad.getConnections() != null) {
 			app.getStreams().getOutStream().println("Making connections...");
 			for (final SadConnectInterface connection : sad.getConnections().getConnectInterface()) {
-				app.getStreams().getOutStream().println("Creating connection " + connection.getId());
+				app.getStreams().getOutStream().println("\tCreating connection " + connection.getId());
 				org.omg.CORBA.Object target = null;
 				if (connection.getProvidesPort() != null) {
 					final String providesId = connection.getProvidesPort().getProvidesIdentifier();
@@ -285,13 +285,13 @@ public class LocalApplicationFactory {
 					}
 					target = component.getCorbaObj();
 				} else {
-					app.getStreams().getErrStream().println("Unsupported target connection type for connection: " + connection.getId());
+					app.getStreams().getErrStream().println("\tUnsupported target connection type for connection: " + connection.getId());
 				}
 
 				if (target != null) {
 					final String usesID = connection.getUsesPort().getUsesIdentifier();
 					if (connection.getUsesPort().getComponentInstantiationRef() == null) {
-						app.getStreams().getErrStream().println("Failed to create connection " + connection.getId());
+						app.getStreams().getErrStream().println("\tFailed to create connection " + connection.getId());
 						continue;
 					}
 					final ScaComponent component = app.getLocalWaveform().getScaComponent(connection.getUsesPort().getComponentInstantiationRef().getRefid());

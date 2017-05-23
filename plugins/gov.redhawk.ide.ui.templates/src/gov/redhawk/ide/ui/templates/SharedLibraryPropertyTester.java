@@ -11,42 +11,82 @@
  */
 package gov.redhawk.ide.ui.templates;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
-
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IURIEditorInput;
+
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
- * Perhaps confusingly, this property tester returns <b>false</b> if the {@link IFile} for the SPD passed to it is a
- * shared library, and true otherwise.
+ * Tests an editor to see if its input is a Redhawk shared library (SPD).
  */
 public class SharedLibraryPropertyTester extends PropertyTester {
+
+	private long lastReceiver = 0;
+	private boolean lastIsSharedLib = false;
 
 	public SharedLibraryPropertyTester() {
 	}
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		@SuppressWarnings("unchecked")
-		List<ArrayList<Object>> receiverArray = (List<ArrayList<Object>>) receiver;
-		IFile spdXml = (IFile) receiverArray.get(0);
-		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		final URI spdUri = URI.createPlatformResourceURI(spdXml.getFullPath().toString(), true).appendFragment(SoftPkg.EOBJECT_PATH);
-		final SoftPkg spd = (SoftPkg) resourceSet.getEObject(spdUri, true);
+		if ("isSharedLibrary".equals(property)) {
+			if (receiver.hashCode() == lastReceiver) {
+				return lastIsSharedLib;
+			}
+			boolean result = isSharedLibrary(receiver);
+			lastReceiver = receiver.hashCode();
+			lastIsSharedLib = result;
+			return result;
+		}
 
-		if (spd != null) {
-			if (spd.getImplementation().get(0).isSharedLibrary()) {
+		return false;
+	}
+
+	private boolean isSharedLibrary(Object receiver) {
+		IEditorInput editorInput = (IEditorInput) receiver;
+		if (editorInput == null) {
+			return false;
+		}
+
+		URI spdUri;
+		IFile file = editorInput.getAdapter(IFile.class);
+		if (file != null) {
+			if (!file.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
 				return false;
+			}
+			spdUri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
+		} else if (editorInput instanceof IURIEditorInput) {
+			spdUri = URI.createURI(((IURIEditorInput) editorInput).getURI().toString());
+			if (!spdUri.segment(spdUri.segmentCount() - 1).endsWith(SpdPackage.FILE_EXTENSION)) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+
+		// Load SPD
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+		final SoftPkg spd;
+		try {
+			spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdUri, true));
+		} catch (WrappedException e) {
+			return false;
+		}
+
+		for (Implementation impl : spd.getImplementation()) {
+			if (impl.isSharedLibrary()) {
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
-
 }

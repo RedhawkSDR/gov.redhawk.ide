@@ -496,18 +496,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.terminated = true;
 		this.streams.getOutStream().println("Releasing Application...");
 
-		try {
-			if (delegate == null) {
-				disconnectAll();
-				releaseAll();
-			}
-			unbind();
-		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
-			String msg = "Problems while releasing";
-			this.streams.getErrStream().println(msg);
-			this.streams.getErrStream().println(e.toString());
-			ScaDebugPlugin.logError(msg, e);
+		if (delegate == null) {
+			disconnectAll();
+			releaseAll();
 		}
+		unbind();
 
 		this.streams.getOutStream().println("Release finished");
 		this.assemblyController = null;
@@ -577,7 +570,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		} catch (final SystemException e) {
 			String msg = "Problems while releasing component " + name;
 			this.streams.getErrStream().println(msg);
-			ScaDebugPlugin.logError(msg, e);
+			this.streams.getErrStream().println(e.toString());
 		}
 	}
 
@@ -607,7 +600,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 					} catch (final SystemException e) {
 						String msg = "Problems while disconnecting connection " + c.getId();
 						this.streams.getErrStream().println(msg);
-						ScaDebugPlugin.logError(msg, e);
+						this.streams.getErrStream().println(e.toString());
 					}
 				}
 			}
@@ -1102,14 +1095,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 		}
 
-		try {
-			unbind();
-		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
-			String msg = "Problems while terminating";
-			this.streams.getErrStream().println(msg);
-			this.streams.getErrStream().println(e.toString());
-			ScaDebugPlugin.logError(msg, e);
-		}
+		unbind();
 
 		this.streams.getOutStream().println("Terminate finished");
 		this.assemblyController = null;
