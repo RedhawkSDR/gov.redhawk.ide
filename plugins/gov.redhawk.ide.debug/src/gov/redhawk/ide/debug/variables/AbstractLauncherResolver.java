@@ -26,7 +26,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * @since 4.0
+ * @since 10.0
  * 
  */
 public abstract class AbstractLauncherResolver implements ILauncherVariableResolver, IExecutableExtension, IDynamicVariableResolver {

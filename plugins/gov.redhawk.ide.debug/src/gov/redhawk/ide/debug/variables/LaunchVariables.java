@@ -11,7 +11,7 @@
 package gov.redhawk.ide.debug.variables;
 
 /**
- * @since 4.0
+ * @since 10.0
  */
 public final class LaunchVariables {
 	private LaunchVariables() {
