@@ -158,12 +158,15 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <and>
-                  <test
-                        forcePluginActivation="false"
-                        property="gov.redhawk.ide.ui.templates.isSharedLibrary">
-                  </test>
-               </and>
+               <with
+                     variable="activeEditorInput">
+                  <not>
+                     <test
+                           forcePluginActivation="true"
+                           property="gov.redhawk.ide.ui.templates.isSharedLibrary">
+                     </test>
+                  </not>
+               </with>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -177,6 +180,15 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
+               <with
+                     variable="activeEditorInput">
+                  <not>
+                     <test
+                           forcePluginActivation="true"
+                           property="gov.redhawk.ide.ui.templates.isSharedLibrary">
+                     </test>
+                  </not>
+               </with>
             </visibleWhen>
          </command>
       </menuContribution>
