@@ -131,7 +131,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 							ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 							URI uri = URI.createPlatformResourceURI(openEditorOn.getFullPath().toString(), true).appendFragment(
 								DeviceConfiguration.EOBJECT_PATH);
-							DeviceConfiguration dcd = (DeviceConfiguration) resourceSet.getEObject(uri, true);
+							DeviceConfiguration dcd = DeviceConfiguration.Util.getDeviceConfiguration(resourceSet.getResource(uri, true));
 							dcd.setId(id);
 							dcd.setName(project.getName());
 							if (domainManagerName != null) {

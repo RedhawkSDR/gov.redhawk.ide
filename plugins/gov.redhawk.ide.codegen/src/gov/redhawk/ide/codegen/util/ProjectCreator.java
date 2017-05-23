@@ -238,7 +238,7 @@ public abstract class ProjectCreator {
 		// Get the URI of the model file.
 		final URI fileURI = URI.createPlatformResourceURI(spdFile.getFullPath().toString(), true).appendFragment(SoftPkg.EOBJECT_PATH);
 		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
-		final SoftPkg spd = (SoftPkg) set.getEObject(fileURI, true);
+		final SoftPkg spd = SoftPkg.Util.getSoftPkg(set.getResource(fileURI, true));
 
 		if (spd == null) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Invalid SPD File"));

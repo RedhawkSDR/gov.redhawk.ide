@@ -145,7 +145,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 							ProjectCreator.importFile(project, openEditorOn, existingSadPath, progress.newChild(1));
 							ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 							URI uri = URI.createPlatformResourceURI(openEditorOn.getFullPath().toString(), true).appendFragment(SoftwareAssembly.EOBJECT_PATH);
-							SoftwareAssembly sad = (SoftwareAssembly) resourceSet.getEObject(uri, true);
+							SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(uri, true));
 							sad.setId(id);
 							sad.setName(project.getName());
 							try {
