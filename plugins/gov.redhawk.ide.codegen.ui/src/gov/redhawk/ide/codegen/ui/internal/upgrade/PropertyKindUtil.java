@@ -144,7 +144,7 @@ public class PropertyKindUtil {
 						public void run() {
 							upgradeProperties(prf);
 							try {
-								SaveXmlUtils.save(null, prf, null);
+								SaveXmlUtils.save(spd, prf, null);
 							} catch (CoreException e) {
 								setResult(e);
 							}

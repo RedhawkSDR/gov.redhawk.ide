@@ -37,49 +37,50 @@ public class SaveXmlUtils {
 	}
 
 	/**
-	 * Save SPD, PRF and SCD files to disk. Any file may optionally be null. If from an editor, this method assumes
-	 * they are all from the <b>same</b> editor. If the model objects come from an open editor, that editor's save
-	 * functionality will be invoked (possibly requiring user interaction). Otherwise the files will be saved directly
-	 * to disk.
-	 * @param spd The SPD file (can be null)
+	 * Saves SPD, PRF and SCD files to disk. If possible, an open editor will be located for the file(s) and saving
+	 * will be done via the UI. This method makes the assumption that the objects are related (i.e. the PRF or SCD, if
+	 * provided, belong to the SPD).
+	 * @param spd The SPD file
 	 * @param prf The PRF file (can be null)
 	 * @param scd The SCD file (can be null)
 	 * @throws CoreException
 	 */
 	public static void save(final SoftPkg spd, final Properties prf, final SoftwareComponent scd) throws CoreException {
+		if (spd == null) {
+			throw new IllegalArgumentException("SPD cannot be null");
+		}
+
 		// Our model object may / most likely belongs to an editor
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 
 		// Look for an SCD editor
-		boolean scdSaved = false;
+		boolean saved = false;
 		if (scd != null) {
-			scdSaved = saveViaEditor(scd, page, workspaceRoot);
+			saved = saveViaEditor(scd, page, workspaceRoot);
 		}
 
 		// Look for a PRF editor
-		boolean prfSaved = false;
-		if (prf != null) {
-			prfSaved = saveViaEditor(prf, page, workspaceRoot);
+		if (!saved && prf != null) {
+			saved = saveViaEditor(prf, page, workspaceRoot);
 		}
 
 		// Look for an SPD editor (this may save the PRF & SCD)
-		boolean spdSaved = false;
-		if (spd != null) {
-			spdSaved = saveViaEditor(spd, page, workspaceRoot);
-			prfSaved = prfSaved || (prf != null && spdSaved);
-			scdSaved = scdSaved || (scd != null && spdSaved);
+		if (!saved) {
+			saved = saveViaEditor(spd, page, workspaceRoot);
 		}
 
 		// If we were unable to save via editor, save the resource(s) directly
-		if (spd != null && !spdSaved) {
-			saveDirectly(spd);
-		}
-		if (prf != null && !prfSaved) {
-			saveDirectly(prf);
-		}
-		if (scd != null && !scdSaved) {
-			saveDirectly(scd);
+		if (!saved) {
+			if (spd != null) {
+				saveDirectly(spd);
+			}
+			if (prf != null) {
+				saveDirectly(prf);
+			}
+			if (scd != null) {
+				saveDirectly(scd);
+			}
 		}
 	}
 
@@ -101,15 +102,19 @@ public class SaveXmlUtils {
 		}
 	}
 
+	/**
+	 * @param eObject The object will be translated to a file, and the open editor for that file will be located
+	 * @param page
+	 * @param workspaceRoot
+	 * @return
+	 */
 	private static boolean saveViaEditor(final EObject eObject, IWorkbenchPage page, IWorkspaceRoot workspaceRoot) {
 		String workspaceRelativeStr = eObject.eResource().getURI().toPlatformString(false);
 		IPath workspaceRelativePath = Path.fromPortableString(workspaceRelativeStr);
 		if (workspaceRelativePath != null) {
 			IEditorPart editorPart = ResourceUtil.findEditor(page, workspaceRoot.getFile(workspaceRelativePath));
-			if (editorPart != null) {
-				if (editorPart.isDirty()) {
-					editorPart.doSave(new NullProgressMonitor());
-				}
+			if (editorPart != null && editorPart.isDirty()) {
+				editorPart.doSave(new NullProgressMonitor());
 				return true;
 			}
 		}
