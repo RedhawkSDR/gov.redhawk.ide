@@ -13,6 +13,8 @@ package gov.redhawk.ide.swtbot;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
@@ -23,12 +25,25 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarToggleButton;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.hamcrest.Description;
 import org.junit.Assert;
 
 import gov.redhawk.ide.swtbot.condition.WaitForWidgetEnablement;
 
 public class ConsoleUtils {
+
+	private static final String DEBUG_UI_PLUGIN_ID = "org.eclipse.debug.ui"; //$NON-NLS-1$
+
+	/**
+	 * See {@link org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT}.
+	 */
+	private static final String CONSOLE_OPEN_ON_OUT = "DEBUG.consoleOpenOnOut"; //$NON-NLS-1$
+
+	/**
+	 * See {@link org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT}.
+	 */
+	private static final String CONSOLE_OPEN_ON_ERR = "DEBUG.consoleOpenOnErr"; //$NON-NLS-1$
 
 	/** private to prevent instantiation since all functions are static. */
 	private ConsoleUtils() {
@@ -168,11 +183,18 @@ public class ConsoleUtils {
 	}
 
 	/**
-	 * Stop the Console View from popping up every time it gets pinged
-	 * Makes assumption on location of 'Show Standard Out' and 'Show Standard Error' buttons
-	 * @param bot
-	 * @return
+	 * Stop the Console View from popping up every time something writes to its stdout / stderr
 	 */
+	public static void disableAutoShowConsole() {
+		IPreferenceStore preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, DEBUG_UI_PLUGIN_ID);
+		preferenceStore.setValue(CONSOLE_OPEN_ON_OUT, false);
+		preferenceStore.setValue(CONSOLE_OPEN_ON_ERR, false);
+	}
+
+	/**
+	 * @deprecated Use {@link #disableAutoShowConsole()}.
+	 */
+	@Deprecated
 	public static void disableAutoShowConsole(SWTWorkbenchBot bot) {
 		final String stdOutTT = "Show Console When Standard Out Changes";
 		final String errOutTT = "Show Console When Standard Error Changes";
