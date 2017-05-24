@@ -197,22 +197,6 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Launch a domain manager and optionally a device manager.
-	 * @param bot
-	 * @param domainName The name of the domain manager to launch
-	 * @param deviceMgrName The name of the device manager to launch, or null for none
-	 * @deprecated Use {@link #launchDomainViaWizard(SWTWorkbenchBot, String, String[])}
-	 */
-	@Deprecated
-	public static void launchDomain(SWTWorkbenchBot bot, String domainName, final String deviceMgrName) {
-		if (deviceMgrName == null) {
-			launchDomainViaWizard(bot, domainName);
-		} else {
-			launchDomainViaWizard(bot, domainName, deviceMgrName);
-		}
-	}
-
-	/**
 	 * Launch a domain manager and optionally device manager(s) via wizard. Does not wait for the domain to connect.
 	 * @param bot
 	 * @param domainName The name of the domain manager to launch
@@ -288,14 +272,6 @@ public class ScaExplorerTestUtils {
 		bot.button("Finish").click();
 		wizardBot.waitUntil(new WaitForModalContext(), 30000);
 		bot.waitUntil(Conditions.shellCloses(wizardShell));
-	}
-
-	/**
-	 * @deprecated Use {@link #terminate()}
-	 */
-	@Deprecated
-	public static void terminateLocalResourceInExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
-		contextMenuForItemInExplorer(bot, nodeParentPath, nodeName, "Terminate");
 	}
 
 	public static void connectPortsInScaExplorer(SWTWorkbenchBot bot, final String[] parentPath, final String connectionName, final String sourceResourceName,
