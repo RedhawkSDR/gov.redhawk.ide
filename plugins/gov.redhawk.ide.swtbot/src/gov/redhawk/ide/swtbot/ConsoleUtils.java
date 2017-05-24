@@ -36,12 +36,12 @@ public class ConsoleUtils {
 	private static final String DEBUG_UI_PLUGIN_ID = "org.eclipse.debug.ui"; //$NON-NLS-1$
 
 	/**
-	 * See {@link org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT}.
+	 * See org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT.
 	 */
 	private static final String CONSOLE_OPEN_ON_OUT = "DEBUG.consoleOpenOnOut"; //$NON-NLS-1$
 
 	/**
-	 * See {@link org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT}.
+	 * See org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT.
 	 */
 	private static final String CONSOLE_OPEN_ON_ERR = "DEBUG.consoleOpenOnErr"; //$NON-NLS-1$
 
