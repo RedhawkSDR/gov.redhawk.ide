@@ -135,6 +135,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		left.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		createGeneralInfoSection(managedForm, left, toolkit);
+		createProjectDocumentationSection(managedForm, left, toolkit);
 		// XXX Don't add the author section since it was deemed confusing
 		// createAuthorsSection(managedForm, left, toolkit);
 
@@ -145,7 +146,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		// The following sections don't make sense for libraries, since the don't have .prf or .scd
 		if (!isSoftpackageLibrary()) {
 			createInterfaceSection(managedForm, right, toolkit);
-			createProjectDocumentationSection(managedForm, right, toolkit);
 			createTestingSection(managedForm, right, toolkit);
 		}
 
