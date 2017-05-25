@@ -124,7 +124,9 @@ public class GenerateWaveformHandler extends AbstractGenerateCodeHandler {
 				RunnableWithResult<CoreException> runnable = new RunnableWithResult.Impl<CoreException>() {
 					@Override
 					public void run() {
-						DocumentationUtils.setXMLCommentHeader(editingDomain, docRoot.getMixed(), headerContent);
+						if (!DocumentationUtils.setXMLCommentHeader(editingDomain, docRoot.getMixed(), headerContent)) {
+							return;
+						}
 						try {
 							SaveXmlUtils.save(sad);
 						} catch (CoreException e) {

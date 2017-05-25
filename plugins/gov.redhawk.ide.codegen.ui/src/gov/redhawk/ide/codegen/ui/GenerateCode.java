@@ -276,34 +276,40 @@ public final class GenerateCode {
 
 				RunnableWithResult<Void> runnable = new RunnableWithResult.Impl<Void>() {
 					public void run() {
-						if (new Version(1, 10, 0).compareTo(codeGenVersion) <= 0) {
+						boolean changes = false;
+
+						String codegenVersion = generator.getCodegenVersion().toString();
+						if (new Version(1, 10, 0).compareTo(codeGenVersion) <= 0 && !codegenVersion.equals(softPkg.getType())) {
 							// Set the SPD's type field to the code generator's version
 							ScaModelCommand.execute(softPkg, new ScaModelCommand() {
 								@Override
 								public void execute() {
-									softPkg.setType(generator.getCodegenVersion().toString());
+									softPkg.setType(codegenVersion);
 								}
 							});
+							changes = true;
 						}
 
 						// Apply header to XML files
 						if (spdRoot != null) {
-							DocumentationUtils.setXMLCommentHeader(domain, spdRoot.getMixed(), headerContents);
+							changes |= DocumentationUtils.setXMLCommentHeader(domain, spdRoot.getMixed(), headerContents);
 						}
 						if (prfRoot != null) {
-							DocumentationUtils.setXMLCommentHeader(domain, prfRoot.getMixed(), headerContents);
+							changes |= DocumentationUtils.setXMLCommentHeader(domain, prfRoot.getMixed(), headerContents);
 						}
 						if (scdRoot != null) {
-							DocumentationUtils.setXMLCommentHeader(domain, scdRoot.getMixed(), headerContents);
+							changes |= DocumentationUtils.setXMLCommentHeader(domain, scdRoot.getMixed(), headerContents);
 						}
 
 						// Save XML files (SPD, PRF, SCD) and wavedev
 						// This should include codegen version, header updates, file CRCs
-						try {
-							SaveXmlUtils.save(softPkg, prf, scd);
-						} catch (CoreException e) {
-							setStatus(new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save changes to XML", e));
-							return;
+						if (changes) {
+							try {
+								SaveXmlUtils.save(softPkg, prf, scd);
+							} catch (CoreException e) {
+								setStatus(new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save changes to XML", e));
+								return;
+							}
 						}
 
 						setStatus(Status.OK_STATUS);

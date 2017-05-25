@@ -120,7 +120,9 @@ public class GenerateNodeHandler extends AbstractGenerateCodeHandler {
 				RunnableWithResult<CoreException> runnable = new RunnableWithResult.Impl<CoreException>() {
 					@Override
 					public void run() {
-						DocumentationUtils.setXMLCommentHeader(editingDomain, docRoot.getMixed(), headerContent);
+						if (!DocumentationUtils.setXMLCommentHeader(editingDomain, docRoot.getMixed(), headerContent)) {
+							return;
+						}
 						try {
 							SaveXmlUtils.save(dcd);
 						} catch (CoreException e) {

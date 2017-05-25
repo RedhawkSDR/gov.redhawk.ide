@@ -50,10 +50,11 @@ public class DocumentationUtils {
 	}
 
 	/**
-	 * Adds/updates/removes an XML comment header
+	 * Adds/updates/removes an XML comment header.
 	 * @param documentRootMixed the {@link FeatureMap} from calling <code>getMixed()</code> on the document root.
+	 * @return True if changes were made to the document
 	 */
-	public static void setXMLCommentHeader(EditingDomain editingDomain, FeatureMap documentRootMixed, String commentText) {
+	public static boolean setXMLCommentHeader(EditingDomain editingDomain, FeatureMap documentRootMixed, String commentText) {
 		// Pad the comment text with newlines so it's not on the same line as the comment markers
 		if (commentText != null) {
 			commentText = '\n' + commentText + '\n';
@@ -82,13 +83,15 @@ public class DocumentationUtils {
 		}
 
 		// If a command was created, run it
-		if (command != null) {
-			if (editingDomain != null) {
-				editingDomain.getCommandStack().execute(command);
-			} else {
-				command.execute();
-			}
+		if (command == null) {
+			return false;
 		}
+		if (editingDomain != null) {
+			editingDomain.getCommandStack().execute(command);
+		} else {
+			command.execute();
+		}
+		return true;
 	}
 
 	/**
