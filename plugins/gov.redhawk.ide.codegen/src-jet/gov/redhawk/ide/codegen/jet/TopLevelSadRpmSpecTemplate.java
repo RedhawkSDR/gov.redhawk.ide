@@ -12,7 +12,6 @@
 package gov.redhawk.ide.codegen.jet;
 
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
-import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
@@ -68,7 +67,8 @@ public class TopLevelSadRpmSpecTemplate
     
     final SadTemplateParameter params = (SadTemplateParameter) argument;
     final SoftwareAssembly sad = params.getSad();
-    
+    final String sadFileName = sad.eResource().getURI().lastSegment();
+
     // The assembly controller isn't specified initially after project creation; ignore if it's not specified, throw
     // an error if it is and we can't get the assembly controller
     final SadComponentInstantiation instance = SoftwareAssembly.Util.getAssemblyControllerInstantiation(sad);
@@ -79,7 +79,7 @@ public class TopLevelSadRpmSpecTemplate
     if (controller == null){
 	    throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenActivator.PLUGIN_ID, "Unable to get assembly controller. Check your SAD file and Target SDR."));
     }
-    
+
     final List<ComponentFile> componentFiles = sad.getComponentFiles().getComponentFile();
     final String waveformSubDir = "/dom/waveforms/" + sad.getName().replace('.', '/');
     final String directoryBlock = ProjectCreator.createDirectoryBlock("%dir %{_prefix}/dom/waveforms/" + sad.getName().replace('.', '/'));
@@ -135,18 +135,18 @@ public class TopLevelSadRpmSpecTemplate
     stringBuffer.append(TEXT_13);
     stringBuffer.append(waveformSubDir);
     stringBuffer.append(TEXT_14);
-    stringBuffer.append(ModelUtil.getResource(sad).getName());
+    stringBuffer.append(sadFileName);
     stringBuffer.append(TEXT_15);
     stringBuffer.append(waveformSubDir);
     stringBuffer.append(TEXT_16);
-    stringBuffer.append(ModelUtil.getResource(sad).getName());
+    stringBuffer.append(sadFileName);
     stringBuffer.append(TEXT_17);
     stringBuffer.append(TEXT_18);
     stringBuffer.append(directoryBlock);
     stringBuffer.append(TEXT_19);
     stringBuffer.append(waveformSubDir);
     stringBuffer.append(TEXT_20);
-    stringBuffer.append(ModelUtil.getResource(sad).getName());
+    stringBuffer.append(sadFileName);
     stringBuffer.append(TEXT_21);
     return stringBuffer.toString();
   }

@@ -12,7 +12,6 @@
 package gov.redhawk.ide.codegen.jet;
 
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
-import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import java.util.Collections;
 import java.util.List;
@@ -66,6 +65,7 @@ public class TopLevelDcdRpmSpecTemplate
     
     final DcdTemplateParameter params = (DcdTemplateParameter) argument;
     final DeviceConfiguration devCfg = params.getDcd();
+    final String dcdFileName = devCfg.eResource().getURI().lastSegment();
 
     String devMgrName = "";
     final SoftPkg devMgrSoftPkg = devCfg.getDeviceManagerSoftPkg().getSoftPkg();
@@ -130,18 +130,18 @@ public class TopLevelDcdRpmSpecTemplate
     stringBuffer.append(TEXT_12);
     stringBuffer.append(nodeSubDir);
     stringBuffer.append(TEXT_13);
-    stringBuffer.append(ModelUtil.getResource(devCfg).getName());
+    stringBuffer.append(dcdFileName);
     stringBuffer.append(TEXT_14);
     stringBuffer.append(nodeSubDir);
     stringBuffer.append(TEXT_15);
-    stringBuffer.append(ModelUtil.getResource(devCfg).getName());
+    stringBuffer.append(dcdFileName);
     stringBuffer.append(TEXT_16);
     stringBuffer.append(TEXT_17);
     stringBuffer.append(directoryBlock);
     stringBuffer.append(TEXT_18);
     stringBuffer.append(nodeSubDir);
     stringBuffer.append(TEXT_19);
-    stringBuffer.append(ModelUtil.getResource(devCfg).getName());
+    stringBuffer.append(dcdFileName);
     stringBuffer.append(TEXT_20);
     return stringBuffer.toString();
   }

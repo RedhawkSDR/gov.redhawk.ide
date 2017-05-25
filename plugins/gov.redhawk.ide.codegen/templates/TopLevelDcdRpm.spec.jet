@@ -1,6 +1,5 @@
 <%@ jet package="gov.redhawk.ide.codegen.jet"
 imports="gov.redhawk.ide.codegen.RedhawkCodegenActivator
-gov.redhawk.model.sca.util.ModelUtil
 gov.redhawk.ide.codegen.util.ProjectCreator
 java.util.Collections
 java.util.List
@@ -16,6 +15,7 @@ skeleton="../generator.skeleton"
 <%
     final DcdTemplateParameter params = (DcdTemplateParameter) argument;
     final DeviceConfiguration devCfg = params.getDcd();
+    final String dcdFileName = devCfg.eResource().getURI().lastSegment();
 
     String devMgrName = "";
     final SoftPkg devMgrSoftPkg = devCfg.getDeviceManagerSoftPkg().getSoftPkg();
@@ -91,9 +91,9 @@ BuildRoot: %{_tmppath}/%{name}-%{version}
 %install
 %__rm -rf $RPM_BUILD_ROOT
 %__mkdir_p "$RPM_BUILD_ROOT%{_prefix}<%=nodeSubDir%>"
-%__install -m 644 <%=ModelUtil.getResource(devCfg).getName()%> $RPM_BUILD_ROOT%{_prefix}<%=nodeSubDir%>/<%=ModelUtil.getResource(devCfg).getName()%>
+%__install -m 644 <%=dcdFileName%> $RPM_BUILD_ROOT%{_prefix}<%=nodeSubDir%>/<%=dcdFileName%>
 
 %files
 %defattr(-,redhawk,redhawk)
 <%=directoryBlock%>
-%{_prefix}<%=nodeSubDir%>/<%=ModelUtil.getResource(devCfg).getName()%>
+%{_prefix}<%=nodeSubDir%>/<%=dcdFileName%>
