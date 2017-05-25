@@ -111,6 +111,7 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createScdFileEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.scdEntry = new FormEntry(client, toolkit, "SCD:", "Browse...", true);
+		this.scdEntry.setTooltip(Messages.GeneralInformationComposite_SCD_Tooltip);
 	}
 
 	/**
@@ -122,6 +123,7 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createPrfFileEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.prfEntry = new FormEntry(client, toolkit, "PRF:", "Browse...", true);
+		this.prfEntry.setTooltip(Messages.GeneralInformationComposite_PRF_Tooltip);
 	}
 
 	/**
@@ -144,7 +146,7 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createIDEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.idEntry = new FormEntry(client, toolkit, "ID*:", "Generate", false);
-
+		this.idEntry.setTooltip(Messages.GeneralInformationComposite_ID_Tooltip);
 	}
 
 	/**
@@ -156,6 +158,7 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createVersionEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.versionEntry = new FormEntry(client, toolkit, "Version:", null, false);
+		this.versionEntry.setTooltip(Messages.GeneralInformationComposite_Version_Tooltip);
 	}
 
 	/**

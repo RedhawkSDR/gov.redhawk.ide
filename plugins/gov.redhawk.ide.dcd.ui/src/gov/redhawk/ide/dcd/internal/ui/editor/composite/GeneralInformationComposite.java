@@ -82,7 +82,7 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createIDEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.idEntry = new FormEntry(client, toolkit, "ID:", "Generate", false);
-
+		this.idEntry.setTooltip(Messages.GeneralInformationComposite_ID_Tooltip);
 	}
 
 	/**

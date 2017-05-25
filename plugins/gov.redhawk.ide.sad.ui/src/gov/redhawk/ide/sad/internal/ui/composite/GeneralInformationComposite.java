@@ -67,10 +67,11 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createAssemblyControllerPart(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		final Label label = toolkit.createLabel(client, "Controller:");
+		label.setToolTipText(Messages.GeneralInformationComposite_AssemblyController_Tooltip);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		this.assemblyControllerPart = new ComboViewerPart();
 		this.assemblyControllerPart.createControl(client, toolkit, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.SINGLE);
-		this.assemblyControllerPart.getControl().setToolTipText("Assembly Controller");
+		this.assemblyControllerPart.getControl().setToolTipText(Messages.GeneralInformationComposite_AssemblyController_Tooltip);
 		this.assemblyControllerPart.setComparator(new ViewerComparator());
 		this.assemblyControllerPart.setLabelProvider(new LabelProvider() {
 			@Override
@@ -129,7 +130,7 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createIDEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.idEntry = new FormEntry(client, toolkit, "ID:", "Generate", false);
-
+		this.idEntry.setTooltip(Messages.GeneralInformationComposite_ID_Tooltip);
 	}
 
 	/**
@@ -141,6 +142,7 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createVersionEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.versionEntry = new FormEntry(client, toolkit, "Version:", null, false);
+		this.versionEntry.setTooltip(Messages.GeneralInformationComposite_Version_Tooltip);
 	}
 
 	/**
