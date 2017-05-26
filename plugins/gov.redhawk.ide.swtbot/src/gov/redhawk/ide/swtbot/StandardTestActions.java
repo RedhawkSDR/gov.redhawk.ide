@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -90,7 +91,9 @@ import gov.redhawk.ide.swtbot.internal.ProjectRecord;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.ScaPlugin;
+import gov.redhawk.sca.util.IPreferenceAccessor;
 import gov.redhawk.sca.util.OrbSession;
+import gov.redhawk.sca.util.ScopedPreferenceAccessor;
 
 public final class StandardTestActions {
 
@@ -283,24 +286,19 @@ public final class StandardTestActions {
 	}
 
 	/**
-	 * Adjusts how often the IDE polls for changes in the model
+	 * Adjusts how often the IDE polls for changes in the SCA model
 	 */
-	public static void setRefreshInterval(SWTWorkbenchBot bot, int milliseconds) {
-		bot.menu("Window").menu("Preferences").click();
-		bot.waitUntil(Conditions.shellIsActive("Preferences"));
-		SWTBotShell prefShell = bot.shell("Preferences");
-		SWTBot prefBot = prefShell.bot();
-		prefBot.tree().getTreeItem("REDHAWK").expand().expandNode("Data Providers", "Polling Data Provider Preferences").select();
-		prefBot.textWithLabel("Refresh Interval (ms):").setText(String.valueOf(milliseconds));
-		prefBot.button("Apply").click();
-		prefBot.button("OK").click();
-		bot.waitUntil(Conditions.shellCloses(prefShell));
+	public static void setRefreshInterval(long milliseconds) {
+		IPreferenceAccessor preferences = new ScopedPreferenceAccessor(InstanceScope.INSTANCE, "gov.redhawk.sca.model.provider.refresh"); //$NON-NLS-1$
+		preferences.setValue("refreshInterval", milliseconds); //$NON-NLS-1$
+	}
 
-		try {
-			bot.shell("Oomph Preference Recorder").close();
-		} catch (WidgetNotFoundException e) {
-			// PASS - Should only get here if the preference recorder shell wasn't opened.
-		}
+	/**
+	 * Resets to the default value how often the IDE polls for changes in the SCA model.
+	 */
+	public static void resetRefreshInterval() {
+		IPreferenceAccessor preferences = new ScopedPreferenceAccessor(InstanceScope.INSTANCE, "gov.redhawk.sca.model.provider.refresh"); //$NON-NLS-1$
+		preferences.setValue("refreshInterval", preferences.getDefaultLong("refreshInterval")); //$NON-NLS-1$
 	}
 
 	/**
