@@ -863,7 +863,7 @@ public class DiagramTestUtils {
 	 * Maximizes active window
 	 */
 	public static void maximizeActiveWindow(SWTGefBot gefBot) {
-		gefBot.menu().menu("Window", "Navigation", "Maximize Active View or Editor").click();
+		gefBot.menu().menu("Window", "Appearance", "Maximize Active View or Editor").click();
 	}
 
 	/**
