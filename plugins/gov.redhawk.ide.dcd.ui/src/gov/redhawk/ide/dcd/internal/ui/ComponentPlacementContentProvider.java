@@ -42,9 +42,9 @@ public class ComponentPlacementContentProvider implements ITreeContentProvider {
 		if (element instanceof DcdComponentPlacement) {
 			final DcdComponentPlacement node = (DcdComponentPlacement) element;
 
-			for (final Object comp : this.elements.getComponentPlacement()) {
+			for (final DcdComponentPlacement comp : this.elements.getComponentPlacement()) {
 				if (node.getCompositePartOfDevice() != null) {
-					if (((DcdComponentPlacement) comp).getComponentInstantiation().get(0).getId().equals(node.getCompositePartOfDevice().getRefID())) {
+					if (comp.getComponentInstantiation().get(0).getId().equals(node.getCompositePartOfDevice().getRefID())) {
 						return comp;
 					}
 				}
@@ -63,8 +63,7 @@ public class ComponentPlacementContentProvider implements ITreeContentProvider {
 			final String id = bindingNode.getComponentInstantiation().get(0).getId();
 			final ArrayList<DcdComponentPlacement> comps = new ArrayList<DcdComponentPlacement>();
 
-			for (final Object comp : this.elements.getComponentPlacement()) {
-				final DcdComponentPlacement place = (DcdComponentPlacement) comp;
+			for (final DcdComponentPlacement place: this.elements.getComponentPlacement()) {
 				if ((place.getCompositePartOfDevice() != null) && place.getCompositePartOfDevice().getRefID().equals(id)) {
 					comps.add(place);
 				}
@@ -77,8 +76,7 @@ public class ComponentPlacementContentProvider implements ITreeContentProvider {
 		} else if (parent == this.elements) {
 			final ArrayList<DcdComponentPlacement> comps = new ArrayList<DcdComponentPlacement>();
 
-			for (final Object comp : this.elements.getComponentPlacement()) {
-				final DcdComponentPlacement place = (DcdComponentPlacement) comp;
+			for (final DcdComponentPlacement place: this.elements.getComponentPlacement()) {
 				if (place.getCompositePartOfDevice() == null) {
 					comps.add(place);
 				}
