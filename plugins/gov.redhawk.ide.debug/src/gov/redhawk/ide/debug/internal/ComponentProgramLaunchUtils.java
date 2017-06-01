@@ -14,7 +14,6 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.filesystem.EFS;
@@ -23,6 +22,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -48,8 +48,10 @@ import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.AnyUtils;
+import mil.jpeojtrs.sca.util.CFErrorFormatter;
 import mil.jpeojtrs.sca.util.CorbaUtils;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
+import mil.jpeojtrs.sca.util.CFErrorFormatter.FileOperation;
 
 /**
  * Utility class for configuring and using {@link ILaunch} and {@link ILaunchConfiguration} associated with launching
@@ -96,15 +98,13 @@ public class ComponentProgramLaunchUtils {
 		// Get path to the component's .so
 		URI uri = spd.eResource().getURI();
 		String spdFileName = uri.lastSegment();
-		String resourcePath;
+		final String entryPoint;
 		if (uri.isPlatform()) {
 			IPath absResourcePath = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(uri.toPlatformString(true))).getRawLocation();
-			resourcePath = absResourcePath.toString().replace(spdFileName, impl.getCode().getEntryPoint());
+			entryPoint = absResourcePath.toString().replace(spdFileName, impl.getCode().getEntryPoint());
 		} else {
-			resourcePath = uri.toFileString().replace(spdFileName, impl.getCode().getEntryPoint());
+			entryPoint = uri.toFileString().replace(spdFileName, impl.getCode().getEntryPoint());
 		}
-
-		final String entryPoint = resourcePath;
 
 		// Fetch implementation options/parameters/dependencies
 		final DataType[] options = ComponentProgramLaunchUtils.getComponentOptions(spd, impl, launch);
@@ -113,12 +113,24 @@ public class ComponentProgramLaunchUtils {
 
 		// Use ComponentHost to launch the component in a thread
 		try {
-			CorbaUtils.invoke(new Callable<Object>() {
-				@Override
-				public Object call() throws Exception {
+			final String resourceDesc = String.format("Component %s", spd.getName());
+			CorbaUtils.invoke(() -> {
+				try {
 					execDev.executeLinked(entryPoint, options, parameters, deps);
-					return null;
+				} catch (CF.DevicePackage.InvalidState e) {
+					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, CFErrorFormatter.format(e, resourceDesc), e));
+				} catch (CF.ExecutableDevicePackage.InvalidFunction e) {
+					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, CFErrorFormatter.format(e, resourceDesc), e));
+				} catch (CF.ExecutableDevicePackage.InvalidParameters e) {
+					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, CFErrorFormatter.format(e, resourceDesc), e));
+				} catch (CF.ExecutableDevicePackage.InvalidOptions e) {
+					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, CFErrorFormatter.format(e, resourceDesc), e));
+				} catch (CF.InvalidFileName e) {
+					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, CFErrorFormatter.format(e, FileOperation.Open, entryPoint), e));
+				} catch (CF.ExecutableDevicePackage.ExecuteFail e) {
+					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, CFErrorFormatter.format(e, resourceDesc), e));
 				}
+				return null;
 			}, subMonitor);
 
 			subMonitor.worked(WORK_LAUNCH);
