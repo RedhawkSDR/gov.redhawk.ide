@@ -255,7 +255,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 				LaunchUtil.launch(newConfig, mode);
 			}
 		} catch (CoreException e) {
-			final Status status = new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e);
+			final Status status = new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e.getCause());
 			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
 		}
 	}
