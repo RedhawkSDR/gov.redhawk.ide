@@ -35,6 +35,8 @@ public class WaveformUtils {
 	 * @param assemblyController
 	 */
 	public static void createNewWaveform(SWTBot bot, String waveformName, String assemblyController) {
+		SWTBotShell origShell = bot.activeShell();
+
 		bot.menu("File").menu("New").menu("Project...").click();
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
@@ -54,6 +56,11 @@ public class WaveformUtils {
 		// Close wizard
 		wizardBot.button("Finish").click();
 		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
+
+		// For some reason, the main shell doesn't always receive focus back when using SWTBot
+		if (!origShell.isActive()) {
+			origShell.activate();
+		}
 	}
 
 	/**
