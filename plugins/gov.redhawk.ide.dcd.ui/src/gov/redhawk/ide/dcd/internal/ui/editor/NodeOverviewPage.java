@@ -99,17 +99,23 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 		final Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
 
+		boolean isPlatformProject = getEditor().getMainResource().getURI().isPlatform();
+
 		final Composite left = toolkit.createComposite(body);
 		left.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		createGeneralInfoSection(managedForm, left, toolkit);
-		createProjectDocumentationSection(managedForm, left, toolkit);
+		if (isPlatformProject) {
+			createProjectDocumentationSection(managedForm, left, toolkit);
+		}
 
 		final Composite right = toolkit.createComposite(body);
 		right.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		createTestingSection(managedForm, right, toolkit);
-		createExportingSection(managedForm, right, toolkit);
+		if (isPlatformProject) {
+			createExportingSection(managedForm, right, toolkit);
+		}
 	}
 
 	/**

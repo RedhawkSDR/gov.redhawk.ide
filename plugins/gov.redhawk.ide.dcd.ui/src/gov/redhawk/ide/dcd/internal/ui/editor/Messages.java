@@ -17,6 +17,8 @@ import org.eclipse.osgi.util.NLS;
 /* package */ class Messages extends NLS {
 	private static final String BUNDLE_NAME = "gov.redhawk.ide.dcd.internal.ui.editor.messages"; //$NON-NLS-1$
 	public static String ProjectDocumentationSection_AddHeaderText;
+	public static String ProjectDocumentationSection_CannotOpenHeaderMessage;
+	public static String ProjectDocumentationSection_CannotOpenHeaderTitle;
 	public static String ProjectDocumentationSection_SectionTitle;
 	static {
 		// initialize resource bundle
