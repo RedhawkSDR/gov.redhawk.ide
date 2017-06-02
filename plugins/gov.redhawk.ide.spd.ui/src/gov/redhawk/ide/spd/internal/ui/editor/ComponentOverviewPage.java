@@ -27,7 +27,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -131,26 +130,29 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		final Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
 
+		boolean isPlatformProject = getEditor().getMainResource().getURI().isPlatform();
+
 		final Composite left = toolkit.createComposite(body);
 		left.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		createGeneralInfoSection(managedForm, left, toolkit);
-		createProjectDocumentationSection(managedForm, left, toolkit);
+		if (isPlatformProject) {
+			createProjectDocumentationSection(managedForm, left, toolkit);
+		}
 		// XXX Don't add the author section since it was deemed confusing
 		// createAuthorsSection(managedForm, left, toolkit);
 
 		final Composite right = toolkit.createComposite(body);
 		right.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-
-		// The following sections don't make sense for libraries, since the don't have .prf or .scd
 		if (!isSoftpackageLibrary()) {
+			// The following sections don't make sense for libraries, since the don't have .prf or .scd
 			createInterfaceSection(managedForm, right, toolkit);
 			createTestingSection(managedForm, right, toolkit);
 		}
-
-		createExportingSection(managedForm, right, toolkit);
-
+		if (isPlatformProject) {
+			createExportingSection(managedForm, right, toolkit);
+		}
 	}
 
 	/**
@@ -347,13 +349,13 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	 * Important because a number of entry fields are omitted in the case of libraries
 	 */
 	public boolean isSoftpackageLibrary() {
-		for (EObject i : spdResource.getContents()) {
-			if (i instanceof SoftPkg) {
-				for (Implementation impl : ((SoftPkg) i).getImplementation()) {
-					if (impl.isSharedLibrary()) {
-						return true;
-					}
-				}
+		final SoftPkg spd = SoftPkg.Util.getSoftPkg(getInput());
+		if (spd == null) {
+			return false;
+		}
+		for (Implementation impl : spd.getImplementation()) {
+			if (impl.isSharedLibrary()) {
+				return true;
 			}
 		}
 		return false;
