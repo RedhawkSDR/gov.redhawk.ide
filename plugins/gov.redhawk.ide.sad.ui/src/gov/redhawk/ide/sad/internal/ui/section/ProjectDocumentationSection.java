@@ -11,6 +11,7 @@
 package gov.redhawk.ide.sad.internal.ui.section;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -36,7 +37,7 @@ public class ProjectDocumentationSection extends ScaSection {
 	}
 
 	@Override
-	protected void createClient(Section section, FormToolkit toolkit) {
+	protected void createClient(final Section section, FormToolkit toolkit) {
 		section.setText(Messages.ProjectDocumentationSection_SectionTitle);
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		final TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
@@ -63,6 +64,7 @@ public class ProjectDocumentationSection extends ScaSection {
 				// Must have a file editor input
 				IEditorInput input = getPage().getEditorInput();
 				if (!(input instanceof IFileEditorInput)) {
+					MessageDialog.openError(section.getShell(), Messages.ProjectDocumentationSection_CannotOpenHeaderTitle, Messages.ProjectDocumentationSection_CannotOpenHeaderMessage);
 					return;
 				}
 
