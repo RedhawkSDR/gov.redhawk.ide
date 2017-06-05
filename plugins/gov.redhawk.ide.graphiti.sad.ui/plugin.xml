@@ -79,7 +79,7 @@
       <propertySections contributorId="SADDiagram.PropertyContributor">
          <propertySection
                afterSection="200"
-               class="gov.redhawk.ide.graphiti.sad.ui.properties.PortInterfacePropertiesSection"
+               class="gov.redhawk.sca.ui.properties.PortInterfacePropertiesSection"
                enablesFor="1"
                filter="gov.redhawk.core.graphiti.ui.properties.PortFilter"
                id="property.section.PortInterface"
