@@ -419,7 +419,7 @@
          </command>
          <command
                commandId="org.eclipse.debug.ui.commands.Terminate"
-               icon="icons/obj16/terminate_co.gif"
+               icon="icons/obj16/Terminate.gif"
                style="push">
             <visibleWhen
                   checkEnabled="false">
