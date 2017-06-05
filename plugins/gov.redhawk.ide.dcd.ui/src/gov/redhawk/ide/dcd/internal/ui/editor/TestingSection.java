@@ -11,6 +11,7 @@
 package gov.redhawk.ide.dcd.internal.ui.editor;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
+import gov.redhawk.ide.spd.ui.ComponentImages;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
 import gov.redhawk.ui.editor.ScaSection;
 
@@ -85,21 +86,25 @@ public class TestingSection extends ScaSection {
 		imageHyperlink.setText("Launch a local node");
 		imageHyperlink.setHref(TestingSection.TESTING_HREF);
 		imageHyperlink.addHyperlinkListener(this.getPage());
+		imageHyperlink.setImage(ComponentImages.getImage(ComponentImages.RUN_EXEC));
 
 		imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
 		imageHyperlink.setText("Launch a remote node");
 		imageHyperlink.setHref(TestingSection.TESTING_HREF);
 		imageHyperlink.addHyperlinkListener(this.getPage());
+		imageHyperlink.setImage(ComponentImages.getImage(ComponentImages.RUN_EXEC));
 
 		imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
 		imageHyperlink.setText("Launch a local node in debug mode");
 		imageHyperlink.setHref(TestingSection.TESTING_HREF);
 		imageHyperlink.addHyperlinkListener(this.getPage());
+		imageHyperlink.setImage(ComponentImages.getImage(ComponentImages.DEBUG_EXEC));
 
 		imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
 		imageHyperlink.setText("Launch a remote node in debug mode");
 		imageHyperlink.setHref(TestingSection.TESTING_HREF);
 		imageHyperlink.addHyperlinkListener(this.getPage());
+		imageHyperlink.setImage(ComponentImages.getImage(ComponentImages.DEBUG_EXEC));
 	}
 
 }
