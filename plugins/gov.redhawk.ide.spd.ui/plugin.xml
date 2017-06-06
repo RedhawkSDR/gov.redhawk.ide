@@ -162,7 +162,7 @@
       <menuContribution
             locationURI="menu:project?after=additions">
          <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatecomponent"
+               commandId="gov.redhawk.ide.codegen.ui.command.generatecode"
                icon="icons/generate_code.gif"
                style="push">
             <visibleWhen
@@ -179,7 +179,7 @@
       <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatecomponent"
+               commandId="gov.redhawk.ide.codegen.ui.command.generatecode"
                icon="icons/generate_code.gif"
                style="push">
             <visibleWhen
