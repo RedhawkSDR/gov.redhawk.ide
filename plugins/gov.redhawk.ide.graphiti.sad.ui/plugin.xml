@@ -136,23 +136,6 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="menu:project?after=additions">
-         <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatewaveform"
-               icon="icons/generate_code.gif"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiSADEditor">
-                  </instanceof>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
             allPopups="false"
             locationURI="popup:gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca?after=org.eclipse.gef.group.rest">
          <command

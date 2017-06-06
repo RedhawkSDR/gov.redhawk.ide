@@ -16,29 +16,17 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="gov.redhawk.ide.codegen.ui.internal.command.GenerateComponentHandler"
-            description="%generate.component.description"
-            id="gov.redhawk.ide.codegen.ui.command.generatecomponent"
-            name="%generate.component.name">
-      </command>
-      <command
-            defaultHandler="gov.redhawk.ide.codegen.ui.internal.command.GenerateNodeHandler"
-            description="%generate.node.description"
-            id="gov.redhawk.ide.codegen.ui.command.generatenode"
-            name="%generate.node.name">
-      </command>
-      <command
-            defaultHandler="gov.redhawk.ide.codegen.ui.internal.command.GenerateWaveformHandler"
-            description="%generate.waveform.description"
-            id="gov.redhawk.ide.codegen.ui.command.generatewaveform"
-            name="%generate.waveform.name">
+            defaultHandler="gov.redhawk.ide.codegen.ui.internal.command.GenerateCodeHandler"
+            description="%command.description"
+            id="gov.redhawk.ide.codegen.ui.command.generatecode"
+            name="%command.name">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="gov.redhawk.ide.codegen.ui.internal.command.GenerateComponentHandler"
-            commandId="gov.redhawk.ide.codegen.ui.command.generatecomponent">
+            class="gov.redhawk.ide.codegen.ui.internal.command.GenerateCodeHandler"
+            commandId="gov.redhawk.ide.codegen.ui.command.generatecode">
          <activeWhen>
             <or>
                <iterate
@@ -80,7 +68,7 @@
       <menuContribution
             locationURI="toolbar:gov.redhawk.prf.ui.editor.page.toolbar?before=additions">
          <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatecomponent"
+               commandId="gov.redhawk.ide.codegen.ui.command.generatecode"
                icon="icons/generate_code.gif"
                label="%command.label"
                style="push"
@@ -93,7 +81,7 @@
       <menuContribution
             locationURI="toolbar:gov.redhawk.ide.scd.ui.editor.page.toolbar?before=additions">
          <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatecomponent"
+               commandId="gov.redhawk.ide.codegen.ui.command.generatecode"
                icon="icons/generate_code.gif"
                label="%command.label"
                style="push"
@@ -106,7 +94,7 @@
       <menuContribution
             locationURI="toolbar:gov.redhawk.ide.spd.internal.ui.editor.implementation.toolbar?before=additions">
          <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatecomponent"
+               commandId="gov.redhawk.ide.codegen.ui.command.generatecode"
                icon="icons/generate_code.gif"
                label="%command.label.0"
                style="push"
@@ -119,106 +107,13 @@
       <menuContribution
             locationURI="toolbar:gov.redhawk.ide.spd.internal.ui.editor.overview.toolbar?before=additions">
          <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatecomponent"
+               commandId="gov.redhawk.ide.codegen.ui.command.generatecode"
                icon="icons/generate_code.gif"
                label="%command.label.1"
                style="push"
                tooltip="%command.tooltip.1">
             <visibleWhen
                   checkEnabled="false">
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="toolbar:gov.redhawk.ide.sad.internal.ui.editor.overview.toolbar?before=additions">
-         <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatewaveform"
-               icon="icons/generate_code.gif"
-               label="%generate.waveform.name"
-               style="push"
-               tooltip="%generate.waveform.name">
-            <visibleWhen
-                  checkEnabled="false">
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="toolbar:gov.redhawk.ide.dcd.internal.ui.editor.overview.toolbar?before=additions">
-         <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatenode"
-               icon="icons/generate_code.gif"
-               label="%generate.node.name"
-               style="push"
-               tooltip="%generate.node.name">
-            <visibleWhen
-                  checkEnabled="false">
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatecomponent"
-               icon="icons/generate_code.gif"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false"
-                     operator="and">
-                  <or>
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                        <test
-                              property="org.eclipse.core.resources.name"
-                              value="*.spd.xml">
-                        </test>
-                     </adapt>
-                     <instanceof
-                           value="mil.jpeojtrs.sca.spd.Implementation">
-                     </instanceof>
-                  </or>
-               </iterate>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatewaveform"
-               icon="icons/generate_code.gif"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate>
-                  <adapt
-                        type="org.eclipse.core.resources.IResource">
-                     <test
-                           property="org.eclipse.core.resources.name"
-                           value="*.sad.xml">
-                     </test>
-                  </adapt>
-               </iterate>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatenode"
-               icon="icons/generate_code.gif"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate>
-                  <adapt
-                        type="org.eclipse.core.resources.IResource">
-                     <test
-                           property="org.eclipse.core.resources.name"
-                           value="*.dcd.xml">
-                     </test>
-                  </adapt>
-               </iterate>
             </visibleWhen>
          </command>
       </menuContribution>

@@ -96,23 +96,6 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="menu:project?after=additions">
-         <command
-               commandId="gov.redhawk.ide.codegen.ui.command.generatenode"
-               icon="icons/generate_code.gif"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeEditor">
-                  <instanceof
-                        value="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDCDEditor">
-                  </instanceof>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
             allPopups="false"
             locationURI="popup:gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox?after=org.eclipse.gef.group.rest">
          <command
