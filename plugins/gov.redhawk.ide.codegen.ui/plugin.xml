@@ -134,9 +134,9 @@
          <command
                commandId="gov.redhawk.ide.codegen.ui.command.generatewaveform"
                icon="icons/generate_code.gif"
-               label="%generate.waveform.name"
+               label="%command.label.1"
                style="push"
-               tooltip="%generate.waveform.name">
+               tooltip="%command.tooltip.1">
             <visibleWhen
                   checkEnabled="false">
             </visibleWhen>
@@ -147,9 +147,9 @@
          <command
                commandId="gov.redhawk.ide.codegen.ui.command.generatenode"
                icon="icons/generate_code.gif"
-               label="%generate.node.name"
+               label="%command.label.1"
                style="push"
-               tooltip="%generate.node.name">
+               tooltip="%command.tooltip.1">
             <visibleWhen
                   checkEnabled="false">
             </visibleWhen>
