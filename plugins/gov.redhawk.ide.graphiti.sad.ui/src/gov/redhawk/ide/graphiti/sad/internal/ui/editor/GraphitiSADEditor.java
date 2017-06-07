@@ -25,6 +25,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import gov.redhawk.core.graphiti.sad.ui.editor.AbstractGraphitiSADEditor;
 import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
+import gov.redhawk.ide.graphiti.sad.internal.ui.editor.pages.SadComponentsPage;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiSADDiagramEditor;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADEditorDiagramTypeProvider;
@@ -44,6 +45,7 @@ public class GraphitiSADEditor extends AbstractGraphitiSADEditor {
 	private ResourceListener nameListener;
 	private IFormPage overviewPage;
 	private IFormPage propertiesPage;
+	private IFormPage componentsPage;
 
 	private class ResourceListener extends AdapterImpl {
 		private SoftwareAssembly sad;
@@ -120,6 +122,9 @@ public class GraphitiSADEditor extends AbstractGraphitiSADEditor {
 
 			propertiesPage = createPropertiesPage(getMainResource());
 			addPage(propertiesPage);
+			
+			componentsPage = createComponentsPage(getMainResource());
+			addPage(componentsPage);
 		} catch (CoreException e) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
 				StatusManager.LOG | StatusManager.SHOW);
@@ -136,6 +141,12 @@ public class GraphitiSADEditor extends AbstractGraphitiSADEditor {
 
 	private IFormPage createPropertiesPage(Resource sadResource) {
 		SadPropertiesPage page = new SadPropertiesPage(this, "propertiesPage", "Properties", true);
+		page.setInput(sadResource);
+		return page;
+	}
+	
+	private IFormPage createComponentsPage(Resource sadResource) {
+		final SadComponentsPage page = new SadComponentsPage(this);
 		page.setInput(sadResource);
 		return page;
 	}
