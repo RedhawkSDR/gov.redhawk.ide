@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadPartitioning;
@@ -55,9 +56,16 @@ public class SadComponentContentProvider implements ITreeContentProvider {
 		if (inputElement == this.elements) {
 			final ArrayList<SadComponentInstantiation> comps = new ArrayList<>();
 
-			for (final SadComponentPlacement comp : this.elements.getComponentPlacement()) {
-				for (SadComponentInstantiation ci : comp.getComponentInstantiation()) {
+			for (final SadComponentPlacement placement : this.elements.getComponentPlacement()) {
+				for (SadComponentInstantiation ci : placement.getComponentInstantiation()) {
 					comps.add(ci);
+				}
+			}
+			for (HostCollocation hc : this.elements.getHostCollocation()) {
+				for (SadComponentPlacement placement : hc.getComponentPlacement()) {
+					for (SadComponentInstantiation ci : placement.getComponentInstantiation()) {
+						comps.add(ci);
+					}
 				}
 			}
 
