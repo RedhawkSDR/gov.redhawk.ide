@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.emf.databinding.EMFUpdateValueStrategy;
@@ -145,13 +146,14 @@ public class ComponentsDetailsPage extends ScaDetails {
 			PartitioningPackage.Literals.COMPONENT_INSTANTIATION__USAGE_NAME, compInst, new EMFEmptyStringToNullUpdateValueStrategy(), null));
 
 		/** Bind Component Instantiation -> Find Component -> Naming Service **/
+		EMFUpdateValueStrategy uniDirectionStrategy = new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT);
 		NamingService namingService = null;
 		if (compInst.getFindComponent() != null) {
 			namingService = compInst.getFindComponent().getNamingService();
 		}
 		if (namingService != null) {
 			retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getNameEntry(), getEditingDomain(),
-				PartitioningPackage.Literals.NAMING_SERVICE__NAME, namingService, new EMFEmptyStringToNullUpdateValueStrategy(), null));
+				PartitioningPackage.Literals.NAMING_SERVICE__NAME, namingService, new EMFEmptyStringToNullUpdateValueStrategy(), uniDirectionStrategy));
 		}
 
 		/** Bind Component Instantiation -> Logging Config -> Logging URI **/
