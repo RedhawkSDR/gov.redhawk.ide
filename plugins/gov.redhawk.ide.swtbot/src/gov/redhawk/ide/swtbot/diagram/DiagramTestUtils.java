@@ -80,6 +80,7 @@ public class DiagramTestUtils {
 
 	public static final String OVERVIEW_TAB = "Overview";
 	public static final String PROPERTIES_TAB = "Properties";
+	public static final String COMPONENTS_TAB = "Components";
 	public static final String PORTS_TAB = "Ports";
 	public static final String IMPLEMENTATIONS = "Implementations";
 	public static final String DIAGRAM_TAB = "Diagram";
