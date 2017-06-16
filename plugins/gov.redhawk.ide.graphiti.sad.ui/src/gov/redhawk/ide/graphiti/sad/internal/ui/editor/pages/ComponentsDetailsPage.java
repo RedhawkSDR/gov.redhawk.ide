@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.sad.internal.ui.editor.pages;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +20,14 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFUpdateValueStrategy;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditObservables;
@@ -26,22 +35,28 @@ import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaDetails;
 import gov.redhawk.ui.parts.FormEntryBindingFactory;
 import gov.redhawk.ui.util.EMFEmptyStringToNullUpdateValueStrategy;
 import gov.redhawk.ui.util.SCAEditorUtil;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ComponentPlacement;
 import mil.jpeojtrs.sca.partitioning.LoggingConfig;
 import mil.jpeojtrs.sca.partitioning.NamingService;
@@ -50,15 +65,21 @@ import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
+import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 public class ComponentsDetailsPage extends ScaDetails {
 
 	private SadComponentComposite componentComposite;
+	private ControlDecoration uriControlDecoration;
 	private Binding loggingUriBinding;
 	private Binding logLevelBinding;
 
-	private final SelectionListener loggingListener = new SelectionAdapter() {
+	/**
+	 * Listener to have the log level and logging uri bindings validate when logging is enabled/disabled
+	 */
+	private final SelectionListener loggingEnabledListener = new SelectionAdapter() {
 		public void widgetSelected(final SelectionEvent e) {
 			if (!ComponentsDetailsPage.this.loggingUriBinding.isDisposed()) {
 				Binding binding = ComponentsDetailsPage.this.loggingUriBinding;
@@ -156,16 +177,6 @@ public class ComponentsDetailsPage extends ScaDetails {
 				PartitioningPackage.Literals.NAMING_SERVICE__NAME, namingService, new EMFEmptyStringToNullUpdateValueStrategy(), uniDirectionStrategy));
 		}
 
-		/** Bind Component Instantiation -> Logging Config -> Logging URI **/
-		IEMFEditValueProperty uriProperty = EMFEditProperties.value(getEditingDomain(),
-			FeaturePath.fromList(PartitioningPackage.Literals.COMPONENT_INSTANTIATION__LOGGING_CONFIG, PartitioningPackage.Literals.LOGGING_CONFIG__URI));
-		@SuppressWarnings("unchecked")
-		IObservableValue< ? > uriObserver = uriProperty.observe(compInst);
-		this.loggingUriBinding = context.bindValue(
-			WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), this.componentComposite.getLoggingUri().getText()),
-			uriObserver, null, null);
-		retVal.add(loggingUriBinding);
-
 		/** Bind Component Instantiation -> Logging Config -> Log Level **/
 		IEMFEditValueProperty levelProperty = EMFEditProperties.value(getEditingDomain(),
 			FeaturePath.fromList(PartitioningPackage.Literals.COMPONENT_INSTANTIATION__LOGGING_CONFIG, PartitioningPackage.Literals.LOGGING_CONFIG__LEVEL));
@@ -184,6 +195,19 @@ public class ComponentsDetailsPage extends ScaDetails {
 		this.logLevelBinding = context.bindValue(WidgetProperties.selection().observe(this.componentComposite.getLevelViewer().getCombo()), levelObserver,
 			new EMFEmptyStringToNullUpdateValueStrategy(), levelModelToTarget);
 		retVal.add(logLevelBinding);
+
+		/** Bind Component Instantiation -> Logging Config -> Logging URI **/
+		IEMFEditValueProperty uriProperty = EMFEditProperties.value(getEditingDomain(),
+			FeaturePath.fromList(PartitioningPackage.Literals.COMPONENT_INSTANTIATION__LOGGING_CONFIG, PartitioningPackage.Literals.LOGGING_CONFIG__URI));
+		@SuppressWarnings("unchecked")
+		IObservableValue< ? > uriObserver = uriProperty.observe(compInst);
+		EMFUpdateValueStrategy uriTargetToModel = new EMFUpdateValueStrategy();
+		ControlDecoration controlDecoration = getUriControlDecoration(componentComposite.getLoggingUri().getText());
+		uriTargetToModel.setAfterConvertValidator(new LoggingUriValidator(compInst, controlDecoration));
+		this.loggingUriBinding = context.bindValue(
+			WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), this.componentComposite.getLoggingUri().getText()),
+			uriObserver, uriTargetToModel, null);
+		retVal.add(loggingUriBinding);
 
 		/** Bind Logging Config enabled button to create/remove logging configuration tags **/
 		final EMFUpdateValueStrategy targetToModel = new EMFUpdateValueStrategy();
@@ -219,17 +243,84 @@ public class ComponentsDetailsPage extends ScaDetails {
 			WidgetProperties.selection().observe(componentComposite.getEnableLoggingButton())));
 
 		/** Add listener for EnableLoggingButton **/
-		// NOTE: MUST remove listener prior to adding since
+		// NOTE: MUST remove listeners prior to adding since
 		// 1.) We don't want multiple listeners
 		// 2.) This listener MUST be triggered AFTER the binding listener, therefore, it is adding every time in the
 		// bind method
-		this.componentComposite.getEnableLoggingButton().removeSelectionListener(this.loggingListener);
-		this.componentComposite.getEnableLoggingButton().addSelectionListener(this.loggingListener);
+		this.componentComposite.getEnableLoggingButton().removeSelectionListener(this.loggingEnabledListener);
+		this.componentComposite.getEnableLoggingButton().addSelectionListener(this.loggingEnabledListener);
 
 		/** Make all composite fields editable/un-editable depending on the context **/
 		this.componentComposite.setEditable(SCAEditorUtil.isEditableResource(getPage(), compInst.eResource()));
 
 		return retVal;
+	}
+
+	private ControlDecoration getUriControlDecoration(Text text) {
+		if (uriControlDecoration == null) {
+			uriControlDecoration = new ControlDecoration(componentComposite.getLoggingUri().getText(), SWT.BOTTOM | SWT.LEFT);
+			uriControlDecoration.setDescriptionText("Invalid entry");
+			FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
+			uriControlDecoration.setImage(fieldDecoration.getImage());
+		}
+		return uriControlDecoration;
+	}
+
+	class LoggingUriValidator implements IValidator {
+		private final ComponentInstantiation compInst;
+		private final ControlDecoration controlDecoration;
+
+		public LoggingUriValidator(SadComponentInstantiation compInst, ControlDecoration controlDecoration) {
+			this.compInst = compInst;
+			this.controlDecoration = controlDecoration;
+		}
+
+		@Override
+		public IStatus validate(Object value) {
+			// Hide any previous validation decorations
+			controlDecoration.hide();
+
+			// No errors if logging configuration is not enabled
+			if (compInst.getLoggingConfig() == null) {
+				return ValidationStatus.ok();
+			}
+
+			try {
+				String uriText = value.toString();
+				URI uri = URI.createURI(uriText);
+				String scheme = uri.scheme();
+				final List<String> protocols = Arrays.asList(new String[] { "file", ScaFileSystemConstants.SCHEME });
+				if (scheme != null || protocols.contains(scheme)) {
+					IPath path = SdrUiPlugin.getDefault().getTargetSdrDomPath();
+					if (scheme.equals(ScaFileSystemConstants.SCHEME)) {
+						String query = QueryParser.createQuery(Collections.singletonMap(ScaFileSystemConstants.QUERY_PARAM_FS, "file://" + path.toString()));
+						uri = URI.createURI(uri + "?" + query);
+					}
+
+					IFileStore store = EFS.getStore(java.net.URI.create(uri.toString()));
+					boolean exists = store.fetchInfo(EFS.NONE, null).exists();
+					boolean isDir = store.fetchInfo(EFS.NONE, null).isDirectory();
+					// Validate that the URI references a file that exists
+					if (!exists) {
+						controlDecoration.setDescriptionText("URI cannot be verified: File not found");
+						controlDecoration.show();
+						return ValidationStatus.ok();
+					}
+					// Validate that the URI is NOT referencing a directory
+					if (isDir) {
+						controlDecoration.setDescriptionText("URI cannot be verified: Target destination is a directory");
+						controlDecoration.show();
+						return ValidationStatus.ok();
+					}
+				}
+
+				return ValidationStatus.ok();
+			} catch (IllegalArgumentException | CoreException ex) {
+				controlDecoration.setDescriptionText("URI cannot be verified: " + ex.getMessage());
+				controlDecoration.show();
+				return ValidationStatus.ok();
+			}
+		}
 	}
 
 }
