@@ -170,7 +170,7 @@ public class ComponentsDetailsPage extends ScaDetails {
 				}
 				retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
 					PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID, ref, new EMFEmptyStringToNullUpdateValueStrategy(),
-					new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER)));
+					new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST)));
 			}
 		}
 
@@ -181,7 +181,7 @@ public class ComponentsDetailsPage extends ScaDetails {
 				if (componentId.equals(ref.getRefid())) {
 					retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
 						PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID, ref, new EMFEmptyStringToNullUpdateValueStrategy(),
-						new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER)));
+						new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST)));
 				}
 			}
 		}
@@ -192,7 +192,7 @@ public class ComponentsDetailsPage extends ScaDetails {
 				if (componentId.equals(externProp.getCompRefID())) {
 					retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
 						SadPackage.Literals.EXTERNAL_PROPERTY__COMP_REF_ID, externProp, new EMFEmptyStringToNullUpdateValueStrategy(),
-						new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER)));
+						new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST)));
 				}
 			}
 		}
@@ -220,7 +220,7 @@ public class ComponentsDetailsPage extends ScaDetails {
 		if (namingService != null) {
 			retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getNameEntry(), getEditingDomain(),
 				PartitioningPackage.Literals.NAMING_SERVICE__NAME, namingService, new EMFEmptyStringToNullUpdateValueStrategy(),
-				new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER)));
+				new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST)));
 		}
 
 		/** Bind Component Instantiation -> Logging Config -> Log Level **/
