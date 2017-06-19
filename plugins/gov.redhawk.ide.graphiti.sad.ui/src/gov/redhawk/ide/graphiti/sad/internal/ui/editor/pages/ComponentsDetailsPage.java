@@ -157,37 +157,43 @@ public class ComponentsDetailsPage extends ScaDetails {
 			PartitioningPackage.Literals.COMPONENT_INSTANTIATION__ID, compInst, new EMFEmptyStringToNullUpdateValueStrategy(), null));
 
 		/** Bind Component Instantiation --> ID --> Connections **/
-		for (SadConnectInterface connection : sad.getConnections().getConnectInterface()) {
-			SadComponentInstantiationRef ref = null;
-			if (componentId.equals(connection.getUsesPort().getComponentInstantiationRef().getRefid())) {
-				ref = connection.getUsesPort().getComponentInstantiationRef();
-			} else if (connection.getProvidesPort() != null && componentId.equals(connection.getProvidesPort().getComponentInstantiationRef().getRefid())) {
-				ref = connection.getProvidesPort().getComponentInstantiationRef();
-			} else if (connection.getComponentSupportedInterface() != null
-				&& componentId.equals(connection.getComponentSupportedInterface().getComponentInstantiationRef().getRefid())) {
-				ref = (SadComponentInstantiationRef) connection.getComponentSupportedInterface().getComponentInstantiationRef();
-			}
-			retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
-				PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID, ref, new EMFEmptyStringToNullUpdateValueStrategy(),
-				new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER)));
-		}
-
-		/** Bind Component Instantiation --> ID --> External Ports **/
-		for (Port externPort : sad.getExternalPorts().getPort()) {
-			SadComponentInstantiationRef ref = externPort.getComponentInstantiationRef();
-			if (componentId.equals(ref.getRefid())) {
+		if (sad.getConnections() != null) {
+			for (SadConnectInterface connection : sad.getConnections().getConnectInterface()) {
+				SadComponentInstantiationRef ref = null;
+				if (componentId.equals(connection.getUsesPort().getComponentInstantiationRef().getRefid())) {
+					ref = connection.getUsesPort().getComponentInstantiationRef();
+				} else if (connection.getProvidesPort() != null && componentId.equals(connection.getProvidesPort().getComponentInstantiationRef().getRefid())) {
+					ref = connection.getProvidesPort().getComponentInstantiationRef();
+				} else if (connection.getComponentSupportedInterface() != null
+					&& componentId.equals(connection.getComponentSupportedInterface().getComponentInstantiationRef().getRefid())) {
+					ref = (SadComponentInstantiationRef) connection.getComponentSupportedInterface().getComponentInstantiationRef();
+				}
 				retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
 					PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID, ref, new EMFEmptyStringToNullUpdateValueStrategy(),
 					new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER)));
 			}
 		}
 
+		/** Bind Component Instantiation --> ID --> External Ports **/
+		if (sad.getExternalPorts() != null) {
+			for (Port externPort : sad.getExternalPorts().getPort()) {
+				SadComponentInstantiationRef ref = externPort.getComponentInstantiationRef();
+				if (componentId.equals(ref.getRefid())) {
+					retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
+						PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID, ref, new EMFEmptyStringToNullUpdateValueStrategy(),
+						new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER)));
+				}
+			}
+		}
+
 		/** Bind Component Instantiation --> ID --> External Properties **/
-		for (ExternalProperty externProp : sad.getExternalProperties().getProperties()) {
-			if (componentId.equals(externProp.getCompRefID())) {
-				retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
-					SadPackage.Literals.EXTERNAL_PROPERTY__COMP_REF_ID, externProp, new EMFEmptyStringToNullUpdateValueStrategy(),
-					new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER)));
+		if (sad.getExternalProperties() != null) {
+			for (ExternalProperty externProp : sad.getExternalProperties().getProperties()) {
+				if (componentId.equals(externProp.getCompRefID())) {
+					retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
+						SadPackage.Literals.EXTERNAL_PROPERTY__COMP_REF_ID, externProp, new EMFEmptyStringToNullUpdateValueStrategy(),
+						new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER)));
+				}
 			}
 		}
 
