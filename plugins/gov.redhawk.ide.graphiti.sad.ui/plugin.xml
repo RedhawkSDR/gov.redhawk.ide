@@ -71,6 +71,12 @@
                id="gov.redhawk.ide.graphiti.sad.ui.propertyTab.requirements"
                label="Requirements">
          </propertyTab>
+         <propertyTab
+               afterTab="gov.redhawk.ide.graphiti.sad.ui.propertyTab.requirements"
+               category="Properties"
+               id="gov.redhawk.ide.graphiti.sad.ui.propertyTab.reservations"
+               label="Reservations">
+         </propertyTab>
       </propertyTabs>
    </extension>
 
@@ -91,6 +97,12 @@
                filter="gov.redhawk.ide.graphiti.ui.properties.RequirementsTabFilter"
                id="gov.redhawk.ide.graphiti.sad.ui.propertySection.requirements"
                tab="gov.redhawk.ide.graphiti.sad.ui.propertyTab.requirements">
+         </propertySection>
+         <propertySection
+               class="gov.redhawk.ide.graphiti.sad.ui.properties.SadReservationsPropertySection"
+               filter="gov.redhawk.ide.graphiti.sad.ui.properties.ReservationsTabFilter"
+               id="gov.redhawk.ide.graphiti.sad.ui.propertySection.reservations"
+               tab="gov.redhawk.ide.graphiti.sad.ui.propertyTab.reservations">
          </propertySection>
       </propertySections>
    </extension>
