@@ -16,7 +16,6 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="gov.redhawk.ide.codegen.ui.internal.command.GenerateComponentHandler"
             description="%generate.component.description"
             id="gov.redhawk.ide.codegen.ui.command.generatecomponent"
             name="%generate.component.name">
@@ -54,22 +53,14 @@
                   <instanceof
                         value="mil.jpeojtrs.sca.spd.Implementation">
                   </instanceof>
-                  <instanceof
-                        value="mil.jpeojtrs.sca.prf.AbstractProperty">
-                  </instanceof>
                   </or>
                </iterate>
-               <and>
-                  <with
-                        variable="activeEditorId">
-                     <equals
-                           value="gov.redhawk.ide.ui.editors.ComponentEditor">
-                     </equals>
-                  </with>
-                  <count
-                        value="0">
-                  </count>
-               </and>
+               <with
+                     variable="activeEditorId">
+                  <equals
+                        value="gov.redhawk.ide.ui.editors.ComponentEditor">
+                  </equals>
+               </with>
             </or>
          </activeWhen>
       </handler>
@@ -87,6 +78,12 @@
                tooltip="%command.tooltip">
             <visibleWhen
                   checkEnabled="false">
+               <with
+                     variable="activeEditorId">
+                  <equals
+                        value="gov.redhawk.ide.ui.editors.ComponentEditor">
+                  </equals>
+               </with>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -100,6 +97,12 @@
                tooltip="%command.tooltip">
             <visibleWhen
                   checkEnabled="false">
+               <with
+                     variable="activeEditorId">
+                  <equals
+                        value="gov.redhawk.ide.ui.editors.ComponentEditor">
+                  </equals>
+               </with>
             </visibleWhen>
          </command>
       </menuContribution>
