@@ -62,6 +62,11 @@ public class SadReservationsPropertySection extends AbstractKeyValuePropertiesSe
 	}
 
 	@Override
+	protected String getToolTipSuffix() {
+		return "Reservation";
+	}
+
+	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
 		EObject eObj = getEObject();

@@ -40,7 +40,7 @@ public abstract class AbstractRequirementsPropertySection extends AbstractKeyVal
 	 * @return
 	 */
 	protected abstract Requirements getSelectionRequirements();
-	
+
 	@Override
 	protected AbstractKeyValuePropertiesComposite getTreeComposite(Composite parent, int style, int treeStyle) {
 		return new RequirementsPropertyComposite(parent, style, treeStyle);
@@ -92,5 +92,10 @@ public abstract class AbstractRequirementsPropertySection extends AbstractKeyVal
 
 		Requires requires = (Requires) ((StructuredSelection) getTreeViewer().getSelection()).getFirstElement();
 		return RemoveCommand.create(getEditingDomain(), requirements, PartitioningPackage.Literals.REQUIREMENTS__REQUIRES, requires);
+	}
+
+	@Override
+	protected String getToolTipSuffix() {
+		return "Requires";
 	}
 }

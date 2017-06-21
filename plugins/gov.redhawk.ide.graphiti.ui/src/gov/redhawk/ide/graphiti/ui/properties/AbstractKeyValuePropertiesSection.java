@@ -105,6 +105,11 @@ public abstract class AbstractKeyValuePropertiesSection extends AbstractProperti
 	 */
 	protected abstract Command createRemoveCommand();
 
+	/**
+	 * @return String to be used as part of the add/remove button tooltips
+	 */
+	protected abstract String getToolTipSuffix();
+
 	@Override
 	public void createControls(Composite parent, final TabbedPropertySheetPage tabbedPropertySheetPage) {
 		super.createControls(parent, tabbedPropertySheetPage);
@@ -150,12 +155,12 @@ public abstract class AbstractKeyValuePropertiesSection extends AbstractProperti
 
 		addButton = new Button(actionComposite, SWT.PUSH);
 		addButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		addButton.setToolTipText("Add Requires");
+		addButton.setToolTipText("Add " + getToolTipSuffix());
 		addButton.setImage(addImage);
 
 		removeButton = new Button(actionComposite, SWT.PUSH);
 		removeButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		removeButton.setToolTipText("Remove Requires");
+		removeButton.setToolTipText("Remove " + getToolTipSuffix());
 		removeButton.setImage(removeImage);
 
 		// Add button selection listeners
