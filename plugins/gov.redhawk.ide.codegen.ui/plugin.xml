@@ -16,7 +16,6 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="gov.redhawk.ide.codegen.ui.internal.command.GenerateCodeHandler"
             description="%command.description"
             id="gov.redhawk.ide.codegen.ui.command.generatecode"
             name="%command.name">
@@ -32,39 +31,30 @@
                <iterate
                      ifEmpty="false">
                   <or>
-                  <adapt
-                        type="org.eclipse.core.resources.IResource">
-                     <test
-                           property="org.eclipse.core.resources.name"
-                           value="*.spd.xml">
-                     </test>
-                  </adapt>
-                  <instanceof
-                        value="mil.jpeojtrs.sca.spd.Implementation">
-                  </instanceof>
-                  <instanceof
-                        value="mil.jpeojtrs.sca.prf.AbstractProperty">
-                  </instanceof>
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                        <test
+                              property="org.eclipse.core.resources.name"
+                              value="*.spd.xml">
+                        </test>
+                     </adapt>
+                     <instanceof
+                           value="mil.jpeojtrs.sca.spd.Implementation">
+                     </instanceof>
                   </or>
                </iterate>
-               <and>
-                  <with
-                        variable="activeEditorId">
-                     <equals
-                           value="gov.redhawk.ide.ui.editors.ComponentEditor">
-                     </equals>
-                  </with>
-                  <count
-                        value="0">
-                  </count>
-               </and>
+               <with
+                     variable="activeEditorId">
+                  <equals
+                        value="gov.redhawk.ide.ui.editors.ComponentEditor">
+                  </equals>
+               </with>
             </or>
          </activeWhen>
       </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
-
       <menuContribution
             locationURI="toolbar:gov.redhawk.prf.ui.editor.page.toolbar?before=additions">
          <command
@@ -75,6 +65,12 @@
                tooltip="%command.tooltip">
             <visibleWhen
                   checkEnabled="false">
+               <with
+                     variable="activeEditorId">
+                  <equals
+                        value="gov.redhawk.ide.ui.editors.ComponentEditor">
+                  </equals>
+               </with>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -88,6 +84,12 @@
                tooltip="%command.tooltip">
             <visibleWhen
                   checkEnabled="false">
+               <with
+                     variable="activeEditorId">
+                  <equals
+                        value="gov.redhawk.ide.ui.editors.ComponentEditor">
+                  </equals>
+               </with>
             </visibleWhen>
          </command>
       </menuContribution>
