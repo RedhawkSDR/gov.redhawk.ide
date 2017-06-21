@@ -12,6 +12,7 @@
 package gov.redhawk.ide.scd.internal.ui.editor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,7 @@ import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.Disposable;
+import org.eclipse.emf.edit.provider.FeatureMapEntryWrapperItemProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
@@ -246,5 +248,11 @@ public class PortsSection extends TreeSection {
 		}
 		Command removeCommand = RemoveCommand.create(domain, removed);
 		domain.getCommandStack().execute(removeCommand);
+	}
+
+	@Override
+	public boolean setFormInput(Object input) {
+		getTreePart().getTreeViewer().setSelection(new StructuredSelection(input));
+		return true;
 	}
 }
