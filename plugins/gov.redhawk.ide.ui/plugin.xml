@@ -57,7 +57,7 @@
   <extension
         point="org.eclipse.ui.navigator.navigatorContent">
      <commonFilter
-           activeByDefault="true"
+           activeByDefault="false"
            description="%commonFilter.description.prf"
            id="gov.redhawk.ui.filter.prf_xml"
            name="%commonFilter.name.prf">
@@ -74,7 +74,7 @@
         </filterExpression>
      </commonFilter>
      <commonFilter
-           activeByDefault="true"
+           activeByDefault="false"
            description="%commonFilter.description.scd"
            id="gov.redhawk.ui.filter.scd_xml"
            name="%commonFilter.name.scd">
