@@ -10,34 +10,32 @@
  *******************************************************************************/
 package gov.redhawk.ide.spd.internal.ui.editor;
 
-import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationSectionImplementationItemProvider;
-import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationSectionSoftPkgItemProvider;
-import gov.redhawk.ide.spd.internal.ui.editor.provider.SpdItemProviderAdapterFactoryAdapter;
-import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
-import gov.redhawk.prf.ui.provider.PropertiesEditorPrfItemProviderAdapterFactory;
-import gov.redhawk.ui.editor.FormOutlinePage;
-import gov.redhawk.ui.editor.SCAFormEditor;
-import gov.redhawk.ui.editor.ScaFormPage;
-import mil.jpeojtrs.sca.prf.Properties;
-import mil.jpeojtrs.sca.scd.provider.ScdItemProviderAdapterFactory;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.ui.PlatformUI;
 
+import gov.redhawk.ide.scd.ui.editor.page.PortsFormPage;
+import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
+import gov.redhawk.ui.editor.FormOutlinePage;
+import gov.redhawk.ui.editor.SCAFormEditor;
+import gov.redhawk.ui.editor.ScaFormPage;
+import mil.jpeojtrs.sca.prf.PrfPackage;
+import mil.jpeojtrs.sca.prf.Properties;
+import mil.jpeojtrs.sca.scd.ScdPackage;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdPackage;
+
 /**
- * 
+ * Provides the outline for the SPD editor.
  */
 public class ComponentOutlinePage extends FormOutlinePage {
 
-	/**
-	 * @since 2.0
-	 */
 	private class ComponentOutlinePageAdapterFactoryLabelProvider extends AdapterFactoryLabelProvider {
 
 		public ComponentOutlinePageAdapterFactoryLabelProvider(AdapterFactory adapterFactory) {
@@ -58,42 +56,34 @@ public class ComponentOutlinePage extends FormOutlinePage {
 
 	}
 
-	/**
-	 * The Constructor.
-	 * 
-	 * @param editor the editor
-	 */
 	public ComponentOutlinePage(final SCAFormEditor editor) {
 		super(editor);
-		super.setLabelProvider(new DecoratingLabelProvider(new ComponentOutlinePageAdapterFactoryLabelProvider(getAdapterFactory()), PlatformUI.getWorkbench()
-		        .getDecoratorManager().getLabelDecorator()));
+
+		// Create our own label provider that will decorate items that have warnings/errors.
+		// We re-use the editor's adapter factory so that objects are the same between the editor & outline
+		ILabelProvider provider = new ComponentOutlinePageAdapterFactoryLabelProvider(fEditor.getAdapterFactory());
+		ILabelDecorator decorator = PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
+		super.setLabelProvider(new DecoratingLabelProvider(provider, decorator));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void addItemProviders(final ComposedAdapterFactory adapterFactory) {
-		final SpdItemProviderAdapterFactoryAdapter provider = new SpdItemProviderAdapterFactoryAdapter();
-		provider.setSoftPkgAdapter(new ImplementationSectionSoftPkgItemProvider(provider));
-		provider.setImplementationAdapter(new ImplementationSectionImplementationItemProvider(provider, this.fEditor.getMainResource()));
-		adapterFactory.addAdapterFactory(provider);
-		adapterFactory.addAdapterFactory(new ScdItemProviderAdapterFactory());
-		adapterFactory.addAdapterFactory(new PropertiesEditorPrfItemProviderAdapterFactory());
+		// We override getAdapterFactory(), so this isn't necessary
+		throw new IllegalStateException("Internal error - this method should never be called");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
+	public AdapterFactory getAdapterFactory() {
+		// We re-use the editor's adapter factory
+		return fEditor.getAdapterFactory();
+	}
+
 	@Override
 	protected boolean getChildren(Object parent) {
 		// Defer to the content provider 
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected String getParentPageId(Object item) {
 		String pageId = getRootPageId(item);
@@ -105,15 +95,19 @@ public class ComponentOutlinePage extends FormOutlinePage {
 
 	private String getRootPageId(Object item) {
 		Object target = AdapterFactoryEditingDomain.unwrap(item);
-		if (target instanceof SoftPkg) {
-			return ImplementationPage.PAGE_ID;
-		} else if (target instanceof Properties) {
-			return PropertiesFormPage.PAGE_ID;
-		} else if (target instanceof EObject) {
-			// Check the parent of the item
-			return getRootPageId(((EObject) target).eContainer());
-		} else {
-			return null;
+		if (target instanceof EObject) {
+			EObject eTarget = (EObject) target;
+			switch (eTarget.eClass().getEPackage().getName()) {
+			case SpdPackage.eNAME:
+				return ImplementationPage.PAGE_ID;
+			case PrfPackage.eNAME:
+				return PropertiesFormPage.PAGE_ID;
+			case ScdPackage.eNAME:
+				return PortsFormPage.PAGE_ID;
+			default:
+				return null;
+			}
 		}
+		return null;
 	}
 }

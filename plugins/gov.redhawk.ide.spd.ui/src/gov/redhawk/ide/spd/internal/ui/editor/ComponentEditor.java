@@ -63,6 +63,9 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import CF.PortSupplierHelper;
 import gov.redhawk.ide.scd.ui.editor.page.PortsFormPage;
 import gov.redhawk.ide.scd.ui.provider.PortsEditorScdItemProviderAdapterFactory;
+import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationSectionImplementationItemProvider;
+import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationSectionSoftPkgItemProvider;
+import gov.redhawk.ide.spd.internal.ui.editor.provider.SpdItemProviderAdapterFactoryAdapter;
 import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
@@ -73,7 +76,9 @@ import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.Interface;
+import mil.jpeojtrs.sca.scd.Ports;
 import mil.jpeojtrs.sca.scd.ScdFactory;
+import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.Descriptor;
@@ -85,7 +90,6 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdFactory;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.spd.UsesDevice;
-import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 /**
@@ -412,9 +416,13 @@ public class ComponentEditor extends SCAFormEditor {
 
 	@Override
 	protected AdapterFactory getSpecificAdapterFactory() {
+		final SpdItemProviderAdapterFactoryAdapter spdAdapterFactory = new SpdItemProviderAdapterFactoryAdapter();
+		spdAdapterFactory.setSoftPkgAdapter(new ImplementationSectionSoftPkgItemProvider(spdAdapterFactory));
+		spdAdapterFactory.setImplementationAdapter(new ImplementationSectionImplementationItemProvider(spdAdapterFactory, getMainResource()));
+
 		final ComposedAdapterFactory factory = new ComposedAdapterFactory();
+		factory.addAdapterFactory(spdAdapterFactory);
 		factory.addAdapterFactory(new PortsEditorScdItemProviderAdapterFactory());
-		factory.addAdapterFactory(new SpdItemProviderAdapterFactory());
 		factory.addAdapterFactory(new PropertiesEditorPrfItemProviderAdapterFactory());
 		return factory;
 	}
@@ -655,15 +663,30 @@ public class ComponentEditor extends SCAFormEditor {
 	}
 
 	@Override
-	public List<Object> getOutlineItems() {
-		final List<Object> myList = new ArrayList<Object>();
-		if (getSoftPkg() != null) {
+	public List< ? > getOutlineItems() {
+		final List<Object> myList = new ArrayList<>();
+		SoftPkg spd = getSoftPkg();
+		if (spd != null) {
+			// Overview page
 			myList.add(this.overviewPage);
-			final PropertyFile propertyFile = getPropertyFile();
-			if ((propertyFile != null) && (propertyFile.getProperties() != null)) {
-				myList.add(propertyFile.getProperties());
+
+			// 'properties' object from PRF
+			final PropertyFile prf = getPropertyFile();
+			if ((prf != null) && (prf.getProperties() != null)) {
+				myList.add(prf.getProperties());
 			}
-			myList.add(getSoftPkg());
+
+			// 'ports' object from SCD
+			final SoftwareComponent scd = ScaEcoreUtils.getFeature(spd, ComponentEditor.SCD_PATH);
+			if (scd != null) {
+				Ports ports = ScaEcoreUtils.getFeature(scd, ScdPackage.Literals.SOFTWARE_COMPONENT__COMPONENT_FEATURES, ScdPackage.Literals.COMPONENT_FEATURES__PORTS);
+				if (ports != null) {
+					myList.add(ports);
+				}
+			}
+
+			// SPD (to display implementations)
+			myList.add(spd);
 		}
 		return myList;
 	}
