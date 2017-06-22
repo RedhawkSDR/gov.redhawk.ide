@@ -62,13 +62,7 @@ import mil.jpeojtrs.sca.partitioning.LoggingConfig;
 import mil.jpeojtrs.sca.partitioning.NamingService;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.sad.ExternalProperty;
-import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
-import mil.jpeojtrs.sca.sad.SadConnectInterface;
-import mil.jpeojtrs.sca.sad.SadPackage;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
@@ -149,64 +143,6 @@ public class ComponentsDetailsPage extends ScaDetails {
 		}
 
 		final List<Binding> retVal = new ArrayList<>();
-		String componentId = compInst.getId();
-		SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(placement.eResource());
-
-		/** Bind Component Instantiation -> ID **/
-		retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
-			PartitioningPackage.Literals.COMPONENT_INSTANTIATION__ID, compInst, new EMFEmptyStringToNullUpdateValueStrategy(), null));
-
-		/** Bind Component Instantiation --> ID --> Connections **/
-		if (sad.getConnections() != null) {
-			for (SadConnectInterface connection : sad.getConnections().getConnectInterface()) {
-				SadComponentInstantiationRef ref = null;
-				if (componentId.equals(connection.getUsesPort().getComponentInstantiationRef().getRefid())) {
-					ref = connection.getUsesPort().getComponentInstantiationRef();
-				} else if (connection.getProvidesPort() != null && componentId.equals(connection.getProvidesPort().getComponentInstantiationRef().getRefid())) {
-					ref = connection.getProvidesPort().getComponentInstantiationRef();
-				} else if (connection.getComponentSupportedInterface() != null
-					&& componentId.equals(connection.getComponentSupportedInterface().getComponentInstantiationRef().getRefid())) {
-					ref = (SadComponentInstantiationRef) connection.getComponentSupportedInterface().getComponentInstantiationRef();
-				}
-				retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
-					PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID, ref, new EMFEmptyStringToNullUpdateValueStrategy(),
-					new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST)));
-			}
-		}
-
-		/** Bind Component Instantiation --> ID --> External Ports **/
-		if (sad.getExternalPorts() != null) {
-			for (Port externPort : sad.getExternalPorts().getPort()) {
-				SadComponentInstantiationRef ref = externPort.getComponentInstantiationRef();
-				if (componentId.equals(ref.getRefid())) {
-					retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
-						PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID, ref, new EMFEmptyStringToNullUpdateValueStrategy(),
-						new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST)));
-				}
-			}
-		}
-
-		/** Bind Component Instantiation --> ID --> External Properties **/
-		if (sad.getExternalProperties() != null) {
-			for (ExternalProperty externProp : sad.getExternalProperties().getProperties()) {
-				if (componentId.equals(externProp.getCompRefID())) {
-					retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
-						SadPackage.Literals.EXTERNAL_PROPERTY__COMP_REF_ID, externProp, new EMFEmptyStringToNullUpdateValueStrategy(),
-						new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST)));
-				}
-			}
-		}
-
-		/** Bind Assembly Controller -> RefID (if applicable) **/
-		boolean isAssemblyController = false;
-		if (SoftwareAssembly.Util.isAssemblyController(compInst)) {
-			isAssemblyController = true;
-		}
-		if (isAssemblyController) {
-			retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getIdEntry(), getEditingDomain(),
-				PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID, sad.getAssemblyController().getComponentInstantiationRef(),
-				new EMFEmptyStringToNullUpdateValueStrategy(), null));
-		}
 
 		/** Bind Component Instantiation -> Usage Name **/
 		retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getNameEntry(), getEditingDomain(),

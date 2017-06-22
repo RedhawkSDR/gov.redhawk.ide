@@ -36,7 +36,6 @@ public class SadComponentComposite extends Composite implements IScaComposite {
 	private static final int NUM_COLUMNS = 3;
 
 	private final FormToolkit toolkit;
-	private FormEntry idEntry;
 	private FormEntry nameEntry;
 	private FormEntry loggingUri;
 	private ComboViewer levelViewer;
@@ -49,7 +48,6 @@ public class SadComponentComposite extends Composite implements IScaComposite {
 		this.toolkit = toolkit;
 		setLayout(FormLayoutFactory.createSectionClientGridLayout(false, SadComponentComposite.NUM_COLUMNS));
 
-		createIdEntry();
 		createNameEntry();
 		createLoggingConfigEntry();
 
@@ -91,22 +89,11 @@ public class SadComponentComposite extends Composite implements IScaComposite {
 	}
 
 	/**
-	 * Text field for Component ID
-	 */
-	private void createIdEntry() {
-		this.idEntry = new FormEntry(this, this.toolkit, "Component ID:", SWT.SINGLE);
-	}
-
-	/**
 	 * Text field for Component Usage Name / Naming Service Name (edits here change both)
 	 */
 	private void createNameEntry() {
 		this.nameEntry = new FormEntry(this, this.toolkit, "Usage Name:", SWT.SINGLE);
 		this.nameEntry.getText().setToolTipText("Human readable name for the component instantiation");
-	}
-
-	public FormEntry getIdEntry() {
-		return this.idEntry;
 	}
 
 	public FormEntry getNameEntry() {
@@ -127,7 +114,9 @@ public class SadComponentComposite extends Composite implements IScaComposite {
 
 	@Override
 	public void setEditable(final boolean canEdit) {
-		this.idEntry.setEditable(canEdit);
 		this.nameEntry.setEditable(canEdit);
+		this.enableLoggingButton.setEnabled(canEdit);
+		this.loggingUri.setEditable(canEdit);
+		this.levelViewer.getCombo().setEnabled(canEdit);
 	}
 }
