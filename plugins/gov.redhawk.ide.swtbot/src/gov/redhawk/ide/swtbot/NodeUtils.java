@@ -16,10 +16,8 @@ import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 import java.util.Arrays;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
@@ -38,7 +36,9 @@ public class NodeUtils {
 	 * @param domainName
 	 */
 	public static void createNewNodeProject(SWTWorkbenchBot bot, String projectName, String domainName) {
-		// Open the new waveform project wizard
+		SWTBotShell origShell = bot.activeShell();
+
+		// Open the new node project wizard
 		bot.menu("File").menu("New").menu("Project...").click();
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
@@ -54,17 +54,15 @@ public class NodeUtils {
 		wizardBot.comboBoxWithLabel("Domain Manager:").setText(domainName);
 
 		// Close wizard
-		SWTBotButton finishButton = wizardBot.button("Finish");
-		finishButton.click();
-
+		wizardBot.button("Finish").click();
 		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
 
-		// Set focus to Node
-		SWTBotEditor nodeEditor = bot.editorByTitle(projectName);
-		nodeEditor.setFocus();
-		nodeEditor.bot().cTabItem("Diagram").activate();
+		// For some reason, the main shell doesn't always receive focus back when using SWTBot
+		if (!origShell.isActive()) {
+			origShell.activate();
+		}
 	}
-	
+
 	/**
 	 * Launches the names node in a running domain and opens the node explorer diagram.
 	 * Assumes domain is already running and visible in the REDHAWK Explorer
