@@ -62,7 +62,10 @@ import mil.jpeojtrs.sca.partitioning.LoggingConfig;
 import mil.jpeojtrs.sca.partitioning.NamingService;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.sad.FindComponent;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadFactory;
+import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
@@ -148,9 +151,33 @@ public class ComponentsDetailsPage extends ScaDetails {
 		retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getNameEntry(), getEditingDomain(),
 			PartitioningPackage.Literals.COMPONENT_INSTANTIATION__USAGE_NAME, compInst, new EMFEmptyStringToNullUpdateValueStrategy(), null));
 
+		/** Bind Component Instantiation -> Find Component **/
+		final FindComponent findComponent = compInst.getFindComponent();
+		EMFUpdateValueStrategy fcTargetToModel = new EMFUpdateValueStrategy();
+		fcTargetToModel.setConverter(new Converter(String.class, FindComponent.class) {
+
+			@Override
+			public Object convert(Object fromObject) {
+				if (fromObject == null || "".equals(fromObject)) {
+					return null;
+				} else if (findComponent != null) {
+					return findComponent;
+				} else {
+					FindComponent fc = SadFactory.eINSTANCE.createFindComponent();
+					NamingService ns = PartitioningFactory.eINSTANCE.createNamingService();
+					ns.setName(fromObject.toString());
+					fc.setNamingService(ns);
+					return fc;
+				}
+			}
+		});
+		retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getNameEntry(), getEditingDomain(),
+			SadPackage.Literals.SAD_COMPONENT_INSTANTIATION__FIND_COMPONENT, compInst, fcTargetToModel,
+			new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST)));
+
 		/** Bind Component Instantiation -> Find Component -> Naming Service **/
 		NamingService namingService = null;
-		if (compInst.getFindComponent() != null) {
+		if (findComponent != null) {
 			namingService = compInst.getFindComponent().getNamingService();
 		}
 		if (namingService != null) {
