@@ -30,6 +30,8 @@ import org.eclipse.graphiti.tb.IDecorator;
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
@@ -130,21 +132,23 @@ public class DiagramTestUtils {
 		SWTBotGefViewer viewer = editor.getSWTBotGefViewer();
 		SWTBotGefFigureCanvas canvas = null;
 
-		for (Field f : viewer.getClass().getDeclaredFields()) {
-			if ("canvas".equals(f.getName())) {
-				f.setAccessible(true);
-				try {
-					canvas = (SWTBotGefFigureCanvas) f.get(viewer);
-				} catch (IllegalArgumentException e) {
-					throw new IllegalStateException(e);
-				} catch (IllegalAccessException e) {
-					throw new IllegalStateException(e);
-				}
-			}
+		// Get the SWTBot object for the figure canvas
+		try {
+			Field f = viewer.getClass().getDeclaredField("canvas");
+			f.setAccessible(true);
+			canvas = (SWTBotGefFigureCanvas) f.get(viewer);
+		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+			throw new IllegalStateException(e);
 		}
 
-		Assert.assertNotNull(canvas);
+		// Drag tree item to editor's figure canvas
 		componentTreeItem.dragAndDrop(canvas);
+
+		// Send a mouse-up event to the display to correct a SWTBot bug where the IDE remains stuck in drag-drop
+		Event event = new Event();
+		event.type = SWT.MouseUp;
+		event.button = 1;
+		componentTreeItem.display.post(event);
 	}
 
 	/**
