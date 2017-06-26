@@ -35,6 +35,8 @@ public class ComponentUtils {
 	 * @param progLanguage
 	 */
 	public static void createComponentProject(SWTBot bot, String componentProjectName, String progLanguage) {
+		SWTBotShell origShell = bot.activeShell();
+
 		StandardTestActions.configurePyDev(bot);
 
 		bot.menu("File").menu("New").menu("Project...").click();
@@ -52,6 +54,11 @@ public class ComponentUtils {
 		wizardBot.button("Finish").click();
 
 		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
+
+		// For some reason, the main shell doesn't always receive focus back when using SWTBot
+		if (!origShell.isActive()) {
+			origShell.activate();
+		}
 	}
 
 	public static void addComponentPort(SWTBot editorBot, String portName, PortDirection portDirection) {

@@ -31,6 +31,8 @@ public class SharedLibraryUtils {
 	 * @param projectType
 	 */
 	public static void createSharedLibraryProject(SWTBot bot, String sharedLibraryProjectName, String projectType) {
+		SWTBotShell origShell = bot.activeShell();
+
 		StandardTestActions.configurePyDev(bot);
 
 		bot.menu("File").menu("New").menu("Project...").click();
@@ -45,5 +47,10 @@ public class SharedLibraryUtils {
 		wizardBot.button("Finish").click();
 
 		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
+
+		// For some reason, the main shell doesn't always receive focus back when using SWTBot
+		if (!origShell.isActive()) {
+			origShell.activate();
+		}
 	}
 }
