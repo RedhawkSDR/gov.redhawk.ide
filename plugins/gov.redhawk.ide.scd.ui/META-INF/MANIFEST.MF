@@ -18,4 +18,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: gov.redhawk.ide.scd.ui.editor.page,
  gov.redhawk.ide.scd.ui.provider
-Import-Package: org.omg.CosEventChannelAdmin
+Import-Package: CF;version="2.0.0",
+ org.omg.CosEventChannelAdmin

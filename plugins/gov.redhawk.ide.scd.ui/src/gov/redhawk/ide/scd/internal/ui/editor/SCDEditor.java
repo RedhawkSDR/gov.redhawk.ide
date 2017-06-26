@@ -13,11 +13,15 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
+import CF.PortSupplierHelper;
 import gov.redhawk.ide.scd.ui.ScdUiPlugin;
 import gov.redhawk.ide.scd.ui.editor.page.PortsFormPage;
 import gov.redhawk.ide.scd.ui.provider.PortsEditorScdItemProviderAdapterFactory;
 import gov.redhawk.ui.editor.SCAFormEditor;
+import mil.jpeojtrs.sca.scd.ComponentType;
+import mil.jpeojtrs.sca.scd.Interface;
 import mil.jpeojtrs.sca.scd.Ports;
+import mil.jpeojtrs.sca.scd.ScdFactory;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
@@ -48,6 +52,25 @@ public class SCDEditor extends SCAFormEditor {
 	 * @throws PartInitException
 	 */
 	private void addPortsFormPage() throws PartInitException {
+		// If resource is a Service, only show the Ports page if PortSupplier is in the inheritance path
+		boolean showPortsPage = true;
+		SoftwareComponent scd = SoftwareComponent.Util.getSoftwareComponent(this.getMainResource());
+		ComponentType componentType = SoftwareComponent.Util.getWellKnownComponentType(scd);
+		if (componentType == ComponentType.SERVICE) {
+			showPortsPage = false;
+			Interface tmpInterface = ScdFactory.eINSTANCE.createInterface();
+			tmpInterface.setRepid(PortSupplierHelper.id());
+			for (Interface serviceInterface : scd.getInterfaces().getInterface()) {
+				if (serviceInterface.isInstance(tmpInterface)) {
+					showPortsPage = true;
+					break;
+				}
+			}
+		}
+		if (!showPortsPage) {
+			return;
+		}
+
 		this.portsFormPage = new PortsFormPage(this);
 		addPage(this.portsFormPage);
 		this.portsFormPage.setInput(getMainResource());
