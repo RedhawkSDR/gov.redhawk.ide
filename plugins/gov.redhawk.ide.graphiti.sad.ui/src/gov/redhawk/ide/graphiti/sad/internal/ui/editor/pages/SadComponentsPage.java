@@ -12,8 +12,10 @@ package gov.redhawk.ide.graphiti.sad.internal.ui.editor.pages;
 
 import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.menus.IMenuService;
 
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
@@ -21,6 +23,7 @@ import gov.redhawk.ui.editor.ScaFormPage;
 public class SadComponentsPage extends ScaFormPage implements IViewerProvider {
 
 	public static final String PAGE_ID = "sadComponentsPage";
+	private static final String TOOLBAR_ID = "gov.redhawk.ide.graphiti.sad.internal.ui.editor.components.toolbar";
 	private final ComponentsBlock fBlock;
 
 	public SadComponentsPage(SCAFormEditor editor) {
@@ -33,6 +36,11 @@ public class SadComponentsPage extends ScaFormPage implements IViewerProvider {
 		managedForm.getForm().setText("Components");
 		this.fBlock.createContent(managedForm);
 		super.createFormContent(managedForm);
+
+		final ToolBarManager manager = (ToolBarManager) managedForm.getForm().getToolBarManager();
+		final IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
+		service.populateContributionManager(manager, "toolbar:" + SadComponentsPage.TOOLBAR_ID);
+		manager.update(true);
 	}
 
 	@Override
