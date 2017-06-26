@@ -220,6 +220,19 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
+            locationURI="toolbar:gov.redhawk.ide.graphiti.sad.internal.ui.editor.components.toolbar?before=additions">
+         <command
+               commandId="gov.redhawk.ide.ui.templates.controlPanel.command"
+               icon="icons/etool16/newexprj_wiz.gif"
+               label="New Control Panel"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
             locationURI="toolbar:gov.redhawk.ide.dcd.internal.ui.editor.overview.toolbar?before=additions">
          <command
                commandId="gov.redhawk.ide.ui.templates.controlPanel.command"
