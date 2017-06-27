@@ -195,16 +195,31 @@ public class DiagramTestUtils {
 	 * @param editPart
 	 * @param ga
 	 */
-	public static void activateDirectEditing(RHBotGefEditor editor, SWTBotGefEditPart editPart, GraphicsAlgorithm ga) {
+	public static void activateHostColDirectEditing(RHBotGefEditor editor, SWTBotGefEditPart editPart, GraphicsAlgorithm ga) {
 		editPart.select();
 
 		// Set the DiagramBehavior's mouse position to point to the graphics algorithm, otherwise activating direct
 		// editing will fail to activate.
 		final int gaX = ga.getX() + ga.getWidth() / 2;
-		final int gaY = ga.getY() + ga.getHeight() / 2;
+		final int gaY = 20 + ga.getY() + ga.getHeight() / 2;
 		AbstractGraphitiMultiPageEditor diagramEditor = (AbstractGraphitiMultiPageEditor) editor.getReference().getEditor(false);
 		final DiagramBehavior diagramBehavior = diagramEditor.getDiagramEditor().getDiagramBehavior();
 		diagramBehavior.getMouseLocation().setLocation(gaX, gaY);
+
+		editPart.activateDirectEdit();
+	}
+
+	public static void activateComponentDirectEditing(RHBotGefEditor editor, SWTBotGefEditPart editPart, ComponentShape compShape) {
+		GraphicsAlgorithm compGa = compShape.getInnerContainerShape().getGraphicsAlgorithm();
+		Text innerText = getContainerShapeText(compShape.getInnerContainerShape());
+
+		// Select the middle of the component shapes usage name Text
+		final int xLoc = compGa.getX() + innerText.getX() + innerText.getWidth() / 2;
+		final int yLoc = compGa.getY() + innerText.getY() + innerText.getHeight() / 2;
+
+		AbstractGraphitiMultiPageEditor diagramEditor = (AbstractGraphitiMultiPageEditor) editor.getReference().getEditor(false);
+		final DiagramBehavior diagramBehavior = diagramEditor.getDiagramEditor().getDiagramBehavior();
+		diagramBehavior.getMouseLocation().setLocation(xLoc, yLoc);
 
 		editPart.activateDirectEdit();
 	}
@@ -332,7 +347,7 @@ public class DiagramTestUtils {
 	public static ComponentShape getComponentShape(SWTBotGefEditor editor, String componentName) {
 		return (ComponentShape) getRHContainerShape(editor, componentName);
 	}
-	
+
 	/**
 	 * 
 	 * @param editor
@@ -452,7 +467,7 @@ public class DiagramTestUtils {
 	 * @param shape
 	 * @return
 	 */
-	public static Text getHostCollocationText(ContainerShape shape) {
+	public static Text getContainerShapeText(ContainerShape shape) {
 		for (GraphicsAlgorithm ga : shape.getGraphicsAlgorithm().getGraphicsAlgorithmChildren()) {
 			if (ga instanceof Text) {
 				return (Text) ga;
@@ -656,7 +671,7 @@ public class DiagramTestUtils {
 		// If you get here, no matching provides port was found
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @param editor - SWTBotGefEditor
@@ -694,7 +709,7 @@ public class DiagramTestUtils {
 	public static SWTBotGefEditPart getDiagramUsesPort(SWTBotGefEditor editor, String componentName) {
 		return getDiagramUsesPort(editor, componentName, null);
 	}
-	
+
 	/**
 	 * 
 	 * @param editor - SWTBotGefEditor
@@ -761,9 +776,9 @@ public class DiagramTestUtils {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * @return = Returns an array of IDecorators associated with the provided pictogram 
+	 * @return = Returns an array of IDecorators associated with the provided pictogram
 	 */
 	public static IDecorator[] getPictogramElementDecorators(SWTBotGefEditor editor, PictogramElement pe) {
 		AbstractGraphitiMultiPageEditor graphitiEditor = (AbstractGraphitiMultiPageEditor) editor.getReference().getEditor(false);
@@ -794,7 +809,7 @@ public class DiagramTestUtils {
 		SWTBotGefEditPart anchor = getDiagramPortAnchor(portEditPart);
 		return anchor.targetConnections();
 	}
-	
+
 	/** Helper method to open Sandbox "Waveform" Chalkboard Graphiti Diagram */
 	public static RHBotGefEditor openChalkboardDiagram(RHSWTGefBot gefBot) {
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, new String[] { "Sandbox" }, "Chalkboard", DiagramType.GRAPHITI_CHALKBOARD);
@@ -806,7 +821,7 @@ public class DiagramTestUtils {
 
 	/** Helper method to open Sandbox Device Manager Graphiti Chalkboard Diagram */
 	public static RHBotGefEditor openNodeChalkboardDiagram(SWTWorkbenchBot gefBot) {
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, new String[]{ "Sandbox" }, "Device Manager", DiagramType.GRAPHITI_CHALKBOARD);
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, new String[] { "Sandbox" }, "Device Manager", DiagramType.GRAPHITI_CHALKBOARD);
 		gefBot.waitUntil(new WaitForOpenDiagramJobs(), WaitForOpenDiagramJobs.DEFAULT_TIMEOUT);
 		RHBotGefEditor editor = new RHSWTGefBot().rhGefEditor("Device Manager");
 		return editor;
@@ -821,7 +836,7 @@ public class DiagramTestUtils {
 	public static void openTabInEditor(SWTBotEditor editor, String tabName) {
 		editor.bot().cTabItem(tabName).activate();
 	}
-	
+
 	/**
 	 * Checks sad.xml for component instantiation code
 	 * @param componentShape
@@ -964,7 +979,7 @@ public class DiagramTestUtils {
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
 		componentPart.select();
-		//editor.clickContextMenu("Logging");
+		// editor.clickContextMenu("Logging");
 		editor.clickContextMenu("Log Level");
 
 		final SWTBot editorBot = editor.bot();
@@ -986,7 +1001,7 @@ public class DiagramTestUtils {
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
 		componentPart.select();
-		//editor.clickContextMenu("Logging");
+		// editor.clickContextMenu("Logging");
 		editor.clickContextMenu("Log Level");
 
 		final SWTBot editorBot = editor.bot();
@@ -1108,7 +1123,8 @@ public class DiagramTestUtils {
 
 			@Override
 			public String getFailureMessage() {
-				String styleDesc = (ComponentState.getStateFromStyle(lastStyle) != null) ? ComponentState.getStateFromStyle(lastStyle).toString() : "id: " + lastStyle;
+				String styleDesc = (ComponentState.getStateFromStyle(lastStyle) != null) ? ComponentState.getStateFromStyle(lastStyle).toString()
+					: "id: " + lastStyle;
 				return String.format("Resource did not change to state '%s'. Style was '%s'.", state.toString(), styleDesc);
 			}
 		}, remainingTime);
@@ -1146,10 +1162,10 @@ public class DiagramTestUtils {
 		GraphicsAlgorithm portRect = ((Shape) portRectPart.part().getModel()).getGraphicsAlgorithm();
 		if (external) {
 			String errorMsg = String.format("Port style for '%s' is not external", name);
-			Assert.assertTrue(errorMsg, StyleUtil.isStyleSet(portRect, StyleUtil.EXTERNAL_PROVIDES_PORT,  StyleUtil.EXTERNAL_USES_PORT));
+			Assert.assertTrue(errorMsg, StyleUtil.isStyleSet(portRect, StyleUtil.EXTERNAL_PROVIDES_PORT, StyleUtil.EXTERNAL_USES_PORT));
 		} else {
 			String errorMsg = String.format("Port style for '%s' is external", name);
-			Assert.assertFalse(errorMsg, StyleUtil.isStyleSet(portRect, StyleUtil.EXTERNAL_PROVIDES_PORT,  StyleUtil.EXTERNAL_USES_PORT));
+			Assert.assertFalse(errorMsg, StyleUtil.isStyleSet(portRect, StyleUtil.EXTERNAL_PROVIDES_PORT, StyleUtil.EXTERNAL_USES_PORT));
 		}
 	}
 
