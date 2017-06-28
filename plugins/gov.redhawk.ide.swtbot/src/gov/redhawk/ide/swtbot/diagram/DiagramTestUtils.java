@@ -202,7 +202,7 @@ public class DiagramTestUtils {
 		// Set the DiagramBehavior's mouse position to point to the graphics algorithm, otherwise activating direct
 		// editing will fail to activate.
 		final int gaX = ga.getX() + ga.getWidth() / 2;
-		final int gaY = 20 + ga.getY() + ga.getHeight() / 2;
+		final int gaY = ga.getY() + ga.getHeight() / 2;
 		AbstractGraphitiMultiPageEditor diagramEditor = (AbstractGraphitiMultiPageEditor) editor.getReference().getEditor(false);
 		final DiagramBehavior diagramBehavior = diagramEditor.getDiagramEditor().getDiagramBehavior();
 		diagramBehavior.getMouseLocation().setLocation(gaX, gaY);
