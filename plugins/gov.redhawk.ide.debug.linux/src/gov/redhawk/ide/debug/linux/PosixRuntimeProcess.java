@@ -46,10 +46,13 @@ public class PosixRuntimeProcess extends RuntimeProcess {
 			if (p == null) {
 				return;
 			}
-			Field pidField = p.getClass().getDeclaredField("pid");
-			pidField.setAccessible(true);
-			int pid = pidField.getInt(p);
-			tree.killAll(String.valueOf(pid));
+			Class< ? > unixProcessClass = Class.forName("java.lang.UNIXProcess");
+			if (unixProcessClass.isInstance(p)) {
+				Field pidField = p.getClass().getDeclaredField("pid");
+				pidField.setAccessible(true);
+				int pid = pidField.getInt(p);
+				tree.killAll(String.valueOf(pid));
+			}
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Catch system errors
 			error = e;
 		}
