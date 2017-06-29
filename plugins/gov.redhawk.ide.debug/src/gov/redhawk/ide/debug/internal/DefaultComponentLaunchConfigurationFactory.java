@@ -19,6 +19,7 @@ import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -69,7 +70,11 @@ public class DefaultComponentLaunchConfigurationFactory extends AbstractLaunchCo
 
 		retVal.setAttribute(IExternalToolConstants.ATTR_LOCATION, location);
 		retVal.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, wd);
-		//		retVal.setAttribute(ILaunchManager.ATTR_PRIVATE, true);
+
+		if (SoftPkg.Util.isComponentHost(spd.eResource().getURI())) {
+			retVal.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
+		}
+		// retVal.setAttribute(ILaunchManager.ATTR_PRIVATE, true);
 		return retVal;
 	}
 
