@@ -351,7 +351,7 @@ public final class SpdLauncherUtil {
 		}
 		
 		LocalAbstractComponent resource;
-		if (SoftPkg.Util.isComponentHost(spd.eResource().getURI())) {
+		if (SoftPkg.Util.isComponentHost(spd)) {
 			resource = SpdLauncherUtil.postLaunchComponentHost(spd, launch, corbaObj, nameBinding, progress.newChild(WORK_INITIALIZE_RESOURCE));
 		} else {
 			resource = SpdLauncherUtil.postLaunchComponent(spd, launch, corbaObj, nameBinding, progress.newChild(WORK_INITIALIZE_RESOURCE));

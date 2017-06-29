@@ -71,7 +71,7 @@ public class DefaultComponentLaunchConfigurationFactory extends AbstractLaunchCo
 		retVal.setAttribute(IExternalToolConstants.ATTR_LOCATION, location);
 		retVal.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, wd);
 
-		if (SoftPkg.Util.isComponentHost(spd.eResource().getURI())) {
+		if (SoftPkg.Util.isComponentHost(spd)) {
 			retVal.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 		}
 		// retVal.setAttribute(ILaunchManager.ATTR_PRIVATE, true);

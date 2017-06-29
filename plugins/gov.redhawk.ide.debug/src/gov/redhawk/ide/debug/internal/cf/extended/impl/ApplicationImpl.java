@@ -1314,7 +1314,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("\tLaunch configuration succeeded.");
 
 		// Skip postLaunch if the resource being launched is a componentHost
-		if (SoftPkg.Util.isComponentHost(spdURI)) {
+		if (SoftPkg.Util.getComponentHostURI().equals(spdURI)) {
 			subMonitor.notWorked(WORK_POST_LAUNCH);
 			return null;
 		}
