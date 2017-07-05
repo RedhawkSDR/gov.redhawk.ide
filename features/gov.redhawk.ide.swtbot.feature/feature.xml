@@ -32,6 +32,7 @@
       <import feature="org.eclipse.swtbot" version="2.4.0.201511021241" match="greaterOrEqual"/>
       <import feature="org.eclipse.swtbot.eclipse.gef" version="2.4.0.201511021241" match="greaterOrEqual"/>
       <import feature="org.eclipse.swtbot.eclipse" version="2.4.0.201511021241" match="greaterOrEqual"/>
+      <import feature="gov.redhawk.core.debug" version="2.0.7"/>
    </requires>
 
    <plugin
