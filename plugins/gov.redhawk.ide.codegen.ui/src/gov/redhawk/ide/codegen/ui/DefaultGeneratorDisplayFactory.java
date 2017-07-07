@@ -13,14 +13,21 @@ package gov.redhawk.ide.codegen.ui;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import mil.jpeojtrs.sca.spd.Implementation;
+
 /**
  * @since 2.1
  */
-public class DefaultGeneratorDisplayFactory implements ICodegenDisplayFactory {
+public class DefaultGeneratorDisplayFactory implements ICodegenLanguageDisplayFactory {
 
 	@Override
 	public ICodegenComposite createComposite(final Composite parent, final int style, final FormToolkit toolkit) {
 		return new DefaultGeneratorPropertiesComposite(parent, style, toolkit);
+	}
+
+	@Override
+	public ICodegenComposite createComposite(Implementation impl, String codegenId, Composite parent, int style, FormToolkit toolkit) {
+		return new DefaultGeneratorPropertiesComposite(impl, codegenId, parent, style, toolkit);
 	}
 
 	@Override

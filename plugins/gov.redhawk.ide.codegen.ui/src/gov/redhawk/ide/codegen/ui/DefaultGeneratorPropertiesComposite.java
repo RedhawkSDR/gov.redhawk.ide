@@ -85,13 +85,25 @@ public class DefaultGeneratorPropertiesComposite extends BaseGeneratorProperties
 	private Button removePropertyButton;
 	private ComposedAdapterFactory adapterFactory;
 
+	private Implementation impl;
+	private String codegenId;
+
 	/**
 	 * @param parent
 	 * @param style
 	 * @param toolkit
 	 */
 	public DefaultGeneratorPropertiesComposite(final Composite parent, final int style, final FormToolkit toolkit) {
+		this(null, null, parent, style, toolkit);
+	}
+
+	/**
+	 * @since 9.2
+	 */
+	public DefaultGeneratorPropertiesComposite(Implementation impl, String codegenId, Composite parent, int style, FormToolkit toolkit) {
 		super(parent, style, toolkit);
+		this.impl = impl;
+		this.codegenId = codegenId;
 		initialize();
 	}
 
@@ -428,4 +440,26 @@ public class DefaultGeneratorPropertiesComposite extends BaseGeneratorProperties
 		}
 	}
 
+	@Override
+	protected ICodeGeneratorDescriptor[] getCodegens() {
+		if (this.impl == null) {
+			return super.getCodegens();
+		}
+
+		String language = this.impl.getProgrammingLanguage().getName();
+		final ICodeGeneratorDescriptor[] availableCodegens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(language);
+
+		// Filter out JET generators
+		List<ICodeGeneratorDescriptor> tempCodegens = new ArrayList<ICodeGeneratorDescriptor>();
+		for (int i = 0; i < availableCodegens.length; i++) {
+			ICodeGeneratorDescriptor codegen = availableCodegens[i];
+			if (codegen.isDeprecated() && !codegen.getId().equals(codegenId)) {
+				continue;
+			} else {
+				tempCodegens.add(codegen);
+			}
+		}
+
+		return tempCodegens.toArray(new ICodeGeneratorDescriptor[0]);
+	}
 }

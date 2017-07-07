@@ -12,12 +12,14 @@ package gov.redhawk.ide.codegen.ui.internal;
 
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.ui.DefaultGeneratorDisplayFactory;
-import gov.redhawk.ide.codegen.ui.ICodeGeneratorPageRegistry2;
+import gov.redhawk.ide.codegen.ui.ICodeGeneratorLanguagePageRegistry;
 import gov.redhawk.ide.codegen.ui.ICodegenComposite;
 import gov.redhawk.ide.codegen.ui.ICodegenDisplayFactory;
 import gov.redhawk.ide.codegen.ui.ICodegenDisplayFactory2;
+import gov.redhawk.ide.codegen.ui.ICodegenLanguageDisplayFactory;
 import gov.redhawk.ide.codegen.ui.ICodegenWizardPage;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
+import mil.jpeojtrs.sca.spd.Implementation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +40,7 @@ import org.eclipse.core.runtime.dynamichelpers.IFilter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-public class CodeGeneratorPageRegistry implements ICodeGeneratorPageRegistry2, IExtensionChangeHandler {
+public class CodeGeneratorPageRegistry implements ICodeGeneratorLanguagePageRegistry, IExtensionChangeHandler {
 
 	public static final String EP_ID = "codegenPages";
 
@@ -231,25 +233,36 @@ public class CodeGeneratorPageRegistry implements ICodeGeneratorPageRegistry2, I
 
 	@Override
 	public ICodegenComposite[] findCompositeByGeneratorId(final String codegen, final Composite parent, final int style, final FormToolkit toolkit) {
+		return findCompositeByGeneratorId(null, codegen, parent, style, toolkit);
+	}
+
+	@Override
+	public ICodegenComposite[] findCompositeByGeneratorId(final Implementation impl, final String codegenId, final Composite parent, final int style,
+		final FormToolkit toolkit) {
 		final ArrayList<ICodegenComposite> codegens = new ArrayList<ICodegenComposite>();
-		final List<ICodegenDisplayFactory> factories = this.codegenToCompositeMap.get(codegen);
+		final List<ICodegenDisplayFactory> factories = this.codegenToCompositeMap.get(codegenId);
 
 		if (factories != null) {
 			for (final ICodegenDisplayFactory factory : factories) {
-				final ICodegenComposite composite = factory.createComposite(parent, style, toolkit);
-				if (codegen != null) {
+				ICodegenComposite composite = null;
+				if (factory instanceof ICodegenLanguageDisplayFactory) {
+					composite = ((ICodegenLanguageDisplayFactory) factory).createComposite(impl, codegenId, parent, style, toolkit);
+				} else {
+					composite = factory.createComposite(parent, style, toolkit);
+				}
+				if (codegenId != null) {
 					codegens.add(composite);
 				}
 			}
 		}
 
 		if (codegens.size() == 0) {
-			codegens.add(this.defaultFactory.createComposite(parent, style, toolkit));
+			codegens.add(this.defaultFactory.createComposite(impl, codegenId, parent, style, toolkit));
 		}
 
 		return codegens.toArray(new ICodegenComposite[codegens.size()]);
 	}
-	
+
 	/**
 	 * This method should return the same factories that was used to create the Wizard pages & Composites from
 	 * findCompositeByGeneratorId and findPageByGeneratorId since the factories are kept within a map generated

@@ -10,22 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen.ui;
 
-import gov.redhawk.ide.codegen.CodegenFactory;
-import gov.redhawk.ide.codegen.CodegenPackage;
-import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
-import gov.redhawk.ide.codegen.IPropertyDescriptor;
-import gov.redhawk.ide.codegen.ITemplateDesc;
-import gov.redhawk.ide.codegen.ImplementationSettings;
-import gov.redhawk.ide.codegen.Property;
-import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
-import gov.redhawk.ui.util.SWTUtil;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-
-import mil.jpeojtrs.sca.spd.Implementation;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
@@ -53,6 +41,17 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import gov.redhawk.ide.codegen.CodegenFactory;
+import gov.redhawk.ide.codegen.CodegenPackage;
+import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
+import gov.redhawk.ide.codegen.IPropertyDescriptor;
+import gov.redhawk.ide.codegen.ITemplateDesc;
+import gov.redhawk.ide.codegen.ImplementationSettings;
+import gov.redhawk.ide.codegen.Property;
+import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
+import gov.redhawk.ui.util.SWTUtil;
+import mil.jpeojtrs.sca.spd.Implementation;
+
 /**
  * @since 2.0
  */
@@ -66,13 +65,25 @@ public class BooleanGeneratorPropertiesComposite extends BaseGeneratorProperties
 	private HashMap<ImplementationSettings, WritableSet<Property>> setMap;
 	private Binding propBinding;
 
+	private Implementation impl;
+	private String codegenId;
+
 	/**
 	 * @param parent
 	 * @param style
 	 * @param toolkit
 	 */
 	public BooleanGeneratorPropertiesComposite(final Composite parent, final int style, final FormToolkit toolkit) {
+		this(null, null, parent, style, toolkit);
+	}
+
+	/**
+	 * @since 9.2
+	 */
+	public BooleanGeneratorPropertiesComposite(Implementation impl, String codegenId, Composite parent, int style, FormToolkit toolkit) {
 		super(parent, style, toolkit);
+		this.impl = impl;
+		this.codegenId = codegenId;
 		initialize();
 	}
 
@@ -272,5 +283,28 @@ public class BooleanGeneratorPropertiesComposite extends BaseGeneratorProperties
 	@Override
 	protected void preBind(final Implementation impl, final ImplementationSettings implSettings, final List<Binding> bindList) {
 		this.propertiesViewer.setInput(this.getImplSettings().getProperties());
+	}
+
+	@Override
+	protected ICodeGeneratorDescriptor[] getCodegens() {
+		if (this.impl == null) {
+			return super.getCodegens();
+		}
+
+		String language = this.impl.getProgrammingLanguage().getName();
+		final ICodeGeneratorDescriptor[] availableCodegens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(language);
+
+		// Filter out JET generators
+		List<ICodeGeneratorDescriptor> tempCodegens = new ArrayList<ICodeGeneratorDescriptor>();
+		for (int i = 0; i < availableCodegens.length; i++) {
+			ICodeGeneratorDescriptor codegen = availableCodegens[i];
+			if (codegen.isDeprecated() && !codegen.getId().equals(codegenId)) {
+				continue;
+			} else {
+				tempCodegens.add(codegen);
+			}
+		}
+
+		return tempCodegens.toArray(new ICodeGeneratorDescriptor[0]);
 	}
 }

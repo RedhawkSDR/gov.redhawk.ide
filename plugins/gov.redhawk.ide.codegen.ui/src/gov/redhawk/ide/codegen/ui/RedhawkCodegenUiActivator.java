@@ -36,6 +36,7 @@ public class RedhawkCodegenUiActivator extends AbstractUIPlugin {
 	 */
 	private static ICodeGeneratorPageRegistry codeGeneratorPageRegistry;
 	private static ICodeGeneratorPageRegistry codeGeneratorTemplatePageRegistry;
+	private static ICodeGeneratorLanguagePageRegistry codeGeneratorLanguagePageRegistry;
 
 	// The shared instance
 	private static RedhawkCodegenUiActivator plugin;
@@ -145,6 +146,17 @@ public class RedhawkCodegenUiActivator extends AbstractUIPlugin {
 		}
 
 		return RedhawkCodegenUiActivator.codeGeneratorTemplatePageRegistry;
+	}
+
+	/**
+	 * @since 9.2
+	 */
+	public static ICodeGeneratorLanguagePageRegistry getCodeGeneratorsLanguageRegistry() {
+		if (RedhawkCodegenUiActivator.codeGeneratorLanguagePageRegistry == null) {
+			RedhawkCodegenUiActivator.codeGeneratorLanguagePageRegistry = new CodeGeneratorPageRegistry();
+		}
+
+		return RedhawkCodegenUiActivator.codeGeneratorLanguagePageRegistry;
 	}
 
 }
