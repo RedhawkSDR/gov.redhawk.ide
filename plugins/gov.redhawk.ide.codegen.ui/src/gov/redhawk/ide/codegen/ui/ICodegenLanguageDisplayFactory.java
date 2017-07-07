@@ -16,23 +16,16 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import mil.jpeojtrs.sca.spd.Implementation;
 
 /**
- * @since 2.0
+ * Extension of {@link ICodegenDisplayFactory} that allows for passing the {@link Implementation} and codegenId
+ * to the created composite, when can then filter available code-generators based on language and existing codegenId 
+ * @since 9.2
  */
-public class BooleanGeneratorDisplayFactory implements ICodegenLanguageDisplayFactory {
+public interface ICodegenLanguageDisplayFactory extends ICodegenDisplayFactory {
 
-	@Override
-	public ICodegenComposite createComposite(final Composite parent, final int style, final FormToolkit toolkit) {
-		return new BooleanGeneratorPropertiesComposite(parent, style, toolkit);
-	}
-
-	@Override
-	public ICodegenComposite createComposite(Implementation impl, String codegenId, Composite parent, int style, FormToolkit toolkit) {
-		return new BooleanGeneratorPropertiesComposite(impl, codegenId, parent, style, toolkit);
-	}
-
-	@Override
-	public ICodegenWizardPage createPage() {
-		return new BooleanGeneratorPropertiesWizardPage();
-	}
-
+	/**
+	 * create the specified composite.
+	 * 
+	 * @return a composite
+	 */
+	ICodegenComposite createComposite(Implementation impl, String codegenId, Composite parent, int style, FormToolkit toolkit);
 }

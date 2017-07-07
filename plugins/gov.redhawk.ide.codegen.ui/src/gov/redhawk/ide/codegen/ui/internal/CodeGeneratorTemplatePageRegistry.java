@@ -11,12 +11,13 @@
 package gov.redhawk.ide.codegen.ui.internal;
 
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
-import gov.redhawk.ide.codegen.ui.ICodeGeneratorPageRegistry2;
+import gov.redhawk.ide.codegen.ui.ICodeGeneratorLanguagePageRegistry;
 import gov.redhawk.ide.codegen.ui.ICodegenComposite;
 import gov.redhawk.ide.codegen.ui.ICodegenDisplayFactory;
 import gov.redhawk.ide.codegen.ui.ICodegenDisplayFactory2;
 import gov.redhawk.ide.codegen.ui.ICodegenWizardPage;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
+import mil.jpeojtrs.sca.spd.Implementation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +38,7 @@ import org.eclipse.core.runtime.dynamichelpers.IFilter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-public class CodeGeneratorTemplatePageRegistry implements ICodeGeneratorPageRegistry2, IExtensionChangeHandler {
+public class CodeGeneratorTemplatePageRegistry implements ICodeGeneratorLanguagePageRegistry, IExtensionChangeHandler {
 
 	public static final String EP_ID = "codegenTemplatePages";
 
@@ -183,14 +184,22 @@ public class CodeGeneratorTemplatePageRegistry implements ICodeGeneratorPageRegi
 		return null;
 	}
 
-	/** 
+	/**
 	 * No composite for codegenTemplate, returns null
 	 */
 	@Override
 	public ICodegenComposite[] findCompositeByGeneratorId(final String codegen, final Composite parent, final int style, final FormToolkit toolkit) {
 		return null;
 	}
-	
+
+	/**
+	 * No composite for codegenTemplate, returns null
+	 */
+	@Override
+	public ICodegenComposite[] findCompositeByGeneratorId(Implementation impl, String codegenId, Composite parent, int style, FormToolkit toolkit) {
+		return null;
+	}
+
 	/**
 	 * This method should return the same factories that was used to create the Wizard pages & Composites from
 	 * findCompositeByGeneratorId and findPageByGeneratorId since the factories are kept within a map generated

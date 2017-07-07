@@ -214,8 +214,8 @@ public class ImplementationDetailsPage extends ScaDetails {
 			this.codegenSection.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 		}
 
-		this.codeGenerationComposite = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry().findCompositeByGeneratorId(generatorId, this.codegenSection,
-			SWT.None, toolkit)[0];
+		this.codeGenerationComposite = RedhawkCodegenUiActivator.getCodeGeneratorsLanguageRegistry().findCompositeByGeneratorId(this.input, generatorId,
+			this.codegenSection, SWT.None, toolkit)[0];
 
 		toolkit.adapt((Composite) this.codeGenerationComposite);
 		this.codegenSection.setClient((Composite) this.codeGenerationComposite);
@@ -238,8 +238,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 
-		// Align the master and details section headers (misalignment caused
-		// by section toolbar icons)
+		// Align the master and details section headers (misalignment caused by section toolbar icons)
 		getPage().alignSectionHeaders(this.fSection.getSection(), section);
 
 		this.implementationComposite = new ImplementationComposite(section, SWT.NONE, toolkit, getPage().isSoftpackageLibrary());

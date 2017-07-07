@@ -159,7 +159,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 			}
 		});
 		this.generatorViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().span(2, 1).grab(true, false).create());
-		this.generatorViewer.setInput(RedhawkCodegenActivator.getCodeGeneratorsRegistry().getCodegens());
+		this.generatorViewer.setInput(getCodegens());
 		this.generatorViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
@@ -174,6 +174,13 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 			}
 
 		});
+	}
+
+	/**
+	 * @since 9.2
+	 */
+	protected ICodeGeneratorDescriptor[] getCodegens() {
+		return RedhawkCodegenActivator.getCodeGeneratorsRegistry().getCodegens();
 	}
 
 	/**
