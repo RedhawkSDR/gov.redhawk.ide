@@ -664,16 +664,12 @@ public final class StandardTestActions {
 	}
 
 	/**
-	 * Close all dialogs and editors. Delete any projects in the workspace.
+	 * Close all dialogs, shells and editors. Delete any projects in the workspace. Collapse items in the Target SDR.
 	 *
 	 * @param bot
 	 * @throws CoreException
 	 */
 	public static void cleanup(SWTWorkbenchBot bot) throws CoreException {
-		if (bot == null) {
-			bot = new SWTWorkbenchBot();
-		}
-
 		final boolean[] dialogsClosed = { false };
 		while (!dialogsClosed[0]) {
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
@@ -699,6 +695,11 @@ public final class StandardTestActions {
 		bot.closeAllEditors();
 
 		StandardTestActions.clearWorkspace();
+
+		SWTBotView view = ViewUtils.getExplorerView(bot);
+		view.setFocus();
+		view.bot().tree().getTreeItem("Sandbox").collapse().expand();
+		view.bot().tree().getTreeItem("Target SDR").collapse().expand();
 	}
 
 	/**
