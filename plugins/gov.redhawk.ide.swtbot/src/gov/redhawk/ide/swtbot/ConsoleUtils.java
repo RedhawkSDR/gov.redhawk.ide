@@ -13,6 +13,8 @@ package gov.redhawk.ide.swtbot;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.MenuItem;
@@ -26,6 +28,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarToggleButton;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.hamcrest.Description;
 import org.junit.Assert;
 
@@ -115,8 +118,11 @@ public class ConsoleUtils {
 			return view;
 		}
 
+		List<String> consoleTitles = new ArrayList<>();
+		consoleTitles.add(consoleText);
 		SWTBotToolbarDropDownButton consoleButton = (SWTBotToolbarDropDownButton) view.toolbarButton("Display Selected Console");
 		if (!consoleButton.isEnabled()) {
+			StatusManager.getManager().handle(new Status(IStatus.INFO, SwtBotActivator.PLUGIN_ID, "Current console: " + consoleTitles.toString()), StatusManager.LOG);
 			throw new WidgetNotFoundException(String.format("Can't find console for %s", titleText));
 		}
 
@@ -126,8 +132,10 @@ public class ConsoleUtils {
 			if (newConsoleText.contains(titleText)) {
 				return view;
 			}
+			consoleTitles.add(newConsoleText);
 			consoleButton.click();
 		}
+		StatusManager.getManager().handle(new Status(IStatus.INFO, SwtBotActivator.PLUGIN_ID, "Current console(s): " + consoleTitles.toString()), StatusManager.LOG);
 		throw new WidgetNotFoundException(String.format("Can't find console for %s", titleText));
 	}
 
