@@ -180,7 +180,7 @@ public final class StandardTestActions {
 	}
 
 	/**
-	 * Activates the REDHAWK perspective and resets it to defaults.
+	 * Activates the REDHAWK perspective, resets it to defaults, and collapses the Sandbox and Target SDR nodes.
 	 *
 	 * @param bot
 	 */
@@ -189,6 +189,11 @@ public final class StandardTestActions {
 		perspective.activate();
 		bot.resetActivePerspective();
 		bot.sleep(100);
+
+		SWTBotView view = ViewUtils.getExplorerView(bot);
+		view.setFocus();
+		view.bot().tree().getTreeItem("Sandbox").collapse().expand();
+		view.bot().tree().getTreeItem("Target SDR").collapse().expand();
 	}
 
 	/**
@@ -664,7 +669,7 @@ public final class StandardTestActions {
 	}
 
 	/**
-	 * Close all dialogs, shells and editors. Delete any projects in the workspace. Collapse items in the Target SDR.
+	 * Close all dialogs, shells and editors. Delete any projects in the workspace.
 	 *
 	 * @param bot
 	 * @throws CoreException
@@ -695,11 +700,6 @@ public final class StandardTestActions {
 		bot.closeAllEditors();
 
 		StandardTestActions.clearWorkspace();
-
-		SWTBotView view = ViewUtils.getExplorerView(bot);
-		view.setFocus();
-		view.bot().tree().getTreeItem("Sandbox").collapse().expand();
-		view.bot().tree().getTreeItem("Target SDR").collapse().expand();
 	}
 
 	/**
