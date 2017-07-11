@@ -67,9 +67,6 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 		super.dispose();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void createControl(final Composite parent) {
 		// create the top level composite for the dialog area
@@ -90,19 +87,21 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 	}
 
 	/**
+	 * Subclasses may add additional controls to the tab. They will appear after location information, before the
+	 * launch configuration information.
 	 * @since 3.0
 	 */
-	protected void createOtherComponents(Composite composite) {
-		// TODO Auto-generated method stub
-
+	protected void createOtherComponents(Composite parent) {
+		// Nothing added here by default
 	}
-	
+
 	@Override
 	protected boolean validateWorkDirectory() {
 		return true;
 	}
 
 	/**
+	 * Creates the contents of the launch group.
 	 * @param launchConfigGroup
 	 */
 	protected void createLaunchGroup(final Composite parent) {
@@ -133,9 +132,6 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setDefaults(final ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
@@ -143,9 +139,6 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 		configuration.setAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT, ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void initializeFrom(final ILaunchConfiguration configuration) {
 		fInitializing = true;
@@ -191,9 +184,6 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 		locationField.setText(location);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void performApply(final ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(ScaLaunchConfigurationConstants.ATT_START, this.startButton.getSelection());
@@ -319,9 +309,6 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 		return manager.performStringSubstitution(expression);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getName() {
 		return "&Main";
