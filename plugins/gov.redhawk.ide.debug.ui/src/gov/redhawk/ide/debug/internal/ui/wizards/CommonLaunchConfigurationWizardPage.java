@@ -75,9 +75,11 @@ public class CommonLaunchConfigurationWizardPage extends WizardPage {
 		setControl(main);
 	}
 
+	/**
+	 * Subclasses may bind controls here
+	 */
 	protected void bindControls() {
-		// TODO Auto-generated method stub
-
+		// Nothing to do by default
 	}
 
 	public Button getStartButton() {
@@ -88,9 +90,12 @@ public class CommonLaunchConfigurationWizardPage extends WizardPage {
 		return timeout;
 	}
 
-	protected void createOtherControls(Composite main) {
-		// TODO Auto-generated method stub
-
+	/**
+	 * Subclasses may create additional controls here
+	 * @param main
+	 */
+	protected void createOtherControls(Composite parent) {
+		// Nothing to do by default
 	}
 
 	public Button getRunConfigurationButton() {
