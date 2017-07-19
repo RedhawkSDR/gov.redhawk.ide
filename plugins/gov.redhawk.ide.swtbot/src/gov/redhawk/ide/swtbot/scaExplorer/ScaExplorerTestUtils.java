@@ -260,16 +260,16 @@ public class ScaExplorerTestUtils {
 		// automatically selected, which will trigger loading of associated PRF file(s) via a modal progress context.
 		wizardBot.waitWhile(Conditions.treeHasRows(wizardBot.tree(), 1));
 		wizardBot.waitUntil(new WaitForModalContext());
-		bot.sleep(WIZARD_POST_MODAL_PROGRESS_DELAY);
+		wizardBot.sleep(WIZARD_POST_MODAL_PROGRESS_DELAY);
 
 		// Find our waveform and select. Again, selection will trigger a modal progress context.
 		SWTBotTreeItem treeItem = StandardTestActions.waitForTreeItemToAppear(wizardBot, wizardBot.tree(), Arrays.asList(waveform.split("\\.")));
 		treeItem.select();
 		wizardBot.waitUntil(new WaitForModalContext());
-		bot.sleep(WIZARD_POST_MODAL_PROGRESS_DELAY);
+		wizardBot.sleep(WIZARD_POST_MODAL_PROGRESS_DELAY);
 
 		// Finish will launch the waveform, again triggering a modal progress context, then closing the dialog
-		bot.button("Finish").click();
+		wizardBot.button("Finish").click();
 		wizardBot.waitUntil(new WaitForModalContext(), 30000);
 		bot.waitUntil(Conditions.shellCloses(wizardShell));
 	}
