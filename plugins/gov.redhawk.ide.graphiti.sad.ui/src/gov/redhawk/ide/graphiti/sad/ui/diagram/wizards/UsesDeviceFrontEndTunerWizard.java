@@ -28,10 +28,6 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
-import mil.jpeojtrs.sca.prf.PrfFactory;
-import mil.jpeojtrs.sca.prf.PrfPackage;
-import mil.jpeojtrs.sca.prf.PropertyValueType;
-import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.scd.ComponentFeatures;
@@ -120,28 +116,24 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 				// populate StructRef with tuner_allocation properties
 				tunerAllocationStruct = ScaFactory.eINSTANCE.createScaStructProperty();
 				tunerAllocationStruct.setId(structRefId);
-				for (TunerAllocationProperties allocProp : TunerAllocationProperties.values()) {
-					ScaSimpleProperty simple = ScaFactory.eINSTANCE.createScaSimpleProperty();
-					Simple definition = (Simple) PrfFactory.eINSTANCE.create(PrfPackage.Literals.SIMPLE);
-					definition.setType(allocProp.getType());
-					definition.setId(allocProp.getType().getLiteral());
-					definition.setName(allocProp.getType().getName());
-					simple.setDefinition(definition);
-					simple.setId(allocProp.getId());
-					switch (allocProp.getType().getValue()) {
-						case PropertyValueType.STRING_VALUE :
-							simple.setValue(UsesDeviceFrontEndTunerPattern.getFEUsesDeviceTunerAllocationProp(existingUsesDeviceStub.getUsesDevice(), allocProp.getId()));
-							break;
-						case PropertyValueType.BOOLEAN_VALUE :
-							simple.setValue(Boolean.valueOf(UsesDeviceFrontEndTunerPattern.getFEUsesDeviceTunerAllocationProp(existingUsesDeviceStub.getUsesDevice(), allocProp.getId())));
-							break;
-						case PropertyValueType.DOUBLE_VALUE :
-							simple.setValue(Double.valueOf(UsesDeviceFrontEndTunerPattern.getFEUsesDeviceTunerAllocationProp(existingUsesDeviceStub.getUsesDevice(), allocProp.getId())));
-							break;
-						default :
-								break;
+				tunerAllocationStruct.setDefinition(TunerAllocationProperty.INSTANCE.createProperty());
+				for (TunerAllocationProperties propDetails : TunerAllocationProperties.values()) {
+					ScaSimpleProperty simple = tunerAllocationStruct.getSimple(propDetails.getId());
+					String value = UsesDeviceFrontEndTunerPattern.getFEUsesDeviceTunerAllocationProp(existingUsesDeviceStub.getUsesDevice(),
+						propDetails.getId());
+					switch (simple.getDefinition().getType()) {
+					case STRING:
+						simple.setValue(value);
+						break;
+					case BOOLEAN:
+						simple.setValue(Boolean.valueOf(value));
+						break;
+					case DOUBLE:
+						simple.setValue(Double.valueOf(value));
+						break;
+					default:
+						break;
 					}
-					tunerAllocationStruct.getFields().add(simple);
 				}
 				allocationPage = new TunerAllocationWizardPage(tunerAllocationStruct);
 			} else if (ListenerAllocationProperty.INSTANCE.getId().equals(structRefId)) { 
@@ -149,16 +141,12 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 				// populate StructRef with listener_allocation properties
 				listenerAllocationStruct = ScaFactory.eINSTANCE.createScaStructProperty();
 				listenerAllocationStruct.setId(structRefId);
-				for (ListenerAllocationProperties allocProp : ListenerAllocationProperties.values()) {
-					ScaSimpleProperty simple = ScaFactory.eINSTANCE.createScaSimpleProperty();
-					Simple definition = (Simple) PrfFactory.eINSTANCE.create(PrfPackage.Literals.SIMPLE);
-					definition.setType(allocProp.getType());
-					definition.setId(allocProp.getType().getLiteral());
-					definition.setName(allocProp.getType().getName());
-					simple.setDefinition(definition);
-					simple.setId(allocProp.getId());
-					simple.setValue(UsesDeviceFrontEndTunerPattern.getFEUsesDeviceTunerAllocationProp(existingUsesDeviceStub.getUsesDevice(), allocProp.getId()));
-					listenerAllocationStruct.getFields().add(simple);
+				listenerAllocationStruct.setDefinition(ListenerAllocationProperty.INSTANCE.createProperty());
+				for (ListenerAllocationProperties propDetails : ListenerAllocationProperties.values()) {
+					ScaSimpleProperty simple = listenerAllocationStruct.getSimple(propDetails.getId());
+					String value = UsesDeviceFrontEndTunerPattern.getFEUsesDeviceTunerAllocationProp(existingUsesDeviceStub.getUsesDevice(),
+						propDetails.getId());
+					simple.setValue(value);
 				}
 				allocationPage = new TunerAllocationWizardPage(listenerAllocationStruct);
 			}
