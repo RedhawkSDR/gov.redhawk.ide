@@ -21,7 +21,6 @@ import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.codegen.util.PropertyUtil;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationSectionImplementationItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationSectionSoftPkgItemProvider;
-import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationSectionUsesDeviceItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.SpdItemProviderAdapterFactoryAdapter;
 import gov.redhawk.ide.spd.internal.ui.editor.wizard.ImplementationWizard;
 import gov.redhawk.model.sca.util.ModelUtil;
@@ -237,7 +236,6 @@ public class ImplementationsSection extends TreeSection implements IPropertyChan
 
 			final SpdItemProviderAdapterFactoryAdapter provider = new SpdItemProviderAdapterFactoryAdapter();
 			provider.setSoftPkgAdapter(new ImplementationSectionSoftPkgItemProvider(provider));
-			provider.setUsesDeviceAdapter(new ImplementationSectionUsesDeviceItemProvider(provider));
 			provider.setImplementationAdapter(new ImplementationSectionImplementationItemProvider(provider, this.getPage().getEditor().getMainResource()));
 			this.adapterFactory.addAdapterFactory(provider);
 
