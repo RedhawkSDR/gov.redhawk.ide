@@ -23,6 +23,7 @@ import mil.jpeojtrs.sca.spd.PropertyRef;
 import mil.jpeojtrs.sca.spd.SoftPkgRef;
 import mil.jpeojtrs.sca.spd.UsesDevice;
 
+import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IDetailsPage;
@@ -85,17 +86,23 @@ public class ImplementationsBlock extends SCAMasterDetailsBlock {
 
 			@Override
 			public Object getPageKey(final Object object) {
+				// Match based on interface (the object will be the actual implementation)
 				if (object instanceof Implementation) {
 					return Implementation.class;
 				} else if (object instanceof UsesDevice) {
 					return UsesDevice.class;
-				} else if (object instanceof PropertyRef) {
-					return PropertyRef.class;
 				} else if (object instanceof Dependency) {
 					return Dependency.class;
 				} else if (object instanceof SoftPkgRef) {
 					return SoftPkgRef.class;
 				}
+
+				// Try to unwrap the object
+				Object unwrapped = AdapterFactoryEditingDomain.unwrap(object);
+				if (unwrapped instanceof PropertyRef) {
+					return PropertyRef.class;
+				}
+
 				return null;
 			}
 
