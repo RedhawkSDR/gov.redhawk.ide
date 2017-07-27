@@ -309,12 +309,24 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			return false;
 		}
 
-		if (this.delegate != null) {
-			return this.delegate.started();
+		// Are there any local components?
+		boolean empty;
+		try {
+			empty = ScaModelCommandWithResult.runExclusive(waveform, new RunnableWithResult.Impl<Boolean>() {
+				@Override
+				public void run() {
+					setResult(waveform.getComponents().isEmpty());
+				}
+			});
+		} catch (InterruptedException e) {
+			empty = false;
 		}
-		if (this.assemblyController != null) {
-			return this.assemblyController.started();
+
+		// If there are no local components, and no delegate, we aren't started any more
+		if (empty && this.delegate == null) {
+			started = false;
 		}
+
 		return started;
 	}
 
