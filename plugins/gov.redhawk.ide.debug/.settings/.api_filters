@@ -1,29 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="gov.redhawk.ide.debug" version="2">
-    <resource path="src-model/gov/redhawk/ide/debug/LocalSca.java" type="gov.redhawk.ide.debug.LocalSca">
-        <filter id="574619656">
-            <message_arguments>
-                <message_argument value="CorbaObjWrapper&lt;T&gt;"/>
-                <message_argument value="LocalSca"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src-model/gov/redhawk/ide/debug/LocalScaDevice.java" type="gov.redhawk.ide.debug.LocalScaDevice">
-        <filter id="574619656">
-            <message_arguments>
-                <message_argument value="ScaDevice&lt;D&gt;"/>
-                <message_argument value="LocalScaDevice"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src-model/gov/redhawk/ide/debug/LocalScaLoadableDevice.java" type="gov.redhawk.ide.debug.LocalScaLoadableDevice">
-        <filter id="574619656">
-            <message_arguments>
-                <message_argument value="ScaLoadableDevice&lt;L&gt;"/>
-                <message_argument value="LocalScaLoadableDevice"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/gov/redhawk/ide/debug/SpdLauncherUtil.java" type="gov.redhawk.ide.debug.SpdLauncherUtil">
         <filter comment="Method suppressed an exception. Use SoftwareComponent.Util.getWellKnownComponentType() directly." id="338792546">
             <message_arguments>
