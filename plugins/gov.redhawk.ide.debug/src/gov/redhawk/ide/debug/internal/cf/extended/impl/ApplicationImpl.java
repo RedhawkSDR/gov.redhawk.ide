@@ -519,7 +519,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		this.streams.getOutStream().println("Releasing Application...");
 
-		// Disconnect components, then release them
+		try {
+			stop();
+		} catch (StopError e) {
+			// Ignore and continue teardown
+		}
 		disconnectAll();
 		releaseAll();
 
