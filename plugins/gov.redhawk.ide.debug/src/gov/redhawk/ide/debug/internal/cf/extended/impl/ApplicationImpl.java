@@ -419,7 +419,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 					}
 					return (component.getComponentInstantiation() != null
 							&& component.getComponentInstantiation().getStartOrder() != null);
-				})
+				}) //
 				.sorted(new ScaComponentComparator().reversed()) // Reverse start order
 				.map(component -> {
 					this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
@@ -523,7 +523,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		this.streams.getOutStream().println("Releasing Application...");
 
-		// Disconnect components, then release them
+		try {
+			stop();
+		} catch (StopError e) {
+			// Ignore and continue teardown
+		}
 		disconnectAll();
 		releaseAll();
 
