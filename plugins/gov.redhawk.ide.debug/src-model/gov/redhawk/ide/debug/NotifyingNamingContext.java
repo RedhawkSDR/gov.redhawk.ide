@@ -26,7 +26,6 @@ import org.omg.PortableServer.POA;
 /**
  * <!-- begin-user-doc -->
  * An extension of the CORBA {@link NamingContextExtOperations}. It is used by objects in the sandbox.
- * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-user-doc -->
  *
  * <p>
