@@ -12,13 +12,13 @@ package gov.redhawk.ide.debug.internal.cf.extended.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -40,6 +40,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.transaction.RunnableWithResult;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jacorb.naming.Name;
@@ -85,6 +86,7 @@ import CF.ResourcePackage.StartError;
 import CF.ResourcePackage.StopError;
 import CF.TestableObjectPackage.UnknownTest;
 import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
+import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
@@ -93,6 +95,7 @@ import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ApplicationStreams;
 import gov.redhawk.ide.debug.internal.ComponentLaunch;
 import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
+import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaAbstractProperty;
@@ -102,6 +105,7 @@ import gov.redhawk.model.sca.ScaFactory;
 import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 import gov.redhawk.model.sca.impl.ScaComponentImpl;
 import gov.redhawk.sca.efs.WrappedFileStore;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
@@ -267,6 +271,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	private boolean started;
 	private final Application delegate;
 	private volatile boolean launching;
+	private boolean isSandboxChalkboard;
 
 	public ApplicationImpl(final LocalScaWaveform waveform, final String identifier, final String name, Application delegate) {
 		this.name = name;
@@ -276,6 +281,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.profile = waveform.getProfile();
 		this.waveform = waveform;
 		this.delegate = delegate;
+
+		// Is this the sandbox chalkboard?
+		isSandboxChalkboard = ScaDebugInstance.getLocalSandboxWaveformURI().equals(waveform.getProfileURI());
 	}
 
 	public ApplicationImpl(final LocalScaWaveform waveform, final String identifier, final String name) {
@@ -354,38 +362,28 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + this.name));
 				throw e;
 			}
+		}
 
-			// Start local components added to the domain waveform
-			for (ScaComponent component : waveform.getComponentsCopy()) {
-				if (component instanceof LocalScaComponent && ((LocalScaComponent) component).getLaunch() != null) {
-					this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
-					try {
-						component.start();
-					} catch (final StartError e) {
-						this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + component.getName()));
-						throw e;
+		List<ScaComponent> compsToStart = waveform.getComponentsCopy().stream() //
+				.filter(component -> {
+					// Must be local and have a launch
+					if (!(component instanceof LocalScaComponent) || ((LocalScaComponent) component).getLaunch() == null) {
+						return false;
 					}
-				}
-			}
-		} else {
-			// Sort components
-			List<ScaComponent> sortedSet = waveform.getComponentsCopy();
-			Collections.sort(sortedSet, new ScaComponentComparator());
-
-			for (ScaComponent component : sortedSet) {
-				// With the exception of the assembly controller, don't start things that have a component
-				// instantiation but don't have a start order (i.e. they're defined in a SAD without a start order)
-				if (component != assemblyController && component.getComponentInstantiation() != null
-					&& component.getComponentInstantiation().getStartOrder() == null) {
-					continue;
-				}
-				this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
-				try {
-					component.start();
-				} catch (final StartError e) {
-					this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + component.getName()));
-					throw e;
-				}
+					// Must have a start order unless it's the assembly controller
+					if (component == assemblyController) {
+						return true;
+					}
+					return (component.getComponentInstantiation() != null && component.getComponentInstantiation().getStartOrder() != null);
+				}).sorted(new ScaComponentComparator()) // Start order
+				.collect(Collectors.toList());
+		for (ScaComponent component : compsToStart) {
+			this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
+			try {
+				component.start();
+			} catch (StartError e) {
+				this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + component.getName()));
+				throw e;
 			}
 		}
 
@@ -405,53 +403,67 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 		this.streams.getOutStream().println("Stopping...");
 
-		if (this.delegate != null) {
-			// Stop local components added to the domain waveform
-			List<ScaComponent> components = waveform.getComponentsCopy();
-			Collections.reverse(components);
-			for (ScaComponent component : components) {
-				if (component instanceof LocalScaComponent && ((LocalScaComponent) component).getLaunch() != null) {
+		int stopErrors = waveform.getComponentsCopy().stream() //
+				.filter(component -> {
+					// Must be local and have a launch
+					if (!(component instanceof LocalScaComponent) || ((LocalScaComponent) component).getLaunch() == null) {
+						return false;
+					}
+					// Must have a start order unless it's the assembly controller
+					if (component == assemblyController) {
+						return true;
+					}
+					return (component.getComponentInstantiation() != null
+							&& component.getComponentInstantiation().getStartOrder() != null);
+				})
+				.sorted(new ScaComponentComparator().reversed()) // Reverse start order
+				.map(component -> {
 					this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
 					try {
+						// TODO: Impose a 3-second timeout like the CF
 						component.stop();
-					} catch (final StopError e) {
+						return true;
+					} catch (StopError e) {
 						this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + component.getName()));
-						throw e;
+						return false;
 					}
-				}
-			}
+				}) // List of booleans indicating successful / failed stop
+				.mapToInt(stopResult -> (stopResult) ? 0 : 1) //
+				.sum();
 
+		boolean delegateFailure = false;
+		if (this.delegate != null) {
 			this.streams.getOutStream().println("\tInvoking delegate stop");
 			try {
 				this.delegate.stop();
 			} catch (StopError e) {
-				this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + this.name));
-				throw e;
-			}
-		} else {
-			List<ScaComponent> sortedSet = waveform.getComponentsCopy();
-			Collections.sort(sortedSet, new ScaComponentComparator());
-			Collections.reverse(sortedSet);
-
-			for (ScaComponent component : sortedSet) {
-				// With the exception of the assembly controller, don't stop things that have a component
-				// instantiation but don't have a start order (i.e. they're defined in a SAD without a start order)
-				if (component != assemblyController && component.getComponentInstantiation() != null
-					&& component.getComponentInstantiation().getStartOrder() == null) {
-					continue;
-				}
-				this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
-				try {
-					component.stop();
-				} catch (StopError e) {
-					this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + component.getName()));
-					throw e;
-				}
+				this.streams.getErrStream().println(CFErrorFormatter.format(e, "application " + this.name));
+				delegateFailure = true;
 			}
 		}
 
 		this.streams.getOutStream().println("Stopped");
 		this.started = false;
+
+		if (stopErrors == 0 && !delegateFailure) {
+			// Successful stop
+			return;
+		}
+
+		// Problems - throw an exception
+		StringBuilder sb = new StringBuilder();
+		if (stopErrors > 0) {
+			sb.append(stopErrors);
+			sb.append(" component(s) failed to stop");
+		}
+		if (delegateFailure) {
+			if (stopErrors > 0) {
+				sb.append(". The domain waveform also failed to stop.");
+			} else {
+				sb.append("The domain waveform failed to stop");
+			}
+		}
+		throw new StopError(ErrorNumberType.CF_NOTSET, sb.toString());
 	}
 
 	@Override
@@ -501,18 +513,25 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			// Attempt to continue since this is a cleanup function
 		}
 
-		this.terminated = true;
+		// Sandbox chalkboard doesn't get terminated during releaseObject(), just other sandbox waveforms
+		if (!isSandboxChalkboard) {
+			this.terminated = true;
+		}
 		this.streams.getOutStream().println("Releasing Application...");
 
-		if (delegate == null) {
-			disconnectAll();
-			releaseAll();
+		// Disconnect components, then release them
+		disconnectAll();
+		releaseAll();
+
+		// For the sandbox chalkboard, we're done
+		if (isSandboxChalkboard) {
+			return;
 		}
+
+		// Unbind the waveform context
 		unbind();
 
 		this.streams.getOutStream().println("Release finished");
-		this.assemblyController = null;
-		this.waveformContext = null;
 		fireTerminated();
 	}
 
@@ -549,9 +568,34 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 					}
 				}
 			}
+			this.waveformContext = null;
 		}
 	}
 
+	/**
+	 * Terminate all <b>local</b> components
+	 */
+	protected void terminateAll() {
+		for (ScaComponent component : this.waveform.getComponentsCopy()) {
+			if (component instanceof LocalScaComponent && ((LocalScaComponent) component).getLaunch() != null) {
+				terminate(component);
+			}
+		}
+		this.assemblyController = null;
+	}
+
+	protected void terminate(final ScaComponent info) {
+		String id = info.getIdentifier();
+		try {
+			((LocalLaunch) info).getLaunch().terminate();
+		} catch (DebugException e) {
+			this.streams.getOutStream().println("Component " + id + " failed to terminate correctly");
+		}
+	}
+
+	/**
+	 * Release all <b>local</b> components
+	 */
 	protected void releaseAll() {
 		this.streams.getOutStream().println("Releasing components...");
 		// Shutdown each component
@@ -560,6 +604,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				release(component);
 			}
 		}
+		this.assemblyController = null;
 		this.streams.getOutStream().println("Released components");
 	}
 
@@ -578,6 +623,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 	}
 
+	/**
+	 * Disconnect all <b>local</b> components
+	 */
 	protected void disconnectAll() {
 		this.streams.getOutStream().println("Disconnecting connections...");
 		// Disconnect components
@@ -1088,22 +1136,12 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("Terminating Application...");
 
 		// Terminate the launch for each component
-		for (ScaComponent component : this.waveform.getComponentsCopy()) {
-			if (component instanceof LocalScaComponent) {
-				String id = component.getIdentifier();
-				try {
-					((LocalScaComponent) component).getLaunch().terminate();
-				} catch (DebugException e) {
-					this.streams.getOutStream().println("Component " + id + " failed to terminate correctly");
-				}
-			}
-		}
+		terminateAll();
 
+		// Unbind waveform context
 		unbind();
 
 		this.streams.getOutStream().println("Terminate finished");
-		this.assemblyController = null;
-		this.waveformContext = null;
 		fireTerminated();
 	}
 
