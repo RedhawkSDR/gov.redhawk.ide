@@ -415,7 +415,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 					}
 					return (component.getComponentInstantiation() != null
 							&& component.getComponentInstantiation().getStartOrder() != null);
-				})
+				}) //
 				.sorted(new ScaComponentComparator().reversed()) // Reverse start order
 				.map(component -> {
 					this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
