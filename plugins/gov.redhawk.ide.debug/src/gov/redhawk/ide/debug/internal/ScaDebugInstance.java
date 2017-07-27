@@ -261,14 +261,19 @@ public enum ScaDebugInstance {
 		return retVal;
 	}
 
+	private static URI localSandboxWaveformURI = null;
+
 	public static URI getLocalSandboxWaveformURI() {
-		URI retVal = URI.createURI("mem:///LocalSca.sad.xml");
-		Map<String, String> queryMap = new HashMap<String, String>();
-		queryMap.put(ScaFileSystemConstants.QUERY_PARAM_WF, SANDBOX_WF_REF);
-		queryMap.put(ScaFileSystemConstants.QUERY_PARAM_NAME, "Chalkboard");
-		String query = QueryParser.createQuery(queryMap);
-		retVal = retVal.appendQuery(query);
-		return retVal;
+		if (localSandboxWaveformURI == null) {
+			URI retVal = URI.createURI("mem:///LocalSca.sad.xml");
+			Map<String, String> queryMap = new HashMap<String, String>();
+			queryMap.put(ScaFileSystemConstants.QUERY_PARAM_WF, SANDBOX_WF_REF);
+			queryMap.put(ScaFileSystemConstants.QUERY_PARAM_NAME, "Chalkboard");
+			String query = QueryParser.createQuery(queryMap);
+			retVal = retVal.appendQuery(query);
+			localSandboxWaveformURI = retVal;
+		}
+		return localSandboxWaveformURI;
 	}
 
 }
