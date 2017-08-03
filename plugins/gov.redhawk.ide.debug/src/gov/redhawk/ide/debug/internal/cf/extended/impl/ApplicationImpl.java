@@ -370,16 +370,28 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 		List<ScaComponent> compsToStart = waveform.getComponentsCopy().stream() //
 				.filter(component -> {
-					// Must be local and have a launch
-					if (!(component instanceof LocalScaComponent) || ((LocalScaComponent) component).getLaunch() == null) {
+					// Must be a locally launched component
+					if (!(component instanceof LocalScaComponent)) {
 						return false;
 					}
-					// Must have a start order unless it's the assembly controller
+					if (((LocalScaComponent) component).getLaunch() == null) {
+						return false;
+					}
+
+					// We want to start the assembly controller
 					if (component == assemblyController) {
 						return true;
 					}
-					return (component.getComponentInstantiation() != null && component.getComponentInstantiation().getStartOrder() != null);
-				}).sorted(new ScaComponentComparator()) // Start order
+
+					// Also start anything NOT mentioned in the SAD file
+					if (component.getComponentInstantiation() == null) {
+						return true;
+					}
+
+					// Also start things in the SAD file WITH a start order
+					return component.getComponentInstantiation().getStartOrder() != null;
+				}) //
+				.sorted(new ScaComponentComparator()) // Sort by AC, then start order
 				.collect(Collectors.toList());
 		for (ScaComponent component : compsToStart) {
 			this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
@@ -409,16 +421,26 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 		int stopErrors = waveform.getComponentsCopy().stream() //
 				.filter(component -> {
-					// Must be local and have a launch
-					if (!(component instanceof LocalScaComponent) || ((LocalScaComponent) component).getLaunch() == null) {
+					// Must be a locally launched component
+					if (!(component instanceof LocalScaComponent)) {
 						return false;
 					}
-					// Must have a start order unless it's the assembly controller
+					if (((LocalScaComponent) component).getLaunch() == null) {
+						return false;
+					}
+
+					// We want to stop the assembly controller
 					if (component == assemblyController) {
 						return true;
 					}
-					return (component.getComponentInstantiation() != null
-							&& component.getComponentInstantiation().getStartOrder() != null);
+
+					// Also stop anything NOT mentioned in the SAD file
+					if (component.getComponentInstantiation() == null) {
+						return true;
+					}
+
+					// Also stop things in the SAD file WITH a start order
+					return component.getComponentInstantiation().getStartOrder() != null;
 				}) //
 				.sorted(new ScaComponentComparator().reversed()) // Reverse start order
 				.map(component -> {
