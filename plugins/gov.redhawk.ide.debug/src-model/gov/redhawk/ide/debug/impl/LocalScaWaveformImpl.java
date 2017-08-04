@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
@@ -615,6 +616,9 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 				getComponents().clear();
 			}
 		});
+
+		// Fetch started attribute
+		fetchStarted(new NullProgressMonitor());
 	}
 
 	@Override
