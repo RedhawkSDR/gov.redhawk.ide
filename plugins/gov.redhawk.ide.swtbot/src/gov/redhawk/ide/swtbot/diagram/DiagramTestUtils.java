@@ -226,8 +226,9 @@ public class DiagramTestUtils {
 	}
 
 	/**
-	 * Add a Use FrontEnd Tuner Device to the SAD diagram editor
+	 * @deprecated Use {@link #addUseFrontEndTunerDeviceToDiagram(SWTGefBot, RHBotGefEditor, int, int)}
 	 */
+	@Deprecated
 	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, RHBotGefEditor editor) {
 		addUseFrontEndTunerDeviceToDiagram(gefBot, editor, 0, 0);
 	}
