@@ -27,6 +27,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
+import gov.redhawk.ide.debug.LocalScaExecutableDevice;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.SpdLauncherUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
@@ -70,6 +71,14 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 					if (component instanceof LocalLaunch) {
 						SpdLauncherUtil.terminate((LocalLaunch) component);
 					}
+				}
+				LocalScaExecutableDevice componentHost = localSca.getSandboxWaveform().getComponentHost();
+				if (componentHost != null && componentHost.getLaunch() != null) {
+					SpdLauncherUtil.terminate(componentHost);
+				}
+				componentHost = localSca.getSandboxWaveform().getComponentHostDebug();
+				if (componentHost != null && componentHost.getLaunch() != null) {
+					SpdLauncherUtil.terminate(componentHost);
 				}
 			} else if (localLaunch == localSca.getSandboxDeviceManager()) {
 				final LocalScaDeviceManager sandboxDevMgr = (LocalScaDeviceManager) localLaunch;

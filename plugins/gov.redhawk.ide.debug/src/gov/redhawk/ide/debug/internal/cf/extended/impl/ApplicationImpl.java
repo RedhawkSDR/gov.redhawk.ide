@@ -607,7 +607,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	/**
-	 * Terminate all <b>local</b> components
+	 * Terminate all <b>local</b> components, local component hosts
 	 */
 	protected void terminateAll() {
 		for (ScaComponent component : this.waveform.getComponentsCopy()) {
@@ -615,6 +615,26 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				terminate(component);
 			}
 		}
+
+		LocalScaExecutableDevice componentHost = this.waveform.getComponentHost();
+		if (componentHost != null && componentHost.getLaunch() != null) {
+			String id = componentHost.getLabel();
+			try {
+				componentHost.getLaunch().terminate();
+			} catch (DebugException e) {
+				this.streams.getOutStream().println("Runtime component host " + id + " failed to terminate correctly");
+			}
+		}
+		componentHost = this.waveform.getComponentHostDebug();
+		if (componentHost != null) {
+			String id = componentHost.getLabel();
+			try {
+				componentHost.getLaunch().terminate();
+			} catch (DebugException e) {
+				this.streams.getOutStream().println("Debug component host " + id + " failed to terminate correctly");
+			}
+		}
+
 		this.assemblyController = null;
 	}
 
@@ -628,7 +648,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	/**
-	 * Release all <b>local</b> components
+	 * Release all <b>local</b> components, local component hosts
 	 */
 	protected void releaseAll() {
 		this.streams.getOutStream().println("Releasing components...");
