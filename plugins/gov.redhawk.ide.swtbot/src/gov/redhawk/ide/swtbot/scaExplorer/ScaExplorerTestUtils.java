@@ -514,9 +514,9 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until Component disappears in REDHAWK Explorer
-	 * @param componentName
+	 * @deprecated Use {@link #waitUntilNodeRemovedFromScaExplorer(SWTWorkbenchBot, String[], String)}
 	 */
+	@Deprecated
 	public static void waitUntilComponentDisappearsInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform,
 		final String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
