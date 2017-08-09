@@ -202,9 +202,9 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
-		section.setDescription("Select devices to include in this node within the following section.");
+		section.setDescription("Devices and services which are launched by this node");
 		// See Bug # 160554: Set text before text client
-		section.setText("All Devices");
+		section.setText("Devices and Services");
 		initialize();
 		createSectionToolbar(section, toolkit);
 		// Create the adapted listener for the filter entry field

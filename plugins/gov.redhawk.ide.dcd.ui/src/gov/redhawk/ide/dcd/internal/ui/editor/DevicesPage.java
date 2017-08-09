@@ -42,7 +42,7 @@ public class DevicesPage extends ScaFormPage implements IViewerProvider {
 	 * @param editor
 	 */
 	public DevicesPage(final SCAFormEditor editor) {
-		super(editor, DevicesPage.PAGE_ID, "Devices");
+		super(editor, DevicesPage.PAGE_ID, "Devices / Services");
 		this.fBlock = new DevicesBlock(this);
 	}
 
@@ -59,7 +59,7 @@ public class DevicesPage extends ScaFormPage implements IViewerProvider {
 	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
-		form.setText("Devices");
+		form.setText("Devices / Services");
 
 		// TODO
 		// form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXTENSIONS_OBJ));

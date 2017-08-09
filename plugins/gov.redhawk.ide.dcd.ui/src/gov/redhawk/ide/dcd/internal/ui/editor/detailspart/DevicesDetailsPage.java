@@ -97,8 +97,8 @@ public class DevicesDetailsPage extends ScaDetails {
 		final Section section = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
 		        | ExpandableComposite.EXPANDED);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText("Device");
-		section.setDescription("This allows you to override particular properties of the selected device.");
+		section.setText("Device Details");
+		section.setDescription("This allows you to override particular properties of the selected device");
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 
