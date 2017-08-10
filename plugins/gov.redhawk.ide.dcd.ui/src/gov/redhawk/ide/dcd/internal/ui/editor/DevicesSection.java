@@ -115,7 +115,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 	private SortAction fSortAction;
 	private ComposedAdapterFactory adapterFactory;
 	private Resource dcdResource;
-	private SoftPkg[] devices;
+	private SoftPkg[] nodeElements;
 
 	private boolean disposed;
 	private boolean editable;
@@ -453,7 +453,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 				final ScaNodeProjectDevicesWizardPage page = (ScaNodeProjectDevicesWizardPage) this.getPages()[0];
 
 				if (page != null) {
-					DevicesSection.this.devices = page.getNodeDevices();
+					DevicesSection.this.nodeElements = page.getNodeElements();
 				}
 
 				return true;
@@ -461,12 +461,13 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 
 		};
 		final WizardDialog dialog = new WizardDialog(getPage().getSite().getShell(), wiz);
+		dialog.setMinimumPageSize(400, 400);
 		wiz.addPage(devWizardPage);
 
 		if (dialog.open() == Window.OK) {
 			final DeviceConfiguration dcd = getDeviceConfiguration();
 
-			if (this.devices.length == 0 || dcd == null) {
+			if (this.nodeElements.length == 0 || dcd == null) {
 				return;
 			}
 
@@ -478,14 +479,14 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 				command.append(SetCommand.create(getEditingDomain(), dcd, DcdPackage.Literals.DEVICE_CONFIGURATION__COMPONENT_FILES, files));
 			}
 
-			for (final SoftPkg device : this.devices) {
+			for (final SoftPkg element : this.nodeElements) {
 				ComponentFile file = null;
 				for (final ComponentFile f : files.getComponentFile()) {
 					if (f == null) {
 						continue;
 					}
 					final SoftPkg fSpd = f.getSoftPkg();
-					if (fSpd != null && device.getId().equals(fSpd.getId())) {
+					if (fSpd != null && element.getId().equals(fSpd.getId())) {
 						file = f;
 						break;
 					}
@@ -493,7 +494,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 
 				if (file == null) {
 					file = DcdFactory.eINSTANCE.createComponentFile();
-					file.setSoftPkg(device);
+					file.setSoftPkg(element);
 					command.append(AddCommand.create(getEditingDomain(), files, PartitioningPackage.Literals.COMPONENT_FILES__COMPONENT_FILE,
 					        file));
 				}
@@ -513,7 +514,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 				        placement));
 
 				final DcdComponentInstantiation instantiation = DcdFactory.eINSTANCE.createDcdComponentInstantiation();
-				final String uniqueName = DeviceConfiguration.Util.createDeviceUsageName(dcd, device.getName());
+				final String uniqueName = DeviceConfiguration.Util.createDeviceUsageName(dcd, element.getName());
 				instantiation.setId(dcd.getName() + ":" + uniqueName);
 				instantiation.setUsageName(uniqueName);
 

@@ -105,7 +105,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 			final IPath existingDcdPath = this.nodePropertiesPage.getExistingResourcePath();
 
 			final String domainManagerName = this.nodePropertiesPage.getDomain();
-			final SoftPkg[] devices = this.nodeDevicesPage.getNodeDevices();
+			final SoftPkg[] nodeElements = this.nodeDevicesPage.getNodeElements();
 
 			BasicNewProjectResourceWizard.updatePerspective(this.fConfig);
 			final WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
@@ -123,7 +123,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 						// If we're creating a new waveform (vs importing one)
 						if (isCreateNewResource) {
 							// Create the XML files
-							NewScaNodeProjectWizard.this.openEditorOn = NodeProjectCreator.createNodeFiles(project, id, null, domainManagerName, devices,
+							NewScaNodeProjectWizard.this.openEditorOn = NodeProjectCreator.createNodeFiles(project, id, null, domainManagerName, nodeElements,
 								progress.newChild(1));
 						} else {
 							openEditorOn = project.getFile("DeviceManager.dcd.xml");
@@ -191,7 +191,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 		addPage(this.nodePropertiesPage);
 
 		this.nodeDevicesPage = new ScaNodeProjectDevicesWizardPage("");
-		this.nodeDevicesPage.setDescription("Add existing Device(s) to your node.");
+		this.nodeDevicesPage.setDescription("Add existing Device(s) / Service(s) to your node.");
 		addPage(this.nodeDevicesPage);
 	}
 

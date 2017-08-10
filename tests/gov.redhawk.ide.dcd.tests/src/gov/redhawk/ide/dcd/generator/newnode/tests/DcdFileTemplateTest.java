@@ -59,7 +59,7 @@ public class DcdFileTemplateTest {
 		// Now generate XML for a DCD
 		final gov.redhawk.ide.dcd.generator.newnode.GeneratorArgs args2 = new gov.redhawk.ide.dcd.generator.newnode.GeneratorArgs();
 		args2.setAuthorName(args1.getAuthorName());
-		args2.setDevices(new SoftPkg[] { softpkg });
+		args2.setNodeElements(new SoftPkg[] { softpkg });
 		args2.setDomainManagerName("MyDomain");
 		args2.setNodeName("MyNodeName");
 		args2.setNodeId("MyNodeID");

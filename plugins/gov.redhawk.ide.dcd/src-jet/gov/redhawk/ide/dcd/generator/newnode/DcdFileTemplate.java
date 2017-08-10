@@ -60,7 +60,7 @@ public class DcdFileTemplate
     final StringBuffer stringBuffer = new StringBuffer();
     
     GeneratorArgs args = (GeneratorArgs)argument;
-    List<String> deviceList = new ArrayList<String>();
+    List<String> elementList = new ArrayList<String>();
 
     stringBuffer.append(TEXT_1);
     stringBuffer.append(args.getNodeId());
@@ -68,42 +68,42 @@ public class DcdFileTemplate
     stringBuffer.append(args.getNodeName());
     stringBuffer.append(TEXT_3);
     	
-	HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 
-	if (args.getDevices() != null && args.getDevices().length > 0) { 
+	HashMap<SoftPkg, String> elementToId = new HashMap<SoftPkg, String>(); 
+	if (args.getNodeElements() != null && args.getNodeElements().length > 0) { 
     stringBuffer.append(TEXT_4);
     
-        for (SoftPkg device : args.getDevices()) {
-            String usageName = ProjectCreator.getBaseFileName(device.getName());
-            devToId.put(device, usageName + "_" + UUID.randomUUID());
+        for (SoftPkg softPkg : args.getNodeElements()) {
+            String usageName = ProjectCreator.getBaseFileName(softPkg.getName());
+            elementToId.put(softPkg, usageName + "_" + UUID.randomUUID());
 
     stringBuffer.append(TEXT_5);
-    stringBuffer.append(devToId.get(device));
+    stringBuffer.append(elementToId.get(softPkg));
     stringBuffer.append(TEXT_6);
-    stringBuffer.append(device.eResource().getURI().path());
+    stringBuffer.append(softPkg.eResource().getURI().path());
     stringBuffer.append(TEXT_7);
     
         }
 
     stringBuffer.append(TEXT_8);
     
-        for (SoftPkg device : args.getDevices()) {
-            int devNum = 1;
-            String usageName = ProjectCreator.getBaseFileName(device.getName());
-            while (deviceList.contains(usageName + "_" + devNum)) {
-                devNum++;
+        for (SoftPkg softPkg : args.getNodeElements()) {
+            int elementNum = 1;
+            String usageName = ProjectCreator.getBaseFileName(softPkg.getName());
+            while (elementList.contains(usageName + "_" + elementNum)) {
+                elementNum++;
             }
-            deviceList.add(usageName + "_" + devNum);
+            elementList.add(usageName + "_" + elementNum);
             
-            String compInstId = args.getNodeName() + ":" + usageName + "_" + devNum;
+            String compInstId = args.getNodeName() + ":" + usageName + "_" + elementNum;
 
     stringBuffer.append(TEXT_9);
-    stringBuffer.append(devToId.get(device));
+    stringBuffer.append(elementToId.get(softPkg));
     stringBuffer.append(TEXT_10);
     stringBuffer.append(compInstId);
     stringBuffer.append(TEXT_11);
     stringBuffer.append(usageName);
     stringBuffer.append(TEXT_12);
-    stringBuffer.append(devNum);
+    stringBuffer.append(elementNum);
     stringBuffer.append(TEXT_13);
     
         }

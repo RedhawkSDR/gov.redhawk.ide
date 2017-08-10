@@ -58,7 +58,7 @@ public class NodeProjectCreator extends ProjectCreator {
 	 * @param nodeID The node ID value
 	 * @param authorName The name of the component author
 	 * @param domainManagerName The domain manager's name
-	 * @param devices The devices to add to the node
+	 * @param nodeElements The devices and services to add to the node
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
 	 *  reported and that the operation cannot be canceled.
@@ -66,7 +66,7 @@ public class NodeProjectCreator extends ProjectCreator {
 	 * @throws CoreException An error occurs while generating files
 	 */
 	public static IFile createNodeFiles(final IProject project, final String nodeID, final String authorName, final String domainManagerName,
-	        final SoftPkg[] devices, final IProgressMonitor monitor) throws CoreException {
+	        final SoftPkg[] nodeElements, final IProgressMonitor monitor) throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, "Creating REDHAWK node files", 2);
 
 		final GeneratorArgs args = new GeneratorArgs();
@@ -77,7 +77,7 @@ public class NodeProjectCreator extends ProjectCreator {
 		
 		args.setAuthorName(authorName);
 		args.setDomainManagerName(domainManagerName);
-		args.setDevices(devices);
+		args.setNodeElements(nodeElements);
 
 		// Generate file content from templates
 		final String dcd = new DcdFileTemplate().generate(args);

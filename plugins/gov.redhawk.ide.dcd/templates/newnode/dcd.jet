@@ -10,7 +10,7 @@ java.util.UUID"
 %>
 <%
     GeneratorArgs args = (GeneratorArgs)argument;
-    List<String> deviceList = new ArrayList<String>();
+    List<String> elementList = new ArrayList<String>();
 %>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE deviceconfiguration PUBLIC "-//JTRS//DTD SCA V2.2.2 DCD//EN" "deviceconfiguration.dtd">
@@ -19,16 +19,16 @@ java.util.UUID"
     <localfile name="/mgr/DeviceManager.spd.xml"/>
   </devicemanagersoftpkg>
 <%	
-	HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 
-	if (args.getDevices() != null && args.getDevices().length > 0) { %>
+	HashMap<SoftPkg, String> elementToId = new HashMap<SoftPkg, String>(); 
+	if (args.getNodeElements() != null && args.getNodeElements().length > 0) { %>
   <componentfiles>
 <%
-        for (SoftPkg device : args.getDevices()) {
-            String usageName = ProjectCreator.getBaseFileName(device.getName());
-            devToId.put(device, usageName + "_" + UUID.randomUUID());
+        for (SoftPkg softPkg : args.getNodeElements()) {
+            String usageName = ProjectCreator.getBaseFileName(softPkg.getName());
+            elementToId.put(softPkg, usageName + "_" + UUID.randomUUID());
 %>
-    <componentfile id="<%=devToId.get(device)%>" type="SPD">
-      <localfile name="<%=device.eResource().getURI().path()%>"/>
+    <componentfile id="<%=elementToId.get(softPkg)%>" type="SPD">
+      <localfile name="<%=softPkg.eResource().getURI().path()%>"/>
     </componentfile>
 <%
         }
@@ -36,20 +36,20 @@ java.util.UUID"
   </componentfiles>
   <partitioning>
 <%
-        for (SoftPkg device : args.getDevices()) {
-            int devNum = 1;
-            String usageName = ProjectCreator.getBaseFileName(device.getName());
-            while (deviceList.contains(usageName + "_" + devNum)) {
-                devNum++;
+        for (SoftPkg softPkg : args.getNodeElements()) {
+            int elementNum = 1;
+            String usageName = ProjectCreator.getBaseFileName(softPkg.getName());
+            while (elementList.contains(usageName + "_" + elementNum)) {
+                elementNum++;
             }
-            deviceList.add(usageName + "_" + devNum);
+            elementList.add(usageName + "_" + elementNum);
             
-            String compInstId = args.getNodeName() + ":" + usageName + "_" + devNum;
+            String compInstId = args.getNodeName() + ":" + usageName + "_" + elementNum;
 %>
     <componentplacement>
-      <componentfileref refid="<%=devToId.get(device)%>"/>
+      <componentfileref refid="<%=elementToId.get(softPkg)%>"/>
       <componentinstantiation id="<%=compInstId%>">
-        <usagename><%=usageName%>_<%=devNum%></usagename>
+        <usagename><%=usageName%>_<%=elementNum%></usagename>
       </componentinstantiation>
     </componentplacement>
 <%

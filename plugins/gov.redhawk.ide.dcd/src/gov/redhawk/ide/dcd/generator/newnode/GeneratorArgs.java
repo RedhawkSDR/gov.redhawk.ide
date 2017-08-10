@@ -22,7 +22,7 @@ public class GeneratorArgs extends GeneratorArgsBase {
 	private String nodeName;
 	private String nodeId;
 	
-	private SoftPkg[] devices;
+	private SoftPkg[] nodeElements;
 
 	public String getDomainManagerName() {
 		return this.domainManagerName;
@@ -32,12 +32,12 @@ public class GeneratorArgs extends GeneratorArgsBase {
 		this.domainManagerName = domainManagerName;
 	}
 
-	public SoftPkg[] getDevices() {
-		return this.devices;
+	public SoftPkg[] getNodeElements() {
+		return this.nodeElements;
 	}
-
-	public void setDevices(final SoftPkg[] devices) {
-		this.devices = devices;
+	
+	public void setNodeElements(final SoftPkg[] nodeElements) {
+		this.nodeElements = nodeElements;
 	}
 
 	public String getNodeName() {

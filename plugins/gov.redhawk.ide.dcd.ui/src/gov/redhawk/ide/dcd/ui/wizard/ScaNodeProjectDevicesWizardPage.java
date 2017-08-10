@@ -47,14 +47,15 @@ import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
  */
 public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 
-	private TreeViewer treeViewer;
+	private TreeViewer devicesTreeViewer;
+	private TreeViewer servicesTreeViewer;
 
 	/**
 	 * @since 1.2
 	 */
 	public ScaNodeProjectDevicesWizardPage(final String pageName) {
 		super(pageName);
-		setTitle("Select Devices for Node");
+		setTitle("Select Devices and/or Services for Node");
 		this.setPageComplete(true);
 	}
 
@@ -67,25 +68,50 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 		this(pageName);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void createControl(final Composite parent) {
 		// The top-level composite for this page
 		final Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
+		composite.setLayout(new GridLayout(1, false));
 
-		// Top Heading
+		createDevicesComposite(composite);
+		createServicesComposite(composite);
+
+		setControl(composite);
+	}
+
+	private void createDevicesComposite(Composite composite) {
+		final Composite deviceComposite = new Composite(composite, SWT.NONE);
+		deviceComposite.setLayout(new GridLayout(1, false));
+		deviceComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1));
+
+		this.devicesTreeViewer = new TreeViewer(deviceComposite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+
+		createSelectionComposite(deviceComposite, "devices", this.devicesTreeViewer);
+	}
+
+	private void createServicesComposite(Composite composite) {
+		final Composite serviceComposite = new Composite(composite, SWT.NONE);
+		serviceComposite.setLayout(new GridLayout(1, false));
+		serviceComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1));
+
+		this.servicesTreeViewer = new TreeViewer(serviceComposite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+
+		createSelectionComposite(serviceComposite, "services", this.servicesTreeViewer);
+	}
+
+	private void createSelectionComposite(Composite composite, final String type, final TreeViewer viewer) {
+		composite.setLayout(new GridLayout(1, false));
+		composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1));
+
 		final Label directionsLabel = new Label(composite, SWT.NONE);
-		directionsLabel.setText("Select devices to include in this node:");
-		GridDataFactory.generate(directionsLabel, 2, 1);
+		directionsLabel.setText("Select one or more " + type + " to include in this node:");
+		GridDataFactory.generate(directionsLabel, 1, 1);
 
-		this.treeViewer = new TreeViewer(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		this.treeViewer.getControl().setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
-		this.treeViewer.setContentProvider(new SdrNavigatorContentProvider());
-		this.treeViewer.setLabelProvider(new SdrNavigatorLabelProvider());
-		this.treeViewer.setComparator(new SdrViewerSorter());
+		viewer.getControl().setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1));
+		viewer.setContentProvider(new SdrNavigatorContentProvider());
+		viewer.setLabelProvider(new SdrNavigatorLabelProvider());
+		viewer.setComparator(new SdrViewerSorter());
 
 		final ComposedAdapterFactory factory = new ComposedAdapterFactory();
 		factory.addAdapterFactory(new SpdItemProviderAdapterFactory());
@@ -98,7 +124,11 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						treeViewer.setInput(sdrRoot.getDevicesContainer());
+						if ("devices".equals(type)) {
+							viewer.setInput(sdrRoot.getDevicesContainer());
+						} else {
+							viewer.setInput(sdrRoot.getServicesContainer());
+						}
 					}
 				});
 				return Status.OK_STATUS;
@@ -108,15 +138,13 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 		job.setUser(true);
 		job.schedule();
 
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				getWizard().getContainer().updateButtons();
 			}
 		});
-
-		setControl(composite);
 	}
 
 	@Override
@@ -125,19 +153,42 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 		super.setVisible(visible);
 	}
 
+	/**
+	 * @deprecated use {@link #getNodeElements()} instead, which also returns selected services
+	 */
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public SoftPkg[] getNodeDevices() {
 		List<SoftPkg> softPkgs = new ArrayList<SoftPkg>();
-		StructuredSelection selection = (StructuredSelection) treeViewer.getSelection();
+		StructuredSelection selection = (StructuredSelection) devicesTreeViewer.getSelection();
 		for (Iterator<SoftPkg> iterator = selection.iterator(); iterator.hasNext();) {
 			softPkgs.add(iterator.next());
 		}
 		return softPkgs.toArray(new SoftPkg[0]);
 	}
 
+	/**
+	 * @since 1.2
+	 */
+	@SuppressWarnings("unchecked")
+	public SoftPkg[] getNodeElements() {
+		List<SoftPkg> softPkgs = new ArrayList<SoftPkg>();
+		StructuredSelection devicesSelection = (StructuredSelection) devicesTreeViewer.getSelection();
+		for (Iterator<SoftPkg> iterator = devicesSelection.iterator(); iterator.hasNext();) {
+			softPkgs.add(iterator.next());
+		}
+
+		StructuredSelection serviceSelection = (StructuredSelection) servicesTreeViewer.getSelection();
+		for (Iterator<SoftPkg> iterator = serviceSelection.iterator(); iterator.hasNext();) {
+			softPkgs.add(iterator.next());
+		}
+
+		return softPkgs.toArray(new SoftPkg[0]);
+	}
+
 	@Override
 	public boolean isPageComplete() {
-		StructuredSelection selection = (StructuredSelection) treeViewer.getSelection();
+		StructuredSelection selection = (StructuredSelection) devicesTreeViewer.getSelection();
 		for (Iterator< ? > iterator = selection.iterator(); iterator.hasNext();) {
 			if (!(iterator.next() instanceof SoftPkg)) {
 				return false;
