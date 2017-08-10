@@ -168,7 +168,7 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 	}
 
 	/**
-	 * @since 1.2
+	 * @since 1.3
 	 */
 	@SuppressWarnings("unchecked")
 	public SoftPkg[] getNodeElements() {

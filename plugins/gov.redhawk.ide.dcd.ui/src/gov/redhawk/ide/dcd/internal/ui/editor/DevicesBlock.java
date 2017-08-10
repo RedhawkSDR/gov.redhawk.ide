@@ -10,23 +10,29 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.internal.ui.editor;
 
-import gov.redhawk.ide.dcd.internal.ui.editor.detailspart.DevicesDetailsPage;
-import gov.redhawk.ui.editor.SCAMasterDetailsBlock;
-import gov.redhawk.ui.editor.ScaSection;
-import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
-import mil.jpeojtrs.sca.spd.Dependency;
-import mil.jpeojtrs.sca.spd.PropertyRef;
-import mil.jpeojtrs.sca.spd.UsesDevice;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
 import org.eclipse.ui.forms.IManagedForm;
 
+import CF.PortSupplierHelper;
+import gov.redhawk.ide.dcd.internal.ui.editor.detailspart.DevicesDetailsPage;
+import gov.redhawk.ide.dcd.internal.ui.editor.detailspart.ServicesDetailsPage;
+import gov.redhawk.ide.dcd.internal.ui.editor.detailspart.ServicesDetailsPage2;
+import gov.redhawk.ui.editor.SCAMasterDetailsBlock;
+import gov.redhawk.ui.editor.ScaSection;
+import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
+import mil.jpeojtrs.sca.scd.Interface;
+import mil.jpeojtrs.sca.scd.ScdFactory;
+import mil.jpeojtrs.sca.scd.SoftwareComponent;
+import mil.jpeojtrs.sca.spd.Dependency;
+import mil.jpeojtrs.sca.spd.PropertyRef;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.UsesDevice;
+
 /**
  * @since 1.2
- * 
  */
 public class DevicesBlock extends SCAMasterDetailsBlock {
 
@@ -42,17 +48,11 @@ public class DevicesBlock extends SCAMasterDetailsBlock {
 		super(page);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public DevicesPage getPage() {
 		return (DevicesPage) super.getPage();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected ScaSection createMasterSection(final IManagedForm managedForm, final Composite parent) {
 		this.fSection = new DevicesSection(getPage(), parent);
@@ -66,24 +66,41 @@ public class DevicesBlock extends SCAMasterDetailsBlock {
 		return this.fSection;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void registerPages(final DetailsPart detailsPart) {
 		detailsPart.setPageLimit(DevicesBlock.PAGE_LIMIT);
 
-		// TODO Fix this!
-		detailsPart.registerPage(DcdComponentPlacement.class, new DevicesDetailsPage(this.fSection));
-		//		detailsPart.registerPage(UsesDevice.class, new UsesDeviceDetailsPage(this.fSection));
-		//		detailsPart.registerPage(PropertyRef.class, new PropertyRefDetailsPage(this.fSection));
-		//		detailsPart.registerPage(Dependency.class, new DependencyDetailsPage(this.fSection));
+		detailsPart.registerPage(DevicesDetailsPage.class, new DevicesDetailsPage(this.fSection));
+		detailsPart.registerPage(ServicesDetailsPage.class, new ServicesDetailsPage(this.fSection));
+		detailsPart.registerPage(ServicesDetailsPage2.class, new ServicesDetailsPage2(this.fSection));
 		detailsPart.setPageProvider(new IDetailsPageProvider() {
 
 			@Override
 			public Object getPageKey(final Object object) {
 				if (object instanceof DcdComponentPlacement) {
-					return DcdComponentPlacement.class;
+					DcdComponentPlacement cp = (DcdComponentPlacement) object;
+					SoftPkg spd = cp.getComponentFileRef().getFile().getSoftPkg();
+					if (spd == null) {
+						return Object.class;
+					}
+
+					SoftwareComponent scd = spd.getDescriptor().getComponent();
+					switch (SoftwareComponent.Util.getWellKnownComponentType(scd)) {
+					case DEVICE:
+						return DevicesDetailsPage.class;
+					case SERVICE:
+						Interface tmpInterface = ScdFactory.eINSTANCE.createInterface();
+						tmpInterface.setRepid(PortSupplierHelper.id());
+						for (Interface serviceInterface : scd.getInterfaces().getInterface()) {
+							if (serviceInterface.isInstance(tmpInterface)) {
+								return ServicesDetailsPage2.class;
+							}
+						}
+						return ServicesDetailsPage.class;
+
+					default:
+						return Object.class;
+					}
 				} else if (object instanceof UsesDevice) {
 					return UsesDevice.class;
 				} else if (object instanceof PropertyRef) {

@@ -10,38 +10,15 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.internal.ui.editor.detailspart;
 
-import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.ide.dcd.internal.ui.editor.DevicesPage;
-import gov.redhawk.ide.dcd.internal.ui.editor.DevicesSection;
-import gov.redhawk.ide.dcd.internal.ui.editor.composite.ComponentPlacementComposite;
-import gov.redhawk.ui.editor.ScaDetails;
-import gov.redhawk.ui.parts.FormEntryBindingFactory;
-import gov.redhawk.ui.util.EMFEmptyStringToNullUpdateValueStrategy;
-import gov.redhawk.ui.util.SCAEditorUtil;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import mil.jpeojtrs.sca.dcd.CompositePartOfDevice;
-import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
-import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
-import mil.jpeojtrs.sca.dcd.DcdFactory;
-import mil.jpeojtrs.sca.dcd.DcdPackage;
-import mil.jpeojtrs.sca.dcd.DcdPartitioning;
-import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.prf.PrfPackage;
-import mil.jpeojtrs.sca.prf.SimpleRef;
-import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
-import mil.jpeojtrs.sca.prf.StructRef;
-import mil.jpeojtrs.sca.prf.StructSequenceRef;
-import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFUpdateValueStrategy;
 import org.eclipse.emf.databinding.edit.EMFEditObservables;
@@ -62,13 +39,36 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
+import gov.redhawk.common.ui.editor.FormLayoutFactory;
+import gov.redhawk.ide.dcd.internal.ui.editor.DevicesPage;
+import gov.redhawk.ide.dcd.internal.ui.editor.DevicesSection;
+import gov.redhawk.ide.dcd.internal.ui.editor.composite.DeviceDetailsComposite;
+import gov.redhawk.ui.editor.ScaDetails;
+import gov.redhawk.ui.parts.FormEntryBindingFactory;
+import gov.redhawk.ui.util.EMFEmptyStringToNullUpdateValueStrategy;
+import gov.redhawk.ui.util.SCAEditorUtil;
+import mil.jpeojtrs.sca.dcd.CompositePartOfDevice;
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
+import mil.jpeojtrs.sca.dcd.DcdFactory;
+import mil.jpeojtrs.sca.dcd.DcdPackage;
+import mil.jpeojtrs.sca.dcd.DcdPartitioning;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.prf.PrfPackage;
+import mil.jpeojtrs.sca.prf.SimpleRef;
+import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
+import mil.jpeojtrs.sca.prf.StructRef;
+import mil.jpeojtrs.sca.prf.StructSequenceRef;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+
 /**
  * The Class ImplementationDetailsPage.
  */
 public class DevicesDetailsPage extends ScaDetails {
 
 	private DcdComponentPlacement input;
-	private ComponentPlacementComposite deviceComposite;
+	private DeviceDetailsComposite deviceComposite;
 	private final DevicesSection fSection;
 	private SoftPkg softPkg;
 	private DcdComponentInstantiation instantiation;
@@ -94,8 +94,8 @@ public class DevicesDetailsPage extends ScaDetails {
 	 * @param parent the parent
 	 */
 	private void createDeviceSection(final FormToolkit toolkit, final Composite parent) {
-		final Section section = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
-		        | ExpandableComposite.EXPANDED);
+		final Section section = toolkit.createSection(parent,
+			Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | ExpandableComposite.EXPANDED);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText("Device Details");
 		section.setDescription("This allows you to override particular properties of the selected device");
@@ -105,7 +105,7 @@ public class DevicesDetailsPage extends ScaDetails {
 		// Align the master and details section headers (misalignment caused by section toolbar icons)
 		getPage().alignSectionHeaders(this.fSection.getSection(), section);
 
-		this.deviceComposite = new ComponentPlacementComposite(section, SWT.NONE, toolkit, this.getEditor());
+		this.deviceComposite = new DeviceDetailsComposite(section, SWT.NONE, toolkit, this.getEditor());
 		toolkit.adapt(this.deviceComposite);
 
 		section.setClient(this.deviceComposite);
@@ -116,7 +116,8 @@ public class DevicesDetailsPage extends ScaDetails {
 	 * Remove the parent from this device.
 	 */
 	protected void handleUnsetParent() {
-		execute(SetCommand.create(getEditingDomain(), this.input, DcdPackage.Literals.DCD_COMPONENT_PLACEMENT__COMPOSITE_PART_OF_DEVICE, SetCommand.UNSET_VALUE));
+		execute(
+			SetCommand.create(getEditingDomain(), this.input, DcdPackage.Literals.DCD_COMPONENT_PLACEMENT__COMPOSITE_PART_OF_DEVICE, SetCommand.UNSET_VALUE));
 		this.deviceComposite.getUnsetParentButton().setEnabled(false);
 	}
 
@@ -130,17 +131,11 @@ public class DevicesDetailsPage extends ScaDetails {
 		getEditingDomain().getCommandStack().execute(command);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public DevicesPage getPage() {
 		return (DevicesPage) super.getPage();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected List<Binding> bind(final DataBindingContext context, final EObject obj) {
 		if (!(obj instanceof DcdComponentPlacement)) {
@@ -158,18 +153,12 @@ public class DevicesDetailsPage extends ScaDetails {
 		}
 
 		final List<Binding> retVal = new ArrayList<Binding>();
-		retVal.add(FormEntryBindingFactory.bind(context,
-		        this.deviceComposite.getNameEntry(),
-		        getEditingDomain(),
-		        PartitioningPackage.Literals.COMPONENT_INSTANTIATION__USAGE_NAME,
-		        this.instantiation,
-		        new EMFEmptyStringToNullUpdateValueStrategy(),
-		        null));
+		retVal.add(FormEntryBindingFactory.bind(context, this.deviceComposite.getNameEntry(), getEditingDomain(),
+			PartitioningPackage.Literals.COMPONENT_INSTANTIATION__USAGE_NAME, this.instantiation, new EMFEmptyStringToNullUpdateValueStrategy(), null));
 
 		this.deviceComposite.getParentViewer().setInput(getAggregateComponentPlacements((DcdPartitioning) this.input.eContainer()));
 
-		// A ComponentPlacement cannot be its own parent, nor can any child of a
-		// parent be the parent's parent.
+		// A ComponentPlacement cannot be its own parent, nor can any child of a parent be the parent's parent.
 		this.deviceComposite.getParentViewer().addFilter(new ViewerFilter() {
 
 			@Override
@@ -195,9 +184,8 @@ public class DevicesDetailsPage extends ScaDetails {
 		});
 
 		retVal.add(context.bindValue(ViewersObservables.observeSingleSelection(this.deviceComposite.getParentViewer()),
-		        EMFEditObservables.observeValue(getEditingDomain(), this.input, DcdPackage.Literals.DCD_COMPONENT_PLACEMENT__COMPOSITE_PART_OF_DEVICE),
-		        createParentTargetToModel(),
-		        createParentModelToTarget()));
+			EMFEditObservables.observeValue(getEditingDomain(), this.input, DcdPackage.Literals.DCD_COMPONENT_PLACEMENT__COMPOSITE_PART_OF_DEVICE),
+			createParentTargetToModel(), createParentModelToTarget()));
 
 		this.deviceComposite.setInput(this.instantiation);
 		this.deviceComposite.setEditable(SCAEditorUtil.isEditableResource(getPage(), this.input.eResource()));
@@ -206,9 +194,6 @@ public class DevicesDetailsPage extends ScaDetails {
 		return retVal;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createSpecificContent(final Composite parent) {
 		final FormToolkit toolkit = getManagedForm().getToolkit();
@@ -218,9 +203,6 @@ public class DevicesDetailsPage extends ScaDetails {
 		addListeners();
 	}
 
-	/**
-	 * 
-	 */
 	private void addListeners() {
 
 		this.deviceComposite.getParentViewer().getCombo().addSelectionListener(new SelectionListener() {
@@ -244,14 +226,11 @@ public class DevicesDetailsPage extends ScaDetails {
 		});
 	}
 
-	/**
-	 * @return
-	 */
 	private UpdateValueStrategy createParentTargetToModel() {
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy() {
+			@SuppressWarnings("rawtypes")
 			@Override
-			protected org.eclipse.core.runtime.IStatus doSet(final org.eclipse.core.databinding.observable.value.IObservableValue observableValue,
-			        final Object value) {
+			protected org.eclipse.core.runtime.IStatus doSet(final IObservableValue observableValue, final Object value) {
 				return super.doSet(observableValue, value);
 			};
 		};
@@ -273,9 +252,6 @@ public class DevicesDetailsPage extends ScaDetails {
 		return strategy;
 	}
 
-	/**
-	 * @return
-	 */
 	private UpdateValueStrategy createParentModelToTarget() {
 		final EMFUpdateValueStrategy strategy = new EMFUpdateValueStrategy();
 		strategy.setConverter(new Converter(CompositePartOfDevice.class, DcdComponentPlacement.class) {
@@ -297,8 +273,7 @@ public class DevicesDetailsPage extends ScaDetails {
 	}
 
 	/**
-	 * This converts a PropertyRef to a Literals reference of the appropriate
-	 * type.
+	 * This converts a PropertyRef to a Literals reference of the appropriate type.
 	 * 
 	 * @param property the property to map
 	 * @return the DcdPackage.Literals corresponding to the property
@@ -317,8 +292,7 @@ public class DevicesDetailsPage extends ScaDetails {
 	}
 
 	/**
-	 * This converts a PropertyRef's ID to a Literals reference of the
-	 * appropriate type.
+	 * This converts a PropertyRef's ID to a Literals reference of the appropriate type.
 	 * 
 	 * @param property the property to map
 	 * @return the DcdPackage.Literals corresponding to the property's ID
@@ -328,8 +302,7 @@ public class DevicesDetailsPage extends ScaDetails {
 	}
 
 	/**
-	 * This converts a PropertyRef's value to a Literals reference of the
-	 * appropriate type.
+	 * This converts a PropertyRef's value to a Literals reference of the appropriate type.
 	 * 
 	 * @param property the property to map
 	 * @return the DcdPackage.Literals corresponding to the property's value
