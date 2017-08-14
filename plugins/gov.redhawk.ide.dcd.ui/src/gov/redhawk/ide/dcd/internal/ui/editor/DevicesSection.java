@@ -444,7 +444,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 			}
 		}
 
-		final ScaNodeProjectDevicesWizardPage devWizardPage = new ScaNodeProjectDevicesWizardPage("Select Devices to Add");
+		final ScaNodeProjectDevicesWizardPage devWizardPage = new ScaNodeProjectDevicesWizardPage("Select Devices / Services to Add");
 
 		final Wizard wiz = new Wizard() {
 
@@ -460,6 +460,8 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 			}
 
 		};
+		wiz.setWindowTitle("Add Devices / Services Wizard");
+		
 		final WizardDialog dialog = new WizardDialog(getPage().getSite().getShell(), wiz);
 		dialog.setMinimumPageSize(400, 400);
 		wiz.addPage(devWizardPage);
