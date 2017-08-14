@@ -260,7 +260,9 @@ public class ComponentsDetailsPage extends ScaDetails {
 		this.componentComposite.getEnableLoggingButton().addSelectionListener(this.loggingEnabledListener);
 
 		/** Make all composite fields editable/un-editable depending on the context **/
-		this.componentComposite.setEditable(SCAEditorUtil.isEditableResource(getPage(), compInst.eResource()));
+		if (!SCAEditorUtil.isEditableResource(getPage(), compInst.eResource())) {
+			this.componentComposite.setEditable(false);
+		}
 
 		return retVal;
 	}
