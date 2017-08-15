@@ -11,7 +11,6 @@
 package gov.redhawk.ide.graphiti.sad.internal.ui.editor.pages;
 
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,14 +21,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditObservables;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
-import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.emf.transaction.RecordingCommand;
@@ -67,6 +62,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.ide.ResourceUtil;
 
+import gov.redhawk.core.graphiti.sad.ui.utils.SADUtils;
 import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiSADEditor;
 import gov.redhawk.ide.sad.ui.wizard.ScaComponentsWizardPage;
 import gov.redhawk.ide.sdr.LoadState;
@@ -77,19 +73,7 @@ import gov.redhawk.sca.ui.parts.FormFilteredTree;
 import gov.redhawk.ui.editor.TreeSection;
 import gov.redhawk.ui.parts.TreePart;
 import gov.redhawk.ui.util.SCAEditorUtil;
-import mil.jpeojtrs.sca.partitioning.ComponentFile;
-import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
-import mil.jpeojtrs.sca.partitioning.ComponentFiles;
-import mil.jpeojtrs.sca.partitioning.ComponentPlacement;
-import mil.jpeojtrs.sca.partitioning.NamingService;
-import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.sad.FindComponent;
-import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
-import mil.jpeojtrs.sca.sad.SadComponentPlacement;
-import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
@@ -189,7 +173,7 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 	protected void buttonSelected(final int index) {
 		switch (index) {
 		case BUTTON_ADD:
-			handleNew();
+			handleAdd();
 			break;
 		case BUTTON_REMOVE:
 			handleRemove();
@@ -199,10 +183,8 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 		}
 	}
 
-	private void handleNew() {
-
-		// TODO: Since we are using the Graphiti delete feature, can we just use the add feature here?
-
+	private void handleAdd() {
+		// Make sure Target SDR has finished loading
 		final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
 		if (sdrRoot.getState() != LoadState.LOADED) {
 			final IRunnableWithProgress waitForLoad = new IRunnableWithProgress() {
@@ -225,7 +207,6 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 
 		final ScaComponentsWizardPage wizardPage = new ScaComponentsWizardPage("Select Components to Add");
 
-		// TODO: Is there an existing basic wizard I can use for this? If not move this to it's own inner class
 		// Create the 'Add Components' wizard
 		List<SoftPkg> components = new ArrayList<>();
 		final Wizard wiz = new Wizard() {
@@ -245,8 +226,8 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 		wiz.addPage(wizardPage);
 		wiz.setWindowTitle("Add Components");
 
-		// Store the final component added so that it can be selected
-		SadComponentInstantiation lastComp = null;
+		// sSed to set selection to the final component added
+		SadComponentInstantiation[] lastComp = new SadComponentInstantiation[1];
 
 		// Open the component selection dialog
 		final WizardDialog dialog = new WizardDialog(getPage().getSite().getShell(), wiz);
@@ -255,81 +236,19 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 			if (components.size() == 0 || sad == null) {
 				return;
 			}
-			final CompoundCommand command = new CompoundCommand("Add Components");
 
-			// First see if we need to add a componentfile section
-			ComponentFiles files = sad.getComponentFiles();
-			if (files == null) {
-				files = PartitioningFactory.eINSTANCE.createComponentFiles();
-				command.append(SetCommand.create(getEditingDomain(), sad, SadPackage.Literals.SOFTWARE_ASSEMBLY__COMPONENT_FILES, files));
+			for (final SoftPkg spd : components) {
+				TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) getEditingDomain();
+				getEditingDomain().getCommandStack().execute(new RecordingCommand(editingDomain) {
+					@Override
+					protected void doExecute() {
+						lastComp[0] = SADUtils.createComponentInstantiation(spd, sad, null, null, null, spd.getImplementation().get(0).getId());
+					}
+				});
 			}
 
-			// TODO: check that we are comparing the correct ID's here
-			for (final SoftPkg component : components) {
-				// Next if we need to add a component file section
-				ComponentFile file = null;
-				for (final ComponentFile f : files.getComponentFile()) {
-					if (f == null) {
-						continue;
-					}
-					final SoftPkg fSpd = f.getSoftPkg();
-					if (fSpd != null && component.getId().equals(fSpd.getId())) {
-						file = f;
-						break;
-					}
-				}
-
-				if (file == null) {
-					file = SadFactory.eINSTANCE.createComponentFile();
-					file.setSoftPkg(component);
-					command.append(AddCommand.create(getEditingDomain(), files, PartitioningPackage.Literals.COMPONENT_FILES__COMPONENT_FILE, file));
-				}
-
-				// Finally, add and populate a new component placement
-				SadComponentPlacement placement = SadFactory.eINSTANCE.createSadComponentPlacement();
-				ComponentFileRef cfp = PartitioningFactory.eINSTANCE.createComponentFileRef();
-				cfp.setRefid(file.getId());
-				placement.setComponentFileRef(cfp);
-				command.append(
-					AddCommand.create(getEditingDomain(), sad.getPartitioning(), PartitioningPackage.Literals.PARTITIONING__COMPONENT_PLACEMENT, placement));
-
-				SadComponentInstantiation instantiation = SadFactory.eINSTANCE.createSadComponentInstantiation();
-				String uniqueName = SoftwareAssembly.Util.createComponentIdentifier(sad, component.getName());
-				instantiation.setId(uniqueName);
-				instantiation.setUsageName(uniqueName);
-
-				FindComponent findComponent = SadFactory.eINSTANCE.createFindComponent();
-				NamingService namingService = PartitioningFactory.eINSTANCE.createNamingService();
-				namingService.setName(uniqueName);
-				findComponent.setNamingService(namingService);
-				instantiation.setFindComponent(findComponent);
-
-				int startOrder = 0;
-				for (SadComponentInstantiation comp : sad.getComponentInstantiationsInStartOrder()) {
-					if (comp.getStartOrder() == null) {
-						break;
-					}
-					startOrder = comp.getStartOrder().intValue() + 1;
-				}
-				instantiation.setStartOrder(BigInteger.valueOf(startOrder));
-
-				command.append(SetCommand.create(getEditingDomain(), placement, PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_INSTANTIATION,
-					Arrays.asList((new SadComponentInstantiation[] { instantiation }))));
-
-				if (sad.getAssemblyController().getComponentInstantiationRef() == null) {
-					SadComponentInstantiationRef ref = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-					ref.setInstantiation(instantiation);
-					ref.setRefid(instantiation.getId());
-					command.append(
-						AddCommand.create(getEditingDomain(), sad.getAssemblyController(), SadPackage.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF, ref));
-				}
-
-				lastComp = instantiation;
-			}
-
-			this.getEditingDomain().getCommandStack().execute(command);
 			this.refresh(this.sadResource);
-			this.selectElement(lastComp);
+			this.selectElement(lastComp[0]);
 		}
 	}
 
@@ -342,9 +261,8 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 
 		SoftwareAssembly sad = getSoftwareAssembly();
 
-		// TODO: Test multi-selection deletion
+		// Delete each selected element individually
 		for (Object selection : selections.toList()) {
-			// Get componentPlacement
 			final SadComponentInstantiation compInst = (SadComponentInstantiation) selection;
 
 			// Find the Graphiti SAD Editor
@@ -365,71 +283,27 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 				IFeatureProvider featureProvider = editor.getDiagramEditor().getDiagramTypeProvider().getFeatureProvider();
 
 				// Find pictogram elements associated with the component to be deleted
-				List<PictogramElement> pictogramElements = Graphiti.getLinkService().getPictogramElements(diagram, Arrays.asList(new EObject[] { compInst }),
-					false);
+				final List<PictogramElement> pictogramElements = Graphiti.getLinkService().getPictogramElements(diagram,
+					Arrays.asList(new EObject[] { compInst }), false);
 
-				// If there are no pictogram elements associates with the component, then just do a regular ECore delete
-				// TODO: Break these out separately
-				if (pictogramElements.size() == 0) {
-					// TODO: Can I just EcoreUtil.delete these? Or do we benefit from the compound command for undo
-					// purposes?
-					ComponentPlacement< ? > placement = compInst.getPlacement();
-					CompoundCommand compoundCommand = new CompoundCommand();
-					compoundCommand.append(RemoveCommand.create(getEditingDomain(), placement,
-						PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_INSTANTIATION, selection));
-					if (placement.getComponentInstantiation().size() <= 1) {
-						compoundCommand.append(RemoveCommand.create(getEditingDomain(), sad.getPartitioning(),
-							PartitioningPackage.Literals.PARTITIONING__COMPONENT_PLACEMENT, placement));
-					}
-
-					// figure out which component file we are using and if no other component placements using it then
-					// remove it.
-					ComponentFile componentFileToRemove = placement.getComponentFileRef().getFile();
-					// check components (not in host collocation)
-					for (SadComponentPlacement p : sad.getPartitioning().getComponentPlacement()) {
-						if (p != placement && p.getComponentFileRef().getRefid().equals(placement.getComponentFileRef().getRefid())) {
-							componentFileToRemove = null;
-							break;
-						}
-					}
-					// check components in host collocation
-					for (HostCollocation hc : sad.getPartitioning().getHostCollocation()) {
-						for (SadComponentPlacement p : hc.getComponentPlacement()) {
-							if (p != placement && p.getComponentFileRef().getRefid().equals(placement.getComponentFileRef().getRefid())) {
-								componentFileToRemove = null;
-								break;
+				// If no pictogram elements are associated with the component do a EcoreUtil delete, else rely on the
+				// Graphiti delete feature
+				TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) getEditingDomain();
+				getEditingDomain().getCommandStack().execute(new RecordingCommand(editingDomain) {
+					@Override
+					protected void doExecute() {
+						if (pictogramElements.isEmpty()) {
+							SADUtils.deleteComponentInstantiation(compInst, sad);
+							SADUtils.organizeStartOrder(sad, diagram, featureProvider);
+						} else {
+							IDeleteContext dc = new DeleteContext(pictogramElements.get(0));
+							IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
+							if (deleteFeature != null && deleteFeature.canDelete(dc)) {
+								deleteFeature.delete(dc);
 							}
 						}
-						if (componentFileToRemove == null) {
-							break;
-						}
 					}
-					if (componentFileToRemove != null) {
-						compoundCommand.append(RemoveCommand.create(getEditingDomain(), sad.getComponentFiles(),
-							PartitioningPackage.Literals.COMPONENT_FILES__COMPONENT_FILE, componentFileToRemove));
-					}
-
-					// TODO: the componentFile can get left behind this way...
-					getEditingDomain().getCommandStack().execute(compoundCommand);
-				} else {
-					// Otherwise use Graphiti features to make sure we also delete graphical shapes for the component
-					// from the diagram
-					TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) getEditingDomain();
-					getEditingDomain().getCommandStack().execute(new RecordingCommand(editingDomain) {
-						@Override
-						protected void doExecute() {
-							// TODO: Rather than calling this here, shouldn't we have a listener somewhere that notices
-							// the model object being removed?
-							if (!pictogramElements.isEmpty()) {
-								IDeleteContext dc = new DeleteContext(pictogramElements.get(0));
-								IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
-								if (deleteFeature != null && deleteFeature.canDelete(dc)) {
-									deleteFeature.delete(dc);
-								}
-							}
-						}
-					});
-				}
+				});
 			}
 		}
 
@@ -462,7 +336,6 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 		}
 	}
 
-	// TODO: This doesn't seem to work if the component doesn't have a diagram object associated with it
 	private void selectFirstElement() {
 		final Tree tree = this.fExtensionTree.getTree();
 		final TreeItem[] items = tree.getItems();
