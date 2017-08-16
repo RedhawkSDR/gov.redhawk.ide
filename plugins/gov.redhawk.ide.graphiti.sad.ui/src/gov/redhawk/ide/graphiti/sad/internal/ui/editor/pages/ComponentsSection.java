@@ -20,11 +20,15 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditObservables;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.emf.transaction.RecordingCommand;
@@ -61,6 +65,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 import gov.redhawk.core.graphiti.sad.ui.utils.SADUtils;
 import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiSADEditor;
@@ -73,6 +78,7 @@ import gov.redhawk.sca.ui.parts.FormFilteredTree;
 import gov.redhawk.ui.editor.TreeSection;
 import gov.redhawk.ui.parts.TreePart;
 import gov.redhawk.ui.util.SCAEditorUtil;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -91,6 +97,26 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 	private boolean editable;
 
 	private DataBindingContext context;
+
+	private final WorkbenchJob refreshViewerJob = new WorkbenchJob("Refresh") {
+
+		@Override
+		public IStatus runInUIThread(final IProgressMonitor monitor) {
+			ComponentsSection.this.fExtensionTree.refresh();
+			return Status.OK_STATUS;
+		}
+	};
+
+	private final EContentAdapter refreshAdapter = new EContentAdapter() {
+		@Override
+		public void notifyChanged(final Notification notification) {
+			super.notifyChanged(notification);
+			final Object feature = notification.getFeature();
+			if (feature == SadPackage.Literals.SOFTWARE_ASSEMBLY__PARTITIONING || feature == PartitioningPackage.Literals.PARTITIONING__COMPONENT_PLACEMENT) {
+				ComponentsSection.this.refreshViewerJob.schedule(10); // SUPPRESS CHECKSTYLE MagicNumber
+			}
+		}
+	};
 
 	public ComponentsSection(final SadComponentsPage page, final Composite parent) {
 		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR, new String[] { "Add...", "Remove" });
@@ -153,7 +179,6 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-
 	}
 
 	private void initialize() {
@@ -226,7 +251,7 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 		wiz.addPage(wizardPage);
 		wiz.setWindowTitle("Add Components");
 
-		// sSed to set selection to the final component added
+		// Used to set selection to the final component added
 		SadComponentInstantiation[] lastComp = new SadComponentInstantiation[1];
 
 		// Open the component selection dialog
@@ -378,10 +403,9 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 			this.context.bindValue(ViewersObservables.observeInput(this.fExtensionTree),
 				EMFEditObservables.observeValue(getEditingDomain(), sad, SadPackage.Literals.SOFTWARE_ASSEMBLY__PARTITIONING));
 
-			// TODO:
-//			if (!this.dcdResource.eAdapters().contains(this.refreshAdapter)) {
-//				this.refreshAdapter.setTarget(this.dcdResource);
-//			}
+			if (!this.sadResource.eAdapters().contains(this.refreshAdapter)) {
+				this.refreshAdapter.setTarget(this.sadResource);
+			}
 		}
 
 		this.fireSelection();
@@ -393,5 +417,15 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 		this.editable = SCAEditorUtil.isEditableResource(getPage(), this.sadResource);
 		this.getTreePart().setButtonEnabled(ComponentsSection.BUTTON_ADD, this.editable);
 		this.getTreePart().setButtonEnabled(ComponentsSection.BUTTON_REMOVE, this.editable);
+	}
+
+	@Override
+	public void dispose() {
+		// Explicitly call the dispose method on the extensions tree
+		if (this.fFilteredTree != null) {
+			this.fFilteredTree.dispose();
+		}
+		this.refreshAdapter.unsetTarget(this.sadResource);
+		super.dispose();
 	}
 }
