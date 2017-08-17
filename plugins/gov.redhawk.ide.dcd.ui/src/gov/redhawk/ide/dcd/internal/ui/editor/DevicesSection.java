@@ -491,6 +491,8 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 			}
 
 		};
+		wiz.setWindowTitle("Add Devices Wizard");
+
 		final WizardDialog dialog = new WizardDialog(getPage().getSite().getShell(), wiz);
 		wiz.addPage(devWizardPage);
 
