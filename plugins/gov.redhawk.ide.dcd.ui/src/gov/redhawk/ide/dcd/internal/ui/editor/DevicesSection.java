@@ -435,8 +435,8 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 						PartitioningPackage.Literals.COMPONENT_FILES__COMPONENT_FILE, componentFileToRemove));
 
 					if (dcd.getComponentFiles().getComponentFile().size() <= 1) {
-						command.append(
-							RemoveCommand.create(getEditingDomain(), dcd, DcdPackage.Literals.DEVICE_CONFIGURATION__COMPONENT_FILES, dcd.getComponentFiles()));
+						
+						command.append(RemoveCommand.create(getEditingDomain(), dcd.getComponentFiles()));
 					}
 				}
 
