@@ -73,6 +73,7 @@ import CF.UnknownIdentifier;
 import CF.UnknownProperties;
 import CF.ApplicationPackage.ComponentElementType;
 import CF.ApplicationPackage.ComponentProcessIdType;
+import CF.ApplicationPackage.InvalidMetric;
 import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.InitializeError;
 import CF.LifeCyclePackage.ReleaseError;
@@ -1664,6 +1665,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 	@Override
 	public void setLogConfigURL(String configUrl) {
+	}
+
+	@Override
+	public DataType[] metrics(String[] components, String[] attributes) throws InvalidMetric {
+		return MetricsGenerator.metrics(getLocalWaveform(), components, attributes);
 	}
 
 	public boolean isDelegate() {
