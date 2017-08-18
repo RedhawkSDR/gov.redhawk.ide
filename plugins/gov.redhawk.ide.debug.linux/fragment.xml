@@ -18,5 +18,11 @@
             id="gov.redhawk.ide.debug.linux.processFactory">
       </processFactory>
    </extension>
+   <extension
+         point="gov.redhawk.ide.debug.processTree">
+      <processTree
+            class="gov.redhawk.ide.debug.linux.ProcessTree">
+      </processTree>
+   </extension>
 
 </fragment>

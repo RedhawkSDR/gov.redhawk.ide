@@ -51,7 +51,7 @@ public class PosixRuntimeProcess extends RuntimeProcess {
 				Field pidField = p.getClass().getDeclaredField("pid");
 				pidField.setAccessible(true);
 				int pid = pidField.getInt(p);
-				tree.killAll(String.valueOf(pid));
+				tree.killAll(pid);
 			}
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Catch system errors
 			error = e;

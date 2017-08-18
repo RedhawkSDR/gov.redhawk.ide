@@ -13,6 +13,7 @@
 <plugin>
    <extension-point id="launchConfigurationFactories" name="Launch Configuration Factories" schema="schema/launchConfigurationFactories.exsd"/>
    <extension-point id="spdBundle" name="spdBundle" schema="schema/spdBundle.exsd"/>
+   <extension-point id="processTree" name="Process Tree" schema="schema/processTree.exsd"/>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
