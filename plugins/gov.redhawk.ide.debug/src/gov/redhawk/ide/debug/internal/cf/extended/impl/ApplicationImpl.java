@@ -95,7 +95,7 @@ import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ApplicationStreams;
-import gov.redhawk.ide.debug.internal.ComponentLaunch;
+import gov.redhawk.ide.debug.internal.IComponentLaunch;
 import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
@@ -1414,8 +1414,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		ILaunchConfigurationWorkingCopy config = createLaunchConfig(usageName, compId, initConfiguration, spdURI, implId, mode, subMonitor.split(WORK_CONFIG));
 
 		final ILaunch subLaunch = config.launch(mode, subMonitor.split(WORK_LAUNCH), false);
-		if (subLaunch instanceof ComponentLaunch) {
-			((ComponentLaunch) subLaunch).setParent(this);
+		if (subLaunch instanceof IComponentLaunch) {
+			((IComponentLaunch) subLaunch).setParent(this);
 		}
 		this.streams.getOutStream().println("\tLaunch configuration succeeded.");
 
@@ -1452,8 +1452,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 
 		final ILaunch subLaunch = config.launch(mode, new NullProgressMonitor(), false);
-		if (subLaunch instanceof ComponentLaunch) {
-			((ComponentLaunch) subLaunch).setParent(this);
+		if (subLaunch instanceof IComponentLaunch) {
+			((IComponentLaunch) subLaunch).setParent(this);
 		}
 		this.streams.getOutStream().println("\tLaunch configuration succeeded.");
 

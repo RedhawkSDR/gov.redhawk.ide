@@ -20,13 +20,21 @@ public interface IComponentLaunch {
 	 */
 	public void terminateContainedComponent();
 
+	/**
+	 * Despite the argument's type, this actualy associates components with the parent <code>ApplicationImpl</code>.
+	 * @param parentProcess
+	 */
 	public void setParent(IProcess parentProcess);
+
+	/**
+	 * @return The parent component host or null
+	 */
+	public ILaunch getComponentHost();
 
 	/**
 	 * Associates contained components with their component host. </br>
 	 * Setting this implicitly marks this component as a shared-address component.
 	 * @param parentLaunch
 	 */
-	public void setParent(ILaunch parentLaunch);
-
+	public void setComponentHost(ILaunch parentLaunch);
 }

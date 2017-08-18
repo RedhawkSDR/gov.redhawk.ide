@@ -139,7 +139,7 @@ public class ComponentProgramLaunchUtils {
 		}
 
 		SpdLauncherUtil.postLaunch(spd, workingCopy, mode, launch, subMonitor.split(WORK_POST_LAUNCH));
-		((IComponentLaunch) launch).setParent(componentHost.getLaunch());
+		((IComponentLaunch) launch).setComponentHost(componentHost.getLaunch());
 	}
 
 	public static DataType[] getComponentOptions(SoftPkg spd, Implementation impl, ILaunch launch) {

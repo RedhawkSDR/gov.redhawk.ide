@@ -23,7 +23,7 @@ import gov.redhawk.ide.debug.variables.LaunchVariables;
 public class ComponentDebugLaunch extends GdbLaunch  implements IComponentLaunch {
 
 	private IProcess parent;
-	private ILaunch parentLaunch;
+	private ILaunch parentComponentHostLaunch;
 
 	public ComponentDebugLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
 		super(launchConfiguration, mode, locator);
@@ -39,8 +39,8 @@ public class ComponentDebugLaunch extends GdbLaunch  implements IComponentLaunch
 	@Override
 	public boolean canTerminate() {
 		// Contained components defer to ComponentHost state
-		if (parentLaunch != null) {
-			return parentLaunch.canTerminate();
+		if (parentComponentHostLaunch != null) {
+			return parentComponentHostLaunch.canTerminate();
 		}
 
 		return super.canTerminate();
@@ -49,8 +49,8 @@ public class ComponentDebugLaunch extends GdbLaunch  implements IComponentLaunch
 	@Override
 	public boolean isTerminated() {
 		// Contained components defer to ComponentHost state
-		if (parentLaunch != null) {
-			return parentLaunch.isTerminated();
+		if (parentComponentHostLaunch != null) {
+			return parentComponentHostLaunch.isTerminated();
 		}
 
 		return super.isTerminated();
@@ -59,8 +59,8 @@ public class ComponentDebugLaunch extends GdbLaunch  implements IComponentLaunch
 	@Override
 	public void terminate() throws DebugException {
 		// If a contained component is terminated, terminate the ComponentHost instead.
-		if (parentLaunch != null) {
-			parentLaunch.terminate();
+		if (parentComponentHostLaunch != null) {
+			parentComponentHostLaunch.terminate();
 			return;
 		}
 		super.terminate();
@@ -94,11 +94,16 @@ public class ComponentDebugLaunch extends GdbLaunch  implements IComponentLaunch
 	}
 
 	@Override
-	public void setParent(ILaunch parentLaunch) {
-		this.parentLaunch = parentLaunch;
-		((IComponentHostLaunch) this.parentLaunch).getChildLaunchList().add(this);
+	public ILaunch getComponentHost() {
+		return this.parentComponentHostLaunch;
 	}
-	
+
+	@Override
+	public void setComponentHost(ILaunch parentLaunch) {
+		this.parentComponentHostLaunch = parentLaunch;
+		((IComponentHostLaunch) this.parentComponentHostLaunch).getChildLaunchList().add(this);
+	}
+
 	@Override
 	public void terminateContainedComponent() {
 		fireTerminate();
