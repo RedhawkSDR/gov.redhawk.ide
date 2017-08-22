@@ -159,6 +159,11 @@ public class GraphitiDCDEditor extends AbstractGraphitiDCDEditor {
 						if (pictogramElements.isEmpty()) {
 							return;
 						}
+						if (notification.getNotifier() instanceof EObject) {
+							if (((EObject) notification.getNotifier()).eContainer() == null) {
+								return;
+							}
+						}
 
 						super.notifyChanged(notification);
 						switch (notification.getEventType()) {
