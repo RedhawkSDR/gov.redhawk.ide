@@ -546,22 +546,22 @@
         </adapter>
      </factory>
      <factory
-           adaptableType="gov.redhawk.ide.sdr.internal.ui.ComponentCategory"
-           class="gov.redhawk.ide.sdr.internal.ui.CategoryAdapterFactory">
+           adaptableType="gov.redhawk.ide.sdr.internal.ui.properties.ComponentCategory"
+           class="gov.redhawk.ide.sdr.internal.ui.properties.CategoryAdapterFactory">
         <adapter
               type="org.eclipse.ui.model.IWorkbenchAdapter">
         </adapter>
      </factory>
      <factory
-           adaptableType="gov.redhawk.ide.sdr.internal.ui.SpdCategory"
-           class="gov.redhawk.ide.sdr.internal.ui.CategoryAdapterFactory">
+           adaptableType="gov.redhawk.ide.sdr.internal.ui.properties.SpdCategory"
+           class="gov.redhawk.ide.sdr.internal.ui.properties.CategoryAdapterFactory">
         <adapter
               type="org.eclipse.ui.model.IWorkbenchAdapter">
         </adapter>
      </factory>
      <factory
-           adaptableType="gov.redhawk.ide.sdr.internal.ui.SdrPropertiesProvider"
-           class="gov.redhawk.ide.sdr.internal.ui.CategoryAdapterFactory">
+           adaptableType="gov.redhawk.ide.sdr.internal.ui.properties.SdrPropertiesProvider"
+           class="gov.redhawk.ide.sdr.internal.ui.properties.CategoryAdapterFactory">
         <adapter
               type="org.eclipse.ui.model.IWorkbenchAdapter">
         </adapter>
@@ -580,7 +580,7 @@
    <extension
          point="gov.redhawk.sca.propertiesProvider">
       <provider
-            class="gov.redhawk.ide.sdr.internal.ui.SdrPropertiesProvider"
+            class="gov.redhawk.ide.sdr.internal.ui.properties.SdrPropertiesProvider"
             id="gov.redhawk.ide.sdr.propertiesProvider"
             name="Target SDR Properties">
       </provider>
