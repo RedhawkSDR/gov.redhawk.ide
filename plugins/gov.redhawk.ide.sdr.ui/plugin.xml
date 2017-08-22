@@ -567,7 +567,7 @@
         </adapter>
      </factory>
      <factory
-           adaptableType="gov.redhawk.ide.sdr.internal.ui.WorkspacePropertiesProvider"
+           adaptableType="gov.redhawk.ide.sdr.internal.ui.properties.WorkspacePropertiesProvider"
            class="gov.redhawk.ide.sdr.internal.ui.CategoryAdapterFactory">
         <adapter
               type="org.eclipse.ui.model.IWorkbenchAdapter">
@@ -595,7 +595,7 @@
    <extension
          point="gov.redhawk.sca.propertiesProvider">
       <provider
-            class="gov.redhawk.ide.sdr.internal.ui.WorkspacePropertiesProvider"
+            class="gov.redhawk.ide.sdr.internal.ui.properties.WorkspacePropertiesProvider"
             id="gov.redhawk.ide.sdr.ui.workspacePropertiesProvider"
             name="Workspace Properties">
       </provider>
