@@ -566,6 +566,13 @@
               type="org.eclipse.ui.model.IWorkbenchAdapter">
         </adapter>
      </factory>
+     <factory
+           adaptableType="gov.redhawk.ide.sdr.internal.ui.WorkspacePropertiesProvider"
+           class="gov.redhawk.ide.sdr.internal.ui.CategoryAdapterFactory">
+        <adapter
+              type="org.eclipse.ui.model.IWorkbenchAdapter">
+        </adapter>
+     </factory>
   </extension>
     <extension
         point="org.eclipse.ui.exportWizards">
@@ -581,8 +588,16 @@
          point="gov.redhawk.sca.propertiesProvider">
       <provider
             class="gov.redhawk.ide.sdr.internal.ui.SdrPropertiesProvider"
-            id="gov.redhawk.ide.sdr.propertiesProvider"
+            id="gov.redhawk.ide.sdr.ui.sdrPropertiesProvider"
             name="Target SDR Properties">
+      </provider>
+   </extension>
+   <extension
+         point="gov.redhawk.sca.propertiesProvider">
+      <provider
+            class="gov.redhawk.ide.sdr.internal.ui.WorkspacePropertiesProvider"
+            id="gov.redhawk.ide.sdr.ui.workspacePropertiesProvider"
+            name="Workspace Properties">
       </provider>
    </extension>
    <extension

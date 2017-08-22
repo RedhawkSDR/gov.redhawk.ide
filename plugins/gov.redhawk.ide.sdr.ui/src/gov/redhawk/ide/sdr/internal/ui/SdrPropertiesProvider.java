@@ -26,17 +26,14 @@ import mil.jpeojtrs.sca.scd.ComponentType;
 public class SdrPropertiesProvider implements IPropertiesProvider {
 
 	public SdrPropertiesProvider() {
-		//Default Constructor
+		SdrRoot targetSdr = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		targetSdr.load(null);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<Category> getCategories() {
 		final List<Category> myList = new ArrayList<Category>();
-		final SdrRoot targetSdr = SdrUiPlugin.getDefault().getTargetSdrRoot();
-		targetSdr.load(null);
+		SdrRoot targetSdr = SdrUiPlugin.getDefault().getTargetSdrRoot();
 		myList.add(new ComponentCategory(targetSdr.getComponentsContainer().getComponents(), "Components", ComponentType.RESOURCE));
 		myList.add(new ComponentCategory(targetSdr.getDevicesContainer().getComponents(), "Devices", ComponentType.DEVICE));
 		myList.add(new ComponentCategory(targetSdr.getServicesContainer().getComponents(), "Services", ComponentType.SERVICE));

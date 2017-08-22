@@ -17,12 +17,11 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-/**
- * 
- */
 public class CategoryAdapterFactory implements IAdapterFactory {
 
 	private static final Class< ? >[] LIST = new Class< ? >[] { IWorkbenchAdapter.class };
@@ -40,9 +39,10 @@ public class CategoryAdapterFactory implements IAdapterFactory {
 				return ((Category) o).getName();
 			} else if (o instanceof SdrPropertiesProvider) {
 				return "Target SDR";
-			} else {
-				return "";
+			} else if (o instanceof WorkspacePropertiesProvider) {
+				return "Workspace";
 			}
+			return "";
 		}
 
 		@Override
@@ -61,6 +61,8 @@ public class CategoryAdapterFactory implements IAdapterFactory {
 				return AbstractUIPlugin.imageDescriptorFromPlugin("mil.jpeojtrs.sca.spd.edit", "icons/full/obj16/SoftPkg.gif");
 			} else if (object instanceof SdrPropertiesProvider) {
 				return AbstractUIPlugin.imageDescriptorFromPlugin("gov.redhawk.ide.sdr.edit", "icons/full/obj16/SdrRoot.gif");
+			} else if (object instanceof WorkspacePropertiesProvider) {
+				return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT);
 			}
 			return null;
 		}
@@ -74,24 +76,15 @@ public class CategoryAdapterFactory implements IAdapterFactory {
 		}
 	};
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
 	@Override
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (adaptableObject instanceof ComponentCategory) {
-			return CategoryAdapterFactory.ADAPTER;
-		} else if (adaptableObject instanceof SpdCategory) {
-			return CategoryAdapterFactory.ADAPTER;
-		} else if (adaptableObject instanceof SdrPropertiesProvider) {
-			return CategoryAdapterFactory.ADAPTER;
+	public < T > T getAdapter(Object adaptableObject, Class<T> adapterType) {
+		if ((adaptableObject instanceof ComponentCategory) || (adaptableObject instanceof SpdCategory) || (adaptableObject instanceof SdrPropertiesProvider)
+			|| (adaptableObject instanceof WorkspacePropertiesProvider)) {
+			return adapterType.cast(CategoryAdapterFactory.ADAPTER);
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
 	@Override
 	public Class< ? >[] getAdapterList() {
 		return CategoryAdapterFactory.LIST;
