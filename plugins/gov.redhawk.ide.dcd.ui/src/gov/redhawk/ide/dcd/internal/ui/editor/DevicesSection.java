@@ -19,17 +19,14 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.NotificationImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditObservables;
 import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
@@ -78,19 +75,15 @@ import gov.redhawk.ui.editor.TreeSection;
 import gov.redhawk.ui.parts.TreePart;
 import gov.redhawk.ui.util.SCAEditorUtil;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
-import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
-import mil.jpeojtrs.sca.dcd.DcdFactory;
 import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.dcd.DcdPartitioning;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.dcd.provider.DcdItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
-import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
-import mil.jpeojtrs.sca.partitioning.ComponentFiles;
 import mil.jpeojtrs.sca.partitioning.ComponentPlacement;
-import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 /**
  * @since 1.1
@@ -296,32 +289,8 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 		}
 	}
 
-	private void handleRemove() {
-		final IStructuredSelection selections = ((IStructuredSelection) getTreePart().getViewer().getSelection());
-		if (selections.isEmpty()) {
-			updateButtons(null);
-			return;
-		}
-
-		final DeviceConfiguration dcd = getDeviceConfiguration();
-
-		// Delete each selected element individually
-		for (Object selection : selections.toList()) {
-			final DcdComponentInstantiation compInst = (DcdComponentInstantiation) selection;
-
-			TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) getEditingDomain();
-			getEditingDomain().getCommandStack().execute(new RecordingCommand(editingDomain) {
-				@Override
-				protected void doExecute() {
-					DCDUtils.deleteComponentInstantiation(compInst, dcd);
-				}
-			});
-		}
-
-		this.refresh(this.dcdResource);
-	}
-
 	private void handleAdd() {
+		// Make sure Target SDR has finished loading
 		final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
 		if (sdrRoot.getState() != LoadState.LOADED) {
 			final IRunnableWithProgress waitForLoad = new IRunnableWithProgress() {
@@ -364,80 +333,66 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 		wiz.setWindowTitle("Add Devices Wizard");
 
 		// Used to set selection to the final component added
-		DcdComponentInstantiation[] lastComp = new DcdComponentInstantiation[1];
+		final DcdComponentInstantiation[] lastComp = new DcdComponentInstantiation[1];
 
 		final WizardDialog dialog = new WizardDialog(getPage().getSite().getShell(), wiz);
 
 		if (dialog.open() == Window.OK) {
-			DeviceConfiguration dcd = getDeviceConfiguration();
+			final DeviceConfiguration dcd = getDeviceConfiguration();
 			if (devices.size() == 0 || dcd == null) {
 				return;
 			}
 
-			final CompoundCommand command = new CompoundCommand("Add Devices");
-			// First see if we need to add a componentfile for this
-			ComponentFiles files = dcd.getComponentFiles();
-			if (files == null) {
-				files = PartitioningFactory.eINSTANCE.createComponentFiles();
-				command.append(SetCommand.create(getEditingDomain(), dcd, DcdPackage.Literals.DEVICE_CONFIGURATION__COMPONENT_FILES, files));
+			for (final SoftPkg spd : devices) {
+				TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) getEditingDomain();
+				getEditingDomain().getCommandStack().execute(new RecordingCommand(editingDomain) {
+
+					@Override
+					protected void doExecute() {
+						lastComp[0] = DCDUtils.createComponentInstantiation(spd, dcd, null, null, spd.getImplementation().get(0).getId());
+					}
+				});
 			}
 
-			for (final SoftPkg device : devices) {
-				ComponentFile file = null;
-				for (final ComponentFile f : files.getComponentFile()) {
-					if (f == null) {
-						continue;
-					}
-					final SoftPkg fSpd = f.getSoftPkg();
-					if (fSpd != null && device.getId().equals(fSpd.getId())) {
-						file = f;
-						break;
-					}
-				}
-
-				if (file == null) {
-					file = DcdFactory.eINSTANCE.createComponentFile();
-					file.setSoftPkg(device);
-					command.append(AddCommand.create(getEditingDomain(), files, PartitioningPackage.Literals.COMPONENT_FILES__COMPONENT_FILE, file));
-				}
-
-				DcdPartitioning partitioning = dcd.getPartitioning();
-				if (partitioning == null) {
-					partitioning = DcdFactory.eINSTANCE.createDcdPartitioning();
-					command.append(SetCommand.create(getEditingDomain(), dcd, DcdPackage.Literals.DEVICE_CONFIGURATION__PARTITIONING, partitioning));
-				}
-
-				final DcdComponentPlacement placement = DcdFactory.eINSTANCE.createDcdComponentPlacement();
-				final ComponentFileRef cfp = PartitioningFactory.eINSTANCE.createComponentFileRef();
-				cfp.setRefid(file.getId());
-				placement.setComponentFileRef(cfp);
-
-				command.append(
-					AddCommand.create(getEditingDomain(), dcd.getPartitioning(), PartitioningPackage.Literals.PARTITIONING__COMPONENT_PLACEMENT, placement));
-
-				final DcdComponentInstantiation instantiation = DcdFactory.eINSTANCE.createDcdComponentInstantiation();
-				final String uniqueName = DeviceConfiguration.Util.createDeviceUsageName(dcd, device.getName());
-				instantiation.setId(dcd.getName() + ":" + uniqueName);
-				instantiation.setUsageName(uniqueName);
-
-				command.append(SetCommand.create(getEditingDomain(), placement, PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_INSTANTIATION,
-					Arrays.asList((new DcdComponentInstantiation[] { instantiation }))));
-
-				lastComp[0] = instantiation;
-			}
-
-			execute(command);
-			refresh(this.dcdResource);
-			selectElement(lastComp[0]);
+			this.refresh(this.dcdResource);
+			this.selectElement(lastComp[0]);
 		}
+	}
+
+	private void handleRemove() {
+		final DeviceConfiguration dcd = getDeviceConfiguration();
+		final IStructuredSelection selections = ((IStructuredSelection) getTreePart().getViewer().getSelection());
+		if (selections.isEmpty()) {
+			updateButtons(null);
+			return;
+		}
+
+		// Delete each selected element individually.
+		for (Object selection : selections.toList()) {
+			final DcdComponentInstantiation compInst = (DcdComponentInstantiation) selection;
+
+			TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) getEditingDomain();
+			getEditingDomain().getCommandStack().execute(new RecordingCommand(editingDomain) {
+				@Override
+				protected void doExecute() {
+					// Notify any listeners added to the componentInstantiation objects to do things like clean up stale
+					// diagram shapes
+					compInst.eNotify(new NotificationImpl(Notification.REMOVE, true, false));
+
+					DcdPartitioning partitioning = ScaEcoreUtils.getEContainerOfType(compInst, DcdPartitioning.class);
+					// If partitioning is null, then a graphiti listener already clean this up.
+					if (partitioning != null) {
+						DCDUtils.deleteComponentInstantiation(compInst, dcd);
+					}
+				}
+			});
+		}
+
+		this.refresh(this.dcdResource);
 	}
 
 	private DeviceConfiguration getDeviceConfiguration() {
 		return ModelUtil.getDeviceConfiguration(this.dcdResource);
-	}
-
-	private void execute(final Command command) {
-		getEditingDomain().getCommandStack().execute(command);
 	}
 
 	private Object getSelection() {
