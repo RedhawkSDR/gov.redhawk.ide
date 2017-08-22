@@ -411,10 +411,42 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 
 		if (selections != null) {
 			List< ? > selectionList = selections.toList();
+
 			for (Object selection : selectionList) {
-				execute(RemoveCommand.create(getEditingDomain(), getDeviceConfiguration().getPartitioning(),
-						PartitioningPackage.Literals.PARTITIONING__COMPONENT_PLACEMENT, selection));
+				CompoundCommand command = new CompoundCommand();
+
+				DeviceConfiguration dcd = getDeviceConfiguration();
+				ComponentPlacement< ? > placement = (ComponentPlacement< ? >) selection;
+				ComponentFile componentFileToRemove = placement.getComponentFileRef().getFile();
+				String componentFileId = placement.getComponentFileRef().getRefid();
+
+				for (DcdComponentPlacement p : dcd.getPartitioning().getComponentPlacement()) {
+					if (placement.equals(p)) {
+						continue;
+					}
+
+					if (componentFileId.equals(p.getComponentFileRef().getRefid())) {
+						componentFileToRemove = null;
+						break;
+					}
+				}
+
+				if (componentFileToRemove != null) {
+					command.append(RemoveCommand.create(getEditingDomain(), dcd.getComponentFiles(),
+						PartitioningPackage.Literals.COMPONENT_FILES__COMPONENT_FILE, componentFileToRemove));
+
+					if (dcd.getComponentFiles().getComponentFile().size() <= 1) {
+						
+						command.append(RemoveCommand.create(getEditingDomain(), dcd.getComponentFiles()));
+					}
+				}
+
+				command.append(
+					RemoveCommand.create(getEditingDomain(), dcd.getPartitioning(), PartitioningPackage.Literals.PARTITIONING__COMPONENT_PLACEMENT, placement));
+
+				execute(command);
 			}
+
 		}
 
 		this.refresh(this.dcdResource);
