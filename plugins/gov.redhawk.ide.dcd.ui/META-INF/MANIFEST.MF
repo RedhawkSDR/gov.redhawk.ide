@@ -50,5 +50,5 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor
-Export-Package: gov.redhawk.ide.dcd.internal.ui.editor;x-internal:=true,
+Export-Package: gov.redhawk.ide.dcd.internal.ui.editor;x-friends:="gov.redhawk.ide.graphiti.dcd.ui",
  gov.redhawk.ide.dcd.ui.wizard

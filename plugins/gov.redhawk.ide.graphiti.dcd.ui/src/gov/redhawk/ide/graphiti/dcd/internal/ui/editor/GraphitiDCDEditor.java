@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.dcd.internal.ui.editor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -19,7 +20,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.graphiti.features.IDeleteFeature;
+import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IDeleteContext;
+import org.eclipse.graphiti.features.context.impl.DeleteContext;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -32,6 +41,8 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDCDDiagramEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDEditorDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
 import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
@@ -126,6 +137,44 @@ public class GraphitiDCDEditor extends AbstractGraphitiDCDEditor {
 		}
 
 		super.addPages();
+
+		addListeners();
+	}
+
+	/**
+	 * Add listeners for all existing device/service shapes so that they clean up if deleted from somewhere other than
+	 * the Diagram tab
+	 */
+	private void addListeners() {
+		for (DcdComponentPlacement placement : getDeviceConfiguration().getPartitioning().getComponentPlacement()) {
+			for (DcdComponentInstantiation compInst : placement.getComponentInstantiation()) {
+				final Diagram diagram = getDiagramEditor().getDiagramTypeProvider().getDiagram();
+				final IFeatureProvider featureProvider = getDiagramEditor().getDiagramTypeProvider().getFeatureProvider();
+				final List<PictogramElement> pictogramElements = Graphiti.getLinkService().getPictogramElements(diagram,
+					Arrays.asList(new EObject[] { compInst }), false);
+
+				compInst.eAdapters().add(new AdapterImpl() {
+					@Override
+					public void notifyChanged(final Notification notification) {
+						if (pictogramElements.isEmpty()) {
+							return;
+						}
+
+						super.notifyChanged(notification);
+						switch (notification.getEventType()) {
+						case Notification.REMOVE:
+							IDeleteContext deleteContext = new DeleteContext(pictogramElements.get(0));
+							IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(deleteContext);
+							if (deleteFeature != null && deleteFeature.canDelete(deleteContext)) {
+								deleteFeature.delete(deleteContext);
+							}
+							break;
+						default:
+						}
+					}
+				});
+			}
+		}
 	}
 
 	private IFormPage createOverviewPage(final Resource dcdResource) {

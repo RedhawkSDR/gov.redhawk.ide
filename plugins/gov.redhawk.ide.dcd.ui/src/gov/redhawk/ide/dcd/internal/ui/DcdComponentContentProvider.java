@@ -42,7 +42,7 @@ public class DcdComponentContentProvider implements ITreeContentProvider {
 			DcdComponentInstantiation comp = (DcdComponentInstantiation) element;
 			DcdComponentPlacement elementPlacement = (DcdComponentPlacement) comp.getPlacement();
 
-			if (elementPlacement.getCompositePartOfDevice() != null) {
+			if (elementPlacement == null || elementPlacement.getCompositePartOfDevice() == null) {
 				return this.dcdPartitioning;
 			}
 
