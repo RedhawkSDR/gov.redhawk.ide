@@ -10,15 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.internal.ui.editor.composite;
 
-import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.common.ui.parts.FormEntry;
-import gov.redhawk.diagram.sheet.properties.ComponentInstantiationPropertyViewerAdapter;
-import gov.redhawk.sca.ui.ScaComponentFactory;
-import gov.redhawk.sca.ui.properties.ScaPropertiesAdapterFactory;
-import gov.redhawk.ui.editor.IScaComposite;
-import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
-import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
-
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -36,10 +27,16 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-/**
- * 
- */
-public class ComponentPlacementComposite extends Composite implements IScaComposite {
+import gov.redhawk.common.ui.editor.FormLayoutFactory;
+import gov.redhawk.common.ui.parts.FormEntry;
+import gov.redhawk.diagram.sheet.properties.ComponentInstantiationPropertyViewerAdapter;
+import gov.redhawk.sca.ui.ScaComponentFactory;
+import gov.redhawk.sca.ui.properties.ScaPropertiesAdapterFactory;
+import gov.redhawk.ui.editor.IScaComposite;
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
+
+public class DcdComponentComposite extends Composite implements IScaComposite {
 	private static final int NUM_COLUMNS = 3;
 
 	private final FormToolkit toolkit;
@@ -59,14 +56,14 @@ public class ComponentPlacementComposite extends Composite implements IScaCompos
 	 * @param style
 	 * @param toolkit
 	 */
-	public ComponentPlacementComposite(final Composite parent, final int style, final FormToolkit toolkit, final IEditingDomainProvider editingDomainProvider) {
+	public DcdComponentComposite(final Composite parent, final int style, final FormToolkit toolkit, final IEditingDomainProvider editingDomainProvider) {
 		super(parent, style);
 
 		this.toolkit = toolkit;
 		this.editingDomainProvider = editingDomainProvider;
 		this.adapter = new ComponentInstantiationPropertyViewerAdapter(this.editingDomainProvider);
 
-		setLayout(FormLayoutFactory.createSectionClientGridLayout(false, ComponentPlacementComposite.NUM_COLUMNS));
+		setLayout(FormLayoutFactory.createSectionClientGridLayout(false, DcdComponentComposite.NUM_COLUMNS));
 
 		createNameEntry();
 
@@ -125,7 +122,7 @@ public class ComponentPlacementComposite extends Composite implements IScaCompos
 			@Override
 			public String getText(final Object element) {
 				final DcdComponentPlacement desc = (DcdComponentPlacement) element;
-				return (desc != null) ? desc.getComponentInstantiation().get(0).getUsageName() : ""; // SUPPRESS CHECKSTYLE AvoidInline
+				return (desc != null) ? desc.getComponentInstantiation().get(0).getUsageName() : "";
 			}
 		});
 		this.parentViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().span(1, 1).grab(true, false).create());
@@ -150,9 +147,6 @@ public class ComponentPlacementComposite extends Composite implements IScaCompos
 		this.adapter.setViewer(this.propertiesViewer);
 	}
 
-	/**
-	 * @return the unsetParentButton
-	 */
 	public Button getUnsetParentButton() {
 		return this.unsetParentButton;
 	}
@@ -165,9 +159,6 @@ public class ComponentPlacementComposite extends Composite implements IScaCompos
 		return this.parentViewer;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setEditable(final boolean canEdit) {
 		this.nameEntry.setEditable(canEdit);

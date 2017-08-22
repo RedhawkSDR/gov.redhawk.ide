@@ -92,7 +92,6 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
 /**
- * The Class NodeEditor.
  * @since 1.1
  */
 public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IDiagramWorkbenchPart, IViewerProvider {
@@ -127,8 +126,7 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 	private Viewer currentViewer;
 
 	/**
-	 * This selection provider coordinates the selections of the various editor
-	 * parts.
+	 * This selection provider coordinates the selections of the various editor parts.
 	 */
 	private final MultiPageSelectionProvider selectionProvider;
 
@@ -176,9 +174,6 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 			}
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public void notifyChanged(final Notification msg) {
 			if (msg.getNotifier() instanceof Resource) {
@@ -260,20 +255,13 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 	public void setSelectionToViewer(final Collection< ? > collection) {
 		final Collection< ? > theSelection = collection;
 		// Make sure it's okay.
-		//
 		if (theSelection != null && !theSelection.isEmpty()) {
-			// I don't know if this should be run this deferred
-			// because we might have to give the editor a chance to process the
-			// viewer update events
-			// and hence to update the views first.
-			//
-			//
+			// I don't know if this should be run this deferred because we might have to give the editor a chance to
+			// process the viewer update events and hence to update the views first.
 			final Runnable runnable = new Runnable() {
 				@Override
 				public void run() {
-					// Try to select the items in the current content viewer of
-					// the editor.
-					//
+					// Try to select the items in the current content viewer of the editor.
 					if (NodeEditor.this.currentViewer != null) {
 						NodeEditor.this.currentViewer.setSelection(new StructuredSelection(theSelection.toArray()), true);
 					}
@@ -289,10 +277,8 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 	 */
 	public void setCurrentViewer(final Viewer viewer) {
 		// If it is changing...
-		//
 		if (this.currentViewer != viewer) {
 			// Remember it.
-			//
 			this.currentViewer = viewer;
 		}
 	}
@@ -341,8 +327,7 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 	 */
 	@SuppressWarnings("unchecked")
 	public void handleContentOutlineSelection(final Object selection) {
-		// // If the diagram viewer is active, we need to map the selection
-		// // to the corresponding EditParts.
+		// If the diagram viewer is active, we need to map the selection to the corresponding EditParts.
 		final List<Object> selectionList = new ArrayList<Object>();
 		if (selection instanceof DelegatingWrapperItemProvider) {
 			final Object item = ((DelegatingWrapperItemProvider) selection).getValue();
@@ -374,7 +359,7 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 			}
 		} catch (final CoreException exception) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, DcdUiActivator.getPluginId(), "Failed to go to marker.", exception),
-			        StatusManager.LOG | StatusManager.SHOW);
+				StatusManager.LOG | StatusManager.SHOW);
 		}
 	}
 
@@ -411,9 +396,6 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isDirty() {
 		if (this.getMainResource() != null && !this.getMainResource().getURI().isPlatform()) {
@@ -444,66 +426,31 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor
-	 * #getContributorId()
-	 */
 	@Override
 	public String getContributorId() {
 		return this.diagramEditor.getContributorId();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart#getDiagram
-	 * ()
-	 */
 	@Override
 	public Diagram getDiagram() {
 		return this.diagramEditor.getDiagram();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart#
-	 * getDiagramEditDomain()
-	 */
 	@Override
 	public IDiagramEditDomain getDiagramEditDomain() {
 		return this.diagramEditor.getDiagramEditDomain();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart#
-	 * getDiagramEditPart()
-	 */
 	@Override
 	public DiagramEditPart getDiagramEditPart() {
 		return this.diagramEditor.getDiagramEditPart();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart#
-	 * getDiagramGraphicalViewer()
-	 */
 	@Override
 	public IDiagramGraphicalViewer getDiagramGraphicalViewer() {
 		return this.diagramEditor.getDiagramGraphicalViewer();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getTitle() {
 		String name = null;
@@ -521,22 +468,15 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private DeviceConfiguration getDeviceConfiguration() {
 		return ModelUtil.getDeviceConfiguration(getMainResource());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void addPages() {
 		// Only creates the other pages if there is something that can be edited
-		//
 		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
-		        && !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
+			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
 			try {
 				int pageIndex;
 
@@ -549,6 +489,7 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 				this.overviewPage.setInput(dcdResource);
 
 				this.devicesPage = new DevicesPage(this);
+
 				addPage(this.devicesPage);
 				this.devicesPage.setInput(dcdResource);
 
@@ -557,7 +498,6 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 				DiagramUtil.initializeDiagramResource(DcdDiagramUtilHelper.INSTANCE, diagramURI, dcdResource);
 
 				// This is the page for the graphical diagram viewer.
-				//
 				final IEditorInput diagramInput = DiagramUtil.getDiagramWrappedInput(diagramURI, (TransactionalEditingDomain) this.getEditingDomain());
 
 				this.diagramEditor = new CustomDiagramEditor(this);
@@ -577,9 +517,6 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void handleDocumentChange(final Resource resource) {
 		super.handleDocumentChange(resource);
@@ -590,9 +527,6 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected IContentOutlinePage createContentOutline() {
 		IContentOutlinePage myOutline = (IContentOutlinePage) this.diagramEditor.getAdapter(IContentOutlinePage.class);
@@ -601,10 +535,8 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 		}
 		this.contentOutlinePage = myOutline;
 		// Listen to selection so that we can handle it is a special way.
-		// //
 		this.contentOutlinePage.addSelectionChangedListener(new ISelectionChangedListener() {
-			// // This ensures that we handle selections correctly.
-			// //
+			// This ensures that we handle selections correctly.
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				handleContentOutlineSelection(event.getSelection());
@@ -613,17 +545,11 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 		return this.contentOutlinePage;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getEditingDomainId() {
 		return NodeEditor.EDITING_DOMAIN_ID;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected AdapterFactory getSpecificAdapterFactory() {
 		final ComposedAdapterFactory factory = new ComposedAdapterFactory();
@@ -653,7 +579,6 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 	@Override
 	protected void emfDoSave(final IProgressMonitor progressMonitor) {
 		// Refresh the necessary state. We are delegating the save to the diagram page
-		//
 		((BasicCommandStack) getEditingDomain().getCommandStack()).saveIsDone();
 	}
 
@@ -677,12 +602,9 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 		super.doSave(monitor);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void resourceChanged(final IResource resource, final IResourceDelta delta) {
-		//Make sure we don't call resource changed on a non sad resource
+		// Make sure we don't call resource changed on a non dcd resource
 		if (this.isValidDcdResource(resource) && !delta.getResource().getWorkspace().isAutoBuilding()) {
 			super.resourceChanged(resource, delta);
 		}
