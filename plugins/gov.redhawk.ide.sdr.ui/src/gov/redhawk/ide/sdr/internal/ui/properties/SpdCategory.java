@@ -28,32 +28,38 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * @since 6.0
  */
 public class SpdCategory implements Category {
-	
+
 	private final SoftPkg softPkg;
 
 	public SpdCategory(final SoftPkg softPkg) {
 		this.softPkg = softPkg;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getName() {
 		return this.softPkg.getName();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
+	public String getDescription() {
+		return softPkg.getDescription();
+	}
+
+	@Override
+	public String getIconPluginId() {
+		return "mil.jpeojtrs.sca.spd.edit";
+	}
+
+	@Override
+	public String getIconPath() {
+		return "icons/full/obj16/SoftPkg.gif";
+	}
+
 	@Override
 	public List<Category> getCategories() {
 		return Collections.emptyList();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<Properties> getProperties() {
 		Properties properties = ScaEcoreUtils.getFeature(softPkg, PATH);
@@ -64,13 +70,9 @@ public class SpdCategory implements Category {
 		}
 	}
 
-	private static final EStructuralFeature [] PATH = new EStructuralFeature[] {
-		SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
-		SpdPackage.Literals.PROPERTY_FILE__PROPERTIES
-	};
-	/**
-	 * {@inheritDoc}
-	 */
+	private static final EStructuralFeature[] PATH = new EStructuralFeature[] { SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
+		SpdPackage.Literals.PROPERTY_FILE__PROPERTIES };
+
 	@Override
 	public boolean containsProperty(final EObject obj) {
 		Properties properties = ScaEcoreUtils.getFeature(softPkg, PATH);
@@ -80,5 +82,4 @@ public class SpdCategory implements Category {
 			return false;
 		}
 	}
-
 }

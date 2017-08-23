@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file is protected by Copyright.
+Please refer to the COPYRIGHT file distributed with this source distribution.
+
+This file is part of REDHAWK IDE.
+
+All rights reserved.  This program and the accompanying materials are made available under
+the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html.
+-->
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
+<properties>
+  <structsequence id="connectionTable" mode="readonly">
+    <struct id="connectionTable::connection_descriptor" name="connection_descriptor">
+      <simple id="connectionTable::connection_id" name="connection_id" type="string"/>
+      <simple id="connectionTable::stream_id" name="stream_id" type="string"/>
+      <simple id="connectionTable::port_name" name="port_name" type="string"/>
+    </struct>
+    <configurationkind kindtype="property"/>
+  </structsequence>
+  <simple id="DCE:cdc5ee18-7ceb-4ae6-bf4c-31f983179b4d" mode="readonly" name="device_kind" type="string">
+    <description>This specifies the device kind</description>
+    <value>FRONTEND::TUNER</value>
+    <kind kindtype="allocation"/>
+    <action type="eq"/>
+  </simple>
+  <simple id="DCE:0f99b2e4-9903-4631-9846-ff349d18ecfb" mode="readonly" name="device_model" type="string">
+    <description> This specifies the specific device</description>
+    <kind kindtype="allocation"/>
+    <action type="eq"/>
+  </simple>
+  <simple id="LOGGING_CONFIG_URI" mode="readonly" name="LOGGING_CONFIG_URI" type="string" commandline="true">
+    <description>A URI that points to a log4j configuration file used for the device manager and all devices spawned by this device.</description>
+    <kind kindtype="property"/>
+    <action type="external"/>
+  </simple>
+  <simple id="DCE:4a23ad60-0b25-4121-a630-68803a498f75" mode="readonly" name="os_name" type="string">
+    <description>SCA required property describing the Operating System Name</description>
+    <value>Linux</value>
+    <kind kindtype="property"/>
+    <kind kindtype="allocation"/>
+    <action type="eq"/>
+  </simple>
+  <simple id="DCE:0f3a9a37-a342-43d8-9b7f-78dc6da74192" mode="readonly" name="os_version" type="string">
+    <description>SCA required property describing the Operating System Version</description>
+    <kind kindtype="property"/>
+    <kind kindtype="allocation"/>
+    <action type="eq"/>
+  </simple>
+  <simple id="DCE:fefb9c66-d14a-438d-ad59-2cfd1adb272b" mode="readonly" name="processor_name" type="string">
+    <description>SCA required property describing the CPU type</description>
+    <kind kindtype="property"/>
+    <kind kindtype="allocation"/>
+    <action type="eq"/>
+  </simple>
+</properties>

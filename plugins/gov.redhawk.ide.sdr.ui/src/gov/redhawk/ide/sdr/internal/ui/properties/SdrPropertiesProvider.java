@@ -31,6 +31,26 @@ public class SdrPropertiesProvider implements IPropertiesProvider {
 	}
 
 	@Override
+	public String getName() {
+		return "Target SDR";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Properties from software installed in the SDRROOT";
+	}
+
+	@Override
+	public String getIconPluginId() {
+		return "gov.redhawk.ide.sdr.edit";
+	}
+
+	@Override
+	public String getIconPath() {
+		return "icons/full/obj16/SdrRoot.gif";
+	}
+
+	@Override
 	public List<Category> getCategories() {
 		final List<Category> myList = new ArrayList<Category>();
 		SdrRoot targetSdr = SdrUiPlugin.getDefault().getTargetSdrRoot();
@@ -40,5 +60,4 @@ public class SdrPropertiesProvider implements IPropertiesProvider {
 		myList.add(new ComponentCategory(targetSdr.getSharedLibrariesContainer().getComponents(), "Shared Libraries", ComponentType.RESOURCE));
 		return myList;
 	}
-
 }

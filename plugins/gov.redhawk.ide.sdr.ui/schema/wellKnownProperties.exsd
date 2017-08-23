@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="gov.redhawk.ide.sdr.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="gov.redhawk.ide.sdr.ui" id="wellKnownProperties" name="Well-known properties"/>
+      </appinfo>
+      <documentation>
+         Defines well-known properties by referencing PRF containing their definition.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="wellKnownProps"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="wellKnownProps">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="1">
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  UI name of the category
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  URI of the category icon
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="prf" type="string" use="required">
+            <annotation>
+               <documentation>
+                  EMF URI of the PRF file
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="description" type="string">
+      <annotation>
+         <documentation>
+            A user-displayable description of the category
+         </documentation>
+      </annotation>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         REDHAWK 2.1.2.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         &lt;extension point=&quot;gov.redhawk.ide.sdr.ui.wellKnownProperties&quot;&gt;
+   &lt;wellKnownProps name=&quot;My Category&quot; icon=&quot;icons/someicon.gif&quot; prf=&quot;resources/my_properties.prf.xml&quot;&gt;
+      &lt;description&gt;This is the description of the category&lt;/description&gt;
+   &lt;/wellKnownProps&gt;
+&lt;/extension&gt;
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         See gov.redhawk.ide.sdr.internal.ui.properties.WellKnownPropertiesProvider.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         This file is protected by Copyright.
+Please refer to the COPYRIGHT file distributed with this source distribution.
+
+This file is part of REDHAWK IDE.
+
+All rights reserved.  This program and the accompanying materials are made available under
+the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html.
+      </documentation>
+   </annotation>
+
+</schema>

@@ -44,17 +44,43 @@ public class ComponentCategory implements Category {
 		return type;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getName() {
 		return this.name;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
+	public String getDescription() {
+		switch (type) {
+		case DEVICE:
+			return "Devices installed in SDRROOT";
+		case SERVICE:
+			return "Services installed in SDRROOT";
+		case RESOURCE:
+			return "Components installed in SDRROOT";
+		default:
+			return "";
+		}
+	}
+
+	@Override
+	public String getIconPluginId() {
+		return "gov.redhawk.ide.sdr.edit";
+	}
+
+	@Override
+	public String getIconPath() {
+		switch (type) {
+		case DEVICE:
+			return "icons/full/obj16/DevicesContainer.gif";
+		case SERVICE:
+			return "icons/full/obj16/ServicesContainer.gif";
+		case RESOURCE:
+		default:
+			return "icons/full/obj16/ComponentsContainer.gif";
+		}
+	}
+
 	@Override
 	public List<Category> getCategories() {
 		final List<Category> myList = new ArrayList<Category>();
@@ -64,17 +90,11 @@ public class ComponentCategory implements Category {
 		return myList;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<Properties> getProperties() {
 		return Collections.emptyList();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean containsProperty(final EObject obj) {
 		for (final Category category : getCategories()) {
@@ -84,5 +104,4 @@ public class ComponentCategory implements Category {
 		}
 		return false;
 	}
-
 }

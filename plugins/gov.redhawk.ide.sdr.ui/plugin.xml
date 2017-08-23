@@ -11,6 +11,7 @@
 	http://www.eclipse.org/legal/epl-v10.html
 -->
 <plugin>
+  <extension-point id="wellKnownProperties" name="Well-known properties" schema="schema/wellKnownProperties.exsd"/>
   <extension
         point="org.eclipse.ui.navigator.viewer">
      <viewerContentBinding
@@ -545,34 +546,6 @@
               type="org.eclipse.ui.views.properties.IPropertySource">
         </adapter>
      </factory>
-     <factory
-           adaptableType="gov.redhawk.ide.sdr.internal.ui.properties.ComponentCategory"
-           class="gov.redhawk.ide.sdr.internal.ui.properties.CategoryAdapterFactory">
-        <adapter
-              type="org.eclipse.ui.model.IWorkbenchAdapter">
-        </adapter>
-     </factory>
-     <factory
-           adaptableType="gov.redhawk.ide.sdr.internal.ui.properties.SpdCategory"
-           class="gov.redhawk.ide.sdr.internal.ui.properties.CategoryAdapterFactory">
-        <adapter
-              type="org.eclipse.ui.model.IWorkbenchAdapter">
-        </adapter>
-     </factory>
-     <factory
-           adaptableType="gov.redhawk.ide.sdr.internal.ui.properties.SdrPropertiesProvider"
-           class="gov.redhawk.ide.sdr.internal.ui.properties.CategoryAdapterFactory">
-        <adapter
-              type="org.eclipse.ui.model.IWorkbenchAdapter">
-        </adapter>
-     </factory>
-     <factory
-           adaptableType="gov.redhawk.ide.sdr.internal.ui.properties.WorkspacePropertiesProvider"
-           class="gov.redhawk.ide.sdr.internal.ui.CategoryAdapterFactory">
-        <adapter
-              type="org.eclipse.ui.model.IWorkbenchAdapter">
-        </adapter>
-     </factory>
   </extension>
     <extension
         point="org.eclipse.ui.exportWizards">
@@ -590,6 +563,14 @@
             class="gov.redhawk.ide.sdr.internal.ui.properties.SdrPropertiesProvider"
             id="gov.redhawk.ide.sdr.ui.sdrPropertiesProvider"
             name="Target SDR Properties">
+      </provider>
+   </extension>
+   <extension
+         point="gov.redhawk.sca.propertiesProvider">
+      <provider
+            class="gov.redhawk.ide.sdr.internal.ui.properties.WellKnownPropertiesProvider"
+            id="gov.redhawk.ide.sdr.ui.wellKnownPropertiesProvider"
+            name="Well-known properties">
       </provider>
    </extension>
    <extension
@@ -659,5 +640,11 @@
             resolver="gov.redhawk.ide.sdr.ui.varables.SdrRootResolver"
             supportsArgument="false">
       </variable>
+   </extension>
+   <extension
+         point="gov.redhawk.ide.sdr.ui.wellKnownProperties">
+      <wellKnownProps name="REDHAWK" icon="icons/rh_logo_16x16.gif" prf="resources/REDHAWK.prf.xml">
+         <description>Well-known REDHAWK properties</description>
+      </wellKnownProps>
    </extension>
 </plugin>

@@ -65,6 +65,26 @@ public class WorkspacePropertiesProvider implements IPropertiesProvider {
 	}
 
 	@Override
+	public String getName() {
+		return "Workspace";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Properties from projects in the workspace";
+	}
+
+	@Override
+	public String getIconPluginId() {
+		return "org.eclipse.ui.ide";
+	}
+
+	@Override
+	public String getIconPath() {
+		return "icons/full/obj16/prj_obj.png";
+	}
+
+	@Override
 	public List<Category> getCategories() {
 		List<Category> categories = new ArrayList<Category>();
 		for (SoftPkg spd : pathToSpd) {
@@ -72,5 +92,4 @@ public class WorkspacePropertiesProvider implements IPropertiesProvider {
 		}
 		return categories;
 	}
-
 }
