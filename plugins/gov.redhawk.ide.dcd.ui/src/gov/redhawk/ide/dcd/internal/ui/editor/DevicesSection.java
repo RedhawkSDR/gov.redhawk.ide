@@ -11,8 +11,6 @@
 package gov.redhawk.ide.dcd.internal.ui.editor;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -314,7 +312,6 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 		final ScaNodeProjectDevicesWizardPage devWizardPage = new ScaNodeProjectDevicesWizardPage("Select Devices / Services to Add");
 
 		// Create the 'Add Devices' wizard
-		final List<SoftPkg> devices = new ArrayList<>();
 		final Wizard wiz = new Wizard() {
 
 			@Override
@@ -330,11 +327,11 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 
 		};
 		wiz.setWindowTitle("Add Devices / Services Wizard");
-		
+
 		final WizardDialog dialog = new WizardDialog(getPage().getSite().getShell(), wiz);
 		dialog.setMinimumPageSize(400, 400);
 		wiz.addPage(devWizardPage);
-		
+
 		final DcdComponentInstantiation[] lastComp = new DcdComponentInstantiation[1];
 
 		if (dialog.open() == Window.OK) {
@@ -344,7 +341,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 				return;
 			}
 
-			for (final SoftPkg spd : devices) {
+			for (final SoftPkg spd : nodeElements) {
 				TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) getEditingDomain();
 				getEditingDomain().getCommandStack().execute(new RecordingCommand(editingDomain) {
 

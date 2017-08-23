@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.internal.ui.editor;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IDetailsPage;
@@ -22,7 +23,9 @@ import gov.redhawk.ide.dcd.internal.ui.editor.detailspart.ServicesDetailsPage;
 import gov.redhawk.ide.dcd.internal.ui.editor.detailspart.ServicesDetailsPage2;
 import gov.redhawk.ui.editor.SCAMasterDetailsBlock;
 import gov.redhawk.ui.editor.ScaSection;
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.scd.Interface;
 import mil.jpeojtrs.sca.scd.ScdFactory;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
@@ -30,6 +33,7 @@ import mil.jpeojtrs.sca.spd.Dependency;
 import mil.jpeojtrs.sca.spd.PropertyRef;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.UsesDevice;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 /**
  * @since 1.2
@@ -71,9 +75,12 @@ public class DevicesBlock extends SCAMasterDetailsBlock {
 
 			@Override
 			public Object getPageKey(final Object object) {
-				if (object instanceof DcdComponentPlacement) {
-					DcdComponentPlacement cp = (DcdComponentPlacement) object;
-					SoftPkg spd = cp.getComponentFileRef().getFile().getSoftPkg();
+				if (object instanceof DcdComponentInstantiation) {
+					DcdComponentInstantiation compInst = (DcdComponentInstantiation) object;
+					final EStructuralFeature[] COMP_TO_SPD = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
+						PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+						PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
+					SoftPkg spd = ScaEcoreUtils.getFeature(compInst, COMP_TO_SPD);
 					if (spd == null) {
 						return Object.class;
 					}
