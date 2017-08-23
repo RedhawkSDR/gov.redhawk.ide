@@ -233,7 +233,7 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 		final ScaComponentsWizardPage wizardPage = new ScaComponentsWizardPage("Select Components to Add");
 
 		// Create the 'Add Components' wizard
-		List<SoftPkg> components = new ArrayList<>();
+		final List<SoftPkg> components = new ArrayList<>();
 		final Wizard wiz = new Wizard() {
 
 			@Override
@@ -249,7 +249,7 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 
 		};
 		wiz.addPage(wizardPage);
-		wiz.setWindowTitle("Add Components");
+		wiz.setWindowTitle("Add Components Wizard");
 
 		// Used to set selection to the final component added
 		SadComponentInstantiation[] lastComp = new SadComponentInstantiation[1];
