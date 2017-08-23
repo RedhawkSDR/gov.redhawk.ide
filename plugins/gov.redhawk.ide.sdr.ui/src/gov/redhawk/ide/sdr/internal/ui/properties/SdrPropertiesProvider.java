@@ -57,7 +57,6 @@ public class SdrPropertiesProvider implements IPropertiesProvider {
 		myList.add(new ComponentCategory(targetSdr.getComponentsContainer().getComponents(), "Components", ComponentType.RESOURCE));
 		myList.add(new ComponentCategory(targetSdr.getDevicesContainer().getComponents(), "Devices", ComponentType.DEVICE));
 		myList.add(new ComponentCategory(targetSdr.getServicesContainer().getComponents(), "Services", ComponentType.SERVICE));
-		myList.add(new ComponentCategory(targetSdr.getSharedLibrariesContainer().getComponents(), "Shared Libraries", ComponentType.RESOURCE));
 		return myList;
 	}
 }
