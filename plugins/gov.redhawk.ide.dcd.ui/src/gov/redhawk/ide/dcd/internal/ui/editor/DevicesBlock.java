@@ -24,7 +24,6 @@ import gov.redhawk.ide.dcd.internal.ui.editor.detailspart.ServicesDetailsPage2;
 import gov.redhawk.ui.editor.SCAMasterDetailsBlock;
 import gov.redhawk.ui.editor.ScaSection;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
-import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.scd.Interface;
 import mil.jpeojtrs.sca.scd.ScdFactory;
