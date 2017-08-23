@@ -67,17 +67,12 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
  */
 public class DevicesDetailsPage extends ScaDetails {
 
-	private DcdComponentPlacement input;
 	private DeviceDetailsComposite deviceComposite;
 	private final DevicesSection fSection;
 	private SoftPkg softPkg;
-	private DcdComponentInstantiation instantiation;
+	private DcdComponentInstantiation input;
+	private DcdComponentPlacement inputPlacement;
 
-	/**
-	 * The Constructor.
-	 * 
-	 * @param fSection the f section
-	 */
 	public DevicesDetailsPage(final DevicesSection fSection) {
 		super(fSection.getPage());
 		this.fSection = fSection;
@@ -116,16 +111,11 @@ public class DevicesDetailsPage extends ScaDetails {
 	 * Remove the parent from this device.
 	 */
 	protected void handleUnsetParent() {
-		execute(
-			SetCommand.create(getEditingDomain(), this.input, DcdPackage.Literals.DCD_COMPONENT_PLACEMENT__COMPOSITE_PART_OF_DEVICE, SetCommand.UNSET_VALUE));
+		execute(SetCommand.create(getEditingDomain(), this.inputPlacement, DcdPackage.Literals.DCD_COMPONENT_PLACEMENT__COMPOSITE_PART_OF_DEVICE,
+			SetCommand.UNSET_VALUE));
 		this.deviceComposite.getUnsetParentButton().setEnabled(false);
 	}
 
-	/**
-	 * Execute.
-	 * 
-	 * @param command the command
-	 */
 	@Override
 	public void execute(final Command command) {
 		getEditingDomain().getCommandStack().execute(command);
@@ -138,14 +128,14 @@ public class DevicesDetailsPage extends ScaDetails {
 
 	@Override
 	protected List<Binding> bind(final DataBindingContext context, final EObject obj) {
-		if (!(obj instanceof DcdComponentPlacement)) {
+		if (!(obj instanceof DcdComponentInstantiation)) {
 			return null;
 		}
-		this.input = (DcdComponentPlacement) obj;
-		this.instantiation = this.input.getComponentInstantiation().get(0);
+		this.input = (DcdComponentInstantiation) obj;
+		this.inputPlacement = (DcdComponentPlacement) input.getPlacement();
 
-		if (this.input.getComponentFileRef().getFile() != null) {
-			this.softPkg = this.input.getComponentFileRef().getFile().getSoftPkg();
+		if (this.inputPlacement.getComponentFileRef().getFile() != null) {
+			this.softPkg = this.inputPlacement.getComponentFileRef().getFile().getSoftPkg();
 		}
 
 		if ((this.softPkg == null) || (this.softPkg.eIsProxy())) {
@@ -154,9 +144,9 @@ public class DevicesDetailsPage extends ScaDetails {
 
 		final List<Binding> retVal = new ArrayList<Binding>();
 		retVal.add(FormEntryBindingFactory.bind(context, this.deviceComposite.getNameEntry(), getEditingDomain(),
-			PartitioningPackage.Literals.COMPONENT_INSTANTIATION__USAGE_NAME, this.instantiation, new EMFEmptyStringToNullUpdateValueStrategy(), null));
+			PartitioningPackage.Literals.COMPONENT_INSTANTIATION__USAGE_NAME, this.input, new EMFEmptyStringToNullUpdateValueStrategy(), null));
 
-		this.deviceComposite.getParentViewer().setInput(getAggregateComponentPlacements((DcdPartitioning) this.input.eContainer()));
+		this.deviceComposite.getParentViewer().setInput(getAggregateComponentPlacements((DcdPartitioning) this.inputPlacement.eContainer()));
 
 		// A ComponentPlacement cannot be its own parent, nor can any child of a parent be the parent's parent.
 		this.deviceComposite.getParentViewer().addFilter(new ViewerFilter() {
@@ -164,7 +154,7 @@ public class DevicesDetailsPage extends ScaDetails {
 			@Override
 			public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
 				boolean retVal = false;
-				if ((element != DevicesDetailsPage.this.input) && !isChild((DcdComponentPlacement) element)) {
+				if ((element != DevicesDetailsPage.this.inputPlacement) && !isChild((DcdComponentPlacement) element)) {
 					retVal = true;
 				}
 				return retVal;
@@ -173,7 +163,7 @@ public class DevicesDetailsPage extends ScaDetails {
 			private boolean isChild(final DcdComponentPlacement element) {
 				boolean retVal = false;
 				if (element.getParentDevice() != null) {
-					if (element.getParentDevice().getPlacement() == DevicesDetailsPage.this.input) {
+					if (element.getParentDevice().getPlacement() == DevicesDetailsPage.this.inputPlacement) {
 						retVal = true;
 					} else {
 						retVal = isChild((DcdComponentPlacement) element.getParentDevice().getPlacement());
@@ -184,12 +174,12 @@ public class DevicesDetailsPage extends ScaDetails {
 		});
 
 		retVal.add(context.bindValue(ViewersObservables.observeSingleSelection(this.deviceComposite.getParentViewer()),
-			EMFEditObservables.observeValue(getEditingDomain(), this.input, DcdPackage.Literals.DCD_COMPONENT_PLACEMENT__COMPOSITE_PART_OF_DEVICE),
+			EMFEditObservables.observeValue(getEditingDomain(), this.inputPlacement, DcdPackage.Literals.DCD_COMPONENT_PLACEMENT__COMPOSITE_PART_OF_DEVICE),
 			createParentTargetToModel(), createParentModelToTarget()));
 
-		this.deviceComposite.setInput(this.instantiation);
-		this.deviceComposite.setEditable(SCAEditorUtil.isEditableResource(getPage(), this.input.eResource()));
-		this.deviceComposite.getUnsetParentButton().setEnabled(this.input.getCompositePartOfDevice() != null);
+		this.deviceComposite.setInput(this.input);
+		this.deviceComposite.setEditable(SCAEditorUtil.isEditableResource(getPage(), this.inputPlacement.eResource()));
+		this.deviceComposite.getUnsetParentButton().setEnabled(this.inputPlacement.getCompositePartOfDevice() != null);
 
 		return retVal;
 	}
@@ -258,12 +248,12 @@ public class DevicesDetailsPage extends ScaDetails {
 
 			@Override
 			public Object convert(final Object fromObject) {
-				if ((fromObject == null) || (DevicesDetailsPage.this.input == null)) {
+				if ((fromObject == null) || (DevicesDetailsPage.this.inputPlacement == null)) {
 					return null;
 				}
 				final CompositePartOfDevice cpod = (CompositePartOfDevice) fromObject;
 
-				final ComponentInstantiation comp = (ComponentInstantiation) DevicesDetailsPage.this.input.eResource().getEObject(cpod.getRefID());
+				final ComponentInstantiation comp = (ComponentInstantiation) DevicesDetailsPage.this.inputPlacement.eResource().getEObject(cpod.getRefID());
 
 				return comp.getPlacement();
 			}

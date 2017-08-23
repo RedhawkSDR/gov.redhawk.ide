@@ -27,7 +27,7 @@ import gov.redhawk.sca.ui.properties.ScaPropertiesAdapterFactory;
 import gov.redhawk.ui.editor.IScaComposite;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 
-public abstract class ComponentPlacementComposite extends Composite implements IScaComposite {
+public abstract class DcdComponentComposite extends Composite implements IScaComposite {
 	private static final int NUM_COLUMNS = 3;
 
 	protected final FormToolkit toolkit; // SUPPRESS CHECKSTYLE INLINE exposed to extending classes
@@ -50,11 +50,11 @@ public abstract class ComponentPlacementComposite extends Composite implements I
 	 * @param style
 	 * @param toolkit
 	 */
-	public ComponentPlacementComposite(final Composite parent, final int style, final FormToolkit toolkit, final IEditingDomainProvider editingDomainProvider) {
+	public DcdComponentComposite(final Composite parent, final int style, final FormToolkit toolkit, final IEditingDomainProvider editingDomainProvider) {
 		this(parent, style, toolkit, editingDomainProvider, true);
 	}
 
-	public ComponentPlacementComposite(final Composite parent, final int style, final FormToolkit toolkit, final IEditingDomainProvider editingDomainProvider,
+	public DcdComponentComposite(final Composite parent, final int style, final FormToolkit toolkit, final IEditingDomainProvider editingDomainProvider,
 		boolean showProps) {
 		super(parent, style);
 
@@ -62,7 +62,7 @@ public abstract class ComponentPlacementComposite extends Composite implements I
 		this.editingDomainProvider = editingDomainProvider;
 		this.adapter = new ComponentInstantiationPropertyViewerAdapter(this.editingDomainProvider);
 
-		setLayout(FormLayoutFactory.createSectionClientGridLayout(false, ComponentPlacementComposite.NUM_COLUMNS));
+		setLayout(FormLayoutFactory.createSectionClientGridLayout(false, DcdComponentComposite.NUM_COLUMNS));
 
 		createCompositeSections(showProps);
 

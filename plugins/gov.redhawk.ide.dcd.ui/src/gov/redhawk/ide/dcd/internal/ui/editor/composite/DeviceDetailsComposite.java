@@ -26,7 +26,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
 
-public class DeviceDetailsComposite extends ComponentPlacementComposite {
+public class DeviceDetailsComposite extends DcdComponentComposite {
 
 	private ComboViewer parentViewer;
 	private Button unsetParentButton;

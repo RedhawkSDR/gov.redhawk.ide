@@ -14,7 +14,7 @@ import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-public class ServiceDetailsComposite extends ComponentPlacementComposite {
+public class ServiceDetailsComposite extends DcdComponentComposite {
 
 	public ServiceDetailsComposite(Composite parent, int style, FormToolkit toolkit, IEditingDomainProvider editingDomainProvider, boolean showProps) {
 		super(parent, style, toolkit, editingDomainProvider, showProps);

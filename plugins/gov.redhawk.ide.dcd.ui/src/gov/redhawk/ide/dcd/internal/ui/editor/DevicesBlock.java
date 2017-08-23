@@ -36,7 +36,6 @@ import mil.jpeojtrs.sca.spd.UsesDevice;
  */
 public class DevicesBlock extends SCAMasterDetailsBlock {
 
-	private static final int PAGE_LIMIT = 10;
 	private DevicesSection fSection;
 
 	/**
@@ -59,17 +58,12 @@ public class DevicesBlock extends SCAMasterDetailsBlock {
 		return this.fSection;
 	}
 
-	/**
-	 * @return the fSection
-	 */
 	public DevicesSection getSection() {
 		return this.fSection;
 	}
 
 	@Override
 	protected void registerPages(final DetailsPart detailsPart) {
-		detailsPart.setPageLimit(DevicesBlock.PAGE_LIMIT);
-
 		detailsPart.registerPage(DevicesDetailsPage.class, new DevicesDetailsPage(this.fSection));
 		detailsPart.registerPage(ServicesDetailsPage.class, new ServicesDetailsPage(this.fSection));
 		detailsPart.registerPage(ServicesDetailsPage2.class, new ServicesDetailsPage2(this.fSection));
