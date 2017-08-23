@@ -50,11 +50,11 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
  */
 public class ServicesDetailsPage extends ScaDetails {
 
-	private DcdComponentPlacement input;
 	private ServiceDetailsComposite serviceComposite;
 	private final DevicesSection fSection;
 	private SoftPkg softPkg;
-	private DcdComponentInstantiation instantiation;
+	private DcdComponentInstantiation input;
+	private DcdComponentPlacement inputPlacement;
 
 	/**
 	 * The Constructor.
@@ -116,14 +116,14 @@ public class ServicesDetailsPage extends ScaDetails {
 
 	@Override
 	protected List<Binding> bind(final DataBindingContext context, final EObject obj) {
-		if (!(obj instanceof DcdComponentPlacement)) {
+		if (!(obj instanceof DcdComponentInstantiation)) {
 			return null;
 		}
-		this.input = (DcdComponentPlacement) obj;
-		this.instantiation = this.input.getComponentInstantiation().get(0);
+		this.input = (DcdComponentInstantiation) obj;
+		this.inputPlacement = (DcdComponentPlacement) input.getPlacement();
 
-		if (this.input.getComponentFileRef().getFile() != null) {
-			this.softPkg = this.input.getComponentFileRef().getFile().getSoftPkg();
+		if (this.inputPlacement.getComponentFileRef().getFile() != null) {
+			this.softPkg = this.inputPlacement.getComponentFileRef().getFile().getSoftPkg();
 		}
 
 		if ((this.softPkg == null) || (this.softPkg.eIsProxy())) {
@@ -132,10 +132,10 @@ public class ServicesDetailsPage extends ScaDetails {
 
 		final List<Binding> retVal = new ArrayList<Binding>();
 		retVal.add(FormEntryBindingFactory.bind(context, this.serviceComposite.getNameEntry(), getEditingDomain(),
-			PartitioningPackage.Literals.COMPONENT_INSTANTIATION__USAGE_NAME, this.instantiation, new EMFEmptyStringToNullUpdateValueStrategy(), null));
+			PartitioningPackage.Literals.COMPONENT_INSTANTIATION__USAGE_NAME, this.input, new EMFEmptyStringToNullUpdateValueStrategy(), null));
 
-		this.serviceComposite.setInput(this.instantiation);
-		this.serviceComposite.setEditable(SCAEditorUtil.isEditableResource(getPage(), this.input.eResource()));
+		this.serviceComposite.setInput(this.input);
+		this.serviceComposite.setEditable(SCAEditorUtil.isEditableResource(getPage(), this.inputPlacement.eResource()));
 
 		return retVal;
 	}
