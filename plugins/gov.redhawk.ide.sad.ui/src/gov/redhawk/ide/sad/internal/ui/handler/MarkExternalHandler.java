@@ -10,20 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.handler;
 
-import gov.redhawk.diagram.edit.parts.EditPartUtil;
-import gov.redhawk.ui.sad.editor.presentation.SadEditor;
-
 import java.util.Map;
-
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.Port;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.sad.diagram.edit.parts.ProvidesPortStubEditPart;
-import mil.jpeojtrs.sca.sad.diagram.edit.parts.UsesPortStubEditPart;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -42,6 +29,17 @@ import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.part.EditorPart;
+
+import gov.redhawk.diagram.edit.parts.EditPartUtil;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.Port;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.sad.diagram.edit.parts.ProvidesPortStubEditPart;
+import mil.jpeojtrs.sca.sad.diagram.edit.parts.UsesPortStubEditPart;
 
 /**
  * 
@@ -184,7 +182,7 @@ public class MarkExternalHandler extends AbstractHandler implements IElementUpda
 					if (obj instanceof IGraphicalEditPart) {
 						final EditorPart editor = (EditorPart) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 
-						if ((editor == null) || (editor.getEditorSite().getId().equals(SadEditor.ID))) {
+						if ((editor == null)) {
 							enabled = false;
 							break;
 						}
