@@ -85,6 +85,10 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 		deviceComposite.setLayout(new GridLayout(1, false));
 		deviceComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1));
 
+		final Label directionsLabel = new Label(deviceComposite, SWT.NONE);
+		directionsLabel.setText("Select one or more device to include in this node:");
+		GridDataFactory.generate(directionsLabel, 1, 1);
+
 		this.devicesTreeViewer = new TreeViewer(deviceComposite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
 		createSelectionComposite(deviceComposite, "devices", this.devicesTreeViewer);
@@ -95,6 +99,10 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 		serviceComposite.setLayout(new GridLayout(1, false));
 		serviceComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1));
 
+		final Label directionsLabel = new Label(serviceComposite, SWT.NONE);
+		directionsLabel.setText("Select one or more service to include in this node:");
+		GridDataFactory.generate(directionsLabel, 1, 1);
+
 		this.servicesTreeViewer = new TreeViewer(serviceComposite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
 		createSelectionComposite(serviceComposite, "services", this.servicesTreeViewer);
@@ -103,10 +111,6 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 	private void createSelectionComposite(Composite composite, final String type, final TreeViewer viewer) {
 		composite.setLayout(new GridLayout(1, false));
 		composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1));
-
-		final Label directionsLabel = new Label(composite, SWT.NONE);
-		directionsLabel.setText("Select one or more " + type + " to include in this node:");
-		GridDataFactory.generate(directionsLabel, 1, 1);
 
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1));
 		viewer.setContentProvider(new SdrNavigatorContentProvider());
