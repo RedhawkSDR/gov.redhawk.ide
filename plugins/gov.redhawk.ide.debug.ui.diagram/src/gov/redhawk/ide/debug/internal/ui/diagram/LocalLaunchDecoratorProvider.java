@@ -10,14 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.diagram;
 
-import gov.redhawk.ide.debug.LocalLaunch;
-import gov.redhawk.ide.debug.ScaDebugPackage;
-import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.sca.util.PluginUtil;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.diagram.part.SadVisualIDRegistry;
-
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.draw2d.Label;
@@ -25,13 +17,10 @@ import org.eclipse.draw2d.RelativeLocator;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.editparts.AbstractConnectionEditPart;
 import org.eclipse.gmf.runtime.common.core.service.AbstractProvider;
 import org.eclipse.gmf.runtime.common.core.service.IOperation;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditDomain;
 import org.eclipse.gmf.runtime.diagram.ui.services.decorator.AbstractDecorator;
 import org.eclipse.gmf.runtime.diagram.ui.services.decorator.CreateDecoratorsOperation;
 import org.eclipse.gmf.runtime.diagram.ui.services.decorator.IDecoration;
@@ -42,6 +31,14 @@ import org.eclipse.gmf.runtime.draw2d.ui.mapmode.MapModeUtil;
 import org.eclipse.gmf.runtime.notation.Edge;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Image;
+
+import gov.redhawk.ide.debug.LocalLaunch;
+import gov.redhawk.ide.debug.ScaDebugPackage;
+import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
+import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.sca.util.PluginUtil;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.diagram.part.SadVisualIDRegistry;
 
 /**
  * 
@@ -132,22 +129,6 @@ public class LocalLaunchDecoratorProvider extends AbstractProvider implements ID
 
 	@Override
 	public void createDecorators(final IDecoratorTarget decoratorTarget) {
-		final EditPart editPart = (EditPart) decoratorTarget.getAdapter(EditPart.class);
-		if (editPart instanceof GraphicalEditPart || editPart instanceof AbstractConnectionEditPart) {
-			final Object model = editPart.getModel();
-			if (model instanceof View) {
-				final View view = (View) model;
-				if (!(view instanceof Edge) && !view.isSetElement()) {
-					return;
-				} else if (view.getElement() instanceof SadComponentInstantiation) {
-					final EditDomain editDomain = editPart.getViewer().getEditDomain();
-					if (((DiagramEditDomain) editDomain).getEditorPart() instanceof SandboxDiagramEditor) {
-						decoratorTarget.installDecorator(LocalLaunchDecoratorProvider.KEY, new LocalLaunchDecorator(decoratorTarget));
-					}
-				}
-			}
-		}
-
 	}
 
 }
