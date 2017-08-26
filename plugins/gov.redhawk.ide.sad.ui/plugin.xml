@@ -23,18 +23,6 @@
       </editpolicyProvider>
    </extension>
 
-   <extension
-         point="org.eclipse.gmf.runtime.diagram.ui.paletteProviders">
-      <paletteProvider
-            class="gov.redhawk.ide.sad.internal.ui.provider.SadPaletteProvider">
-         <Priority
-               name="Low">
-         </Priority>
-         <editor
-               class="mil.jpeojtrs.sca.sad.diagram.part.SadDiagramEditor(mil.jpeojtrs.sca.sad.diagram)">
-         </editor>
-      </paletteProvider>
-   </extension>
 
 	<extension
          point="org.eclipse.ui.newWizards">

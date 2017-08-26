@@ -12,30 +12,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="gov.redhawk.ide.debug.internal.ui.diagram.LocalScaEditor"
-            default="false"
-            icon="icons/redhawk16.gif"
-            id="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
-            matchingStrategy="gov.redhawk.ide.debug.internal.ui.diagram.ScaChalkboardMatchingStrategy"
-            name="%editor.name">
-      </editor>
-   </extension>
-   <extension
-         point="gov.redhawk.sca.ui.scaContentTypes">
-      <contentTypeBinding
-            contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
-            editorId="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
-            priority="NORMAL">
-      </contentTypeBinding>
-       <contentTypeBinding
-            contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
-            editorId="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
-            priority="LOW">
-      </contentTypeBinding>
-   </extension>
-   <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="mil.jpeojtrs.sca.sad.diagram.edit.parts.SadComponentInstantiationEditPart"

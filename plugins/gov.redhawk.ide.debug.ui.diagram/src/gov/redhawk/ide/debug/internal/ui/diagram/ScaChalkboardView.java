@@ -12,9 +12,6 @@
 
 package gov.redhawk.ide.debug.internal.ui.diagram;
 
-import gov.redhawk.ide.debug.internal.ui.LocalScaElementFactory;
-import gov.redhawk.model.sca.util.ScaTransactionEditingDomainFactory;
-
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.jface.action.MenuManager;
@@ -31,12 +28,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
+
+import gov.redhawk.ide.debug.internal.ui.LocalScaElementFactory;
+import gov.redhawk.model.sca.util.ScaTransactionEditingDomainFactory;
 
 public class ScaChalkboardView extends ViewPart {
 
-	private LocalScaEditor diagram;
 	private ViewEditorSite editorSite;
 	private IEditorInput editorInput;
 
@@ -56,20 +54,7 @@ public class ScaChalkboardView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		editorSite = new ViewEditorSite(this.getSite());
-		//editorInput = new URIEditorInput(ScaDebugPlugin.getInstance().getLocalSca().eResource().getURI());
 		editorInput = LocalScaElementFactory.getLocalScaInput();
-		diagram = new LocalScaEditor();
-		try {
-			diagram.init(editorSite, editorInput);
-			diagram.createPartControl(parent);
-		} catch (PartInitException e) {
-			// TODO show the error in the window
-
-			// BEGIN DEBUG CODE
-			e.printStackTrace();
-			// END DEBUG CODE
-		}
-
 	}
 
 	@Override
