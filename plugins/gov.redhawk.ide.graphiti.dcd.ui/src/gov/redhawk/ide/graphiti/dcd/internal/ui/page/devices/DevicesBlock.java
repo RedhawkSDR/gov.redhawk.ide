@@ -49,7 +49,7 @@ public class DevicesBlock extends SCAMasterDetailsBlock {
 	public DevicesPage getPage() {
 		return (DevicesPage) super.getPage();
 	}
-
+ 
 	@Override
 	protected ScaSection createMasterSection(final IManagedForm managedForm, final Composite parent) {
 		this.fSection = new DevicesSection(getPage(), parent);
