@@ -118,13 +118,6 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		this.fInfoSection.refresh(getInput());
 	}
 
-	/**
-	 * Creates the project documentation section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param left the left
-	 * @param toolkit the toolkit
-	 */
 	private void createProjectDocumentationSection(final IManagedForm managedForm, final Composite left, final FormToolkit toolkit) {
 		this.projectDocumentationSection = new ProjectDocumentationSection(this, left);
 		managedForm.addPart(this.projectDocumentationSection);
