@@ -52,11 +52,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: gov.redhawk.ide.sad.ui.SadUiActivator
 Export-Package: gov.redhawk.ide.sad.internal.ui;x-internal:=true,
- gov.redhawk.ide.sad.internal.ui.composite;x-internal:=true,
- gov.redhawk.ide.sad.internal.ui.editor;x-friends:="gov.redhawk.ide.debug.ui.diagram",
  gov.redhawk.ide.sad.internal.ui.handler;x-internal:=true,
- gov.redhawk.ide.sad.internal.ui.properties;x-internal:=true,
- gov.redhawk.ide.sad.internal.ui.section;x-internal:=true,
  gov.redhawk.ide.sad.internal.ui.wizard;x-internal:=true,
  gov.redhawk.ide.sad.ui,
  gov.redhawk.ide.sad.ui.edit.policies,
