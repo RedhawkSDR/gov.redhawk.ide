@@ -15,7 +15,7 @@ import org.eclipse.osgi.util.NLS;
 //BEGIN GENERATED CODE
 
 /* package */ class Messages extends NLS {
-	private static final String BUNDLE_NAME = "gov.redhawk.ide.graphiti.sad.internal.ui.editor.overview.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "gov.redhawk.ide.graphiti.sad.internal.ui.page.overview.messages"; //$NON-NLS-1$
 	public static String GeneralInformationComposite_AssemblyController_Tooltip;
 	public static String GeneralInformationComposite_ID_Tooltip;
 	public static String GeneralInformationComposite_Version_Tooltip;
