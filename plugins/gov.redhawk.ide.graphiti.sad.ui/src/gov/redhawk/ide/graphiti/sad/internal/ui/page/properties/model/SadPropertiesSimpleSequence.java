@@ -39,9 +39,7 @@ import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.Values;
 
-/**
- *
- */
+@SuppressWarnings("restriction")
 public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence> {
 
 	public SadPropertiesSimpleSequence(AdapterFactory adapterFactory, SimpleSequence def, Object parent) {
@@ -143,13 +141,12 @@ public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence>
 	public XViewerCellEditor createCellEditor(Composite parent) {
 		return new XViewerDialogCellEditor(parent) {
 
-			@SuppressWarnings("restriction")
 			@Override
 			protected Object openDialogBox() {
-				ValuesWizard wizard = new ValuesWizard(def.getType(), def.isComplex());
+				ValuesWizard wizard = new ValuesWizard(getDef().getType(), getDef().isComplex());
 				List<String> values = new ArrayList<String>();
-				if (value != null) {
-					for (Object item : (Collection< ? >) value) {
+				if (doGetValue() != null) {
+					for (Object item : (Collection< ? >) doGetValue()) {
 						values.add((String) item);
 					}
 				}

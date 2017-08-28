@@ -11,7 +11,6 @@
 package gov.redhawk.ide.graphiti.sad.internal.ui.page.overview;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.ide.sad.internal.ui.Messages;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
 import gov.redhawk.ui.editor.ScaSection;
 
@@ -22,9 +21,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 
-/**
- * 
- */
 public class ExportingSection extends ScaSection {
 
 	/**
@@ -38,9 +34,6 @@ public class ExportingSection extends ScaSection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
 		section.setText(Messages.ExportingSection_Title);
@@ -59,9 +52,6 @@ public class ExportingSection extends ScaSection {
 		toolkit.paintBordersFor(client);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public AbstractOverviewPage getPage() {
 		return (AbstractOverviewPage) super.getPage();

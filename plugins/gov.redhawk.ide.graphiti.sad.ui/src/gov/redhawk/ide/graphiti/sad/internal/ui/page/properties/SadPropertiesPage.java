@@ -37,9 +37,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-/**
- * 
- */
 public class SadPropertiesPage extends ScaFormPage {
 
 	private static final String TOOLBAR_ID = "gov.redhawk.ide.sad.internal.ui.editor.properties.toolbar";
@@ -50,7 +47,6 @@ public class SadPropertiesPage extends ScaFormPage {
 			final ImageDescriptor expandAllImageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(SadUiActivator.PLUGIN_ID,
 					"icons/full/elcl16/expandall.gif");
 			setImageDescriptor(expandAllImageDescriptor);
-			//			setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 		}
 
 		@Override
@@ -73,21 +69,10 @@ public class SadPropertiesPage extends ScaFormPage {
 
 	private SadPropertiesAdapterFactory adapterFactory = null;
 
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 */
 	public SadPropertiesPage(SCAFormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
 
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 * @param newStyleHeader
-	 */
 	public SadPropertiesPage(SCAFormEditor editor, String id, String title, boolean newStyleHeader) {
 		super(editor, id, title, newStyleHeader);
 	}
@@ -149,9 +134,6 @@ public class SadPropertiesPage extends ScaFormPage {
 		viewer.setXViewerEditAdapter(new XViewerEditAdapter(editingSupport, editingSupport));
 	}
 
-	/* (non-Javadoc)
-	 * @see gov.redhawk.ui.editor.ScaFormPage#refresh(org.eclipse.emf.ecore.resource.Resource)
-	 */
 	@Override
 	protected void refresh(Resource resource) {
 		SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);

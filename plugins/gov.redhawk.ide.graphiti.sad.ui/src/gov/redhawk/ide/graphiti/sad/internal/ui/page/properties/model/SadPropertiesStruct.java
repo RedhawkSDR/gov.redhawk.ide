@@ -36,9 +36,6 @@ import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructRef;
 
-/**
- *
- */
 public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements NestedItemProvider {
 
 	public SadPropertiesStruct(AdapterFactory adapterFactory, Struct def, Object parent) {

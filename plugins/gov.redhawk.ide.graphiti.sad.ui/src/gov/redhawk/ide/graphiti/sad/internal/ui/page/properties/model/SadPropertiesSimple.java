@@ -70,8 +70,8 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 			@Override
 			public String getText(Object element) {
 				if (element != null) {
-					if (def.getEnumerations() != null) {
-						for (Enumeration enumeration : def.getEnumerations().getEnumeration()) {
+					if (getDef().getEnumerations() != null) {
+						for (Enumeration enumeration : getDef().getEnumerations().getEnumeration()) {
 							if (enumeration.getValue().equals(element)) {
 								return enumeration.getLabel();
 							}
@@ -115,7 +115,7 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 	}
 
 	public boolean checkValue(String text) {
-		if (text == null || text.isEmpty() || def.getType().isValueOfType(text, def.isComplex())) {
+		if (text == null || text.isEmpty() || getDef().getType().isValueOfType(text, getDef().isComplex())) {
 			return true;
 		}
 		return false;
@@ -132,10 +132,10 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 
 	@Override
 	public XViewerCellEditor createCellEditor(Composite parent) {
-		if (def.getType() == PropertyValueType.BOOLEAN) {
+		if (getDef().getType() == PropertyValueType.BOOLEAN) {
 			return new XViewerListCellEditor(parent, Arrays.asList("", "true", "false"));
-		} else if (def.getEnumerations() != null) {
-			final List<Enumeration> enumerations = def.getEnumerations().getEnumeration();
+		} else if (getDef().getEnumerations() != null) {
+			final List<Enumeration> enumerations = getDef().getEnumerations().getEnumeration();
 			List<String> values = new ArrayList<String>(enumerations.size());
 			values.add("");
 			for (Enumeration enumeration : enumerations) {
@@ -153,10 +153,10 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 					if (checkValue((String) value)) {
 						return null;
 					} else {
-						if (def.isComplex()) {
-							return "Value must be of type complex " + def.getType();
+						if (getDef().isComplex()) {
+							return "Value must be of type complex " + getDef().getType();
 						} else {
-							return "Value must be of type " + def.getType();
+							return "Value must be of type " + getDef().getType();
 						}
 					}
 				}

@@ -59,9 +59,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.progress.WorkbenchJob;
 
-/**
- * The Class GeneralInfoSection.
- */
 public class GeneralInfoSection extends ScaSection {
 	private class Listener extends EContentAdapter {
 		private final EObject root;
@@ -104,20 +101,11 @@ public class GeneralInfoSection extends ScaSection {
 	private Resource sadResource;
 	private Collection<Binding> bindings = new ArrayList<Binding>();
 
-	/**
-	 * Instantiates a new general info section.
-	 * 
-	 * @param page the page
-	 * @param parent the parent
-	 */
 	public GeneralInfoSection(final SadOverviewPage page, final Composite parent) {
 		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
 		section.setText("General Information");
@@ -137,11 +125,6 @@ public class GeneralInfoSection extends ScaSection {
 		toolkit.paintBordersFor(this.client);
 	}
 
-	/**
-	 * Add Listeners to handle Control Events
-	 * 
-	 * @param actionBars
-	 */
 	private void addListeners(final IActionBars actionBars) {
 		final FormEntryAdapter fIdEntryAdapter = new FormEntryAdapter(actionBars) {
 			@Override
@@ -152,25 +135,14 @@ public class GeneralInfoSection extends ScaSection {
 		this.client.getIdEntry().setFormEntryListener(fIdEntryAdapter);
 	}
 
-	/**
-	 * @param create
-	 */
 	protected void execute(final Command command) {
 		getEditingDomain().getCommandStack().execute(command);
 	}
 
-	/**
-	 * Gets the editing domain.
-	 * 
-	 * @return the editing domain
-	 */
 	private EditingDomain getEditingDomain() {
 		return getPage().getEditor().getEditingDomain();
 	}
 
-	/**
-	 * @return
-	 */
 	private UpdateValueStrategy createAssemblyControllerModelToTarget() {
 		final EMFUpdateValueStrategy retVal = new EMFUpdateValueStrategy();
 		retVal.setConverter(new Converter(AssemblyController.class, ComponentInstantiation.class) {
@@ -191,9 +163,6 @@ public class GeneralInfoSection extends ScaSection {
 		return retVal;
 	}
 
-	/**
-	 * @return
-	 */
 	private UpdateValueStrategy createAssemblyControllerTargetToModel() {
 		final EMFEmptyStringToNullUpdateValueStrategy retVal = new EMFEmptyStringToNullUpdateValueStrategy();
 		retVal.setConverter(new Converter(ComponentInstantiation.class, AssemblyController.class) {
@@ -216,9 +185,6 @@ public class GeneralInfoSection extends ScaSection {
 		return retVal;
 	}
 
-	/**
-	 * 
-	 */
 	private void refreshAssemblyControllerItems() {
 		if (this.listener != null) {
 			this.listener.dispose();
@@ -232,9 +198,6 @@ public class GeneralInfoSection extends ScaSection {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void dispose() {
 		if (this.listener != null) {
@@ -243,11 +206,6 @@ public class GeneralInfoSection extends ScaSection {
 		super.dispose();
 	}
 
-	/**
-	 * TODO
-	 * 
-	 * @param readOnly
-	 */
 	private void setEditable(final boolean editable) {
 		this.client.setEditable(editable);
 	}
@@ -259,9 +217,6 @@ public class GeneralInfoSection extends ScaSection {
 		return SoftwareAssembly.Util.getSoftwareAssembly(this.sadResource);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void refresh(final Resource resource) {
 		this.sadResource = resource;

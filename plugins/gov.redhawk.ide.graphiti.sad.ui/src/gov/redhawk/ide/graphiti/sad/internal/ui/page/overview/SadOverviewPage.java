@@ -32,7 +32,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
-import gov.redhawk.ide.sad.ui.SadUiActivator;
+import gov.redhawk.ide.graphiti.sad.internal.ui.editor.overview.ProjectDocumentationSection;
 import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
@@ -52,11 +52,6 @@ public class SadOverviewPage extends AbstractOverviewPage {
 	private TestingSection testingSection;
 	private ExportingSection exportingSection;
 
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 */
 	public SadOverviewPage(final SCAFormEditor editor) {
 		super(editor, SadOverviewPage.PAGE_ID, "Overview");
 	}
@@ -75,12 +70,6 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		manager.update(true);
 	}
 
-	/**
-	 * Fill body.
-	 * 
-	 * @param managedForm the managed form
-	 * @param toolkit the toolkit
-	 */
 	private void fillBody(final IManagedForm managedForm, final FormToolkit toolkit) {
 		final Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
@@ -111,38 +100,17 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		this.externalPortsSection.refresh(getInput());
 	}
 
-	/**
-	 * Creates the testing section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param right the right
-	 * @param toolkit the toolkit
-	 */
 	private void createTestingSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
 		this.testingSection = new TestingSection(this, right);
 		managedForm.addPart(this.testingSection);
 	}
 
-	/**
-	 * Creates the exporting section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param right the right
-	 * @param toolkit the toolkit
-	 */
 	private void createExportingSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
 		this.exportingSection = new ExportingSection(this, right);
 		managedForm.addPart(this.exportingSection);
 
 	}
 
-	/**
-	 * Creates the general info section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param left the left
-	 * @param toolkit the toolkit
-	 */
 	private void createGeneralInfoSection(final IManagedForm managedForm, final Composite left, final FormToolkit toolkit) {
 		this.fInfoSection = new GeneralInfoSection(this, left);
 		managedForm.addPart(this.fInfoSection);

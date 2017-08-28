@@ -40,21 +40,15 @@ import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-/**
- *
- */
 public abstract class SadPropertyImpl< T extends AbstractProperty > extends ItemProvider implements SadProperty {
 
-	protected final T def;
-	protected AbstractPropertyRef< ? > ref;
-	protected ExternalProperty externalProperty;
+	private final T def;
+	private AbstractPropertyRef< ? > ref;
+	private ExternalProperty externalProperty;
 
 	private Adapter adapter = null;
 	private ILabelProvider labelProvider = null;
 
-	/**
-	 *
-	 */
 	public SadPropertyImpl(AdapterFactory adapterFactory, T def, Object parent) {
 		super(adapterFactory);
 		this.def = def;
@@ -63,8 +57,8 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 
 	@Override
 	public void dispose() {
-		if (ref != null) {
-			ref.eAdapters().remove(adapter);
+		if (getRef() != null) {
+			getRef().eAdapters().remove(adapter);
 		}
 		setExternalProperty(null);
 
@@ -98,12 +92,12 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 	}
 
 	protected AbstractPropertyRef< ? > getValueRef() {
-		return ref;
+		return getRef();
 	}
 
 	@Override
 	public T getDefinition() {
-		return this.def;
+		return this.getDef();
 	}
 
 	public XViewerCellEditor createCellEditor(Composite parent) {
@@ -133,7 +127,7 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 
 	@Override
 	public String getID() {
-		return def.getId();
+		return getDef().getId();
 	}
 
 	@Override
@@ -202,7 +196,7 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 
 	protected Object getModelObject(EStructuralFeature feature) {
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
-			return ref;
+			return getRef();
 		} else if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			return externalProperty;
 		}
@@ -272,13 +266,13 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 	}
 
 	public void setReference(AbstractPropertyRef< ? > reference) {
-		if (ref == reference) {
+		if (getRef() == reference) {
 			return;
 		}
 
-		unregisterAdapter(ref);
+		unregisterAdapter(getRef());
 		registerAdapter(reference);
-		ref = reference;
+		setRef(reference);
 	}
 
 	public void setExternalProperty(ExternalProperty externalProperty) {
@@ -325,5 +319,17 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 		if (eObject != null) {
 			eObject.eAdapters().remove(getAdapter());
 		}
+	}
+
+	public T getDef() {
+		return def;
+	}
+
+	public AbstractPropertyRef< ? > getRef() {
+		return ref;
+	}
+
+	public void setRef(AbstractPropertyRef< ? > ref) {
+		this.ref = ref;
 	}
 }

@@ -40,9 +40,7 @@ import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
 
-/**
- *
- */
+@SuppressWarnings("restriction")
 public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence> {
 
 	public SadPropertiesStructSequence(AdapterFactory adapterFactory, StructSequence def, Object parent) {
@@ -65,8 +63,8 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 
 	@Override
 	public Object getSadValue() {
-		if (ref != null) {
-			return ((StructSequenceRef) ref).getStructValue();
+		if (getRef() != null) {
+			return ((StructSequenceRef) getRef()).getStructValue();
 		}
 		return null;
 	}
@@ -78,7 +76,7 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 
 	@Override
 	public Object getPrfValue() {
-		return def.getStructValue();
+		return getDef().getStructValue();
 	}
 
 	@Override

@@ -41,14 +41,10 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import gov.redhawk.ui.editor.IScaComposite;
 
-/**
- * 
- */
 public class ExternalPortsComposite extends Composite implements IScaComposite {
 
 	private final AdapterFactory adapterFactory;
 	private final FormToolkit toolkit;
-	private final IActionBars actionBars;
 	private TableViewer tableViewer;
 	private Button addButton;
 	private Button removeButton;
@@ -57,7 +53,6 @@ public class ExternalPortsComposite extends Composite implements IScaComposite {
 		super(parent, style);
 		this.adapterFactory = createAdapterFactory();
 		this.toolkit = toolkit;
-		this.actionBars = actionBars;
 		this.setLayout(new GridLayout(2, false));
 
 		createTable(this);
@@ -85,11 +80,11 @@ public class ExternalPortsComposite extends Composite implements IScaComposite {
 
 		final Table portTable = this.toolkit.createTable(parent, SWT.SINGLE | SWT.FULL_SELECTION);
 		portTable.setHeaderVisible(true);
-		portTable.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 3).create()); // SUPPRESS CHECKSTYLE MagicNumber
+		portTable.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 3).create());
 		final TableLayout tableLayout = new TableLayout();
-		tableLayout.addColumnData(new ColumnWeightData(40, 10, true)); // SUPPRESS CHECKSTYLE MagicNumber
-		tableLayout.addColumnData(new ColumnWeightData(30, 10, true)); // SUPPRESS CHECKSTYLE MagicNumber
-		tableLayout.addColumnData(new ColumnWeightData(30, 10, true)); // SUPPRESS CHECKSTYLE MagicNumber
+		tableLayout.addColumnData(new ColumnWeightData(40, 10, true));
+		tableLayout.addColumnData(new ColumnWeightData(30, 10, true));
+		tableLayout.addColumnData(new ColumnWeightData(30, 10, true));
 		portTable.setLayout(tableLayout);
 		this.tableViewer = new TableViewer(portTable);
 		final TableViewerColumn column1 = new TableViewerColumn(this.tableViewer, SWT.LEFT);

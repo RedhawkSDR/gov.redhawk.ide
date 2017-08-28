@@ -66,9 +66,7 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 		return DuplicateExternalPropertyIDConstraint.validateProperty(prop, sad);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter#setInput(org.eclipse.swt.widgets.Control, org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor, java.lang.Object)
-	 */
+
 	@Override
 	public void setInput(Control c, CellEditDescriptor ced, Object selObject) {
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
@@ -100,9 +98,6 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 		return prop.getPropID();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter#getInput(org.eclipse.swt.widgets.Control, org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor, java.lang.Object)
-	 */
 	@Override
 	public Object getInput(Control c, CellEditDescriptor ced, Object selObject) {
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
