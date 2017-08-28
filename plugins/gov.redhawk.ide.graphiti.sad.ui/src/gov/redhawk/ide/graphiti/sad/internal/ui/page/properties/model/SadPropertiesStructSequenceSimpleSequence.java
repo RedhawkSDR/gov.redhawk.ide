@@ -19,9 +19,6 @@ import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
 
-/**
- *
- */
 public class SadPropertiesStructSequenceSimpleSequence extends SadPropertiesStructSequenceNestedProperty {
 
 	public SadPropertiesStructSequenceSimpleSequence(AdapterFactory adapterFactory, SimpleSequence def, SadPropertiesStructSequence parent) {

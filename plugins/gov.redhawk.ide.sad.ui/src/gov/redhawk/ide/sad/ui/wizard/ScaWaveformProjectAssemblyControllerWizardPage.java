@@ -54,9 +54,6 @@ public class ScaWaveformProjectAssemblyControllerWizardPage extends WizardPage {
 		this.setPageComplete(true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void createControl(final Composite parent) {
 		// The top-level composite for this page

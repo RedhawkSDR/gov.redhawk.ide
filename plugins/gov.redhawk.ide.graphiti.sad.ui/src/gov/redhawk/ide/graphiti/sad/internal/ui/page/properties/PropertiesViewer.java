@@ -16,11 +16,6 @@ import org.eclipse.swt.widgets.Composite;
 
 public class PropertiesViewer extends XViewer {
 
-	/**
-	 * @param parent
-	 * @param style
-	 * @param xViewerFactory
-	 */
 	public PropertiesViewer(Composite parent, int style) {
 		super(parent, style, new PropertiesViewerFactory());
 		setAutoExpandLevel(2);

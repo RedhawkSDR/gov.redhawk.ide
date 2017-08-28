@@ -39,9 +39,6 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-/**
- * 
- */
 public class SadOverviewPage extends AbstractOverviewPage {
 
 	public static final String PAGE_ID = "sadEditorOverviewPage";
@@ -51,18 +48,10 @@ public class SadOverviewPage extends AbstractOverviewPage {
 	private GeneralInfoSection fInfoSection;
 	private ExternalPortsSection externalPortsSection;
 
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 */
 	public SadOverviewPage(final SCAFormEditor editor) {
 		super(editor, SadOverviewPage.PAGE_ID, "Overview");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
 		super.createFormContent(managedForm);
@@ -78,12 +67,6 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		manager.update(true);
 	}
 
-	/**
-	 * Fill body.
-	 * 
-	 * @param managedForm the managed form
-	 * @param toolkit the toolkit
-	 */
 	private void fillBody(final IManagedForm managedForm, final FormToolkit toolkit) {
 		final Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
@@ -111,47 +94,23 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		this.externalPortsSection.refresh(getInput());
 	}
 
-	/**
-	 * Creates the testing section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param right the right
-	 * @param toolkit the toolkit
-	 */
 	private void createTestingSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
 		this.testingSection = new TestingSection(this, right);
 		managedForm.addPart(this.testingSection);
 	}
 
-	/**
-	 * Creates the exporting section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param right the right
-	 * @param toolkit the toolkit
-	 */
 	private void createExportingSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
 		this.exportingSection = new ExportingSection(this, right);
 		managedForm.addPart(this.exportingSection);
 
 	}
 
-	/**
-	 * Creates the general info section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param left the left
-	 * @param toolkit the toolkit
-	 */
 	private void createGeneralInfoSection(final IManagedForm managedForm, final Composite left, final FormToolkit toolkit) {
 		this.fInfoSection = new GeneralInfoSection(this, left);
 		managedForm.addPart(this.fInfoSection);
 		this.fInfoSection.refresh(getInput());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void linkActivated(final HyperlinkEvent e) {
 		if (TestingSection.TESTING_HREF_DEBUG.equals(e.getHref())) {
@@ -192,9 +151,6 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void refresh(final Resource resource) {
 		if (this.fInfoSection != null) {

@@ -43,9 +43,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 
-/**
- * 
- */
 public class ExternalPortsSection extends ScaSection {
 
 	private ExternalPortsComposite client;
@@ -57,9 +54,6 @@ public class ExternalPortsSection extends ScaSection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
 		section.setText("External Ports");
@@ -117,9 +111,6 @@ public class ExternalPortsSection extends ScaSection {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public AbstractOverviewPage getPage() {
 		return (AbstractOverviewPage) super.getPage();

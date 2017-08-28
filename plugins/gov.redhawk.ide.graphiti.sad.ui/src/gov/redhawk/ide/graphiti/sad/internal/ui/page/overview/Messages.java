@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
  // BEGIN GENERATED CODE
-package gov.redhawk.ide.sad.internal.ui;
+package gov.redhawk.ide.graphiti.sad.internal.ui.page.overview;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -17,7 +17,7 @@ import org.eclipse.osgi.util.NLS;
  * 
  */
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "gov.redhawk.ide.sad.internal.ui.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "gov.redhawk.ide.graphiti.sad.internal.ui.page.overview.messages"; //$NON-NLS-1$
 	public static String ExportingSection_Export_Form;
 	public static String ExportingSection_Title;
 	static {
