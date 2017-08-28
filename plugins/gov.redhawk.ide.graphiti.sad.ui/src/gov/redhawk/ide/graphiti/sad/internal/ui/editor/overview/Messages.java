@@ -8,17 +8,21 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  */
-package gov.redhawk.ide.sad.internal.ui.composite;
+package gov.redhawk.ide.graphiti.sad.internal.ui.editor.overview;
 
 import org.eclipse.osgi.util.NLS;
 
-// BEGIN GENERATED CODE
+//BEGIN GENERATED CODE
 
-public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "gov.redhawk.ide.sad.internal.ui.composite.messages"; //$NON-NLS-1$
+/* package */ class Messages extends NLS {
+	private static final String BUNDLE_NAME = "gov.redhawk.ide.graphiti.sad.internal.ui.editor.overview.messages"; //$NON-NLS-1$
 	public static String GeneralInformationComposite_AssemblyController_Tooltip;
 	public static String GeneralInformationComposite_ID_Tooltip;
 	public static String GeneralInformationComposite_Version_Tooltip;
+	public static String ProjectDocumentationSection_AddHeaderText;
+	public static String ProjectDocumentationSection_CannotOpenHeaderMessage;
+	public static String ProjectDocumentationSection_CannotOpenHeaderTitle;
+	public static String ProjectDocumentationSection_SectionTitle;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
