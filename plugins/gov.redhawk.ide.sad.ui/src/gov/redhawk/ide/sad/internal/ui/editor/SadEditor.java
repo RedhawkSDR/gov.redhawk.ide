@@ -10,30 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.editor;
 
-import gov.redhawk.diagram.DiagramUtil;
-import gov.redhawk.diagram.editor.URIEditorInputProxy;
-import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
-import gov.redhawk.ide.sad.ui.SadUiActivator;
-import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.sca.sad.diagram.SadDiagramUtilHelper;
-import gov.redhawk.sca.sad.diagram.part.SadDiagramEditor;
-import gov.redhawk.sca.util.PluginUtil;
-import gov.redhawk.ui.editor.SCAFormEditor;
-
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import mil.jpeojtrs.sca.prf.provider.PrfItemProviderAdapterFactory;
-import mil.jpeojtrs.sca.sad.SadPackage;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
-import mil.jpeojtrs.sca.scd.provider.ScdItemProviderAdapterFactory;
-import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -61,13 +43,11 @@ import org.eclipse.emf.edit.provider.DelegatingWrapperItemProvider;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramEditDomain;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.gmf.runtime.diagram.ui.properties.views.PropertiesBrowserPage;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide.document.FileEditorInputProxy;
-import org.eclipse.gmf.runtime.emf.core.util.EMFCoreUtil;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -93,6 +73,21 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
 import CF.Application;
+import gov.redhawk.diagram.DiagramUtil;
+import gov.redhawk.diagram.editor.URIEditorInputProxy;
+import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
+import gov.redhawk.ide.sad.ui.SadUiActivator;
+import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.sca.sad.diagram.SadDiagramUtilHelper;
+import gov.redhawk.sca.util.PluginUtil;
+import gov.redhawk.ui.editor.SCAFormEditor;
+import mil.jpeojtrs.sca.prf.provider.PrfItemProviderAdapterFactory;
+import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
+import mil.jpeojtrs.sca.scd.provider.ScdItemProviderAdapterFactory;
+import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
 /**
  * This is an example of a Sad model editor.
@@ -100,8 +95,6 @@ import CF.Application;
 public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IDiagramWorkbenchPart, IViewerProvider {
 
 	public static final String ID = "gov.redhawk.ide.sad.ui.editor.presentation.SadEditorID";
-
-	public static final String EDITING_DOMAIN_ID = SadDiagramEditor.EDITING_DOMAIN_ID;
 
 	private static final String DIAGRAM_PAGE_ID = "2";
 
@@ -119,11 +112,6 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 	 * This is the content outline page's viewer.
 	 */
 	private TreeViewer contentOutlineViewer;
-
-	/**
-	 * The graphical diagram editor embedded into this editor.
-	 */
-	private SadDiagramEditor diagramEditor;
 
 	/**
 	 * This keeps track of the active content viewer, which may be either one of
@@ -366,7 +354,6 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 	 * This deals with how we want selection in the outliner to affect the other
 	 * views.
 	 */
-	@SuppressWarnings("unchecked")
 	public void handleContentOutlineSelection(final Object selection) {
 		// // If the diagram viewer is active, we need to map the selection
 		// // to the corresponding EditParts.
@@ -374,11 +361,6 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 		if (selection instanceof DelegatingWrapperItemProvider) {
 			final Object item = ((DelegatingWrapperItemProvider) selection).getValue();
 			if (item instanceof ContainmentUpdatingFeatureMapEntry) {
-				final Object value = ((ContainmentUpdatingFeatureMapEntry) item).getValue();
-				if (value instanceof EObject) {
-					final String elementID = EMFCoreUtil.getProxyID((EObject) value);
-					selectionList.addAll(this.diagramEditor.getDiagramGraphicalViewer().findEditPartsForElement(elementID, IGraphicalEditPart.class));
-				}
 				this.selectionProvider.setSelection(new StructuredSelection(selectionList));
 			} else if (item instanceof DelegatingWrapperItemProvider) {
 				this.handleContentOutlineSelection(item);
@@ -480,10 +462,7 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 	 */
 	@Override
 	public String getContributorId() {
-		if (this.diagramEditor == null) {
 			return null;
-		}
-		return this.diagramEditor.getContributorId();
 	}
 
 	/*
@@ -495,10 +474,7 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 	 */
 	@Override
 	public Diagram getDiagram() {
-		if (this.diagramEditor == null) {
 			return null;
-		}
-		return this.diagramEditor.getDiagram();
 	}
 
 	/*
@@ -509,10 +485,7 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 	 */
 	@Override
 	public IDiagramEditDomain getDiagramEditDomain() {
-		if (this.diagramEditor == null) {
 			return null;
-		}
-		return this.diagramEditor.getDiagramEditDomain();
 	}
 
 	/*
@@ -523,10 +496,7 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 	 */
 	@Override
 	public DiagramEditPart getDiagramEditPart() {
-		if (this.diagramEditor == null) {
 			return null;
-		}
-		return this.diagramEditor.getDiagramEditPart();
 	}
 
 	/*
@@ -537,10 +507,7 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 	 */
 	@Override
 	public IDiagramGraphicalViewer getDiagramGraphicalViewer() {
-		if (this.diagramEditor == null) {
 			return null;
-		}
-		return this.diagramEditor.getDiagramGraphicalViewer();
 	}
 
 	/**
@@ -593,12 +560,6 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 				this.propertiesPage = createPropertiesPage(sadResource);
 				addPage(propertiesPage);
 
-				final SadDiagramEditor editor = createDiagramEditor();
-				setDiagramEditor(editor);
-				final IEditorInput diagramInput = createDiagramInput(sadResource);
-				pageIndex = addPage(editor, diagramInput);
-				setPageText(pageIndex, "Diagram");
-
 				final IEditorPart textEditor = createTextEditor(getEditorInput());
 				if (textEditor != null) {
 					final int sadSourcePageNum = addPage(textEditor, this.getEditorInput());
@@ -608,12 +569,6 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
 
 			} catch (final PartInitException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-				        StatusManager.LOG | StatusManager.SHOW);
-			} catch (final IOException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-				        StatusManager.LOG | StatusManager.SHOW);
-			} catch (final CoreException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
 				        StatusManager.LOG | StatusManager.SHOW);
 			}
@@ -640,14 +595,6 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 		DiagramUtil.initializeDiagramResource(SadDiagramUtilHelper.INSTANCE, diagramURI, sadResource);
 
 		return DiagramUtil.getDiagramWrappedInput(diagramURI, (TransactionalEditingDomain) this.getEditingDomain());
-	}
-
-	protected SadDiagramEditor createDiagramEditor() {
-		return new CustomDiagramEditor(this);
-	}
-
-	protected void setDiagramEditor(final SadDiagramEditor diagramEditor) {
-		this.diagramEditor = diagramEditor;
 	}
 
 	/**
@@ -681,7 +628,7 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 	 */
 	@Override
 	protected IContentOutlinePage createContentOutline() {
-		IContentOutlinePage myOutline = (IContentOutlinePage) this.diagramEditor.getAdapter(IContentOutlinePage.class);
+		IContentOutlinePage myOutline = null;
 		if (myOutline == null) {
 			myOutline = new WaveformOutlinePage(this);
 		}
@@ -697,14 +644,6 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 			}
 		});
 		return this.contentOutlinePage;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getEditingDomainId() {
-		return SadEditor.EDITING_DOMAIN_ID;
 	}
 
 	/**
@@ -784,7 +723,8 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 		return false;
 	}
 
-	public SadDiagramEditor getDiagramEditor() {
-		return this.diagramEditor;
+	@Override
+	public String getEditingDomainId() {
+		return null;
 	}
 }

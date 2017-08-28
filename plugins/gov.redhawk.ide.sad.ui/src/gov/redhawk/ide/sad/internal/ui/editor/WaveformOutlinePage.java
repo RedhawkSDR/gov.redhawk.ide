@@ -10,11 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.editor;
 
-import gov.redhawk.ui.editor.FormOutlinePage;
-import gov.redhawk.ui.editor.SCAFormEditor;
-import mil.jpeojtrs.sca.partitioning.Partitioning;
-import mil.jpeojtrs.sca.sad.HostCollocation;
-
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl.ContainmentUpdatingFeatureMapEntry;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
@@ -22,6 +17,11 @@ import org.eclipse.emf.edit.provider.DelegatingWrapperItemProvider;
 import org.eclipse.emf.edit.provider.FeatureMapEntryWrapperItemProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.ui.part.PageBook;
+
+import gov.redhawk.ui.editor.FormOutlinePage;
+import gov.redhawk.ui.editor.SCAFormEditor;
+import mil.jpeojtrs.sca.partitioning.Partitioning;
+import mil.jpeojtrs.sca.sad.HostCollocation;
 
 public class WaveformOutlinePage extends FormOutlinePage {
 
@@ -100,7 +100,7 @@ public class WaveformOutlinePage extends FormOutlinePage {
 	protected String getParentPageId(Object item) {
 		String pageId = null;
 		if (item instanceof Partitioning || item instanceof DelegatingWrapperItemProvider || item instanceof FeatureMapEntryWrapperItemProvider) {
-			pageId = CustomDiagramEditor.PAGE_ID;
+			pageId = "diagram";
 		}
 		if (pageId != null) {
 			return pageId;
