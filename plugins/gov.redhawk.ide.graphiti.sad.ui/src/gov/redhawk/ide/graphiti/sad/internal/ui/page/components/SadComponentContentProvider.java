@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.internal.ui.editor.pages;
+package gov.redhawk.ide.graphiti.sad.internal.ui.page.components;
 
 import java.util.ArrayList;
 
@@ -56,14 +56,15 @@ public class SadComponentContentProvider implements ITreeContentProvider {
 		if (inputElement == this.elements) {
 			final ArrayList<SadComponentInstantiation> comps = new ArrayList<>();
 
-			for (final SadComponentPlacement placement : this.elements.getComponentPlacement()) {
-				for (SadComponentInstantiation ci : placement.getComponentInstantiation()) {
+			for (final SadComponentPlacement comp : this.elements.getComponentPlacement()) {
+				for (SadComponentInstantiation ci : comp.getComponentInstantiation()) {
 					comps.add(ci);
 				}
 			}
+			
 			for (HostCollocation hc : this.elements.getHostCollocation()) {
-				for (SadComponentPlacement placement : hc.getComponentPlacement()) {
-					for (SadComponentInstantiation ci : placement.getComponentInstantiation()) {
+				for (SadComponentPlacement comp : hc.getComponentPlacement()) {
+					for (SadComponentInstantiation ci : comp.getComponentInstantiation()) {
 						comps.add(ci);
 					}
 				}
