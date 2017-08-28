@@ -25,8 +25,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import gov.redhawk.core.graphiti.sad.ui.editor.AbstractGraphitiSADEditor;
 import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
-import gov.redhawk.ide.graphiti.sad.internal.ui.editor.overview.SadOverviewPage;
-import gov.redhawk.ide.graphiti.sad.internal.ui.editor.properties.SadPropertiesPage;
+import gov.redhawk.ide.graphiti.sad.internal.ui.page.overview.SadOverviewPage;
+import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.SadPropertiesPage;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiSADDiagramEditor;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADEditorDiagramTypeProvider;
