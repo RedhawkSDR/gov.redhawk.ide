@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties;
 
-import gov.redhawk.ide.sad.internal.ui.editor.SadEditor;
 import gov.redhawk.ide.sad.internal.ui.properties.model.SadPropertiesSimpleSequence;
 import gov.redhawk.ide.sad.internal.ui.properties.model.SadPropertiesSimple;
 import gov.redhawk.ide.sad.internal.ui.properties.model.SadPropertiesStruct;
@@ -29,7 +28,7 @@ import org.eclipse.swt.widgets.Control;
 
 public class PropertiesViewerFactory extends XViewerFactory {
 
-	public static final String NAMESPACE = SadEditor.ID + ".propertiesViewer";
+	public static final String NAMESPACE = "gov.redhawk.ide.sad.ui.editor.presentation.SadEditorID.propertiesViewer";
 
 	public static final XViewerColumn NAME = new XViewerColumn(NAMESPACE + ".name", "Name", 140, XViewerAlign.Left, true, SortDataType.String, false,
 		"Name of the property or component");

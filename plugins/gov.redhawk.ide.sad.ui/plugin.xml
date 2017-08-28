@@ -41,18 +41,6 @@
    </extension>
    
     <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="gov.redhawk.ide.sad.internal.ui.editor.SadEditor"
-            contributorClass="gov.redhawk.ide.sad.internal.ui.editor.SadMultipageEditorActionBarContributor"
-            default="false"
-            icon="icons/full/obj16/SadModelFile.gif"
-            id="gov.redhawk.ide.sad.ui.editor.presentation.SadEditorID"
-            name="%editor.name.waveformEditor">
-         <contentTypeBinding contentTypeId="mil.jpeojtrs.sca.sad.content-type"/>
-      </editor>
-   </extension>
-    <extension
           point="org.eclipse.ui.ide.markerResolution">
        <markerResolutionGenerator
              class="gov.redhawk.ide.sad.internal.ui.SadMarkerResolutionGenerator"
@@ -149,12 +137,4 @@
          </command>
       </menuContribution>
    </extension>
-    <extension
-       point="gov.redhawk.sca.ui.scaContentTypes">
-    <contentTypeBinding
-          contentTypeId="mil.jpeojtrs.sca.sad.contentType"
-          editorId="gov.redhawk.ide.sad.ui.editor.presentation.SadEditorID"
-          priority="LOWEST">
-    </contentTypeBinding>
- </extension>
 </plugin>
