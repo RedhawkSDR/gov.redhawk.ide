@@ -25,13 +25,13 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import gov.redhawk.core.graphiti.sad.ui.editor.AbstractGraphitiSADEditor;
 import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
+import gov.redhawk.ide.graphiti.sad.internal.ui.editor.overview.SadOverviewPage;
+import gov.redhawk.ide.graphiti.sad.internal.ui.editor.properties.SadPropertiesPage;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiSADDiagramEditor;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADEditorDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
-import gov.redhawk.ide.sad.internal.ui.editor.SadOverviewPage;
-import gov.redhawk.ide.sad.internal.ui.editor.SadPropertiesPage;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
@@ -40,6 +40,8 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
  * A multi-page editor for SAD files. Includes a Graphiti diagram.
  */
 public class GraphitiSADEditor extends AbstractGraphitiSADEditor {
+
+	public static final String ID = "gov.redhawk.ide.graphiti.sad.ui.editor.presentation.SadEditorID";
 
 	private ResourceListener nameListener;
 	private IFormPage overviewPage;
