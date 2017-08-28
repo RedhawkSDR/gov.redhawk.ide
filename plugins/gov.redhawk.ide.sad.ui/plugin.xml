@@ -77,29 +77,7 @@
        </menuContribution>
     </extension>
     
-     <extension point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
-      <propertyTabs contributorId="mil.jpeojtrs.sca.sad.diagram">
-         <propertyTab
-               category="domain"
-               id="property.tab.idl"
-               label="%propertyTab.label">
-         </propertyTab>
-      </propertyTabs>
-   </extension>
    
-   <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertySections">
-      <propertySections
-            contributorId="mil.jpeojtrs.sca.sad.diagram">
-         <propertySection
-               class="gov.redhawk.ide.sad.internal.ui.properties.IdlPropertySection"
-               enablesFor="1"
-               filter="gov.redhawk.ide.sad.internal.ui.properties.IdlPropertySection$Filter"
-               id="property.section.idl"
-               tab="property.tab.idl">
-         </propertySection>
-      </propertySections>
-   </extension>
    <extension
          point="org.eclipse.ui.commands">
       <command
