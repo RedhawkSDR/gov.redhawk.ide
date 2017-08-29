@@ -34,7 +34,6 @@ Require-Bundle: gov.redhawk.ide.dcd.ui,
  gov.redhawk.ide.dcd,
  gov.redhawk.ide.debug,
  mil.jpeojtrs.sca.spd,
- gov.redhawk.ide.debug.ui.diagram,
  gov.redhawk.core.graphiti.ui,
  gov.redhawk.core.graphiti.dcd.ui;visibility:=reexport,
  gov.redhawk.ide.debug.ui
