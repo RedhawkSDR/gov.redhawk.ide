@@ -13,54 +13,10 @@
 
 <plugin>
 
-   <extension
-         point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
-      <editpolicyProvider
-            class="gov.redhawk.ide.sad.ui.providers.SadIdeEditPolicyProvider">
-         <Priority
-               name="Medium">
-         </Priority>
-      </editpolicyProvider>
-   </extension>
 
 
    
-    <extension
-          point="org.eclipse.ui.ide.markerResolution">
-       <markerResolutionGenerator
-             class="gov.redhawk.ide.sad.internal.ui.SadMarkerResolutionGenerator"
-             markerType="gov.redhawk.ide.emf.validation.problem">
-       </markerResolutionGenerator>
-    </extension>
 
-    <extension
-          point="org.eclipse.ui.menus">
-       <menuContribution
-             locationURI="popup:org.eclipse.ui.popup.any#sourceMenuId?after=additions">
-          <menu
-                id="sourceMenuId"
-                label="%menu.label.source">
-             <command
-                   commandId="gov.redhawk.ide.ui.command.cleanUpComponentFiles"
-                   style="push">
-                <visibleWhen
-                      checkEnabled="false">
-                   <iterate>
-                      <or>
-                         <adapt
-                               type="org.eclipse.core.resources.IResource">
-                            <test
-                                  property="org.eclipse.core.resources.name"
-                                  value="*.sad.xml">
-                            </test>
-                         </adapt>
-                      </or>
-                   </iterate>
-                </visibleWhen>
-             </command>
-          </menu>
-       </menuContribution>
-    </extension>
     
    
 </plugin>

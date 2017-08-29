@@ -51,7 +51,3 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  gov.redhawk.ide.codegen.ui
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: gov.redhawk.ide.sad.ui.SadUiActivator
-Export-Package: gov.redhawk.ide.sad.internal.ui;x-internal:=true,
- gov.redhawk.ide.sad.ui,
- gov.redhawk.ide.sad.ui.edit.policies,
- gov.redhawk.ide.sad.ui.providers
