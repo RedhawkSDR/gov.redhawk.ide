@@ -80,18 +80,18 @@ public class ExportToSDRHandler extends AbstractHandler implements IHandler {
 
 		if (projectsToExport.size() == exportedProjects.size()) {
 			// Everything exported
-			String message = String.format("Installed %d project(s) to target SDR", exportedProjects.size());
-			Notifications.INSTANCE.notify(Notifications.INFO, "Export complete", message);
+			String message = Messages.bind(Messages.ExportToSDRHandler_ExportSuccess_Message, exportedProjects.size());
+			Notifications.INSTANCE.notify(Notifications.INFO, Messages.ExportToSDRHandler_ExportSuccess_Title, message);
 		} else {
 			// Some, but not all, exported
 			StringBuilder sb = new StringBuilder();
 			for (IProject project : exportedProjects) {
 				sb.append(project.getName());
-				sb.append(", ");
+				sb.append(", "); //$NON-NLS-1$
 			}
 			sb.setLength(sb.length() - 2);
-			String message = String.format("Installed %d of %d project(s) to target SDR: %s", exportedProjects.size(), projectsToExport.size(), sb.toString());
-			Notifications.INSTANCE.notify(Notifications.WARNING, "Export complete", message);
+			String message = Messages.bind(Messages.ExportToSDRHandler_ExportPartialSuccess_Message, new Object[] { exportedProjects.size(), projectsToExport.size(), sb.toString() });
+			Notifications.INSTANCE.notify(Notifications.WARNING, Messages.ExportToSDRHandler_ExportPartialSuccess_Title, message);
 		}
 	}
 }
