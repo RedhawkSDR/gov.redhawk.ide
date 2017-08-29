@@ -44,7 +44,7 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
  * Provides the "Overview" page in the SAD editor.
  */
 public class SadOverviewPage extends AbstractOverviewPage {
-
+ 
 	public static final String PAGE_ID = "sadEditorOverviewPage"; //$NON-NLS-1$
 	private static final String TOOLBAR_ID = "gov.redhawk.ide.sad.internal.ui.editor.overview.toolbar"; //$NON-NLS-1$
 	private GeneralInfoSection fInfoSection;
