@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.internal.ui.handler;
+package gov.redhawk.ide.graphiti.sad.internal.ui.page.overview;
 
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -34,9 +34,6 @@ import org.eclipse.jface.action.Action;
 
 import CF.ResourceHelper;
 
-/**
- * 
- */
 public class AddExternalPortAction extends Action {
 
 	private SadComponentInstantiation componentInstantiation;

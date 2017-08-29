@@ -11,9 +11,6 @@
 package gov.redhawk.ide.graphiti.sad.internal.ui.page.overview;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.ide.sad.internal.ui.handler.AddExternalPortAction;
-import gov.redhawk.ide.sad.internal.ui.handler.RemoveExternalPortAction;
-import gov.redhawk.ide.sad.internal.ui.wizard.ExternalPortWizard;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
 import gov.redhawk.ui.editor.ScaSection;
 import gov.redhawk.ui.util.SCAEditorUtil;
