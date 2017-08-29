@@ -56,7 +56,7 @@ public class SadOverviewPage extends AbstractOverviewPage {
 	public SadOverviewPage(final SCAFormEditor editor) {
 		super(editor, SadOverviewPage.PAGE_ID, "Overview");
 	}
- 
+
 	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
 		super.createFormContent(managedForm);
