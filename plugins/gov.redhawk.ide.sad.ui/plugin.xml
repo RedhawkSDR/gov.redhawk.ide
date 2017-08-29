@@ -78,41 +78,4 @@
     </extension>
     
    
-   <extension
-         point="org.eclipse.ui.commands">
-      <command
-            categoryId="gov.redhawk.ide.ui.category"
-            defaultHandler="gov.redhawk.ide.sad.internal.ui.handler.MarkExternalHandler"
-            id="gov.redhawk.ide.sad.ui.command.addExternalPort"
-            name="%command.name">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <command
-               commandId="gov.redhawk.ide.sad.ui.command.addExternalPort"
-               style="toggle">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false"
-                     operator="and">
-                  <or>
-                     <instanceof
-                           value="mil.jpeojtrs.sca.sad.diagram.edit.parts.ComponentSupportedInterfaceStubEditPart">
-                     </instanceof>
-                     <instanceof
-                           value="mil.jpeojtrs.sca.sad.diagram.edit.parts.UsesPortStubEditPart">
-                     </instanceof>
-                     <instanceof
-                           value="mil.jpeojtrs.sca.sad.diagram.edit.parts.ProvidesPortStubEditPart">
-                     </instanceof>
-                  </or>
-               </iterate>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
 </plugin>
