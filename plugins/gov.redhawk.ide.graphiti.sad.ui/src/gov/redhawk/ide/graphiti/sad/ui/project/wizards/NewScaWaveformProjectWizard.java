@@ -42,8 +42,8 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
+import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
-import gov.redhawk.ide.sad.ui.SadUiActivator;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -152,7 +152,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 							try {
 								sad.eResource().save(null);
 							} catch (IOException e) {
-								throw new CoreException(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, "Failed to modify SAD File."));
+								throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to modify SAD File."));
 							}
 							openEditorOn.refreshLocal(IResource.DEPTH_ONE, null);
 						}
@@ -172,7 +172,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 
 			BasicNewProjectResourceWizard.updatePerspective(this.fConfig);
 		} catch (final InvocationTargetException x) {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, x.getCause().getMessage(), x.getCause()),
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, x.getCause().getMessage(), x.getCause()),
 				StatusManager.SHOW | StatusManager.LOG);
 			return false;
 		} catch (final InterruptedException x) {

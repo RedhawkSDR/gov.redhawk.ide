@@ -16,7 +16,6 @@ Require-Bundle: gov.redhawk.eclipsecorba.library.ui,
  gov.redhawk.ide.debug.ui,
  gov.redhawk.ide.debug.ui.diagram,
  gov.redhawk.ide.graphiti.ui;visibility:=reexport,
- gov.redhawk.ide.sad.ui;visibility:=reexport,
  gov.redhawk.ide.sdr,
  gov.redhawk.ide.sdr.ui;bundle-version="3.3.0",
  gov.redhawk.monitor,
@@ -50,7 +49,9 @@ Require-Bundle: gov.redhawk.eclipsecorba.library.ui,
  org.eclipse.xtext.xbase.lib;visibility:=reexport,
  org.eclipse.nebula.widgets.xviewer,
  org.eclipse.nebula.widgets.xviewer.core,
- gov.redhawk.ide.spd.ui
+ gov.redhawk.ide.spd.ui,
+ gov.redhawk.ide.ui,
+ gov.redhawk.ide.sad
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
