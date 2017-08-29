@@ -25,7 +25,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.draw2d;visibility:=reexport,
  org.jacorb;bundle-version="3.3.0";visibility:=reexport,
  gov.redhawk.core.graphiti.ui,
- gov.redhawk.core.graphiti.sad.ui
+ gov.redhawk.core.graphiti.sad.ui,
+ org.eclipse.ui.console
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: REDHAWK

@@ -201,7 +201,6 @@
         <module>plugins/gov.redhawk.ide.prf</module>
         <module>plugins/gov.redhawk.ide.prf.ui</module>
         <module>plugins/gov.redhawk.ide.sad</module>
-        <module>plugins/gov.redhawk.ide.sad.ui</module>
         <module>plugins/gov.redhawk.ide.scd.ui</module>
         <module>plugins/gov.redhawk.ide.sdr</module>
         <module>plugins/gov.redhawk.ide.sdr.edit</module>

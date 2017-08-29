@@ -10,13 +10,15 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  gov.redhawk.ide.sad;bundle-version="2.0.0",
  gov.redhawk.ide.debug;bundle-version="1.0.0",
  gov.redhawk.sca.ui;bundle-version="8.0.0",
- gov.redhawk.ide.sad.ui;bundle-version="4.0.0",
  gov.redhawk.diagram;bundle-version="4.0.0",
  gov.redhawk.ide.debug.ui;bundle-version="1.0.0",
  org.eclipse.debug.ui;bundle-version="3.6.1",
  gov.redhawk.ide;bundle-version="5.0.0",
  gov.redhawk.core.resourceFactory;bundle-version="2.0.0",
- org.eclipse.jdt.annotation;bundle-version="[1.1.0,2.0.0)";resolution:=optional
+ org.eclipse.jdt.annotation;bundle-version="[1.1.0,2.0.0)";resolution:=optional,
+ org.eclipse.ui.ide,
+ mil.jpeojtrs.sca.sad.diagram,
+ gov.redhawk.sca.sad.diagram
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: gov.redhawk.ide.debug.internal.adapters;x-internal:=true,

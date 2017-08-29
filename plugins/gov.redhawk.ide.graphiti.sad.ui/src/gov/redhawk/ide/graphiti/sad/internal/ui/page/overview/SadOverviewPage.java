@@ -33,6 +33,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.graphiti.sad.internal.ui.editor.overview.ProjectDocumentationSection;
+import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
@@ -166,7 +167,7 @@ public class SadOverviewPage extends AbstractOverviewPage {
 				LaunchUtil.launch(newConfig, mode);
 			}
 		} catch (final CoreException e) {
-			final Status status = new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e);
+			final Status status = new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e);
 			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
 		}
 	}

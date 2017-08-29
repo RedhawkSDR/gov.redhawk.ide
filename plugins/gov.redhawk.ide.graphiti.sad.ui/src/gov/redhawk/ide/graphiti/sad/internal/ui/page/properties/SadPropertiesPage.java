@@ -11,7 +11,7 @@
 package gov.redhawk.ide.graphiti.sad.internal.ui.page.properties;
 
 import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.model.SadPropertiesAdapterFactory;
-import gov.redhawk.ide.sad.ui.SadUiActivator;
+import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -44,8 +44,8 @@ public class SadPropertiesPage extends ScaFormPage {
 	private IAction expandAllAction = new Action() {
 		{
 			setToolTipText("Expand All");
-			final ImageDescriptor expandAllImageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(SadUiActivator.PLUGIN_ID,
-					"icons/full/elcl16/expandall.gif");
+			final ImageDescriptor expandAllImageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(SADUIGraphitiPlugin.PLUGIN_ID,
+				"icons/full/obj16/expandall.gif");
 			setImageDescriptor(expandAllImageDescriptor);
 		}
 

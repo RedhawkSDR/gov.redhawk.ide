@@ -44,7 +44,6 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
 import gov.redhawk.ide.dcd.ui.DcdUiActivator;
-import gov.redhawk.ide.sad.ui.SadUiActivator;
 import mil.jpeojtrs.sca.dcd.DcdFactory;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.dcd.DomainManager;
@@ -120,7 +119,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 							PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(project, workingSets);
 						}
 
-						// If we're creating a new waveform (vs importing one)
+						// If we're creating a new node (vs importing one)
 						if (isCreateNewResource) {
 							// Create the XML files
 							NewScaNodeProjectWizard.this.openEditorOn = NodeProjectCreator.createNodeFiles(project, id, null, domainManagerName, nodeElements,
@@ -143,7 +142,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 							try {
 								dcd.eResource().save(null);
 							} catch (IOException e) {
-								throw new CoreException(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, "Failed to modify SAD File."));
+								throw new CoreException(new Status(IStatus.ERROR, DcdUiActivator.PLUGIN_ID, "Failed to modify DCD File."));
 							}
 							openEditorOn.refreshLocal(IResource.DEPTH_ONE, null);
 						}
