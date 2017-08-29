@@ -68,7 +68,7 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 	private ScaWaveformProjectPropertiesWizardPage waveformPropertiesPage;
 
 	private IFile openEditorOn;
-
+ 
 	private final SoftwareAssembly sad;
 
 	public NewWaveformFromLocalWizard(final SoftwareAssembly sad) {
