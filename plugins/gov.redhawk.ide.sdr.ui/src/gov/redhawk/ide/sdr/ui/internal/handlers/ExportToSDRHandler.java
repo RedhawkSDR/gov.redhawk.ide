@@ -17,8 +17,8 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jdt.annotation.Nullable;
@@ -26,11 +26,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import gov.redhawk.core.notification.ui.Notifications;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.export.FileStoreExporter;
 import gov.redhawk.ide.sdr.ui.export.IScaExporter;
 import gov.redhawk.ide.sdr.ui.util.ExportToSdrRootJob;
-import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
 
 public class ExportToSDRHandler extends AbstractHandler implements IHandler {
 
@@ -38,28 +38,60 @@ public class ExportToSDRHandler extends AbstractHandler implements IHandler {
 	public Object execute(@Nullable final ExecutionEvent event) throws ExecutionException {
 		final ISelection sel = HandlerUtil.getCurrentSelection(event);
 		if (sel instanceof IStructuredSelection) {
-			List<IProject> projects = new ArrayList<IProject>();
+			final List<IProject> projects = new ArrayList<IProject>();
 			for (Object obj : ((IStructuredSelection) sel).toList()) {
+				IProject project = null;
 				if (obj instanceof IProject) {
-					projects.add((IProject) obj);
-				} else if (obj instanceof IFile) {
-					projects.add(((IFile) obj).getProject());
+					project = (IProject) obj;
+				} else if (obj instanceof IResource) {
+					project = ((IResource) obj).getProject();
+				}
+				if (project != null && project.exists() && project.isOpen()) {
+					projects.add(project);
 				}
 			}
 
 			// Export, then refresh the SDRROOT
 			final IScaExporter exporter = new FileStoreExporter(SdrUiPlugin.getDefault().getTargetSdrPath());
 			final ExportToSdrRootJob exportJob = new ExportToSdrRootJob(exporter, projects);
-			final RefreshSdrJob refreshJob = new RefreshSdrJob();
 			exportJob.addJobChangeListener(new JobChangeAdapter() {
 				@Override
 				public void done(IJobChangeEvent event) {
-					refreshJob.schedule();
+					reportStatus(projects, exportJob.getExportedProjects());
+					SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
 				}
 			});
 			exportJob.schedule();
 		}
 
 		return null;
+	}
+
+	/**
+	 * Report status of an export operation.
+	 * @param projectsToExport The projects that the user asked to export
+	 * @param exportedProjects The projects that were successfully exported
+	 */
+	public static void reportStatus(List<IProject> projectsToExport, List<IProject> exportedProjects) {
+		if (exportedProjects.size() == 0) {
+			// User will have gotten pop-up error(s)
+			return;
+		}
+
+		if (projectsToExport.size() == exportedProjects.size()) {
+			// Everything exported
+			String message = String.format("Installed %d project(s) to target SDR", exportedProjects.size());
+			Notifications.INSTANCE.notify(Notifications.INFO, "Export complete", message);
+		} else {
+			// Some, but not all, exported
+			StringBuilder sb = new StringBuilder();
+			for (IProject project : exportedProjects) {
+				sb.append(project.getName());
+				sb.append(", ");
+			}
+			sb.setLength(sb.length() - 2);
+			String message = String.format("Installed %d of %d project(s) to target SDR: %s", exportedProjects.size(), projectsToExport.size(), sb.toString());
+			Notifications.INSTANCE.notify(Notifications.WARNING, "Export complete", message);
+		}
 	}
 }

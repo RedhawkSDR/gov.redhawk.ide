@@ -35,6 +35,7 @@ import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.export.FileStoreExporter;
 import gov.redhawk.ide.sdr.ui.export.IScaExporter;
+import gov.redhawk.ide.sdr.ui.internal.handlers.ExportToSDRHandler;
 import gov.redhawk.ide.sdr.ui.util.ExportToSdrRootJob;
 import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
@@ -105,6 +106,7 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 		exportJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {
+				ExportToSDRHandler.reportStatus(projects, exportJob.getExportedProjects());
 				SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
 			}
 		});

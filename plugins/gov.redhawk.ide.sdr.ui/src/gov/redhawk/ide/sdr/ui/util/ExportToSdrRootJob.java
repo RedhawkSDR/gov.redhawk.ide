@@ -11,6 +11,8 @@
 package gov.redhawk.ide.sdr.ui.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -37,6 +39,7 @@ public class ExportToSdrRootJob extends Job {
 
 	private IScaExporter exporter;
 	private List<IProject> projects;
+	private List<IProject> exportedProjects;
 
 	public ExportToSdrRootJob(IScaExporter exporter, List<IProject> projects) {
 		super("Export to SDRROOT");
@@ -44,6 +47,7 @@ public class ExportToSdrRootJob extends Job {
 		Assert.isNotNull(projects);
 		this.exporter = exporter;
 		this.projects = projects;
+		this.exportedProjects = new ArrayList<>();
 	}
 
 	@Override
@@ -56,34 +60,39 @@ public class ExportToSdrRootJob extends Job {
 				String progressMsg = String.format("Exporting %s to SDRROOT", project.getName());
 				progress.subTask(progressMsg);
 
-				// Perform export
-				Exception error = null;
-				try {
-					if (project.hasNature(ScaNodeProjectNature.ID)) {
-						ExportUtils.exportNode(project, exporter, progress.newChild(1));
-					} else if (project.hasNature(ScaWaveformProjectNature.ID)) {
-						ExportUtils.exportWaveform(project, exporter, progress.newChild(1));
-					} else if (project.hasNature(ScaComponentProjectNature.ID)) {
-						ExportUtils.exportComponent(project, exporter, progress.newChild(1));
-					}
-				} catch (IOException ex) {
-					error = ex;
-				} catch (CoreException ex) {
-					error = ex;
-				}
-
-				// Capture status
-				if (error != null) {
-					String errorMsg = String.format("Error while exporting %s", project.getName());
-					status.add(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, errorMsg, error));
-				} else {
-					String successMsg = String.format("Successfully exported %s", project.getName());
-					status.add(new Status(IStatus.OK, SdrUiPlugin.PLUGIN_ID, successMsg));
-				}
-
 				// Allow cancellation
 				if (progress.isCanceled()) {
 					return Status.CANCEL_STATUS;
+				}
+
+				// Perform export
+				try {
+					boolean exported;
+					if (project.hasNature(ScaNodeProjectNature.ID)) {
+						ExportUtils.exportNode(project, exporter, progress.newChild(1));
+						exportedProjects.add(project);
+						exported = true;
+					} else if (project.hasNature(ScaWaveformProjectNature.ID)) {
+						ExportUtils.exportWaveform(project, exporter, progress.newChild(1));
+						exportedProjects.add(project);
+						exported = true;
+					} else if (project.hasNature(ScaComponentProjectNature.ID)) {
+						ExportUtils.exportComponent(project, exporter, progress.newChild(1));
+						exportedProjects.add(project);
+						exported = true;
+					} else {
+						String errorMsg = String.format("Can't export project %s that does not have a REDHAWK project nature", project.getName());
+						status.add(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, errorMsg));
+						exported = false;
+					}
+
+					if (exported) {
+						String successMsg = String.format("Successfully exported %s", project.getName());
+						status.add(new Status(IStatus.OK, SdrUiPlugin.PLUGIN_ID, successMsg));
+					}
+				} catch (IOException | CoreException ex) {
+					String errorMsg = String.format("Error while exporting %s", project.getName());
+					status.add(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, errorMsg, ex));
 				}
 			}
 
@@ -96,5 +105,13 @@ public class ExportToSdrRootJob extends Job {
 				SdrUiPlugin.getDefault().logError("Error while cleaning up exporter", e);
 			}
 		}
+	}
+
+	/**
+	 * Gets the list of projects that were successfully exported.
+	 * @since 4.3
+	 */
+	public List<IProject> getExportedProjects() {
+		return Collections.unmodifiableList(exportedProjects);
 	}
 }
