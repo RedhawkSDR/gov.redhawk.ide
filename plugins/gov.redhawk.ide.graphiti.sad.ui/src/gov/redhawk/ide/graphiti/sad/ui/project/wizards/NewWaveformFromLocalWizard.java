@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.debug.internal.ui.diagram;
+package gov.redhawk.ide.graphiti.sad.ui.project.wizards;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -45,7 +45,6 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
-import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectPropertiesWizardPage;
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
 import mil.jpeojtrs.sca.partitioning.ComponentPlacement;

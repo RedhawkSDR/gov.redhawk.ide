@@ -196,4 +196,19 @@
          </command>
       </menuContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="gov.redhawk.ide.ui.wizards.category.sca"
+            class="gov.redhawk.ide.graphiti.sad.ui.project.wizards.NewScaWaveformProjectWizard"
+            finalPerspective="gov.redhawk.ide.ui.perspectives.sca"
+            hasPages="true"
+            icon="icons/newprj_wiz.gif"
+            id="gov.redhawk.ide.ui.wizards.newwaveform"
+            name="%wizard.name.waveformProject"
+            preferredPerspectives="gov.redhawk.ide.ui.wizards.category.sca"
+            project="true">
+      </wizard>
+   </extension>
 </plugin>
