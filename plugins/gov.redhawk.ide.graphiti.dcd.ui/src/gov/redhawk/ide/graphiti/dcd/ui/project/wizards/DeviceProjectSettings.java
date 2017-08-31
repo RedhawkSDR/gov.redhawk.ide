@@ -23,32 +23,20 @@ public class DeviceProjectSettings {
 	private boolean aggregate = false;
 	private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
-	/**
-	 * @return the aggregate
-	 */
 	public String getDeviceType() {
 		return deviceType;
 	}
 
-	/**
-	 * @return the aggregate
-	 */
 	public boolean isAggregate() {
 		return aggregate;
 	}
 
-	/**
-	 * @param aggregate the aggregate to set
-	 */
 	public void setAggregate(boolean aggregate) {
 		final boolean oldValue = this.aggregate;
 		this.aggregate = aggregate;
 		firePropertyChange("aggregate", oldValue, this.aggregate);
 	}
 
-	/**
-	 * @param deviceType the deviceType to set
-	 */
 	public void setDeviceType(String deviceType) {
 		final String oldValue = this.deviceType;
 		this.deviceType = deviceType;

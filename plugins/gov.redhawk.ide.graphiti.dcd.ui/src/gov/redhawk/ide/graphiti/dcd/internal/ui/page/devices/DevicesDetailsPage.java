@@ -82,12 +82,6 @@ public class DevicesDetailsPage extends ScaDetails {
 		return getPage().getEditor().getDataBindingContext();
 	}
 
-	/**
-	 * Creates the implementation section.
-	 * 
-	 * @param toolkit the toolkit
-	 * @param parent the parent
-	 */
 	private void createDeviceSection(final FormToolkit toolkit, final Composite parent) {
 		final Section section = toolkit.createSection(parent,
 			Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | ExpandableComposite.EXPANDED);
@@ -107,9 +101,6 @@ public class DevicesDetailsPage extends ScaDetails {
 
 	}
 
-	/**
-	 * Remove the parent from this device.
-	 */
 	protected void handleUnsetParent() {
 		execute(SetCommand.create(getEditingDomain(), this.inputPlacement, DcdPackage.Literals.DCD_COMPONENT_PLACEMENT__COMPOSITE_PART_OF_DEVICE,
 			SetCommand.UNSET_VALUE));

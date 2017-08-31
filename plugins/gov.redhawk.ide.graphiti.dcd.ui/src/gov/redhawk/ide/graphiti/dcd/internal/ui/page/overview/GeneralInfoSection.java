@@ -45,7 +45,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 
 /**
- * The Class GeneralInfoSection.
  * @since 1.1
  */
 public class GeneralInfoSection extends ScaSection {
@@ -53,28 +52,16 @@ public class GeneralInfoSection extends ScaSection {
 	private final Collection<Binding> bindings = new ArrayList<Binding>();
 	private Resource dcdResource;
 
-	/**
-	 * Instantiates a new general info section.
-	 * 
-	 * @param page the page
-	 * @param parent the parent
-	 */
 	public GeneralInfoSection(final NodeOverviewPage page, final Composite parent) {
 		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public NodeOverviewPage getPage() {
 		return (NodeOverviewPage) super.getPage();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
 		section.setText("General Information");
@@ -94,11 +81,6 @@ public class GeneralInfoSection extends ScaSection {
 		toolkit.paintBordersFor(this.client);
 	}
 
-	/**
-	 * Add Listeners to handle Control Events
-	 * 
-	 * @param actionBars
-	 */
 	private void addListeners(final IActionBars actionBars) {
 		final FormEntryAdapter fIdEntryAdapter = new FormEntryAdapter(actionBars) {
 			@Override
@@ -112,43 +94,22 @@ public class GeneralInfoSection extends ScaSection {
 		this.client.getIdEntry().setFormEntryListener(fIdEntryAdapter);
 	}
 
-	/**
-	 * Gets the project.
-	 * 
-	 * @return the project
-	 */
 	protected IProject getProject() {
 		return ModelUtil.getProject(getSoftPkg());
 	}
 
-	/**
-	 * @param create
-	 */
 	protected void execute(final Command command) {
 		getEditingDomain().getCommandStack().execute(command);
 	}
 
-	/**
-	 * Gets the editing domain.
-	 * 
-	 * @return the editing domain
-	 */
 	private EditingDomain getEditingDomain() {
 		return getPage().getEditor().getEditingDomain();
 	}
 
-	/**
-	 * TODO
-	 * 
-	 * @param readOnly
-	 */
 	private void setEditable(final boolean editable) {
 		this.client.setEditable(editable);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void refresh(final Resource resource) {
 		this.dcdResource = resource;
@@ -189,9 +150,6 @@ public class GeneralInfoSection extends ScaSection {
 		return ModelUtil.getDeviceConfiguration(this.dcdResource);
 	}
 
-	/**
-	 * @return
-	 */
 	private SoftPkg getSoftPkg() {
 		final DeviceConfiguration dcd = getDeviceConfiguration();
 		if (dcd != null) {

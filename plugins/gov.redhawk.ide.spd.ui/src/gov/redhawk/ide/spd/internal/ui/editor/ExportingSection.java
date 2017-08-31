@@ -38,9 +38,6 @@ public class ExportingSection extends ScaSection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
 		section.setText(SpdUIMessages.ExportingSection_SECTION_TITLE);

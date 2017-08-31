@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * The Class ScaNodeProjectPropertiesWizardPage.
  * @since 1.1
  */
 public class ScaNodeProjectPropertiesWizardPage extends ScaProjectPropertiesWizardPage {
@@ -48,18 +47,12 @@ public class ScaNodeProjectPropertiesWizardPage extends ScaProjectPropertiesWiza
 	/** Device Type Combo */
 	private Combo domainCombo;
 
-	/**
-	 * The Class DcdFileValidator.
-	 */
 	private static final class DcdFileValidator implements IValidator {
 		// Rules:
 		// The file must exist
 		// It must have the DOCTYPE for SPD
 		// It must pass a DTD check
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public IStatus validate(final Object value) {
 			// Project names are always stripped of whitespace
@@ -102,9 +95,6 @@ public class ScaNodeProjectPropertiesWizardPage extends ScaProjectPropertiesWiza
 		getContentsGroup().setValidator(new DcdFileValidator());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void customCreateControl(final Composite parent) {
 		// Domain Group

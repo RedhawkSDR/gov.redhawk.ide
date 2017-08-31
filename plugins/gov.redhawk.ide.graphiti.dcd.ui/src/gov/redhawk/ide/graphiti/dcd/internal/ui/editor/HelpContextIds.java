@@ -10,28 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui.editor;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class HelpContextIds.
- */
 public final class HelpContextIds {
 
-	/** The Constant PREFIX. */
 	public static final String PREFIX = "gov.redhawk.ide.dcd.doc.user."; //$NON-NLS-1$
-
-	/** The Constant Component Overview. */
 	public static final String NODE_OVERVIEW = HelpContextIds.PREFIX + "node_overview"; //$NON-NLS-1$
-	/**
-	 * Generic source page.
-	 */
 	public static final String SOURCE_PAGE = HelpContextIds.PREFIX + "source_page"; //$NON-NLS-1$
-
-	/** The Constant RENAME_DIALOG. */
 	public static final String RENAME_DIALOG = HelpContextIds.PREFIX + "rename_dialog"; //$NON-NLS-1$
 
-	/**
-	 * Instantiates a new help context ids.
-	 */
 	private HelpContextIds() {
 
 	}

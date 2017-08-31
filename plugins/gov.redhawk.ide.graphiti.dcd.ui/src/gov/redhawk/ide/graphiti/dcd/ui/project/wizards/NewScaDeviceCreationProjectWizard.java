@@ -31,24 +31,17 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
 /**
- * The Class NewScaResourceProjectWizard.
  * @since 1.1
  */
 public class NewScaDeviceCreationProjectWizard extends NewScaResourceWizard implements IImportWizard {
 
 
-	/**
-	 * 
-	 */
 	public NewScaDeviceCreationProjectWizard() {
 		super(ICodeGeneratorDescriptor.COMPONENT_TYPE_DEVICE);
 		this.setWindowTitle("New Device Project");
 		this.setNeedsProgressMonitor(true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addPages() {

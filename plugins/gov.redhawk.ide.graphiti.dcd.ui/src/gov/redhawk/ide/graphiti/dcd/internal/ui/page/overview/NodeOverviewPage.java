@@ -10,17 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui.page.overview;
 
-import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.HelpContextIds;
-import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.ScaIdeConstants;
-import gov.redhawk.ide.graphiti.dcd.internal.ui.page.devices.DevicesPage;
-import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
-import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.ui.editor.AbstractOverviewPage;
-import gov.redhawk.ui.editor.SCAFormEditor;
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.dcd.DeviceManagerSoftPkg;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.action.ToolBarManager;
@@ -37,10 +26,9 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.menus.IMenuService;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.ide.dcd.internal.ui.HelpContextIds;
-import gov.redhawk.ide.dcd.internal.ui.ScaIdeConstants;
+import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.HelpContextIds;
+import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.ScaIdeConstants;
 import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
-import gov.redhawk.ide.spd.ui.editor.AuthorsSection;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
 import gov.redhawk.ui.editor.SCAFormEditor;
@@ -48,14 +36,12 @@ import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.dcd.DeviceManagerSoftPkg;
 
 /**
- * Provides the "Overview" page in the DCD editor.
  * @since 1.1
  */
 public class NodeOverviewPage extends AbstractOverviewPage {
 
-	/** The Constant PAGE_ID. */
-	public static final String PAGE_ID = "nodeOverview"; //$NON-NLS-1$
-	private static final String TOOLBAR_ID = "gov.redhawk.ide.dcd.internal.ui.editor.overview.toolbar"; //$NON-NLS-1$
+	public static final String PAGE_ID = "nodeOverview";
+	private static final String TOOLBAR_ID = "gov.redhawk.ide.dcd.internal.ui.editor.overview.toolbar";
 	private GeneralInfoSection fInfoSection;
 	private ProjectDocumentationSection projectDocumentationSection;
 	private TestingSection testingSection;
@@ -63,11 +49,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 	private Resource dcdResource;
 	private Resource spdResource;
 
-	/**
-	 * Instantiates a new node overview page.
-	 * 
-	 * @param editor the editor
-	 */
 	public NodeOverviewPage(final SCAFormEditor editor) {
 		super(editor, NodeOverviewPage.PAGE_ID, "Overview");
 	}
@@ -99,12 +80,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 		refresh(this.dcdResource);
 	}
 
-	/**
-	 * Fill body.
-	 * 
-	 * @param managedForm the managed form
-	 * @param toolkit the toolkit
-	 */
 	private void fillBody(final IManagedForm managedForm, final FormToolkit toolkit) {
 		final Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
@@ -128,51 +103,23 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 		}
 	}
 
-	/**
-	 * Creates the testing section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param right the right
-	 * @param toolkit the toolkit
-	 */
 	private void createTestingSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
 		this.testingSection = new TestingSection(this, right);
 		managedForm.addPart(this.testingSection);
 	}
 
-	/**
-	 * Creates the general info section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param left the left
-	 * @param toolkit the toolkit
-	 */
 	private void createGeneralInfoSection(final IManagedForm managedForm, final Composite left, final FormToolkit toolkit) {
 		this.fInfoSection = new GeneralInfoSection(this, left);
 		managedForm.addPart(this.fInfoSection);
 
 	}
 
-	/**
-	 * Creates the project documentation section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param left the left
-	 * @param toolkit the toolkit
-	 */
 	private void createProjectDocumentationSection(final IManagedForm managedForm, final Composite left, final FormToolkit toolkit) {
 		this.projectDocumentationSection = new ProjectDocumentationSection(this, left);
 		managedForm.addPart(this.projectDocumentationSection);
 		this.projectDocumentationSection.refresh(getInput());
 	}
 
-	/**
-	 * Creates the exporting section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param right the right
-	 * @param toolkit the toolkit
-	 */
 	private void createExportingSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
 		this.exportingSection = new ExportingSection(this, right);
 		managedForm.addPart(this.exportingSection);
