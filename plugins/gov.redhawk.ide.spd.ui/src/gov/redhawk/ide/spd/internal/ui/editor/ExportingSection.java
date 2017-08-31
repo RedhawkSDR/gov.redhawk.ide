@@ -22,9 +22,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 
-/**
- * 
- */
 public class ExportingSection extends ScaSection {
 
 	/**

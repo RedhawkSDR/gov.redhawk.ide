@@ -45,11 +45,6 @@ public abstract class DcdComponentComposite extends Composite implements IScaCom
 	 */
 	protected abstract void createCompositeSections(boolean showProps);
 
-	/**
-	 * @param parent
-	 * @param style
-	 * @param toolkit
-	 */
 	public DcdComponentComposite(final Composite parent, final int style, final FormToolkit toolkit, final IEditingDomainProvider editingDomainProvider) {
 		this(parent, style, toolkit, editingDomainProvider, true);
 	}
@@ -69,24 +64,10 @@ public abstract class DcdComponentComposite extends Composite implements IScaCom
 		toolkit.paintBordersFor(this);
 	}
 
-	/**
-	 * Creates the name entry.
-	 * 
-	 * @param client the client
-	 * @param toolkit the toolkit
-	 * @param actionBars the action bars
-	 */
 	protected void createNameEntry() {
 		this.nameEntry = new FormEntry(this, this.toolkit, "Name:", SWT.SINGLE);
 	}
 
-	/**
-	 * Creates the properties entry.
-	 * 
-	 * @param client the client
-	 * @param toolkit the toolkit
-	 * @param actionBars the action bars
-	 */
 	protected void createPropertiesArea() {
 		final Group group = new Group(this, SWT.SHADOW_ETCHED_IN);
 		group.setText("Properties");
