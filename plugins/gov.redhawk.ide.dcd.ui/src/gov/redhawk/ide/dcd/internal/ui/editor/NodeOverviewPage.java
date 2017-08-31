@@ -10,6 +10,16 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.internal.ui.editor;
 
+import gov.redhawk.common.ui.editor.FormLayoutFactory;
+import gov.redhawk.ide.dcd.internal.ui.HelpContextIds;
+import gov.redhawk.ide.dcd.internal.ui.ScaIdeConstants;
+import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
+import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.ui.editor.AbstractOverviewPage;
+import gov.redhawk.ui.editor.SCAFormEditor;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.dcd.DeviceManagerSoftPkg;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.action.ToolBarManager;
@@ -49,7 +59,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 	private ProjectDocumentationSection projectDocumentationSection;
 	private TestingSection testingSection;
 	private ExportingSection exportingSection;
-	private AuthorsSection fAuthorsSection;
 	private Resource dcdResource;
 	private Resource spdResource;
 
@@ -228,10 +237,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 			}
 
 			refresh(this.spdResource);
-		} else if (resource == this.spdResource) {
-			if (this.fAuthorsSection != null) {
-				this.fAuthorsSection.refresh(resource);
-			}
 		}
 	}
 }
