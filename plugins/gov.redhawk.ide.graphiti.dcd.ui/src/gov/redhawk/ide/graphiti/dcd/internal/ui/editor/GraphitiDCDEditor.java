@@ -34,8 +34,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import gov.redhawk.core.graphiti.dcd.ui.editor.AbstractGraphitiDCDEditor;
 import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiDiagramEditor;
-import gov.redhawk.ide.dcd.internal.ui.editor.DevicesPage;
-import gov.redhawk.ide.dcd.internal.ui.editor.NodeOverviewPage;
+import gov.redhawk.ide.graphiti.dcd.internal.ui.page.devices.DevicesPage;
+import gov.redhawk.ide.graphiti.dcd.internal.ui.page.overview.NodeOverviewPage;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDCDDiagramEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDEditorDiagramTypeProvider;
