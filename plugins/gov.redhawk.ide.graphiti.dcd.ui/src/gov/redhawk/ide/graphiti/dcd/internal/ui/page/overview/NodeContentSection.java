@@ -23,38 +23,24 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 
 /**
  * @since 1.1
- * 
  */
 public class NodeContentSection extends ScaSection {
 
-	/** The Constant PROP_HREF. */
 	public static final String DEVICE_HREF = "http://devices";
 
 	private static final String FORM_TEXT = "<form>" + "<li> <a href=\"" + NodeContentSection.DEVICE_HREF
 	        + "\" nowrap=\"true\">Devices</a>: declares devices contained in the node.</li></form>";
 
-	/**
-	 * The Constructor.
-	 * 
-	 * @param page the page
-	 * @param parent the parent
-	 */
 	public NodeContentSection(final AbstractOverviewPage page, final Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public AbstractOverviewPage getPage() {
 		return (AbstractOverviewPage) super.getPage();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
 		section.setText("Node Content");
@@ -75,29 +61,16 @@ public class NodeContentSection extends ScaSection {
 
 	}
 
-	/**
-	 * Creates the form text area.
-	 * 
-	 * @param client the client
-	 * @param toolkit the toolkit
-	 * @param actionBars the action bars
-	 */
 	private void createFormTextArea(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		final FormText formText = toolkit.createFormText(client, true);
 		formText.setWhitespaceNormalized(true);
 		final TableWrapData td = new TableWrapData(TableWrapData.FILL);
 		formText.setLayoutData(td);
-		// formText.setImage(key, image)
 		formText.setText(getFormText(), true, false);
 		formText.addHyperlinkListener(getPage());
 
 	}
 
-	/**
-	 * Gets the form text.
-	 * 
-	 * @return the form text
-	 */
 	private String getFormText() {
 		return NodeContentSection.FORM_TEXT;
 	}

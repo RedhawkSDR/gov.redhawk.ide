@@ -51,11 +51,6 @@ public class DcdComponentComposite extends Composite implements IScaComposite {
 
 	private TreeViewer propertiesViewer;
 
-	/**
-	 * @param parent
-	 * @param style
-	 * @param toolkit
-	 */
 	public DcdComponentComposite(final Composite parent, final int style, final FormToolkit toolkit, final IEditingDomainProvider editingDomainProvider) {
 		super(parent, style);
 
@@ -74,13 +69,6 @@ public class DcdComponentComposite extends Composite implements IScaComposite {
 		toolkit.paintBordersFor(this);
 	}
 
-	/**
-	 * Creates the name entry.
-	 * 
-	 * @param client the client
-	 * @param toolkit the toolkit
-	 * @param actionBars the action bars
-	 */
 	private void createNameEntry() {
 		this.nameEntry = new FormEntry(this, this.toolkit, "Name:", SWT.SINGLE);
 		this.nameEntry.getText().setToolTipText("Human readable name for the device instantiation");
@@ -96,13 +84,6 @@ public class DcdComponentComposite extends Composite implements IScaComposite {
 		super.dispose();
 	}
 
-	/**
-	 * Creates the generator entry.
-	 * 
-	 * @param client the client
-	 * @param toolkit the toolkit
-	 * @param actionBars the action bars
-	 */
 	private void createParentEntry() {
 		final Label label = this.toolkit.createLabel(this, "Parent:");
 		label.setForeground(this.toolkit.getColors().getColor(IFormColors.TITLE));
@@ -131,13 +112,6 @@ public class DcdComponentComposite extends Composite implements IScaComposite {
 		this.unsetParentButton.setEnabled(false);
 	}
 
-	/**
-	 * Creates the properties entry.
-	 * 
-	 * @param client the client
-	 * @param toolkit the toolkit
-	 * @param actionBars the action bars
-	 */
 	private void createPropertiesArea() {
 		final Group group = new Group(this, SWT.SHADOW_ETCHED_IN);
 		group.setText("Properties");

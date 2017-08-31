@@ -67,9 +67,6 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 		this(pageName);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void createControl(final Composite parent) {
 		// The top-level composite for this page

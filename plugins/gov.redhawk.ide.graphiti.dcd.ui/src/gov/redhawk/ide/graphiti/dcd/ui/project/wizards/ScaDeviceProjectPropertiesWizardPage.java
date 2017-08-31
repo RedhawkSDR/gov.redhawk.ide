@@ -10,9 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.project.wizards;
 
-import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
-import gov.redhawk.ide.spd.ui.wizard.ScaResourceProjectPropertiesWizardPage;
-
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -20,16 +17,18 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
+import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
+import gov.redhawk.ide.spd.ui.wizard.ScaResourceProjectPropertiesWizardPage;
+
 /**
- * The Class ScaDeviceProjectPropertiesWizardPage.
  * @since 1.1
  */
 public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectPropertiesWizardPage {
@@ -41,20 +40,12 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 	private DataBindingContext context;
 	private boolean showDeviceGroup = true;
 
-	/**
-	 * Instantiates a new sca resource project properties wizard page.
-	 * 
-	 * @param pageName the page name
-	 */
 	protected ScaDeviceProjectPropertiesWizardPage(final String pageName, final String type) {
 		super(pageName, type);
 		this.setDescription("Choose to either create a new Device or import an existing one.");
 		context = new DataBindingContext();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void customCreateControl(final Composite parent) {
 		if (this.showDeviceGroup) {
@@ -100,8 +91,7 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 	@Override
 	protected void createContentsGroup(Composite parent) {
 		super.createContentsGroup(parent);
-		getContentsGroup().getImportFileButton().addSelectionListener(new SelectionListener() {
-
+		getContentsGroup().getImportFileButton().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (getContentsGroup().getImportFileButton().getSelection()) {
@@ -116,25 +106,13 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 					aggregateButton.setEnabled(true);
 				}
 			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-
-			}
 		});
 	}
 
-	/**
-	 * @return
-	 */
 	public String getDeviceType() {
 		return deviceProjSettings.getDeviceType();
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean getAggregateDeviceType() {
 		return deviceProjSettings.isAggregate();
 	}

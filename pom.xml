@@ -196,7 +196,6 @@
         <module>plugins/gov.redhawk.ide.codegen.edit</module>
         <module>plugins/gov.redhawk.ide.codegen.ui</module>
         <module>plugins/gov.redhawk.ide.dcd</module>
-        <module>plugins/gov.redhawk.ide.dcd.ui</module>
         <module>plugins/gov.redhawk.ide.debug</module>
         <module>plugins/gov.redhawk.ide.debug.linux</module>
         <module>plugins/gov.redhawk.ide.debug.edit</module>

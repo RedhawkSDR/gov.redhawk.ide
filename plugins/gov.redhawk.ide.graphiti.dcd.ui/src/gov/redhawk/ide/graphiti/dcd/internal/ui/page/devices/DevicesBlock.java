@@ -27,11 +27,6 @@ public class DevicesBlock extends SCAMasterDetailsBlock {
 
 	private DevicesSection fSection;
 
-	/**
-	 * Instantiates a new scrolled properties block.
-	 * 
-	 * @param page the page
-	 */
 	public DevicesBlock(final DevicesPage page) {
 		super(page);
 	}

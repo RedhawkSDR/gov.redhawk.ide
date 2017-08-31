@@ -39,14 +39,8 @@ import org.eclipse.swt.widgets.Text;
  */
 public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPropertiesWizardPage {
 
-	/**
-	 * The Class ServiceIdlValidator.
-	 */
 	private static final class ServiceIdlValidator implements IValidator {
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public IStatus validate(final Object value) {
 			final String s = ((String) value).trim();
@@ -76,19 +70,11 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 	private ServiceIdlValidator serviceIdlValidator = new ServiceIdlValidator();
 	private DataBindingContext context = new DataBindingContext();
 
-	/**
-	 * Instantiates a new sca resource project properties wizard page.
-	 * 
-	 * @param pageName the page name
-	 */
 	protected ScaServiceProjectPropertiesWizardPage(final String pageName, final String type) {
 		super(pageName, type);
 		this.setDescription("Choose to either create a new Service or import an existing one.");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void createControl(final Composite parent) {
 		super.createControl(parent);
@@ -111,9 +97,6 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void customCreateControl(final Composite parent) {
 		// Service Group

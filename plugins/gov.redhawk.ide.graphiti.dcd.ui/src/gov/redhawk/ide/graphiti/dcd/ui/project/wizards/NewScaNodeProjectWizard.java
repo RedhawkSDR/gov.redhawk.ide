@@ -60,10 +60,8 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 
 	protected static final long SDR_REFRESH_DELAY = 500;
 
-	/** The node properties page. */
 	private ScaNodeProjectPropertiesWizardPage nodePropertiesPage;
 
-	/** The node properties page. */
 	private ScaNodeProjectDevicesWizardPage nodeDevicesPage;
 
 	private IFile openEditorOn;

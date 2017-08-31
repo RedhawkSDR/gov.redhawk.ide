@@ -37,13 +37,11 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.menus.IMenuService;
 
 /**
- * The Class NodeOverviewPage.
  * @since 1.1
  */
 public class NodeOverviewPage extends AbstractOverviewPage {
 
-	/** The Constant PAGE_ID. */
-	public static final String PAGE_ID = "nodeOverview"; //$NON-NLS-1$
+	public static final String PAGE_ID = "nodeOverview";
 	private static final String TOOLBAR_ID = "gov.redhawk.ide.dcd.internal.ui.editor.overview.toolbar";
 	private GeneralInfoSection fInfoSection;
 	private NodeContentSection nodeContent;
@@ -52,40 +50,25 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 	private Resource dcdResource;
 	private Resource spdResource;
 
-	/**
-	 * Instantiates a new node overview page.
-	 * 
-	 * @param editor the editor
-	 */
 	public NodeOverviewPage(final SCAFormEditor editor) {
 		super(editor, NodeOverviewPage.PAGE_ID, "Overview");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public SCAFormEditor getEditor() {
 		return super.getEditor();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected String getHelpResource() {
 		return ScaIdeConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/node_editor/overview.htm"; //$NON-NLS-1$
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		final ScrolledForm form = managedForm.getForm();
 		final FormToolkit toolkit = managedForm.getToolkit();
-		// TODO form.setImage();
 		form.setText("Overview");
 		fillBody(managedForm, toolkit);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), HelpContextIds.NODE_OVERVIEW);
@@ -98,12 +81,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 		refresh(this.dcdResource);
 	}
 
-	/**
-	 * Fill body.
-	 * 
-	 * @param managedForm the managed form
-	 * @param toolkit the toolkit
-	 */
 	private void fillBody(final IManagedForm managedForm, final FormToolkit toolkit) {
 		final Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
@@ -112,9 +89,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 		left.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		createGeneralInfoSection(managedForm, left, toolkit);
-
-		// XXX Disable Authors Sections
-		// createAuthorsSection(managedForm, left, toolkit);
 
 		final Composite right = toolkit.createComposite(body);
 		right.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
@@ -128,59 +102,28 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 
 	}
 
-	/**
-	 * Creates the testing section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param right the right
-	 * @param toolkit the toolkit
-	 */
 	private void createTestingSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
 		this.testingSection = new TestingSection(this, right);
 		managedForm.addPart(this.testingSection);
 	}
 
-	/**
-	 * Creates the node content section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param right the right
-	 * @param toolkit the toolkit
-	 */
 	private void createNodeContentSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
 		this.nodeContent = new NodeContentSection(this, right);
 		managedForm.addPart(this.nodeContent);
 	}
 
-	/**
-	 * Creates the general info section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param left the left
-	 * @param toolkit the toolkit
-	 */
 	private void createGeneralInfoSection(final IManagedForm managedForm, final Composite left, final FormToolkit toolkit) {
 		this.fInfoSection = new GeneralInfoSection(this, left);
 		managedForm.addPart(this.fInfoSection);
 
 	}
 
-	/**
-	 * Creates the exporting section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param right the right
-	 * @param toolkit the toolkit
-	 */
 	private void createExportingSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
 		this.exportingSection = new ExportingSection(this, right);
 		managedForm.addPart(this.exportingSection);
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void linkActivated(final HyperlinkEvent e) {
 		final Object href = e.getHref();
@@ -195,31 +138,20 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 			final WizardDialog dialog = new WizardDialog(getEditor().getSite().getShell(), wizard);
 			dialog.open();
 		}
-		// TODO Auto-generated method stub
-
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setInput(final Resource input) {
 		this.dcdResource = input;
 		super.setInput(input);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void dispose() {
 		removeResourceListener(this.spdResource);
 		super.dispose();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void refresh(final Resource resource) {
 		if (resource == null) {

@@ -12,9 +12,6 @@ package gov.redhawk.ide.graphiti.dcd.internal.ui.page.overview;
 
 import org.eclipse.osgi.util.NLS;
 
-/**
- * 
- */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "gov.redhawk.ide.graphiti.dcd.internal.ui.page.overview.messages"; //$NON-NLS-1$
 	public static String ExportingSection_ExportForm; // SUPPRESS CHECKSTYLE VariableName

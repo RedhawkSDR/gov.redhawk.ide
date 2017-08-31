@@ -26,21 +26,14 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.menus.IMenuService;
 
 /**
- * The Class ImplementationPage.
  * @since 1.1
  */
 public class DevicesPage extends ScaFormPage implements IViewerProvider {
 
-	/** The Constant PAGE_ID. */
-	public static final String PAGE_ID = "devices"; //$NON-NLS-1$
+	public static final String PAGE_ID = "devices";
 	private static final String TOOLBAR_ID = "gov.redhawk.ide.dcd.internal.ui.editor.devices.toolbar";
 	private final DevicesBlock fBlock;
 
-	/**
-	 * Instantiates a new properties form page.
-	 * 
-	 * @param editor
-	 */
 	public DevicesPage(final SCAFormEditor editor) {
 		super(editor, DevicesPage.PAGE_ID, "Devices");
 		this.fBlock = new DevicesBlock(this);
@@ -61,8 +54,6 @@ public class DevicesPage extends ScaFormPage implements IViewerProvider {
 		final ScrolledForm form = managedForm.getForm();
 		form.setText("Devices");
 
-		// TODO
-		// form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXTENSIONS_OBJ));
 		this.fBlock.createContent(managedForm);
 
 		// refire selection

@@ -41,9 +41,6 @@ public class NewScaServiceCreationProjectWizard extends NewScaResourceWizard imp
 		this.setNeedsProgressMonitor(true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addPages() {

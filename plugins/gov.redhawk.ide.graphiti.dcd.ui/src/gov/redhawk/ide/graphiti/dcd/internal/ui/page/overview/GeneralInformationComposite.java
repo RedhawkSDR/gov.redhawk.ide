@@ -21,9 +21,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 
-/**
- * 
- */
 public class GeneralInformationComposite extends Composite implements IScaComposite {
 	private static final int NUM_COLUMNS = 3;
 
@@ -31,12 +28,6 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	private FormEntry idEntry;
 	private FormEntry nameEntry;
 
-	/**
-	 * @param parent
-	 * @param style
-	 * @param toolkit
-	 * @param actionBars
-	 */
 	public GeneralInformationComposite(final Composite parent, final int style, final FormToolkit toolkit, final IActionBars actionBars) {
 		super(parent, style);
 		this.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, GeneralInformationComposite.NUM_COLUMNS));
@@ -48,13 +39,6 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 		createDescriptionEntry(this, toolkit, actionBars);
 	}
 
-	/**
-	 * Creates the description area.
-	 * 
-	 * @param client the client
-	 * @param toolkit the toolkit
-	 * @param actionBars the action bars
-	 */
 	private void createDescriptionEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.descriptionEntry = new FormEntry(client, toolkit, "Description:", SWT.MULTI | SWT.WRAP);
 		final Object data = this.descriptionEntry.getText().getLayoutData();
@@ -63,63 +47,37 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 			final GridData gData = (GridData) data;
 			gData.verticalAlignment = SWT.FILL;
 			gData.grabExcessVerticalSpace = true;
-			gData.heightHint = 75; // SUPPRESS CHECKSTYLE MagicNumber
+			gData.heightHint = 75; 
 		} else if (data instanceof TableWrapData) {
 			((TableWrapData) this.descriptionEntry.getLabel().getLayoutData()).valign = SWT.TOP;
 			final TableWrapData tData = (TableWrapData) data;
 			tData.valign = SWT.FILL;
 			tData.grabVertical = true;
-			tData.heightHint = 75; // SUPPRESS CHECKSTYLE MagicNumber
+			tData.heightHint = 75;
 		}
 	}
 
-	/**
-	 * Creates the id entry.
-	 * 
-	 * @param client the client
-	 * @param toolkit the toolkit
-	 * @param actionBars the action bars
-	 */
 	private void createIDEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.idEntry = new FormEntry(client, toolkit, "ID:", "Generate", false);
 
 	}
 
-	/**
-	 * Creates the name entry.
-	 * 
-	 * @param client the client
-	 * @param toolkit the toolkit
-	 * @param actionBars the action bars
-	 */
 	private void createNameEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.nameEntry = new FormEntry(client, toolkit, "Name:", null, false);
 	}
 
-	/**
-	 * @return the descriptionEntry
-	 */
 	public FormEntry getDescriptionEntry() {
 		return this.descriptionEntry;
 	}
 
-	/**
-	 * @return the idEntry
-	 */
 	public FormEntry getIdEntry() {
 		return this.idEntry;
 	}
 
-	/**
-	 * @return the nameEntry
-	 */
 	public FormEntry getNameEntry() {
 		return this.nameEntry;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setEditable(final boolean editable) {
 		this.descriptionEntry.setEditable(editable);

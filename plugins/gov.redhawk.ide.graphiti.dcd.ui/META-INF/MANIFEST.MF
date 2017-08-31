@@ -7,8 +7,7 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: gov.redhawk.ide.dcd.ui,
- gov.redhawk.ide.graphiti.ui;visibility:=reexport,
+Require-Bundle: gov.redhawk.ide.graphiti.ui;visibility:=reexport,
  gov.redhawk.ide.sdr,
  gov.redhawk.ide.sdr.ui,
  gov.redhawk.ide.ui,

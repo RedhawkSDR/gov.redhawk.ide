@@ -25,35 +25,21 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 
 /**
  * @since 1.1
- *
  */
 public class TestingSection extends ScaSection {
 
-	/** The Constant TESTING_HREF. */
 	public static final String TESTING_HREF = "test";
 
-	/**
-	 * The Constructor.
-	 *
-	 * @param page the page
-	 * @param parent the parent
-	 */
 	public TestingSection(final AbstractOverviewPage page, final Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public AbstractOverviewPage getPage() {
 		return (AbstractOverviewPage) super.getPage();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
 		section.setText("Testing");
@@ -74,13 +60,6 @@ public class TestingSection extends ScaSection {
 
 	}
 
-	/**
-	 * Creates the testing area.
-	 *
-	 * @param client the client
-	 * @param toolkit the toolkit
-	 * @param actionBars the action bars
-	 */
 	private void createTestingArea(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		ImageHyperlink imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
 		imageHyperlink.setText("Launch a local node");

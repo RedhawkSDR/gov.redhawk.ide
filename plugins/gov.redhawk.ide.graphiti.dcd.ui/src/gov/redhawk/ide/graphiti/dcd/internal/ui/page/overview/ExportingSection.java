@@ -23,24 +23,14 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 
 /**
  * @since 1.1
- * 
  */
 public class ExportingSection extends ScaSection {
 
-	/**
-	 * Instantiates a new exporting section.
-	 * 
-	 * @param page the page
-	 * @param parent the parent
-	 */
 	public ExportingSection(final AbstractOverviewPage page, final Composite parent) {
 		super(page, parent, SWT.None);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
 		section.setText(Messages.ExportingSection_SectionTitle);
@@ -59,21 +49,11 @@ public class ExportingSection extends ScaSection {
 		toolkit.paintBordersFor(client);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public AbstractOverviewPage getPage() {
 		return (AbstractOverviewPage) super.getPage();
 	}
 
-	/**
-	 * Creates the exporting area.
-	 * 
-	 * @param client the client
-	 * @param toolkit the toolkit
-	 * @param actionBars the action bars
-	 */
 	private void createExportingArea(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		getPage().createClient(client, Messages.ExportingSection_ExportForm, toolkit);
 	}
