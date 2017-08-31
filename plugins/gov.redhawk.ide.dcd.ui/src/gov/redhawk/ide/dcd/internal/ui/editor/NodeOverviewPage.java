@@ -14,7 +14,6 @@ import gov.redhawk.common.ui.editor.FormLayoutFactory;
 import gov.redhawk.ide.dcd.internal.ui.HelpContextIds;
 import gov.redhawk.ide.dcd.internal.ui.ScaIdeConstants;
 import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
-import gov.redhawk.ide.spd.ui.editor.AuthorsSection;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
 import gov.redhawk.ui.editor.SCAFormEditor;
@@ -49,7 +48,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 	private NodeContentSection nodeContent;
 	private TestingSection testingSection;
 	private ExportingSection exportingSection;
-	private AuthorsSection fAuthorsSection;
 	private Resource dcdResource;
 	private Resource spdResource;
 
@@ -257,10 +255,6 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 			}
 
 			refresh(this.spdResource);
-		} else if (resource == this.spdResource) {
-			if (this.fAuthorsSection != null) {
-				this.fAuthorsSection.refresh(resource);
-			}
 		}
 	}
 }

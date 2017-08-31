@@ -12,15 +12,6 @@
 <?eclipse version="3.4"?>
 <plugin>
  <extension
-         point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
-      <editpolicyProvider
-            class="gov.redhawk.ide.dcd.ui.providers.DcdIdeEditPolicyProvider">
-         <Priority
-               name="Medium">
-         </Priority>
-      </editpolicyProvider>
-   </extension>
- <extension
          point="org.eclipse.ui.newWizards">
       <wizard
             canFinishEarly="false"
@@ -69,20 +60,6 @@
       </primaryWizard>
    </extension>
  <extension
-       point="org.eclipse.ui.editors">
-    <editor
-          class="gov.redhawk.ide.dcd.internal.ui.editor.NodeEditor"
-          contributorClass="gov.redhawk.ide.dcd.internal.ui.editor.NodeEditorActionBarContributor"
-          default="false"
-          icon="icons/obj16/SpdModelFile.gif"
-          id="gov.redhawk.ide.ui.editors.NodeEditor"
-          name="%editor.name">
-       <contentTypeBinding
-             contentTypeId="mil.jpeojtrs.sca.dcd.content-type">
-       </contentTypeBinding>
-    </editor>
- </extension>
- <extension
        point="org.eclipse.ui.menus">
     <menuContribution
           locationURI="popup:org.eclipse.ui.popup.any?after=additions">
@@ -125,26 +102,6 @@
           id="gov.redhawk.ide.dcd.ui.command.LaunchDeviceManager"
           name="%command.name">
     </command>
- </extension>
- <extension
-       point="gov.redhawk.sca.ui.scaContentTypes">
-    <contentTypeBinding
-          contentTypeId="mil.jpeojtrs.sca.dcd.contentType"
-          editorId="gov.redhawk.ide.ui.editors.NodeEditor"
-          priority="LOWEST">
-    </contentTypeBinding>
- </extension>
- <extension
-       point="org.eclipse.gmf.runtime.diagram.ui.paletteProviders">
-    <paletteProvider
-          class="gov.redhawk.ide.dcd.internal.ui.DcdPaletteProvider">
-       <Priority
-             name="Low">
-       </Priority>
-       <editor
-             class="mil.jpeojtrs.sca.dcd.diagram.part.DcdDiagramEditor(mil.jpeojtrs.sca.dcd.diagram)">
-       </editor>
-    </paletteProvider>
  </extension>
    
    

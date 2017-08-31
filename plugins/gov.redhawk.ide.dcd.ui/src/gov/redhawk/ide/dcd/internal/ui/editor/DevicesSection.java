@@ -63,8 +63,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 import gov.redhawk.core.graphiti.dcd.ui.utils.DCDUtils;
 import gov.redhawk.ide.dcd.internal.ui.DcdComponentContentProvider;
-import gov.redhawk.ide.dcd.internal.ui.editor.provider.DcdItemProviderAdapterFactoryAdapter;
-import gov.redhawk.ide.dcd.internal.ui.editor.provider.DevicesSectionComponentPlacementItemProvider;
 import gov.redhawk.ide.dcd.ui.wizard.ScaNodeProjectDevicesWizardPage;
 import gov.redhawk.ide.sdr.LoadState;
 import gov.redhawk.ide.sdr.SdrRoot;
@@ -214,13 +212,8 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 	private AdapterFactory getAdapterFactory() {
 		if (this.adapterFactory == null) {
 			this.adapterFactory = new ComposedAdapterFactory();
-			final DcdItemProviderAdapterFactoryAdapter dcdAdapter = new DcdItemProviderAdapterFactoryAdapter();
-			dcdAdapter.setComponentPlacementAdapter(new DevicesSectionComponentPlacementItemProvider(dcdAdapter));
-
-			this.adapterFactory.addAdapterFactory(dcdAdapter);
 			this.adapterFactory.addAdapterFactory(new DcdItemProviderAdapterFactory());
 			this.adapterFactory.addAdapterFactory(new ResourceItemProviderAdapterFactory());
-
 			this.adapterFactory.addAdapterFactory(new EcoreItemProviderAdapterFactory());
 			this.adapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
 		}
