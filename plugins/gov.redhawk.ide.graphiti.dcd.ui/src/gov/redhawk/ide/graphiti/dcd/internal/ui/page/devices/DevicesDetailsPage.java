@@ -40,9 +40,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.ide.dcd.internal.ui.editor.DevicesPage;
-import gov.redhawk.ide.dcd.internal.ui.editor.DevicesSection;
-import gov.redhawk.ide.dcd.internal.ui.editor.composite.DeviceDetailsComposite;
 import gov.redhawk.ui.editor.ScaDetails;
 import gov.redhawk.ui.parts.FormEntryBindingFactory;
 import gov.redhawk.ui.util.EMFEmptyStringToNullUpdateValueStrategy;

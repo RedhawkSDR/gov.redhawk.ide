@@ -29,6 +29,7 @@ import gov.redhawk.common.ui.editor.FormLayoutFactory;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.HelpContextIds;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.ScaIdeConstants;
 import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
+import gov.redhawk.ide.spd.internal.ui.editor.ProjectDocumentationSection;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
 import gov.redhawk.ui.editor.SCAFormEditor;
