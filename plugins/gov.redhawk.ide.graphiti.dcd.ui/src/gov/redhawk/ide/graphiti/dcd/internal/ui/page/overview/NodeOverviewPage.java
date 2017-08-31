@@ -39,7 +39,7 @@ import mil.jpeojtrs.sca.dcd.DeviceManagerSoftPkg;
  * @since 1.1
  */
 public class NodeOverviewPage extends AbstractOverviewPage {
-
+ 
 	public static final String PAGE_ID = "nodeOverview";
 	private static final String TOOLBAR_ID = "gov.redhawk.ide.dcd.internal.ui.editor.overview.toolbar";
 	private GeneralInfoSection fInfoSection;
