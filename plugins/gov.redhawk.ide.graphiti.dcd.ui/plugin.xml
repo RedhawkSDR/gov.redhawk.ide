@@ -148,5 +148,97 @@
                tab="gov.redhawk.ide.graphiti.dcd.ui.propertyTab.requirements">
          </propertySection>
       </propertySections>
+    </extension>
+	<extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="gov.redhawk.ide.graphiti.dcd.internal.ui.handlers.LaunchDeviceManager"
+            id="gov.redhawk.ide.graphiti.dcd.ui.command.LaunchDeviceManager"
+            name="%command.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="gov.redhawk.ide.graphiti.dcd.internal.ui.handlers.LaunchDeviceManager"
+            commandId="gov.redhawk.ide.graphiti.dcd.ui.command.LaunchDeviceManager">
+         <activeWhen>
+            <iterate
+                  ifEmpty="false"
+                  operator="or">
+               <instanceof
+                     value="gov.redhawk.ide.sdr.SdrRoot">
+               </instanceof>
+            </iterate>
+         </activeWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="gov.redhawk.ide.graphiti.dcd.ui.command.LaunchDeviceManager"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <instanceof
+                        value="mil.jpeojtrs.sca.dcd.DeviceConfiguration">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="gov.redhawk.ide.ui.wizards.category.sca"
+            class="gov.redhawk.ide.graphiti.dcd.ui.project.wizards.NewScaNodeProjectWizard"
+            finalPerspective="gov.redhawk.ide.ui.perspectives.sca"
+            hasPages="true"
+            icon="icons/newprj_wiz.gif"
+            id="gov.redhawk.ide.ui.wizards.newnode"
+            name="%wizard.name"
+            preferredPerspectives="gov.redhawk.ide.ui.wizards.category.sca, org.eclipse.cdt.ui.CPerspective, org.python.pydev.ui.PythonPerspective"
+            project="true">
+      </wizard>
+      <primaryWizard
+            id="gov.redhawk.ide.ui.wizards.newnode">
+      </primaryWizard>
+      <wizard
+            canFinishEarly="false"
+            category="gov.redhawk.ide.ui.wizards.category.sca"
+            class="gov.redhawk.ide.graphiti.dcd.ui.project.wizards.NewScaDeviceCreationProjectWizard"
+            finalPerspective="gov.redhawk.ide.ui.perspectives.sca"
+            hasPages="true"
+            icon="icons/newprj_wiz.gif"
+            id="gov.redhawk.ide.ui.wizard.newdevice"
+            name="%wizard.name.0"
+            preferredPerspectives="gov.redhawk.ide.ui.wizards.category.sca, org.eclipse.cdt.ui.CPerspective, org.python.pydev.ui.PythonPerspective"
+            project="true">
+      </wizard>
+      <primaryWizard
+            id="gov.redhawk.ide.ui.wizard.newdevice">
+      </primaryWizard>
+      <wizard
+            canFinishEarly="false"
+            category="gov.redhawk.ide.ui.wizards.category.sca"
+            class="gov.redhawk.ide.graphiti.dcd.ui.project.wizards.NewScaServiceCreationProjectWizard"
+            finalPerspective="gov.redhawk.ide.ui.perspectives.sca"
+            hasPages="true"
+            icon="icons/newprj_wiz.gif"
+            id="gov.redhawk.ide.ui.wizard.newservice"
+            name="%wizard.name.1"
+            preferredPerspectives="gov.redhawk.ide.ui.wizards.category.sca, org.eclipse.cdt.ui.CPerspective, org.python.pydev.ui.PythonPerspective"
+            project="true">
+      </wizard>
+      <primaryWizard
+            id="gov.redhawk.ide.ui.wizard.newservice">
+      </primaryWizard>
    </extension>
 </plugin>

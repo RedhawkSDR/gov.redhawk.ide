@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package gov.redhawk.ide.dcd.ui.wizard;
+package gov.redhawk.ide.graphiti.dcd.ui.project.wizards;
 
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
 import gov.redhawk.ide.codegen.util.ImplementationAndSettings;

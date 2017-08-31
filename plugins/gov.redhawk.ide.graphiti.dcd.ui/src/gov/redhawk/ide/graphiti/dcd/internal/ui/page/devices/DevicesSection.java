@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.dcd.internal.ui.editor;
+package gov.redhawk.ide.graphiti.dcd.internal.ui.page.devices;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -60,8 +60,8 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import gov.redhawk.core.graphiti.dcd.ui.utils.DCDUtils;
-import gov.redhawk.ide.dcd.internal.ui.DcdComponentContentProvider;
-import gov.redhawk.ide.dcd.ui.wizard.ScaNodeProjectDevicesWizardPage;
+import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.DcdComponentContentProvider;
+import gov.redhawk.ide.graphiti.dcd.ui.project.wizards.ScaNodeProjectDevicesWizardPage;
 import gov.redhawk.ide.sdr.LoadState;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;

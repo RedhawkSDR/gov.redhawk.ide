@@ -36,8 +36,15 @@ Require-Bundle: gov.redhawk.ide.dcd.ui,
  mil.jpeojtrs.sca.spd,
  gov.redhawk.core.graphiti.ui,
  gov.redhawk.core.graphiti.dcd.ui;visibility:=reexport,
- gov.redhawk.ide.debug.ui
+ gov.redhawk.ide.debug.ui,
+ org.eclipse.core.databinding.property,
+ gov.redhawk.ide.spd.ui,
+ gov.redhawk.ide.codegen.ui,
+ gov.redhawk.ide,
+ org.eclipse.core.databinding.beans,
+ gov.redhawk.eclipsecorba.library.ui
 Bundle-ActivationPolicy: lazy
 Export-Package: gov.redhawk.ide.graphiti.dcd.internal.ui.editor,
  gov.redhawk.ide.graphiti.dcd.ui,
- gov.redhawk.ide.graphiti.dcd.ui.diagram.providers
+ gov.redhawk.ide.graphiti.dcd.ui.diagram.providers,
+ gov.redhawk.ide.graphiti.dcd.ui.project.wizards

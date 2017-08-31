@@ -9,10 +9,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package gov.redhawk.ide.dcd.internal.ui.editor;
+package gov.redhawk.ide.graphiti.dcd.internal.ui.page.devices;
 
-import gov.redhawk.ide.dcd.internal.ui.HelpContextIds;
-import gov.redhawk.ide.dcd.internal.ui.ScaIdeConstants;
+import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.HelpContextIds;
+import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.ScaIdeConstants;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
 

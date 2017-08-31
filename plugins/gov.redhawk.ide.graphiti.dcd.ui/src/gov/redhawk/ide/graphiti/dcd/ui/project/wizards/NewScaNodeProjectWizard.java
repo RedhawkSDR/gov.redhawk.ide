@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package gov.redhawk.ide.dcd.ui.wizard;
+package gov.redhawk.ide.graphiti.dcd.ui.project.wizards;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -43,7 +43,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
-import gov.redhawk.ide.dcd.ui.DcdUiActivator;
+import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import mil.jpeojtrs.sca.dcd.DcdFactory;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.dcd.DomainManager;
@@ -142,7 +142,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 							try {
 								dcd.eResource().save(null);
 							} catch (IOException e) {
-								throw new CoreException(new Status(IStatus.ERROR, DcdUiActivator.PLUGIN_ID, "Failed to modify DCD File."));
+								throw new CoreException(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to modify DCD File."));
 							}
 							openEditorOn.refreshLocal(IResource.DEPTH_ONE, null);
 						}
@@ -157,7 +157,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 				IDE.openEditor(activePage, this.openEditorOn, true);
 			}
 		} catch (final InvocationTargetException x) {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, DcdUiActivator.PLUGIN_ID, x.getCause().getMessage(), x.getCause()),
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, x.getCause().getMessage(), x.getCause()),
 				StatusManager.SHOW | StatusManager.LOG);
 			return false;
 		} catch (final InterruptedException x) {

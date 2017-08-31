@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.dcd.internal.ui;
+package gov.redhawk.ide.graphiti.dcd.internal.ui.page.overview;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -16,7 +16,7 @@ import org.eclipse.osgi.util.NLS;
  * 
  */
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "gov.redhawk.ide.dcd.internal.ui.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "gov.redhawk.ide.graphiti.dcd.internal.ui.page.overview.messages"; //$NON-NLS-1$
 	public static String ExportingSection_ExportForm; // SUPPRESS CHECKSTYLE VariableName
 	public static String ExportingSection_SectionTitle; // SUPPRESS CHECKSTYLE VariableName
 	static {
