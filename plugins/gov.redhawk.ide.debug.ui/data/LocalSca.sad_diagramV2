@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:diagram="http://sca.jpeojtrs.mil/diagram" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:sad="http://sca.jpeojtrs.mil/sad" xmi:id="___LjcLC2EeGjqedH7Kp3yg" type="Sad" name="LocalSca.sad_diagramV2" measurementUnit="Pixel">
-  <styles xmi:type="notation:DiagramStyle" xmi:id="___LjcbC2EeGjqedH7Kp3yg"/>
-  <styles xmi:type="diagram:EObjectContainerStyle" xmi:id="___LjcrC2EeGjqedH7Kp3yg" name="FindByStubContainer"/>
-  <element xmi:type="sad:SoftwareAssembly" href="LocalSca.sad.xml#LocalSca"/>
-</notation:Diagram>
