@@ -52,7 +52,7 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 	public NodeOverviewPage(final SCAFormEditor editor) {
 		super(editor, NodeOverviewPage.PAGE_ID, "Overview");
 	}
-
+ 
 	@Override
 	public SCAFormEditor getEditor() {
 		return super.getEditor();
