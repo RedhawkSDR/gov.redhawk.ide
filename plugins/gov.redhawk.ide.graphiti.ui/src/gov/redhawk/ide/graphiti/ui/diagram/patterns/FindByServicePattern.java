@@ -11,7 +11,7 @@
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.core.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
-import gov.redhawk.diagram.util.FindByStubUtil;
+import gov.redhawk.core.graphiti.ui.util.FindByStubUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.wizards.FindByServiceWizardPage;
