@@ -92,40 +92,6 @@
      </commonFilter>
      <commonFilter
            activeByDefault="true"
-           description="%commonFilter.description.sadDiagram"
-           id="gov.redhawk.ui.filter.sad_diagram"
-           name="%commonFilter.name.sadDiagram">
-        <filterExpression>
-           <and>
-              <adapt
-                    type="org.eclipse.core.resources.IResource">
-                 <test
-                       property="org.eclipse.core.resources.name"
-                       value="*.sad_diagram">
-                 </test>
-              </adapt>
-           </and>
-        </filterExpression>
-     </commonFilter>
-     <commonFilter
-           activeByDefault="true"
-           description="%commonFilter.description.sadDiagramV2"
-           id="gov.redhawk.ui.filter.sad_diagramV2"
-           name="%commonFilter.name.sadDiagramV2">
-        <filterExpression>
-           <and>
-              <adapt
-                    type="org.eclipse.core.resources.IResource">
-                 <test
-                       property="org.eclipse.core.resources.name"
-                       value="*.sad_diagramV2">
-                 </test>
-              </adapt>
-           </and>
-        </filterExpression>
-     </commonFilter>
-     <commonFilter
-           activeByDefault="true"
            description="%commonFilter.description.componentChildren"
            id="gov.redhawk.ui.filter.component"
            name="%commonFilter.name.componentChildren">
@@ -138,40 +104,6 @@
                     value="mil.jpeojtrs.sca.spd.Author">
               </instanceof>
            </or>
-        </filterExpression>
-     </commonFilter>
-     <commonFilter
-           activeByDefault="true"
-           description="%commonFilter.description.dcdDiagram"
-           id="gov.redhawk.ui.filter.dcd_diagram"
-           name="%commonFilter.name.dcdDiagram">
-        <filterExpression>
-           <and>
-              <adapt
-                    type="org.eclipse.core.resources.IResource">
-                 <test
-                       property="org.eclipse.core.resources.name"
-                       value="*.dcd_diagram">
-                 </test>
-              </adapt>
-           </and>
-        </filterExpression>
-     </commonFilter>
-     <commonFilter
-           activeByDefault="true"
-           description="%commonFilter.description.dcdDiagramV2"
-           id="gov.redhawk.ui.filter.dcd_diagramV2"
-           name="%commonFilter.name.dcdDiagramV2">
-        <filterExpression>
-           <and>
-              <adapt
-                    type="org.eclipse.core.resources.IResource">
-                 <test
-                       property="org.eclipse.core.resources.name"
-                       value="*.dcd_diagramV2">
-                 </test>
-              </adapt>
-           </and>
         </filterExpression>
      </commonFilter>
      <commonFilter
