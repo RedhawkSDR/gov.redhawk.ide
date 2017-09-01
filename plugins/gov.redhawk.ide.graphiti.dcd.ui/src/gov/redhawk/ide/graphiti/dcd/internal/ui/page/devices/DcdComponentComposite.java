@@ -29,7 +29,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
 import gov.redhawk.common.ui.parts.FormEntry;
-import gov.redhawk.diagram.sheet.properties.ComponentInstantiationPropertyViewerAdapter;
+import gov.redhawk.core.graphiti.ui.adapters.ComponentInstantiationPropertyViewerAdapter;
 import gov.redhawk.sca.ui.ScaComponentFactory;
 import gov.redhawk.sca.ui.properties.ScaPropertiesAdapterFactory;
 import gov.redhawk.ui.editor.IScaComposite;

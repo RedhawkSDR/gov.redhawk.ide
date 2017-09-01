@@ -23,8 +23,8 @@ import org.eclipse.graphiti.util.IColorConstant;
 
 import gov.redhawk.core.graphiti.ui.diagram.providers.IDecoratorProvider;
 import gov.redhawk.core.graphiti.ui.diagram.providers.IToolTipDelegate;
+import gov.redhawk.core.graphiti.ui.util.InterfacesUtil;
 import gov.redhawk.core.graphiti.ui.util.StyleUtil;
-import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
