@@ -54,5 +54,6 @@ Require-Bundle: org.eclipse.ui.forms,
  org.apache.commons.lang,
  gov.redhawk.frontend.ui,
  gov.redhawk.ide.sad,
- gov.redhawk.core.graphiti.sad.ui
+ gov.redhawk.core.graphiti.sad.ui,
+ org.eclipse.ui.views.properties.tabbed
 
