@@ -32,7 +32,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
-import gov.redhawk.ide.graphiti.sad.internal.ui.editor.overview.ProjectDocumentationSection;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
 import gov.redhawk.model.sca.util.ModelUtil;

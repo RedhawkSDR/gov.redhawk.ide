@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  */
-package gov.redhawk.ide.graphiti.sad.internal.ui.editor.overview;
+package gov.redhawk.ide.graphiti.sad.internal.ui.page.overview;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;

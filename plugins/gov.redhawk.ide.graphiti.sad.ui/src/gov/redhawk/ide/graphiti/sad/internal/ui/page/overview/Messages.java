@@ -20,6 +20,13 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "gov.redhawk.ide.graphiti.sad.internal.ui.page.overview.messages"; //$NON-NLS-1$
 	public static String ExportingSection_Export_Form;
 	public static String ExportingSection_Title;
+	public static String GeneralInformationComposite_AssemblyController_Tooltip;
+	public static String GeneralInformationComposite_ID_Tooltip;
+	public static String GeneralInformationComposite_Version_Tooltip;
+	public static String ProjectDocumentationSection_AddHeaderText;
+	public static String ProjectDocumentationSection_CannotOpenHeaderMessage;
+	public static String ProjectDocumentationSection_CannotOpenHeaderTitle;
+	public static String ProjectDocumentationSection_SectionTitle;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(Messages.BUNDLE_NAME, Messages.class);

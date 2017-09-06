@@ -69,7 +69,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 import gov.redhawk.core.graphiti.sad.ui.utils.SADUtils;
 import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiSADEditor;
-import gov.redhawk.ide.sad.ui.wizard.ScaComponentsWizardPage;
 import gov.redhawk.ide.sdr.LoadState;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;

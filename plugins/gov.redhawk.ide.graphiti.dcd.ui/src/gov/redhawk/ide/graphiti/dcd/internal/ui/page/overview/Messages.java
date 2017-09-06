@@ -12,10 +12,19 @@ package gov.redhawk.ide.graphiti.dcd.internal.ui.page.overview;
 
 import org.eclipse.osgi.util.NLS;
 
+//BEGIN GENERATED CODE
+
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "gov.redhawk.ide.graphiti.dcd.internal.ui.page.overview.messages"; //$NON-NLS-1$
-	public static String ExportingSection_ExportForm; // SUPPRESS CHECKSTYLE VariableName
-	public static String ExportingSection_SectionTitle; // SUPPRESS CHECKSTYLE VariableName
+	public static String ExportingSection_ExportForm;
+	public static String ExportingSection_SectionTitle;
+
+	public static String ProjectDocumentationSection_AddHeaderText;
+	public static String ProjectDocumentationSection_CannotOpenHeaderMessage;
+	public static String ProjectDocumentationSection_CannotOpenHeaderTitle;
+	public static String ProjectDocumentationSection_SectionTitle;
+
+	public static String GeneralInformationComposite_ID_Tooltip;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(Messages.BUNDLE_NAME, Messages.class);
@@ -24,3 +33,5 @@ public class Messages extends NLS {
 	private Messages() {
 	}
 }
+
+//END GENERATED CODE

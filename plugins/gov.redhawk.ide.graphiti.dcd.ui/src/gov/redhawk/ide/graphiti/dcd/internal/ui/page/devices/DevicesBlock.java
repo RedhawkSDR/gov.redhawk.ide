@@ -18,9 +18,6 @@ import org.eclipse.ui.forms.IDetailsPageProvider;
 import org.eclipse.ui.forms.IManagedForm;
 
 import CF.PortSupplierHelper;
-import gov.redhawk.ide.dcd.internal.ui.editor.detailspart.DevicesDetailsPage;
-import gov.redhawk.ide.dcd.internal.ui.editor.detailspart.ServicesDetailsPage;
-import gov.redhawk.ide.dcd.internal.ui.editor.detailspart.ServicesDetailsPage2;
 import gov.redhawk.ui.editor.SCAMasterDetailsBlock;
 import gov.redhawk.ui.editor.ScaSection;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
