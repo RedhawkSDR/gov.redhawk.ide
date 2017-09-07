@@ -224,16 +224,6 @@
            name="%commands.category.name.sca">
      </category>
   </extension>
-      <extension
-          point="org.eclipse.ui.commands">
-       <command
-             categoryId="gov.redhawk.ide.ui.category"
-             defaultHandler="gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesHandler"
-             description="%command.description.cleanUpComponentFiles"
-             id="gov.redhawk.ide.ui.command.cleanUpComponentFiles"
-             name="%command.name.cleanUpComponentFiles">
-       </command>
-    </extension>
         <extension
           point="org.eclipse.ltk.core.refactoring.renameParticipants">
        <renameParticipant
