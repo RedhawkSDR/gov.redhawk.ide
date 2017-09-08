@@ -418,7 +418,11 @@ public final class StandardTestActions {
 	}
 
 	/**
-	 * Export the declared project from the Project Explorer to the Target SDR
+	 * Export a project from the Project Explorer to the Target SDR. Does <b>NOT</b> wait for the export to complete.
+	 * <p/>
+	 * If you need to wait for the export to complete, consider
+	 * {@link gov.redhawk.ide.swtbot.condition.WaitForExport WaitForExport} followed by
+	 * {@link gov.redhawk.ide.swtbot.condition.WaitForTargetSdrRootLoad WaitForTargetSdrRootLoad}.
 	 * @param projectName
 	 * @param bot
 	 */
