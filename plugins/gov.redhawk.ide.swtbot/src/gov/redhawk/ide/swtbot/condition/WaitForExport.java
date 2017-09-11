@@ -10,8 +10,14 @@
  */
 package gov.redhawk.ide.swtbot.condition;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.ui.statushandlers.StatusManager;
+
+import gov.redhawk.ide.swtbot.SwtBotActivator;
 
 public class WaitForExport extends DefaultCondition {
 
@@ -27,14 +33,27 @@ public class WaitForExport extends DefaultCondition {
 	 */
 	public static final long TIMEOUT_SHORT = 10000;
 
+	private boolean foundJob;
+
+	@Override
+	public void init(SWTBot bot) {
+		super.init(bot);
+		foundJob = false;
+	}
+
 	@Override
 	public boolean test() throws Exception {
 		// Ensure the refresh job isn't queued / running
 		Job[] jobs = Job.getJobManager().find(null);
 		for (Job job : jobs) {
 			if ("ExportToSdrRootJob".equals(job.getClass().getSimpleName())) {
+				foundJob = true;
 				return false;
 			}
+		}
+
+		if (!foundJob) {
+			StatusManager.getManager().handle(new Status(IStatus.INFO, SwtBotActivator.PLUGIN_ID, "Export job was not scheduled/running"), StatusManager.LOG);
 		}
 		return true;
 	}
