@@ -149,15 +149,7 @@ public class LocalApplicationFactory {
 			waveform.setMode(this.launch.getLaunchMode());
 			waveform.setNamingContext(LocalApplicationFactory.createWaveformContext(namingContext, name));
 
-			app = new ApplicationImpl(waveform, appId, name);
-			app.setLaunching(true);
-			this.launch.addProcess(app);
-			waveform.setLocalApp(app);
-
-			progress.subTask("Bind application");
-			LocalApplicationFactory.bindApp(app);
-			progress.worked(1);
-
+			// Profile URI and object
 			URI uri = sad.eResource().getURI();
 			if (uri.isFile()) {
 				waveform.setProfileURI(uri);
@@ -169,6 +161,15 @@ public class LocalApplicationFactory {
 				waveform.setProfileURI(sadUri);
 			}
 			waveform.fetchProfileObject(null);
+
+			app = new ApplicationImpl(waveform, appId, name);
+			app.setLaunching(true);
+			this.launch.addProcess(app);
+			waveform.setLocalApp(app);
+
+			progress.subTask("Bind application");
+			LocalApplicationFactory.bindApp(app);
+			progress.worked(1);
 
 			final LocalScaWaveform tmpWaveform = waveform;
 			ScaModelCommand.execute(this.localSca, new ScaModelCommand() {

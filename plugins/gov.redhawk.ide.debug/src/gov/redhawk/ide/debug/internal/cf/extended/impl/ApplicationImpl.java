@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.filesystem.EFS;
@@ -118,6 +119,8 @@ import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.ExternalProperties;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
+import mil.jpeojtrs.sca.sad.Option;
+import mil.jpeojtrs.sca.sad.Options;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadPackage;
@@ -125,6 +128,7 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.sad.util.StartOrderComparator;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.CFErrorFormatter;
+import mil.jpeojtrs.sca.util.CorbaUtils;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
@@ -264,6 +268,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 	private static final EStructuralFeature[] ASSEMBLY_ID_PATH = new EStructuralFeature[] { SadPackage.Literals.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER,
 		SadPackage.Literals.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID };
+	private static final float DEFAULT_STOP_TIMEOUT = 3.0f;
+	private static final float RELEASE_TIMEOUT = 3.0f;
+
 	private LocalScaComponent assemblyController;
 	private NotifyingNamingContext waveformContext;
 	private final ApplicationStreams streams = new ApplicationStreams();
@@ -297,6 +304,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	private boolean aware = false;
 
+	/**
+	 * @see CF.ApplicationOperations#stopTimeout()
+	 */
+	private float stopTimeout = DEFAULT_STOP_TIMEOUT;
+
 	private final Application delegate;
 	private volatile boolean launching;
 	private boolean isSandboxChalkboard;
@@ -309,6 +321,28 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.profile = waveform.getProfile();
 		this.waveform = waveform;
 		this.delegate = delegate;
+
+		if (waveform.getProfileObj() != null) {
+			Options options = waveform.getProfileObj().getOptions();
+			if (options != null) {
+				for (Option option : options.getOption()) {
+					if (option.getName() == null) {
+						continue;
+					}
+					switch (option.getName()) {
+					case "STOP_TIMEOUT":
+						try {
+							stopTimeout = Float.parseFloat(option.getValue());
+						} catch (NumberFormatException e) {
+							this.streams.getErrStream().println("Invalid stop timeout in SAD file (not a number)");
+						}
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
 
 		// Is this the sandbox chalkboard?
 		isSandboxChalkboard = ScaDebugInstance.getLocalSandboxWaveformURI().equals(waveform.getProfileURI());
@@ -437,6 +471,10 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 	@Override
 	public void stop() throws StopError {
+		stop(stopTimeout);
+	}
+
+	public void stop(float timeout) throws StopError {
 		try {
 			waitOnLaunch();
 		} catch (InterruptedException e) {
@@ -447,7 +485,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 		this.streams.getOutStream().println("Stopping...");
 
-		int stopErrors = waveform.getComponentsCopy().stream() //
+		List<ScaComponent> compsToStop = waveform.getComponentsCopy().stream() //
 				.filter(component -> {
 					// Must be a locally launched component
 					if (!(component instanceof LocalScaComponent)) {
@@ -471,19 +509,35 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 					return component.getComponentInstantiation().getStartOrder() != null;
 				}) //
 				.sorted(new ScaComponentComparator().reversed()) // Reverse start order
-				.map(component -> {
-					this.streams.getOutStream().println("\t" + component.getInstantiationIdentifier());
-					try {
-						// TODO: Impose a 3-second timeout like the CF
-						component.stop();
-						return true;
-					} catch (StopError e) {
-						this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + component.getName()));
-						return false;
-					}
-				}) // List of booleans indicating successful / failed stop
-				.mapToInt(stopResult -> (stopResult) ? 0 : 1) //
-				.sum();
+				.collect(Collectors.toList());
+		int stopErrors = 0;
+		for (ScaComponent component : compsToStop) {
+			String instId = component.getInstantiationIdentifier();
+			this.streams.getOutStream().println("\t" + instId);
+			try {
+				CorbaUtils.invoke(() -> {
+					component.stop();
+					return null;
+				}, (long) (timeout * 1000));
+			} catch (InterruptedException e) {
+				this.streams.getErrStream().println("Interrupted while attempting to stop.");
+				throw new StopError(ErrorNumberType.CF_EINTR, "Interrupted while attempting to stop.");
+			} catch (TimeoutException e) {
+				this.streams.getErrStream().println("Timed out while stopping component " + instId);
+				stopErrors++;
+			} catch (CoreException e) {
+				if (e.getCause() instanceof StopError) {
+					this.streams.getErrStream().println(CFErrorFormatter.format((StopError) e.getCause(), "component " + instId));
+				} else if (e.getCause() instanceof SystemException) {
+					String msg = String.format("CORBA exception while stopping component %s", instId);
+					this.streams.getErrStream().println(msg);
+					this.streams.getErrStream().println(e.getCause().getMessage());
+				} else {
+					this.streams.getErrStream().println(e.getMessage());
+				}
+				stopErrors++;
+			}
+		}
 
 		boolean delegateFailure = false;
 		if (this.delegate != null) {
@@ -574,12 +628,16 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("Releasing Application...");
 
 		try {
-			stop();
+			stop(DEFAULT_STOP_TIMEOUT);
 		} catch (StopError e) {
 			// Ignore and continue teardown
 		}
 		disconnectAll();
-		releaseAll();
+		try {
+			releaseAll();
+		} catch (InterruptedException e) {
+			throw new ReleaseError(new String[] { "Interrupted while releasing components" });
+		}
 
 		// For the sandbox chalkboard, we're done
 		if (isSandboxChalkboard) {
@@ -672,9 +730,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	/**
-	 * Release all <b>local</b> components, local component hosts
+	 * Release all <b>local</b> components, local component hosts.
 	 */
-	protected void releaseAll() {
+	protected void releaseAll() throws InterruptedException {
 		this.streams.getOutStream().println("Releasing components...");
 		// Shutdown each component
 		for (final ScaComponent component : this.waveform.getComponentsCopy()) {
@@ -696,18 +754,29 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("Released components");
 	}
 
-	protected void release(final ScaAbstractComponent< ? > resource, String name) {
+	protected void release(final ScaAbstractComponent< ? > resource, String name) throws InterruptedException {
 		this.streams.getOutStream().println("\tReleasing component " + name);
 		try {
-			resource.releaseObject();
-		} catch (ReleaseError e) {
-			String msg = "Problems while releasing component " + name;
+			CorbaUtils.invoke(() -> {
+				resource.releaseObject();
+				return null;
+			}, (long) (RELEASE_TIMEOUT * 1000.0));
+		} catch (InterruptedException e) {
+			String msg = "Interrupted while attempting to stop.";
 			this.streams.getErrStream().println(msg);
-			this.streams.getErrStream().println(CFErrorFormatter.format(e, "component " + name));
-		} catch (final SystemException e) {
-			String msg = "Problems while releasing component " + name;
-			this.streams.getErrStream().println(msg);
-			this.streams.getErrStream().println(e.toString());
+			throw e;
+		} catch (TimeoutException e) {
+			this.streams.getErrStream().println("Timed out while releasing component " + name);
+		} catch (CoreException e) {
+			if (e.getCause() instanceof ReleaseError) {
+				String msg = String.format("Problems while releasing component %s", name);
+				this.streams.getErrStream().println(msg);
+				this.streams.getErrStream().println(CFErrorFormatter.format((ReleaseError) e.getCause(), "component " + name));
+			} else {
+				String msg = String.format("Problems while releasing component %s", name);
+				this.streams.getErrStream().println(msg);
+				this.streams.getErrStream().println(e.toString());
+			}
 		}
 	}
 
@@ -1198,6 +1267,16 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	@Override
+	public float stopTimeout() {
+		return stopTimeout;
+	}
+
+	@Override
+	public void stopTimeout(float newStopTimeout) {
+		this.stopTimeout = newStopTimeout;
+	}
+
+	@Override
 	public boolean canTerminate() {
 		return !this.terminated;
 	}
@@ -1306,7 +1385,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		final List<ConnectionInfo> oldConnections = getConnectionInfo(oldComponent);
 
 		disconnect(oldConnections);
-		release(oldComponent, oldComponent.getName());
+		try {
+			release(oldComponent, oldComponent.getName());
+		} catch (InterruptedException e1) {
+			throw new ReleaseError(new String[] { "Interrupted while releasing component" });
+		}
 		if (oldComponent.getLaunch() != null && oldComponent.getLaunch().canTerminate()) {
 			try {
 				oldComponent.getLaunch().terminate();
