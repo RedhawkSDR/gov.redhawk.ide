@@ -486,63 +486,6 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * @deprecated Use {@link #waitUntilNodeAppearsInScaExplorer(SWTWorkbenchBot, String[], String)}
-	 */
-	@Deprecated
-	public static void waitUntilComponentDisplaysInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, final String componentName) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		final SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return componentName + " Component did not load into REDHAWK Explorer";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = waveformTreeItem.getItems();
-				for (SWTBotTreeItem item : items) {
-					if (item.getText().equals(componentName)) {
-						return true;
-					}
-				}
-				return false;
-			}
-		}, 10000);
-	}
-
-	/**
-	 * @deprecated Use {@link #waitUntilNodeRemovedFromScaExplorer(SWTWorkbenchBot, String[], String)}
-	 */
-	@Deprecated
-	public static void waitUntilComponentDisappearsInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform,
-		final String componentName) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-		final SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return componentName + " Component did not disappear from REDHAWK Explorer";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = waveformTreeItem.getItems();
-				for (SWTBotTreeItem item : items) {
-					if (item.getText().equals(componentName)) {
-						return false;
-					}
-				}
-				return true;
-			}
-		});
-	}
-
-	/**
 	 * Waits until REDHAWK Explorer Waveform is stopped
 	 * @param componentName
 	 */
