@@ -82,7 +82,7 @@ public class ComponentDebugLaunch extends GdbLaunch  implements IComponentLaunch
 		if (parent == null) {
 			return " < DEBUGGING > ";
 		}
-		return " [" + parent.getLabel() + "] ";
+		return " < DEBUGGING > [" + parent.getLabel() + "] ";
 	}
 
 	@Override
