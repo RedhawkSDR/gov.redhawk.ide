@@ -265,10 +265,33 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	private boolean terminated;
 	private final ILaunch parentLaunch;
 	private LocalScaWaveform waveform;
-	private final String name;
+
+	/**
+	 * @see CF.ResourceOperations#identifier()
+	 */
 	private final String identifier;
-	private final String profile;
+
+	/**
+	 * @see CF.ResourceOperations#started()
+	 */
 	private boolean started;
+
+	/**
+	 * @see CF.ResourceOperations#softwareProfile()
+	 * @see CF.ApplicationOperations#profile()
+	 */
+	private final String profile;
+
+	/**
+	 * @see CF.ApplicationOperations#name()
+	 */
+	private final String name;
+
+	/**
+	 * @see CF.ApplicationOperations#aware()
+	 */
+	private boolean aware = false;
+
 	private final Application delegate;
 	private volatile boolean launching;
 	private boolean isSandboxChalkboard;
@@ -1136,7 +1159,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 	@Override
 	public boolean aware() {
-		return true;
+		return aware;
 	}
 
 	@Override
