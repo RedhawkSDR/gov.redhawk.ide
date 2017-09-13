@@ -25,7 +25,6 @@ import org.eclipse.swtbot.swt.finder.matchers.AbstractMatcher;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarToggleButton;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -197,26 +196,6 @@ public class ConsoleUtils {
 		IPreferenceStore preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, DEBUG_UI_PLUGIN_ID);
 		preferenceStore.setValue(CONSOLE_OPEN_ON_OUT, false);
 		preferenceStore.setValue(CONSOLE_OPEN_ON_ERR, false);
-	}
-
-	/**
-	 * @deprecated Use {@link #disableAutoShowConsole()}.
-	 */
-	@Deprecated
-	public static void disableAutoShowConsole(SWTWorkbenchBot bot) {
-		final String stdOutTT = "Show Console When Standard Out Changes";
-		final String errOutTT = "Show Console When Standard Error Changes";
-		SWTBotView view = ViewUtils.getConsoleView(bot);
-		view.setFocus();
-		List<SWTBotToolbarButton> buttons = view.getToolbarButtons();
-		for (SWTBotToolbarButton button : buttons) {
-			if (stdOutTT.equals(button.getToolTipText()) || errOutTT.equals(button.getToolTipText())) {
-				SWTBotToolbarToggleButton tmp = (SWTBotToolbarToggleButton) button;
-				if (tmp.isChecked()) {
-					button.click();
-				}
-			}
-		}
 	}
 
 	/**
