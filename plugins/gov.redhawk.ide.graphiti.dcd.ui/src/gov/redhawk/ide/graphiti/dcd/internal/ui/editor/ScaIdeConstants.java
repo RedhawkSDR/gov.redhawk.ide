@@ -14,6 +14,9 @@ import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 
 import org.eclipse.core.runtime.QualifiedName;
 
+/**
+ * @since 1.1
+ */
 public final class ScaIdeConstants {
 
 	public static final String PLUGIN_DOC_ROOT = "/gov.redhawk.ide.dcd.doc.user/"; //$NON-NLS-1$
