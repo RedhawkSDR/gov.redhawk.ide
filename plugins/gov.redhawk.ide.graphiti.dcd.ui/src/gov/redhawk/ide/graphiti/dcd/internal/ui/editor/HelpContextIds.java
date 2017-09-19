@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui.editor;
 
+/**
+ * @since 1.1
+ */
 public final class HelpContextIds {
 
 	public static final String PREFIX = "gov.redhawk.ide.dcd.doc.user."; //$NON-NLS-1$

@@ -41,6 +41,9 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
  */
 public class GraphitiSADEditor extends AbstractGraphitiSADEditor {
 
+	/**
+	 * @since 2.0
+	 */
 	public static final String ID = "gov.redhawk.ide.graphiti.sad.ui.editor.presentation.SadEditorID";
 
 	private ResourceListener nameListener;
