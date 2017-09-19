@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPropertiesWizardPage {
 

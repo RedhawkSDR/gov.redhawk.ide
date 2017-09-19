@@ -19,6 +19,9 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.Reservation;
 
+/**
+ * @since 2.0
+ */
 public class ReservationsContentProvider implements ITreeContentProvider {
 
 	@Override

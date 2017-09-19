@@ -15,7 +15,7 @@ import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public final class ScaIdeConstants {
 

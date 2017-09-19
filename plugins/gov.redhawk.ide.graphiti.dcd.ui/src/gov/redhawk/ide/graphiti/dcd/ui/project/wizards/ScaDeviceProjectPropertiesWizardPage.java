@@ -29,7 +29,7 @@ import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
 import gov.redhawk.ide.spd.ui.wizard.ScaResourceProjectPropertiesWizardPage;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectPropertiesWizardPage {
 

@@ -32,6 +32,7 @@ import mil.jpeojtrs.sca.sad.SadPackage;
  * An abstract implementation of component instantiations requirements property section.
  * This section displays either the device_requires or deployer_requires values of the selection.
  * Add/remove buttons handle adding/removing requires elements from the selection.
+ * @since 2.0
  */
 public abstract class AbstractRequirementsPropertySection extends AbstractKeyValuePropertiesSection {
 

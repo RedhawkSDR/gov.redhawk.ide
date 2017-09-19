@@ -31,7 +31,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public class NewScaDeviceCreationProjectWizard extends NewScaResourceWizard implements IImportWizard {
 

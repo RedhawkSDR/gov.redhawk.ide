@@ -26,6 +26,9 @@ import mil.jpeojtrs.sca.sad.Reservation;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SadPackage;
 
+/**
+ * @since 2.0
+ */
 public class SadReservationsPropertySection extends AbstractKeyValuePropertiesSection {
 
 	private HostCollocation getSelectedHostCollocation() {

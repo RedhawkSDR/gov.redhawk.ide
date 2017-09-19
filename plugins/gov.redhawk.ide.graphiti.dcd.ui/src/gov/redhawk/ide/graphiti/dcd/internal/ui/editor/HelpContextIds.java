@@ -11,7 +11,7 @@
 package gov.redhawk.ide.graphiti.dcd.internal.ui.editor;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public final class HelpContextIds {
 

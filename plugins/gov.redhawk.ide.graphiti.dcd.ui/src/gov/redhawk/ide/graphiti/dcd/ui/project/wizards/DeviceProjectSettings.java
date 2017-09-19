@@ -16,7 +16,7 @@ import gov.redhawk.sca.util.PropertyChangeSupport;
 import java.beans.PropertyChangeListener;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public class DeviceProjectSettings {
 	private String deviceType = RedhawkIdePreferenceConstants.DEVICE;

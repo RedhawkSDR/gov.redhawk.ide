@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public class ScaNodeProjectPropertiesWizardPage extends ScaProjectPropertiesWizardPage {
 

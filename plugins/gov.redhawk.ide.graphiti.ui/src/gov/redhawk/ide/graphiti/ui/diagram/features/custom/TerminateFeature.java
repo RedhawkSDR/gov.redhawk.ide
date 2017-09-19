@@ -21,7 +21,9 @@ import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.SpdLauncherUtil;
 
 /**
+ * This feature gives the ability to terminate a locally-launched resource.
  * NOTE: The icon for this feature can be overridden in the associated ToolBehaviorProvider
+ * @since 2.0
  */
 public class TerminateFeature extends DefaultDeleteFeature {
 

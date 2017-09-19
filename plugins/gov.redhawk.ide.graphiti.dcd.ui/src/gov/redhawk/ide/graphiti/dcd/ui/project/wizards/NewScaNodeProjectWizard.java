@@ -53,7 +53,7 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
  * Wizard for creating new REDHAWK node projects.
- * @since 1.1
+ * @since 2.0
  */
 public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 

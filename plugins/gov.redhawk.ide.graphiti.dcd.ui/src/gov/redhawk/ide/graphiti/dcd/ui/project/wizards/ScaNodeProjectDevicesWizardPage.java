@@ -43,7 +43,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 

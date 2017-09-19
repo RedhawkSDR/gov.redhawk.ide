@@ -18,6 +18,9 @@ import gov.redhawk.ide.graphiti.ui.properties.AbstractRequirementsPropertySectio
 import mil.jpeojtrs.sca.partitioning.Requirements;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
+/**
+ * @since 2.0
+ */
 public class SadRequirementsPropertySection extends AbstractRequirementsPropertySection {
 
 	@Override

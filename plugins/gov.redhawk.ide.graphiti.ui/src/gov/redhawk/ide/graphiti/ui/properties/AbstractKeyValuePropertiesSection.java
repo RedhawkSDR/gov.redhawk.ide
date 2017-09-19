@@ -46,6 +46,7 @@ import mil.jpeojtrs.sca.partitioning.Requires;
 
 /**
  * Abstract class for property sections designed to display 0-to-many Key/Value pairings
+ * @since 2.0
  */
 public abstract class AbstractKeyValuePropertiesSection extends AbstractPropertiesSection {
 

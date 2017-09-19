@@ -20,6 +20,9 @@ import mil.jpeojtrs.sca.partitioning.Requirements;
 import mil.jpeojtrs.sca.partitioning.Requires;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
+/**
+ * @since 2.0
+ */
 public class RequirementsContentProvider implements ITreeContentProvider {
 
 	@Override

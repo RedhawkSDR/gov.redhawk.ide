@@ -25,6 +25,9 @@ import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.UsesDeviceRef;
 
+/**
+ * @since 2.0
+ */
 public class HostCollocationDecoratorProvider implements IDecoratorProvider {
 
 	protected static final IDecorator[] NO_DECORATORS = new IDecorator[0];

@@ -37,6 +37,9 @@ public class ImageProvider extends AbstractImageProvider implements IImageProvid
 	public static final String IMG_FIND_BY_DOMAIN_MANAGER = PREFIX + "findByDomainManager";
 	public static final String IMG_FIND_BY_FILE_MANAGER = PREFIX + "findByFileManager";
 	public static final String IMG_CONSOLE_VIEW = PREFIX + "consoleView";
+	/**
+	 * @since 2.0
+	 */
 	public static final String IMG_TERMINATE = PREFIX + "terminate";
 	public static final String IMG_USES_DEVICE = PREFIX + "usesDevice";
 

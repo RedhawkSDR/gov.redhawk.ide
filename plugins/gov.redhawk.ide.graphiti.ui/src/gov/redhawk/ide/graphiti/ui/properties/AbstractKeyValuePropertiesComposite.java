@@ -30,6 +30,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 
+/**
+ * @since 2.0
+ */
 public abstract class AbstractKeyValuePropertiesComposite extends Composite {
 
 	private TreeViewer treeViewer;

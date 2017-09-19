@@ -29,6 +29,7 @@ import mil.jpeojtrs.sca.sad.SadPackage;
 
 /**
  * Create the tree viewer for the {@link SadReservationsPropertySection}
+ * @since 2.0
  */
 public class ReservationsPropertyComposite extends AbstractKeyValuePropertiesComposite {
 

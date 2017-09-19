@@ -23,6 +23,7 @@ import mil.jpeojtrs.sca.partitioning.Requires;
 
 /**
  * Create the tree viewer for the {@link AbstractRequirementsPropertySection}
+ * @since 2.0
  */
 public class RequirementsPropertyComposite extends AbstractKeyValuePropertiesComposite {
 

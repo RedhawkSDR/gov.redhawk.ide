@@ -131,6 +131,9 @@ public class GraphitiDeviceManagerSandboxEditor extends GraphitiDeviceManagerExp
 		return modelMap;
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
 	protected ScaDeviceManagerModelAdapter getScaModelAdapter() {
 		return new LocalScaDeviceManagerModelAdapter(modelMap);

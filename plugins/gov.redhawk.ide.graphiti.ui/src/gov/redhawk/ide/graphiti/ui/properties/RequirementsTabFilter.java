@@ -24,6 +24,7 @@ import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 /**
  * Filter used to ensure the Requirements property tab is only displayed for {@link ComponentInstantiation}
  * objects in design-time diagrams.
+ * @since 2.0
  */
 public class RequirementsTabFilter extends CompoundFilter {
 

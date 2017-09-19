@@ -21,7 +21,7 @@ import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
 import mil.jpeojtrs.sca.dcd.DcdPartitioning;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public class DcdComponentContentProvider implements ITreeContentProvider {
 	private DcdPartitioning dcdPartitioning = null;

@@ -16,6 +16,9 @@ import org.eclipse.swt.graphics.Image;
 
 import mil.jpeojtrs.sca.partitioning.Requires;
 
+/**
+ * @since 2.0
+ */
 public class RequirementsLabelProvider extends BaseLabelProvider implements ITableLabelProvider {
 
 	@Override
