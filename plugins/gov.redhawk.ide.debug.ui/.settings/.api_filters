@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="gov.redhawk.ide.debug.ui" version="2">
-    <resource path="META-INF/MANIFEST.MF" type="gov.redhawk.ide.debug.ui.tabs.LocalAbstractMainTab">
-        <filter comment="Class was abstract and not intended to be used outside the package" id="305324134">
-            <message_arguments>
-                <message_argument value="gov.redhawk.ide.debug.ui.tabs.LocalAbstractMainTab"/>
-                <message_argument value="gov.redhawk.ide.debug.ui_3.0.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/gov/redhawk/ide/debug/ui/tabs/AbstractMainTab.java" type="gov.redhawk.ide.debug.ui.tabs.AbstractMainTab">
         <filter id="576720909">
             <message_arguments>
