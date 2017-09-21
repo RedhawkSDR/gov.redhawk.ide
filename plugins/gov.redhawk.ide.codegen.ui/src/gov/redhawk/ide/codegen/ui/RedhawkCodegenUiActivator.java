@@ -149,7 +149,7 @@ public class RedhawkCodegenUiActivator extends AbstractUIPlugin {
 	}
 
 	/**
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	public static ICodeGeneratorLanguagePageRegistry getCodeGeneratorsLanguageRegistry() {
 		if (RedhawkCodegenUiActivator.codeGeneratorLanguagePageRegistry == null) {

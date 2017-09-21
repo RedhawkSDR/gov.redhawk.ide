@@ -16,25 +16,15 @@ import gov.redhawk.ide.codegen.CodegenPackage;
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
 import gov.redhawk.ide.codegen.ITemplateDesc;
 import gov.redhawk.ide.codegen.ImplementationSettings;
-import gov.redhawk.ide.codegen.PortRepToGeneratorMap;
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
-import gov.redhawk.ide.codegen.ui.internal.GeneratorDialog;
-import gov.redhawk.ide.codegen.ui.internal.PortGeneratorComposite;
-import gov.redhawk.ui.editor.EMFTableViewerElementSelector;
 import gov.redhawk.ui.parts.FormEntryBindingFactory;
 import gov.redhawk.ui.util.EMFEmptyStringToNullUpdateValueStrategy;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
-import mil.jpeojtrs.sca.scd.Ports;
-import mil.jpeojtrs.sca.scd.Provides;
-import mil.jpeojtrs.sca.scd.Uses;
-import mil.jpeojtrs.sca.spd.Descriptor;
 import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -44,9 +34,6 @@ import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFUpdateValueStrategy;
 import org.eclipse.emf.databinding.edit.EMFEditObservables;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
@@ -57,10 +44,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -76,7 +60,6 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 	private static final int NUM_COLUMNS = 3;
 
 	private final FormToolkit toolkit;
-	private final int style;
 	private FormEntry outputDirEntry;
 	private ComboViewer generatorViewer;
 	private ComboViewer templateViewer;
@@ -84,19 +67,11 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 	private ImplementationSettings implSettings;
 	private ITemplateDesc selectedTemplate;
 	private EditingDomain domain;
-	private PortGeneratorComposite portMapComposite;
 	private Implementation impl;
-	private EMFTableViewerElementSelector portMapSelector;
 
-	/**
-	 * @param parent
-	 * @param style
-	 * @param toolkit
-	 */
 	public BaseGeneratorPropertiesComposite(final Composite parent, final int style, final FormToolkit toolkit) {
 		super(parent, style);
 
-		this.style = style;
 		this.toolkit = toolkit;
 
 		setLayout(FormLayoutFactory.createSectionClientGridLayout(false, BaseGeneratorPropertiesComposite.NUM_COLUMNS));
@@ -110,8 +85,6 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		createOutputDirEntry();
 
 		createPropertiesArea();
-
-		createExtraArea(this, this.style, this.toolkit);
 
 		this.toolkit.paintBordersFor(this);
 	}
@@ -177,7 +150,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 	}
 
 	/**
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	protected ICodeGeneratorDescriptor[] getCodegens() {
 		return RedhawkCodegenActivator.getCodeGeneratorsRegistry().getCodegens();
@@ -245,10 +218,6 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 							CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__TEMPLATE, desc.getId());
 						dom.getCommandStack().execute(command);
 
-						// Change the enablement of the port map if the new
-						// template supports it
-						BaseGeneratorPropertiesComposite.this.portMapComposite.setEnabled(BaseGeneratorPropertiesComposite.this.getEnablePortMap());
-
 						// Update the properties display and rebind
 						templateSelected(desc);
 					}
@@ -257,59 +226,10 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		});
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void dispose() {
-		if ((this.implSettings != null) && this.implSettings.eAdapters().contains(this.portMapSelector)) {
-			this.implSettings.eAdapters().remove(this.portMapSelector);
-		}
 		this.context.dispose();
 		super.dispose();
-	}
-
-	/**
-	 * This method is used to add extra Generator Settings information for
-	 * subclasses.
-	 * 
-	 * @param parent the parent composite
-	 * @param style this composite's style
-	 * @param toolkit the toolkit to use
-	 */
-	protected void createExtraArea(final Composite parent, final int style, final FormToolkit toolkit) {
-		this.portMapComposite = new PortGeneratorComposite(parent, SWT.NONE, toolkit);
-		this.portMapComposite.setLayoutData(GridDataFactory.fillDefaults().span(BaseGeneratorPropertiesComposite.NUM_COLUMNS, 1).grab(true, false).create());
-		this.portMapComposite.getAddPropertyButton().addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				handleAddPortMapping();
-			}
-		});
-
-		this.portMapComposite.getEditPropertyButton().addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				handleEditPortMapping();
-			}
-		});
-
-		this.portMapComposite.getRemovePropertyButton().addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				handleRemovePortMapping();
-			}
-		});
-		this.portMapComposite.getPortMapViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(final SelectionChangedEvent event) {
-				final boolean enabled = BaseGeneratorPropertiesComposite.this.portMapComposite.isEnabled();
-				BaseGeneratorPropertiesComposite.this.portMapComposite.getRemovePropertyButton().setEnabled(enabled && !event.getSelection().isEmpty());
-				BaseGeneratorPropertiesComposite.this.portMapComposite.getEditPropertyButton().setEnabled(enabled && !event.getSelection().isEmpty());
-				BaseGeneratorPropertiesComposite.this.portMapComposite.getAddPropertyButton().setEnabled(
-					enabled && BaseGeneratorPropertiesComposite.this.getUnmappedRepIds(null).size() > 0);
-			}
-		});
 	}
 
 	/**
@@ -360,26 +280,9 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 			EMFEditObservables.observeValue(editingDomain, implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__TEMPLATE),
 			createTemplateTargetToModel(), createTemplateModelToTarget()));
 
-		this.portMapComposite.setEnabled(this.getEnablePortMap());
-
-		this.portMapComposite.getPortMapViewer().setInput(implSettings);
-		if (this.portMapSelector == null) {
-			this.portMapSelector = new EMFTableViewerElementSelector(this.portMapComposite.getPortMapViewer());
-		}
-		if (!this.implSettings.eAdapters().contains(this.portMapSelector)) {
-			this.implSettings.eAdapters().add(this.portMapSelector);
-		}
 		this.createPropertyBinding();
-		this.portMapComposite.getAddPropertyButton().setEnabled((getUnmappedRepIds(null).size() > 0) && (this.portMapComposite.isEnabled()));
 	}
 
-	private boolean getEnablePortMap() {
-		return ((this.getSelectedTemplate() != null) && this.getSelectedTemplate().delegatePortGeneration());
-	}
-
-	/**
-	 * @return
-	 */
 	private UpdateValueStrategy createTemplateModelToTarget() {
 		final EMFUpdateValueStrategy strategy = new EMFUpdateValueStrategy();
 		strategy.setConverter(new Converter(String.class, ITemplateDesc.class) {
@@ -398,9 +301,6 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		return strategy;
 	}
 
-	/**
-	 * @return
-	 */
 	private UpdateValueStrategy createTemplateTargetToModel() {
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(ITemplateDesc.class, String.class) {
@@ -418,9 +318,6 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		return strategy;
 	}
 
-	/**
-	 * @return
-	 */
 	private UpdateValueStrategy createGeneratorTargetToModel() {
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(ICodeGeneratorDescriptor.class, String.class) {
@@ -438,9 +335,6 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		return strategy;
 	}
 
-	/**
-	 * @return
-	 */
 	private UpdateValueStrategy createGeneratorModelToTarget() {
 		final EMFUpdateValueStrategy strategy = new EMFUpdateValueStrategy();
 		strategy.setConverter(new Converter(String.class, ICodeGeneratorDescriptor.class) {
@@ -493,87 +387,6 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		// If we didn't find the template for some reason, return the default
 		// generator template
 		return (template != null) ? template : genTemplate; // SUPPRESS CHECKSTYLE AvoidInline
-	}
-
-	/**
-	 * Handle add mapping.
-	 */
-	private void handleAddPortMapping() {
-		final HashSet<String> repIds = getUnmappedRepIds(null);
-
-		final GeneratorDialog dialog = new GeneratorDialog(getShell(), "Add Generator Mapping", null, repIds, this.impl.getProgrammingLanguage().getName());
-		if (dialog.open() == Window.OK) {
-			final EObject ref = dialog.getValue();
-			this.domain.getCommandStack().execute(
-				AddCommand.create(this.domain, this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__PORT_GENERATORS, ref));
-		}
-	}
-
-	/**
-	 * Handle edit mapping.
-	 */
-	private void handleEditPortMapping() {
-		final PortRepToGeneratorMap curProp = (PortRepToGeneratorMap) ((IStructuredSelection) this.portMapComposite.getPortMapViewer().getSelection()).getFirstElement();
-		final HashSet<String> repIds = getUnmappedRepIds(curProp.getRepId());
-
-		final GeneratorDialog dialog = new GeneratorDialog(getShell(), "Edit Generator Mapping", curProp, repIds, this.impl.getProgrammingLanguage().getName());
-		if (dialog.open() == Window.OK) {
-			final PortRepToGeneratorMap ref = (PortRepToGeneratorMap) dialog.getValue();
-			this.domain.getCommandStack().execute(
-				SetCommand.create(this.domain, curProp, CodegenPackage.Literals.PORT_REP_TO_GENERATOR_MAP__GENERATOR, ref.getGenerator()));
-		}
-	}
-
-	/**
-	 * Handle remove mapping.
-	 */
-	private void handleRemovePortMapping() {
-		final PortRepToGeneratorMap curProp = (PortRepToGeneratorMap) ((IStructuredSelection) this.portMapComposite.getPortMapViewer().getSelection()).getFirstElement();
-		this.domain.getCommandStack().execute(
-			RemoveCommand.create(this.domain, this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__PORT_GENERATORS, curProp));
-	}
-
-	/**
-	 * This returns a set of repIds representing all the ports for the current
-	 * implementation that do not have a generator assigned. If currentRep is
-	 * not null, it adds it to the list.
-	 * 
-	 * @param currentRep the repId to add to the set, or null if none should be
-	 *            added
-	 * @return set of repIds without generators
-	 */
-	private HashSet<String> getUnmappedRepIds(final String currentRep) {
-		final HashSet<String> repIds = new HashSet<String>();
-		final Descriptor descriptor = ((SoftPkg) this.impl.eContainer()).getDescriptor();
-
-		if ((descriptor != null) && (descriptor.getComponent() != null)) {
-			final Ports ports = descriptor.getComponent().getComponentFeatures().getPorts();
-
-			// Store the current RepIds
-			for (final Provides p : ports.getProvides()) {
-				repIds.add(p.getRepID());
-			}
-			for (final Uses u : ports.getUses()) {
-				repIds.add(u.getRepID());
-			}
-
-			// filter out the used ones
-			for (final PortRepToGeneratorMap r : this.implSettings.getPortGenerators()) {
-				repIds.remove(r.getRepId());
-			}
-
-			// Add the passed in rep if necessary
-			if (currentRep != null) {
-				repIds.add(currentRep);
-			}
-		}
-
-		return repIds;
-	}
-
-	public void setEditable(final boolean canEdit) {
-		this.portMapComposite.getAddPropertyButton().setEnabled(canEdit && (getUnmappedRepIds(null).size() > 0) && this.portMapComposite.isEnabled());
-		this.portMapComposite.setEditable(canEdit);
 	}
 
 	/**

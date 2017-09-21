@@ -18,7 +18,7 @@ import mil.jpeojtrs.sca.spd.Implementation;
 /**
  * Extension of {@link ICodeGeneratorPageRegistry2} that allows for passing the {@link Implementation}
  * to the found composite, when can then filter available code-generators based on language and existing codegenId 
- * @since 9.2
+ * @since 10.0
  */
 public interface ICodeGeneratorLanguagePageRegistry extends ICodeGeneratorPageRegistry2 {
 	/**
