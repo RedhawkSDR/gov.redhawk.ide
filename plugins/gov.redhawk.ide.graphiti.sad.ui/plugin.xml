@@ -66,6 +66,12 @@
          point="org.eclipse.ui.views.properties.tabbed.propertySections">
       <propertySections contributorId="SADDiagram.PropertyContributor">
          <propertySection
+               class="gov.redhawk.ide.graphiti.ui.properties.PropertiesSection"
+               filter="gov.redhawk.ide.graphiti.ui.properties.ComponentInstantiationFilter"
+               id="gov.redhawk.ide.graphiti.sad.ui.propertySection.properties"
+               tab="gov.redhawk.core.graphiti.sad.ui.propertyTab.properties">
+         </propertySection>
+         <propertySection
                afterSection="200"
                class="gov.redhawk.ide.graphiti.sad.ui.properties.PortInterfacePropertiesSection"
                enablesFor="1"
