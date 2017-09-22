@@ -35,9 +35,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 
-/**
- * @since 1.1
- */
 public class ComponentInstantiationPropertyViewerAdapter {
 	private ComponentInstantiation input = null;
 	private final ScaComponent component = ScaFactory.eINSTANCE.createScaComponent();
@@ -66,9 +63,6 @@ public class ComponentInstantiationPropertyViewerAdapter {
 		}
 	}
 
-	/**
-	 * @since 6.0
-	 */
 	public TreeViewer getViewer() {
 		return viewer;
 	}
@@ -143,9 +137,6 @@ public class ComponentInstantiationPropertyViewerAdapter {
 		viewer.refresh();
 	}
 
-	/**
-	 * @since 7.0
-	 */
 	public void dispose() {
 		component.eAdapters().remove(contentAdapter);
 		component.dispose();
