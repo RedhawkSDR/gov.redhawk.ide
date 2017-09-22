@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
-import gov.redhawk.core.graphiti.ui.properties.AbstractPropertiesSection;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import mil.jpeojtrs.sca.partitioning.Requirements;
 import mil.jpeojtrs.sca.partitioning.Requires;
