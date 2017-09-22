@@ -13,8 +13,6 @@ package gov.redhawk.ide.codegen.provider;
 
 
 import gov.redhawk.ide.codegen.CodegenPackage;
-import gov.redhawk.ide.codegen.CodegenUtil;
-import gov.redhawk.ide.codegen.IPortTemplateDesc;
 import gov.redhawk.ide.codegen.PortRepToGeneratorMap;
 
 import java.util.Collection;
@@ -199,9 +197,7 @@ public class PortRepToGeneratorMapItemProvider
 		case 0:
 			return ((PortRepToGeneratorMap) object).getRepId();
 		case 1:
-			final String generator = ((PortRepToGeneratorMap) object).getGenerator();
-			final IPortTemplateDesc temp = CodegenUtil.getPortTemplate(generator, null);
-			return (temp != null) ? temp.getName() : generator; // SUPPRESS CHECKSTYLE AvoidInline
+			return ((PortRepToGeneratorMap) object).getGenerator();
 		}
 		return super.getColumnText(object, columnIndex);
 	}
