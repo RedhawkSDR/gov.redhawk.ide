@@ -10,16 +10,13 @@
  */
 package gov.redhawk.ide.graphiti.ui.properties;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -27,7 +24,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
-import gov.redhawk.core.graphiti.ui.util.DUtil;
 import gov.redhawk.model.sca.IDisposable;
 import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.sca.ui.ScaComponentFactory;
@@ -83,27 +79,10 @@ public class PropertiesSection extends AbstractPropertiesSection implements ITab
 		final EObject eObj = getEObject();
 		if (eObj instanceof ComponentInstantiation) {
 			final ComponentInstantiation newInput = (ComponentInstantiation) eObj;
-			if (DUtil.isDiagramRuntime(getDiagram())) {
-				getViewer().setInput(getScaPropertyContainer(selection));
-			} else {
-				this.adapter.setInput(newInput);
-			}
+			this.adapter.setInput(newInput);
 		} else {
 			this.adapter.setInput(null);
 		}
-	}
-
-	private ScaPropertyContainer< ? , ? > getScaPropertyContainer(final ISelection selection) {
-		if (selection instanceof StructuredSelection) {
-			StructuredSelection ss = (StructuredSelection) selection;
-			Object element = ss.getFirstElement();
-			if (element instanceof EditPart) {
-				EditPart ep = (EditPart) element;
-				final ScaPropertyContainer< ? , ? > container = Platform.getAdapterManager().getAdapter(ep, ScaPropertyContainer.class);
-				return container;
-			}
-		}
-		return null;
 	}
 
 	@Override
