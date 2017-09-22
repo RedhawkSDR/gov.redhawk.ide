@@ -18,6 +18,8 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPart;
@@ -25,10 +27,13 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 import gov.redhawk.model.sca.IDisposable;
+import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.sca.ui.ScaComponentFactory;
 import gov.redhawk.sca.ui.properties.ScaPropertiesAdapterFactory;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
+import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 
 /**
  * Handles properties for either design-time (properties of a {@link ComponentInstantiation} in a SAD/DCD) or runtime
@@ -65,7 +70,19 @@ public class PropertiesSection extends AbstractPropertiesSection implements ITab
 	}
 
 	protected TreeViewer createTreeViewer(final Composite parent) {
-		return ScaComponentFactory.createPropertyTable(getWidgetFactory(), parent, SWT.SINGLE, this.adapterFactory);
+		TreeViewer viewer = ScaComponentFactory.createPropertyTable(getWidgetFactory(), parent, SWT.SINGLE, this.adapterFactory);
+		viewer.addFilter(new ViewerFilter() {
+
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof ScaAbstractProperty< ? >) {
+					AbstractProperty propDef = ((ScaAbstractProperty< ? >) element).getDefinition();
+					return (propDef == null) || PropertiesUtil.canOverride(propDef);
+				}
+				return false;
+			}
+		});
+		return viewer;
 	}
 
 	@Override
