@@ -11,9 +11,14 @@
 package gov.redhawk.ide.graphiti.sad.internal.ui.page.properties;
 
 import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.model.SadPropertiesAdapterFactory;
+import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.model.SadPropertyImpl;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
+import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
+import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.ecore.resource.Resource;
@@ -26,6 +31,8 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerEditAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -123,6 +130,21 @@ public class SadPropertiesPage extends ScaFormPage {
 		viewer.setContentProvider(new AdapterFactoryContentProvider(adapterFactory));
 		PropertiesViewerLabelProvider labelProvider = new PropertiesViewerLabelProvider(viewer);
 		viewer.setLabelProvider(labelProvider);
+		viewer.addFilter(new ViewerFilter() {
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof SadPropertyImpl< ? >) {
+					Object objDef = ((SadPropertyImpl< ? >) element).getDefinition();
+					AbstractProperty propDef = (AbstractProperty) objDef;
+					// Things you can override + anything that could be an external property
+					return (propDef == null) || PropertiesUtil.canOverride(propDef)
+						|| propDef.isKind(PropertyConfigurationType.PROPERTY, PropertyConfigurationType.CONFIGURE);
+				} else if (element instanceof SadComponentInstantiation) {
+					return true;
+				}
+				return false;
+			}
+		});
 
 		Resource resource = getInput();
 		if (resource != null) {
