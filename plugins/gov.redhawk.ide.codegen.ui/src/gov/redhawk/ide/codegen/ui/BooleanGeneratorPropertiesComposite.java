@@ -78,7 +78,7 @@ public class BooleanGeneratorPropertiesComposite extends BaseGeneratorProperties
 	}
 
 	/**
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	public BooleanGeneratorPropertiesComposite(Implementation impl, String codegenId, Composite parent, int style, FormToolkit toolkit) {
 		super(parent, style, toolkit);

@@ -40,7 +40,7 @@ import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 
 /**
  * Utility class that allows accessing the files associated with project documentation.
- * @since 9.2
+ * @since 10.0
  */
 public class DocumentationUtils {
 
