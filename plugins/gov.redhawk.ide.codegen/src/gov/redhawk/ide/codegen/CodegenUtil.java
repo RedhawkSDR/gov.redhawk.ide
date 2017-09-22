@@ -275,25 +275,6 @@ public class CodegenUtil {
 	}
 
 	/**
-	 * @since 7.0
-	 */
-	public static IPortTemplateDesc getPortTemplate(final String templateId, final String codeGenId) {
-		IPortTemplateDesc temp = null;
-
-		// First, check if the template with the name exists
-		if (templateId != null) {
-			temp = RedhawkCodegenActivator.getCodeGeneratorPortTemplatesRegistry().findTemplate(templateId);
-		}
-
-		// Otherwise, check if the template specified by the code generator exists (not required to be specified)
-		if ((temp == null) && (codeGenId != null)) {
-			temp = RedhawkCodegenActivator.getCodeGeneratorPortTemplatesRegistry().findTemplate(codeGenId);
-		}
-
-		return temp;
-	}
-
-	/**
 	 * Adds the top level build script generator to a REDHAWK project, if applicable for the project type.
 	 * @param project The project to add the top level build script generator to
 	 * @param progress the progress monitor to use for reporting progress to the user. It is the caller's responsibility

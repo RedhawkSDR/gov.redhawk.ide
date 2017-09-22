@@ -13,7 +13,6 @@
 <plugin>
    <extension-point id="codegens" name="%extension-point.name" schema="schema/codegens.exsd"/>
    <extension-point id="codegenTemplate" name="%extension-point.name.0" schema="schema/codegenTemplate.exsd"/>
-   <extension-point id="portGenerator" name="%extension-point.name.1" schema="schema/portGenerator.exsd"/>
    
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package

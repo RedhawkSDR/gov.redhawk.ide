@@ -11,7 +11,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.codegen;
 
-import gov.redhawk.ide.codegen.internal.CodeGeneratorPortTemplatesRegistry;
 import gov.redhawk.ide.codegen.internal.CodeGeneratorTemplatesRegistry;
 import gov.redhawk.ide.codegen.internal.CodeGeneratorsRegistry;
 
@@ -37,11 +36,6 @@ public class RedhawkCodegenActivator extends Plugin {
 	 * Create the REDHAWK Codegen Registry
 	 */
 	private static ICodeGeneratorsRegistry codeGeneratorsRegistry;
-
-	/**
-	 * Create the REDHAWK Codegen Port Template Registry
-	 */
-	private static ICodeGeneratorPortTemplatesRegistry codeGeneratorPortTemplatesRegistry;
 
 	/**
 	 * Create the REDHAWK Codegen Template Registry
@@ -122,20 +116,6 @@ public class RedhawkCodegenActivator extends Plugin {
 		}
 
 		return RedhawkCodegenActivator.codeGeneratorsRegistry;
-	}
-
-	/**
-	 * Returns the registry of Code Generator Port Templates.
-	 * 
-	 * @return the registry of code generator port templates.
-	 * @since 7.0
-	 */
-	public static ICodeGeneratorPortTemplatesRegistry getCodeGeneratorPortTemplatesRegistry() {
-		if (RedhawkCodegenActivator.codeGeneratorPortTemplatesRegistry == null) {
-			RedhawkCodegenActivator.codeGeneratorPortTemplatesRegistry = new CodeGeneratorPortTemplatesRegistry();
-		}
-
-		return RedhawkCodegenActivator.codeGeneratorPortTemplatesRegistry;
 	}
 
 	/**
