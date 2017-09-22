@@ -54,6 +54,18 @@
    </extension>
   
    <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections contributorId="DCDDiagram.PropertyContributor">
+         <propertySection
+               class="gov.redhawk.ide.graphiti.ui.properties.PropertiesSection"
+               filter="gov.redhawk.ide.graphiti.ui.properties.ComponentInstantiationFilter"
+               id="gov.redhawk.ide.graphiti.dcd.ui.propertySection.properties"
+               tab="gov.redhawk.core.graphiti.dcd.ui.propertyTab.properties">
+         </propertySection>
+      </propertySections>
+   </extension>
+
+   <extension
          point="org.eclipse.ui.editors">
       <editor
             class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDCDEditor"
