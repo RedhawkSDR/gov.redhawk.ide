@@ -27,6 +27,8 @@ import org.eclipse.graphiti.pattern.IPattern;
 
 import gov.redhawk.core.graphiti.dcd.ui.diagram.providers.DCDGraphitiFeatureProvider;
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.DecrementStartOrderFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.IncrementStartOrderFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect.DCDReconnectFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.internal.diagram.features.DCDUpdateDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.DialogEditingFeatureForPattern;
@@ -71,6 +73,9 @@ public class DCDEditorFeatureProvider extends DCDGraphitiFeatureProvider {
 		if (pes != null && pes.length == 1) {
 			PictogramElement pictogramElement = pes[0];
 			if (pictogramElement instanceof RHContainerShape) {
+				features.add(new IncrementStartOrderFeature(this));
+				features.add(new DecrementStartOrderFeature(this));
+				
 				IPattern pattern = getPatternForPictogramElement(pictogramElement);
 				if (pattern instanceof IDialogEditingPattern) {
 					IDialogEditingPattern dialogEditing = (IDialogEditingPattern) pattern;

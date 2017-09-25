@@ -15,8 +15,11 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
+import gov.redhawk.core.graphiti.dcd.ui.utils.DCDUtils;
 import gov.redhawk.core.graphiti.ui.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.features.update.AbstractDesignDiagramUpdateFeature;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
@@ -55,6 +58,20 @@ public class DCDUpdateDiagramFeature extends AbstractDesignDiagramUpdateFeature 
 			connections.addAll(dcd.getConnections().getConnectInterface());
 		}
 		return connections;
+	}
+	
+	@Override
+	public boolean update(IUpdateContext context) {
+		PictogramElement pe = context.getPictogramElement();
+		if (pe instanceof Diagram) {
+			Diagram diagram = (Diagram) pe;
+			DeviceConfiguration dcd = DUtil.getDiagramDCD(diagram);
+			DCDUtils.organizeStartOrder(dcd, diagram, getFeatureProvider());
+			
+			// Defer to the base class for most updates 
+			return super.update(context);
+		}
+		return false;
 	}
 
 }

@@ -13,8 +13,12 @@ package gov.redhawk.ide.graphiti.dcd.internal.ui.page.devices;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -31,6 +35,8 @@ import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -52,14 +58,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import gov.redhawk.core.graphiti.dcd.ui.utils.DCDUtils;
+import gov.redhawk.core.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.DcdComponentContentProvider;
 import gov.redhawk.ide.graphiti.dcd.ui.project.wizards.ScaNodeProjectDevicesWizardPage;
 import gov.redhawk.ide.sdr.LoadState;
@@ -362,21 +372,41 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 		for (Object selection : selections.toList()) {
 			final DcdComponentInstantiation compInst = (DcdComponentInstantiation) selection;
 
-			TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) getEditingDomain();
-			getEditingDomain().getCommandStack().execute(new RecordingCommand(editingDomain) {
-				@Override
-				protected void doExecute() {
-					// Notify any listeners added to the componentInstantiation objects to do things like clean up stale
-					// diagram shapes
-					compInst.eNotify(new NotificationImpl(Notification.REMOVE, true, false));
+			// Find the Graphiti editor
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+			String workspaceRelativeStr = dcd.eResource().getURI().toPlatformString(false);
+			IPath workspaceRelativePath = Path.fromPortableString(workspaceRelativeStr);
 
-					DcdPartitioning partitioning = ScaEcoreUtils.getEContainerOfType(compInst, DcdPartitioning.class);
-					// If partitioning is null, then a graphiti listener already clean this up.
-					if (partitioning != null) {
-						DCDUtils.deleteComponentInstantiation(compInst, dcd);
+			IEditorPart editorPart = null;
+			if (workspaceRelativePath != null) {
+				editorPart = ResourceUtil.findEditor(page, workspaceRoot.getFile(workspaceRelativePath));
+			}
+			if (editorPart instanceof AbstractGraphitiMultiPageEditor) {
+				AbstractGraphitiMultiPageEditor editor = (AbstractGraphitiMultiPageEditor) editorPart;
+
+				// Find the diagram && featureProvider
+				Diagram diagram = editor.getDiagramEditor().getDiagramTypeProvider().getDiagram();
+				IFeatureProvider featureProvider = editor.getDiagramEditor().getDiagramTypeProvider().getFeatureProvider();
+
+				TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) getEditingDomain();
+				getEditingDomain().getCommandStack().execute(new RecordingCommand(editingDomain) {
+					@Override
+					protected void doExecute() {
+						// Notify any listeners added to the componentInstantiation objects to do things like clean up
+						// stale
+						// diagram shapes
+						compInst.eNotify(new NotificationImpl(Notification.REMOVE, true, false));
+
+						DcdPartitioning partitioning = ScaEcoreUtils.getEContainerOfType(compInst, DcdPartitioning.class);
+						// If partitioning is null, then a graphiti listener already clean this up.
+						if (partitioning != null) {
+							DCDUtils.deleteComponentInstantiation(compInst, dcd);
+							DCDUtils.organizeStartOrder(dcd, diagram, featureProvider);
+						}
 					}
-				}
-			});
+				});
+			}
 		}
 
 		this.refresh(this.dcdResource);

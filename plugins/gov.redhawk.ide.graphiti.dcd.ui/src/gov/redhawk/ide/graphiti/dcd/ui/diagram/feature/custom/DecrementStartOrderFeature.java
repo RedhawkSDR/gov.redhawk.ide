@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom;
+package gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom;
 
 import java.math.BigInteger;
 
@@ -18,20 +18,20 @@ import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
-import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
-import gov.redhawk.core.graphiti.sad.ui.utils.SADUtils;
+import gov.redhawk.core.graphiti.dcd.ui.utils.DCDUtils;
+import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
-public class IncrementStartOrderFeature extends AbstractComponentInstantiationFeature {
+public class DecrementStartOrderFeature extends AbstractComponentInstantiationFeature {
 
-	public IncrementStartOrderFeature(IFeatureProvider fp) {
+	public DecrementStartOrderFeature(IFeatureProvider fp) {
 		super(fp);
 	}
 
-	public static final String NAME = "Move Start Order Later";
-	public static final String DESCRIPTION = "Increment the start order by 1";
+	public static final String NAME = "Move Start Order Earlier";
+	public static final String DESCRIPTION = "Decrement the start order by 1";
 
 	@Override
 	public String getName() {
@@ -42,7 +42,7 @@ public class IncrementStartOrderFeature extends AbstractComponentInstantiationFe
 	public String getDescription() {
 		return DESCRIPTION;
 	}
-	
+
 	@Override
 	public boolean isAvailable(IContext context) {
 		if (!super.isAvailable(context)) {
@@ -51,14 +51,14 @@ public class IncrementStartOrderFeature extends AbstractComponentInstantiationFe
 
 		ICustomContext customContext = (ICustomContext) context;
 		PictogramElement[] pes = customContext.getPictogramElements();
-		SadComponentInstantiation compInst = (SadComponentInstantiation) DUtil.getBusinessObject(pes[0]);
+		DcdComponentInstantiation compInst = (DcdComponentInstantiation) DUtil.getBusinessObject(pes[0]);
 		if (compInst.getStartOrder() == null) {
 			return false;
 		}
 
 		return super.isAvailable(context);
 	}
-	
+
 	@Override
 	public boolean canExecute(ICustomContext context) {
 		// Can't execute if the diagram is read-only
@@ -72,22 +72,22 @@ public class IncrementStartOrderFeature extends AbstractComponentInstantiationFe
 			return false;
 		}
 
-		// Don't allow increment if there is not already a start order assigned
-		SadComponentInstantiation compInst = (SadComponentInstantiation) DUtil.getBusinessObject(pes[0]);
+		// Don't allow decrement if there is not already a start order assigned
+		DcdComponentInstantiation compInst = (DcdComponentInstantiation) DUtil.getBusinessObject(pes[0]);
 		if (compInst.getStartOrder() == null) {
 			return false;
 		}
 
-		// Don't allow increment if its already the highest
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
-		EList<SadComponentInstantiation> sortedComponents = sad.getComponentInstantiationsInStartOrder();
-		for (int i = sortedComponents.size() - 1; i >= 0; i--) {
-			if (sortedComponents.get(i).getStartOrder() != null) {
-				return !sortedComponents.get(i).equals(compInst);
-			}
+		// Don't allow decrement if its already the lowest start order.
+		final DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
+		EList<DcdComponentInstantiation> sortedComponents = dcd.getComponentInstantiationsInStartOrder();
+		DcdComponentInstantiation firstComponent = sortedComponents.get(0);
+		if (firstComponent.equals(compInst)) {
+			return false;
 		}
 
-		return true;
+		// Start order must be greater than zero
+		return compInst.getStartOrder().compareTo(BigInteger.ZERO) > 0;
 	}
 
 	/**
@@ -95,21 +95,21 @@ public class IncrementStartOrderFeature extends AbstractComponentInstantiationFe
 	 */
 	@Override
 	public void execute(ICustomContext context) {
-		ComponentShape componentShape = (ComponentShape) context.getPictogramElements()[0];
-		final SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
+		RHContainerShape containerShape = (RHContainerShape) context.getPictogramElements()[0];
+		DcdComponentInstantiation ci = (DcdComponentInstantiation) DUtil.getBusinessObject(containerShape);
 
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
+		final DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
 
 		// get current we are swapping start order with
-		final SadComponentInstantiation swapCI = SADUtils.getComponentInstantiationViaStartOrder(sad, ci.getStartOrder().add(BigInteger.ONE));
+		DcdComponentInstantiation swapCI = DCDUtils.getComponentInstantiationViaStartOrder(dcd, ci.getStartOrder().subtract(BigInteger.ONE));
 
 		// swap start orders, also handle assembly controller changes
-		SADUtils.swapStartOrder(sad, getFeatureProvider(), ci, swapCI);
+		DCDUtils.swapStartOrder(dcd, getFeatureProvider(), swapCI, ci);
 
 		// force pictogram objects to update
-		updatePictogramElement(componentShape);
-		updatePictogramElement(DUtil.getPictogramElementForBusinessObject(getDiagram(), swapCI, ComponentShape.class));
+		updatePictogramElement(containerShape);
+		updatePictogramElement(DUtil.getPictogramElementForBusinessObject(getDiagram(), swapCI, RHContainerShape.class));
 	}
 
 }

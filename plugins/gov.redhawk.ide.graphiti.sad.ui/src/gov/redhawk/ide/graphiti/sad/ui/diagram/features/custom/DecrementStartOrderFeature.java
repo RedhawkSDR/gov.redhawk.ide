@@ -14,6 +14,7 @@ import java.math.BigInteger;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
@@ -40,6 +41,22 @@ public class DecrementStartOrderFeature extends AbstractComponentInstantiationFe
 	@Override
 	public String getDescription() {
 		return DESCRIPTION;
+	}
+	
+	@Override
+	public boolean isAvailable(IContext context) {
+		if (!super.isAvailable(context)) {
+			return false;
+		}
+
+		ICustomContext customContext = (ICustomContext) context;
+		PictogramElement[] pes = customContext.getPictogramElements();
+		SadComponentInstantiation compInst = (SadComponentInstantiation) DUtil.getBusinessObject(pes[0]);
+		if (compInst.getStartOrder() == null) {
+			return false;
+		}
+
+		return super.isAvailable(context);
 	}
 
 	@Override
