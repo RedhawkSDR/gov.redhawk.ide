@@ -11,7 +11,7 @@
 package gov.redhawk.ide.graphiti.sad.internal.ui.page.properties;
 
 import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.model.SadPropertiesAdapterFactory;
-import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.model.SadPropertyImpl;
+import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.model.SadProperty;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
@@ -133,10 +133,14 @@ public class SadPropertiesPage extends ScaFormPage {
 		viewer.addFilter(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof SadPropertyImpl< ? >) {
-					Object objDef = ((SadPropertyImpl< ? >) element).getDefinition();
-					AbstractProperty propDef = (AbstractProperty) objDef;
+				if (element instanceof SadProperty) {
+					if (parentElement instanceof SadProperty) {
+						// Props that are children of props are members, and hence are always shown
+						return true;
+					}
+
 					// Things you can override + anything that could be an external property
+					AbstractProperty propDef = ((SadProperty) element).getDefinition();
 					return (propDef == null) || PropertiesUtil.canOverride(propDef)
 						|| propDef.isKind(PropertyConfigurationType.PROPERTY, PropertyConfigurationType.CONFIGURE);
 				} else if (element instanceof SadComponentInstantiation) {
