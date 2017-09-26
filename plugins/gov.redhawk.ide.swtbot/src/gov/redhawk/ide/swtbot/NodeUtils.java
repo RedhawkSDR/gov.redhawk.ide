@@ -31,11 +31,8 @@ public class NodeUtils {
 
 	/**
 	 * Create a Redhawk node using the new project wizard.
-	 * @param bot
-	 * @param projectName
-	 * @param domainName
 	 */
-	public static void createNewNodeProject(SWTWorkbenchBot bot, String projectName, String domainName) {
+	public static void createNewNodeProject(SWTWorkbenchBot bot, String projectName, String domainName, String deviceName) {
 		SWTBotShell origShell = bot.activeShell();
 
 		// Open the new node project wizard
@@ -52,6 +49,11 @@ public class NodeUtils {
 
 		// Enter a domain manager
 		wizardBot.comboBoxWithLabel("Domain Manager:").setText(domainName);
+		
+		if (deviceName != null) {
+			wizardBot.button("Next >").click();
+			wizardBot.tree(0).select(deviceName);
+		}
 
 		// Close wizard
 		wizardBot.button("Finish").click();
@@ -61,6 +63,16 @@ public class NodeUtils {
 		if (!origShell.isActive()) {
 			origShell.activate();
 		}
+	}
+
+	/**
+	 * Create a Redhawk node using the new project wizard.
+	 * @param bot
+	 * @param projectName
+	 * @param domainName
+	 */
+	public static void createNewNodeProject(SWTWorkbenchBot bot, String projectName, String domainName) {
+		createNewNodeProject(bot, projectName, domainName, null);
 	}
 
 	/**
