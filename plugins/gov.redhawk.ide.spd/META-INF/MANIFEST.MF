@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: gov.redhawk.ide.spd
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 3.0.0.qualifier
 Bundle-Activator: gov.redhawk.ide.spd.IdeSpdPlugin
 Require-Bundle: gov.redhawk.ide;bundle-version="4.0.0",
  gov.redhawk.ide.codegen;bundle-version="7.0.0";visibility:=reexport,
