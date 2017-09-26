@@ -107,8 +107,10 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			StructSequenceRef structSequenceRef = PrfFactory.eINSTANCE.createStructSequenceRef();
 			structSequenceRef.setRefID(getID());
-			for (Object item : (Collection< ? >) value) {
-				structSequenceRef.getStructValue().add((StructValue) item);
+
+			List< ? > list = (List< ? >) value;
+			for (int i = 0; i < list.size(); i++) {
+				structSequenceRef.getStructValue().add((StructValue) list.get(i));
 			}
 			return structSequenceRef;
 		}
