@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.diagram;
 
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
@@ -18,27 +17,11 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 
 import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
-import gov.redhawk.core.graphiti.ui.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
-
-	public static void decrementStartOrder(SWTBotGefEditor editor, String componentName) {
-		editor.select(componentName).clickContextMenu("Move Start Order Later");
-	}
-
-	public static int getStartOrder(SWTBotGefEditor editor, String component) {
-		ComponentShape componentShape = (ComponentShape) editor.getEditPart(component).part().getModel();
-		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
-		return ci.getStartOrder().intValue();
-	}
-
-	public static void incrementStartOrder(SWTBotGefEditor editor, String componentName) {
-		editor.select(componentName).clickContextMenu("Move Start Order Earlier");
-	}
 
 	public static boolean isAssemblyController(SWTGefBot bot, SWTBotGefEditor editor, String component) {
 		ComponentShape assemblyController = (ComponentShape) editor.getEditPart(component).part().getModel();
@@ -72,30 +55,6 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Check whether the component graphical start order text matches the expected value
-	 * @param componentShape - Component to be check
-	 * @param expectedValue - Expected value of start order
-	 * @return - True if component start order text matches expected value
-	 */
-	public static boolean correctStartOrderValue(ComponentShape componentShape, String expectedValue) {
-		return PluginUtil.equals(ComponentUtils.getStartOrderText(componentShape).getValue(), expectedValue);
-	}
-
-	/**
-	 * Check whether the component graphical start order styling is set correctly
-	 * @param componentShape - Component to be check
-	 * @param isAssemblyController - boolean declaring whether assembly controller styling is expected
-	 * @return - True if component styling is set correctly
-	 */
-	public static boolean correctStartOrderStyling(ComponentShape componentShape, boolean isAssemblyController) {
-		GraphicsAlgorithm ga = ComponentUtils.getStartOrderEllipseShape(componentShape).getGraphicsAlgorithm();
-		if (isAssemblyController) {
-			return StyleUtil.isStyleSet(ga, StyleUtil.ASSEMBLY_CONTROLLER_ELLIPSE);
-		}
-		return StyleUtil.isStyleSet(ga, StyleUtil.START_ORDER_ELLIPSE);
-	}
-
-	/**
 	 * Gets the interface lollipop shape for the given component
 	 * @param componentShape - Component from which to get interface lollipop shape
 	 * @return - the interface lollipop shape, if the Component has one, or null otherwise
@@ -121,37 +80,4 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	public static Text getInnerText(ComponentShape componentShape) {
 		return componentShape.getInnerText();
 	}
-
-	/**
-	 * Gets the start order Text shape for the given component
-	 * @param componentShape - Component from which to get start order Text
-	 * @return - the start order Text, if the Component has one, or null otherwise
-	 */
-	public static Text getStartOrderText(ComponentShape componentShape) {
-		return componentShape.getStartOrderText();
-	}
-
-	/**
-	 * Gets the start order ContainerShape (i.e., the ellipse) for the given component
-	 * @param componentShape - Component from which to get start order shape
-	 * @return - the start order shape, if the Component has one, or null otherwise
-	 */
-	public static ContainerShape getStartOrderEllipseShape(ComponentShape componentShape) {
-		return componentShape.getStartOrderEllipseShape();
-	}
-
-	/**
-	 * Check both the graphical start order text and styling of a component shape
-	 * @param editor - SWTBotGefEditor
-	 * @param component - Component name
-	 * @param expectedNumber - Expected value of start order
-	 * @param isAssemblyController - boolean declaring whether assembly controller styling is expected
-	 * @return - True if component start order text matches expected value AND component styling is set correctly
-	 */
-	public static boolean correctStylingAndValue(SWTBotGefEditor editor, String component, String expectedValue, boolean isAssemblyController) {
-		ComponentShape componentShape = (ComponentShape) editor.getEditPart(component).part().getModel();
-		return ComponentUtils.correctStartOrderValue(componentShape, expectedValue)
-			&& ComponentUtils.correctStartOrderStyling(componentShape, isAssemblyController);
-	}
-
 }
