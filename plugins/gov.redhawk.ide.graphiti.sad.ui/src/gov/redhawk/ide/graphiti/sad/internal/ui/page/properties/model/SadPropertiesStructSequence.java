@@ -163,7 +163,7 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 		StructSequenceRef ref = getValueRef();
 		property.setDefinition(getDefinition());
 		if (ref != null) {
-			property.fromAny(ref.toAny());
+			property.setValueFromRef(ref);
 		}
 		return property;
 	}

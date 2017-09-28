@@ -97,7 +97,7 @@ public class ComponentInstantiationPropertyViewerAdapter {
 
 		if (!EcoreUtil.equals(cp, input.getComponentProperties()) && getEditingDomain() != null && getEditingDomain().getCommandStack() != null) {
 			getEditingDomain().getCommandStack().execute(
-			        SetCommand.create(getEditingDomain(), input, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, cp));
+				SetCommand.create(getEditingDomain(), input, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, cp));
 		}
 	}
 
@@ -125,9 +125,13 @@ public class ComponentInstantiationPropertyViewerAdapter {
 
 			// Set property overrides
 			if (input.getComponentProperties() != null) {
-				for (AbstractPropertyRef< ? > ref : new FeatureMapList<AbstractPropertyRef>(input.getComponentProperties().getProperties(), AbstractPropertyRef.class)) {
+				for (AbstractPropertyRef< ? > ref : new FeatureMapList<>(input.getComponentProperties().getProperties(), AbstractPropertyRef.class)) {
 					final ScaAbstractProperty< ? > prop = component.getProperty(ref.getRefID());
-					prop.fromAny(ref.toAny());
+					// SAD could have invalid property overrides (i.e. no property by that ID)
+					if (prop == null) {
+						continue;
+					}
+					prop.setValueFromRef(ref);
 				}
 			}
 		} else {
