@@ -48,6 +48,7 @@ public class SadOverviewPage extends AbstractOverviewPage {
 	private static final String TOOLBAR_ID = "gov.redhawk.ide.sad.internal.ui.editor.overview.toolbar"; //$NON-NLS-1$
 	private GeneralInfoSection fInfoSection;
 	private ProjectDocumentationSection projectDocumentationSection;
+	private WaveformOptionsSection waveformOptionsSection;
 	private ExternalPortsSection externalPortsSection;
 	private TestingSection testingSection;
 	private ExportingSection exportingSection;
@@ -80,6 +81,7 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		left.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		createGeneralInfoSection(managedForm, left, toolkit);
+		createWaveformOptionsSection(managedForm, left, toolkit);
 		if (isPlatformProject) {
 			createProjectDocumentationSection(managedForm, left, toolkit);
 		}
@@ -115,6 +117,12 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		this.fInfoSection = new GeneralInfoSection(this, left);
 		managedForm.addPart(this.fInfoSection);
 		this.fInfoSection.refresh(getInput());
+	}
+	
+	private void createWaveformOptionsSection(final IManagedForm managedForm, final Composite left, final FormToolkit toolkit) {
+		this.waveformOptionsSection = new WaveformOptionsSection(this, left);
+		managedForm.addPart(this.waveformOptionsSection);
+		this.waveformOptionsSection.refresh(getInput());
 	}
 
 	private void createProjectDocumentationSection(final IManagedForm managedForm, final Composite left, final FormToolkit toolkit) {
@@ -171,6 +179,9 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		}
 		if (this.externalPortsSection != null) {
 			this.externalPortsSection.refresh(resource);
+		}
+		if (this.waveformOptionsSection != null) {
+			this.waveformOptionsSection.refresh(resource);
 		}
 	}
 
