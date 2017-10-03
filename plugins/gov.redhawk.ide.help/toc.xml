@@ -34,33 +34,35 @@
       <topic href="html/mainch4.html" label="Component Structure">
       </topic>
       </topic>
-      <topic href="html/mainch5.html" label="Connections">
+      <topic href="html/mainch5.html" label="Libraries">
       </topic>
-      <topic href="html/mainch6.html" label="Waveforms">
+      <topic href="html/mainch6.html" label="Connections">
       </topic>
-      <topic href="html/mainch7.html" label="Devices">
+      <topic href="html/mainch7.html" label="Waveforms">
       </topic>
-      <topic href="html/mainch8.html" label="Services">
+      <topic href="html/mainch8.html" label="Devices">
       </topic>
-      <topic href="html/mainch9.html" label="Nodes">
+      <topic href="html/mainch9.html" label="Services">
+      </topic>
+      <topic href="html/mainch10.html" label="Nodes">
       </topic>
       </topic>
-      <topic href="html/mainch11.html" label="Runtime Environment">
-         <topic href="html/mainch12.html" label="Runtime Environment Inspection">
+      <topic href="html/mainch12.html" label="Runtime Environment">
+         <topic href="html/mainch13.html" label="Runtime Environment Inspection">
          </topic>
       </topic>
       <topic label="Programmer&apos;s Guide">
-      <topic href="html/mainch10.html" label="Sandbox">
+      <topic href="html/mainch11.html" label="Sandbox">
       </topic>
-      <topic href="html/mainch13.html" label="Logging">
+      <topic href="html/mainch14.html" label="Logging">
       </topic>
       </topic>
-      <topic href="html/mainch14.html" label="IDE User Guide">
-         <topic href="html/mainch15.html" label="Sharing REDHAWK Projects With Others">
+      <topic href="html/mainch15.html" label="IDE User Guide">
+         <topic href="html/mainch16.html" label="Sharing REDHAWK Projects With Others">
          </topic>
-         <topic href="html/mainch16.html" label="Exploring SDRROOT">
+         <topic href="html/mainch17.html" label="Exploring SDRROOT">
          </topic>
-         <topic href="html/mainch17.html" label="Exploring a Running Domain">
+         <topic href="html/mainch18.html" label="Exploring a Running Domain">
          </topic>
       </topic>
       <topic label="Reference">
