@@ -137,7 +137,7 @@ public class WaveformOptionsSection extends ScaSection {
 		client.setLayoutData(GridDataFactory.fillDefaults().create());
 
 		tableComposite = createTableComposite(client, toolkit);
-		createButtonComposite(client);
+		createButtonComposite(client, toolkit);
 
 		section.setClient(this.client);
 
@@ -162,20 +162,18 @@ public class WaveformOptionsSection extends ScaSection {
 	/**
 	 * Create the composite that will contain buttons for adding/removing {@link Requires} elements
 	 */
-	private void createButtonComposite(Composite parent) {
-		Composite actionComposite = new Composite(parent, SWT.NONE);
+	private void createButtonComposite(Composite parent, FormToolkit toolkit) {
+		Composite actionComposite = toolkit.createComposite(parent, SWT.NONE);
 		actionComposite.setLayout(new GridLayout());
 		actionComposite.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.BEGINNING).create());
 		actionComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
-		addButton = new Button(actionComposite, SWT.PUSH);
+		addButton = toolkit.createButton(actionComposite, "Add", SWT.PUSH);
 		addButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		addButton.setText("Add");
 		addButton.setToolTipText("Add Option");
 
-		removeButton = new Button(actionComposite, SWT.PUSH);
+		removeButton = toolkit.createButton(actionComposite, "Remove", SWT.PUSH);
 		removeButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		removeButton.setText("Remove");
 		removeButton.setToolTipText("Remove Option");
 		removeButton.setEnabled(false);
 
