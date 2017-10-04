@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.finder.widgets;
 
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.results.VoidResult;
 import org.eclipse.swtbot.swt.finder.utils.MessageFormat;
@@ -49,4 +50,12 @@ public class RHBotSection extends AbstractSWTBotControl<Section> {
 		return this;
 	}
 
+	/**
+	 * Returns a SWTBot instance that matches the contents of this workbench part.
+	 *
+	 * @return SWTBot
+	 */
+	public SWTBot bot() {
+		return new SWTBot(widget);
+	}
 }
