@@ -138,7 +138,10 @@ public class ComponentInstantiationPropertyViewerAdapter {
 			component.unsetProfileObj();
 		}
 		ignore = false;
-		viewer.refresh();
+
+		if (viewer != null) {
+			viewer.refresh();
+		}
 	}
 
 	public void dispose() {
