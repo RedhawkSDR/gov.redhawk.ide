@@ -25,14 +25,12 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 import gov.redhawk.model.sca.IDisposable;
-import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.sca.ui.ScaComponentFactory;
 import gov.redhawk.sca.ui.properties.ScaPropertiesAdapterFactory;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 
 /**
- * Handles properties for either design-time (properties of a {@link ComponentInstantiation} in a SAD/DCD) or runtime
- * ({@link ScaPropertyContainer}).
+ * Handles design-time properties for a {@link ComponentInstantiation} in a SAD/DCD.
  * @see {@link ComponentInstantiationFilter}.
  */
 public class PropertiesSection extends AbstractPropertiesSection implements ITabbedPropertyConstants, IEditingDomainProvider {
