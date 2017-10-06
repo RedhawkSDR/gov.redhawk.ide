@@ -14,8 +14,10 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.platform.AbstractPropertySectionFilter;
+import org.eclipse.jface.viewers.IFilter;
 
-import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
+import gov.redhawk.core.graphiti.ui.properties.BusinessObjectFilter;
+import gov.redhawk.core.graphiti.ui.properties.CompoundFilter;
 import gov.redhawk.core.graphiti.ui.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 
@@ -23,14 +25,21 @@ import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
  * Selects only {@link ComponentInstantiation}s (representing a component/device/service) in design-time diagrams.
  * @see {@link PropertiesSection}
  */
-public class ComponentInstantiationFilter extends AbstractPropertySectionFilter {
+public class ComponentInstantiationFilter extends CompoundFilter {
 
-	@Override
-	protected boolean accept(PictogramElement pictogramElement) {
-		Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pictogramElement);
-		return (pictogramElement instanceof RHContainerShape) && //
-				DUtil.getBusinessObject(pictogramElement, ComponentInstantiation.class) != null && //
-				!DUtil.isDiagramRuntime(diagram);
+	public ComponentInstantiationFilter() {
+		super(CompoundFilter.BooleanOperator.FILTER_AND);
+
+		IFilter boFilter = new BusinessObjectFilter(ComponentInstantiation.class);
+		IFilter designTimeFilter = new AbstractPropertySectionFilter() {
+			@Override
+			protected boolean accept(PictogramElement pictogramElement) {
+				Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pictogramElement);
+				return !DUtil.isDiagramRuntime(diagram);
+			}
+		};
+
+		addFilter(boFilter);
+		addFilter(designTimeFilter);
 	}
-
 }
