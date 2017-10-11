@@ -45,6 +45,9 @@ import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 import gov.redhawk.ide.ui.wizard.RedhawkImportWizardPage1.ProjectRecord;
+import mil.jpeojtrs.sca.scd.ComponentType;
+import mil.jpeojtrs.sca.scd.SoftwareComponent;
+import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
@@ -125,8 +128,7 @@ public abstract class RedhawkImportUtil {
 				}
 
 				// Create the files, shouldGenerate parameter should be false
-				final IStatus status = generator.generate(settings, impl, System.out, System.err, monitor.newChild(1), fileList.toArray(new String[0]), false,
-					crcMap);
+				final IStatus status = generator.generate(settings, impl, System.out, System.err, monitor.newChild(1), fileList.toArray(new String[0]), false, crcMap);
 				// Save the workspace
 				final WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
@@ -172,39 +174,108 @@ public abstract class RedhawkImportUtil {
 	 */
 	protected WaveDevSettings createWaveDevFile(ProjectRecord projectRecord, String projectName, SoftPkg softPkg) throws CoreException {
 		WaveDevSettings waveDev = CodegenFactory.eINSTANCE.createWaveDevSettings();
+		ComponentType componentType = ComponentType.OTHER;
+		if (softPkg.getDescriptor() != null) {
+			componentType = SoftwareComponent.Util.getWellKnownComponentType(softPkg.getDescriptor().getComponent());
+		}
 
 		// Recreate the basic settings for each implementation
 		// This makes assumptions that the defaults are selected for everything
 		for (final Implementation impl : softPkg.getImplementation()) {
-			final ImplementationSettings settings = CodegenFactory.eINSTANCE.createImplementationSettings();
 			final String lang = impl.getProgrammingLanguage().getName();
-			// Find the code generator if specified, otherwise pick the first one returned by the registry
+
+			// Make a best guess at the code generator
 			ICodeGeneratorDescriptor codeGenDesc = null;
 			final ICodeGeneratorDescriptor[] codeGens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(lang);
 			if (codeGens.length > 0) {
 				codeGenDesc = codeGens[0];
 			}
-
-			if (codeGenDesc != null) {
-				final IScaComponentCodegen generator = codeGenDesc.getGenerator();
-
-				// Assume that there is <name>[/].+<other> format for the entrypoint
-				// Pick out <name> for both the output dir and settings name
-				final String lf = impl.getCode().getEntryPoint();
-
-				// Set the generator, settings name and output directory
-				settings.setGeneratorId(generator.getClass().getCanonicalName());
-				settings.setOutputDir(lf.substring(0, lf.lastIndexOf('/')));
-
-				// pick the first selectable and defaultable template returned by the registry
-				ITemplateDesc templateDesc = null;
-				final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(settings.getGeneratorId());
-				for (final ITemplateDesc itd : templates) {
-					if (itd.isSelectable() && !itd.notDefaultableGenerator()) {
-						templateDesc = itd;
+			switch (componentType) {
+			case RESOURCE:
+			case DEVICE:
+			case SERVICE:
+				if (lang != null) {
+					switch (lang.toLowerCase()) {
+					case "c++":
+						codeGenDesc = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(
+							"gov.redhawk.ide.codegen.jinja.cplusplus.CplusplusGenerator");
+						break;
+					case "java":
+						codeGenDesc = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen("gov.redhawk.ide.codegen.jinja.java.JavaGenerator");
+						break;
+					case "python":
+						codeGenDesc = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen("gov.redhawk.ide.codegen.jinja.python.PythonGenerator");
+						break;
+					default:
 						break;
 					}
 				}
+				break;
+			case OTHER:
+				if (CodeFileType.SHARED_LIBRARY.equals(impl.getCode().getType()) && lang != null) {
+					switch (lang.toLowerCase()) {
+					case "c++":
+						codeGenDesc = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(
+							"gov.redhawk.ide.codegen.jinja.cplusplus.CplusplusSharedLibraryGenerator");
+						break;
+					default:
+						break;
+					}
+				}
+				break;
+			default:
+				break;
+			}
+
+			final ImplementationSettings settings = CodegenFactory.eINSTANCE.createImplementationSettings();
+			if (codeGenDesc != null) {
+				final IScaComponentCodegen generator = codeGenDesc.getGenerator();
+
+				// Use the localfile to determine the output directory
+				String outputDir = impl.getCode().getLocalFile().getName();
+				if (outputDir.indexOf('/') != -1) {
+					outputDir = outputDir.substring(0, outputDir.lastIndexOf('/'));
+				}
+
+				// Set the generator, settings name and output directory
+				settings.setGeneratorId(generator.getClass().getCanonicalName());
+				settings.setOutputDir(outputDir);
+
+				// Find a template using the template registry and the componentType
+				ITemplateDesc templateDesc = null;
+				
+				if (CodeFileType.SHARED_LIBRARY.equals(impl.getCode().getType()) && lang != null) {
+					// Handle shared libraries as a special case
+					switch (lang.toLowerCase()) {
+					case "c++":
+						templateDesc = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate("redhawk.codegen.jinja.cpp.library");
+						break;
+					default:
+						break;
+					}
+				} else {
+					// Handle all other project types
+					final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(
+						settings.getGeneratorId(), componentType.getLiteral());
+					for (final ITemplateDesc itd : templates) {
+						if (itd.isSelectable() && !itd.notDefaultableGenerator()) {
+							templateDesc = itd;
+							break;
+						}
+					}
+				}
+				
+				// If we still don't have a template, ask the import project wizard for help
+				if (templateDesc == null) {
+					for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
+						if (assistant.handlesLanguage(lang)) {
+							String templateId = assistant.getDefaultTemplate();
+							templateDesc = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate(templateId);
+							break;
+						}
+					}
+				}
+				
 				// If we found the template, use it
 				if (templateDesc != null) {
 					// Set the properties to their default values
@@ -215,16 +286,6 @@ public abstract class RedhawkImportUtil {
 						settings.getProperties().add(p);
 					}
 					settings.setTemplate(templateDesc.getId());
-					if (projectRecord.getTemplate() != null && !projectRecord.getTemplate().isEmpty()) {
-						settings.setTemplate(projectRecord.getTemplate().get(impl.getId()));
-					} else {
-						for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
-							if (assistant.handlesLanguage(lang)) {
-								settings.setTemplate(assistant.getDefaultTemplate());
-								break;
-							}
-						}
-					}
 				}
 			}
 
