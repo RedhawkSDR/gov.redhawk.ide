@@ -157,7 +157,7 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 		super.setReference(reference);
 
 		Map<String, AbstractPropertyRef< ? >> fieldRefs = new HashMap<String, AbstractPropertyRef< ? >>();
-		if (reference != null) {
+		if (reference != null && reference instanceof StructRef) {
 			StructRef structRef = (StructRef) reference;
 			for (FeatureMap.Entry ref : structRef.getRefs()) {
 				AbstractPropertyRef< ? > childRef = (AbstractPropertyRef< ? >) ref.getValue();
