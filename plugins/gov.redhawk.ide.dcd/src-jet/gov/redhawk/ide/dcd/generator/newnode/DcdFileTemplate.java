@@ -103,9 +103,11 @@ public class DcdFileTemplate
 			tmpInterface.setRepid(ResourceHelper.id());
             SoftwareComponent scd = softPkg.getDescriptor().getComponent();
             boolean implementsResource = false;
-			for (Interface serviceInterface : scd.getInterfaces().getInterface()) {
-				if (serviceInterface.isInstance(tmpInterface)) {
-					implementsResource = true;
+            if (scd != null) {
+				for (Interface serviceInterface : scd.getInterfaces().getInterface()) {
+					if (serviceInterface.isInstance(tmpInterface)) {
+						implementsResource = true;
+					}
 				}
 			}
 
