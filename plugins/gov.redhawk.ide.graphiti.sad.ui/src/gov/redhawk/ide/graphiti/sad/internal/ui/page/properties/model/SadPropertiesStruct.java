@@ -27,7 +27,9 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.widgets.Composite;
 
+import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.XViewerCellEditor;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
@@ -192,5 +194,10 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 	protected boolean isEmpty(Object value) {
 		// Struct values are not modified directly, so this is never called
 		return false;
+	}
+
+	@Override
+	public XViewerCellEditor createCellEditor(Composite parent) {
+		return null;
 	}
 }

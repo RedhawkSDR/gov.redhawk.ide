@@ -13,7 +13,9 @@ package gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.model;
 import java.util.Collection;
 
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.swt.widgets.Composite;
 
+import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.XViewerCellEditor;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
@@ -42,4 +44,6 @@ public interface SadProperty {
 	SadComponentInstantiation getComponentInstantiation();
 
 	ILabelProvider getLabelProvider();
+
+	XViewerCellEditor createCellEditor(Composite parent);
 }
