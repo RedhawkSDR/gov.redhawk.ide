@@ -13,8 +13,12 @@ package gov.redhawk.ide.dcd.generator.newnode;
  
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.dcd.generator.newnode.GeneratorArgs;
+import CF.ResourceHelper;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.scd.SoftwareComponent;
+import mil.jpeojtrs.sca.scd.ScdFactory;
+import mil.jpeojtrs.sca.scd.Interface;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,16 +45,21 @@ public class DcdFileTemplate
   protected final String TEXT_7 = "\"/>" + NL + "    </componentfile>";
   protected final String TEXT_8 = NL + "  </componentfiles>" + NL + "  <partitioning>";
   protected final String TEXT_9 = NL + "    <componentplacement>" + NL + "      <componentfileref refid=\"";
-  protected final String TEXT_10 = "\"/>" + NL + "      <componentinstantiation id=\"";
-  protected final String TEXT_11 = "\">" + NL + "        <usagename>";
-  protected final String TEXT_12 = "_";
-  protected final String TEXT_13 = "</usagename>" + NL + "      </componentinstantiation>" + NL + "    </componentplacement>";
-  protected final String TEXT_14 = NL + "  </partitioning>";
-  protected final String TEXT_15 = NL + "  <partitioning/>";
-  protected final String TEXT_16 = NL + "  <domainmanager>" + NL + "    <namingservice name=\"";
-  protected final String TEXT_17 = "/";
-  protected final String TEXT_18 = "\"/>" + NL + "  </domainmanager>" + NL + "</deviceconfiguration>";
-  protected final String TEXT_19 = NL;
+  protected final String TEXT_10 = "\"/>" + NL;
+  protected final String TEXT_11 = NL + "      <componentinstantiation id=\"";
+  protected final String TEXT_12 = "\" startorder=\"";
+  protected final String TEXT_13 = "\">";
+  protected final String TEXT_14 = NL + "\t  <componentinstantiation id=\"";
+  protected final String TEXT_15 = "\">";
+  protected final String TEXT_16 = NL + "        <usagename>";
+  protected final String TEXT_17 = "_";
+  protected final String TEXT_18 = "</usagename>" + NL + "      </componentinstantiation>" + NL + "    </componentplacement>";
+  protected final String TEXT_19 = NL + "  </partitioning>";
+  protected final String TEXT_20 = NL + "  <partitioning/>";
+  protected final String TEXT_21 = NL + "  <domainmanager>" + NL + "    <namingservice name=\"";
+  protected final String TEXT_22 = "/";
+  protected final String TEXT_23 = "\"/>" + NL + "  </domainmanager>" + NL + "</deviceconfiguration>";
+  protected final String TEXT_24 = NL;
 
     /**
      * {@inheritDoc}
@@ -86,8 +95,24 @@ public class DcdFileTemplate
 
     stringBuffer.append(TEXT_8);
     
+		int tmpStartOrder = 0;
         for (SoftPkg softPkg : args.getNodeElements()) {
             int elementNum = 1;
+            
+            Interface tmpInterface = ScdFactory.eINSTANCE.createInterface();
+			tmpInterface.setRepid(ResourceHelper.id());
+            SoftwareComponent scd = softPkg.getDescriptor().getComponent();
+            boolean implementsResource = false;
+			for (Interface serviceInterface : scd.getInterfaces().getInterface()) {
+				if (serviceInterface.isInstance(tmpInterface)) {
+					implementsResource = true;
+				}
+			}
+
+			Integer startOrder = null;
+			if (implementsResource) {
+            	startOrder = tmpStartOrder++;
+			}
             String usageName = ProjectCreator.getBaseFileName(softPkg.getName());
             while (elementList.contains(usageName + "_" + elementNum)) {
                 elementNum++;
@@ -99,29 +124,45 @@ public class DcdFileTemplate
     stringBuffer.append(TEXT_9);
     stringBuffer.append(elementToId.get(softPkg));
     stringBuffer.append(TEXT_10);
-    stringBuffer.append(compInstId);
+     			
+			if (startOrder != null) {
+
     stringBuffer.append(TEXT_11);
-    stringBuffer.append(usageName);
+    stringBuffer.append(compInstId);
     stringBuffer.append(TEXT_12);
-    stringBuffer.append(elementNum);
+    stringBuffer.append(startOrder);
     stringBuffer.append(TEXT_13);
+     
+			} else {
+
+    stringBuffer.append(TEXT_14);
+    stringBuffer.append(compInstId);
+    stringBuffer.append(TEXT_15);
+    
+			}
+
+    stringBuffer.append(TEXT_16);
+    stringBuffer.append(usageName);
+    stringBuffer.append(TEXT_17);
+    stringBuffer.append(elementNum);
+    stringBuffer.append(TEXT_18);
     
         }
 
-    stringBuffer.append(TEXT_14);
+    stringBuffer.append(TEXT_19);
     
     } else {
 
-    stringBuffer.append(TEXT_15);
+    stringBuffer.append(TEXT_20);
     
     }
 
-    stringBuffer.append(TEXT_16);
+    stringBuffer.append(TEXT_21);
     stringBuffer.append(args.getDomainManagerName());
-    stringBuffer.append(TEXT_17);
+    stringBuffer.append(TEXT_22);
     stringBuffer.append(args.getDomainManagerName());
-    stringBuffer.append(TEXT_18);
-    stringBuffer.append(TEXT_19);
+    stringBuffer.append(TEXT_23);
+    stringBuffer.append(TEXT_24);
     return stringBuffer.toString();
   }
 }

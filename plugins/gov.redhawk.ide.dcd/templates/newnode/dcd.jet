@@ -1,8 +1,12 @@
 <%@ jet package="gov.redhawk.ide.dcd.generator.newnode" skeleton="../generator.skeleton"
 class="DcdFileTemplate" imports="gov.redhawk.ide.codegen.util.ProjectCreator
 gov.redhawk.ide.dcd.generator.newnode.GeneratorArgs
+CF.ResourceHelper
 mil.jpeojtrs.sca.util.DceUuidUtil 
 mil.jpeojtrs.sca.spd.SoftPkg
+mil.jpeojtrs.sca.scd.SoftwareComponent
+mil.jpeojtrs.sca.scd.ScdFactory
+mil.jpeojtrs.sca.scd.Interface
 java.util.ArrayList
 java.util.HashMap 
 java.util.List
@@ -36,8 +40,24 @@ java.util.UUID"
   </componentfiles>
   <partitioning>
 <%
+		int tmpStartOrder = 0;
         for (SoftPkg softPkg : args.getNodeElements()) {
             int elementNum = 1;
+            
+            Interface tmpInterface = ScdFactory.eINSTANCE.createInterface();
+			tmpInterface.setRepid(ResourceHelper.id());
+            SoftwareComponent scd = softPkg.getDescriptor().getComponent();
+            boolean implementsResource = false;
+			for (Interface serviceInterface : scd.getInterfaces().getInterface()) {
+				if (serviceInterface.isInstance(tmpInterface)) {
+					implementsResource = true;
+				}
+			}
+
+			Integer startOrder = null;
+			if (implementsResource) {
+            	startOrder = tmpStartOrder++;
+			}
             String usageName = ProjectCreator.getBaseFileName(softPkg.getName());
             while (elementList.contains(usageName + "_" + elementNum)) {
                 elementNum++;
@@ -48,7 +68,18 @@ java.util.UUID"
 %>
     <componentplacement>
       <componentfileref refid="<%=elementToId.get(softPkg)%>"/>
-      <componentinstantiation id="<%=compInstId%>">
+
+<% 			
+			if (startOrder != null) {
+%>
+      <componentinstantiation id="<%=compInstId%>" startorder="<%=startOrder%>">
+<% 
+			} else {
+%>
+	  <componentinstantiation id="<%=compInstId%>">
+<%
+			}
+%>
         <usagename><%=usageName%>_<%=elementNum%></usagename>
       </componentinstantiation>
     </componentplacement>
