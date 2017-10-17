@@ -201,13 +201,16 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		if (element instanceof SadProperty) {
 			SadProperty prop = (SadProperty) element;
 			if (prop.isAssemblyControllerProperty()) {
-				String value = prop.getExternalID();
-				if (value != null) {
-					return value;
+				if (prop.getDefinition().eContainer() instanceof AbstractProperty) {
+					return "";
+				}
+				if (prop.getExternalID() != null) {
+					return prop.getExternalID();
 				}
 				return prop.getID();
+			} else {
+				return prop.getExternalID();
 			}
-			return prop.getExternalID();
 		}
 		return "";
 	}

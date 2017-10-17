@@ -11,9 +11,9 @@
 package gov.redhawk.ide.graphiti.sad.internal.ui.page.properties;
 
 import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.model.SadProperty;
-import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.model.SadPropertyImpl;
 import gov.redhawk.sca.sad.validation.DuplicateAssemblyExternalPropertyIDConstraint;
 import gov.redhawk.sca.sad.validation.DuplicateExternalPropertyIDConstraint;
+import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -32,10 +32,8 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 	@Override
 	public Control createControl(CellEditDescriptor ced, final XViewer xv) {
 		IStructuredSelection ss = (IStructuredSelection) xv.getSelection();
-		Object editElement = ss.getFirstElement();
+		final SadProperty prop = (SadProperty) ss.getFirstElement();
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
-			final SadProperty prop = (SadProperty) editElement;
-
 			String[] items = new String[] { "", prop.getDefinition().getId() };
 			XViewerComboCellEditor editor = new XViewerComboCellEditor(xv.getTree(), items, ced.getSwtStyle());
 
@@ -55,7 +53,9 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 
 			return editor;
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
-			return ((SadPropertyImpl< ? >) editElement).createCellEditor(xv.getTree());
+			if (PropertiesUtil.canOverride(prop.getDefinition())) {
+				return prop.createCellEditor(xv.getTree());
+			}
 		}
 		return null;
 	}

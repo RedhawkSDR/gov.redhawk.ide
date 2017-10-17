@@ -28,9 +28,7 @@ import org.eclipse.emf.edit.provider.IDisposable;
 import org.eclipse.emf.edit.provider.ItemProvider;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.swt.widgets.Composite;
 
-import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.XViewerCellEditor;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.sad.ExternalProperties;
@@ -98,10 +96,6 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 	@Override
 	public T getDefinition() {
 		return this.getDef();
-	}
-
-	public XViewerCellEditor createCellEditor(Composite parent) {
-		return null;
 	}
 
 	public SadPropertiesComponent getComponent() {

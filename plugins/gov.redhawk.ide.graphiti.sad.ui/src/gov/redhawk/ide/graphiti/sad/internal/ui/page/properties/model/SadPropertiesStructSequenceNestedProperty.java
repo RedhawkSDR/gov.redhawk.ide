@@ -18,7 +18,9 @@ import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.edit.provider.ItemProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.widgets.Composite;
 
+import gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.XViewerCellEditor;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
@@ -117,5 +119,11 @@ public abstract class SadPropertiesStructSequenceNestedProperty extends ItemProv
 	@Override
 	public SadComponentInstantiation getComponentInstantiation() {
 		return getParent().getComponentInstantiation();
+	}
+
+	@Override
+	public XViewerCellEditor createCellEditor(Composite parent) {
+		// Edited via dialog on the struct sequence
+		return null;
 	}
 }
