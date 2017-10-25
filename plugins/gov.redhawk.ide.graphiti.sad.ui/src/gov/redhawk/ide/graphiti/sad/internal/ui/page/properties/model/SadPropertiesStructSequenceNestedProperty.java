@@ -30,7 +30,7 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 public abstract class SadPropertiesStructSequenceNestedProperty extends ItemProvider implements SadProperty {
 
 	private final AbstractProperty definition;
-	private ILabelProvider labelProvider;
+	protected ILabelProvider labelProvider;  // SUPPRESS CHECKSTYLE INLINE
 
 	public SadPropertiesStructSequenceNestedProperty(AdapterFactory adapterFactory, AbstractProperty def, Object parent) {
 		super(adapterFactory);
