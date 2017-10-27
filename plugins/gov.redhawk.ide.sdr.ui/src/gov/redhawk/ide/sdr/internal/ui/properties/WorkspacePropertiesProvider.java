@@ -43,7 +43,9 @@ public class WorkspacePropertiesProvider implements IPropertiesProvider {
 				for (IResource resource : project.members()) {
 					if (resource.getType() == IResource.FILE && resource.getName().endsWith(".spd.xml")) {
 						SoftPkg spd = attemptLoad((IFile) resource);
-						pathToSpd.add(spd);
+						if (spd != null) {
+							pathToSpd.add(spd);
+						}
 					}
 				}
 			} catch (CoreException e) {
