@@ -11,9 +11,13 @@
 package gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 
 import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
@@ -23,6 +27,29 @@ public class SadPropertiesStructSequenceSimpleSequence extends SadPropertiesStru
 
 	public SadPropertiesStructSequenceSimpleSequence(AdapterFactory adapterFactory, SimpleSequence def, SadPropertiesStructSequence parent) {
 		super(adapterFactory, def, parent);
+	}
+
+	@Override
+	public ILabelProvider getLabelProvider() {
+		if (labelProvider == null) {
+			labelProvider = new LabelProvider() {
+
+				@Override
+				public String getText(Object element) {
+					if (element != null) {
+						@SuppressWarnings({ "unchecked" })
+						List<ArrayList<String>> list = (List<ArrayList<String>>) element;
+						for (ArrayList<String> arrayList : list) {
+							Collections.replaceAll(arrayList, "", "\"\"");
+						}
+						return Arrays.toString(((List< ? >) element).toArray());
+					}
+					return "";
+				}
+
+			};
+		}
+		return labelProvider;
 	}
 
 	@Override

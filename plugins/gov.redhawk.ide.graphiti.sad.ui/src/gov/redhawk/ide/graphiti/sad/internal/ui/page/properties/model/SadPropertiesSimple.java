@@ -48,6 +48,10 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 	public String getSadValue() {
 		SimpleRef simpleRef = getValueRef();
 		if (simpleRef != null) {
+			// Display empty strings as ""
+			if ("".equals(simpleRef.getValue())) {
+				return "\"\"";
+			}
 			return simpleRef.getValue();
 		}
 		return null;
@@ -100,6 +104,11 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			SimpleRef ref = PrfFactory.eINSTANCE.createSimpleRef();
 			ref.setRefID(getID());
+
+			// If ("\"\"") is entered, convert it to an empty string before passing to the model object
+			if ("\"\"".equals(value)) {
+				value = "";
+			}
 			ref.setValue((String) value);
 			return ref;
 		}
@@ -108,6 +117,10 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 
 	@Override
 	protected Command createSetCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
+		// If ("\"\"") is entered, convert it to an empty string before passing to the model object
+		if ("\"\"".equals(value)) {
+			value = "";
+		}
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			return SetCommand.create(domain, owner, PrfPackage.Literals.SIMPLE_REF__VALUE, value);
 		}

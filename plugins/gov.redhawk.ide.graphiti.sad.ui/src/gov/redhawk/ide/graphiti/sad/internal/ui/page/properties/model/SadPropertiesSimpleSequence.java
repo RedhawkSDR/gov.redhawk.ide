@@ -13,6 +13,7 @@ package gov.redhawk.ide.graphiti.sad.internal.ui.page.properties.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
@@ -50,7 +51,10 @@ public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence>
 	public Object getSadValue() {
 		SimpleSequenceRef ref = getValueRef();
 		if (ref != null) {
-			return ref.getValues().getValue();
+			List< String > retVal = new ArrayList<>();
+			retVal.addAll(ref.getValues().getValue());
+			Collections.replaceAll(retVal, "", "\"\"");
+			return retVal;
 		}
 		return null;
 	}
@@ -94,8 +98,11 @@ public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence>
 		return getDefinition().getKind();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected Object createModelObject(EStructuralFeature feature, Object value) {
+		// Make sure double-quotes are interpreted as empty strings
+		Collections.replaceAll((List) value, "\"\"", "");
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			SimpleSequenceRef ref = PrfFactory.eINSTANCE.createSimpleSequenceRef();
 			ref.setRefID(getID());
@@ -106,8 +113,11 @@ public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence>
 		return super.createModelObject(feature, value);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Command createSetCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
+		// Make sure double-quotes are interpreted as empty strings
+		Collections.replaceAll((List) value, "\"\"", "");
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			return SetCommand.create(domain, ((SimpleSequenceRef) owner).getValues(), PrfPackage.Literals.VALUES__VALUE, value);
 		}
