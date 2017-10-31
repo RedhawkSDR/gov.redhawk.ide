@@ -851,21 +851,6 @@ public class DiagramTestUtils {
 		String namingservice = "<namingservice name=\"" + ci.getUsageName() + "\"/>";
 
 		return "(?s).*" + componentinstantiation + ".*" + usagename + ".*" + namingservice + ".*";
-
-	}
-
-	/**
-	 * Checks dcd.xml for device instantiation code
-	 * @param deviceShape
-	 * @return
-	 */
-	public static String regexStringForDevice(RHContainerShape deviceShape) {
-		Object bo = DUtil.getBusinessObject(deviceShape);
-		DcdComponentInstantiation ci = (DcdComponentInstantiation) bo;
-		String componentinstantiation = "<componentinstantiation id=\"" + ci.getId() + "\">";
-		String usagename = "<usagename>" + ci.getUsageName() + "</usagename>";
-
-		return "(?s).*" + componentinstantiation + ".*" + usagename + ".*";
 	}
 
 	/**
