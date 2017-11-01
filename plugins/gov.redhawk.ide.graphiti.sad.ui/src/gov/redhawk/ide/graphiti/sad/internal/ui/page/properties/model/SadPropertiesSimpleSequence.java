@@ -73,7 +73,10 @@ public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence>
 	public Object getPrfValue() {
 		Values values = getDefinition().getValues();
 		if (values != null) {
-			return values.getValue();
+			List< String > retVal = new ArrayList<>();
+			retVal.addAll(values.getValue());
+			Collections.replaceAll(retVal, "", "\"\"");
+			return retVal;
 		}
 		return null;
 	}

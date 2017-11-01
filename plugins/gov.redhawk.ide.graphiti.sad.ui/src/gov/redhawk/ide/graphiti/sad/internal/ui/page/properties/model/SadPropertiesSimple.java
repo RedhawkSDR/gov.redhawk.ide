@@ -64,7 +64,11 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 
 	@Override
 	public Object getPrfValue() {
-		return getDefinition().getValue();
+		String value = getDefinition().getValue();
+		if ("".equals(value)) {
+			return "\"\"";
+		}
+		return value;
 	}
 
 	@Override
