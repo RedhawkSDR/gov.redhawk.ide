@@ -10,8 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
@@ -19,6 +23,11 @@ import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+
+import gov.redhawk.ide.swtbot.diagram.RHBotGefEditor;
+import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 public class WaveformUtils {
 
@@ -110,4 +119,16 @@ public class WaveformUtils {
 		return null;
 	}
 
+	/**
+	 * @param editor
+	 * @return the {@link SoftwareAssembly} model object associated with the waveform editor
+	 * @throws IOException
+	 */
+	public static SoftwareAssembly getSoftwareAssembly(RHBotGefEditor editor) throws IOException {
+		ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+		String editorText = editor.toTextEditor().getText();
+		Resource resource = resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI("mem://temp.sad.xml"), SadPackage.eCONTENT_TYPE);
+		resource.load(new ByteArrayInputStream(editorText.getBytes()), null);
+		return SoftwareAssembly.Util.getSoftwareAssembly(resource);
+	}
 }
