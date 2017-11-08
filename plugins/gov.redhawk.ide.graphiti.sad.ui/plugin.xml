@@ -90,6 +90,12 @@
                tab="gov.redhawk.core.graphiti.sad.ui.propertyTab.properties">
          </propertySection>
          <propertySection
+               class="gov.redhawk.ide.graphiti.ui.properties.ConnectionPropertiesSection"
+               filter="gov.redhawk.ide.graphiti.ui.properties.ConnectionPropertiesFilter"
+               id="gov.redhawk.ide.graphiti.sad.ui.propertySection.connectionProperties"
+               tab="gov.redhawk.core.graphiti.sad.ui.propertyTab.properties">
+         </propertySection>
+         <propertySection
                afterSection="200"
                class="gov.redhawk.sca.ui.properties.PortInterfacePropertiesSection"
                enablesFor="1"

@@ -159,6 +159,12 @@
                id="gov.redhawk.ide.graphiti.dcd.ui.propertySection.requirements"
                tab="gov.redhawk.ide.graphiti.dcd.ui.propertyTab.requirements">
          </propertySection>
+         <propertySection
+               class="gov.redhawk.ide.graphiti.ui.properties.ConnectionPropertiesSection"
+               filter="gov.redhawk.ide.graphiti.ui.properties.ConnectionPropertiesFilter"
+               id="gov.redhawk.ide.graphiti.dcd.ui.propertySection.connectionProperties"
+               tab="gov.redhawk.core.graphiti.dcd.ui.propertyTab.properties">
+         </propertySection>
       </propertySections>
     </extension>
 	<extension

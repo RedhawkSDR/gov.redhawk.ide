@@ -40,6 +40,13 @@
                type="gov.redhawk.ide.debug.LocalLaunch">
          </adapter>
       </factory>
+      <factory
+            adaptableType="org.eclipse.graphiti.ui.platform.GraphitiConnectionEditPart"
+            class="gov.redhawk.ide.graphiti.ui.adapters.ConnectInterfaceAdapter">
+         <adapter
+               type="mil.jpeojtrs.sca.partitioning.ConnectInterface">
+         </adapter>
+      </factory>
    </extension>
 
 </plugin>

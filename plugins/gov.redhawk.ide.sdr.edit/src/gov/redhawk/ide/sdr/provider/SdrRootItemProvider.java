@@ -11,16 +11,8 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.provider;
 
-import gov.redhawk.eclipsecorba.library.LibraryFactory;
-import gov.redhawk.ide.sdr.SdrFactory;
-import gov.redhawk.ide.sdr.SdrPackage;
-import gov.redhawk.ide.sdr.SdrRoot;
-
 import java.util.Collection;
 import java.util.List;
-
-import mil.jpeojtrs.sca.util.QueryParser;
-import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -41,6 +33,13 @@ import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+
+import gov.redhawk.eclipsecorba.library.LibraryFactory;
+import gov.redhawk.ide.sdr.SdrFactory;
+import gov.redhawk.ide.sdr.SdrPackage;
+import gov.redhawk.ide.sdr.SdrRoot;
+import mil.jpeojtrs.sca.util.QueryParser;
+import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 /**
  * This is the item provider adapter for a {@link gov.redhawk.ide.sdr.SdrRoot} object.
