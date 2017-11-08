@@ -60,6 +60,10 @@ public class ViewUtils {
 		}
 	}
 
+	public static SWTBotView getAllocationManagerView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.ui.views.allocmgr.view");
+	}
+
 	/**
 	 * Return Audio View
 	 * @param bot
