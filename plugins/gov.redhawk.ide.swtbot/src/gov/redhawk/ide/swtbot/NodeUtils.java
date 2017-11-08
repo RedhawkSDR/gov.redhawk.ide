@@ -11,15 +11,23 @@
  */
 package gov.redhawk.ide.swtbot;
 
-import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
-
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+
+import gov.redhawk.ide.swtbot.diagram.RHBotGefEditor;
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
+import mil.jpeojtrs.sca.dcd.DcdPackage;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 public class NodeUtils {
 
@@ -94,4 +102,16 @@ public class NodeUtils {
 		devMgrTreeItem.contextMenu("Open With").menu("Node Explorer").click();
 	}
 
+	/**
+	 * @param editor
+	 * @return The {@link DeviceConfiguration} model object associated with the Node editor
+	 * @throws IOException
+	 */
+	public static DeviceConfiguration getDeviceConfiguration(RHBotGefEditor editor) throws IOException {
+		ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+		String editorText = editor.toTextEditor().getText();
+		Resource resource = resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI("mem://temp.dcd.xml"), DcdPackage.eCONTENT_TYPE);
+		resource.load(new ByteArrayInputStream(editorText.getBytes()), null);
+		return DeviceConfiguration.Util.getDeviceConfiguration(resource);
+	}
 }
