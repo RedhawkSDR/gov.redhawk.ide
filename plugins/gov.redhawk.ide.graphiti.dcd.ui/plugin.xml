@@ -165,6 +165,12 @@
                id="gov.redhawk.ide.graphiti.dcd.ui.propertySection.connectionProperties"
                tab="gov.redhawk.core.graphiti.dcd.ui.propertyTab.properties">
          </propertySection>
+         <propertySection
+               class="gov.redhawk.ide.graphiti.dcd.ui.properties.DeviceConfigurationSection"
+               filter="gov.redhawk.ide.graphiti.dcd.ui.properties.DeviceConfigurationFilter"
+               id="gov.redhawk.ide.graphiti.dcd.ui.propertySection.deviceConfiguration"
+               tab="gov.redhawk.core.graphiti.dcd.ui.propertyTab.properties">
+         </propertySection>
       </propertySections>
     </extension>
 	<extension
@@ -258,5 +264,15 @@
       <primaryWizard
             id="gov.redhawk.ide.ui.wizard.newservice">
       </primaryWizard>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.graphiti.ui.internal.parts.DiagramEditPart"
+            class="gov.redhawk.ide.graphiti.dcd.ui.adapters.DeviceConfigurationAdapter">
+         <adapter
+               type="mil.jpeojtrs.sca.dcd.DeviceConfiguration">
+         </adapter>
+      </factory>
    </extension>
 </plugin>

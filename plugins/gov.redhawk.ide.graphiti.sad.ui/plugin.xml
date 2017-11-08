@@ -116,6 +116,12 @@
                id="gov.redhawk.ide.graphiti.sad.ui.propertySection.reservations"
                tab="gov.redhawk.ide.graphiti.sad.ui.propertyTab.reservations">
          </propertySection>
+         <propertySection
+               class="gov.redhawk.ide.graphiti.sad.ui.properties.SoftwareAssemblySection"
+               filter="gov.redhawk.ide.graphiti.sad.ui.properties.SoftwareAssemblyFilter"
+               id="gov.redhawk.ide.graphiti.sad.ui.propertySection.softwareAssembly"
+               tab="gov.redhawk.core.graphiti.sad.ui.propertyTab.properties">
+         </propertySection>
       </propertySections>
    </extension>
 
@@ -222,5 +228,15 @@
             preferredPerspectives="gov.redhawk.ide.ui.wizards.category.sca"
             project="true">
       </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.graphiti.ui.internal.parts.DiagramEditPart"
+            class="gov.redhawk.ide.graphiti.sad.ui.adapters.SoftwareAssemblyAdapter">
+         <adapter
+               type="mil.jpeojtrs.sca.sad.SoftwareAssembly">
+         </adapter>
+      </factory>
    </extension>
 </plugin>
