@@ -122,7 +122,7 @@ public final class GenerateCode {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				// Map of Implementation -> ( map of FileName relative to output location -> true will regenerate, 
+				// Map of Implementation -> ( map of FileName relative to output location -> true will regenerate,
 				// false wants to regenerate but contents different
 				SubMonitor progress = SubMonitor.convert(monitor, "Calculating files to generate", impls.size());
 				final Map<Implementation, Set<FileStatus>> implMap = new HashMap<Implementation, Set<FileStatus>>();
@@ -206,10 +206,10 @@ public final class GenerateCode {
 									openJob.setPriority(Job.SHORT);
 									openJob.schedule();
 								}
-								
+
 								// Static field, set to null now that we are done with it.
 								openJob = null;
-								
+
 								processJob.removeJobChangeListener(this);
 								super.done(event);
 							}
@@ -388,8 +388,8 @@ public final class GenerateCode {
 	private static IStatus generateImplementation(final String[] files, final Implementation impl, final ImplementationSettings settings,
 		final IProgressMonitor monitor, final SoftPkg softpkg, final List<FileToCRCMap> crcMap) {
 		if (settings == null) {
-			return new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find settings (wavedev) for " + impl.getId()
-				+ ", skipping generation");
+			return new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID,
+				"Unable to find settings (wavedev) for " + impl.getId() + ", skipping generation");
 		}
 
 		final String implId = impl.getId();
@@ -450,7 +450,6 @@ public final class GenerateCode {
 				final WaveDevSettings wavedev = CodegenUtil.loadWaveDevSettings(softpkg);
 				PropertyUtil.setLastGenerated(wavedev, settings, new Date(System.currentTimeMillis()));
 
-				
 				if (openEditor && (mainFile != null) && mainFile.exists()) {
 					progress.subTask("Opening editor for main file");
 
@@ -476,9 +475,7 @@ public final class GenerateCode {
 				retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unexpected error", e));
 			}
 		} else {
-			retStatus.add(new Status(
-				IStatus.WARNING,
-				RedhawkCodegenUiActivator.PLUGIN_ID,
+			retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID,
 				"No code generator is specified in the settings (wavedev). Code generation was skipped for the implementation. Check your generator selection for the implementation."));
 		}
 
@@ -524,8 +521,8 @@ public final class GenerateCode {
 						if (e.getCause() instanceof CoreException) {
 							throw ((CoreException) e.getCause());
 						} else {
-							throw new CoreException(new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID,
-								"Failed in calling generator get generated files.", e));
+							throw new CoreException(
+								new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed in calling generator get generated files.", e));
 						}
 					} catch (TimeoutException e) {
 						if (subMonitor.isCanceled()) {
@@ -623,13 +620,13 @@ public final class GenerateCode {
 
 		// Wavedev checks
 		if (waveDev == null) {
-			retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID,
-				"Unable to find project settings (wavedev) file. Cannot generate code."));
+			retStatus.add(
+				new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find project settings (wavedev) file. Cannot generate code."));
 		} else {
 			ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
 			if (implSettings == null) {
-				retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find settings in wavedev file for implementation "
-					+ impl.getId()));
+				retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID,
+					"Unable to find settings in wavedev file for implementation " + impl.getId()));
 			} else {
 				String templateId = implSettings.getTemplate();
 				ITemplateDesc template = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate(templateId);
