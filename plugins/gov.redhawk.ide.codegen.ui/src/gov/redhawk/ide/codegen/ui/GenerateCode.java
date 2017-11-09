@@ -43,7 +43,9 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.EMap;
@@ -95,6 +97,9 @@ import mil.jpeojtrs.sca.util.NamedThreadFactory;
  * @since 7.0
  */
 public final class GenerateCode {
+
+	/** We want this job to run last */
+	private static WorkbenchJob openJob;
 
 	private GenerateCode() {
 	}
@@ -185,7 +190,7 @@ public final class GenerateCode {
 							implFileMap.put(entry.getKey(), subsetFilesToGenerate.toArray(new String[subsetFilesToGenerate.size()]));
 						}
 
-						WorkspaceJob processJob = new WorkspaceJob("Generating...") {
+						final WorkspaceJob processJob = new WorkspaceJob("Generating...") {
 
 							@Override
 							public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
@@ -194,7 +199,21 @@ public final class GenerateCode {
 						};
 						processJob.setUser(true);
 						processJob.schedule();
-
+						processJob.addJobChangeListener(new JobChangeAdapter() {
+							@Override
+							public void done(IJobChangeEvent event) {
+								if (openJob != null) {
+									openJob.setPriority(Job.SHORT);
+									openJob.schedule();
+								}
+								
+								// Static field, set to null now that we are done with it.
+								openJob = null;
+								
+								processJob.removeJobChangeListener(this);
+								super.done(event);
+							}
+						});
 						return Status.OK_STATUS;
 					}
 				};
@@ -431,11 +450,12 @@ public final class GenerateCode {
 				final WaveDevSettings wavedev = CodegenUtil.loadWaveDevSettings(softpkg);
 				PropertyUtil.setLastGenerated(wavedev, settings, new Date(System.currentTimeMillis()));
 
+				
 				if (openEditor && (mainFile != null) && mainFile.exists()) {
 					progress.subTask("Opening editor for main file");
 
 					// Open the selected editor
-					final WorkbenchJob openJob = new WorkbenchJob("Open editor") {
+					openJob = new WorkbenchJob("Open editor") {
 						@Override
 						public IStatus runInUIThread(final IProgressMonitor monitor) {
 							try {
@@ -446,8 +466,6 @@ public final class GenerateCode {
 							return new Status(IStatus.OK, RedhawkCodegenUiActivator.PLUGIN_ID, "");
 						}
 					};
-					openJob.setPriority(Job.SHORT);
-					openJob.schedule();
 				}
 
 				if (retStatus.isOK()) {
