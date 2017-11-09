@@ -107,7 +107,7 @@ public class WaitForBuild extends DefaultCondition {
 	private boolean isGenerateCodeBuildRunning() {
 		Job[] jobs = Job.getJobManager().find(null);
 		for (Job job : jobs) {
-			if (job.getClass().getName().startsWith("gov.redhawk.ide.codegen.ui.GenerateCode$") && job.getName().startsWith("Building Project")) {
+			if (job.getClass().getName().startsWith("gov.redhawk.ide.codegen.ui.internal.job.ProcessImplsJob$") && job.getName().startsWith("Building Project")) {
 				return true;
 			}
 		}
