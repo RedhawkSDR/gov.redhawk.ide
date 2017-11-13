@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 import gov.redhawk.model.sca.IDisposable;
@@ -38,7 +37,7 @@ import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
  * Handles design-time properties for a {@link ComponentInstantiation} in a SAD/DCD.
  * @see {@link ComponentInstantiationFilter}.
  */
-public class PropertiesSection extends AbstractPropertiesSection implements ITabbedPropertyConstants, IEditingDomainProvider {
+public class PropertiesSection extends AbstractPropertiesSection implements IEditingDomainProvider {
 
 	private AdapterFactory adapterFactory;
 	private final ComponentInstantiationPropertyViewerAdapter adapter = new ComponentInstantiationPropertyViewerAdapter(this);
