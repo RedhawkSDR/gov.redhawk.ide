@@ -46,7 +46,7 @@ public class ExportToSDRHandler extends AbstractHandler implements IHandler {
 				} else if (obj instanceof IResource) {
 					project = ((IResource) obj).getProject();
 				}
-				if (project != null && project.exists() && project.isOpen()) {
+				if (project != null && project.exists() && project.isOpen() && !projects.contains(project)) {
 					projects.add(project);
 				}
 			}

@@ -81,6 +81,9 @@ public class TopLevelSadRpmSpecTemplate
     }
 
     final List<ComponentFile> componentFiles = sad.getComponentFiles().getComponentFile();
+    if (sad.getName() == null || sad.getName().isEmpty()) {
+        throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenActivator.PLUGIN_ID, "SAD file doesn't have a name set"));
+    }
     final String waveformSubDir = "/dom/waveforms/" + sad.getName().replace('.', '/');
     final String directoryBlock = ProjectCreator.createDirectoryBlock("%dir %{_prefix}/dom/waveforms/" + sad.getName().replace('.', '/'));
 
