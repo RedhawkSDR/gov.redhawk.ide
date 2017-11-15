@@ -32,7 +32,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.core.databinding.property;bundle-version="1.5.0",
  gov.redhawk.core.notification.ui;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Localization: plugin
 Bundle-Vendor: %Bundle-Provider.0
 Export-Package: gov.redhawk.ide.sdr.internal.ui;x-internal:=true,

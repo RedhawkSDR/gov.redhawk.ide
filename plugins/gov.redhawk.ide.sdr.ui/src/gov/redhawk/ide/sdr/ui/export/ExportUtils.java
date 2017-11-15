@@ -28,6 +28,7 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -102,13 +103,13 @@ public class ExportUtils {
 	 * that the operation cannot be canceled.
 	 * @since 2.0
 	 */
-	public static void exportWaveform(final IProject proj, final IScaExporter exporter, final IProgressMonitor monitor) throws CoreException, IOException {
+	public static boolean exportWaveform(final IProject proj, final IScaExporter exporter, final IProgressMonitor monitor) throws CoreException, IOException {
 		if (!proj.hasNature(ScaWaveformProjectNature.ID)) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Project missing required nature"));
 		}
 
-		if (!ExportUtils.checkProject(proj)) {
-			return;
+		if (!checkProject(proj)) {
+			return false;
 		}
 
 		// Find .sad.xml files
@@ -119,7 +120,8 @@ public class ExportUtils {
 			}
 		}
 
-		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting waveforms", sadFiles.size() * 2);
+		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting waveforms", sadFiles.size() * 3);
+		Map<IResource, IPath> sourceFileToTargetFolder = new HashMap<>();
 		for (final IResource sadFile : sadFiles) {
 			// Load the SAD file
 			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
@@ -135,16 +137,24 @@ public class ExportUtils {
 
 			// Validate against the ecore model
 			if (!validateEcore(sad, sad.getName())) {
-				return;
+				return false;
 			}
 
-			// Make directory & copy SAD file
+			// Determine install location
 			final IPath outputFolder = new Path("dom/waveforms").append(name.replace('.', File.separatorChar));
+			sourceFileToTargetFolder.put(sadFile, outputFolder);
+			progress.worked(1);
+		}
+
+		// Install each file
+		for (IResource sadFile : sourceFileToTargetFolder.keySet()) {
+			IPath outputFolder = sourceFileToTargetFolder.get(sadFile);
 			exporter.mkdir(outputFolder, progress.newChild(1));
 			exporter.write(sadFile, outputFolder.append(sadFile.getName()), progress.newChild(1));
 		}
 
 		progress.done();
+		return true;
 	}
 
 	private static boolean validateEcore(EObject object, String projectName) {
@@ -216,19 +226,19 @@ public class ExportUtils {
 	 * that the operation cannot be canceled.
 	 * @since 2.0
 	 */
-	public static void exportComponent(final IProject proj, final IScaExporter exporter, final IProgressMonitor monitor) throws CoreException, IOException {
+	public static boolean exportComponent(final IProject proj, final IScaExporter exporter, final IProgressMonitor monitor) throws CoreException, IOException {
 		if (!proj.hasNature(ScaComponentProjectNature.ID)) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Project missing required nature"));
 		}
 
-		if (!ExportUtils.checkProject(proj)) {
-			return;
+		if (!checkProject(proj)) {
+			return false;
 		}
 
 		if (useBuildSH(proj)) {
-			buildSH(monitor, proj);
+			return buildSH(monitor, proj);
 		} else {
-			ExportUtils.basicExportComponent(proj, exporter, true, monitor);
+			return basicExportComponent(proj, exporter, true, monitor);
 		}
 	}
 
@@ -241,13 +251,13 @@ public class ExportUtils {
 	 * that the operation cannot be canceled.
 	 * @since 2.0
 	 */
-	public static void exportNode(final IProject proj, final IScaExporter exporter, final IProgressMonitor monitor) throws CoreException, IOException {
+	public static boolean exportNode(final IProject proj, final IScaExporter exporter, final IProgressMonitor monitor) throws CoreException, IOException {
 		if (!proj.hasNature(ScaNodeProjectNature.ID)) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Project missing required nature"));
 		}
 
-		if (!ExportUtils.checkProject(proj)) {
-			return;
+		if (!checkProject(proj)) {
+			return false;
 		}
 
 		// Find node files
@@ -258,7 +268,8 @@ public class ExportUtils {
 			}
 		}
 
-		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting nodes", dcdFiles.size() * 2);
+		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting nodes", dcdFiles.size() * 3);
+		Map<IResource, IPath> sourceFileToTargetFolder = new HashMap<>();
 		for (final IResource dcdFile : dcdFiles) {
 			// Load the DCD file
 			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
@@ -274,16 +285,24 @@ public class ExportUtils {
 
 			// Validate against the ecore model
 			if (!validateEcore(dcd, dcd.getName())) {
-				return;
+				return false;
 			}
 
-			// Make directory & copy DCD file
+			// Determine install location
 			final IPath outputFolder = new Path("dev/nodes").append(name.replace('.', File.separatorChar));
+			sourceFileToTargetFolder.put(dcdFile, outputFolder);
+			progress.worked(1);
+		}
+
+		// Install each file
+		for (IResource dcdFile : sourceFileToTargetFolder.keySet()) {
+			IPath outputFolder = sourceFileToTargetFolder.get(dcdFile);
 			exporter.mkdir(outputFolder, progress.newChild(1));
 			exporter.write(dcdFile, outputFolder.append(dcdFile.getName()), progress.newChild(1));
 		}
 
 		progress.done();
+		return true;
 	}
 
 	/**
@@ -352,8 +371,8 @@ public class ExportUtils {
 	 * to call done() on the given monitor. Accepts null, indicating that no progress should be reported and
 	 * that the operation cannot be canceled.
 	 */
-	private static void basicExportComponent(final IProject proj, final IScaExporter exporter, final boolean includeCode, final IProgressMonitor monitor)
-		throws CoreException, IOException {
+	private static boolean basicExportComponent(final IProject proj, final IScaExporter exporter, final boolean includeCode, final IProgressMonitor monitor)
+		throws CoreException {
 		if (!proj.hasNature(ScaComponentProjectNature.ID)) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Project missing required nature"));
 		}
@@ -366,42 +385,38 @@ public class ExportUtils {
 			}
 		}
 
-		final SubMonitor allComponentsProgress = SubMonitor.convert(monitor, "Exporting SPD resources...", spds.size());
-		final int SPD_WORK = 1;
-		final int PRF_WORK = 1;
-		final int SCD_WORK = 1;
-		final int MKDIR_WORK = 1;
-		final int IMPL_WORK = 96;
+		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting SPD resources...", spds.size() * 2);
 
+		// Perform checks, figure out what we're installing where
+		List<ICoreRunnable> runnables = new ArrayList<>();
 		for (final IResource spdResource : spds) {
-			final SubMonitor progress = allComponentsProgress.newChild(1);
-			progress.beginTask("Exporting resources of " + spdResource.getName(), SPD_WORK + PRF_WORK + SCD_WORK + IMPL_WORK + MKDIR_WORK);
+			final SubMonitor prepProgress = progress.split(1);
 
 			// Now load the SPD file and copy the prf and scd files, if any
 			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 			final Resource resource = resourceSet.getResource(URI.createURI(spdResource.getLocationURI().toString()), true);
 			final SoftPkg softPkg = ModelUtil.getSoftPkg(resource);
 
-			IPath outputFolder = null;
 			ComponentType type = ComponentType.OTHER;
 			if ((softPkg.getDescriptor() != null) && (softPkg.getDescriptor().getComponent() != null)) {
 				final SoftwareComponent component = softPkg.getDescriptor().getComponent();
 				type = SoftwareComponent.Util.getWellKnownComponentType(component);
 			}
 
+			IPath prefix;
 			switch (type) {
 			case DEVICE:
-				outputFolder = new Path("dev/devices");
+				prefix = new Path("dev/devices");
 				break;
 			case DEVICE_MANAGER:
-				outputFolder = new Path("dev/nodes");
+				prefix = new Path("dev/nodes");
 				break;
 			case DOMAIN_MANAGER:
-				outputFolder = new Path("dom/mgr");
+				prefix = new Path("dom/mgr");
 				break;
 			case EVENT_SERVICE:
 			case SERVICE:
-				outputFolder = new Path("dev/services");
+				prefix = new Path("dev/services");
 				break;
 			case FILE_MANAGER:
 			case FILE_SYSTEM:
@@ -410,79 +425,100 @@ public class ExportUtils {
 			case RESOURCE:
 			case OTHER:
 			case RESOURCE_FACTORY:
-				outputFolder = new Path("dom/components");
+				prefix = new Path("dom/components");
 				break;
 			default:
 				throw new CoreException(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Unknown component type: " + type));
 			}
+			IPath outputFolder = prefix.append(proj.getName().replace('.', File.separatorChar));
 
+			// SPD
 			final IPath spdRootPath = spdResource.getFullPath().removeLastSegments(1);
-
-			// If we were told to include code make sure at least one implementation has generated code.
 			if (includeCode) {
-				if (!ExportUtils.checkProjectImplsForExport(softPkg, spdRootPath)) {
-					return;
+				// If we were told to include code make sure at least one implementation has generated code.
+				if (!checkProjectImplsForExport(softPkg, spdRootPath)) {
+					return false;
 				}
 			}
-
-			outputFolder = outputFolder.append(proj.getName().replace('.', File.separatorChar));
-
-			// Copy the SPD File
 			final IPath spdOutputPath = outputFolder.append(spdResource.getName());
 
-			IResource prfResource = null;
-			IPath prfOutputPath = null;
+			// PRF
+			IResource prfResource;
+			IPath prfOutputPath;
 			if (softPkg.getPropertyFile() != null) {
 				final IPath prfPath = new Path(softPkg.getPropertyFile().getLocalFile().getName());
 				if (prfPath.isAbsolute()) {
 					throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Cannot export absolute path localfile paths"));
 				}
-				prfResource = ExportUtils.getWorkspaceResource(spdRootPath.append(prfPath));
+				prfResource = getWorkspaceResource(spdRootPath.append(prfPath));
 				if (prfResource == null) {
 					throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Expected file " + prfPath + " does not exist"));
 				}
 				prfOutputPath = outputFolder.append(prfPath);
+			} else {
+				prfResource = null;
+				prfOutputPath = null;
 			}
 
-			IResource scdResourcePath = null;
-			IPath scdOutputPath = null;
+			// SCD
+			IResource scdResourcePath;
+			IPath scdOutputPath;
 			if (softPkg.getDescriptor() != null) {
 				final IPath scdPath = new Path(softPkg.getDescriptor().getLocalfile().getName());
 				if (scdPath.isAbsolute()) {
 					throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Cannot export absolute path localfile paths"));
 				}
-				scdResourcePath = ExportUtils.getWorkspaceResource(spdRootPath.append(scdPath));
+				scdResourcePath = getWorkspaceResource(spdRootPath.append(scdPath));
 				if (scdResourcePath == null) {
 					throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Expected file " + scdPath + " does not exist"));
 				}
 				scdOutputPath = outputFolder.append(scdPath);
-			}
-			progress.setWorkRemaining(IMPL_WORK);
-
-			boolean useExporter = true;
-			if (softPkg.getImplementation() != null) {
-				int implWork = softPkg.getImplementation().size() * (PRF_WORK + ((includeCode) ? IMPL_WORK : 0)); // SUPPRESS
-																													// CHECKSTYLE
-																													// INLINE
-				progress.setWorkRemaining(implWork);
-				for (final Implementation impl : softPkg.getImplementation()) {
-					useExporter &= ExportUtils.exportImpl(exporter, includeCode, progress.newChild(1), outputFolder, spdRootPath, impl);
-					implWork -= (PRF_WORK + ((includeCode) ? IMPL_WORK : 0)); // SUPPRESS CHECKSTYLE INLINE
-					progress.setWorkRemaining(implWork);
-				}
+			} else {
+				scdResourcePath = null;
+				scdOutputPath = null;
 			}
 
-			if (useExporter) {
-				exporter.mkdir(outputFolder, progress.newChild(MKDIR_WORK));
-				exporter.write(spdResource, spdOutputPath, progress.newChild(SPD_WORK));
-				if (prfResource != null) {
-					exporter.write(prfResource, prfOutputPath, progress.newChild(PRF_WORK));
+			// Prepare (but don't execute) the export
+			runnables.add((monitor2) -> {
+				try {
+					SubMonitor installProgress = SubMonitor.convert(monitor2);
+					final int WORK_PER_IMPL_INSTALL = 100;
+
+					boolean useExporter = true;
+					if (softPkg.getImplementation() != null) {
+						installProgress.setWorkRemaining(softPkg.getImplementation().size() * WORK_PER_IMPL_INSTALL + 4);
+
+						for (final Implementation impl : softPkg.getImplementation()) {
+							useExporter &= exportImpl(exporter, includeCode, installProgress.split(WORK_PER_IMPL_INSTALL), outputFolder, spdRootPath, impl);
+						}
+					} else {
+						installProgress.setWorkRemaining(4);
+					}
+
+					if (useExporter) {
+						exporter.mkdir(outputFolder, installProgress.split(1));
+						exporter.write(spdResource, spdOutputPath, installProgress.split(1));
+						if (prfResource != null) {
+							exporter.write(prfResource, prfOutputPath, installProgress.split(1));
+						}
+						if (scdResourcePath != null) {
+							exporter.write(scdResourcePath, scdOutputPath, installProgress.split(1));
+						}
+					}
+				} catch (IOException e) {
+					throw new CoreException(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, e.getMessage(), e));
 				}
-				if (scdResourcePath != null) {
-					exporter.write(scdResourcePath, scdOutputPath, progress.newChild(SCD_WORK));
-				}
-			}
+			});
+			prepProgress.worked(1);
 		}
+
+		// Perform each export
+		for (ICoreRunnable runnable : runnables) {
+			runnable.run(progress.split(1));
+		}
+
+		progress.done();
+		return true;
 	}
 
 	private static boolean exportImpl(final IScaExporter exporter, final boolean includeCode, final SubMonitor progress, IPath outputFolder,
@@ -491,7 +527,7 @@ public class ExportUtils {
 
 		ImplementationSettings implSettings = CodegenUtil.getImplementationSettings(impl);
 		String outputDir = implSettings.getOutputDir();
-		IResource outputDirResource = ExportUtils.getWorkspaceResource(spdRootPath.append(outputDir));
+		IResource outputDirResource = getWorkspaceResource(spdRootPath.append(outputDir));
 
 		if (useInstallImplScript(outputDirResource)) {
 			installImpl(progress, impl.getId(), (IContainer) outputDirResource);
@@ -508,7 +544,7 @@ public class ExportUtils {
 		if (codeLocalFile != null && codeLocalFile.isAbsolute()) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Cannot export absolute 'localfile' paths"));
 		}
-		final IResource srcPath = ExportUtils.getWorkspaceResource(spdRootPath.append(codeLocalFile));
+		final IResource srcPath = getWorkspaceResource(spdRootPath.append(codeLocalFile));
 
 		IPath outputPath;
 		if (includeCode) {
@@ -525,7 +561,7 @@ public class ExportUtils {
 			if (prfPath.isAbsolute()) {
 				throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Cannot export absolute path property paths"));
 			}
-			final IResource srcPrfPath = ExportUtils.getWorkspaceResource(spdRootPath.append(prfPath));
+			final IResource srcPrfPath = getWorkspaceResource(spdRootPath.append(prfPath));
 			if (srcPrfPath == null) {
 				throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Expected file " + prfPath + " does not exist"));
 			}
@@ -544,7 +580,7 @@ public class ExportUtils {
 		final ILaunchConfigurationWorkingCopy retVal = configType.newInstance(null, launchConfigName);
 
 		retVal.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
-		retVal.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, ExportUtils.getEnv());
+		retVal.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, getEnv());
 		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, false);
 		retVal.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, "${none}");
 		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, "${none}");
@@ -621,7 +657,7 @@ public class ExportUtils {
 	 * @throws IOException
 	 * @throws DebugException
 	 */
-	private static void buildSH(final IProgressMonitor progress, IProject project) throws CoreException, IOException, DebugException {
+	private static boolean buildSH(final IProgressMonitor progress, IProject project) throws CoreException, IOException, DebugException {
 		String configTypeId = IExternalToolConstants.ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE;
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		final String launchConfigName = launchManager.generateLaunchConfigurationName("Build Install " + project.getName());
@@ -629,7 +665,7 @@ public class ExportUtils {
 		final ILaunchConfigurationWorkingCopy retVal = configType.newInstance(null, launchConfigName);
 
 		retVal.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
-		retVal.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, ExportUtils.getEnv());
+		retVal.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, getEnv());
 		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, false);
 		retVal.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, "${none}");
 		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, "${none}");
@@ -663,6 +699,7 @@ public class ExportUtils {
 			throw new CoreException(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID,
 				"Install script returned with error code " + launch.getProcesses()[0].getExitValue() + "\n\nSee console output for details.", null));
 		}
+		return true;
 	}
 
 	/**
@@ -693,7 +730,7 @@ public class ExportUtils {
 					throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Cannot export absolute path localfile paths"));
 				}
 
-				final IResource srcPath = ExportUtils.getWorkspaceResource(spdRootPath.append(codeLocalFile));
+				final IResource srcPath = getWorkspaceResource(spdRootPath.append(codeLocalFile));
 				// Check if the path exists, there may be multiple implementations in this, only one needs to be built
 				if ((srcPath == null) || !srcPath.exists()) {
 					final String inProjStr = "in project '" + projectName + "' ";
