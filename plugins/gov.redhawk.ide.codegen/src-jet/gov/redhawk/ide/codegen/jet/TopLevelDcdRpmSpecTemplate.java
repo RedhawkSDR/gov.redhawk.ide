@@ -73,6 +73,9 @@ public class TopLevelDcdRpmSpecTemplate
     } else {
     	componentFiles = devCfg.getComponentFiles().getComponentFile();
     }
+    if (devCfg.getName() == null || devCfg.getName().isEmpty()) {
+        throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenActivator.PLUGIN_ID, "DCD file doesn't have a name set"));
+    }
     final String nodeSubDir = "/dev/nodes/" + devCfg.getName().replace('.', '/');
     final String directoryBlock = ProjectCreator.createDirectoryBlock("%dir %{_prefix}/dev/nodes/" + devCfg.getName().replace('.', '/'));
 
