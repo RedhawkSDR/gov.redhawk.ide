@@ -67,23 +67,25 @@ public class ExportToSdrRootJob extends Job {
 
 				// Perform export
 				try {
-					boolean exported;
+					boolean exported = false;
 					if (project.hasNature(ScaNodeProjectNature.ID)) {
-						ExportUtils.exportNode(project, exporter, progress.newChild(1));
-						exportedProjects.add(project);
-						exported = true;
+						if (ExportUtils.exportNode(project, exporter, progress.newChild(1))) {
+							exportedProjects.add(project);
+							exported = true;
+						}
 					} else if (project.hasNature(ScaWaveformProjectNature.ID)) {
-						ExportUtils.exportWaveform(project, exporter, progress.newChild(1));
-						exportedProjects.add(project);
-						exported = true;
+						if (ExportUtils.exportWaveform(project, exporter, progress.newChild(1))) {
+							exportedProjects.add(project);
+							exported = true;
+						}
 					} else if (project.hasNature(ScaComponentProjectNature.ID)) {
-						ExportUtils.exportComponent(project, exporter, progress.newChild(1));
-						exportedProjects.add(project);
-						exported = true;
+						if (ExportUtils.exportComponent(project, exporter, progress.newChild(1))) {
+							exportedProjects.add(project);
+							exported = true;
+						}
 					} else {
 						String errorMsg = String.format("Can't export project %s that does not have a REDHAWK project nature", project.getName());
 						status.add(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, errorMsg));
-						exported = false;
 					}
 
 					if (exported) {
