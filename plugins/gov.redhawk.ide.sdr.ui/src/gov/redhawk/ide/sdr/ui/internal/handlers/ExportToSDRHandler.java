@@ -17,8 +17,8 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jdt.annotation.Nullable;
@@ -30,7 +30,6 @@ import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.export.FileStoreExporter;
 import gov.redhawk.ide.sdr.ui.export.IScaExporter;
 import gov.redhawk.ide.sdr.ui.util.ExportToSdrRootJob;
-import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
 
 public class ExportToSDRHandler extends AbstractHandler implements IHandler {
 
@@ -40,21 +39,24 @@ public class ExportToSDRHandler extends AbstractHandler implements IHandler {
 		if (sel instanceof IStructuredSelection) {
 			List<IProject> projects = new ArrayList<IProject>();
 			for (Object obj : ((IStructuredSelection) sel).toList()) {
+				IProject project = null;
 				if (obj instanceof IProject) {
-					projects.add((IProject) obj);
-				} else if (obj instanceof IFile) {
-					projects.add(((IFile) obj).getProject());
+					project = (IProject) obj;
+				} else if (obj instanceof IResource) {
+					project = ((IResource) obj).getProject();
+				}
+				if (project != null && project.exists() && project.isOpen() && !projects.contains(project)) {
+					projects.add(project);
 				}
 			}
 
 			// Export, then refresh the SDRROOT
 			final IScaExporter exporter = new FileStoreExporter(SdrUiPlugin.getDefault().getTargetSdrPath());
 			final ExportToSdrRootJob exportJob = new ExportToSdrRootJob(exporter, projects);
-			final RefreshSdrJob refreshJob = new RefreshSdrJob();
 			exportJob.addJobChangeListener(new JobChangeAdapter() {
 				@Override
 				public void done(IJobChangeEvent event) {
-					refreshJob.schedule();
+					SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
 				}
 			});
 			exportJob.schedule();
