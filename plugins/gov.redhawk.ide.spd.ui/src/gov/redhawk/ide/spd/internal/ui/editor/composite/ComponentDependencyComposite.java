@@ -14,8 +14,6 @@ import gov.redhawk.common.ui.editor.FormLayoutFactory;
 import gov.redhawk.ide.codegen.provider.CodegenItemProviderAdapterFactory;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionDependencyItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionImplementationItemProvider;
-import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionOsItemProvider;
-import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionProcessorItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionPropertyRefItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.SpdItemProviderAdapterFactoryAdapter;
 import gov.redhawk.ui.editor.IScaComposite;
@@ -165,8 +163,6 @@ public class ComponentDependencyComposite extends Composite implements IScaCompo
 			this.adapterFactory.addAdapterFactory(new ResourceItemProviderAdapterFactory());
 			final SpdItemProviderAdapterFactoryAdapter spdFactory = new SpdItemProviderAdapterFactoryAdapter();
 			spdFactory.setImplementationAdapter(new ImplementationDetailsSectionImplementationItemProvider(spdFactory));
-			spdFactory.setOsAdapter(new ImplementationDetailsSectionOsItemProvider(spdFactory));
-			spdFactory.setProcessorAdapter(new ImplementationDetailsSectionProcessorItemProvider(spdFactory));
 			spdFactory.setDependencyAdapter(new ImplementationDetailsSectionDependencyItemProvider(spdFactory));
 			spdFactory.setPropertyRefAdapter(new ImplementationDetailsSectionPropertyRefItemProvider(spdFactory));
 			this.adapterFactory.addAdapterFactory(spdFactory);
