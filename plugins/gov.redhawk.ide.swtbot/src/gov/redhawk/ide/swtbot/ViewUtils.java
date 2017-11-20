@@ -73,6 +73,10 @@ public class ViewUtils {
 		return bot.viewById("gov.redhawk.ui.port.playaudio.view");
 	}
 
+	public static SWTBotView getConnectionManagerView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.ui.views.connmgr.view");
+	}
+
 	public static SWTBotView getConsoleView(SWTWorkbenchBot bot) {
 		return bot.viewById("org.eclipse.ui.console.ConsoleView");
 	}
