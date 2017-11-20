@@ -12,6 +12,9 @@ package gov.redhawk.ide.snapshot.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -21,6 +24,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
@@ -33,26 +38,35 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-/**
- *
- */
 public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 
 	private static final int UPDATE_DELAY_MS = 100;
 
 	private BulkIOSnapshotSettings bulkIOsettings = new BulkIOSnapshotSettings();
+	private Map<String, Boolean> connectionIds;
 	private Text samplesTxt;
 	private Label unitsLabel;
 	private Binding samplesBinding;
 
+	private Text connectionIDField;
+
 	public BulkIOSnapshotWizardPage(String pageName, ImageDescriptor titleImage) {
+		this(pageName, titleImage, new HashMap<String, Boolean>());
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public BulkIOSnapshotWizardPage(String pageName, ImageDescriptor titleImage, Map<String, Boolean> connectionIds) {
 		super(pageName, "Port Snapshot", titleImage);
 		setDescription("Write a stream of samples from the Port to the given file.");
+		this.connectionIds = connectionIds;
 	}
 
 	public BulkIOSnapshotSettings getBulkIOsettings() {
@@ -74,7 +88,8 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		captureCombo.setContentProvider(ArrayContentProvider.getInstance()); // ArrayContentProvider does not store any state, therefore can re-use instances
 		captureCombo.setInput(CaptureMethod.values());
 		@SuppressWarnings("unchecked")
-		IObservableValue< ? > captureMethodObservable = BeanProperties.value(bulkIOsettings.getClass(), BulkIOSnapshotSettings.PROP_CAPTURE_METHOD).observe(bulkIOsettings);
+		IObservableValue< ? > captureMethodObservable = BeanProperties.value(bulkIOsettings.getClass(), BulkIOSnapshotSettings.PROP_CAPTURE_METHOD).observe(
+			bulkIOsettings);
 		dataBindingCtx.bindValue(ViewerProperties.singleSelection().observe(captureCombo), captureMethodObservable);
 
 		// === number of samples ===
@@ -100,14 +115,66 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		});
 
 		// === connection ID ==
+		// Widget is dependent on if port is multi-out or not (if connectionIds is empty, it is not).
 		Label label = new Label(parent, SWT.None);
-		label.setText("Connection ID (Optional):");
-		Text connectionIDField = new Text(parent, SWT.BORDER);
-		connectionIDField.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
-		connectionIDField.setToolTipText("Custom Port connection ID to use vs a generated one.");
-		@SuppressWarnings("unchecked")
-		IObservableValue< ? > connectionIdObservable = BeanProperties.value(bulkIOsettings.getClass(), BulkIOSnapshotSettings.PROP_CONNECTION_ID).observe(bulkIOsettings);
-		dataBindingCtx.bindValue(WidgetProperties.text(SWT.Modify).observe(connectionIDField), connectionIdObservable);
+		if (connectionIds.isEmpty()) {
+			label.setText("Connection ID (Optional):");
+			connectionIDField = new Text(parent, SWT.BORDER);
+			connectionIDField.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
+			connectionIDField.setToolTipText("Custom Port connection ID to use vs a generated one.");
+			@SuppressWarnings("unchecked")
+			IObservableValue< ? > connectionIdObservable = BeanProperties.value(bulkIOsettings.getClass(), BulkIOSnapshotSettings.PROP_CONNECTION_ID).observe(
+				bulkIOsettings);
+			dataBindingCtx.bindValue(WidgetProperties.text(SWT.Modify).observe(connectionIDField), connectionIdObservable);
+		} else {
+			label.setText("Connection ID:");
+			final ComboViewer connectionIDComboField = new ComboViewer(parent, SWT.BORDER | SWT.READ_ONLY);
+			connectionIDComboField.getCombo().setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
+			connectionIDComboField.getCombo().setToolTipText("Available mulit-out port connection IDs");
+			connectionIDComboField.setContentProvider(ArrayContentProvider.getInstance());
+			connectionIDComboField.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					if (element instanceof Entry) {
+						return ((Entry< ? , ? >) element).getKey().toString();
+					}
+					return super.getText(element);
+				}
+			});
+			connectionIDComboField.setInput(connectionIds.entrySet());
+
+			ISWTObservableValue targetObservableValue = WidgetProperties.selection().observe(connectionIDComboField.getCombo());
+			@SuppressWarnings("unchecked")
+			IObservableValue< ? > modelObservableValue = BeanProperties.value(bulkIOsettings.getClass(), BulkIOSnapshotSettings.PROP_CONNECTION_ID).observe(
+				bulkIOsettings);
+			UpdateValueStrategy targetToModel = new UpdateValueStrategy();
+			targetToModel.setAfterGetValidator(new IValidator() {
+
+				@Override
+				public IStatus validate(Object value) {
+					Object element = connectionIDComboField.getStructuredSelection().getFirstElement();
+					if (element instanceof Entry) {
+						Boolean isValid = (Boolean) ((Entry< ? , ? >) element).getValue();
+						if (!isValid) {
+							return new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Selected connection ID is already in use");
+						}
+					}
+					return Status.OK_STATUS;
+				}
+			});
+			dataBindingCtx.bindValue(targetObservableValue, modelObservableValue, targetToModel, null);
+
+			// Set selection at first available connectionId
+			// This needs to happen after the data binding has been initialized
+			if (connectionIDComboField != null) {
+				for (Entry<String, Boolean> entry : connectionIds.entrySet()) {
+					if (entry.getValue()) {
+						connectionIDComboField.setSelection(new StructuredSelection(entry));
+						break;
+					}
+				}
+			}
+		}
 
 		// === create output control widgets ==
 		createOutputControls(parent);
@@ -217,8 +284,10 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 					// PASS - ignore
 				}
 			}
+
+			// Only preserve connection ID when using the Text widget
 			tmp = pageSettings.get(BulkIOSnapshotSettings.PROP_CONNECTION_ID);
-			if (tmp != null) {
+			if (tmp != null && connectionIDField != null) {
 				bss.setConnectionID(tmp);
 			}
 		}

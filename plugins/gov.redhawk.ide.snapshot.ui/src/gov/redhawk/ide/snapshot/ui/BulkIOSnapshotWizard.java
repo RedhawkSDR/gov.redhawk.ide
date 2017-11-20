@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.ui;
 
+import java.util.Map;
+
 import gov.redhawk.ide.snapshot.capture.CorbaDataReceiver;
 import gov.redhawk.ide.snapshot.capture.CorbaNumSamplesReceiver;
 import gov.redhawk.ide.snapshot.capture.CorbaSignalTimeReceiver;
@@ -35,7 +37,8 @@ public class BulkIOSnapshotWizard extends SnapshotWizard {
 
 	@Override
 	public void addPages() {
-		bulkIOPage = new BulkIOSnapshotWizardPage("snapshot", null);
+		Map<String, Boolean> connectionIds = ScaUsesPort.Util.getConnectionIds(this.getPort());
+		bulkIOPage = new BulkIOSnapshotWizardPage("snapshot", null, connectionIds);
 		setSnapshotPage(bulkIOPage);
 
 		addPage(bulkIOPage);

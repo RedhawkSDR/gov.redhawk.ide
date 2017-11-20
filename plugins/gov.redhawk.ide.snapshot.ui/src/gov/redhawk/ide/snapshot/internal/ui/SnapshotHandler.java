@@ -104,6 +104,7 @@ public class SnapshotHandler extends AbstractHandler {
 					}
 				}
 				BulkIOSnapshotWizard wizard = new BulkIOSnapshotWizard();
+				wizard.setPort(port);
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				if (dialog.open() == Window.OK) {
 					CorbaDataReceiver receiver = wizard.getCorbaReceiver();
