@@ -61,7 +61,7 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 	}
 
 	/**
-	 * @since 2.0
+	 * @since 2.1
 	 */
 	public BulkIOSnapshotWizardPage(String pageName, ImageDescriptor titleImage, Map<String, Boolean> connectionIds) {
 		super(pageName, "Port Snapshot", titleImage);
