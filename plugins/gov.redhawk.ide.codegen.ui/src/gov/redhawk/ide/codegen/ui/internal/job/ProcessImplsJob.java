@@ -371,6 +371,9 @@ public class ProcessImplsJob extends WorkbenchJob {
 				}
 			}
 
+			final IFile mainFile = generator.getDefaultFile(impl, settings);
+			boolean openEditor = (mainFile == null || !mainFile.exists());
+
 			status = generator.generate(settings, impl, genConsole.getOutStream(), genConsole.getErrStream(), progress.newChild(1), files,
 				generator.shouldGenerate(), crcMap);
 			if (!status.isOK()) {
@@ -384,8 +387,7 @@ public class ProcessImplsJob extends WorkbenchJob {
 			final WaveDevSettings wavedev = CodegenUtil.loadWaveDevSettings(softpkg);
 			PropertyUtil.setLastGenerated(wavedev, settings, new Date(System.currentTimeMillis()));
 
-			final IFile mainFile = generator.getDefaultFile(impl, settings);
-			if (mainFile != null && mainFile.exists()) {
+			if (openEditor && mainFile != null && mainFile.exists()) {
 				mainFileSet.add(mainFile);
 			}
 
