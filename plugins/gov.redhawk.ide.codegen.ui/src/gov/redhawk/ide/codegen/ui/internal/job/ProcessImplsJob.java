@@ -162,7 +162,6 @@ public class ProcessImplsJob extends WorkbenchJob {
 			}
 		};
 		processJob.setUser(true);
-		processJob.schedule();
 		processJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {
@@ -173,11 +172,10 @@ public class ProcessImplsJob extends WorkbenchJob {
 					openJob.setPriority(Job.SHORT);
 					openJob.schedule();
 				}
-
-				processJob.removeJobChangeListener(this);
-				super.done(event);
 			}
 		});
+		processJob.schedule();
+
 		return Status.OK_STATUS;
 	}
 
@@ -384,6 +382,9 @@ public class ProcessImplsJob extends WorkbenchJob {
 				}
 			}
 
+			final IFile mainFile = generator.getDefaultFile(impl, settings);
+			boolean openEditor = (mainFile == null || !mainFile.exists());
+
 			status = generator.generate(settings, impl, genConsole.getOutStream(), genConsole.getErrStream(), progress.newChild(1), files,
 				generator.shouldGenerate(), crcMap);
 			if (!status.isOK()) {
@@ -397,8 +398,7 @@ public class ProcessImplsJob extends WorkbenchJob {
 			final WaveDevSettings wavedev = CodegenUtil.loadWaveDevSettings(softpkg);
 			PropertyUtil.setLastGenerated(wavedev, settings, new Date(System.currentTimeMillis()));
 
-			final IFile mainFile = generator.getDefaultFile(impl, settings);
-			if (mainFile != null && mainFile.exists()) {
+			if (openEditor && mainFile != null && mainFile.exists()) {
 				mainFileSet.add(mainFile);
 			}
 
