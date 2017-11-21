@@ -160,7 +160,6 @@ public class ProcessImplsJob extends WorkbenchJob {
 			}
 		};
 		processJob.setUser(true);
-		processJob.schedule();
 		processJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {
@@ -171,11 +170,10 @@ public class ProcessImplsJob extends WorkbenchJob {
 					openJob.setPriority(Job.SHORT);
 					openJob.schedule();
 				}
-
-				processJob.removeJobChangeListener(this);
-				super.done(event);
 			}
 		});
+		processJob.schedule();
+
 		return Status.OK_STATUS;
 	}
 
