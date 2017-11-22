@@ -1453,11 +1453,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 					if (port instanceof ScaUsesPort) {
 						final ScaUsesPort uses = (ScaUsesPort) port;
 						for (final ScaConnection conn : uses.getConnections()) {
-							if (oldComponent.getObj()._is_equivalent(conn.getData().port)) {
+							if (oldComponent.getObj()._is_equivalent(conn.getTargetPort())) {
 								retVal.add(new FromConnectionInfo(uses, oldComponent.getInstantiationIdentifier(), null, conn));
 							} else {
 								for (final ScaPort< ? , ? > targetPort : oldComponent.getPorts()) {
-									if (targetPort.getObj()._is_equivalent(conn.getData().port)) {
+									if (targetPort.getObj()._is_equivalent(conn.getTargetPort())) {
 										retVal.add(new FromConnectionInfo(uses, oldComponent.getInstantiationIdentifier(), targetPort.getName(), conn));
 									}
 								}
@@ -1473,7 +1473,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			if (port instanceof ScaUsesPort) {
 				final ScaUsesPort uses = (ScaUsesPort) port;
 				for (final ScaConnection conn : uses.getConnections()) {
-					retVal.add(new ToConnectionInfo(oldComponent.getInstantiationIdentifier(), uses.getName(), conn.getData().port, conn));
+					retVal.add(new ToConnectionInfo(oldComponent.getInstantiationIdentifier(), uses.getName(), conn.getTargetPort(), conn));
 				}
 			}
 		}
