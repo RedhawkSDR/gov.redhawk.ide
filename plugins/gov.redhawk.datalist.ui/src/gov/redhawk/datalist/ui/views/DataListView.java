@@ -22,9 +22,12 @@ import gov.redhawk.ide.snapshot.ui.SnapshotWizard;
 import gov.redhawk.model.sca.ScaAbstractComponent;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.sca.ui.MultiOutConnectionWizard;
 
 import java.lang.reflect.Array;
 import java.text.DecimalFormat;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -42,6 +45,7 @@ import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -386,6 +390,16 @@ public class DataListView extends ViewPart {
 
 	protected void startAcquire(DataCollectionSettings settings) {
 		ScaUsesPort source = dataCourier.getSource();
+
+		// Check if multi-out port, and if so get a connection ID from the user
+		String connectionId = null;
+		if (ScaUsesPort.Util.isMultiOutPort(source)) {
+			connectionId = getConnectionId(source);
+			if (connectionId == null) {
+				return;
+			}
+		}
+
 		if (source == null || source.isDisposed()) {
 			StatusManager.getManager().handle(
 				new Status(Status.ERROR, DataListPlugin.PLUGIN_ID, "No source or source is no longer valid.", new Exception().fillInStackTrace()),
@@ -420,7 +434,7 @@ public class DataListView extends ViewPart {
 			prevCols = columns;
 		}
 
-		dataCourier.acquire(settings);
+		dataCourier.acquire(settings, connectionId);
 		viewer.setItemCount(0);
 
 		setButtons(true); // is running
@@ -469,5 +483,27 @@ public class DataListView extends ViewPart {
 		if (this.input != null) {
 			this.input.setFocus();
 		}
+	}
+
+	/**
+	 * Checks if the port is a multi-out port and if so gives the user the option to define the connection ID
+	 * @return False if the data acquire operation was canceled
+	 */
+	private String getConnectionId(ScaUsesPort port) {
+		Map<String, Boolean> connectionIds = ScaUsesPort.Util.getConnectionIds(port);
+		// Check if port is a multi-out port, and if it has an available connection ID
+		Entry<String, Boolean> firstEntry = connectionIds.entrySet().iterator().next();
+		String connectionId = null;
+		if (connectionIds.size() == 1 && firstEntry.getValue()) {
+			connectionId = firstEntry.getKey();
+		} else {
+			MultiOutConnectionWizard dialog = new MultiOutConnectionWizard(Display.getDefault().getActiveShell(), connectionIds);
+			if (Window.CANCEL == dialog.open() || dialog.getSelectedId() == null) {
+				return null;
+			}
+			connectionId = dialog.getSelectedId();
+		}
+
+		return connectionId;
 	}
 }

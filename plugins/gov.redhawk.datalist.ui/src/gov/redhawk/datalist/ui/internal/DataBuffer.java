@@ -41,6 +41,7 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 	private final List<Sample> dataBuffer = new LinkedList<Sample>();
 	private int dimension = 1;
 	private final ScaUsesPort port;
+	private String connectionId;
 	private final ListenerList<IDataBufferListener> listeners = new ListenerList<IDataBufferListener>();
 
 	private List<Object> cached;
@@ -52,7 +53,7 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 			BulkIOType type2 = getBulkIOType();
 			String ior2 = port.getIor();
 			if (type2 != null && ior2 != null) {
-				BulkIOUtilActivator.getBulkIOPortConnectionManager().disconnect(ior2, type2, DataBuffer.this);
+				BulkIOUtilActivator.getBulkIOPortConnectionManager().disconnect(ior2, type2, DataBuffer.this, DataBuffer.this.connectionId);
 			}
 			return Status.OK_STATUS;
 		}
@@ -67,7 +68,7 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 				BulkIOType type2 = getBulkIOType();
 				String ior2 = port.getIor();
 				if (type2 != null && ior2 != null) {
-					BulkIOUtilActivator.getBulkIOPortConnectionManager().connect(ior2, type2, DataBuffer.this);
+					BulkIOUtilActivator.getBulkIOPortConnectionManager().connect(ior2, type2, DataBuffer.this, DataBuffer.this.connectionId);
 				}
 			} catch (CoreException e) {
 				return new Status(e.getStatus().getSeverity(), DataListPlugin.PLUGIN_ID, "Failed to connect port.", e);
@@ -80,6 +81,7 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 		}
 
 	};
+
 	private int samples;
 	private int index;
 	private double initialTime;
@@ -119,10 +121,12 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 		return this.port;
 	}
 
-	public void acquire(final DataCollectionSettings settings) {
+	public void acquire(final DataCollectionSettings settings, String connectionId) {
 		if (connected) {
 			return;
 		}
+		this.connectionId = connectionId;
+
 		connected = true;
 		clear();
 		this.setDimension(settings.getDimensions());
@@ -150,6 +154,7 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 		}
 		this.captureMethod = method;
 		this.settings = settings;
+
 		this.connectJob.schedule();
 	}
 
@@ -192,6 +197,7 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 		if (!connected) {
 			return;
 		}
+
 		final int length = Array.getLength(data);
 		super.pushPacket(length, time, eos, streamID);
 
@@ -323,5 +329,4 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 	public int size() {
 		return dataBuffer.size();
 	}
-
 }

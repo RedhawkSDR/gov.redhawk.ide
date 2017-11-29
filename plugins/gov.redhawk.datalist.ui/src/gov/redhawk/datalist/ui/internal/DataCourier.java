@@ -151,8 +151,8 @@ public class DataCourier {
 		return dataBuffer.getStreamSRI();
 	}
 
-	public void acquire(DataCollectionSettings settings) {
-		dataBuffer.acquire(settings);
+	public void acquire(DataCollectionSettings settings, String connectionId) {
+		dataBuffer.acquire(settings, connectionId);
 	}
 
 	public void stop() {
