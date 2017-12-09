@@ -21,16 +21,16 @@
 
   <properties>
     <tycho.scmUrl>scm:git:https://github.com/RedhawkSDR/eclipse-gov.redhawk.ide</tycho.scmUrl>
-    <eclipse>http://download.eclipse.org/releases/oxygen</eclipse>
+    <eclipse>http://download.eclipse.org/releases/photon</eclipse>
     <orbit>http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository</orbit>
-    <nebula>http://download.eclipse.org/nebula/releases/1.0.0/</nebula>
+    <nebula>http://download.eclipse.org/nebula/releases/1.4.0/</nebula>
     <nxm>http://nextmidas.techma.com/p2/nxm/updates/3.6/latest/</nxm>
     <nxm-rcp>http://nextmidas.techma.com/p2/nxm.ui/updates/latest/</nxm-rcp>
     <jacorb>http://download.redhawksdr.org/jacorb/updates/stable</jacorb>
     <mil.jpeojtrs.sca>http://download.redhawksdr.org/mil.jpeojtrs.sca/releases/2.1</mil.jpeojtrs.sca>
     <gov.redhawk.core>http://download.redhawksdr.org/gov.redhawk.core/releases/2.1</gov.redhawk.core>
     <swt-bot>http://download.eclipse.org/technology/swtbot/snapshots/</swt-bot>
-    <pydev>https://dl.bintray.com/fabioz/pydev/5.7.0/</pydev>
+    <pydev>https://dl.bintray.com/fabioz/pydev/6.2.0/</pydev>
     <!-- Sonar -->
     <sonar.language>java</sonar.language>
     <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
