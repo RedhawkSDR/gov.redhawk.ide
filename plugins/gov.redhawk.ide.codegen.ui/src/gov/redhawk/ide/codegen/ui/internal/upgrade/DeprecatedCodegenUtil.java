@@ -10,21 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen.ui.internal.upgrade;
 
-import gov.redhawk.ide.codegen.CodegenUtil;
-import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
-import gov.redhawk.ide.codegen.ImplementationSettings;
-import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
-import gov.redhawk.ide.codegen.WaveDevSettings;
-import gov.redhawk.ide.codegen.ui.IComponentProjectUpgrader;
-import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
-import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
-import gov.redhawk.ui.RedhawkUiActivator;
-
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.List;
-
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,10 +23,25 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 
+import gov.redhawk.ide.codegen.CodegenUtil;
+import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
+import gov.redhawk.ide.codegen.ImplementationSettings;
+import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
+import gov.redhawk.ide.codegen.WaveDevSettings;
+import gov.redhawk.ide.codegen.ui.IComponentProjectUpgrader;
+import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
+import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
+import gov.redhawk.ui.RedhawkUiActivator;
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+
 /**
  * Utility methods for upgrading deprecated code generators.
  */
 public class DeprecatedCodegenUtil {
+	private static final List<String> DEPRECATED_TEMPLATES = Arrays.asList(new String[] { "gov.redhawk.ide.codegen.jet.python.pattern.ManualTemplate",
+		"gov.redhawk.ide.codegen.jet.python.pattern.MinimalTemplate", "gov.redhawk.ide.codegen.jet.python.pattern.MinimalServiceTemplate",
+		"gov.redhawk.ide.codegen.jet.java.pattern.ManualTemplate", "gov.redhawk.ide.codegen.jet.cplusplus.ManualTemplate" });
 
 	private DeprecatedCodegenUtil() {
 	}
@@ -58,14 +61,36 @@ public class DeprecatedCodegenUtil {
 		final SoftPkg softPkg = (SoftPkg) impls.get(0).eContainer();
 		final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings(softPkg);
 		boolean hasDeprecated = false;
+
 		for (final Implementation impl : impls) {
+			checkTemplate(waveDev, impl, shell);
+
 			hasDeprecated = isDeprecated(impl, waveDev);
 			if (hasDeprecated) {
 				break;
 			}
 		}
+
 		if (hasDeprecated && shouldUpgrade(shell, softPkg.getName())) {
 			upgrade(shell, softPkg, waveDev);
+		}
+	}
+
+	private static void checkTemplate(WaveDevSettings waveDev, Implementation impl, Shell shell) throws CoreException {
+		if (waveDev == null) {
+			waveDev = WaveDevUtil.generateWaveDev(impl.getSoftPkg());
+		}
+		if (waveDev == null) {
+			throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID,
+				"GENERATE FAILED: Failed to find implementation settings in " + impl.getSoftPkg().getName() + ".wavedev file", null));
+		}
+
+		final ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
+		if (implSettings != null) {
+			if (DEPRECATED_TEMPLATES.contains(implSettings.getTemplate())) {
+				MessageDialog.openError(shell, Messages.OldTemplate_Title, Messages.OldTemplate_Message);
+				throw new OperationCanceledException();
+			}
 		}
 	}
 
@@ -93,8 +118,8 @@ public class DeprecatedCodegenUtil {
 						if (service != null) {
 							service.upgrade(monitor, spd, implSettings);
 						} else {
-							throw new CoreException(new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to find project upgrade service.",
-								null));
+							throw new CoreException(
+								new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to find project upgrade service.", null));
 						}
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
@@ -117,13 +142,6 @@ public class DeprecatedCodegenUtil {
 	}
 
 	private static boolean isDeprecated(Implementation impl, WaveDevSettings waveDev) throws CoreException {
-		if (waveDev == null) {
-			waveDev = WaveDevUtil.generateWaveDev(impl.getSoftPkg());
-		}
-		if (waveDev == null) {
-			throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, "GENERATE FAILED: Failed to find implementation settings in "
-				+ impl.getSoftPkg().getName() + ".wavedev file", null));
-		}
 		final ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
 		if (implSettings != null) {
 			ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(implSettings.getGeneratorId());
