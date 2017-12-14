@@ -20,6 +20,8 @@ public class Messages extends NLS {
 	public static String Error_CantSavePrf;
 	public static String OldCodeGen_Message;
 	public static String OldCodeGen_Title;
+	public static String OldTemplate_Message;
+	public static String OldTemplate_Title;
 
 	static {
 		// initialize resource bundle
