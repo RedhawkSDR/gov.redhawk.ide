@@ -625,8 +625,7 @@
          point="gov.redhawk.core.resourceFactory.resourceFactories">
       <factoryProvider
             class="gov.redhawk.ide.debug.internal.SdrResourceFactoryProvider"
-            id="gov.redhawk.ide.debug.ui.sdrFactoryProvider"
-            priority="20">
+            id="gov.redhawk.ide.debug.ui.sdrFactoryProvider">
       </factoryProvider>
    </extension>
    <extension

@@ -152,13 +152,11 @@
          point="gov.redhawk.core.resourceFactory.resourceFactories">
       <factoryProvider
             class="gov.redhawk.ide.debug.internal.WorkspaceResourceFactoryProvider"
-            id="gov.redhawk.ide.debug.workspaceFactoryProvider"
-            priority="10">
+            id="gov.redhawk.ide.debug.workspaceFactoryProvider">
       </factoryProvider>
       <factoryProvider
             class="gov.redhawk.ide.debug.internal.BundleResourceFactoryProvider"
-            id="gov.redhawk.ide.debug.bundleFactoryProvider"
-            priority="-1">
+            id="gov.redhawk.ide.debug.bundleFactoryProvider">
       </factoryProvider>
    </extension>
    <extension
