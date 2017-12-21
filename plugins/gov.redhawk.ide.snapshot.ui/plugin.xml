@@ -16,7 +16,6 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="gov.redhawk.ide.ui.category"
-            defaultHandler="gov.redhawk.ide.snapshot.internal.ui.SnapshotHandler"
             id="gov.redhawk.ide.snapshot.ui.commands.snapshot"
             name="Snapshot">
       </command>
@@ -36,12 +35,11 @@
                      operator="or">
                   <adapt
                         type="gov.redhawk.model.sca.ScaUsesPort">
+                     <test
+                           property="gov.redhawk.sca.model.port.interface"
+                           value="IDL:BULKIO/data.*">
+                     </test>
                   </adapt>
-                  <test
-                        forcePluginActivation="true"
-                        property="gov.redhawk.ui.port.interface"
-                        value="IDL:BULKIO/data.*">
-                  </test>
                </iterate>
             </visibleWhen>
          </command>
@@ -81,5 +79,12 @@
             id="gov.redhawk.ide.snapshot.writer.BlueDataWriter"
             name="Midas BLUE file (.tmp)">
       </writer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="gov.redhawk.ide.snapshot.internal.ui.SnapshotHandler"
+            commandId="gov.redhawk.ide.snapshot.ui.commands.snapshot">
+      </handler>
    </extension>
 </plugin>

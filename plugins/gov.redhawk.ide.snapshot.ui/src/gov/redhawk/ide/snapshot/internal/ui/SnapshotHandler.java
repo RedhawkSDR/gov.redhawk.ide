@@ -1,4 +1,4 @@
-/*******************************************************************************
+/**
  * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
@@ -6,8 +6,8 @@
  *
  * All rights reserved.  This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.snapshot.internal.ui;
 
 import gov.redhawk.bulkio.util.BulkIOType;
@@ -27,7 +27,6 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -41,32 +40,17 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import BULKIO.dataCharHelper;
-import BULKIO.dataDoubleHelper;
-import BULKIO.dataFloatHelper;
-import BULKIO.dataLongHelper;
-import BULKIO.dataLongLongHelper;
-import BULKIO.dataOctetHelper;
-import BULKIO.dataShortHelper;
-import BULKIO.dataUlongHelper;
-import BULKIO.dataUlongLongHelper;
-import BULKIO.dataUshortHelper;
 import CF.ResourceOperations;
 import CF.ResourcePackage.StartError;
 
 public class SnapshotHandler extends AbstractHandler {
-	/**
-	 * The constructor.
-	 */
+
 	public SnapshotHandler() {
 	}
 
-	/**
-	 * the command has been executed, so extract extract the needed information
-	 * from the application context.
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell shell = HandlerUtil.getActiveShell(event);
@@ -137,36 +121,23 @@ public class SnapshotHandler extends AbstractHandler {
 		return null;
 	}
 
-	private boolean isPortSupported(ScaUsesPort port) {
-		if (port == null) {
-			return false;
-		}
-		final String portRepId = port.getRepid();
-		if (portRepId.equals(dataLongLongHelper.id()) || portRepId.equals(dataUlongLongHelper.id()) || portRepId.equals(dataFloatHelper.id())
-			|| portRepId.equals(dataDoubleHelper.id()) || portRepId.equals(dataShortHelper.id()) || portRepId.equals(dataUshortHelper.id())
-			|| portRepId.equals(dataLongHelper.id()) || portRepId.equals(dataUlongHelper.id()) || portRepId.equals(dataOctetHelper.id())
-			|| portRepId.equals(dataCharHelper.id())) {
-			return true;
-		}
-		return false;
-	}
-
 	@Override
 	public void setEnabled(Object evaluationContext) {
-		final IEvaluationContext context = (IEvaluationContext) evaluationContext;
-		Object obj = context.getVariable("activeMenuSelection");
-		if (obj instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection) obj;
-			Object element = ss.getFirstElement();
-			if (element instanceof ScaUsesPort) {
-				setBaseEnabled(isPortSupported((ScaUsesPort) element));
-				return;
-			} else {
-				ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, element);
-				setBaseEnabled(isPortSupported(port));
+		Object obj = HandlerUtil.getVariable(evaluationContext, ISources.ACTIVE_MENU_SELECTION_NAME);
+		if (!(obj instanceof IStructuredSelection)) {
+			setBaseEnabled(false);
+			return;
+		}
+		IStructuredSelection ss = (IStructuredSelection) obj;
+
+		for (Object element : ss.toArray()) {
+			ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, element);
+			if (port == null || !BulkIOType.isTypeSupported(port.getRepid())) {
+				setBaseEnabled(false);
 				return;
 			}
 		}
-		setBaseEnabled(false);
+
+		setBaseEnabled(true);
 	}
 }
