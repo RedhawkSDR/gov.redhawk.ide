@@ -1,15 +1,16 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.datalist.ui.handlers;
 
+import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.datalist.ui.DataListPlugin;
 import gov.redhawk.datalist.ui.views.DataListView;
 import gov.redhawk.model.sca.ScaUsesPort;
@@ -21,19 +22,15 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-/**
- * @since 2.0
- */
 public class DataListHandler extends AbstractHandler {
-	/**
-	 * The constructor.
-	 */
+
 	public DataListHandler() {
 	}
 
@@ -66,5 +63,25 @@ public class DataListHandler extends AbstractHandler {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void setEnabled(Object evaluationContext) {
+		Object obj = HandlerUtil.getVariable(evaluationContext, ISources.ACTIVE_MENU_SELECTION_NAME);
+		if (!(obj instanceof IStructuredSelection)) {
+			setBaseEnabled(false);
+			return;
+		}
+		IStructuredSelection ss = (IStructuredSelection) obj;
+
+		for (Object element : ss.toArray()) {
+			ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, element);
+			if (port == null || !BulkIOType.isTypeSupported(port.getRepid())) {
+				setBaseEnabled(false);
+				return;
+			}
+		}
+
+		setBaseEnabled(true);
 	}
 }
