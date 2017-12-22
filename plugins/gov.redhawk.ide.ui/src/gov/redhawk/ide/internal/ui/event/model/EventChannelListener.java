@@ -11,8 +11,8 @@
 package gov.redhawk.ide.internal.ui.event.model;
 
 import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
-import gov.redhawk.sca.util.ORBUtil;
 import gov.redhawk.sca.util.OrbSession;
+import mil.jpeojtrs.sca.util.CorbaUtils;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.CoreException;
@@ -20,17 +20,21 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.omg.CORBA.SystemException;
 import org.omg.CosEventChannelAdmin.AlreadyConnected;
+import org.omg.CosEventChannelAdmin.ConsumerAdmin;
 import org.omg.CosEventChannelAdmin.EventChannel;
 import org.omg.CosEventChannelAdmin.ProxyPushSupplier;
 import org.omg.CosEventChannelAdmin.TypeError;
 import org.omg.CosEventComm.PushConsumer;
 import org.omg.CosEventComm.PushConsumerHelper;
 import org.omg.CosEventComm.PushConsumerPOATie;
-import org.omg.PortableServer.POA;
+import org.omg.PortableServer.POAPackage.ObjectNotActive;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
+import org.omg.PortableServer.POAPackage.WrongAdapter;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 public class EventChannelListener extends ChannelListener {
+
+	private OrbSession session;
 
 	private EventChannel eventChannel;
 	private PushConsumer ref;
@@ -47,52 +51,51 @@ public class EventChannelListener extends ChannelListener {
 			disconnect();
 			return;
 		}
-		POA poa = session.getPOA();
-		try {
-			ref = PushConsumerHelper.narrow(poa.servant_to_reference(new PushConsumerPOATie(this)));
-			pushSupplier = eventChannel.for_consumers().obtain_push_supplier();
-			pushSupplier.connect_push_consumer(ref);
-		} catch (SystemException e) {
-			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: " + "("
-					+ getChannel() + ")", e));
-		} catch (ServantNotActive e) {
-			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: " + "("
-					+ getChannel() + ")", e));
-		} catch (WrongPolicy e) {
-			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: " + "("
-					+ getChannel() + ")", e));
-		} catch (AlreadyConnected e) {
-			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: " + "("
-					+ getChannel() + ")", e));
-		} catch (TypeError e) {
-			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: " + "("
-					+ getChannel() + ")", e));
-		}
 
+		this.session = session;
+		try {
+			// Create a PushConsumer for this instance to receive events
+			ref = PushConsumerHelper.narrow(session.getPOA().servant_to_reference(new PushConsumerPOATie(this)));
+
+			// Connect to the event channel
+			ConsumerAdmin consumerAdmin = eventChannel.for_consumers();
+			pushSupplier = consumerAdmin.obtain_push_supplier();
+			CorbaUtils.release(consumerAdmin);
+			pushSupplier.connect_push_consumer(ref);
+		} catch (SystemException | ServantNotActive | WrongPolicy | AlreadyConnected | TypeError e) {
+			String msg = String.format("Failed to connect to event channel '%s'", getChannel());
+			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, msg, e));
+		}
 	}
 
 	@Override
 	public void disconnect() {
-		if (ref == null) {
-			return;
-		}
 		if (pushSupplier != null) {
 			try {
 				pushSupplier.disconnect_push_supplier();
 			} catch (SystemException e) {
-				// PASS
+				String msg = String.format("Failed to disconnect push supplier after listening to event channel '%s'", getChannel());
+				RedhawkIDEUiPlugin.logError(msg, e);
 			}
+			CorbaUtils.release(pushSupplier);
+			pushSupplier = null;
 		}
+
 		if (ref != null) {
-			ORBUtil.release(ref);
+			try {
+				byte[] id = session.getPOA().reference_to_id(ref);
+				session.getPOA().deactivate_object(id);
+			} catch (WrongAdapter | WrongPolicy | CoreException | ObjectNotActive e) {
+				String msg = String.format("Failed to deactivate CORBA object after listening to event channel '%s'", getChannel());
+				RedhawkIDEUiPlugin.logError(msg, e);
+			}
+			CorbaUtils.release(ref);
+			ref = null;
 		}
-		ref = null;
 	}
 
 	@Override
 	public void disconnect_push_consumer() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public EventChannel getEventChannel() {
