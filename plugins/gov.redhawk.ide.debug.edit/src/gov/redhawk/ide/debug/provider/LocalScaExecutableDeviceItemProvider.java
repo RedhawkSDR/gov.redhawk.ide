@@ -81,7 +81,7 @@ public class LocalScaExecutableDeviceItemProvider extends ScaExecutableDeviceIte
 		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
 			getString("_UI_LocalAbstractComponent_implementationID_feature"),
 			getString("_UI_PropertyDescriptor_description", "_UI_LocalAbstractComponent_implementationID_feature", "_UI_LocalAbstractComponent_type"),
-			ScaDebugPackage.Literals.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
+			ScaDebugPackage.Literals.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID, false, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
 	}
 
 	/**

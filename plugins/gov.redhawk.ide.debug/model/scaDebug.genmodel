@@ -75,7 +75,7 @@
       <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalLaunch/mode"/>
     </genClasses>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalAbstractComponent">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/implementationID"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/implementationID"/>
       <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/execParam"/>
     </genClasses>
     <genClasses provider="Stateful" image="false" ecoreClass="scaDebug.ecore#//LocalScaWaveform">
