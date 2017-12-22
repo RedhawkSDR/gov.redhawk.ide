@@ -95,7 +95,7 @@ public class LocalScaWaveformItemProvider extends ScaWaveformItemProvider {
 		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
 			getString("_UI_LocalScaWaveform_domainWaveform_feature"),
 			getString("_UI_PropertyDescriptor_description", "_UI_LocalScaWaveform_domainWaveform_feature", "_UI_LocalScaWaveform_type"),
-			ScaDebugPackage.Literals.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM, true, false, true, null, null, null));
+			ScaDebugPackage.Literals.LOCAL_SCA_WAVEFORM__DOMAIN_WAVEFORM, false, false, true, null, null, null));
 	}
 
 	/**
