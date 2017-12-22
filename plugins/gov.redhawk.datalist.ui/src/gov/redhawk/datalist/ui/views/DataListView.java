@@ -393,8 +393,9 @@ public class DataListView extends ViewPart {
 
 		// Check if multi-out port, and if so get a connection ID from the user
 		String connectionId = null;
-		if (ScaUsesPort.Util.isMultiOutPort(source)) {
-			connectionId = getConnectionId(source);
+		Map<String, Boolean> connectionIDTable = ScaUsesPort.Util.getConnectionIds(source);
+		if (connectionIDTable.size() > 0) {
+			connectionId = getConnectionId(connectionIDTable);
 			if (connectionId == null) {
 				return;
 			}
@@ -489,8 +490,7 @@ public class DataListView extends ViewPart {
 	 * Checks if the port is a multi-out port and if so gives the user the option to define the connection ID
 	 * @return False if the data acquire operation was canceled
 	 */
-	private String getConnectionId(ScaUsesPort port) {
-		Map<String, Boolean> connectionIds = ScaUsesPort.Util.getConnectionIds(port);
+	private String getConnectionId(Map<String, Boolean> connectionIds) {
 		// Check if port is a multi-out port, and if it has an available connection ID
 		Entry<String, Boolean> firstEntry = connectionIds.entrySet().iterator().next();
 		String connectionId = null;
