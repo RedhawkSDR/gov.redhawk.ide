@@ -12,11 +12,11 @@ package gov.redhawk.ide.swtbot;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotCanvas;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
 import org.hamcrest.BaseMatcher;
@@ -183,7 +183,7 @@ public class ViewUtils {
 		});
 	}
 
-	public static SWTBotTree selectPropertiesTab(SWTWorkbenchBot bot, final String label) {
+	public static SWTBot selectPropertiesTab(SWTWorkbenchBot bot, final String label) {
 		// Matcher for a tab in the property tab list
 		Matcher<TabbedPropertyList.ListElement> matcher = new BaseMatcher<TabbedPropertyList.ListElement>() {
 			@Override
@@ -209,6 +209,6 @@ public class ViewUtils {
 		// Convert to Canvas (parent type), then click with SWTBot
 		new SWTBotCanvas(listElement).click();
 
-		return view.bot().tree();
+		return view.bot();
 	}
 }
