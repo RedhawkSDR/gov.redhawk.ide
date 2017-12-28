@@ -12,12 +12,10 @@ package gov.redhawk.ide.swtbot;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
-import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotCanvas;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
@@ -30,128 +28,59 @@ import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 @SuppressWarnings("restriction")
 public class ViewUtils {
 
+	private static final String AUDIO_VIEW_ID = "gov.redhawk.ui.port.playaudio.view";
+	private static final String CORBA_NAME_BROWSER_VIEW_ID = "gov.redhawk.ui.views.namebrowserview";
+	private static final String CONSOLE_VIEW_ID = "org.eclipse.ui.console.ConsoleView";
+	private static final String DATA_LIST_VIEW_ID = "gov.redhawk.datalist.ui.views.DataListView";
+	private static final String PLOT_VIEW_ID = "gov.redhawk.ui.port.nxmplot.PlotView2";
+	private static final String PORT_MONITOR_VIEW_ID = "gov.redhawk.ui.views.monitor.ports.PortMonitorView";
+	private static final String PROBLEMS_VIEW_ID = "org.eclipse.ui.views.ProblemView";
+	private static final String PROJECT_VIEW_ID = "org.eclipse.ui.navigator.ProjectExplorer";
 	public static final String PROPERTIES_VIEW_ID = "org.eclipse.ui.views.PropertySheet";
+	private static final String SRI_VIEW_ID = "gov.redhawk.bulkio.ui.sridata.view";
 
 	/** private to prevent instantiation since all functions are static. */
 	private ViewUtils() {
 	}
 
-	/**
-	 * Check to see if a specified tree item exists
-	 * @param treeItem - The base tree object
-	 * @param treePath - Array of strings to define path to tree item to be checked. Ex: "tree root", "node parent",
-	 * "node to check for")
-	 * @returns true if entire treePath exists, false if one or more elements in the treePath does not exist
-	 */
-	public static boolean checkIfTreeItemExistsEntry(SWTBotTree treeItem, String... treePath) {
-		try {
-			// Expand down to the depth of the tree item we are looking for
-			String[] expandPath = new String[treePath.length - 1];
-			for (int i = 0; i < expandPath.length; i++) {
-				expandPath[i] = treePath[i];
-			}
-			SWTBotTreeItem parent = treeItem.expandNode(expandPath);
-
-			// Check if tree item exists
-			parent.getNode(treePath[treePath.length - 1]);
-			return true;
-		} catch (WidgetNotFoundException e) {
-			return false;
-		}
+	public static SWTBotView getAudioView(SWTWorkbenchBot bot) {
+		return bot.viewById(AUDIO_VIEW_ID);
 	}
 
-	/**
-	 * Return Audio View
-	 * @param bot
-	 * @return
-	 */
-	public static SWTBotView getAudioView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.ui.port.playaudio.view");
+	public static SWTBotView getCorbaNameBrowserView(SWTWorkbenchBot bot) {
+		return bot.viewById(CORBA_NAME_BROWSER_VIEW_ID);
 	}
 
 	public static SWTBotView getConsoleView(SWTWorkbenchBot bot) {
-		return bot.viewById("org.eclipse.ui.console.ConsoleView");
+		return bot.viewById(CONSOLE_VIEW_ID);
 	}
 
-	/**
-	 * Return the CORBA Name Browser view
-	 * @param bot
-	 * @return
-	 */
-	public static SWTBotView getCorbaNameBrowserView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.ui.views.namebrowserview");
-	}
-
-	/**
-	 * Return Data List View
-	 * @param bot
-	 * @return
-	 */
 	public static SWTBotView getDataListView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.datalist.ui.views.DataListView");
+		return bot.viewById(DATA_LIST_VIEW_ID);
 	}
 
-	/**
-	 * Return the Redhawk Explorer view
-	 * @param bot
-	 * @return
-	 */
 	public static SWTBotView getExplorerView(SWTWorkbenchBot bot) {
 		return bot.viewById(ScaExplorerTestUtils.SCA_EXPLORER_VIEW_ID);
 	}
 
-	/**
-	 * Return Plot View
-	 * @param bot
-	 * @return
-	 */
 	public static SWTBotView getPlotView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.ui.port.nxmplot.PlotView2");
+		return bot.viewById(PLOT_VIEW_ID);
 	}
 
-	/**
-	 * Return Port Monitor View
-	 * @param bot
-	 * @return
-	 */
 	public static SWTBotView getPortMonitorView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.ui.views.monitor.ports.PortMonitorView");
+		return bot.viewById(PORT_MONITOR_VIEW_ID);
 	}
 
-	/**
-	 * Gets the Problems view
-	 * @param bot
-	 * @return
-	 */
 	public static SWTBotView getProblemsView(SWTWorkbenchBot bot) {
-		return bot.viewById("org.eclipse.ui.views.ProblemView");
+		return bot.viewById(PROBLEMS_VIEW_ID);
 	}
 
-	/**
-	 * Gets the project explorer view / package explorer view, as appropriate.
-	 * @param bot
-	 * @return
-	 */
 	public static SWTBotView getProjectView(SWTWorkbenchBot bot) {
-		return bot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
+		return bot.viewById(PROJECT_VIEW_ID);
 	}
 
-	/**
-	 * Return Snapshot dialog
-	 * @param bot
-	 * @return
-	 */
-	public static SWTBotShell getSnapshotDialog(SWTWorkbenchBot bot) {
-		return bot.shell("Snapshot");
-	}
-
-	/**
-	 * Return SRI View
-	 * @param bot
-	 * @return
-	 */
 	public static SWTBotView getSRIView(SWTWorkbenchBot bot) {
-		return bot.viewById("gov.redhawk.bulkio.ui.sridata.view");
+		return bot.viewById(SRI_VIEW_ID);
 	}
 
 	/**
@@ -195,7 +124,7 @@ public class ViewUtils {
 	 * Waits until Data List View displays
 	 * @param bot
 	 */
-	public static void waitUntilDataListViewDisplays(final SWTWorkbenchBot bot) {
+	public static SWTBotView waitUntilDataListViewDisplays(final SWTWorkbenchBot bot) {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
@@ -207,6 +136,7 @@ public class ViewUtils {
 				return getDataListView((SWTWorkbenchBot) bot) != null;
 			}
 		});
+		return getDataListView((SWTWorkbenchBot) bot);
 	}
 
 	/**
@@ -224,25 +154,6 @@ public class ViewUtils {
 			public boolean test() throws Exception {
 				SWTBotView dataListView = getDataListView((SWTWorkbenchBot) bot);
 				return dataListView.bot().table().rowCount() > 10;
-			}
-		});
-	}
-
-	/**
-	 * Waits until Snapshot dialog displays
-	 * @param bot
-	 */
-	public static void waitUntilSnapshotDialogDisplays(final SWTWorkbenchBot bot) {
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return "Snapshot Dialog isn't displayed";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				SWTBotShell snapshotDialog = bot.shell("Snapshot");
-				return snapshotDialog != null;
 			}
 		});
 	}
