@@ -249,7 +249,13 @@ public class ScaExplorerTestUtils {
 		bot.waitUntil(Conditions.shellCloses(deletePopup));
 	}
 
-	public static void launchWaveformFromDomain(SWTWorkbenchBot bot, String domain, String waveform) {
+	/**
+	 * @param bot
+	 * @param domain
+	 * @param waveform The waveform's name (e.g. "rh.basic_component_demo")
+	 * @return The instance name of the launched waveform (e.g. "rh.basic_component_demo_123_45678901")
+	 */
+	public static String launchWaveformFromDomain(SWTWorkbenchBot bot, String domain, String waveform) {
 		SWTBotTreeItem domainTreeItem = getTreeItemFromScaExplorer(bot, new String[] { domain }, null);
 		domainTreeItem.contextMenu("Launch Waveform...").click();
 
@@ -269,9 +275,11 @@ public class ScaExplorerTestUtils {
 		wizardBot.sleep(WIZARD_POST_MODAL_PROGRESS_DELAY);
 
 		// Finish will launch the waveform, again triggering a modal progress context, then closing the dialog
+		String waveformName = wizardBot.textWithLabel("Waveform Name:").getText();
 		wizardBot.button("Finish").click();
 		wizardBot.waitUntil(new WaitForModalContext(), 30000);
 		bot.waitUntil(Conditions.shellCloses(wizardShell));
+		return waveformName;
 	}
 
 	public static void connectPortsInScaExplorer(SWTWorkbenchBot bot, final String[] parentPath, final String connectionName, final String sourceResourceName,
