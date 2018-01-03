@@ -187,8 +187,10 @@ public final class StandardTestActions {
 	public static void switchToScaPerspective(SWTWorkbenchBot bot) {
 		SWTBotPerspective perspective = bot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
 		perspective.activate();
-		bot.resetActivePerspective();
-		bot.sleep(100);
+
+		// Resetting the perspective appears to cause strange issues with the console view in Photon M4
+		//bot.resetActivePerspective();
+		//bot.sleep(100);
 
 		SWTBotView view = ViewUtils.getExplorerView(bot);
 		view.setFocus();
