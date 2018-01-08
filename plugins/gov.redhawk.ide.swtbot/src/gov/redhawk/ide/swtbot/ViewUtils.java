@@ -18,6 +18,7 @@ import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotCanvas;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -88,6 +89,10 @@ public class ViewUtils {
 
 	public static SWTBotView getProblemsView(SWTWorkbenchBot bot) {
 		return bot.viewById(PROBLEMS_VIEW_ID);
+	}
+
+	public static SWTBotView getProgressView(SWTWorkbenchBot bot) {
+		return bot.viewById(IPageLayout.ID_PROGRESS_VIEW);
 	}
 
 	public static SWTBotView getProjectView(SWTWorkbenchBot bot) {
