@@ -564,8 +564,8 @@ public class ScaExplorerTestUtils {
 	 * Waits until Sandbox Device manager has no device items
 	 * @param componentName
 	 */
-	public static void waitUntilSandboxDeviceManagerEmpty(SWTWorkbenchBot bot, String[] parentPath, String deviceManager) {
-		final SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, deviceManager);
+	public static void waitUntilSandboxDeviceManagerEmpty(SWTWorkbenchBot bot) {
+		final SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, new String[] { "Sandbox" }, "Device Manager");
 
 		bot.waitUntil(new DefaultCondition() {
 			@Override
