@@ -44,7 +44,7 @@ public class HostCollocationWizard extends Wizard {
 	private UsesDeviceSelectionWizardPage page;
 
 	public HostCollocationWizard(HostCollocation hostCollocation, UsesDeviceDependencies usesDeviceDeps) {
-		setWindowTitle("Edit Host Collocation");
+		setWindowTitle(Messages.HostCollocationWizard_WindowTitle);
 		this.hostCollocation = hostCollocation;
 		this.usesDeviceDeps = usesDeviceDeps;
 	}

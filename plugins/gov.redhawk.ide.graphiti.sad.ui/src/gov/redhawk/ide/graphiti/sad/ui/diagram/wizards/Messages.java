@@ -15,6 +15,7 @@ import org.eclipse.osgi.util.NLS;
 
 /* package */ class Messages extends NLS {
 	private static final String BUNDLE_NAME = "gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.messages"; //$NON-NLS-1$
+	public static String HostCollocationWizard_WindowTitle;
 	public static String UsesDeviceFrontEndTunerWizard_WindowTitle;
 	public static String UsesDeviceWizard_WindowTitle;
 	static {

@@ -17,6 +17,7 @@ import org.eclipse.osgi.util.NLS;
 	private static final String BUNDLE_NAME = "gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.messages"; //$NON-NLS-1$
 	public static String HostCollocationPattern_CreateDescription;
 	public static String HostCollocationPattern_CreateName;
+	public static String HostCollocationPattern_EditName;
 	public static String UsesDeviceFrontEndTunerPattern_CreateDescription;
 	public static String UsesDeviceFrontEndTunerPattern_CreateName;
 	public static String UsesDeviceFrontEndTunerPattern_EditName;

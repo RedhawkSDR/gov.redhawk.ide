@@ -106,6 +106,11 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		return WaveformImageProvider.IMG_HOST_COLLOCATION;
 	}
 
+	@Override
+	public String getEditName() {
+		return Messages.HostCollocationPattern_EditName;
+	}
+
 	// THE FOLLOWING THREE METHODS DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
@@ -625,10 +630,5 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 		int result = dialog.open();
 		return result == WizardDialog.OK;
-	}
-
-	@Override
-	public String getEditName() {
-		return NAME;
 	}
 }
