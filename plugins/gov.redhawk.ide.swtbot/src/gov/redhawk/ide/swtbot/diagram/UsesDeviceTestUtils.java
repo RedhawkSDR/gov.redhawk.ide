@@ -12,6 +12,7 @@
 package gov.redhawk.ide.swtbot.diagram;
 
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotCombo;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
@@ -89,27 +90,30 @@ public class UsesDeviceTestUtils {
 	public static void completeUsesFEDeviceWizard(SWTBot bot, String existingAllocId, String newAllocId, String[] provides, String[] uses) {
 		SWTBotShell allocateTunerShell = bot.shell("Allocate Tuner");
 		allocateTunerShell.setFocus();
+		SWTBot shellBot = allocateTunerShell.bot();
+
 		// click next, Generic FrontEnd Device already selected
-		bot.button("&Next >").click();
+		shellBot.button("&Next >").click();
 		// stick with the default values
-		bot.button("&Next >").click();
+		shellBot.button("&Next >").click();
 		// switch to Listen by id
-		SWTBotCombo comboField = bot.comboBox(0); // Allocation
+		SWTBotCombo comboField = shellBot.comboBox(0); // Allocation
 		comboField.setFocus();
 		comboField.setSelection("Listen to Existing Tuner by ID");
 		// provide existing tuner allocation id
-		SWTBotText existingTunerAllocationIdText = bot.textWithLabel("Existing Tuner Allocation ID");
+		SWTBotText existingTunerAllocationIdText = shellBot.textWithLabel("Existing Tuner Allocation ID");
 		existingTunerAllocationIdText.setFocus();
 		existingTunerAllocationIdText.typeText(existingAllocId);
 		// provide allocation id
 		if (newAllocId != null) {
-			SWTBotText newAllocationIdText = bot.textWithLabel("New Allocation ID");
+			SWTBotText newAllocationIdText = shellBot.textWithLabel("New Allocation ID");
 			newAllocationIdText.setFocus();
 			newAllocationIdText.typeText(newAllocId);
 		}
-		bot.button("&Next >").click();
+		shellBot.button("&Next >").click();
 
-		completeAddPortsPage(bot, provides, uses);
+		completeAddPortsPage(shellBot, provides, uses);
+		bot.waitUntil(Conditions.shellCloses(allocateTunerShell));
 	}
 
 	private static void completeAddPortsPage(SWTBot bot, String[] provides, String[] uses) {

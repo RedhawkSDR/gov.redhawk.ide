@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
@@ -45,25 +45,28 @@ import FRONTEND.FE_TUNER_DEVICE_KIND;
 
 public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern implements IDialogEditingPattern {
 
-	public static final String NAME = "Use FrontEnd Tuner Device";
-
 	public UsesDeviceFrontEndTunerPattern() {
 		super();
 	}
 
 	@Override
 	public String getCreateName() {
-		return NAME;
+		return Messages.UsesDeviceFrontEndTunerPattern_CreateName;
 	}
 
 	@Override
 	public String getCreateDescription() {
-		return "";
+		return Messages.UsesDeviceFrontEndTunerPattern_CreateDescription;
 	}
 
 	@Override
 	public String getCreateImageId() {
 		return ImageProvider.IMG_USES_DEVICE_FRONTEND_TUNER;
+	}
+
+	@Override
+	public String getEditName() {
+		return Messages.UsesDeviceFrontEndTunerPattern_EditName;
 	}
 
 	// THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
@@ -192,11 +195,6 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public String getEditName() {
-		return NAME;
 	}
 
 	/**

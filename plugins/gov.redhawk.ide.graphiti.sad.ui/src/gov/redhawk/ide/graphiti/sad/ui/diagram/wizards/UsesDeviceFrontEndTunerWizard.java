@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.sad.ui.diagram.wizards;
 
 import java.util.ArrayList;
@@ -51,10 +51,10 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 	private UsesDeviceFrontEndTunerWizardPage namePage;
 	private TunerAllocationWizardPage allocationPage;
 	private PortsWizardPage portsWizardPage;
-	private static final String DEFAULT_DEVICE_ID_PREFIX = "FrontEndTuner_";
+	private static final String DEFAULT_DEVICE_ID_PREFIX = "FrontEndTuner_"; //$NON-NLS-1$
 
 	public UsesDeviceFrontEndTunerWizard(SoftwareAssembly sad) {
-		this.setWindowTitle("Allocate Tuner");
+		this.setWindowTitle(Messages.UsesDeviceFrontEndTunerWizard_WindowTitle);
 		this.sad = sad;
 	}
 
@@ -160,7 +160,7 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 				String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, DEFAULT_DEVICE_ID_PREFIX);
 				namePage.getModel().setUsesDeviceId(deviceId);
 				// device model
-				namePage.getModel().setDeviceModel("");
+				namePage.getModel().setDeviceModel(""); //$NON-NLS-1$
 				// ports
 				portsWizardPage.getModel().setProvidesPortNames(new ArrayList<String>());
 				portsWizardPage.getModel().setUsesPortNames(new ArrayList<String>());
@@ -177,7 +177,7 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 				Ports ports = features.getPorts();
 
 				// pre-populate deviceId
-				String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, spd.getName() + "_");
+				String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, spd.getName() + "_"); //$NON-NLS-1$
 				namePage.getModel().setUsesDeviceId(deviceId);
 
 				// pre-populate device_model

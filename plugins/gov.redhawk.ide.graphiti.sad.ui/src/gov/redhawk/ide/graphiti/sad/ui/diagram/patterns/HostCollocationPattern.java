@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import java.util.ArrayList;
@@ -72,17 +72,15 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 public class HostCollocationPattern extends AbstractContainerPattern implements IDialogEditingPattern {
 
-	public static final String NAME = "Host Collocation";
-
 	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove
 	// etc.)
-	public static final String HOST_COLLOCATION_OUTER_CONTAINER_SHAPE = "hostCollocationOuterContainerShape";
+	public static final String HOST_COLLOCATION_OUTER_CONTAINER_SHAPE = "hostCollocationOuterContainerShape"; //$NON-NLS-1$
 
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
-	public static final String GA_OUTER_ROUNDED_RECTANGLE = "outerRoundedRectangle";
-	public static final String GA_OUTER_ROUNDED_RECTANGLE_TEXT = "outerRoundedRectangleText";
-	public static final String GA_OUTER_ROUNDED_RECTANGLE_IMAGE = "outerRoundedRectangleImage";
+	private static final String GA_OUTER_ROUNDED_RECTANGLE = "outerRoundedRectangle"; //$NON-NLS-1$
+	private static final String GA_OUTER_ROUNDED_RECTANGLE_TEXT = "outerRoundedRectangleText"; //$NON-NLS-1$
+	private static final String GA_OUTER_ROUNDED_RECTANGLE_IMAGE = "outerRoundedRectangleImage"; //$NON-NLS-1$
 
 	private static final int OUTER_IMAGE_LEFT_PADDING = 20;
 	private static final int OUTER_TITLE_IMAGE_PADDING = 4;
@@ -95,12 +93,12 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 
 	@Override
 	public String getCreateName() {
-		return NAME;
+		return Messages.HostCollocationPattern_CreateName;
 	}
 
 	@Override
 	public String getCreateDescription() {
-		return "";
+		return Messages.HostCollocationPattern_CreateDescription;
 	}
 
 	@Override
@@ -566,7 +564,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 			existingNames.add(collocation.getName());
 		}
 		for (int index = 1;; index++) {
-			String name = "collocation_" + index;
+			String name = "collocation_" + index; //$NON-NLS-1$
 			if (!existingNames.contains(name)) {
 				return name;
 			}
