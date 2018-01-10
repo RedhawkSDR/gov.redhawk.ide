@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.core.graphiti.ui.util.FindByStubUtil;
@@ -23,21 +23,18 @@ import org.eclipse.graphiti.pattern.IPattern;
 
 public class FindByFileManagerPattern extends AbstractFindByPattern implements IPattern {
 
-	public static final String NAME = "File Manager";
-	public static final String SHAPE_TITLE = "File Manager";
-
 	public FindByFileManagerPattern() {
 		super();
 	}
 
 	@Override
 	public String getCreateName() {
-		return NAME;
+		return Messages.FindByFileManagerPattern_CreateName;
 	}
 
 	@Override
 	public String getCreateDescription() {
-		return "";
+		return Messages.FindByFileManagerPattern_CreateDescription;
 	}
 
 	@Override
@@ -79,7 +76,7 @@ public class FindByFileManagerPattern extends AbstractFindByPattern implements I
 
 	@Override
 	public String getInnerTitle(FindByStub findByStub) {
-		return SHAPE_TITLE;
+		return Messages.FindByFileManagerPattern_InnerTitle;
 	}
 
 	@Override

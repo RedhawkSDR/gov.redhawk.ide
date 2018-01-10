@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import java.util.List;
@@ -40,25 +40,28 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 public class FindByCORBANamePattern extends AbstractFindByPattern implements IDialogEditingPattern {
 
-	public static final String NAME = "Find By Name";
-
 	public FindByCORBANamePattern() {
 		super();
 	}
 
 	@Override
 	public String getCreateName() {
-		return NAME;
+		return Messages.FindByCORBANamePattern_CreateName;
 	}
 
 	@Override
 	public String getCreateDescription() {
-		return "";
+		return Messages.FindByCORBANamePattern_CreateDescription;
 	}
 
 	@Override
 	public String getCreateImageId() {
 		return ImageProvider.IMG_FIND_BY_CORBA_NAME;
+	}
+
+	@Override
+	public String getEditName() {
+		return Messages.FindByCORBANamePattern_EditName;
 	}
 
 	// THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
@@ -124,7 +127,7 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 
 	@Override
 	public String getCheckValueValidName() {
-		return "CORBA";
+		return Messages.FindByCORBANamePattern_InvalidValueName;
 	}
 
 	private FindByCORBANameWizardPage openWizard() {
@@ -238,8 +241,13 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IDi
 		return true;
 	}
 
-	@Override
-	public String getEditName() {
-		return NAME;
+	private Wizard getEditWizard() {
+		Wizard wizard = new Wizard() {
+			public boolean performFinish() {
+				return true;
+			}
+		};
+		wizard.setWindowTitle(Messages.FindByCORBANamePattern_WizardTitle);
+		return wizard;
 	}
 }

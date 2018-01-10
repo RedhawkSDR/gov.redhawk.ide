@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.core.graphiti.ui.diagram.patterns.AbstractPortSupplierPattern;
@@ -53,7 +53,6 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.jface.wizard.Wizard;
 
 public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern {
 
@@ -421,14 +420,6 @@ public abstract class AbstractFindByPattern extends AbstractPortSupplierPattern 
 		}
 
 		return false;
-	}
-
-	protected static Wizard getEditWizard() {
-		return new Wizard() {
-			public boolean performFinish() {
-				return true;
-			}
-		};
 	}
 
 	@Override

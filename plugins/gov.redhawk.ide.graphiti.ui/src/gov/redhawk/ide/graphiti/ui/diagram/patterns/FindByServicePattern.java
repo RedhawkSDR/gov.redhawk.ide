@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.core.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
@@ -41,26 +41,28 @@ import org.eclipse.ui.PlatformUI;
 
 public class FindByServicePattern extends AbstractFindByPattern implements IDialogEditingPattern {
 
-	public static final String NAME = "Service";
-	public static final String FIND_BY_SERVICE_NAME = "Service Name";
-
 	public FindByServicePattern() {
 		super();
 	}
 
 	@Override
 	public String getCreateName() {
-		return NAME;
+		return Messages.FindByServicePattern_CreateName;
 	}
 
 	@Override
 	public String getCreateDescription() {
-		return "";
+		return Messages.FindByServicePattern_CreateDescription;
 	}
 
 	@Override
 	public String getCreateImageId() {
 		return ImageProvider.IMG_FIND_BY_SERVICE;
+	}
+
+	@Override
+	public String getEditName() {
+		return Messages.FindByServicePattern_EditName;
 	}
 
 	// THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
@@ -127,15 +129,11 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 		return findByStub;
 	}
 
-	protected static FindByServiceWizardPage getWizardPage() {
-		return getWizardPage(null, new Wizard() {
-			public boolean performFinish() {
-				return true;
-			}
-		});
+	private FindByServiceWizardPage getWizardPage() {
+		return getWizardPage(null, getEditWizard());
 	}
 
-	public static FindByServiceWizardPage getWizardPage(FindByStub existingFindByStub, Wizard wizard) {
+	private static FindByServiceWizardPage getWizardPage(FindByStub existingFindByStub, Wizard wizard) {
 		FindByServiceWizardPage page = new FindByServiceWizardPage();
 		wizard.addPage(page);
 		if (existingFindByStub != null) {
@@ -178,13 +176,12 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 	@Override
 	public String getOuterTitle(FindByStub findByStub) {
 		// service name/type
-		String displayOuterText = "";
 		if (findByStub.getDomainFinder().getType().equals(DomainFinderType.SERVICENAME)) {
-			displayOuterText = NAME + " Name";
+			return Messages.FindByServicePattern_OuterTitle_ServiceName;
 		} else if (findByStub.getDomainFinder().getType().equals(DomainFinderType.SERVICETYPE)) {
-			displayOuterText = NAME + " Type";
+			return Messages.FindByServicePattern_OuterTitle_ServiceType;
 		}
-		return displayOuterText;
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override
@@ -305,8 +302,13 @@ public class FindByServicePattern extends AbstractFindByPattern implements IDial
 		return true;
 	}
 
-	@Override
-	public String getEditName() {
-		return NAME;
+	private Wizard getEditWizard() {
+		Wizard wizard = new Wizard() {
+			public boolean performFinish() {
+				return true;
+			}
+		};
+		wizard.setWindowTitle(Messages.FindByServicePattern_WizardTitle);
+		return wizard;
 	}
 }

@@ -13,20 +13,14 @@ package gov.redhawk.ide.swtbot.diagram;
 import org.eclipse.swtbot.eclipse.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
-
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByServicePattern;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 
 public class FindByUtils {
 
-	public static final String FIND_BY_NAME = FindByCORBANamePattern.NAME, FIND_BY_SERVICE = FindByServicePattern.NAME,
-			FIND_BY_DOMAIN_MANAGER = FindByDomainManagerPattern.NAME, FIND_BY_EVENT_CHANNEL = FindByEventChannelPattern.NAME,
-			FIND_BY_FILE_MANAGER = FindByFileManagerPattern.NAME;
+	public static final String FIND_BY_NAME = "Find By Name", FIND_BY_SERVICE = "Service", FIND_BY_DOMAIN_MANAGER = "Domain Manager",
+			FIND_BY_EVENT_CHANNEL = "Event Channel", FIND_BY_FILE_MANAGER = "File Manager";
 
-	protected FindByUtils() {
+	private FindByUtils() {
 	}
 
 	public static void completeFindByWizard(SWTBot bot, String findByType, String name, String[] provides, String[] uses) {
@@ -52,26 +46,35 @@ public class FindByUtils {
 		if (uses == null) {
 			uses = new String[0];
 		}
+
+		SWTBotShell shell;
+
 		switch (findByType) {
 		case FIND_BY_NAME:
-			addFindByCorbaName(bot, name, provides, uses);
+			shell = bot.shell("Find By Name");
+			addFindByCorbaName(shell.bot(), name, provides, uses);
 			break;
 		case FIND_BY_EVENT_CHANNEL:
-			addFindByEventChannel(bot, name);
+			shell = bot.shell("Event Channel");
+			addFindByEventChannel(shell.bot(), name);
 			break;
 		case FIND_BY_SERVICE:
+			shell = bot.shell("Service");
 			if (isServiceIdl) {
-				addFindByServiceType(bot, name, provides, uses);
+				addFindByServiceType(shell.bot(), name, provides, uses);
 			} else {
-				addFindByServiceName(bot, name, provides, uses);
+				addFindByServiceName(shell.bot(), name, provides, uses);
 			}
 			break;
 		default:
-			break;
+			// The find by does not have a dialog/wizard
+			return;
 		}
+
+		bot.waitUntil(Conditions.shellCloses(shell));
 	}
 
-	public static void addFindByCorbaName(SWTBot bot, String name, String[] providesPortNames, String[] usesPortNames) {
+	private static void addFindByCorbaName(SWTBot bot, String name, String[] providesPortNames, String[] usesPortNames) {
 		bot.textWithLabel("Component Name:").setText(name);
 		for (String s : providesPortNames) {
 			bot.textInGroup("Port(s) to use for connections", 0).setText(s);
@@ -84,7 +87,7 @@ public class FindByUtils {
 		bot.button("Finish").click();
 	}
 
-	public static void addFindByServiceName(SWTBot bot, String name, String[] providesPortNames, String[] usesPortNames) {
+	private static void addFindByServiceName(SWTBot bot, String name, String[] providesPortNames, String[] usesPortNames) {
 		bot.textWithLabel("Service Name:").setText(name);
 		for (String s : providesPortNames) {
 			bot.textInGroup("Port(s) to use for connections", 0).setText(s);
@@ -97,7 +100,7 @@ public class FindByUtils {
 		bot.button("Finish").click();
 	}
 
-	public static void addFindByServiceType(SWTBot bot, String name, String[] providesPortNames, String[] usesPortNames) {
+	private static void addFindByServiceType(SWTBot bot, String name, String[] providesPortNames, String[] usesPortNames) {
 		bot.radio(1).click();
 		bot.button("Browse").click();
 		bot.waitUntil(Conditions.shellIsActive("Select an interface"));
@@ -140,7 +143,7 @@ public class FindByUtils {
 		bot.button("Finish").click();
 	}
 
-	public static void addFindByEventChannel(SWTBot bot, String name) {
+	private static void addFindByEventChannel(SWTBot bot, String name) {
 		bot.textWithLabel("Name:").setText(name);
 		bot.button("OK").click();
 	}

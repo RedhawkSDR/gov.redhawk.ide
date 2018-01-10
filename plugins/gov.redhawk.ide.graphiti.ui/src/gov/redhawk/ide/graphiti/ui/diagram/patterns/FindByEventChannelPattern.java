@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.core.graphiti.ui.diagram.patterns.AbstractConnectInterfacePattern;
@@ -35,25 +35,28 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 public class FindByEventChannelPattern extends AbstractFindByPattern implements IDialogEditingPattern {
 
-	public static final String NAME = "Event Channel";
-
 	public FindByEventChannelPattern() {
 		super();
 	}
 
 	@Override
 	public String getCreateName() {
-		return NAME;
+		return Messages.FindByEventChannelPattern_CreateName;
 	}
 
 	@Override
 	public String getCreateDescription() {
-		return "";
+		return Messages.FindByEventChannelPattern_CreateDescription;
 	}
 
 	@Override
 	public String getCreateImageId() {
 		return ImageProvider.IMG_FIND_BY_DOMAIN_MANAGER;
+	}
+
+	@Override
+	public String getEditName() {
+		return Messages.FindByEventChannelPattern_EditName;
 	}
 
 	// THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
@@ -129,8 +132,9 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	}
 	
 	private AbstractInputValidationDialog getDialog() {
+		// String windowTitle, String defaultMessage, String inputLabel
 		return new AbstractInputValidationDialog(
-			NAME, "Enter the name of the event channel to find", "Name") {
+			Messages.FindByEventChannelPattern_DialogTitle, Messages.FindByEventChannelPattern_DialogMessage, Messages.FindByEventChannelPattern_DialogInputLabel) {
 			@Override
 			public String inputValidity(String value) {
 				return checkValueValid(value, null);
@@ -205,10 +209,5 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 		updatePictogramElement(findByPE);
 		layoutPictogramElement(findByPE);
 		return true;
-	}
-
-	@Override
-	public String getEditName() {
-		return NAME;
 	}
 }

@@ -44,7 +44,7 @@ public abstract class AbstractInputValidationDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		this.getShell().setText("New " + windowTitle);
+		this.getShell().setText(windowTitle);
 		setTitle(windowTitle);
 		setMessage(defaultMessage);
 	}
