@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
@@ -34,25 +34,28 @@ import org.eclipse.graphiti.features.context.ICreateContext;
 
 public class UsesDevicePattern extends AbstractUsesDevicePattern {
 
-	public static final String NAME = "Use Device";
-
 	public UsesDevicePattern() {
 		super();
 	}
 
 	@Override
 	public String getCreateName() {
-		return NAME;
+		return Messages.UsesDevicePattern_CreateName;
 	}
 
 	@Override
 	public String getCreateDescription() {
-		return "";
+		return Messages.UsesDevicePattern_CreateDescription;
 	}
 
 	@Override
 	public String getCreateImageId() {
 		return ImageProvider.IMG_USES_DEVICE;
+	}
+
+	@Override
+	public String getEditName() {
+		return Messages.UsesDevicePattern_EditName;
 	}
 
 	// THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
@@ -147,11 +150,6 @@ public class UsesDevicePattern extends AbstractUsesDevicePattern {
 		addGraphicalRepresentation(context, usesDeviceStubs[0]);
 
 		return new Object[] { usesDeviceStubs[0] };
-	}
-
-	@Override
-	public String getEditName() {
-		return NAME;
 	}
 
 	/**

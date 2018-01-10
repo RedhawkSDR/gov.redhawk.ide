@@ -19,6 +19,8 @@ import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
+import org.eclipse.graphiti.pattern.CreateFeatureForPattern;
+import org.eclipse.graphiti.pattern.IPattern;
 
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
@@ -63,7 +65,11 @@ public class SADEditorToolBehaviorProvider extends SADPaletteToolBehaviorProvide
 		compartmentEntry.setInitiallyOpen(false);
 
 		for (ICreateFeature cf : getFeatureProvider().getCreateFeatures()) {
-			if (HostCollocationPattern.NAME.equals(cf.getCreateName()) || UsesDeviceFrontEndTunerPattern.NAME.equals(cf.getCreateName())) {
+			if (!(cf instanceof CreateFeatureForPattern)) {
+				continue;
+			}
+			IPattern pattern = ((CreateFeatureForPattern) cf).getPattern();
+			if (pattern instanceof HostCollocationPattern || pattern instanceof UsesDeviceFrontEndTunerPattern) {
 				ObjectCreationToolEntry objectCreationToolEntry = new ObjectCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),
 					cf.getCreateImageId(), cf.getCreateLargeImageId(), cf);
 

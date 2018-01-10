@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.sad.ui.diagram.wizards;
 
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
@@ -22,7 +22,6 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.jface.wizard.Wizard;
 
-
 public class UsesDeviceWizard extends Wizard {
 
 	private SoftwareAssembly sad;
@@ -31,48 +30,42 @@ public class UsesDeviceWizard extends Wizard {
 	private PortsWizardPage portsWizardPage;
 
 	public UsesDeviceWizard(SoftwareAssembly sad) {
-		this.sad = sad;
+		this(sad, null);
 	}
-	
-	public UsesDeviceWizard(SoftwareAssembly sad, UsesDeviceStub existingUsesDevice) {
-		this(sad);
-		this.existingUsesDeviceStub = existingUsesDevice;
-	}
-	
 
+	public UsesDeviceWizard(SoftwareAssembly sad, UsesDeviceStub existingUsesDevice) {
+		this.sad = sad;
+		this.existingUsesDeviceStub = existingUsesDevice;
+		setWindowTitle(Messages.UsesDeviceWizard_WindowTitle);
+	}
 
 	@Override
 	public void addPages() {
-		
 		if (existingUsesDeviceStub == null) {
+			String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, "Device_"); //$NON-NLS-1$
 
-			String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, "Device_");
-			
 			namePage = new UsesDeviceWizardPage(deviceId, sad);
 			portsWizardPage = new PortsWizardPage();
 		} else {
-			
-			//create name page for wizard
+			// create name page for wizard
 			namePage = new UsesDeviceWizardPage(existingUsesDeviceStub.getUsesDevice().getId(), sad);
-			
-			//ports
+
+			// ports
 			List<String> providesPortNames = new ArrayList<String>();
-			for (ProvidesPortStub p: existingUsesDeviceStub.getProvidesPortStubs()) {
+			for (ProvidesPortStub p : existingUsesDeviceStub.getProvidesPortStubs()) {
 				providesPortNames.add(p.getName());
 			}
 			List<String> usesPortNames = new ArrayList<String>();
-			for (UsesPortStub p: existingUsesDeviceStub.getUsesPortStubs()) {
+			for (UsesPortStub p : existingUsesDeviceStub.getUsesPortStubs()) {
 				usesPortNames.add(p.getName());
 			}
 			portsWizardPage = new PortsWizardPage(providesPortNames, usesPortNames);
-			
-			
 		}
-		
+
 		addPage(namePage);
 		addPage(portsWizardPage);
 	}
-	
+
 	@Override
 	public boolean performFinish() {
 		return true;
@@ -81,7 +74,6 @@ public class UsesDeviceWizard extends Wizard {
 	public UsesDeviceWizardPage getNamePage() {
 		return namePage;
 	}
-
 
 	public PortsWizardPage getPortsWizardPage() {
 		return portsWizardPage;
