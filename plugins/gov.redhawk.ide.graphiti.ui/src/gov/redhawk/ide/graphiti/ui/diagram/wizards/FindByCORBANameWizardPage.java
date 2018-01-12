@@ -1,20 +1,16 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.ui.diagram.wizards;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
@@ -33,18 +29,14 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 
 public class FindByCORBANameWizardPage extends AbstractFindByWizardPage {
 
-	// inner class model used to store user selections
-	public static class CORBANameModel {
+	/**
+	 * Used as the model for UI input.
+	 */
+	public class CORBANameModel extends FindByModel {
 
-		public static final String CORBA_NAME = "corbaName";
-		public static final String USES_PORT_NAMES = "usesPortNames";
-		public static final String PROVIDES_PORT_NAMES = "providesPortNames";
-
-		private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+		public static final String CORBA_NAME = "corbaName"; //$NON-NLS-1$
 
 		private String corbaName;
-		private List<String> usesPortNames = new ArrayList<String>();
-		private List<String> providesPortNames = new ArrayList<String>();
 
 		public CORBANameModel() {
 		}
@@ -56,35 +48,7 @@ public class FindByCORBANameWizardPage extends AbstractFindByWizardPage {
 		public void setCorbaName(String corbaName) {
 			final String oldValue = this.corbaName;
 			this.corbaName = corbaName;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, CORBANameModel.CORBA_NAME, oldValue, corbaName));
-		}
-
-		public List<String> getUsesPortNames() {
-			return usesPortNames;
-		}
-
-		public void setUsesPortNames(List<String> usesPortNames) {
-			final List<String> oldValue = this.usesPortNames;
-			this.usesPortNames = usesPortNames;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, CORBANameModel.USES_PORT_NAMES, oldValue, usesPortNames));
-		}
-
-		public List<String> getProvidesPortNames() {
-			return providesPortNames;
-		}
-
-		public void setProvidesPortNames(List<String> providesPortNames) {
-			final List<String> oldValue = this.providesPortNames;
-			this.providesPortNames = providesPortNames;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, CORBANameModel.PROVIDES_PORT_NAMES, oldValue, providesPortNames));
-		}
-
-		public void addPropertyChangeListener(final PropertyChangeListener listener) {
-			this.pcs.addPropertyChangeListener(listener);
-		}
-
-		public void removePropertyChangeListener(final PropertyChangeListener listener) {
-			this.pcs.removePropertyChangeListener(listener);
+			getPropChangeSupport().firePropertyChange(new PropertyChangeEvent(this, CORBANameModel.CORBA_NAME, oldValue, corbaName));
 		}
 
 		public boolean isComplete() {

@@ -1,20 +1,16 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.graphiti.ui.diagram.wizards;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
@@ -40,24 +36,20 @@ import gov.redhawk.eclipsecorba.library.ui.IdlInterfaceSelectionDialog;
 
 public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 
-	// inner class model used to store user selections
-	public static class ServiceModel {
+	/**
+	 * Used as the model for UI input.
+	 */
+	public class ServiceModel extends FindByModel {
 
-		public static final String ENABLE_SERVICE_NAME = "enableServiceName";
-		public static final String ENABLE_SERVICE_TYPE = "enableServiceType";
-		public static final String SERVICE_NAME = "serviceName";
-		public static final String SERVICE_TYPE = "serviceType";
-		public static final String USES_PORT_NAMES = "usesPortNames";
-		public static final String PROVIDES_PORT_NAMES = "providesPortNames";
-
-		private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+		public static final String ENABLE_SERVICE_NAME = "enableServiceName"; //$NON-NLS-1$
+		public static final String ENABLE_SERVICE_TYPE = "enableServiceType"; //$NON-NLS-1$
+		public static final String SERVICE_NAME = "serviceName"; //$NON-NLS-1$
+		public static final String SERVICE_TYPE = "serviceType"; //$NON-NLS-1$
 
 		private boolean enableServiceName = true;
 		private boolean enableServiceType;
 		private String serviceName;
 		private String serviceType;
-		private List<String> usesPortNames = new ArrayList<String>();
-		private List<String> providesPortNames = new ArrayList<String>();
 
 		public ServiceModel() {
 		}
@@ -73,7 +65,7 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 		public void setEnableServiceName(boolean enableServiceName) {
 			final boolean oldValue = this.enableServiceName;
 			this.enableServiceName = enableServiceName;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, ServiceModel.ENABLE_SERVICE_NAME, oldValue, enableServiceName));
+			getPropChangeSupport().firePropertyChange(new PropertyChangeEvent(this, ServiceModel.ENABLE_SERVICE_NAME, oldValue, enableServiceName));
 		}
 
 		public boolean setEnableServiceType() {
@@ -83,7 +75,7 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 		public void setEnableServiceType(boolean enableServiceType) {
 			final boolean oldValue = this.enableServiceType;
 			this.enableServiceType = enableServiceType;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, ServiceModel.ENABLE_SERVICE_TYPE, oldValue, enableServiceType));
+			getPropChangeSupport().firePropertyChange(new PropertyChangeEvent(this, ServiceModel.ENABLE_SERVICE_TYPE, oldValue, enableServiceType));
 		}
 
 		public String getServiceName() {
@@ -93,7 +85,7 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 		public void setServiceName(String usesPortName) {
 			final String oldValue = this.serviceName;
 			this.serviceName = usesPortName;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, ServiceModel.SERVICE_NAME, oldValue, usesPortName));
+			getPropChangeSupport().firePropertyChange(new PropertyChangeEvent(this, ServiceModel.SERVICE_NAME, oldValue, usesPortName));
 		}
 
 		public String getServiceType() {
@@ -103,35 +95,7 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 		public void setServiceType(String providesPortName) {
 			final String oldValue = this.serviceType;
 			this.serviceType = providesPortName;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, ServiceModel.SERVICE_TYPE, oldValue, providesPortName));
-		}
-
-		public List<String> getUsesPortNames() {
-			return usesPortNames;
-		}
-
-		public void setUsesPortNames(List<String> usesPortNames) {
-			final List<String> oldValue = this.usesPortNames;
-			this.usesPortNames = usesPortNames;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, ServiceModel.USES_PORT_NAMES, oldValue, usesPortNames));
-		}
-
-		public List<String> getProvidesPortNames() {
-			return providesPortNames;
-		}
-
-		public void setProvidesPortNames(List<String> providesPortNames) {
-			final List<String> oldValue = this.providesPortNames;
-			this.providesPortNames = providesPortNames;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, ServiceModel.PROVIDES_PORT_NAMES, oldValue, providesPortNames));
-		}
-
-		public void addPropertyChangeListener(final PropertyChangeListener listener) {
-			this.pcs.addPropertyChangeListener(listener);
-		}
-
-		public void removePropertyChangeListener(final PropertyChangeListener listener) {
-			this.pcs.removePropertyChangeListener(listener);
+			getPropChangeSupport().firePropertyChange(new PropertyChangeEvent(this, ServiceModel.SERVICE_TYPE, oldValue, providesPortName));
 		}
 
 		public boolean isComplete() {
