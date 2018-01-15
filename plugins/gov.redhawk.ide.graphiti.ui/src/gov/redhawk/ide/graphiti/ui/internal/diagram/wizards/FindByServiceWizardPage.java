@@ -8,19 +8,19 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  */
-package gov.redhawk.ide.graphiti.ui.diagram.wizards;
+package gov.redhawk.ide.graphiti.ui.internal.diagram.wizards;
 
 import java.beans.PropertyChangeEvent;
 
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -33,13 +33,14 @@ import org.eclipse.swt.widgets.Text;
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
 import gov.redhawk.eclipsecorba.library.ui.IdlFilter;
 import gov.redhawk.eclipsecorba.library.ui.IdlInterfaceSelectionDialog;
+import gov.redhawk.ide.graphiti.ui.diagram.wizards.AbstractPortWizardPage;
 
-public class FindByServiceWizardPage extends AbstractFindByWizardPage {
+public class FindByServiceWizardPage extends AbstractPortWizardPage {
 
 	/**
 	 * Used as the model for UI input.
 	 */
-	public class ServiceModel extends FindByModel {
+	public class ServiceModel extends AbstractPortWizardPage.AbstractPortModel {
 
 		public static final String ENABLE_SERVICE_NAME = "enableServiceName"; //$NON-NLS-1$
 		public static final String ENABLE_SERVICE_TYPE = "enableServiceType"; //$NON-NLS-1$
@@ -97,16 +98,6 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 			this.serviceType = providesPortName;
 			getPropChangeSupport().firePropertyChange(new PropertyChangeEvent(this, ServiceModel.SERVICE_TYPE, oldValue, providesPortName));
 		}
-
-		public boolean isComplete() {
-			if (this.enableServiceType && this.serviceType.length() == 0) {
-				return false;
-			}
-			if (this.enableServiceName && this.serviceName.length() == 0) {
-				return false;
-			}
-			return true;
-		}
 	};
 
 	private ServiceModel model;
@@ -127,87 +118,63 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void createNameSection() {
-		Composite dialogComposite = getDialogComposite();
-
+	protected void createTopSection(Composite parent) {
 		// ### Section for manually entering the service name ###//
-		serviceNameBtn = new Button(dialogComposite, SWT.RADIO);
+		serviceNameBtn = new Button(parent, SWT.RADIO);
 		serviceNameBtn.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		serviceNameBtn.setText("Service Name");
 		serviceNameBtn.setSelection(model.getEnableServiceName());
-		getDbc().bindValue(WidgetProperties.selection().observe(serviceNameBtn),
+		Binding binding = getDbc().bindValue(WidgetProperties.selection().observe(serviceNameBtn),
 			BeanProperties.value(model.getClass(), ServiceModel.ENABLE_SERVICE_NAME).observe(model));
+		ControlDecorationSupport.create(binding, SWT.TOP | SWT.LEFT);
 
-		final Label serviceNameLabel = new Label(dialogComposite, SWT.NONE);
+		final Label serviceNameLabel = new Label(parent, SWT.NONE);
 		serviceNameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		serviceNameLabel.setText("Service Name:");
 
-		serviceNameText = new Text(dialogComposite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
+		serviceNameText = new Text(parent, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		serviceNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		serviceNameText.setToolTipText("The name of a service in the domain");
-		serviceNameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				getDbc().updateModels();
-			}
-		});
-		getDbc().bindValue(WidgetProperties.text(SWT.Modify).observe(serviceNameText),
-			BeanProperties.value(model.getClass(), ServiceModel.SERVICE_NAME).observe(model), new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
-				@Override
-				public IStatus validate(Object value) {
-					String err = validService("Service Name", (String) value, serviceNameBtn);
-					if (err != null) {
-						return ValidationStatus.error(err);
-					}
-					err = validateAll();
-					if (err != null) {
-						return ValidationStatus.error(err);
-					}
-					return ValidationStatus.ok();
+		binding = getDbc().bindValue(WidgetProperties.text(SWT.Modify).observe(serviceNameText),
+			BeanProperties.value(model.getClass(), ServiceModel.SERVICE_NAME).observe(model), new UpdateValueStrategy().setAfterGetValidator(value -> {
+				String err = validService("Service Name", (String) value, serviceNameBtn);
+				if (err != null) {
+					return ValidationStatus.error(err);
 				}
+				return ValidationStatus.ok();
 			}), null);
+		ControlDecorationSupport.create(binding, SWT.TOP | SWT.LEFT);
 		serviceNameBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				serviceNameText.setEnabled(serviceNameBtn.getSelection());
-				getDbc().updateModels();
 			}
 		});
 
 		// ### Section for browsing for the service type ###//
-		serviceTypeBtn = new Button(dialogComposite, SWT.RADIO);
+		serviceTypeBtn = new Button(parent, SWT.RADIO);
 		serviceTypeBtn.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		serviceTypeBtn.setText("Service Type");
 		serviceTypeBtn.setSelection(model.getEnableServiceType());
 		getDbc().bindValue(WidgetProperties.selection().observe(serviceTypeBtn),
 			BeanProperties.value(model.getClass(), ServiceModel.ENABLE_SERVICE_TYPE).observe(model));
 
-		final Label serviceTypeLabel = new Label(dialogComposite, SWT.NONE);
+		final Label serviceTypeLabel = new Label(parent, SWT.NONE);
 		serviceTypeLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		serviceTypeLabel.setText("Service Type:");
 
-		Composite serviceTypeComposite = new Composite(dialogComposite, SWT.NONE);
+		Composite serviceTypeComposite = new Composite(parent, SWT.NONE);
 		serviceTypeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		serviceTypeComposite.setLayout(new GridLayout(2, false));
 
 		serviceTypeText = new Text(serviceTypeComposite, SWT.SINGLE | SWT.LEAD | SWT.BORDER | SWT.READ_ONLY);
 		serviceTypeText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		serviceTypeText.setToolTipText("The interface (repid) of a service in the domain");
-		serviceTypeText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				getDbc().updateModels();
-			}
-		});
 		getDbc().bindValue(WidgetProperties.text(SWT.Modify).observe(serviceTypeText),
 			BeanProperties.value(model.getClass(), ServiceModel.SERVICE_TYPE).observe(model), new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
 				@Override
 				public IStatus validate(Object value) {
 					String err = validService("Service Type", (String) value, serviceTypeBtn);
-					if (err != null) {
-						return ValidationStatus.error(err);
-					}
-					err = validateAll();
 					if (err != null) {
 						return ValidationStatus.error(err);
 					}
@@ -233,7 +200,6 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				serviceTypeBrowseBtn.setEnabled(serviceTypeBtn.getSelection());
 				serviceTypeText.setEnabled(serviceTypeBtn.getSelection());
-				getDbc().updateModels();
 			}
 		});
 
@@ -245,30 +211,6 @@ public class FindByServiceWizardPage extends AbstractFindByWizardPage {
 
 	public ServiceModel getModel() {
 		return model;
-	}
-
-	protected String validateAll() {
-		String err = validService("Service Name", serviceNameText, serviceNameBtn);
-		if (err != null) {
-			return err;
-		}
-		err = validService("Service Type", serviceTypeText, serviceTypeBtn);
-		if (err != null) {
-			return err;
-		}
-
-		return super.validateAll();
-	}
-
-	// Validate service name fields
-	private String validService(String valueType, Text valueText, Button btn) {
-		if (btn != null && btn.getSelection()) {
-			if (valueText == null || valueText.getText().length() < 1) {
-				return valueType + " must not be empty";
-			}
-			return validText(valueType, valueText);
-		}
-		return null;
 	}
 
 	private String validService(String valueType, String value, Button btn) {

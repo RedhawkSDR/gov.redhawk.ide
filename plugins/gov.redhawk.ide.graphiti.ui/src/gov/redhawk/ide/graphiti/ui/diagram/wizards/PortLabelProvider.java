@@ -15,13 +15,13 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-/* package */ class FindByPortLabelProvider extends ColumnLabelProvider {
+/* package */ class PortLabelProvider extends ColumnLabelProvider {
 
 	private static final String SCD_EDIT_PLUGIN_ID = "mil.jpeojtrs.sca.scd.edit"; //$NON-NLS-1$
 
 	private Image icon;
 
-	public FindByPortLabelProvider(String scdEditIconPath) {
+	public PortLabelProvider(String scdEditIconPath) {
 		ImageDescriptor desc = AbstractUIPlugin.imageDescriptorFromPlugin(SCD_EDIT_PLUGIN_ID, scdEditIconPath);
 		icon = desc.createImage();
 	}

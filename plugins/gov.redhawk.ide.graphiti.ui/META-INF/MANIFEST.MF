@@ -50,6 +50,7 @@ Export-Package: gov.redhawk.ide.graphiti.ui,
  gov.redhawk.ide.graphiti.ui.diagram.patterns,
  gov.redhawk.ide.graphiti.ui.diagram.providers,
  gov.redhawk.ide.graphiti.ui.diagram.util,
+ gov.redhawk.ide.graphiti.ui.diagram.wizards,
  gov.redhawk.ide.graphiti.ui.palette,
  gov.redhawk.ide.graphiti.ui.properties;x-friends:="gov.redhawk.ide.graphiti.dcd.ui,gov.redhawk.ide.graphiti.sad.ui"
 Bundle-ActivationPolicy: lazy

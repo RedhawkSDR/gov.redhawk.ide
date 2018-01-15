@@ -28,7 +28,7 @@ import gov.redhawk.core.graphiti.ui.diagram.patterns.AbstractConnectInterfacePat
 import gov.redhawk.core.graphiti.ui.util.FindByStubUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.wizards.FindByCORBANameWizardPage;
+import gov.redhawk.ide.graphiti.ui.internal.diagram.wizards.FindByCORBANameWizardPage;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.Connections;
 import mil.jpeojtrs.sca.partitioning.FindBy;

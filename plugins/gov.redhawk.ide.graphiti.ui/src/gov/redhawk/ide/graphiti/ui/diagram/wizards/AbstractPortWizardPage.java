@@ -21,24 +21,37 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-public abstract class AbstractFindByWizardPage extends WizardPage {
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 
+/**
+ * @since 2.0
+ */
+public abstract class AbstractPortWizardPage extends WizardPage {
+
+	private static final String ADD_ICON = "icons/obj16/add.gif"; //$NON-NLS-1$
+	private static final String REMOVE_ICON = "icons/obj16/remove.gif"; //$NON-NLS-1$
 	private static final String PROVIDES_ICON = "icons/full/obj16/Provides.gif"; //$NON-NLS-1$
 	private static final String USES_ICON = "icons/full/obj16/Uses.gif"; //$NON-NLS-1$
 
@@ -47,11 +60,13 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 	private Text usesPortNameText, providesPortNameText;
 	private TableViewer usesPortList, providesPortList;
 	private Composite dialogComposite;
+	private Image addImage;
+	private Image removeImage;
 
 	/**
 	 * Used as the model for UI input.
 	 */
-	protected abstract class FindByModel {
+	protected abstract class AbstractPortModel {
 
 		public static final String USES_PORT_NAMES = "usesPortNames"; //$NON-NLS-1$
 		public static final String PROVIDES_PORT_NAMES = "providesPortNames"; //$NON-NLS-1$
@@ -60,7 +75,7 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 		private List<String> usesPortNames = new ArrayList<>();
 		private List<String> providesPortNames = new ArrayList<>();
 
-		public FindByModel() {
+		public AbstractPortModel() {
 		}
 
 		protected PropertyChangeSupport getPropChangeSupport() {
@@ -96,90 +111,90 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 		}
 	}
 
-	protected AbstractFindByWizardPage(String pageName, String title) {
+	protected AbstractPortWizardPage(String pageName, String title) {
 		super(pageName, title, null);
-		dbc = new DataBindingContext();
 	}
-
-	protected abstract void createNameSection();
 
 	protected abstract Object getModel();
 
-	protected String validateAll() {
-		String err;
-		if (usesPortNameText != null) {
-			err = validText("Port", usesPortNameText);
-			if (err != null) {
-				return err;
-			}
-		}
-		if (providesPortNameText != null) {
-			err = validText("Port", providesPortNameText);
-			if (err != null) {
-				return err;
-			}
-		}
-		return null;
-	}
-
 	@Override
 	public void createControl(Composite parent) {
-		// Create main page composite
+		dbc = new DataBindingContext();
 		WizardPageSupport.create(this, getDbc());
+
 		this.dialogComposite = new Composite(parent, SWT.NONE);
 		dialogComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		dialogComposite.setLayout(new GridLayout(1, false));
 
-		createNameSection();
-		createPortsSection();
+		createTopSection(dialogComposite);
+		createPortsSection(dialogComposite);
 
 		setControl(dialogComposite);
 		getDbc().updateModels();
 	}
 
-	private void createPortsSection() {
-		// port group
-		final Group portOptions = new Group(dialogComposite, SWT.NONE);
+	/**
+	 * Create the section at the top of the page
+	 */
+	protected abstract void createTopSection(Composite parent);
+
+	private void createPortsSection(Composite parent) {
+		ImageDescriptor addDesc = AbstractUIPlugin.imageDescriptorFromPlugin(GraphitiUIPlugin.PLUGIN_ID, ADD_ICON);
+		addImage = addDesc.createImage(parent.getDisplay());
+		ImageDescriptor removeDesc = AbstractUIPlugin.imageDescriptorFromPlugin(GraphitiUIPlugin.PLUGIN_ID, REMOVE_ICON);
+		removeImage = removeDesc.createImage(parent.getDisplay());
+
+		final Group portOptions = new Group(parent, SWT.NONE);
 		portOptions.setLayout(new GridLayout(2, true));
 		portOptions.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		portOptions.setText("Port(s) to use for connections");
 
-		// provides port composite
 		final Composite providesPortComposite = createPortComposite(portOptions);
-		// add provides port name text
+
+		Label providesPortsLabel = new Label(providesPortComposite, SWT.NONE);
+		providesPortsLabel.setText("Provides Ports");
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(providesPortsLabel);
+
 		providesPortNameText = addPortNameText(providesPortComposite);
 		providesPortNameText.setToolTipText("The specified provides port on the component will be located to make connections");
-		// add provides port "Add" button
+
 		providesPortAddBtn = new Button(providesPortComposite, SWT.PUSH);
-		providesPortAddBtn.setText("Add Provides Port");
-		// add provides port list
-		providesPortList = addPortList(providesPortComposite, FindByModel.PROVIDES_PORT_NAMES, PROVIDES_ICON);
-		// add provides port "Delete" button
+		providesPortAddBtn.setImage(addImage);
+		providesPortAddBtn.setToolTipText("Add provides port");
+
+		providesPortList = addPortList(providesPortComposite, AbstractPortModel.PROVIDES_PORT_NAMES, PROVIDES_ICON);
+
 		providesPortDeleteBtn = new Button(providesPortComposite, SWT.PUSH);
-		providesPortDeleteBtn.setText("Delete");
+		providesPortDeleteBtn.setImage(removeImage);
+		providesPortDeleteBtn.setToolTipText("Remove provides port");
 		providesPortDeleteBtn.setEnabled(false);
-		// add provides port listeners
+
 		providesPortList.addSelectionChangedListener(event -> {
 			providesPortDeleteBtn.setEnabled(!providesPortList.getStructuredSelection().isEmpty());
 		});
 		providesPortAddBtn.addSelectionListener(getPortAddListener(providesPortList, providesPortNameText, providesPortDeleteBtn));
 		providesPortDeleteBtn.addSelectionListener(getPortDeleteListener(providesPortList, providesPortDeleteBtn));
 
-		// uses port composite
 		final Composite usesPortComposite = createPortComposite(portOptions);
-		// add uses port name text
+
+		Label usesPortsLabel = new Label(usesPortComposite, SWT.NONE);
+		usesPortsLabel.setText("Uses Ports");
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(usesPortsLabel);
+
 		usesPortNameText = addPortNameText(usesPortComposite);
 		usesPortNameText.setToolTipText("The specified uses port on the component will be located to make connections");
-		// add uses port "Add" button
+
 		usesPortAddBtn = new Button(usesPortComposite, SWT.PUSH);
-		usesPortAddBtn.setText("Add Uses Port");
-		// add uses port list
-		usesPortList = addPortList(usesPortComposite, FindByModel.USES_PORT_NAMES, USES_ICON);
-		// add uses port "Delete" button
+		usesPortAddBtn.setImage(addImage);
+		usesPortAddBtn.setToolTipText("Add uses port");
+
+		usesPortList = addPortList(usesPortComposite, AbstractPortModel.USES_PORT_NAMES, USES_ICON);
+
 		usesPortDeleteBtn = new Button(usesPortComposite, SWT.PUSH);
-		usesPortDeleteBtn.setText("Delete");
+		usesPortDeleteBtn.setImage(removeImage);
+		usesPortDeleteBtn.setToolTipText("Remove uses port");
 		usesPortDeleteBtn.setEnabled(false);
-		// add uses port listeners
+
 		usesPortList.addSelectionChangedListener(event -> {
 			usesPortDeleteBtn.setEnabled(!usesPortList.getStructuredSelection().isEmpty());
 		});
@@ -199,16 +214,22 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 		GridData layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, true, 1, 1);
 		layoutData.minimumWidth = 200;
 		portNameText.setLayoutData(layoutData);
+		final ControlDecoration controlDecoration = new ControlDecoration(portNameText, SWT.TOP | SWT.LEFT);
+		FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING);
+		controlDecoration.setImage(fieldDecoration.getImage());
+		controlDecoration.hide();
 
-		portNameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String err = validText("Port", portNameText);
-				if (err != null) {
-					setErrorMessage(err);
-				} else {
-					setErrorMessage(validateAll());
+		portNameText.addModifyListener(event -> {
+			String err = validText("Port", portNameText.getText());
+			if (err != null) {
+				if (getErrorMessage() == null) {
+					setMessage(err, WizardPage.WARNING);
 				}
+				controlDecoration.setDescriptionText(err);
+				controlDecoration.show();
+			} else {
+				getDbc().updateModels();
+				controlDecoration.hide();
 			}
 		});
 		return portNameText;
@@ -222,7 +243,7 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 
 		TableViewerColumn column = new TableViewerColumn(portList, SWT.NONE);
 		column.getColumn().setWidth(100);
-		column.setLabelProvider(new FindByPortLabelProvider(scdEditIconPath));
+		column.setLabelProvider(new PortLabelProvider(scdEditIconPath));
 
 		portList.setContentProvider(new ObservableListContentProvider());
 		@SuppressWarnings("unchecked")
@@ -265,19 +286,6 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 		return listener;
 	}
 
-	/**
-	 * If returns null, that means the value is valid/has no spaces.
-	 * @param valueType
-	 * @param value
-	 * @return
-	 */
-	public String validText(String valueType, Text valueText) {
-		if (valueText != null && valueText.getText().contains(" ")) { //$NON-NLS-1$
-			return valueType + " must not include spaces";
-		}
-		return null;
-	}
-
 	public String validText(String valueType, String value) {
 		if (value.contains(" ")) { //$NON-NLS-1$
 			return valueType + " must not include spaces";
@@ -285,13 +293,21 @@ public abstract class AbstractFindByWizardPage extends WizardPage {
 		return null;
 	}
 
-	// Getters
-	public Composite getDialogComposite() {
-		return dialogComposite;
-	}
-
 	public DataBindingContext getDbc() {
 		return dbc;
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		if (addImage != null) {
+			addImage.dispose();
+			addImage = null;
+		}
+		if (removeImage != null) {
+			removeImage.dispose();
+			removeImage = null;
+		}
 	}
 
 }
