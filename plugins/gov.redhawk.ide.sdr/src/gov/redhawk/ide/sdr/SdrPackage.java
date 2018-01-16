@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr;
 
@@ -176,31 +176,6 @@ public interface SdrPackage extends EPackage {
 	 */
 	int SDR_ROOT_FEATURE_COUNT = 12;
 	/**
-	 * The meta object id for the '{@link gov.redhawk.ide.sdr.impl.PropertyRegistryImpl <em>Property Registry</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.sdr.impl.PropertyRegistryImpl
-	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getPropertyRegistry()
-	 * @generated
-	 */
-	int PROPERTY_REGISTRY = 11;
-	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PROPERTY_REGISTRY__PROPERTIES = 0;
-	/**
-	 * The number of structural features of the '<em>Property Registry</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PROPERTY_REGISTRY_FEATURE_COUNT = 1;
-	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.sdr.impl.SoftPkgRegistryImpl <em>Soft Pkg Registry</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -208,15 +183,15 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getSoftPkgRegistry()
 	 * @generated
 	 */
-	int SOFT_PKG_REGISTRY = 12;
+	int SOFT_PKG_REGISTRY = 7;
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map.
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SOFT_PKG_REGISTRY__PROPERTIES = PROPERTY_REGISTRY__PROPERTIES;
+	int SOFT_PKG_REGISTRY__NAME = 0;
 	/**
 	 * The feature id for the '<em><b>Components</b></em>' reference list.
 	 * <!-- begin-user-doc -->
@@ -224,7 +199,7 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SOFT_PKG_REGISTRY__COMPONENTS = PROPERTY_REGISTRY_FEATURE_COUNT + 0;
+	int SOFT_PKG_REGISTRY__COMPONENTS = 1;
 	/**
 	 * The number of structural features of the '<em>Soft Pkg Registry</em>' class.
 	 * <!-- begin-user-doc -->
@@ -232,7 +207,7 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SOFT_PKG_REGISTRY_FEATURE_COUNT = PROPERTY_REGISTRY_FEATURE_COUNT + 1;
+	int SOFT_PKG_REGISTRY_FEATURE_COUNT = 2;
 	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.sdr.impl.ComponentsContainerImpl <em>Components Container</em>}' class.
 	 * <!-- begin-user-doc -->
@@ -243,13 +218,13 @@ public interface SdrPackage extends EPackage {
 	 */
 	int COMPONENTS_CONTAINER = 1;
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map.
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENTS_CONTAINER__PROPERTIES = SOFT_PKG_REGISTRY__PROPERTIES;
+	int COMPONENTS_CONTAINER__NAME = SOFT_PKG_REGISTRY__NAME;
 	/**
 	 * The feature id for the '<em><b>Components</b></em>' reference list.
 	 * <!-- begin-user-doc -->
@@ -259,13 +234,13 @@ public interface SdrPackage extends EPackage {
 	 */
 	int COMPONENTS_CONTAINER__COMPONENTS = SOFT_PKG_REGISTRY__COMPONENTS;
 	/**
-	 * The feature id for the '<em><b>Sdr Root</b></em>' container reference.
+	 * The feature id for the '<em><b>Child Containers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENTS_CONTAINER__SDR_ROOT = SOFT_PKG_REGISTRY_FEATURE_COUNT + 0;
+	int COMPONENTS_CONTAINER__CHILD_CONTAINERS = SOFT_PKG_REGISTRY_FEATURE_COUNT + 0;
 	/**
 	 * The number of structural features of the '<em>Components Container</em>' class.
 	 * <!-- begin-user-doc -->
@@ -275,55 +250,6 @@ public interface SdrPackage extends EPackage {
 	 */
 	int COMPONENTS_CONTAINER_FEATURE_COUNT = SOFT_PKG_REGISTRY_FEATURE_COUNT + 1;
 	/**
-	 * The meta object id for the '{@link gov.redhawk.ide.sdr.impl.ComponentsSubContainerImpl <em>Components Sub Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.sdr.impl.ComponentsSubContainerImpl
-	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getComponentsSubContainer()
-	 * @generated
-	 */
-	int COMPONENTS_SUB_CONTAINER = 2;
-	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENTS_SUB_CONTAINER__PROPERTIES = SOFT_PKG_REGISTRY__PROPERTIES;
-	/**
-	 * The feature id for the '<em><b>Components</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENTS_SUB_CONTAINER__COMPONENTS = SOFT_PKG_REGISTRY__COMPONENTS;
-	/**
-	 * The feature id for the '<em><b>Sub Containers</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENTS_SUB_CONTAINER__SUB_CONTAINERS = SOFT_PKG_REGISTRY_FEATURE_COUNT + 0;
-	/**
-	 * The feature id for the '<em><b>Container Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENTS_SUB_CONTAINER__CONTAINER_NAME = SOFT_PKG_REGISTRY_FEATURE_COUNT + 1;
-	/**
-	 * The number of structural features of the '<em>Components Sub Container</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENTS_SUB_CONTAINER_FEATURE_COUNT = SOFT_PKG_REGISTRY_FEATURE_COUNT + 2;
-	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.sdr.impl.WaveformsContainerImpl <em>Waveforms Container</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -331,15 +257,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getWaveformsContainer()
 	 * @generated
 	 */
-	int WAVEFORMS_CONTAINER = 3;
-	/**
-	 * The feature id for the '<em><b>Sdr Root</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WAVEFORMS_CONTAINER__SDR_ROOT = 0;
+	int WAVEFORMS_CONTAINER = 2;
 	/**
 	 * The feature id for the '<em><b>Waveforms</b></em>' reference list.
 	 * <!-- begin-user-doc -->
@@ -347,7 +265,23 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WAVEFORMS_CONTAINER__WAVEFORMS = 1;
+	int WAVEFORMS_CONTAINER__WAVEFORMS = 0;
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WAVEFORMS_CONTAINER__NAME = 1;
+	/**
+	 * The feature id for the '<em><b>Child Containers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WAVEFORMS_CONTAINER__CHILD_CONTAINERS = 2;
 	/**
 	 * The number of structural features of the '<em>Waveforms Container</em>' class.
 	 * <!-- begin-user-doc -->
@@ -355,48 +289,7 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WAVEFORMS_CONTAINER_FEATURE_COUNT = 2;
-	/**
-	 * The meta object id for the '{@link gov.redhawk.ide.sdr.impl.WaveformsSubContainerImpl <em>Waveforms Sub Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.sdr.impl.WaveformsSubContainerImpl
-	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getWaveformsSubContainer()
-	 * @generated
-	 */
-	int WAVEFORMS_SUB_CONTAINER = 4;
-	/**
-	 * The feature id for the '<em><b>Sub Containers</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WAVEFORMS_SUB_CONTAINER__SUB_CONTAINERS = 0;
-	/**
-	 * The feature id for the '<em><b>Container Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WAVEFORMS_SUB_CONTAINER__CONTAINER_NAME = 1;
-	/**
-	 * The feature id for the '<em><b>Waveforms</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WAVEFORMS_SUB_CONTAINER__WAVEFORMS = 2;
-	/**
-	 * The number of structural features of the '<em>Waveforms Sub Container</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WAVEFORMS_SUB_CONTAINER_FEATURE_COUNT = 3;
+	int WAVEFORMS_CONTAINER_FEATURE_COUNT = 3;
 	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.sdr.impl.DevicesContainerImpl <em>Devices Container</em>}' class.
 	 * <!-- begin-user-doc -->
@@ -405,15 +298,15 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getDevicesContainer()
 	 * @generated
 	 */
-	int DEVICES_CONTAINER = 5;
+	int DEVICES_CONTAINER = 3;
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map.
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DEVICES_CONTAINER__PROPERTIES = SOFT_PKG_REGISTRY__PROPERTIES;
+	int DEVICES_CONTAINER__NAME = SOFT_PKG_REGISTRY__NAME;
 	/**
 	 * The feature id for the '<em><b>Components</b></em>' reference list.
 	 * <!-- begin-user-doc -->
@@ -423,13 +316,13 @@ public interface SdrPackage extends EPackage {
 	 */
 	int DEVICES_CONTAINER__COMPONENTS = SOFT_PKG_REGISTRY__COMPONENTS;
 	/**
-	 * The feature id for the '<em><b>Sdr Root</b></em>' container reference.
+	 * The feature id for the '<em><b>Child Containers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DEVICES_CONTAINER__SDR_ROOT = SOFT_PKG_REGISTRY_FEATURE_COUNT + 0;
+	int DEVICES_CONTAINER__CHILD_CONTAINERS = SOFT_PKG_REGISTRY_FEATURE_COUNT + 0;
 	/**
 	 * The number of structural features of the '<em>Devices Container</em>' class.
 	 * <!-- begin-user-doc -->
@@ -446,15 +339,15 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getServicesContainer()
 	 * @generated
 	 */
-	int SERVICES_CONTAINER = 6;
+	int SERVICES_CONTAINER = 4;
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map.
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICES_CONTAINER__PROPERTIES = SOFT_PKG_REGISTRY__PROPERTIES;
+	int SERVICES_CONTAINER__NAME = SOFT_PKG_REGISTRY__NAME;
 	/**
 	 * The feature id for the '<em><b>Components</b></em>' reference list.
 	 * <!-- begin-user-doc -->
@@ -464,13 +357,13 @@ public interface SdrPackage extends EPackage {
 	 */
 	int SERVICES_CONTAINER__COMPONENTS = SOFT_PKG_REGISTRY__COMPONENTS;
 	/**
-	 * The feature id for the '<em><b>Sdr Root</b></em>' container reference.
+	 * The feature id for the '<em><b>Child Containers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICES_CONTAINER__SDR_ROOT = SOFT_PKG_REGISTRY_FEATURE_COUNT + 0;
+	int SERVICES_CONTAINER__CHILD_CONTAINERS = SOFT_PKG_REGISTRY_FEATURE_COUNT + 0;
 	/**
 	 * The number of structural features of the '<em>Services Container</em>' class.
 	 * <!-- begin-user-doc -->
@@ -487,15 +380,15 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getSharedLibrariesContainer()
 	 * @generated
 	 */
-	int SHARED_LIBRARIES_CONTAINER = 7;
+	int SHARED_LIBRARIES_CONTAINER = 5;
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map.
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SHARED_LIBRARIES_CONTAINER__PROPERTIES = SOFT_PKG_REGISTRY__PROPERTIES;
+	int SHARED_LIBRARIES_CONTAINER__NAME = SOFT_PKG_REGISTRY__NAME;
 	/**
 	 * The feature id for the '<em><b>Components</b></em>' reference list.
 	 * <!-- begin-user-doc -->
@@ -505,13 +398,13 @@ public interface SdrPackage extends EPackage {
 	 */
 	int SHARED_LIBRARIES_CONTAINER__COMPONENTS = SOFT_PKG_REGISTRY__COMPONENTS;
 	/**
-	 * The feature id for the '<em><b>Sdr Root</b></em>' container reference.
+	 * The feature id for the '<em><b>Child Containers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SHARED_LIBRARIES_CONTAINER__SDR_ROOT = SOFT_PKG_REGISTRY_FEATURE_COUNT + 0;
+	int SHARED_LIBRARIES_CONTAINER__CHILD_CONTAINERS = SOFT_PKG_REGISTRY_FEATURE_COUNT + 0;
 	/**
 	 * The number of structural features of the '<em>Shared Libraries Container</em>' class.
 	 * <!-- begin-user-doc -->
@@ -528,15 +421,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getNodesContainer()
 	 * @generated
 	 */
-	int NODES_CONTAINER = 8;
-	/**
-	 * The feature id for the '<em><b>Sdr Root</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int NODES_CONTAINER__SDR_ROOT = 0;
+	int NODES_CONTAINER = 6;
 	/**
 	 * The feature id for the '<em><b>Nodes</b></em>' reference list.
 	 * <!-- begin-user-doc -->
@@ -544,7 +429,23 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int NODES_CONTAINER__NODES = 1;
+	int NODES_CONTAINER__NODES = 0;
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int NODES_CONTAINER__NAME = 1;
+	/**
+	 * The feature id for the '<em><b>Child Containers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int NODES_CONTAINER__CHILD_CONTAINERS = 2;
 	/**
 	 * The number of structural features of the '<em>Nodes Container</em>' class.
 	 * <!-- begin-user-doc -->
@@ -552,81 +453,7 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int NODES_CONTAINER_FEATURE_COUNT = 2;
-	/**
-	 * The meta object id for the '{@link gov.redhawk.ide.sdr.impl.NodesSubContainerImpl <em>Nodes Sub Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.sdr.impl.NodesSubContainerImpl
-	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getNodesSubContainer()
-	 * @generated
-	 */
-	int NODES_SUB_CONTAINER = 9;
-	/**
-	 * The feature id for the '<em><b>Sub Containers</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int NODES_SUB_CONTAINER__SUB_CONTAINERS = 0;
-	/**
-	 * The feature id for the '<em><b>Container Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int NODES_SUB_CONTAINER__CONTAINER_NAME = 1;
-	/**
-	 * The feature id for the '<em><b>Nodes</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int NODES_SUB_CONTAINER__NODES = 2;
-	/**
-	 * The number of structural features of the '<em>Nodes Sub Container</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int NODES_SUB_CONTAINER_FEATURE_COUNT = 3;
-	/**
-	 * The meta object id for the '{@link gov.redhawk.ide.sdr.impl.StringToAbstractPropertyImpl <em>String To Abstract Property</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.sdr.impl.StringToAbstractPropertyImpl
-	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getStringToAbstractProperty()
-	 * @generated
-	 */
-	int STRING_TO_ABSTRACT_PROPERTY = 10;
-	/**
-	 * The feature id for the '<em><b>Key</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int STRING_TO_ABSTRACT_PROPERTY__KEY = 0;
-	/**
-	 * The feature id for the '<em><b>Value</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int STRING_TO_ABSTRACT_PROPERTY__VALUE = 1;
-	/**
-	 * The number of structural features of the '<em>String To Abstract Property</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int STRING_TO_ABSTRACT_PROPERTY_FEATURE_COUNT = 2;
+	int NODES_CONTAINER_FEATURE_COUNT = 3;
 	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.sdr.LoadState <em>Load State</em>}' enum.
 	 * <!-- begin-user-doc -->
@@ -635,7 +462,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getLoadState()
 	 * @generated
 	 */
-	int LOAD_STATE = 13;
+	int LOAD_STATE = 8;
 	/**
 	 * The meta object id for the '<em>IStatus</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -644,7 +471,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getIStatus()
 	 * @generated
 	 */
-	int ISTATUS = 14;
+	int ISTATUS = 9;
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.SdrRoot <em>Root</em>}'.
@@ -799,47 +626,15 @@ public interface SdrPackage extends EPackage {
 	EClass getComponentsContainer();
 
 	/**
-	 * Returns the meta object for the container reference '{@link gov.redhawk.ide.sdr.ComponentsContainer#getSdrRoot <em>Sdr Root</em>}'.
+	 * Returns the meta object for the containment reference list '{@link gov.redhawk.ide.sdr.ComponentsContainer#getChildContainers <em>Child Containers</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the container reference '<em>Sdr Root</em>'.
-	 * @see gov.redhawk.ide.sdr.ComponentsContainer#getSdrRoot()
+	 * @return the meta object for the containment reference list '<em>Child Containers</em>'.
+	 * @see gov.redhawk.ide.sdr.ComponentsContainer#getChildContainers()
 	 * @see #getComponentsContainer()
 	 * @generated
 	 */
-	EReference getComponentsContainer_SdrRoot();
-
-	/**
-	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.ComponentsSubContainer <em>Components Sub Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Components Sub Container</em>'.
-	 * @see gov.redhawk.ide.sdr.ComponentsSubContainer
-	 * @generated
-	 */
-	EClass getComponentsSubContainer();
-
-	/**
-	 * Returns the meta object for the reference list '{@link gov.redhawk.ide.sdr.ComponentsSubContainer#getSubContainers <em>Sub Containers</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Sub Containers</em>'.
-	 * @see gov.redhawk.ide.sdr.ComponentsSubContainer#getSubContainers()
-	 * @see #getComponentsSubContainer()
-	 * @generated
-	 */
-	EReference getComponentsSubContainer_SubContainers();
-
-	/**
-	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.sdr.ComponentsSubContainer#getContainerName <em>Container Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Container Name</em>'.
-	 * @see gov.redhawk.ide.sdr.ComponentsSubContainer#getContainerName()
-	 * @see #getComponentsSubContainer()
-	 * @generated
-	 */
-	EAttribute getComponentsSubContainer_ContainerName();
+	EReference getComponentsContainer_ChildContainers();
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.WaveformsContainer <em>Waveforms Container</em>}'.
@@ -850,17 +645,6 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getWaveformsContainer();
-
-	/**
-	 * Returns the meta object for the container reference '{@link gov.redhawk.ide.sdr.WaveformsContainer#getSdrRoot <em>Sdr Root</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the container reference '<em>Sdr Root</em>'.
-	 * @see gov.redhawk.ide.sdr.WaveformsContainer#getSdrRoot()
-	 * @see #getWaveformsContainer()
-	 * @generated
-	 */
-	EReference getWaveformsContainer_SdrRoot();
 
 	/**
 	 * Returns the meta object for the reference list '{@link gov.redhawk.ide.sdr.WaveformsContainer#getWaveforms <em>Waveforms</em>}'.
@@ -874,47 +658,26 @@ public interface SdrPackage extends EPackage {
 	EReference getWaveformsContainer_Waveforms();
 
 	/**
-	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.WaveformsSubContainer <em>Waveforms Sub Container</em>}'.
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.sdr.WaveformsContainer#getName <em>Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Waveforms Sub Container</em>'.
-	 * @see gov.redhawk.ide.sdr.WaveformsSubContainer
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see gov.redhawk.ide.sdr.WaveformsContainer#getName()
+	 * @see #getWaveformsContainer()
 	 * @generated
 	 */
-	EClass getWaveformsSubContainer();
+	EAttribute getWaveformsContainer_Name();
 
 	/**
-	 * Returns the meta object for the reference list '{@link gov.redhawk.ide.sdr.WaveformsSubContainer#getSubContainers <em>Sub Containers</em>}'.
+	 * Returns the meta object for the containment reference list '{@link gov.redhawk.ide.sdr.WaveformsContainer#getChildContainers <em>Child Containers</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Sub Containers</em>'.
-	 * @see gov.redhawk.ide.sdr.WaveformsSubContainer#getSubContainers()
-	 * @see #getWaveformsSubContainer()
+	 * @return the meta object for the containment reference list '<em>Child Containers</em>'.
+	 * @see gov.redhawk.ide.sdr.WaveformsContainer#getChildContainers()
+	 * @see #getWaveformsContainer()
 	 * @generated
 	 */
-	EReference getWaveformsSubContainer_SubContainers();
-
-	/**
-	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.sdr.WaveformsSubContainer#getContainerName <em>Container Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Container Name</em>'.
-	 * @see gov.redhawk.ide.sdr.WaveformsSubContainer#getContainerName()
-	 * @see #getWaveformsSubContainer()
-	 * @generated
-	 */
-	EAttribute getWaveformsSubContainer_ContainerName();
-
-	/**
-	 * Returns the meta object for the reference list '{@link gov.redhawk.ide.sdr.WaveformsSubContainer#getWaveforms <em>Waveforms</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Waveforms</em>'.
-	 * @see gov.redhawk.ide.sdr.WaveformsSubContainer#getWaveforms()
-	 * @see #getWaveformsSubContainer()
-	 * @generated
-	 */
-	EReference getWaveformsSubContainer_Waveforms();
+	EReference getWaveformsContainer_ChildContainers();
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.DevicesContainer <em>Devices Container</em>}'.
@@ -927,15 +690,15 @@ public interface SdrPackage extends EPackage {
 	EClass getDevicesContainer();
 
 	/**
-	 * Returns the meta object for the container reference '{@link gov.redhawk.ide.sdr.DevicesContainer#getSdrRoot <em>Sdr Root</em>}'.
+	 * Returns the meta object for the containment reference list '{@link gov.redhawk.ide.sdr.DevicesContainer#getChildContainers <em>Child Containers</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the container reference '<em>Sdr Root</em>'.
-	 * @see gov.redhawk.ide.sdr.DevicesContainer#getSdrRoot()
+	 * @return the meta object for the containment reference list '<em>Child Containers</em>'.
+	 * @see gov.redhawk.ide.sdr.DevicesContainer#getChildContainers()
 	 * @see #getDevicesContainer()
 	 * @generated
 	 */
-	EReference getDevicesContainer_SdrRoot();
+	EReference getDevicesContainer_ChildContainers();
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.ServicesContainer <em>Services Container</em>}'.
@@ -948,15 +711,15 @@ public interface SdrPackage extends EPackage {
 	EClass getServicesContainer();
 
 	/**
-	 * Returns the meta object for the container reference '{@link gov.redhawk.ide.sdr.ServicesContainer#getSdrRoot <em>Sdr Root</em>}'.
+	 * Returns the meta object for the containment reference list '{@link gov.redhawk.ide.sdr.ServicesContainer#getChildContainers <em>Child Containers</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the container reference '<em>Sdr Root</em>'.
-	 * @see gov.redhawk.ide.sdr.ServicesContainer#getSdrRoot()
+	 * @return the meta object for the containment reference list '<em>Child Containers</em>'.
+	 * @see gov.redhawk.ide.sdr.ServicesContainer#getChildContainers()
 	 * @see #getServicesContainer()
 	 * @generated
 	 */
-	EReference getServicesContainer_SdrRoot();
+	EReference getServicesContainer_ChildContainers();
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.SharedLibrariesContainer <em>Shared Libraries Container</em>}'.
@@ -969,15 +732,15 @@ public interface SdrPackage extends EPackage {
 	EClass getSharedLibrariesContainer();
 
 	/**
-	 * Returns the meta object for the container reference '{@link gov.redhawk.ide.sdr.SharedLibrariesContainer#getSdrRoot <em>Sdr Root</em>}'.
+	 * Returns the meta object for the containment reference list '{@link gov.redhawk.ide.sdr.SharedLibrariesContainer#getChildContainers <em>Child Containers</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the container reference '<em>Sdr Root</em>'.
-	 * @see gov.redhawk.ide.sdr.SharedLibrariesContainer#getSdrRoot()
+	 * @return the meta object for the containment reference list '<em>Child Containers</em>'.
+	 * @see gov.redhawk.ide.sdr.SharedLibrariesContainer#getChildContainers()
 	 * @see #getSharedLibrariesContainer()
 	 * @generated
 	 */
-	EReference getSharedLibrariesContainer_SdrRoot();
+	EReference getSharedLibrariesContainer_ChildContainers();
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.NodesContainer <em>Nodes Container</em>}'.
@@ -988,17 +751,6 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getNodesContainer();
-
-	/**
-	 * Returns the meta object for the container reference '{@link gov.redhawk.ide.sdr.NodesContainer#getSdrRoot <em>Sdr Root</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the container reference '<em>Sdr Root</em>'.
-	 * @see gov.redhawk.ide.sdr.NodesContainer#getSdrRoot()
-	 * @see #getNodesContainer()
-	 * @generated
-	 */
-	EReference getNodesContainer_SdrRoot();
 
 	/**
 	 * Returns the meta object for the reference list '{@link gov.redhawk.ide.sdr.NodesContainer#getNodes <em>Nodes</em>}'.
@@ -1012,102 +764,26 @@ public interface SdrPackage extends EPackage {
 	EReference getNodesContainer_Nodes();
 
 	/**
-	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.NodesSubContainer <em>Nodes Sub Container</em>}'.
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.sdr.NodesContainer#getName <em>Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Nodes Sub Container</em>'.
-	 * @see gov.redhawk.ide.sdr.NodesSubContainer
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see gov.redhawk.ide.sdr.NodesContainer#getName()
+	 * @see #getNodesContainer()
 	 * @generated
 	 */
-	EClass getNodesSubContainer();
+	EAttribute getNodesContainer_Name();
 
 	/**
-	 * Returns the meta object for the reference list '{@link gov.redhawk.ide.sdr.NodesSubContainer#getSubContainers <em>Sub Containers</em>}'.
+	 * Returns the meta object for the containment reference list '{@link gov.redhawk.ide.sdr.NodesContainer#getChildContainers <em>Child Containers</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Sub Containers</em>'.
-	 * @see gov.redhawk.ide.sdr.NodesSubContainer#getSubContainers()
-	 * @see #getNodesSubContainer()
+	 * @return the meta object for the containment reference list '<em>Child Containers</em>'.
+	 * @see gov.redhawk.ide.sdr.NodesContainer#getChildContainers()
+	 * @see #getNodesContainer()
 	 * @generated
 	 */
-	EReference getNodesSubContainer_SubContainers();
-
-	/**
-	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.sdr.NodesSubContainer#getContainerName <em>Container Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Container Name</em>'.
-	 * @see gov.redhawk.ide.sdr.NodesSubContainer#getContainerName()
-	 * @see #getNodesSubContainer()
-	 * @generated
-	 */
-	EAttribute getNodesSubContainer_ContainerName();
-
-	/**
-	 * Returns the meta object for the reference list '{@link gov.redhawk.ide.sdr.NodesSubContainer#getNodes <em>Nodes</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Nodes</em>'.
-	 * @see gov.redhawk.ide.sdr.NodesSubContainer#getNodes()
-	 * @see #getNodesSubContainer()
-	 * @generated
-	 */
-	EReference getNodesSubContainer_Nodes();
-
-	/**
-	 * Returns the meta object for class '{@link java.util.Map.Entry <em>String To Abstract Property</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>String To Abstract Property</em>'.
-	 * @see java.util.Map.Entry
-	 * @model keyDataType="mil.jpeojtrs.sca.prf.DceUUID"
-	 *        valueType="mil.jpeojtrs.sca.prf.AbstractProperty"
-	 * @generated
-	 */
-	EClass getStringToAbstractProperty();
-
-	/**
-	 * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Key</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Key</em>'.
-	 * @see java.util.Map.Entry
-	 * @see #getStringToAbstractProperty()
-	 * @generated
-	 */
-	EAttribute getStringToAbstractProperty_Key();
-
-	/**
-	 * Returns the meta object for the reference '{@link java.util.Map.Entry <em>Value</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Value</em>'.
-	 * @see java.util.Map.Entry
-	 * @see #getStringToAbstractProperty()
-	 * @generated
-	 */
-	EReference getStringToAbstractProperty_Value();
-
-	/**
-	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.PropertyRegistry <em>Property Registry</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Property Registry</em>'.
-	 * @see gov.redhawk.ide.sdr.PropertyRegistry
-	 * @generated
-	 */
-	EClass getPropertyRegistry();
-
-	/**
-	 * Returns the meta object for the map '{@link gov.redhawk.ide.sdr.PropertyRegistry#getProperties <em>Properties</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the map '<em>Properties</em>'.
-	 * @see gov.redhawk.ide.sdr.PropertyRegistry#getProperties()
-	 * @see #getPropertyRegistry()
-	 * @generated
-	 */
-	EReference getPropertyRegistry_Properties();
+	EReference getNodesContainer_ChildContainers();
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.SoftPkgRegistry <em>Soft Pkg Registry</em>}'.
@@ -1118,6 +794,17 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getSoftPkgRegistry();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.sdr.SoftPkgRegistry#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see gov.redhawk.ide.sdr.SoftPkgRegistry#getName()
+	 * @see #getSoftPkgRegistry()
+	 * @generated
+	 */
+	EAttribute getSoftPkgRegistry_Name();
 
 	/**
 	 * Returns the meta object for the reference list '{@link gov.redhawk.ide.sdr.SoftPkgRegistry#getComponents <em>Components</em>}'.
@@ -1277,35 +964,12 @@ public interface SdrPackage extends EPackage {
 		 */
 		EClass COMPONENTS_CONTAINER = eINSTANCE.getComponentsContainer();
 		/**
-		 * The meta object literal for the '<em><b>Sdr Root</b></em>' container reference feature.
+		 * The meta object literal for the '<em><b>Child Containers</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference COMPONENTS_CONTAINER__SDR_ROOT = eINSTANCE.getComponentsContainer_SdrRoot();
-		/**
-		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.ComponentsSubContainerImpl <em>Components Sub Container</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ide.sdr.impl.ComponentsSubContainerImpl
-		 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getComponentsSubContainer()
-		 * @generated
-		 */
-		EClass COMPONENTS_SUB_CONTAINER = eINSTANCE.getComponentsSubContainer();
-		/**
-		 * The meta object literal for the '<em><b>Sub Containers</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference COMPONENTS_SUB_CONTAINER__SUB_CONTAINERS = eINSTANCE.getComponentsSubContainer_SubContainers();
-		/**
-		 * The meta object literal for the '<em><b>Container Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMPONENTS_SUB_CONTAINER__CONTAINER_NAME = eINSTANCE.getComponentsSubContainer_ContainerName();
+		EReference COMPONENTS_CONTAINER__CHILD_CONTAINERS = eINSTANCE.getComponentsContainer_ChildContainers();
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.WaveformsContainerImpl <em>Waveforms Container</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -1316,13 +980,6 @@ public interface SdrPackage extends EPackage {
 		 */
 		EClass WAVEFORMS_CONTAINER = eINSTANCE.getWaveformsContainer();
 		/**
-		 * The meta object literal for the '<em><b>Sdr Root</b></em>' container reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference WAVEFORMS_CONTAINER__SDR_ROOT = eINSTANCE.getWaveformsContainer_SdrRoot();
-		/**
 		 * The meta object literal for the '<em><b>Waveforms</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1330,35 +987,19 @@ public interface SdrPackage extends EPackage {
 		 */
 		EReference WAVEFORMS_CONTAINER__WAVEFORMS = eINSTANCE.getWaveformsContainer_Waveforms();
 		/**
-		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.WaveformsSubContainerImpl <em>Waveforms Sub Container</em>}' class.
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ide.sdr.impl.WaveformsSubContainerImpl
-		 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getWaveformsSubContainer()
 		 * @generated
 		 */
-		EClass WAVEFORMS_SUB_CONTAINER = eINSTANCE.getWaveformsSubContainer();
+		EAttribute WAVEFORMS_CONTAINER__NAME = eINSTANCE.getWaveformsContainer_Name();
 		/**
-		 * The meta object literal for the '<em><b>Sub Containers</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Child Containers</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference WAVEFORMS_SUB_CONTAINER__SUB_CONTAINERS = eINSTANCE.getWaveformsSubContainer_SubContainers();
-		/**
-		 * The meta object literal for the '<em><b>Container Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute WAVEFORMS_SUB_CONTAINER__CONTAINER_NAME = eINSTANCE.getWaveformsSubContainer_ContainerName();
-		/**
-		 * The meta object literal for the '<em><b>Waveforms</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference WAVEFORMS_SUB_CONTAINER__WAVEFORMS = eINSTANCE.getWaveformsSubContainer_Waveforms();
+		EReference WAVEFORMS_CONTAINER__CHILD_CONTAINERS = eINSTANCE.getWaveformsContainer_ChildContainers();
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.DevicesContainerImpl <em>Devices Container</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -1369,12 +1010,12 @@ public interface SdrPackage extends EPackage {
 		 */
 		EClass DEVICES_CONTAINER = eINSTANCE.getDevicesContainer();
 		/**
-		 * The meta object literal for the '<em><b>Sdr Root</b></em>' container reference feature.
+		 * The meta object literal for the '<em><b>Child Containers</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference DEVICES_CONTAINER__SDR_ROOT = eINSTANCE.getDevicesContainer_SdrRoot();
+		EReference DEVICES_CONTAINER__CHILD_CONTAINERS = eINSTANCE.getDevicesContainer_ChildContainers();
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.ServicesContainerImpl <em>Services Container</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -1385,12 +1026,12 @@ public interface SdrPackage extends EPackage {
 		 */
 		EClass SERVICES_CONTAINER = eINSTANCE.getServicesContainer();
 		/**
-		 * The meta object literal for the '<em><b>Sdr Root</b></em>' container reference feature.
+		 * The meta object literal for the '<em><b>Child Containers</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference SERVICES_CONTAINER__SDR_ROOT = eINSTANCE.getServicesContainer_SdrRoot();
+		EReference SERVICES_CONTAINER__CHILD_CONTAINERS = eINSTANCE.getServicesContainer_ChildContainers();
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.SharedLibrariesContainerImpl <em>Shared Libraries Container</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -1401,12 +1042,12 @@ public interface SdrPackage extends EPackage {
 		 */
 		EClass SHARED_LIBRARIES_CONTAINER = eINSTANCE.getSharedLibrariesContainer();
 		/**
-		 * The meta object literal for the '<em><b>Sdr Root</b></em>' container reference feature.
+		 * The meta object literal for the '<em><b>Child Containers</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference SHARED_LIBRARIES_CONTAINER__SDR_ROOT = eINSTANCE.getSharedLibrariesContainer_SdrRoot();
+		EReference SHARED_LIBRARIES_CONTAINER__CHILD_CONTAINERS = eINSTANCE.getSharedLibrariesContainer_ChildContainers();
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.NodesContainerImpl <em>Nodes Container</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -1417,13 +1058,6 @@ public interface SdrPackage extends EPackage {
 		 */
 		EClass NODES_CONTAINER = eINSTANCE.getNodesContainer();
 		/**
-		 * The meta object literal for the '<em><b>Sdr Root</b></em>' container reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference NODES_CONTAINER__SDR_ROOT = eINSTANCE.getNodesContainer_SdrRoot();
-		/**
 		 * The meta object literal for the '<em><b>Nodes</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1431,74 +1065,19 @@ public interface SdrPackage extends EPackage {
 		 */
 		EReference NODES_CONTAINER__NODES = eINSTANCE.getNodesContainer_Nodes();
 		/**
-		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.NodesSubContainerImpl <em>Nodes Sub Container</em>}' class.
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ide.sdr.impl.NodesSubContainerImpl
-		 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getNodesSubContainer()
 		 * @generated
 		 */
-		EClass NODES_SUB_CONTAINER = eINSTANCE.getNodesSubContainer();
+		EAttribute NODES_CONTAINER__NAME = eINSTANCE.getNodesContainer_Name();
 		/**
-		 * The meta object literal for the '<em><b>Sub Containers</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Child Containers</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference NODES_SUB_CONTAINER__SUB_CONTAINERS = eINSTANCE.getNodesSubContainer_SubContainers();
-		/**
-		 * The meta object literal for the '<em><b>Container Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute NODES_SUB_CONTAINER__CONTAINER_NAME = eINSTANCE.getNodesSubContainer_ContainerName();
-		/**
-		 * The meta object literal for the '<em><b>Nodes</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference NODES_SUB_CONTAINER__NODES = eINSTANCE.getNodesSubContainer_Nodes();
-		/**
-		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.StringToAbstractPropertyImpl <em>String To Abstract Property</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ide.sdr.impl.StringToAbstractPropertyImpl
-		 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getStringToAbstractProperty()
-		 * @generated
-		 */
-		EClass STRING_TO_ABSTRACT_PROPERTY = eINSTANCE.getStringToAbstractProperty();
-		/**
-		 * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute STRING_TO_ABSTRACT_PROPERTY__KEY = eINSTANCE.getStringToAbstractProperty_Key();
-		/**
-		 * The meta object literal for the '<em><b>Value</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference STRING_TO_ABSTRACT_PROPERTY__VALUE = eINSTANCE.getStringToAbstractProperty_Value();
-		/**
-		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.PropertyRegistryImpl <em>Property Registry</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ide.sdr.impl.PropertyRegistryImpl
-		 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getPropertyRegistry()
-		 * @generated
-		 */
-		EClass PROPERTY_REGISTRY = eINSTANCE.getPropertyRegistry();
-		/**
-		 * The meta object literal for the '<em><b>Properties</b></em>' map feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference PROPERTY_REGISTRY__PROPERTIES = eINSTANCE.getPropertyRegistry_Properties();
+		EReference NODES_CONTAINER__CHILD_CONTAINERS = eINSTANCE.getNodesContainer_ChildContainers();
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.SoftPkgRegistryImpl <em>Soft Pkg Registry</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -1508,6 +1087,13 @@ public interface SdrPackage extends EPackage {
 		 * @generated
 		 */
 		EClass SOFT_PKG_REGISTRY = eINSTANCE.getSoftPkgRegistry();
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SOFT_PKG_REGISTRY__NAME = eINSTANCE.getSoftPkgRegistry_Name();
 		/**
 		 * The meta object literal for the '<em><b>Components</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->

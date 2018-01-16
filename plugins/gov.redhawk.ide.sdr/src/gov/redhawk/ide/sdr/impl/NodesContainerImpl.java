@@ -1,20 +1,18 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
 import gov.redhawk.ide.sdr.NodesContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
-import gov.redhawk.ide.sdr.SdrRoot;
-
 import java.util.Collection;
 
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -26,8 +24,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
-import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -35,11 +34,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.impl.NodesContainerImpl#getSdrRoot <em>Sdr Root</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.NodesContainerImpl#getNodes <em>Nodes</em>}</li>
- * </ul>
  * </p>
+ * <ul>
+ *   <li>{@link gov.redhawk.ide.sdr.impl.NodesContainerImpl#getNodes <em>Nodes</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.impl.NodesContainerImpl#getName <em>Name</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.impl.NodesContainerImpl#getChildContainers <em>Child Containers</em>}</li>
+ * </ul>
  *
  * @generated
  */
@@ -54,6 +54,34 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	 * @ordered
 	 */
 	protected EList<DeviceConfiguration> nodes;
+
+	/**
+	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String NAME_EDEFAULT = null;
+	/**
+	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String name = NAME_EDEFAULT;
+	/**
+	 * The cached value of the '{@link #getChildContainers() <em>Child Containers</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getChildContainers()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<NodesContainer> childContainers;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -80,49 +108,6 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	 * @generated
 	 */
 	@Override
-	public SdrRoot getSdrRoot() {
-		if (eContainerFeatureID() != SdrPackage.NODES_CONTAINER__SDR_ROOT)
-			return null;
-		return (SdrRoot) eInternalContainer();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetSdrRoot(SdrRoot newSdrRoot, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject) newSdrRoot, SdrPackage.NODES_CONTAINER__SDR_ROOT, msgs);
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setSdrRoot(SdrRoot newSdrRoot) {
-		if (newSdrRoot != eInternalContainer() || (eContainerFeatureID() != SdrPackage.NODES_CONTAINER__SDR_ROOT && newSdrRoot != null)) {
-			if (EcoreUtil.isAncestor(this, newSdrRoot))
-				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
-			NotificationChain msgs = null;
-			if (eInternalContainer() != null)
-				msgs = eBasicRemoveFromContainer(msgs);
-			if (newSdrRoot != null)
-				msgs = ((InternalEObject) newSdrRoot).eInverseAdd(this, SdrPackage.SDR_ROOT__NODES_CONTAINER, SdrRoot.class, msgs);
-			msgs = basicSetSdrRoot(newSdrRoot, msgs);
-			if (msgs != null)
-				msgs.dispatch();
-		} else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.NODES_CONTAINER__SDR_ROOT, newSdrRoot, newSdrRoot));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EList<DeviceConfiguration> getNodes() {
 		if (nodes == null) {
 			nodes = new EObjectResolvingEList<DeviceConfiguration>(DeviceConfiguration.class, this, SdrPackage.NODES_CONTAINER__NODES);
@@ -135,15 +120,32 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-			if (eInternalContainer() != null)
-				msgs = eBasicRemoveFromContainer(msgs);
-			return basicSetSdrRoot((SdrRoot) otherEnd, msgs);
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setName(String newName) {
+		String oldName = name;
+		name = newName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.NODES_CONTAINER__NAME, oldName, name));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<NodesContainer> getChildContainers() {
+		if (childContainers == null) {
+			childContainers = new EObjectContainmentEList<NodesContainer>(NodesContainer.class, this, SdrPackage.NODES_CONTAINER__CHILD_CONTAINERS);
 		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
+		return childContainers;
 	}
 
 	/**
@@ -154,8 +156,8 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-			return basicSetSdrRoot(null, msgs);
+		case SdrPackage.NODES_CONTAINER__CHILD_CONTAINERS:
+			return ((InternalEList< ? >) getChildContainers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -166,26 +168,14 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	 * @generated
 	 */
 	@Override
-	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
-		switch (eContainerFeatureID()) {
-		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-			return eInternalContainer().eInverseRemove(this, SdrPackage.SDR_ROOT__NODES_CONTAINER, SdrRoot.class, msgs);
-		}
-		return super.eBasicRemoveFromContainerFeature(msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-			return getSdrRoot();
 		case SdrPackage.NODES_CONTAINER__NODES:
 			return getNodes();
+		case SdrPackage.NODES_CONTAINER__NAME:
+			return getName();
+		case SdrPackage.NODES_CONTAINER__CHILD_CONTAINERS:
+			return getChildContainers();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -199,12 +189,16 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-			setSdrRoot((SdrRoot) newValue);
-			return;
 		case SdrPackage.NODES_CONTAINER__NODES:
 			getNodes().clear();
 			getNodes().addAll((Collection< ? extends DeviceConfiguration>) newValue);
+			return;
+		case SdrPackage.NODES_CONTAINER__NAME:
+			setName((String) newValue);
+			return;
+		case SdrPackage.NODES_CONTAINER__CHILD_CONTAINERS:
+			getChildContainers().clear();
+			getChildContainers().addAll((Collection< ? extends NodesContainer>) newValue);
 			return;
 		}
 		super.eSet(featureID, newValue);
@@ -218,11 +212,14 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-			setSdrRoot((SdrRoot) null);
-			return;
 		case SdrPackage.NODES_CONTAINER__NODES:
 			getNodes().clear();
+			return;
+		case SdrPackage.NODES_CONTAINER__NAME:
+			setName(NAME_EDEFAULT);
+			return;
+		case SdrPackage.NODES_CONTAINER__CHILD_CONTAINERS:
+			getChildContainers().clear();
 			return;
 		}
 		super.eUnset(featureID);
@@ -236,12 +233,31 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-			return getSdrRoot() != null;
 		case SdrPackage.NODES_CONTAINER__NODES:
 			return nodes != null && !nodes.isEmpty();
+		case SdrPackage.NODES_CONTAINER__NAME:
+			return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+		case SdrPackage.NODES_CONTAINER__CHILD_CONTAINERS:
+			return childContainers != null && !childContainers.isEmpty();
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy())
+			return super.toString();
+
+		StringBuffer result = new StringBuffer(super.toString());
+		result.append(" (name: ");
+		result.append(name);
+		result.append(')');
+		return result.toString();
 	}
 
 } //NodesContainerImpl

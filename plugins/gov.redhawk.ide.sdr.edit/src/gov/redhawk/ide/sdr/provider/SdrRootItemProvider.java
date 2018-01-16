@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.provider;
 
@@ -33,9 +33,6 @@ import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-
-import gov.redhawk.eclipsecorba.library.LibraryFactory;
-import gov.redhawk.ide.sdr.SdrFactory;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import mil.jpeojtrs.sca.util.QueryParser;
@@ -47,8 +44,8 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
  * <!-- end-user-doc -->
  * @generated
  */
-public class SdrRootItemProvider extends ItemProviderAdapter implements IEditingDomainItemProvider, IStructuredItemContentProvider, ITreeItemContentProvider,
-		IItemLabelProvider, IItemPropertySource {
+public class SdrRootItemProvider extends ItemProviderAdapter
+		implements IEditingDomainItemProvider, IStructuredItemContentProvider, ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -278,24 +275,12 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getTextGen(Object object) {
-		IStatus labelValue = ((SdrRoot) object).getLoadStatus();
-		String label = labelValue == null ? null : labelValue.toString();
-		return label == null || label.length() == 0 ? getString("_UI_SdrRoot_type") : getString("_UI_SdrRoot_type") + " " + label;
-	}
-
-	/**
-	 * This returns the label text for the adapted class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	@Override
 	public String getText(final Object object) {
 		// END GENERATED CODE
-		return "Target SDR";
+		return getString("_UI_SdrRoot_type");
 		// BEGIN GENERATED CODE
 	}
 
@@ -340,13 +325,6 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-
-		newChildDescriptors.add(createChildParameter(SdrPackage.Literals.SDR_ROOT__SERVICES_CONTAINER, SdrFactory.eINSTANCE.createServicesContainer()));
-
-		newChildDescriptors.add(createChildParameter(SdrPackage.Literals.SDR_ROOT__SHARED_LIBRARIES_CONTAINER,
-			SdrFactory.eINSTANCE.createSharedLibrariesContainer()));
-
-		newChildDescriptors.add(createChildParameter(SdrPackage.Literals.SDR_ROOT__IDL_LIBRARY, LibraryFactory.eINSTANCE.createIdlLibrary()));
 	}
 
 	/**

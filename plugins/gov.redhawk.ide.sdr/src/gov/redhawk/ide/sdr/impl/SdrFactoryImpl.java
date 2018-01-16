@@ -1,19 +1,24 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
-import gov.redhawk.ide.sdr.*;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.impl.EFactoryImpl;
+import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
 import gov.redhawk.ide.sdr.ComponentsContainer;
-import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.LoadState;
 import gov.redhawk.ide.sdr.NodesContainer;
@@ -23,17 +28,6 @@ import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
 import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.WaveformsContainer;
-
-import java.util.Map;
-
-import mil.jpeojtrs.sca.prf.AbstractProperty;
-
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.impl.EFactoryImpl;
-import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 /**
  * <!-- begin-user-doc -->
@@ -83,12 +77,8 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 			return createSdrRoot();
 		case SdrPackage.COMPONENTS_CONTAINER:
 			return createComponentsContainer();
-		case SdrPackage.COMPONENTS_SUB_CONTAINER:
-			return createComponentsSubContainer();
 		case SdrPackage.WAVEFORMS_CONTAINER:
 			return createWaveformsContainer();
-		case SdrPackage.WAVEFORMS_SUB_CONTAINER:
-			return createWaveformsSubContainer();
 		case SdrPackage.DEVICES_CONTAINER:
 			return createDevicesContainer();
 		case SdrPackage.SERVICES_CONTAINER:
@@ -97,10 +87,6 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 			return createSharedLibrariesContainer();
 		case SdrPackage.NODES_CONTAINER:
 			return createNodesContainer();
-		case SdrPackage.NODES_SUB_CONTAINER:
-			return createNodesSubContainer();
-		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY:
-			return (EObject) createStringToAbstractProperty();
 		default:
 			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -163,30 +149,10 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ComponentsSubContainer createComponentsSubContainer() {
-		ComponentsSubContainerImpl componentsSubContainer = new ComponentsSubContainerImpl();
-		return componentsSubContainer;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public WaveformsContainer createWaveformsContainer() {
 		WaveformsContainerImpl waveformsContainer = new WaveformsContainerImpl();
 		return waveformsContainer;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public WaveformsSubContainer createWaveformsSubContainer() {
-		WaveformsSubContainerImpl waveformsSubContainer = new WaveformsSubContainerImpl();
-		return waveformsSubContainer;
 	}
 
 	/**
@@ -230,26 +196,6 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	public NodesContainer createNodesContainer() {
 		NodesContainerImpl nodesContainer = new NodesContainerImpl();
 		return nodesContainer;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NodesSubContainer createNodesSubContainer() {
-		NodesSubContainerImpl nodesSubContainer = new NodesSubContainerImpl();
-		return nodesSubContainer;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Map.Entry<String, AbstractProperty> createStringToAbstractProperty() {
-		StringToAbstractPropertyImpl stringToAbstractProperty = new StringToAbstractPropertyImpl();
-		return stringToAbstractProperty;
 	}
 
 	/**

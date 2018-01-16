@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.tests;
 
@@ -25,7 +25,7 @@ import org.junit.Assert;
  * @generated
  */
 public class ComponentsContainerTest extends SoftPkgRegistryTest {
-	
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -53,7 +53,7 @@ public class ComponentsContainerTest extends SoftPkgRegistryTest {
 	 */
 	@Override
 	protected ComponentsContainer getFixture() {
-		return (ComponentsContainer)fixture;
+		return (ComponentsContainer) fixture;
 	}
 
 	private SdrRoot sdrRoot;
@@ -88,7 +88,6 @@ public class ComponentsContainerTest extends SoftPkgRegistryTest {
 		Assert.assertNotNull(getFixture().getSoftPkg("DCE:e0cfeb24-1039-4b4c-93cb-33c42008d64f"));
 		Assert.assertNotNull(getFixture().getSoftPkg("DCE:859ebb11-4767-4e8e-874a-101e6efb3440"));
 		Assert.assertNotNull(getFixture().getSoftPkg("DCE:38279be0-4650-40c4-9084-352e6ebeedeb"));
-		Assert.assertEquals(this.sdrRoot, getFixture().getSdrRoot());
 		Assert.assertNotNull(this.fixture);
 	}
 

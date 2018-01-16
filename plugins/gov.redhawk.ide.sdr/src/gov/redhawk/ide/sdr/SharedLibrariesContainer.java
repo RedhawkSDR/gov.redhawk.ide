@@ -1,15 +1,17 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr;
+
+import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -18,10 +20,10 @@ package gov.redhawk.ide.sdr;
  *
  * <p>
  * The following features are supported:
- * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.SharedLibrariesContainer#getSdrRoot <em>Sdr Root</em>}</li>
- * </ul>
  * </p>
+ * <ul>
+ *   <li>{@link gov.redhawk.ide.sdr.SharedLibrariesContainer#getChildContainers <em>Child Containers</em>}</li>
+ * </ul>
  *
  * @see gov.redhawk.ide.sdr.SdrPackage#getSharedLibrariesContainer()
  * @model
@@ -29,20 +31,19 @@ package gov.redhawk.ide.sdr;
  */
 public interface SharedLibrariesContainer extends SoftPkgRegistry {
 	/**
-	 * Returns the value of the '<em><b>Sdr Root</b></em>' container reference.
-	 * It is bidirectional and its opposite is '{@link gov.redhawk.ide.sdr.SdrRoot#getSharedLibrariesContainer <em>Shared Libraries Container</em>}'.
+	 * Returns the value of the '<em><b>Child Containers</b></em>' containment reference list.
+	 * The list contents are of type {@link gov.redhawk.ide.sdr.SharedLibrariesContainer}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Sdr Root</em>' container reference isn't clear,
+	 * If the meaning of the '<em>Child Containers</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Sdr Root</em>' container reference.
-	 * @see gov.redhawk.ide.sdr.SdrPackage#getSharedLibrariesContainer_SdrRoot()
-	 * @see gov.redhawk.ide.sdr.SdrRoot#getSharedLibrariesContainer
-	 * @model opposite="sharedLibrariesContainer" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @return the value of the '<em>Child Containers</em>' containment reference list.
+	 * @see gov.redhawk.ide.sdr.SdrPackage#getSharedLibrariesContainer_ChildContainers()
+	 * @model containment="true"
 	 * @generated
 	 */
-	SdrRoot getSdrRoot();
+	EList<SharedLibrariesContainer> getChildContainers();
 
 } // SharedLibrariesContainer

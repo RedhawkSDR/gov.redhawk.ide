@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.tests;
 
@@ -53,7 +53,7 @@ public class DevicesContainerTest extends SoftPkgRegistryTest {
 	 */
 	@Override
 	protected DevicesContainer getFixture() {
-		return (DevicesContainer)fixture;
+		return (DevicesContainer) fixture;
 	}
 
 	private SdrRoot sdrRoot;
@@ -89,7 +89,6 @@ public class DevicesContainerTest extends SoftPkgRegistryTest {
 		for (final SoftPkg softPkg : devices) {
 			Assert.assertNotNull(softPkg);
 		}
-		Assert.assertEquals(this.sdrRoot, getFixture().getSdrRoot());
 	}
 
 } //DevicesContainerTest

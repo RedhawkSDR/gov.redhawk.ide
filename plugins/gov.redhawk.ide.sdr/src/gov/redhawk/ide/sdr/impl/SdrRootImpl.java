@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
@@ -75,6 +75,7 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
  * <em><b>Root</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getLoadStatus <em>Load Status</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getState <em>State</em>}</li>
@@ -89,7 +90,6 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
  *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDevFileSystemRoot <em>Dev File System Root</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDomFileSystemRoot <em>Dom File System Root</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -352,9 +352,11 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (newComponentsContainer != componentsContainer) {
 			NotificationChain msgs = null;
 			if (componentsContainer != null)
-				msgs = ((InternalEObject) componentsContainer).eInverseRemove(this, SdrPackage.COMPONENTS_CONTAINER__SDR_ROOT, ComponentsContainer.class, msgs);
+				msgs = ((InternalEObject) componentsContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER, null,
+					msgs);
 			if (newComponentsContainer != null)
-				msgs = ((InternalEObject) newComponentsContainer).eInverseAdd(this, SdrPackage.COMPONENTS_CONTAINER__SDR_ROOT, ComponentsContainer.class, msgs);
+				msgs = ((InternalEObject) newComponentsContainer).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER, null,
+					msgs);
 			msgs = basicSetComponentsContainer(newComponentsContainer, msgs);
 			if (msgs != null)
 				msgs.dispatch();
@@ -400,9 +402,11 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (newWaveformsContainer != waveformsContainer) {
 			NotificationChain msgs = null;
 			if (waveformsContainer != null)
-				msgs = ((InternalEObject) waveformsContainer).eInverseRemove(this, SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT, WaveformsContainer.class, msgs);
+				msgs = ((InternalEObject) waveformsContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER, null,
+					msgs);
 			if (newWaveformsContainer != null)
-				msgs = ((InternalEObject) newWaveformsContainer).eInverseAdd(this, SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT, WaveformsContainer.class, msgs);
+				msgs = ((InternalEObject) newWaveformsContainer).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER, null,
+					msgs);
 			msgs = basicSetWaveformsContainer(newWaveformsContainer, msgs);
 			if (msgs != null)
 				msgs.dispatch();
@@ -448,9 +452,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (newDevicesContainer != devicesContainer) {
 			NotificationChain msgs = null;
 			if (devicesContainer != null)
-				msgs = ((InternalEObject) devicesContainer).eInverseRemove(this, SdrPackage.DEVICES_CONTAINER__SDR_ROOT, DevicesContainer.class, msgs);
+				msgs = ((InternalEObject) devicesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__DEVICES_CONTAINER, null, msgs);
 			if (newDevicesContainer != null)
-				msgs = ((InternalEObject) newDevicesContainer).eInverseAdd(this, SdrPackage.DEVICES_CONTAINER__SDR_ROOT, DevicesContainer.class, msgs);
+				msgs = ((InternalEObject) newDevicesContainer).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__DEVICES_CONTAINER, null, msgs);
 			msgs = basicSetDevicesContainer(newDevicesContainer, msgs);
 			if (msgs != null)
 				msgs.dispatch();
@@ -496,9 +500,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (newServicesContainer != servicesContainer) {
 			NotificationChain msgs = null;
 			if (servicesContainer != null)
-				msgs = ((InternalEObject) servicesContainer).eInverseRemove(this, SdrPackage.SERVICES_CONTAINER__SDR_ROOT, ServicesContainer.class, msgs);
+				msgs = ((InternalEObject) servicesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__SERVICES_CONTAINER, null, msgs);
 			if (newServicesContainer != null)
-				msgs = ((InternalEObject) newServicesContainer).eInverseAdd(this, SdrPackage.SERVICES_CONTAINER__SDR_ROOT, ServicesContainer.class, msgs);
+				msgs = ((InternalEObject) newServicesContainer).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__SERVICES_CONTAINER, null, msgs);
 			msgs = basicSetServicesContainer(newServicesContainer, msgs);
 			if (msgs != null)
 				msgs.dispatch();
@@ -544,9 +548,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (newNodesContainer != nodesContainer) {
 			NotificationChain msgs = null;
 			if (nodesContainer != null)
-				msgs = ((InternalEObject) nodesContainer).eInverseRemove(this, SdrPackage.NODES_CONTAINER__SDR_ROOT, NodesContainer.class, msgs);
+				msgs = ((InternalEObject) nodesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__NODES_CONTAINER, null, msgs);
 			if (newNodesContainer != null)
-				msgs = ((InternalEObject) newNodesContainer).eInverseAdd(this, SdrPackage.NODES_CONTAINER__SDR_ROOT, NodesContainer.class, msgs);
+				msgs = ((InternalEObject) newNodesContainer).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__NODES_CONTAINER, null, msgs);
 			msgs = basicSetNodesContainer(newNodesContainer, msgs);
 			if (msgs != null)
 				msgs.dispatch();
@@ -591,11 +595,11 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (newSharedLibrariesContainer != sharedLibrariesContainer) {
 			NotificationChain msgs = null;
 			if (sharedLibrariesContainer != null)
-				msgs = ((InternalEObject) sharedLibrariesContainer).eInverseRemove(this, SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT,
-					SharedLibrariesContainer.class, msgs);
+				msgs = ((InternalEObject) sharedLibrariesContainer).eInverseRemove(this,
+					EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER, null, msgs);
 			if (newSharedLibrariesContainer != null)
-				msgs = ((InternalEObject) newSharedLibrariesContainer).eInverseAdd(this, SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT,
-					SharedLibrariesContainer.class, msgs);
+				msgs = ((InternalEObject) newSharedLibrariesContainer).eInverseAdd(this,
+					EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER, null, msgs);
 			msgs = basicSetSharedLibrariesContainer(newSharedLibrariesContainer, msgs);
 			if (msgs != null)
 				msgs.dispatch();
@@ -1055,45 +1059,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @generated
 	 */
 	@Override
-	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-		case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
-			if (componentsContainer != null)
-				msgs = ((InternalEObject) componentsContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER, null,
-					msgs);
-			return basicSetComponentsContainer((ComponentsContainer) otherEnd, msgs);
-		case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
-			if (waveformsContainer != null)
-				msgs = ((InternalEObject) waveformsContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER, null,
-					msgs);
-			return basicSetWaveformsContainer((WaveformsContainer) otherEnd, msgs);
-		case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
-			if (devicesContainer != null)
-				msgs = ((InternalEObject) devicesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__DEVICES_CONTAINER, null, msgs);
-			return basicSetDevicesContainer((DevicesContainer) otherEnd, msgs);
-		case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
-			if (servicesContainer != null)
-				msgs = ((InternalEObject) servicesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__SERVICES_CONTAINER, null, msgs);
-			return basicSetServicesContainer((ServicesContainer) otherEnd, msgs);
-		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
-			if (nodesContainer != null)
-				msgs = ((InternalEObject) nodesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__NODES_CONTAINER, null, msgs);
-			return basicSetNodesContainer((NodesContainer) otherEnd, msgs);
-		case SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER:
-			if (sharedLibrariesContainer != null)
-				msgs = ((InternalEObject) sharedLibrariesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE
-					- SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER, null, msgs);
-			return basicSetSharedLibrariesContainer((SharedLibrariesContainer) otherEnd, msgs);
-		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 		case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
@@ -1529,8 +1494,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		IStatus retVal = Status.OK_STATUS;
 		for (SoftwareAssembly currentSad : getWaveformsContainer().getWaveforms()) {
 			if (PluginUtil.equals(currentSad.getId(), sad.getId())) {
-				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, sadFileUri + " duplicate ID of "
-					+ convertFileURI(currentSad.eResource().getURI()) + ". IDs should be unique.");
+				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID,
+					sadFileUri + " duplicate ID of " + convertFileURI(currentSad.eResource().getURI()) + ". IDs should be unique.");
 				break;
 			}
 		}
@@ -1563,8 +1528,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		IStatus retVal = Status.OK_STATUS;
 		for (DeviceConfiguration current : getNodesContainer().getNodes()) {
 			if (PluginUtil.equals(current.getId(), dcd.getId())) {
-				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, dcdFileURI + " duplicate ID of "
-					+ convertFileURI(current.eResource().getURI()) + ". IDs should be unique.");
+				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID,
+					dcdFileURI + " duplicate ID of " + convertFileURI(current.eResource().getURI()) + ". IDs should be unique.");
 				break;
 			}
 		}
