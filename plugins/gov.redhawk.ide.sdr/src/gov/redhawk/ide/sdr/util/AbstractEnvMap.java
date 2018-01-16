@@ -119,7 +119,7 @@ public abstract class AbstractEnvMap implements IEnvMap {
 	 * @param impl
 	 * @return
 	 * @throws CoreException A referenced dependency cannot be found/loaded
-	 * @since 10.1
+	 * @since 11.0
 	 */
 	public static List<Implementation> getDependencyImplementations(final Implementation impl) throws CoreException {
 		if (impl == null) {
