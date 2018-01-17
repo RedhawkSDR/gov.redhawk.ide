@@ -121,7 +121,7 @@ public class UsesDeviceTestUtils {
 		if (provides != null) {
 			for (int i = 0; i < provides.length; i++) {
 				bot.textInGroup("Port(s) to use for connections", 0).setText(provides[i]);
-				bot.button(0).click(); // add provides port
+				bot.buttonWithTooltip("Add provides port").click();
 			}
 		}
 
@@ -129,7 +129,7 @@ public class UsesDeviceTestUtils {
 		if (uses != null) {
 			for (int i = 0; i < uses.length; i++) {
 				bot.textInGroup("Port(s) to use for connections", 1).setText(uses[i]);
-				bot.button(2).click(); // add uses port
+				bot.buttonWithTooltip("Add uses port").click();
 			}
 		}
 

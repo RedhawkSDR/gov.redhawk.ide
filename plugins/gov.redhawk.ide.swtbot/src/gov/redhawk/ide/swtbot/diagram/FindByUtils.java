@@ -78,11 +78,11 @@ public class FindByUtils {
 		bot.textWithLabel("Component Name:").setText(name);
 		for (String s : providesPortNames) {
 			bot.textInGroup("Port(s) to use for connections", 0).setText(s);
-			bot.button("Add Provides Port").click();
+			bot.buttonWithTooltip("Add provides port").click();
 		}
 		for (String s : usesPortNames) {
 			bot.textInGroup("Port(s) to use for connections", 1).setText(s);
-			bot.button("Add Uses Port").click();
+			bot.buttonWithTooltip("Add uses port").click();
 		}
 		bot.button("Finish").click();
 	}
@@ -91,11 +91,11 @@ public class FindByUtils {
 		bot.textWithLabel("Service Name:").setText(name);
 		for (String s : providesPortNames) {
 			bot.textInGroup("Port(s) to use for connections", 0).setText(s);
-			bot.button("Add Provides Port").click();
+			bot.buttonWithTooltip("Add provides port").click();
 		}
 		for (String s : usesPortNames) {
 			bot.textInGroup("Port(s) to use for connections", 1).setText(s);
-			bot.button("Add Uses Port").click();
+			bot.buttonWithTooltip("Add uses port").click();
 		}
 		bot.button("Finish").click();
 	}
@@ -134,11 +134,11 @@ public class FindByUtils {
 
 		for (String s : providesPortNames) {
 			bot.textInGroup("Port(s) to use for connections", 0).setText(s);
-			bot.button("Add Provides Port").click();
+			bot.buttonWithTooltip("Add provides port").click();
 		}
 		for (String s : usesPortNames) {
 			bot.textInGroup("Port(s) to use for connections", 1).setText(s);
-			bot.button("Add Uses Port").click();
+			bot.buttonWithTooltip("Add uses port").click();
 		}
 		bot.button("Finish").click();
 	}
