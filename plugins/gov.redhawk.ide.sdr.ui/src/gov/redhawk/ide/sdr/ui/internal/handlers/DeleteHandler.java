@@ -10,12 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.internal.handlers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -23,8 +20,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.URI;
@@ -33,9 +28,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import gov.redhawk.ide.sdr.ComponentsSubContainer;
-import gov.redhawk.ide.sdr.NodesSubContainer;
-import gov.redhawk.ide.sdr.WaveformsSubContainer;
+import gov.redhawk.ide.sdr.ComponentsContainer;
+import gov.redhawk.ide.sdr.DevicesContainer;
+import gov.redhawk.ide.sdr.NodesContainer;
+import gov.redhawk.ide.sdr.ServicesContainer;
+import gov.redhawk.ide.sdr.SharedLibrariesContainer;
+import gov.redhawk.ide.sdr.SoftPkgRegistry;
+import gov.redhawk.ide.sdr.WaveformsContainer;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -46,99 +45,108 @@ public class DeleteHandler extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getCurrentSelection(event);
-		Map<String, URI> deleteMap = new HashMap<String, URI>();
-
-		if (selection instanceof IStructuredSelection) {
-			final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-			for (final Object obj : structuredSelection.toArray()) {
-				if (obj instanceof SoftPkg) {
-					SoftPkg softPkg = (SoftPkg) obj;
-					deleteMap.put(softPkg.getName(), softPkg.eResource().getURI());
-				} else if (obj instanceof SoftwareAssembly) {
-					SoftwareAssembly sad = (SoftwareAssembly) obj;
-					deleteMap.put(sad.getName(), sad.eResource().getURI());
-				} else if (obj instanceof DeviceConfiguration) {
-					DeviceConfiguration dcd = (DeviceConfiguration) obj;
-					deleteMap.put(dcd.getName(), dcd.eResource().getURI());
-				} else if (obj instanceof ComponentsSubContainer) {
-					recursiveAddToDeleteMap((ComponentsSubContainer) obj, deleteMap);
-				} else if (obj instanceof WaveformsSubContainer) {
-					recursiveAddToDeleteMap((WaveformsSubContainer) obj, deleteMap);
-				} else if (obj instanceof NodesSubContainer) {
-					recursiveAddToDeleteMap((NodesSubContainer) obj, deleteMap);
-				}
-			}
-			Job deleteJob = createDeleteJob(deleteMap, event);
-			if (deleteJob != null) {
-				deleteJob.schedule();
-			}
+		if (!(selection instanceof IStructuredSelection)) {
+			return null;
 		}
+		final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+
+		Map<String, URI> deleteMap = new HashMap<String, URI>();
+		for (final Object obj : structuredSelection.toArray()) {
+			add(obj, deleteMap);
+		}
+		if (deleteMap.size() == 0) {
+			return null;
+		}
+
+		Job deleteJob = createDeleteJob(deleteMap, event);
+		if (deleteJob != null) {
+			deleteJob.schedule();
+		}
+
 		return null;
 	}
 
-	private void recursiveAddToDeleteMap(ComponentsSubContainer container, Map<String, URI> deleteMap) {
-		for (ComponentsSubContainer subContainer : container.getSubContainers()) {
-			recursiveAddToDeleteMap(subContainer, deleteMap);
-		}
-		for (SoftPkg softPkg : container.getComponents()) {
-			deleteMap.put(softPkg.getName(), softPkg.eResource().getURI());
-		}
-	}
-
-	private void recursiveAddToDeleteMap(WaveformsSubContainer container, Map<String, URI> deleteMap) {
-		for (WaveformsSubContainer subContainer : container.getSubContainers()) {
-			recursiveAddToDeleteMap(subContainer, deleteMap);
-		}
-		for (SoftwareAssembly sad : container.getWaveforms()) {
+	private void add(Object obj, Map<String, URI> deleteMap) {
+		if (obj instanceof SoftPkg) {
+			SoftPkg spd = (SoftPkg) obj;
+			deleteMap.put(spd.getName(), spd.eResource().getURI());
+		} else if (obj instanceof SoftwareAssembly) {
+			SoftwareAssembly sad = (SoftwareAssembly) obj;
 			deleteMap.put(sad.getName(), sad.eResource().getURI());
-		}
-	}
-
-	private void recursiveAddToDeleteMap(NodesSubContainer container, Map<String, URI> deleteMap) {
-		for (NodesSubContainer subContainer : container.getSubContainers()) {
-			recursiveAddToDeleteMap(subContainer, deleteMap);
-		}
-		for (DeviceConfiguration dcd : container.getNodes()) {
+		} else if (obj instanceof DeviceConfiguration) {
+			DeviceConfiguration dcd = (DeviceConfiguration) obj;
 			deleteMap.put(dcd.getName(), dcd.eResource().getURI());
+		} else if (obj instanceof SoftPkgRegistry) {
+			SoftPkgRegistry registry = (SoftPkgRegistry) obj;
+			for (SoftPkg spd : registry.getComponents()) {
+				add(spd, deleteMap);
+			}
+			if (obj instanceof ComponentsContainer) {
+				ComponentsContainer container = (ComponentsContainer) obj;
+				for (ComponentsContainer childContainer : container.getChildContainers()) {
+					add(childContainer, deleteMap);
+				}
+			} else if (obj instanceof DevicesContainer) {
+				DevicesContainer container = (DevicesContainer) obj;
+				for (DevicesContainer childContainer : container.getChildContainers()) {
+					add(childContainer, deleteMap);
+				}
+			} else if (obj instanceof ServicesContainer) {
+				ServicesContainer container = (ServicesContainer) obj;
+				for (ServicesContainer childContainer : container.getChildContainers()) {
+					add(childContainer, deleteMap);
+				}
+			} else if (obj instanceof SharedLibrariesContainer) {
+				SharedLibrariesContainer container = (SharedLibrariesContainer) obj;
+				for (SharedLibrariesContainer childContainer : container.getChildContainers()) {
+					add(childContainer, deleteMap);
+				}
+			}
+		} else if (obj instanceof WaveformsContainer) {
+			WaveformsContainer container = (WaveformsContainer) obj;
+			for (SoftwareAssembly sad : container.getWaveforms()) {
+				add(sad, deleteMap);
+			}
+			for (WaveformsContainer childContainer : container.getChildContainers()) {
+				add(childContainer, deleteMap);
+			}
+		} else if (obj instanceof NodesContainer) {
+			NodesContainer container = (NodesContainer) obj;
+			for (DeviceConfiguration sad : container.getNodes()) {
+				add(sad, deleteMap);
+			}
+			for (NodesContainer childContainer : container.getChildContainers()) {
+				add(childContainer, deleteMap);
+			}
 		}
 	}
 
 	private Job createDeleteJob(Map<String, URI> deleteMap, ExecutionEvent event) {
-		String objectNames = "";
-		final List<URI> objectURIs = new ArrayList<URI>();
-		Iterator<Entry<String, URI>> it = deleteMap.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, URI> entry = (Map.Entry<String, URI>) it.next();
-			if (!it.hasNext()) {
-				objectNames += entry.getKey();
-			} else {
-				objectNames += entry.getKey() + "\n";
-			}
-			objectURIs.add(entry.getValue());
+		String deleteDescription;
+		if (deleteMap.size() > 5) {
+			deleteDescription = String.format("%d resources", deleteMap.size());
+		} else {
+			deleteDescription = deleteMap.keySet().stream().collect(Collectors.joining(", "));
 		}
-		final String deleteMessageString = objectNames.trim();
 
-		if (!MessageDialog.openQuestion(HandlerUtil.getActiveShell(event), "Delete",
-			"Are you sure you want to delete the following:\n" + deleteMessageString)) {
+		String deleteQuestion = String.format("Are you sure you want to delete %s?", deleteDescription);
+		if (!MessageDialog.openQuestion(HandlerUtil.getActiveShell(event), "Delete", deleteQuestion)) {
 			return null;
 		}
 
-		final Job job = new Job("Deleting " + deleteMessageString) {
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				try {
-					for (URI uri : objectURIs) {
-						final IFileStore efsStore = EFS.getStore(java.net.URI.create(uri.toString()));
-						final IFileStore parent = efsStore.getParent();
-						parent.delete(EFS.NONE, monitor);
-					}
-				} catch (final CoreException e) {
-					return new Status(e.getStatus().getSeverity(), SdrUiPlugin.PLUGIN_ID, "Failed to delete " + deleteMessageString, e);
+		final Job job = Job.create("Deleting: " + deleteDescription, monitor -> {
+			try {
+				for (URI uri : deleteMap.values()) {
+					final IFileStore efsStore = EFS.getStore(java.net.URI.create(uri.toString()));
+					final IFileStore parent = efsStore.getParent();
+					parent.delete(EFS.NONE, monitor);
 				}
-				SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
-				return Status.OK_STATUS;
+			} catch (final CoreException e) {
+				return new Status(e.getStatus().getSeverity(), SdrUiPlugin.PLUGIN_ID, "Failed to delete: " + deleteDescription, e);
 			}
-		};
+			SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
+			return Status.OK_STATUS;
+		});
 		job.setUser(false);
 		return job;
 	}

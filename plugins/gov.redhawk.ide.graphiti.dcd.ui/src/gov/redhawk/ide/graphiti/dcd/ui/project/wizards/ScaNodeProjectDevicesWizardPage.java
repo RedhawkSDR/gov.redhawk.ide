@@ -192,9 +192,13 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 
 	@Override
 	public boolean isPageComplete() {
-		StructuredSelection selection = (StructuredSelection) devicesTreeViewer.getSelection();
-		for (Iterator< ? > iterator = selection.iterator(); iterator.hasNext();) {
-			if (!(iterator.next() instanceof SoftPkg)) {
+		for (Object selection : devicesTreeViewer.getStructuredSelection().toArray()) {
+			if (!(selection instanceof SoftPkg)) {
+				return false;
+			}
+		}
+		for (Object selection : servicesTreeViewer.getStructuredSelection().toArray()) {
+			if (!(selection instanceof SoftPkg)) {
 				return false;
 			}
 		}

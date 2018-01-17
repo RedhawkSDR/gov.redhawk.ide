@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  gov.redhawk.sca.model,
  org.eclipse.jdt.launching,
  org.eclipse.core.expressions,
- gov.redhawk.ide.spd.ui
+ gov.redhawk.ide.spd.ui,
+ gov.redhawk.ide.sdr.edit
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor

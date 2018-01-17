@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.transaction.RunnableWithResult;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
@@ -156,17 +155,11 @@ public abstract class AbstractPaletteToolBehaviorProvider extends AbstractToolBe
 	protected void refreshCompartmentEntry(PaletteCompartmentEntry compartmentEntry, final SoftPkgRegistry container, String iconId) {
 		compartmentEntry.getToolEntries().clear();
 
-		List<SoftPkg> spds;
-		try {
-			spds = ScaModelCommand.runExclusive(container, new RunnableWithResult.Impl<List<SoftPkg>>() {
-				@Override
-				public void run() {
-					setResult(new ArrayList<SoftPkg>(container.getComponents()));
-				}
-			});
-		} catch (InterruptedException e) {
-			spds = new ArrayList<SoftPkg>();
-		}
+		// Collect SPDs in the tree under the container
+		List<SoftPkg> spds = ScaModelCommand.runExclusive(container, () -> {
+			return container.getAllComponents();
+		});
+
 		for (SoftPkg spd : spds) {
 			for (Implementation impl : spd.getImplementation()) {
 				if (impl.isExecutable()) {
