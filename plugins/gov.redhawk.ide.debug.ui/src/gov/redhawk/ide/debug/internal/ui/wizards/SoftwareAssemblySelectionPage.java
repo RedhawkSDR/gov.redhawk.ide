@@ -57,7 +57,7 @@ public class SoftwareAssemblySelectionPage extends WizardPage {
 		main.setLayout(new GridLayout(2, false));
 
 		viewer = new TreeViewer(main, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
-		viewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(2, 1).create());
+		viewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(2, 1).minSize(1, 160).create());
 		viewer.setContentProvider(new SdrNavigatorContentProvider() {
 			@Override
 			public boolean hasChildren(Object object) {
