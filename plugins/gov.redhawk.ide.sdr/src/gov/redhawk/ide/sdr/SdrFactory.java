@@ -49,6 +49,12 @@ public interface SdrFactory extends EFactory {
 	 */
 	ComponentsContainer createComponentsContainer();
 
+	// END GENERATED CODE
+
+	ComponentsContainer createComponentsContainer(String name);
+
+	// BEGIN GENERATED CODE
+
 	/**
 	 * Returns a new object of class '<em>Waveforms Container</em>'.
 	 * <!-- begin-user-doc -->
@@ -57,6 +63,12 @@ public interface SdrFactory extends EFactory {
 	 * @generated
 	 */
 	WaveformsContainer createWaveformsContainer();
+
+	// END GENERATED CODE
+
+	WaveformsContainer createWaveformsContainer(String name);
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * Returns a new object of class '<em>Devices Container</em>'.
@@ -67,6 +79,12 @@ public interface SdrFactory extends EFactory {
 	 */
 	DevicesContainer createDevicesContainer();
 
+	// END GENERATED CODE
+
+	DevicesContainer createDevicesContainer(String name);
+
+	// BEGIN GENERATED CODE
+
 	/**
 	 * Returns a new object of class '<em>Services Container</em>'.
 	 * <!-- begin-user-doc -->
@@ -75,6 +93,12 @@ public interface SdrFactory extends EFactory {
 	 * @generated
 	 */
 	ServicesContainer createServicesContainer();
+
+	// END GENERATED CODE
+
+	ServicesContainer createServicesContainer(String name);
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * Returns a new object of class '<em>Shared Libraries Container</em>'.
@@ -85,6 +109,12 @@ public interface SdrFactory extends EFactory {
 	 */
 	SharedLibrariesContainer createSharedLibrariesContainer();
 
+	// END GENERATED CODE
+
+	SharedLibrariesContainer createSharedLibrariesContainer(String name);
+
+	// BEGIN GENERATED CODE
+
 	/**
 	 * Returns a new object of class '<em>Nodes Container</em>'.
 	 * <!-- begin-user-doc -->
@@ -93,6 +123,12 @@ public interface SdrFactory extends EFactory {
 	 * @generated
 	 */
 	NodesContainer createNodesContainer();
+
+	// END GENERATED CODE
+
+	NodesContainer createNodesContainer(String name);
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * Returns the package supported by this factory.

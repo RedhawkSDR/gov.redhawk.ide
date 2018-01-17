@@ -144,6 +144,17 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 		return componentsContainer;
 	}
 
+	// END GENERATED CODE
+
+	@Override
+	public ComponentsContainer createComponentsContainer(String name) {
+		ComponentsContainer container = createComponentsContainer();
+		container.setName(name);
+		return container;
+	}
+
+	// BEGIN GENERATED CODE
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -154,6 +165,17 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 		WaveformsContainerImpl waveformsContainer = new WaveformsContainerImpl();
 		return waveformsContainer;
 	}
+
+	// END GENERATED CODE
+
+	@Override
+	public WaveformsContainer createWaveformsContainer(String name) {
+		WaveformsContainer container = createWaveformsContainer();
+		container.setName(name);
+		return container;
+	}
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -166,6 +188,17 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 		return devicesContainer;
 	}
 
+	// END GENERATED CODE
+
+	@Override
+	public DevicesContainer createDevicesContainer(String name) {
+		DevicesContainer container = createDevicesContainer();
+		container.setName(name);
+		return container;
+	}
+
+	// BEGIN GENERATED CODE
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -177,6 +210,17 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 		return servicesContainer;
 	}
 
+	// END GENERATED CODE
+
+	@Override
+	public ServicesContainer createServicesContainer(String name) {
+		ServicesContainer container = createServicesContainer();
+		container.setName(name);
+		return container;
+	}
+
+	// BEGIN GENERATED CODE
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -186,6 +230,17 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 		SharedLibrariesContainerImpl sharedLibrariesContainer = new SharedLibrariesContainerImpl();
 		return sharedLibrariesContainer;
 	}
+
+	// END GENERATED CODE
+
+	@Override
+	public SharedLibrariesContainer createSharedLibrariesContainer(String name) {
+		SharedLibrariesContainer container = createSharedLibrariesContainer();
+		container.setName(name);
+		return container;
+	}
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -197,6 +252,17 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 		NodesContainerImpl nodesContainer = new NodesContainerImpl();
 		return nodesContainer;
 	}
+
+	// END GENERATED CODE
+
+	@Override
+	public NodesContainer createNodesContainer(String name) {
+		NodesContainer container = createNodesContainer();
+		container.setName(name);
+		return container;
+	}
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * <!-- begin-user-doc -->

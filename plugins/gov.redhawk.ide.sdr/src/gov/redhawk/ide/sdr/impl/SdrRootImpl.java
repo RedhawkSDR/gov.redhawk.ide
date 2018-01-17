@@ -12,6 +12,7 @@
 package gov.redhawk.ide.sdr.impl;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,6 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -903,19 +903,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	public synchronized void unload(IProgressMonitor monitor) {
 		// END GENERATED CODE
 		SubMonitor subMonitor = SubMonitor.convert(monitor, "Unloading...", 2);
-		TransactionalEditingDomain editingDomain = TransactionUtil.getEditingDomain(this);
 
-		if (editingDomain == null) {
-			getNodesContainer().getNodes().clear();
-			getComponentsContainer().getComponents().clear();
-			getDevicesContainer().getComponents().clear();
-			getServicesContainer().getComponents().clear();
-			getWaveformsContainer().getWaveforms().clear();
-			setLoadStatus(null);
-			setState(LoadState.UNLOADED);
-			return;
-		}
-		final Resource[] resources = editingDomain.getResourceSet().getResources().toArray(new Resource[eResource().getResourceSet().getResources().size()]);
+		// Unload each XML file and remove the resource
+		final Resource[] resources = eResource().getResourceSet().getResources().toArray(new Resource[eResource().getResourceSet().getResources().size()]);
 		for (final Resource resource : resources) {
 			if (resource == eResource()) {
 				continue;
@@ -925,21 +915,24 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			}
 		}
 		subMonitor.worked(1);
-		editingDomain.getCommandStack().execute(new ScaModelCommand() {
 
-			@Override
-			public void execute() {
-				getNodesContainer().getNodes().clear();
-				getComponentsContainer().getComponents().clear();
-				getSharedLibrariesContainer().getComponents().clear();
-				getDevicesContainer().getComponents().clear();
-				getServicesContainer().getComponents().clear();
-				getWaveformsContainer().getWaveforms().clear();
-				setLoadStatus(null);
-				domainConfiguration = null;
-				setState(LoadState.UNLOADED);
-			}
-
+		// Empty this object of its references, etc
+		ScaModelCommand.execute(this, () -> {
+			getComponentsContainer().getComponents().clear();
+			getComponentsContainer().getChildContainers().clear();
+			getDevicesContainer().getComponents().clear();
+			getDevicesContainer().getChildContainers().clear();
+			getNodesContainer().getNodes().clear();
+			getNodesContainer().getChildContainers().clear();
+			getServicesContainer().getComponents().clear();
+			getServicesContainer().getChildContainers().clear();
+			getSharedLibrariesContainer().getComponents().clear();
+			getSharedLibrariesContainer().getChildContainers().clear();
+			getWaveformsContainer().getWaveforms().clear();
+			getWaveformsContainer().getChildContainers().clear();
+			setLoadStatus(null);
+			setState(LoadState.UNLOADED);
+			setDomainConfiguration(null);
 		});
 		subMonitor.worked(1);
 		subMonitor.done();
@@ -1427,10 +1420,56 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 
 		for (Implementation impl : softPkg.getImplementation()) {
 			if (impl.isExecutable()) {
-				domain.getCommandStack().execute(new AddCommand(domain, getComponentsContainer().getComponents(), softPkg));
+				ScaModelCommand.execute(getComponentsContainer(), () -> {
+					// Root container
+					ComponentsContainer container = getComponentsContainer();
+
+					// For each namespace segment in the SPD's name
+					String[] segments = softPkg.getName().split("\\.");
+					segments = Arrays.copyOf(segments, segments.length - 1);
+					nextSegment: for (String segment : segments) {
+						// Find the child container for the namespace
+						for (ComponentsContainer childContainer : container.getChildContainers()) {
+							if (segment.equals(childContainer.getName())) {
+								container = childContainer;
+								continue nextSegment;
+							}
+						}
+
+						// Create a new container for the namespace
+						ComponentsContainer childContainer = SdrFactory.eINSTANCE.createComponentsContainer(segment);
+						container.getChildContainers().add(childContainer);
+						container = childContainer;
+					}
+
+					container.getComponents().add(softPkg);
+				});
 				return;
 			} else if (impl.isSharedLibrary()) {
-				domain.getCommandStack().execute(new AddCommand(domain, getSharedLibrariesContainer().getComponents(), softPkg));
+				ScaModelCommand.execute(getComponentsContainer(), () -> {
+					// Root container
+					SharedLibrariesContainer container = getSharedLibrariesContainer();
+
+					// For each namespace segment in the SPD's name
+					String[] segments = softPkg.getName().split("\\.");
+					segments = Arrays.copyOf(segments, segments.length - 1);
+					nextSegment: for (String segment : segments) {
+						// Find the child container for the namespace
+						for (SharedLibrariesContainer childContainer : container.getChildContainers()) {
+							if (segment.equals(childContainer.getName())) {
+								container = childContainer;
+								continue nextSegment;
+							}
+						}
+
+						// Create a new container for the namespace
+						SharedLibrariesContainer childContainer = SdrFactory.eINSTANCE.createSharedLibrariesContainer(segment);
+						container.getChildContainers().add(childContainer);
+						container = childContainer;
+					}
+
+					container.getComponents().add(softPkg);
+				});
 				return;
 			}
 		}
@@ -1443,7 +1482,30 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 */
 	private void addDevice(EditingDomain domain, final SoftPkg softPkg, final SoftwareComponent component) {
 		// END GENERATED CODE
-		domain.getCommandStack().execute(new AddCommand(domain, getDevicesContainer().getComponents(), softPkg));
+		ScaModelCommand.execute(getComponentsContainer(), () -> {
+			// Root container
+			DevicesContainer container = getDevicesContainer();
+
+			// For each namespace segment in the SPD's name
+			String[] segments = softPkg.getName().split("\\.");
+			segments = Arrays.copyOf(segments, segments.length - 1);
+			nextSegment: for (String segment : segments) {
+				// Find the child container for the namespace
+				for (DevicesContainer childContainer : container.getChildContainers()) {
+					if (segment.equals(childContainer.getName())) {
+						container = childContainer;
+						continue nextSegment;
+					}
+				}
+
+				// Create a new container for the namespace
+				DevicesContainer childContainer = SdrFactory.eINSTANCE.createDevicesContainer(segment);
+				container.getChildContainers().add(childContainer);
+				container = childContainer;
+			}
+
+			container.getComponents().add(softPkg);
+		});
 		// BEGIN GENERATED CODE
 	}
 
@@ -1453,7 +1515,30 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 */
 	private void addService(EditingDomain domain, final SoftPkg softPkg, final SoftwareComponent component) {
 		// END GENERATED CODE
-		domain.getCommandStack().execute(new AddCommand(domain, getServicesContainer().getComponents(), softPkg));
+		ScaModelCommand.execute(getComponentsContainer(), () -> {
+			// Root container
+			ServicesContainer container = getServicesContainer();
+
+			// For each namespace segment in the SPD's name
+			String[] segments = softPkg.getName().split("\\.");
+			segments = Arrays.copyOf(segments, segments.length - 1);
+			nextSegment: for (String segment : segments) {
+				// Find the child container for the namespace
+				for (ServicesContainer childContainer : container.getChildContainers()) {
+					if (segment.equals(childContainer.getName())) {
+						container = childContainer;
+						continue nextSegment;
+					}
+				}
+
+				// Create a new container for the namespace
+				ServicesContainer childContainer = SdrFactory.eINSTANCE.createServicesContainer(segment);
+				container.getChildContainers().add(childContainer);
+				container = childContainer;
+			}
+
+			container.getComponents().add(softPkg);
+		});
 		// BEGIN GENERATED CODE
 	}
 
@@ -1500,7 +1585,30 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			}
 		}
 
-		domain.getCommandStack().execute(new AddCommand(domain, getWaveformsContainer().getWaveforms(), sad));
+		ScaModelCommand.execute(getComponentsContainer(), () -> {
+			// Root container
+			WaveformsContainer container = getWaveformsContainer();
+
+			// For each namespace segment in the SPD's name
+			String[] segments = sad.getName().split("\\.");
+			segments = Arrays.copyOf(segments, segments.length - 1);
+			nextSegment: for (String segment : segments) {
+				// Find the child container for the namespace
+				for (WaveformsContainer childContainer : container.getChildContainers()) {
+					if (segment.equals(childContainer.getName())) {
+						container = childContainer;
+						continue nextSegment;
+					}
+				}
+
+				// Create a new container for the namespace
+				WaveformsContainer childContainer = SdrFactory.eINSTANCE.createWaveformsContainer(segment);
+				container.getChildContainers().add(childContainer);
+				container = childContainer;
+			}
+
+			container.getWaveforms().add(sad);
+		});
 		submonitor.worked(1);
 
 		return retVal;
@@ -1534,7 +1642,30 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			}
 		}
 
-		domain.getCommandStack().execute(new AddCommand(domain, getNodesContainer().getNodes(), dcd));
+		ScaModelCommand.execute(getComponentsContainer(), () -> {
+			// Root container
+			NodesContainer container = getNodesContainer();
+
+			// For each namespace segment in the SPD's name
+			String[] segments = dcd.getName().split("\\.");
+			segments = Arrays.copyOf(segments, segments.length - 1);
+			nextSegment: for (String segment : segments) {
+				// Find the child container for the namespace
+				for (NodesContainer childContainer : container.getChildContainers()) {
+					if (segment.equals(childContainer.getName())) {
+						container = childContainer;
+						continue nextSegment;
+					}
+				}
+
+				// Create a new container for the namespace
+				NodesContainer childContainer = SdrFactory.eINSTANCE.createNodesContainer(segment);
+				container.getChildContainers().add(childContainer);
+				container = childContainer;
+			}
+
+			container.getNodes().add(dcd);
+		});
 		submonitor.worked(1);
 		return retVal;
 		// BEGIN GENERATED CODE

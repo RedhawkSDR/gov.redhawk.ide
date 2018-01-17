@@ -12,28 +12,21 @@
 package gov.redhawk.ide.sdr.impl;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
-import org.eclipse.emf.ecore.util.FeatureMap;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
-import mil.jpeojtrs.sca.prf.AbstractProperty;
-import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.SpdPackage;
-import mil.jpeojtrs.sca.util.DceUuidUtil;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
-import mil.jpeojtrs.sca.util.collections.FeatureMapList;
 
 /**
  * <!-- begin-user-doc -->
@@ -132,90 +125,6 @@ public abstract class SoftPkgRegistryImpl extends EObjectImpl implements SoftPkg
 		return components;
 	}
 
-	// END GENERATED CODE
-
-	private Adapter mapAdapter = new AdapterImpl() {
-		@Override
-		public void notifyChanged(org.eclipse.emf.common.notify.Notification msg) {
-			switch (msg.getFeatureID(SoftPkgRegistry.class)) {
-			case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
-				switch (msg.getEventType()) {
-				case Notification.ADD:
-					if (msg.getNewValue() instanceof SoftPkg) {
-						SoftPkg newValue = (SoftPkg) msg.getNewValue();
-						addSpd(newValue);
-					}
-					break;
-				case Notification.ADD_MANY:
-					if (msg.getNewValue() instanceof List< ? >) {
-						List< ? > newValues = (List< ? >) msg.getNewValue();
-						for (Object o : newValues) {
-							if (o instanceof SoftPkg) {
-								SoftPkg newValue = (SoftPkg) o;
-								addSpd(newValue);
-							}
-						}
-					}
-					break;
-				case Notification.REMOVE:
-					if (msg.getOldValue() instanceof SoftPkg) {
-						SoftPkg oldValue = (SoftPkg) msg.getOldValue();
-						removeSpd(oldValue);
-					}
-					break;
-				case Notification.REMOVE_MANY:
-					if (msg.getOldValue() instanceof List) {
-						List< ? > oldValues = (List< ? >) msg.getOldValue();
-						for (Object o : oldValues) {
-							if (o instanceof SoftPkg) {
-								SoftPkg newValue = (SoftPkg) o;
-								removeSpd(newValue);
-							}
-						}
-					}
-					break;
-				default:
-					break;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-	};
-	{
-		eAdapters().add(mapAdapter);
-	}
-
-	private static final EStructuralFeature[] PATH_SPD_TO_PROPERTIES_MAP = { SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
-		SpdPackage.Literals.PROPERTY_FILE__PROPERTIES, PrfPackage.Literals.PROPERTIES__PROPERTIES };
-
-	private void addSpd(SoftPkg spd) {
-		FeatureMap properties = ScaEcoreUtils.getFeature(spd, PATH_SPD_TO_PROPERTIES_MAP);
-		if (properties == null) {
-			return;
-		}
-		for (AbstractProperty prop : new FeatureMapList<AbstractProperty>(properties, AbstractProperty.class)) {
-			if (DceUuidUtil.isValid(prop.getId())) {
-				getProperties().put(prop.getId(), prop);
-			}
-		}
-	}
-
-	private void removeSpd(SoftPkg spd) {
-		FeatureMap properties = ScaEcoreUtils.getFeature(spd, PATH_SPD_TO_PROPERTIES_MAP);
-		if (properties == null) {
-			return;
-		}
-		for (AbstractProperty prop : new FeatureMapList<AbstractProperty>(properties, AbstractProperty.class)) {
-			if (DceUuidUtil.isValid(prop.getId())) {
-				getProperties().remove(prop.getId());
-			}
-		}
-	}
-
-	// BEGIN GENERATED CODE
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -224,9 +133,22 @@ public abstract class SoftPkgRegistryImpl extends EObjectImpl implements SoftPkg
 	@Override
 	public SoftPkg getSoftPkg(String softPkgId) {
 		// END GENERATED CODE
-		if (softPkgId != null) {
-			for (SoftPkg spd : getComponents()) {
-				if (softPkgId.equals(spd.getId())) {
+		if (softPkgId == null) {
+			return null;
+		}
+
+		// Search this container's contents
+		for (SoftPkg spd : getComponents()) {
+			if (softPkgId.equals(spd.getId())) {
+				return spd;
+			}
+		}
+
+		// Search child containers' contents
+		for (EObject child : eContents()) {
+			if (child instanceof SoftPkgRegistry) {
+				SoftPkg spd = ((SoftPkgRegistry) child).getSoftPkg(softPkgId);
+				if (spd != null) {
 					return spd;
 				}
 			}
@@ -238,9 +160,15 @@ public abstract class SoftPkgRegistryImpl extends EObjectImpl implements SoftPkg
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public EList<SoftPkg> getAllComponents() {
+		EList<SoftPkg> retVal = new BasicEList<>(getComponents());
+		TreeIterator<SoftPkgRegistry> iter = EcoreUtil.getAllContents(this, false);
+		while (iter.hasNext()) {
+			retVal.addAll(iter.next().getComponents());
+		}
+		return retVal;
 	}
 
 	/**
