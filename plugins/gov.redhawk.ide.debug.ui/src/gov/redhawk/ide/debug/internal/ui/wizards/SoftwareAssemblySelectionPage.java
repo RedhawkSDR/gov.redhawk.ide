@@ -33,15 +33,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
-import gov.redhawk.ide.sdr.WaveformsSubContainer;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-/**
- * 
- */
 public class SoftwareAssemblySelectionPage extends WizardPage {
 
 	private LaunchLocalWaveformWizard wizard;
@@ -54,9 +50,6 @@ public class SoftwareAssemblySelectionPage extends WizardPage {
 		this.wizard = wizard;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite main = new Composite(parent, SWT.None);
@@ -103,7 +96,7 @@ public class SoftwareAssemblySelectionPage extends WizardPage {
 
 				@Override
 				public IStatus validate(Object value) {
-					if (value instanceof WaveformsSubContainer) {
+					if (!(value instanceof SoftwareAssembly)) {
 						return ValidationStatus.error("Must select a waveform");
 					}
 					return ValidationStatus.ok();
