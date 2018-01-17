@@ -22,6 +22,7 @@ import junit.framework.TestCase;
  * The following operations are tested:
  * <ul>
  *   <li>{@link gov.redhawk.ide.sdr.SoftPkgRegistry#getSoftPkg(java.lang.String) <em>Get Soft Pkg</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.SoftPkgRegistry#getAllComponents() <em>Get All Components</em>}</li>
  * </ul>
  * </p>
  * @generated
@@ -75,7 +76,22 @@ public abstract class SoftPkgRegistryTest extends TestCase {
 	 */
 	public void testGetSoftPkg__String() {
 		// END GENERATED CODE
-		getFixture().getSoftPkg(null);
+		// Must be implemented by derived test classes
+		fail();
+		// BEGIN GENERATED CODE
+	}
+
+	/**
+	 * Tests the '{@link gov.redhawk.ide.sdr.SoftPkgRegistry#getAllComponents() <em>Get All Components</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gov.redhawk.ide.sdr.SoftPkgRegistry#getAllComponents()
+	 * @generated NOT
+	 */
+	public void testGetAllComponents() {
+		// END GENERATED CODE
+		// Must be implemented by derived test classes
+		fail();
 		// BEGIN GENERATED CODE
 	}
 

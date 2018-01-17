@@ -11,7 +11,9 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.tests;
 
-import gov.redhawk.ide.sdr.SdrFactory;
+import org.junit.Assert;
+
+import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
 import junit.textui.TestRunner;
 
@@ -31,6 +33,8 @@ public class ServicesContainerTest extends SoftPkgRegistryTest {
 	public static void main(String[] args) {
 		TestRunner.run(ServicesContainerTest.class);
 	}
+
+	private SdrRoot sdrRoot;
 
 	/**
 	 * Constructs a new Services Container test case with the given name.
@@ -57,11 +61,15 @@ public class ServicesContainerTest extends SoftPkgRegistryTest {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see junit.framework.TestCase#setUp()
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	protected void setUp() throws Exception {
-		setFixture(SdrFactory.eINSTANCE.createServicesContainer());
+		// END GENERATED CODE
+		this.sdrRoot = SdrTestsUtil.getSdrTestsSdrRoot();
+		setFixture(this.sdrRoot.getServicesContainer());
+		Assert.assertNotNull(this.fixture);
+		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -73,6 +81,41 @@ public class ServicesContainerTest extends SoftPkgRegistryTest {
 	@Override
 	protected void tearDown() throws Exception {
 		setFixture(null);
+	}
+
+	// END GENERATED CODE
+
+	@Override
+	public void testGetSoftPkg__String() {
+		Assert.assertNull(getFixture().getSoftPkg(null));
+		Assert.assertNull(getFixture().getSoftPkg("InvalidId"));
+
+		// Device in root container (no namespace)
+		Assert.assertNotNull(getFixture().getSoftPkg("DCE:09dfff50-60e9-4e3d-9c3b-dd3c13b12f35"));
+
+		// Namespaced device
+		getFixture().getSoftPkg("DCE:cc1b5f19-b14a-42b4-84db-aa99d14ba488");
+	}
+
+	@Override
+	public void testGetAllComponents() {
+		Assert.assertEquals(2, getFixture().getAllComponents().size());
+	}
+
+	public void testServicesContainer() {
+		Assert.assertNull(getFixture().getName());
+		Assert.assertEquals(1, getFixture().getComponents().size());
+		Assert.assertEquals(1, getFixture().getChildContainers().size());
+
+		ServicesContainer childContainer = getFixture().getChildContainers().get(0);
+		Assert.assertEquals("name", childContainer.getName());
+		Assert.assertEquals(0, childContainer.getComponents().size());
+		Assert.assertEquals(1, childContainer.getChildContainers().size());
+
+		childContainer = childContainer.getChildContainers().get(0);
+		Assert.assertEquals("space", childContainer.getName());
+		Assert.assertEquals(1, childContainer.getComponents().size());
+		Assert.assertEquals(0, childContainer.getChildContainers().size());
 	}
 
 } //ServicesContainerTest

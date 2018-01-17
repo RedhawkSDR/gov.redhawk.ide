@@ -11,12 +11,11 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.tests;
 
+import org.junit.Assert;
+
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.SdrRoot;
-import org.junit.Assert;
 import junit.textui.TestRunner;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -66,10 +65,11 @@ public class DevicesContainerTest extends SoftPkgRegistryTest {
 	 */
 	@Override
 	protected void setUp() throws Exception {
+		// END GENERATED CODE
 		this.sdrRoot = SdrTestsUtil.getSdrTestsSdrRoot();
-		this.sdrRoot.load(null);
 		setFixture(this.sdrRoot.getDevicesContainer());
 		Assert.assertNotNull(this.fixture);
+		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -83,12 +83,34 @@ public class DevicesContainerTest extends SoftPkgRegistryTest {
 		setFixture(null);
 	}
 
+	// END GENERATED CODE
+
+	@Override
+	public void testGetSoftPkg__String() {
+		Assert.assertNull(getFixture().getSoftPkg(null));
+		Assert.assertNull(getFixture().getSoftPkg("InvalidId"));
+
+		// Device in root container (no namespace)
+		Assert.assertNotNull(getFixture().getSoftPkg("DCE:28412a77-28d4-40aa-8b63-c9c6c9eb6e4a"));
+
+		// Namespaced device
+		getFixture().getSoftPkg("DCE:59a7d548-1a3a-11e5-85d9-3417ebc4aab5");
+	}
+
+	@Override
+	public void testGetAllComponents() {
+		Assert.assertEquals(2, getFixture().getAllComponents().size());
+	}
+
 	public void testDevicesContainer() {
-		final EList<SoftPkg> devices = getFixture().getComponents();
-		Assert.assertEquals(1, devices.size());
-		for (final SoftPkg softPkg : devices) {
-			Assert.assertNotNull(softPkg);
-		}
+		Assert.assertNull(getFixture().getName());
+		Assert.assertEquals(1, getFixture().getComponents().size());
+		Assert.assertEquals(1, getFixture().getChildContainers().size());
+
+		DevicesContainer childContainer = getFixture().getChildContainers().get(0);
+		Assert.assertEquals("rh", childContainer.getName());
+		Assert.assertEquals(1, childContainer.getComponents().size());
+		Assert.assertEquals(0, childContainer.getChildContainers().size());
 	}
 
 } //DevicesContainerTest

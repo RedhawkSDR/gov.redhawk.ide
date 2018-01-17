@@ -11,13 +11,11 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.tests;
 
+import org.junit.Assert;
+
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrRoot;
 import junit.textui.TestRunner;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-
-import org.eclipse.emf.common.util.EList;
-import org.junit.Assert;
 
 /**
  * <!-- begin-user-doc --> A test case for the model object '
@@ -65,10 +63,11 @@ public class ComponentsContainerTest extends SoftPkgRegistryTest {
 	 */
 	@Override
 	protected void setUp() throws Exception {
+		// END GENERATED CODE
 		this.sdrRoot = SdrTestsUtil.getSdrTestsSdrRoot();
-		this.sdrRoot.load(null);
 		setFixture(this.sdrRoot.getComponentsContainer());
 		Assert.assertNotNull(fixture);
+		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -82,13 +81,36 @@ public class ComponentsContainerTest extends SoftPkgRegistryTest {
 		setFixture(null);
 	}
 
-	public void testComponentsContainer() {
-		final EList<SoftPkg> components = getFixture().getComponents();
-		Assert.assertTrue(components.size() >= 3);
+	// END GENERATED CODE
+
+	@Override
+	public void testGetSoftPkg__String() {
+		Assert.assertNull(getFixture().getSoftPkg(null));
+		Assert.assertNull(getFixture().getSoftPkg("InvalidId"));
+
+		// Components in root container (no namespace)
 		Assert.assertNotNull(getFixture().getSoftPkg("DCE:e0cfeb24-1039-4b4c-93cb-33c42008d64f"));
 		Assert.assertNotNull(getFixture().getSoftPkg("DCE:859ebb11-4767-4e8e-874a-101e6efb3440"));
 		Assert.assertNotNull(getFixture().getSoftPkg("DCE:38279be0-4650-40c4-9084-352e6ebeedeb"));
-		Assert.assertNotNull(this.fixture);
+
+		// Namespaced component
+		Assert.assertNotNull(getFixture().getSoftPkg("DCE:c7dc1f48-16d3-11e5-9335-3417ebc4aab5"));
+	}
+
+	@Override
+	public void testGetAllComponents() {
+		Assert.assertEquals(6, getFixture().getAllComponents().size());
+	}
+
+	public void testComponentsContainer() {
+		Assert.assertNull(getFixture().getName());
+		Assert.assertEquals(5, getFixture().getComponents().size());
+		Assert.assertEquals(1, getFixture().getChildContainers().size());
+
+		ComponentsContainer childContainer = getFixture().getChildContainers().get(0);
+		Assert.assertEquals("rh", childContainer.getName());
+		Assert.assertEquals(1, childContainer.getComponents().size());
+		Assert.assertEquals(0, childContainer.getChildContainers().size());
 	}
 
 } // ComponentsContainerTest

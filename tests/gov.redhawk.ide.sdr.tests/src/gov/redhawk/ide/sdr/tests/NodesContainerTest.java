@@ -11,13 +11,12 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.tests;
 
+import org.junit.Assert;
+
 import gov.redhawk.ide.sdr.NodesContainer;
 import gov.redhawk.ide.sdr.SdrRoot;
-import org.junit.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -84,9 +83,11 @@ public class NodesContainerTest extends TestCase {
 	 */
 	@Override
 	protected void setUp() throws Exception {
+		// END GENERATED CODE
 		this.sdrRoot = SdrTestsUtil.getSdrTestsSdrRoot();
-		this.sdrRoot.load(null);
 		setFixture(this.sdrRoot.getNodesContainer());
+		Assert.assertNotNull(fixture);
+		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -100,12 +101,17 @@ public class NodesContainerTest extends TestCase {
 		setFixture(null);
 	}
 
-	public void testDevicesContainer() {
-		final EList<DeviceConfiguration> nodes = this.fixture.getNodes();
-		Assert.assertEquals(1, nodes.size());
-		for (final DeviceConfiguration devConfig : nodes) {
-			Assert.assertNotNull(devConfig);
-		}
+	// END GENERATED CODE
+
+	public void testNodesContainer() {
+		Assert.assertNull(getFixture().getName());
+		Assert.assertEquals(1, getFixture().getNodes().size());
+		Assert.assertEquals(1, getFixture().getChildContainers().size());
+
+		NodesContainer childContainer = getFixture().getChildContainers().get(0);
+		Assert.assertEquals("demo", childContainer.getName());
+		Assert.assertEquals(1, childContainer.getNodes().size());
+		Assert.assertEquals(0, childContainer.getChildContainers().size());
 	}
 
 } //NodesContainerTest
