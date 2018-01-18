@@ -22,21 +22,21 @@
         <filter comment="Changed return value from void to boolean" id="1141899266">
             <message_arguments>
                 <message_argument value="2.0"/>
-                <message_argument value="4.3"/>
+                <message_argument value="5.0"/>
                 <message_argument value="exportComponent(IProject, IScaExporter, IProgressMonitor)"/>
             </message_arguments>
         </filter>
         <filter comment="Changed return value from void to boolean" id="1141899266">
             <message_arguments>
                 <message_argument value="2.0"/>
-                <message_argument value="4.3"/>
+                <message_argument value="5.0"/>
                 <message_argument value="exportNode(IProject, IScaExporter, IProgressMonitor)"/>
             </message_arguments>
         </filter>
         <filter comment="Changed return value from void to boolean" id="1141899266">
             <message_arguments>
                 <message_argument value="2.0"/>
-                <message_argument value="4.3"/>
+                <message_argument value="5.0"/>
                 <message_argument value="exportWaveform(IProject, IScaExporter, IProgressMonitor)"/>
             </message_arguments>
         </filter>

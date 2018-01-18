@@ -1,23 +1,22 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.tests;
 
+import org.junit.Assert;
+
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.WaveformsContainer;
-import org.junit.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -84,9 +83,11 @@ public class WaveformsContainerTest extends TestCase {
 	 */
 	@Override
 	protected void setUp() throws Exception {
+		// END GENERATED CODE
 		this.sdrRoot = SdrTestsUtil.getSdrTestsSdrRoot();
-		this.sdrRoot.load(null);
 		setFixture(this.sdrRoot.getWaveformsContainer());
+		Assert.assertNotNull(fixture);
+		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -100,11 +101,17 @@ public class WaveformsContainerTest extends TestCase {
 		setFixture(null);
 	}
 
+	// END GENERATED CODE
+
 	public void testWaveformsContainer() {
-		final EList<SoftwareAssembly> waveforms = this.fixture.getWaveforms();
-		Assert.assertEquals(1, waveforms.size());
-		Assert.assertNotNull(waveforms.get(0));
-		Assert.assertEquals(this.sdrRoot, this.fixture.getSdrRoot());
+		Assert.assertNull(getFixture().getName());
+		Assert.assertEquals(1, getFixture().getWaveforms().size());
+		Assert.assertEquals(1, getFixture().getChildContainers().size());
+
+		WaveformsContainer childContainer = getFixture().getChildContainers().get(0);
+		Assert.assertEquals("demo", childContainer.getName());
+		Assert.assertEquals(1, childContainer.getWaveforms().size());
+		Assert.assertEquals(0, childContainer.getChildContainers().size());
 	}
 
 } //WaveformsContainerTest

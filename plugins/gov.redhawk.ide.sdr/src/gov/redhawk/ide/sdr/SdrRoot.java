@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr;
 
@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.resource.Resource;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getLoadStatus <em>Load Status</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getState <em>State</em>}</li>
@@ -41,7 +42,6 @@ import org.eclipse.emf.ecore.resource.Resource;
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDevFileSystemRoot <em>Dev File System Root</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDomFileSystemRoot <em>Dom File System Root</em>}</li>
  * </ul>
- * </p>
  *
  * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot()
  * @model
@@ -84,7 +84,6 @@ public interface SdrRoot extends EObject {
 
 	/**
 	 * Returns the value of the '<em><b>Components Container</b></em>' containment reference.
-	 * It is bidirectional and its opposite is '{@link gov.redhawk.ide.sdr.ComponentsContainer#getSdrRoot <em>Sdr Root</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Components Container</em>' containment reference isn't clear,
@@ -93,15 +92,13 @@ public interface SdrRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Components Container</em>' containment reference.
 	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_ComponentsContainer()
-	 * @see gov.redhawk.ide.sdr.ComponentsContainer#getSdrRoot
-	 * @model opposite="sdrRoot" containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	ComponentsContainer getComponentsContainer();
 
 	/**
 	 * Returns the value of the '<em><b>Waveforms Container</b></em>' containment reference.
-	 * It is bidirectional and its opposite is '{@link gov.redhawk.ide.sdr.WaveformsContainer#getSdrRoot <em>Sdr Root</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Waveforms Container</em>' containment reference isn't clear,
@@ -110,15 +107,13 @@ public interface SdrRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Waveforms Container</em>' containment reference.
 	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_WaveformsContainer()
-	 * @see gov.redhawk.ide.sdr.WaveformsContainer#getSdrRoot
-	 * @model opposite="sdrRoot" containment="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	WaveformsContainer getWaveformsContainer();
 
 	/**
 	 * Returns the value of the '<em><b>Devices Container</b></em>' containment reference.
-	 * It is bidirectional and its opposite is '{@link gov.redhawk.ide.sdr.DevicesContainer#getSdrRoot <em>Sdr Root</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Devices Container</em>' containment reference isn't clear,
@@ -127,15 +122,13 @@ public interface SdrRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Devices Container</em>' containment reference.
 	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_DevicesContainer()
-	 * @see gov.redhawk.ide.sdr.DevicesContainer#getSdrRoot
-	 * @model opposite="sdrRoot" containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	DevicesContainer getDevicesContainer();
 
 	/**
 	 * Returns the value of the '<em><b>Services Container</b></em>' containment reference.
-	 * It is bidirectional and its opposite is '{@link gov.redhawk.ide.sdr.ServicesContainer#getSdrRoot <em>Sdr Root</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Services Container</em>' containment reference isn't clear,
@@ -144,15 +137,13 @@ public interface SdrRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Services Container</em>' containment reference.
 	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_ServicesContainer()
-	 * @see gov.redhawk.ide.sdr.ServicesContainer#getSdrRoot
-	 * @model opposite="sdrRoot" containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	ServicesContainer getServicesContainer();
 
 	/**
 	 * Returns the value of the '<em><b>Nodes Container</b></em>' containment reference.
-	 * It is bidirectional and its opposite is '{@link gov.redhawk.ide.sdr.NodesContainer#getSdrRoot <em>Sdr Root</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Nodes Container</em>' containment reference isn't clear,
@@ -161,15 +152,13 @@ public interface SdrRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Nodes Container</em>' containment reference.
 	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_NodesContainer()
-	 * @see gov.redhawk.ide.sdr.NodesContainer#getSdrRoot
-	 * @model opposite="sdrRoot" containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	NodesContainer getNodesContainer();
 
 	/**
 	 * Returns the value of the '<em><b>Shared Libraries Container</b></em>' containment reference.
-	 * It is bidirectional and its opposite is '{@link gov.redhawk.ide.sdr.SharedLibrariesContainer#getSdrRoot <em>Sdr Root</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Shared Libraries Container</em>' containment reference isn't clear,
@@ -178,8 +167,7 @@ public interface SdrRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Shared Libraries Container</em>' containment reference.
 	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_SharedLibrariesContainer()
-	 * @see gov.redhawk.ide.sdr.SharedLibrariesContainer#getSdrRoot
-	 * @model opposite="sdrRoot" containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	SharedLibrariesContainer getSharedLibrariesContainer();

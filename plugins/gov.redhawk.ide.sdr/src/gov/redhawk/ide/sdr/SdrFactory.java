@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr;
 
@@ -49,14 +49,11 @@ public interface SdrFactory extends EFactory {
 	 */
 	ComponentsContainer createComponentsContainer();
 
-	/**
-	 * Returns a new object of class '<em>Components Sub Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Components Sub Container</em>'.
-	 * @generated
-	 */
-	ComponentsSubContainer createComponentsSubContainer();
+	// END GENERATED CODE
+
+	ComponentsContainer createComponentsContainer(String name);
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * Returns a new object of class '<em>Waveforms Container</em>'.
@@ -67,14 +64,11 @@ public interface SdrFactory extends EFactory {
 	 */
 	WaveformsContainer createWaveformsContainer();
 
-	/**
-	 * Returns a new object of class '<em>Waveforms Sub Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Waveforms Sub Container</em>'.
-	 * @generated
-	 */
-	WaveformsSubContainer createWaveformsSubContainer();
+	// END GENERATED CODE
+
+	WaveformsContainer createWaveformsContainer(String name);
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * Returns a new object of class '<em>Devices Container</em>'.
@@ -85,6 +79,12 @@ public interface SdrFactory extends EFactory {
 	 */
 	DevicesContainer createDevicesContainer();
 
+	// END GENERATED CODE
+
+	DevicesContainer createDevicesContainer(String name);
+
+	// BEGIN GENERATED CODE
+
 	/**
 	 * Returns a new object of class '<em>Services Container</em>'.
 	 * <!-- begin-user-doc -->
@@ -93,6 +93,12 @@ public interface SdrFactory extends EFactory {
 	 * @generated
 	 */
 	ServicesContainer createServicesContainer();
+
+	// END GENERATED CODE
+
+	ServicesContainer createServicesContainer(String name);
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * Returns a new object of class '<em>Shared Libraries Container</em>'.
@@ -103,6 +109,12 @@ public interface SdrFactory extends EFactory {
 	 */
 	SharedLibrariesContainer createSharedLibrariesContainer();
 
+	// END GENERATED CODE
+
+	SharedLibrariesContainer createSharedLibrariesContainer(String name);
+
+	// BEGIN GENERATED CODE
+
 	/**
 	 * Returns a new object of class '<em>Nodes Container</em>'.
 	 * <!-- begin-user-doc -->
@@ -112,14 +124,11 @@ public interface SdrFactory extends EFactory {
 	 */
 	NodesContainer createNodesContainer();
 
-	/**
-	 * Returns a new object of class '<em>Nodes Sub Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Nodes Sub Container</em>'.
-	 * @generated
-	 */
-	NodesSubContainer createNodesSubContainer();
+	// END GENERATED CODE
+
+	NodesContainer createNodesContainer(String name);
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * Returns the package supported by this factory.

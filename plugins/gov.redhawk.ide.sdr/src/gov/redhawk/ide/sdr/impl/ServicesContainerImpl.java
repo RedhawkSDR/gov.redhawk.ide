@@ -1,26 +1,26 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
 import gov.redhawk.ide.sdr.SdrPackage;
-import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
 
-import org.eclipse.emf.common.notify.Notification;
+import java.util.Collection;
 import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,14 +29,24 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.impl.ServicesContainerImpl#getSdrRoot <em>Sdr Root</em>}</li>
- * </ul>
  * </p>
+ * <ul>
+ *   <li>{@link gov.redhawk.ide.sdr.impl.ServicesContainerImpl#getChildContainers <em>Child Containers</em>}</li>
+ * </ul>
  *
  * @generated
  */
 public class ServicesContainerImpl extends SoftPkgRegistryImpl implements ServicesContainer {
+
+	/**
+	 * The cached value of the '{@link #getChildContainers() <em>Child Containers</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getChildContainers()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<ServicesContainer> childContainers;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -62,58 +72,11 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public SdrRoot getSdrRoot() {
-		if (eContainerFeatureID() != SdrPackage.SERVICES_CONTAINER__SDR_ROOT)
-			return null;
-		return (SdrRoot) eInternalContainer();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetSdrRoot(SdrRoot newSdrRoot, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject) newSdrRoot, SdrPackage.SERVICES_CONTAINER__SDR_ROOT, msgs);
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setSdrRoot(SdrRoot newSdrRoot) {
-		if (newSdrRoot != eInternalContainer() || (eContainerFeatureID() != SdrPackage.SERVICES_CONTAINER__SDR_ROOT && newSdrRoot != null)) {
-			if (EcoreUtil.isAncestor(this, newSdrRoot))
-				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
-			NotificationChain msgs = null;
-			if (eInternalContainer() != null)
-				msgs = eBasicRemoveFromContainer(msgs);
-			if (newSdrRoot != null)
-				msgs = ((InternalEObject) newSdrRoot).eInverseAdd(this, SdrPackage.SDR_ROOT__SERVICES_CONTAINER, SdrRoot.class, msgs);
-			msgs = basicSetSdrRoot(newSdrRoot, msgs);
-			if (msgs != null)
-				msgs.dispatch();
-		} else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SERVICES_CONTAINER__SDR_ROOT, newSdrRoot, newSdrRoot));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-			if (eInternalContainer() != null)
-				msgs = eBasicRemoveFromContainer(msgs);
-			return basicSetSdrRoot((SdrRoot) otherEnd, msgs);
+	public EList<ServicesContainer> getChildContainers() {
+		if (childContainers == null) {
+			childContainers = new EObjectContainmentEList<ServicesContainer>(ServicesContainer.class, this, SdrPackage.SERVICES_CONTAINER__CHILD_CONTAINERS);
 		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
+		return childContainers;
 	}
 
 	/**
@@ -124,8 +87,8 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-			return basicSetSdrRoot(null, msgs);
+		case SdrPackage.SERVICES_CONTAINER__CHILD_CONTAINERS:
+			return ((InternalEList< ? >) getChildContainers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -136,24 +99,10 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	 * @generated
 	 */
 	@Override
-	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
-		switch (eContainerFeatureID()) {
-		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-			return eInternalContainer().eInverseRemove(this, SdrPackage.SDR_ROOT__SERVICES_CONTAINER, SdrRoot.class, msgs);
-		}
-		return super.eBasicRemoveFromContainerFeature(msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-			return getSdrRoot();
+		case SdrPackage.SERVICES_CONTAINER__CHILD_CONTAINERS:
+			return getChildContainers();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -163,11 +112,13 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-			setSdrRoot((SdrRoot) newValue);
+		case SdrPackage.SERVICES_CONTAINER__CHILD_CONTAINERS:
+			getChildContainers().clear();
+			getChildContainers().addAll((Collection< ? extends ServicesContainer>) newValue);
 			return;
 		}
 		super.eSet(featureID, newValue);
@@ -181,8 +132,8 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-			setSdrRoot((SdrRoot) null);
+		case SdrPackage.SERVICES_CONTAINER__CHILD_CONTAINERS:
+			getChildContainers().clear();
 			return;
 		}
 		super.eUnset(featureID);
@@ -196,8 +147,8 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-			return getSdrRoot() != null;
+		case SdrPackage.SERVICES_CONTAINER__CHILD_CONTAINERS:
+			return childContainers != null && !childContainers.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

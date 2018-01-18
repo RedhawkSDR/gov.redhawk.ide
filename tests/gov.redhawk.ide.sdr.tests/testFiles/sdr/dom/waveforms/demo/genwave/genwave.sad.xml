@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softwareassembly PUBLIC "-//JTRS//DTD SCA V2.2.2 SAD//EN" "softwareassembly.dtd">
+<softwareassembly id="DCE:af148b7d-5164-4c8b-8fc9-89d70cb1a7a5" name="demo.genwave">
+  <componentfiles>
+    <componentfile id="SigGen_7a8b6b13-18f4-4731-a7b0-67ad325efa24" type="SPD">
+      <localfile name="/components/rh/SigGen/SigGen.spd.xml"/>
+    </componentfile>
+  </componentfiles>
+  <partitioning>
+    <componentplacement>
+      <componentfileref refid="SigGen_7a8b6b13-18f4-4731-a7b0-67ad325efa24"/>
+      <componentinstantiation id="SigGen_1">
+        <usagename>SigGen_1</usagename>
+        <findcomponent>
+          <namingservice name="SigGen_1"/>
+        </findcomponent>
+      </componentinstantiation>
+    </componentplacement>
+  </partitioning>
+  <assemblycontroller>
+    <componentinstantiationref refid="SigGen_1"/>
+  </assemblycontroller>
+  <externalports>
+    <port>
+      <usesidentifier>dataFloat_out</usesidentifier>
+      <componentinstantiationref refid="SigGen_1"/>
+    </port>
+  </externalports>
+</softwareassembly>

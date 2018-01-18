@@ -111,7 +111,7 @@ public class ExportToSdrRootJob extends Job {
 
 	/**
 	 * Gets the list of projects that were successfully exported.
-	 * @since 4.3
+	 * @since 5.0
 	 */
 	public List<IProject> getExportedProjects() {
 		return Collections.unmodifiableList(exportedProjects);

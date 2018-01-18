@@ -1,33 +1,25 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
-import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
-import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.NodesContainer;
-import gov.redhawk.ide.sdr.PropertyRegistry;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
 import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
-
-import java.util.Map;
-
-import mil.jpeojtrs.sca.prf.AbstractProperty;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
@@ -71,7 +63,7 @@ public class SdrSwitch< T > extends Switch<T> {
 	 * Checks whether this is a switch for the given package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @parameter ePackage the package in question.
+	 * @param ePackage the package in question.
 	 * @return whether this is a switch for the given package.
 	 * @generated
 	 */
@@ -103,19 +95,6 @@ public class SdrSwitch< T > extends Switch<T> {
 			if (result == null)
 				result = caseSoftPkgRegistry(componentsContainer);
 			if (result == null)
-				result = casePropertyRegistry(componentsContainer);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case SdrPackage.COMPONENTS_SUB_CONTAINER: {
-			ComponentsSubContainer componentsSubContainer = (ComponentsSubContainer) theEObject;
-			T result = caseComponentsSubContainer(componentsSubContainer);
-			if (result == null)
-				result = caseSoftPkgRegistry(componentsSubContainer);
-			if (result == null)
-				result = casePropertyRegistry(componentsSubContainer);
-			if (result == null)
 				result = defaultCase(theEObject);
 			return result;
 		}
@@ -126,20 +105,11 @@ public class SdrSwitch< T > extends Switch<T> {
 				result = defaultCase(theEObject);
 			return result;
 		}
-		case SdrPackage.WAVEFORMS_SUB_CONTAINER: {
-			WaveformsSubContainer waveformsSubContainer = (WaveformsSubContainer) theEObject;
-			T result = caseWaveformsSubContainer(waveformsSubContainer);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
 		case SdrPackage.DEVICES_CONTAINER: {
 			DevicesContainer devicesContainer = (DevicesContainer) theEObject;
 			T result = caseDevicesContainer(devicesContainer);
 			if (result == null)
 				result = caseSoftPkgRegistry(devicesContainer);
-			if (result == null)
-				result = casePropertyRegistry(devicesContainer);
 			if (result == null)
 				result = defaultCase(theEObject);
 			return result;
@@ -150,8 +120,6 @@ public class SdrSwitch< T > extends Switch<T> {
 			if (result == null)
 				result = caseSoftPkgRegistry(servicesContainer);
 			if (result == null)
-				result = casePropertyRegistry(servicesContainer);
-			if (result == null)
 				result = defaultCase(theEObject);
 			return result;
 		}
@@ -160,8 +128,6 @@ public class SdrSwitch< T > extends Switch<T> {
 			T result = caseSharedLibrariesContainer(sharedLibrariesContainer);
 			if (result == null)
 				result = caseSoftPkgRegistry(sharedLibrariesContainer);
-			if (result == null)
-				result = casePropertyRegistry(sharedLibrariesContainer);
 			if (result == null)
 				result = defaultCase(theEObject);
 			return result;
@@ -173,33 +139,9 @@ public class SdrSwitch< T > extends Switch<T> {
 				result = defaultCase(theEObject);
 			return result;
 		}
-		case SdrPackage.NODES_SUB_CONTAINER: {
-			NodesSubContainer nodesSubContainer = (NodesSubContainer) theEObject;
-			T result = caseNodesSubContainer(nodesSubContainer);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY: {
-			@SuppressWarnings("unchecked")
-			Map.Entry<String, AbstractProperty> stringToAbstractProperty = (Map.Entry<String, AbstractProperty>) theEObject;
-			T result = caseStringToAbstractProperty(stringToAbstractProperty);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case SdrPackage.PROPERTY_REGISTRY: {
-			PropertyRegistry propertyRegistry = (PropertyRegistry) theEObject;
-			T result = casePropertyRegistry(propertyRegistry);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
 		case SdrPackage.SOFT_PKG_REGISTRY: {
 			SoftPkgRegistry softPkgRegistry = (SoftPkgRegistry) theEObject;
 			T result = caseSoftPkgRegistry(softPkgRegistry);
-			if (result == null)
-				result = casePropertyRegistry(softPkgRegistry);
 			if (result == null)
 				result = defaultCase(theEObject);
 			return result;
@@ -240,21 +182,6 @@ public class SdrSwitch< T > extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Components Sub Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Components Sub Container</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseComponentsSubContainer(ComponentsSubContainer object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Waveforms Container</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -266,21 +193,6 @@ public class SdrSwitch< T > extends Switch<T> {
 	 * @generated
 	 */
 	public T caseWaveformsContainer(WaveformsContainer object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Waveforms Sub Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Waveforms Sub Container</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseWaveformsSubContainer(WaveformsSubContainer object) {
 		return null;
 	}
 
@@ -341,51 +253,6 @@ public class SdrSwitch< T > extends Switch<T> {
 	 * @generated
 	 */
 	public T caseNodesContainer(NodesContainer object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Nodes Sub Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Nodes Sub Container</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseNodesSubContainer(NodesSubContainer object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>String To Abstract Property</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>String To Abstract Property</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseStringToAbstractProperty(Map.Entry<String, AbstractProperty> object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Property Registry</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Property Registry</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T casePropertyRegistry(PropertyRegistry object) {
 		return null;
 	}
 

@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.tests;
 
@@ -390,9 +390,8 @@ public class SdrRootTest extends TestCase {
 	public void testDuplicateId_IDE_1121() throws URISyntaxException, IOException {
 		String[] sdrs = { "testFiles/sdr_dupComponent", "testFiles/sdr_dupDevice", "testFiles/sdr_dupService", "testFiles/sdr_dupWaveform",
 			"testFiles/sdr_dupNode", "testFiles/sdr_dupSharedLibrary" };
-		
-		outerLoop: 
-		for (String sdr : sdrs) {
+
+		outerLoop: for (String sdr : sdrs) {
 			SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(SdrTestsUtil.PLUGIN_ID, sdr);
 			IStatus loadStatus = sdrRoot.getLoadStatus();
 			Assert.assertTrue(loadStatus.getSeverity() == Status.ERROR);

@@ -11,7 +11,6 @@
 package gov.redhawk.ide.spd.internal.ui.editor.wizard;
 
 import org.eclipse.core.databinding.Binding;
-import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.emf.common.util.URI;
@@ -39,8 +38,6 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -57,15 +54,12 @@ import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter;
-import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionPropertyRefItemProvider;
 import gov.redhawk.ide.spd.internal.ui.parts.PropertyElementSelectorDialog;
 import gov.redhawk.ui.util.EMFEmptyStringToNullUpdateValueStrategy;
 import gov.redhawk.ui.validation.EmfValidationStatusProvider;
-import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.spd.Dependency;
 import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.PropertyRef;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SoftPkgRef;
 import mil.jpeojtrs.sca.spd.SpdFactory;
@@ -87,23 +81,17 @@ public class DependencyWizardPage extends WizardPage {
 
 	private PageBook detailsPageBook;
 
-	private Group propertyRefGroup;
-
-	private Group softPkgRefGroup;
-
-	private Text valueText;
-
-	private Text refIdText;
-
-	private TreeViewer softPkgRefViewer;
-
 	private ComboViewer dependencyTypeComboViewer;
 
+	private Group propertyRefGroup;
+	private Text refIdText;
+	private Text valueText;
+
+	private Group softPkgRefGroup;
+	private TreeViewer softPkgRefViewer;
+
 	private final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-
 	private final Resource dependencyResource;
-
-	private Text propNameText;
 
 	/**
 	 * @param pageName
@@ -122,9 +110,6 @@ public class DependencyWizardPage extends WizardPage {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
@@ -138,23 +123,13 @@ public class DependencyWizardPage extends WizardPage {
 		}
 	}
 
-	/**
-	 * @return the processor
-	 */
 	public Dependency getDependency() {
 		return this.dependency;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void createControl(final Composite parent) {
-
-		// Create an adapter factory that yields item providers.
-		//
 		this.adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
-
 		this.adapterFactory.addAdapterFactory(new ResourceItemProviderAdapterFactory());
 		this.adapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
 
@@ -168,25 +143,21 @@ public class DependencyWizardPage extends WizardPage {
 		dependencyKindCombo = new Combo(client, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
 		dependencyKindCombo.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 		dependencyKindCombo.setItems(new String[] { "Property Reference", "Shared Library (SoftPkg) Reference" });
-		dependencyKindCombo.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(final ModifyEvent e) {
-				if (dependencyKindCombo.getSelectionIndex() == 0) {
-					if (DependencyWizardPage.this.dependency.getPropertyRef() == null) {
-						DependencyWizardPage.this.dependency.setPropertyRef(SpdFactory.eINSTANCE.createPropertyRef());
-					}
-					DependencyWizardPage.this.dependency.setSoftPkgRef(null);
-					DependencyWizardPage.this.detailsPageBook.showPage(DependencyWizardPage.this.propertyRefGroup);
-					dependencyTypeComboViewer.setInput(new String[] { "allocation", "matching", "other" });
-				} else if (dependencyKindCombo.getSelectionIndex() == 1) {
-					DependencyWizardPage.this.dependency.setPropertyRef(null);
-					if (DependencyWizardPage.this.dependency.getSoftPkgRef() == null) {
-						DependencyWizardPage.this.dependency.setSoftPkgRef(SpdFactory.eINSTANCE.createSoftPkgRef());
-					}
-					DependencyWizardPage.this.detailsPageBook.showPage(DependencyWizardPage.this.softPkgRefGroup);
-					dependencyTypeComboViewer.setInput(new String[] { "other" });
+		dependencyKindCombo.addModifyListener(event -> {
+			if (dependencyKindCombo.getSelectionIndex() == 0) {
+				if (DependencyWizardPage.this.dependency.getPropertyRef() == null) {
+					DependencyWizardPage.this.dependency.setPropertyRef(SpdFactory.eINSTANCE.createPropertyRef());
 				}
+				DependencyWizardPage.this.dependency.setSoftPkgRef(null);
+				DependencyWizardPage.this.detailsPageBook.showPage(DependencyWizardPage.this.propertyRefGroup);
+				dependencyTypeComboViewer.setInput(new String[] { "allocation", "matching", "other" });
+			} else if (dependencyKindCombo.getSelectionIndex() == 1) {
+				DependencyWizardPage.this.dependency.setPropertyRef(null);
+				if (DependencyWizardPage.this.dependency.getSoftPkgRef() == null) {
+					DependencyWizardPage.this.dependency.setSoftPkgRef(SpdFactory.eINSTANCE.createSoftPkgRef());
+				}
+				DependencyWizardPage.this.detailsPageBook.showPage(DependencyWizardPage.this.softPkgRefGroup);
+				dependencyTypeComboViewer.setInput(new String[] { "other" });
 			}
 		});
 
@@ -242,7 +213,6 @@ public class DependencyWizardPage extends WizardPage {
 			}
 			return null;
 		}
-
 	}
 
 	private class ViewerToSoftPkgRef extends Converter {
@@ -289,26 +259,6 @@ public class DependencyWizardPage extends WizardPage {
 		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.refIdText), dependencyIdObservable, new EMFEmptyStringToNullUpdateValueStrategy(),
 			null);
 
-		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
-		strategy.setConverter(new Converter(PropertyRef.class, String.class) {
-			private final ImplementationDetailsSectionPropertyRefItemProvider itemPropertyRefItemProvider = new ImplementationDetailsSectionPropertyRefItemProvider(
-				DependencyWizardPage.this.adapterFactory);
-
-			@Override
-			public Object convert(final Object fromObject) {
-				final AbstractProperty prop = this.itemPropertyRefItemProvider.getProperty(DependencyWizardPage.this.dependency.getPropertyRef());
-				if (prop == null) {
-					return "";
-				} else {
-					return prop.getName();
-				}
-			}
-
-		});
-		@SuppressWarnings("unchecked")
-		IObservableValue< ? > dependencyIdObservable2 = propRefIdPath.observe(this.dependency);
-		this.context.bindValue(WidgetProperties.text(SWT.None).observe(this.propNameText), dependencyIdObservable2,
-			new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), strategy);
 		@SuppressWarnings("unchecked")
 		IObservableValue< ? > dependencyValueObservable = propValuePath.observe(this.dependency);
 		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.valueText), dependencyValueObservable,
@@ -355,10 +305,8 @@ public class DependencyWizardPage extends WizardPage {
 		final Button propertyRefBrowse = new Button(this.propertyRefGroup, SWT.PUSH);
 		propertyRefBrowse.setText("Browse...");
 		propertyRefBrowse.addSelectionListener(new SelectionAdapter() {
-
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-
 				final PropertyElementSelectorDialog dialog = new PropertyElementSelectorDialog(getShell());
 				final int result = dialog.open();
 				if (result == Window.OK) {
@@ -368,14 +316,7 @@ public class DependencyWizardPage extends WizardPage {
 					}
 				}
 			}
-
 		});
-
-		label = new Label(this.propertyRefGroup, SWT.None);
-		label.setText("Name:");
-		this.propNameText = new Text(this.propertyRefGroup, SWT.BORDER | SWT.READ_ONLY);
-		this.propNameText.setEnabled(false);
-		this.propNameText.setLayoutData(fieldTextFactory.span(2, 1).create());
 
 		label = new Label(this.propertyRefGroup, SWT.NULL);
 		label.setText("Value:");
@@ -383,11 +324,6 @@ public class DependencyWizardPage extends WizardPage {
 		this.valueText.setLayoutData(fieldTextFactory.span(2, 1).create());
 	}
 
-	/**
-	 * Sets the os.
-	 * 
-	 * @param os2 the os2
-	 */
 	public void setDependency(final Dependency dependency) {
 		this.dependencyResource.getContents().clear();
 		this.dependency = EcoreUtil.copy(dependency);

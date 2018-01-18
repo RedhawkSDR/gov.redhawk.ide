@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.provider;
 
@@ -125,29 +125,6 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link gov.redhawk.ide.sdr.ComponentsSubContainer} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ComponentsSubContainerItemProvider componentsSubContainerItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link gov.redhawk.ide.sdr.ComponentsSubContainer}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createComponentsSubContainerAdapter() {
-		if (componentsSubContainerItemProvider == null) {
-			componentsSubContainerItemProvider = new ComponentsSubContainerItemProvider(this);
-		}
-
-		return componentsSubContainerItemProvider;
-	}
-
-	/**
 	 * This keeps track of the one adapter used for all {@link gov.redhawk.ide.sdr.WaveformsContainer} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -168,29 +145,6 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 		}
 
 		return waveformsContainerItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link gov.redhawk.ide.sdr.WaveformsSubContainer} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected WaveformsSubContainerItemProvider waveformsSubContainerItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link gov.redhawk.ide.sdr.WaveformsSubContainer}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createWaveformsSubContainerAdapter() {
-		if (waveformsSubContainerItemProvider == null) {
-			waveformsSubContainerItemProvider = new WaveformsSubContainerItemProvider(this);
-		}
-
-		return waveformsSubContainerItemProvider;
 	}
 
 	/**
@@ -283,52 +237,6 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 		}
 
 		return nodesContainerItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link gov.redhawk.ide.sdr.NodesSubContainer} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected NodesSubContainerItemProvider nodesSubContainerItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link gov.redhawk.ide.sdr.NodesSubContainer}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createNodesSubContainerAdapter() {
-		if (nodesSubContainerItemProvider == null) {
-			nodesSubContainerItemProvider = new NodesSubContainerItemProvider(this);
-		}
-
-		return nodesSubContainerItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link java.util.Map.Entry} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected StringToAbstractPropertyItemProvider stringToAbstractPropertyItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link java.util.Map.Entry}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createStringToAbstractPropertyAdapter() {
-		if (stringToAbstractPropertyItemProvider == null) {
-			stringToAbstractPropertyItemProvider = new StringToAbstractPropertyItemProvider(this);
-		}
-
-		return stringToAbstractPropertyItemProvider;
 	}
 
 	/**
@@ -440,12 +348,8 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 			sdrRootItemProvider.dispose();
 		if (componentsContainerItemProvider != null)
 			componentsContainerItemProvider.dispose();
-		if (componentsSubContainerItemProvider != null)
-			componentsSubContainerItemProvider.dispose();
 		if (waveformsContainerItemProvider != null)
 			waveformsContainerItemProvider.dispose();
-		if (waveformsSubContainerItemProvider != null)
-			waveformsSubContainerItemProvider.dispose();
 		if (devicesContainerItemProvider != null)
 			devicesContainerItemProvider.dispose();
 		if (servicesContainerItemProvider != null)
@@ -454,10 +358,6 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 			sharedLibrariesContainerItemProvider.dispose();
 		if (nodesContainerItemProvider != null)
 			nodesContainerItemProvider.dispose();
-		if (nodesSubContainerItemProvider != null)
-			nodesSubContainerItemProvider.dispose();
-		if (stringToAbstractPropertyItemProvider != null)
-			stringToAbstractPropertyItemProvider.dispose();
 	}
 
 }

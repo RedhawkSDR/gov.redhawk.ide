@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.provider;
 
@@ -16,14 +16,17 @@ import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
+import org.eclipse.emf.edit.provider.ViewerNotification;
+import gov.redhawk.ide.sdr.SdrPackage;
+import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 
 /**
  * This is the item provider adapter for a {@link gov.redhawk.ide.sdr.SharedLibrariesContainer} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
- * @since 5.0
  */
 public class SharedLibrariesContainerItemProvider extends SoftPkgRegistryItemProvider {
 	/**
@@ -52,14 +55,44 @@ public class SharedLibrariesContainerItemProvider extends SoftPkgRegistryItemPro
 	}
 
 	/**
-	 * This returns SharedLibrariesContainer.gif.
+	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
+	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
+	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
+	public Collection< ? extends EStructuralFeature> getChildrenFeatures(Object object) {
+		if (childrenFeatures == null) {
+			super.getChildrenFeatures(object);
+			childrenFeatures.add(SdrPackage.Literals.SHARED_LIBRARIES_CONTAINER__CHILD_CONTAINERS);
+		}
+		return childrenFeatures;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	protected EStructuralFeature getChildFeature(Object object, Object child) {
+		// Check the type of the specified child object and return the proper feature to use for
+		// adding (see {@link AddCommand}) it as a child.
+
+		return super.getChildFeature(object, child);
+	}
+
+	/**
+	 * This returns SharedLibrariesContainer.gif.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/SharedLibrariesContainer"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/SharedLibrariesContainer.png"));
 	}
 
 	/**
@@ -70,7 +103,10 @@ public class SharedLibrariesContainerItemProvider extends SoftPkgRegistryItemPro
 	 */
 	@Override
 	public String getText(Object object) {
-		return "Shared Libraries";
+		// END GENERATED CODE
+		String label = ((SharedLibrariesContainer) object).getName();
+		return (label == null || label.length() == 0) ? getString("_UI_SharedLibrariesContainer_type") : label;
+		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -83,6 +119,12 @@ public class SharedLibrariesContainerItemProvider extends SoftPkgRegistryItemPro
 	@Override
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
+
+		switch (notification.getFeatureID(SharedLibrariesContainer.class)) {
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__CHILD_CONTAINERS:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
+			return;
+		}
 		super.notifyChanged(notification);
 	}
 

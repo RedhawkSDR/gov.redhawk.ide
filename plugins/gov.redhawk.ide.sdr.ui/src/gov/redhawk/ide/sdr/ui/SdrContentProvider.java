@@ -10,25 +10,34 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui;
 
+import java.util.Arrays;
+
+import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
+import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
+import org.eclipse.emf.transaction.RunnableWithResult;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.ui.provider.TransactionalAdapterFactoryContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+
 import gov.redhawk.eclipsecorba.idl.expressions.util.ExpressionsAdapterFactory;
 import gov.redhawk.eclipsecorba.idl.operations.provider.OperationsItemProviderAdapterFactory;
 import gov.redhawk.eclipsecorba.idl.provider.IdlItemProviderAdapterFactory;
 import gov.redhawk.eclipsecorba.idl.types.provider.TypesItemProviderAdapterFactory;
 import gov.redhawk.eclipsecorba.library.provider.RepositoryItemProviderAdapterFactory;
+import gov.redhawk.ide.sdr.NodesContainer;
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.SoftPkgRegistry;
+import gov.redhawk.ide.sdr.WaveformsContainer;
 import gov.redhawk.ide.sdr.provider.SdrItemProviderAdapterFactory;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.Descriptor;
 import mil.jpeojtrs.sca.spd.SoftPkg;
-
-import org.eclipse.emf.common.notify.AdapterFactory;
-import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
-import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
-import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.emf.transaction.ui.provider.TransactionalAdapterFactoryContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.1
@@ -66,31 +75,123 @@ public class SdrContentProvider extends TransactionalAdapterFactoryContentProvid
 
 	@Override
 	public Object getParent(final Object object) {
-		if (this.input instanceof SdrRoot) {
-			final SdrRoot root = (SdrRoot) this.input;
-			if (object instanceof SoftPkg) {
-				ComponentType type = ComponentType.OTHER;
-				final SoftPkg spd = (SoftPkg) object;
-				final Descriptor desc = spd.getDescriptor();
-				if (desc != null) {
-					final SoftwareComponent scd = desc.getComponent();
-					type = SoftwareComponent.Util.getWellKnownComponentType(scd);
-				}
-				switch (type) {
-				case DEVICE_MANAGER:
-					return root.getNodesContainer();
-				case DEVICE:
-					return root.getDevicesContainer();
-				case SERVICE:
-					return root.getServicesContainer();
-				case RESOURCE:
-				default:
-					return root.getComponentsContainer();
-				}
-			}
+		if (!(this.input instanceof SdrRoot)) {
+			return super.getParent(object);
 		}
-		// TODO Auto-generated method stub
+		final SdrRoot root = (SdrRoot) this.input;
+
+		if (object instanceof SoftPkg) {
+			ComponentType type = ComponentType.OTHER;
+			final SoftPkg spd = (SoftPkg) object;
+			final Descriptor desc = spd.getDescriptor();
+			if (desc != null) {
+				final SoftwareComponent scd = desc.getComponent();
+				type = SoftwareComponent.Util.getWellKnownComponentType(scd);
+			}
+			switch (type) {
+			case DEVICE:
+				return getParentOf(root.getDevicesContainer(), spd);
+			case SERVICE:
+				return getParentOf(root.getServicesContainer(), spd);
+			case RESOURCE:
+				boolean isExecutable = run(new RunnableWithResult.Impl<Boolean>() {
+					public void run() {
+						setResult(spd.getImplementation().size() > 0 && spd.getImplementation().get(0).isExecutable());
+					}
+				});
+				if (isExecutable) {
+					return getParentOf(root.getComponentsContainer(), spd);
+				} else {
+					return getParentOf(root.getSharedLibrariesContainer(), spd);
+				}
+			default:
+				return getParentOf(root.getComponentsContainer(), spd);
+			}
+		} else if (object instanceof SoftwareAssembly) {
+			final SoftwareAssembly sad = (SoftwareAssembly) object;
+			return getParentOf(root, sad);
+		} else if (object instanceof DeviceConfiguration) {
+			final DeviceConfiguration dcd = (DeviceConfiguration) object;
+			return getParentOf(root, dcd);
+		}
+
 		return super.getParent(object);
+	}
+
+	private SoftPkgRegistry getParentOf(SoftPkgRegistry root, SoftPkg spd) {
+		return run(new RunnableWithResult.Impl<SoftPkgRegistry>() {
+			public void run() {
+				if (spd.getName() == null) {
+					return;
+				}
+
+				SoftPkgRegistry container = root;
+				String[] segments = spd.getName().split("\\.");
+				segments = Arrays.copyOf(segments, segments.length - 1);
+				nextSegment: for (String segment : segments) {
+					for (EObject childContent : container.eContents()) {
+						if (!(childContent instanceof SoftPkgRegistry)) {
+							continue;
+						}
+						SoftPkgRegistry childContainer = (SoftPkgRegistry) childContent;
+						if (segment.equals(childContainer.getName())) {
+							container = childContainer;
+							continue nextSegment;
+						}
+					}
+					return;
+				}
+				setResult(container);
+			}
+		});
+	}
+
+	private WaveformsContainer getParentOf(SdrRoot root, SoftwareAssembly sad) {
+		return run(new RunnableWithResult.Impl<WaveformsContainer>() {
+			public void run() {
+				if (sad.getName() == null) {
+					return;
+				}
+
+				WaveformsContainer container = root.getWaveformsContainer();
+				String[] segments = sad.getName().split("\\.");
+				segments = Arrays.copyOf(segments, segments.length - 1);
+				nextSegment: for (String segment : segments) {
+					for (WaveformsContainer childContainer : container.getChildContainers()) {
+						if (segment.equals(childContainer.getName())) {
+							container = childContainer;
+							continue nextSegment;
+						}
+					}
+					return;
+				}
+				setResult(container);
+			}
+		});
+	}
+
+	private NodesContainer getParentOf(SdrRoot root, DeviceConfiguration dcd) {
+		return run(new RunnableWithResult.Impl<NodesContainer>() {
+			public void run() {
+				if (dcd.getName() == null) {
+					return;
+				}
+
+				NodesContainer container = root.getNodesContainer();
+				String[] segments = dcd.getName().split("\\.");
+				segments = Arrays.copyOf(segments, segments.length - 1);
+				nextSegment: for (String segment : segments) {
+					for (NodesContainer childContainer : container.getChildContainers()) {
+						if (segment.equals(childContainer.getName())) {
+							container = childContainer;
+							continue nextSegment;
+						}
+					}
+					return;
+				}
+				setResult(container);
+			}
+		});
 	}
 
 	@Override

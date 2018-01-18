@@ -1,37 +1,32 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
-import org.eclipse.emf.ecore.util.FeatureMap;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
-import mil.jpeojtrs.sca.prf.AbstractProperty;
-import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.SpdPackage;
-import mil.jpeojtrs.sca.util.DceUuidUtil;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
-import mil.jpeojtrs.sca.util.collections.FeatureMapList;
 
 /**
  * <!-- begin-user-doc -->
@@ -40,14 +35,33 @@ import mil.jpeojtrs.sca.util.collections.FeatureMapList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
+ *   <li>{@link gov.redhawk.ide.sdr.impl.SoftPkgRegistryImpl#getName <em>Name</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.impl.SoftPkgRegistryImpl#getComponents <em>Components</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
-public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implements SoftPkgRegistry {
+public abstract class SoftPkgRegistryImpl extends EObjectImpl implements SoftPkgRegistry {
+	/**
+	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String NAME_EDEFAULT = null;
+	/**
+	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String name = NAME_EDEFAULT;
 	/**
 	 * The cached value of the '{@link #getComponents() <em>Components</em>}' reference list.
 	 * <!-- begin-user-doc -->
@@ -82,6 +96,27 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setName(String newName) {
+		String oldName = name;
+		name = newName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SOFT_PKG_REGISTRY__NAME, oldName, name));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public EList<SoftPkg> getComponents() {
 		if (components == null) {
@@ -89,90 +124,6 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 		}
 		return components;
 	}
-
-	// END GENERATED CODE
-
-	private Adapter mapAdapter = new AdapterImpl() {
-		@Override
-		public void notifyChanged(org.eclipse.emf.common.notify.Notification msg) {
-			switch (msg.getFeatureID(SoftPkgRegistry.class)) {
-			case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
-				switch (msg.getEventType()) {
-				case Notification.ADD:
-					if (msg.getNewValue() instanceof SoftPkg) {
-						SoftPkg newValue = (SoftPkg) msg.getNewValue();
-						addSpd(newValue);
-					}
-					break;
-				case Notification.ADD_MANY:
-					if (msg.getNewValue() instanceof List< ? >) {
-						List< ? > newValues = (List< ? >) msg.getNewValue();
-						for (Object o : newValues) {
-							if (o instanceof SoftPkg) {
-								SoftPkg newValue = (SoftPkg) o;
-								addSpd(newValue);
-							}
-						}
-					}
-					break;
-				case Notification.REMOVE:
-					if (msg.getOldValue() instanceof SoftPkg) {
-						SoftPkg oldValue = (SoftPkg) msg.getOldValue();
-						removeSpd(oldValue);
-					}
-					break;
-				case Notification.REMOVE_MANY:
-					if (msg.getOldValue() instanceof List) {
-						List< ? > oldValues = (List< ? >) msg.getOldValue();
-						for (Object o : oldValues) {
-							if (o instanceof SoftPkg) {
-								SoftPkg newValue = (SoftPkg) o;
-								removeSpd(newValue);
-							}
-						}
-					}
-					break;
-				default:
-					break;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-	};
-	{
-		eAdapters().add(mapAdapter);
-	}
-
-	private static final EStructuralFeature[] PATH_SPD_TO_PROPERTIES_MAP = { SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
-		SpdPackage.Literals.PROPERTY_FILE__PROPERTIES, PrfPackage.Literals.PROPERTIES__PROPERTIES };
-
-	private void addSpd(SoftPkg spd) {
-		FeatureMap properties = ScaEcoreUtils.getFeature(spd, PATH_SPD_TO_PROPERTIES_MAP);
-		if (properties == null) {
-			return;
-		}
-		for (AbstractProperty prop : new FeatureMapList<AbstractProperty>(properties, AbstractProperty.class)) {
-			if (DceUuidUtil.isValid(prop.getId())) {
-				getProperties().put(prop.getId(), prop);
-			}
-		}
-	}
-
-	private void removeSpd(SoftPkg spd) {
-		FeatureMap properties = ScaEcoreUtils.getFeature(spd, PATH_SPD_TO_PROPERTIES_MAP);
-		if (properties == null) {
-			return;
-		}
-		for (AbstractProperty prop : new FeatureMapList<AbstractProperty>(properties, AbstractProperty.class)) {
-			if (DceUuidUtil.isValid(prop.getId())) {
-				getProperties().remove(prop.getId());
-			}
-		}
-	}
-
-	// BEGIN GENERATED CODE
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -182,9 +133,22 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	@Override
 	public SoftPkg getSoftPkg(String softPkgId) {
 		// END GENERATED CODE
-		if (softPkgId != null) {
-			for (SoftPkg spd : getComponents()) {
-				if (softPkgId.equals(spd.getId())) {
+		if (softPkgId == null) {
+			return null;
+		}
+
+		// Search this container's contents
+		for (SoftPkg spd : getComponents()) {
+			if (softPkgId.equals(spd.getId())) {
+				return spd;
+			}
+		}
+
+		// Search child containers' contents
+		for (EObject child : eContents()) {
+			if (child instanceof SoftPkgRegistry) {
+				SoftPkg spd = ((SoftPkgRegistry) child).getSoftPkg(softPkgId);
+				if (spd != null) {
 					return spd;
 				}
 			}
@@ -196,11 +160,27 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public EList<SoftPkg> getAllComponents() {
+		EList<SoftPkg> retVal = new BasicEList<>(getComponents());
+		TreeIterator<SoftPkgRegistry> iter = EcoreUtil.getAllContents(this, false);
+		while (iter.hasNext()) {
+			retVal.addAll(iter.next().getComponents());
+		}
+		return retVal;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
+		case SdrPackage.SOFT_PKG_REGISTRY__NAME:
+			return getName();
 		case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
 			return getComponents();
 		}
@@ -216,6 +196,9 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
+		case SdrPackage.SOFT_PKG_REGISTRY__NAME:
+			setName((String) newValue);
+			return;
 		case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
 			getComponents().clear();
 			getComponents().addAll((Collection< ? extends SoftPkg>) newValue);
@@ -232,6 +215,9 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
+		case SdrPackage.SOFT_PKG_REGISTRY__NAME:
+			setName(NAME_EDEFAULT);
+			return;
 		case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
 			getComponents().clear();
 			return;
@@ -247,10 +233,29 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
+		case SdrPackage.SOFT_PKG_REGISTRY__NAME:
+			return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 		case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
 			return components != null && !components.isEmpty();
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy())
+			return super.toString();
+
+		StringBuffer result = new StringBuffer(super.toString());
+		result.append(" (name: ");
+		result.append(name);
+		result.append(')');
+		return result.toString();
 	}
 
 } //SoftPkgRegistryImpl

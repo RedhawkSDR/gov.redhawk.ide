@@ -166,9 +166,9 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			@Override
 			public void execute() {
 				MultiStatus status = new MultiStatus(ScaDebugUiPlugin.PLUGIN_ID, 0, "Invalid SPD file(s) were not added to the sandbox", null);
-				List<SoftPkg> spds = new ArrayList<>(SdrResourceFactoryProvider.this.root.getComponentsContainer().getComponents());
-				spds.addAll(SdrResourceFactoryProvider.this.root.getDevicesContainer().getComponents());
-				spds.addAll(SdrResourceFactoryProvider.this.root.getServicesContainer().getComponents());
+				List<SoftPkg> spds = new ArrayList<>(SdrResourceFactoryProvider.this.root.getComponentsContainer().getAllComponents());
+				spds.addAll(SdrResourceFactoryProvider.this.root.getDevicesContainer().getAllComponents());
+				spds.addAll(SdrResourceFactoryProvider.this.root.getServicesContainer().getAllComponents());
 				for (final SoftPkg spd : spds) {
 					try {
 						SpdResourceFactory resFactory = SpdResourceFactory.createResourceFactory(spd);
