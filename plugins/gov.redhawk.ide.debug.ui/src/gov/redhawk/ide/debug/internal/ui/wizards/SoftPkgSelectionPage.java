@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
-import gov.redhawk.ide.sdr.ComponentsSubContainer;
+import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter;
@@ -95,7 +95,7 @@ public class SoftPkgSelectionPage extends WizardPage {
 							}
 						}
 					}
-				} else if (element instanceof ComponentsSubContainer) {
+				} else if (element instanceof SoftPkgRegistry) {
 					return true;
 				}
 				return false;
@@ -130,7 +130,7 @@ public class SoftPkgSelectionPage extends WizardPage {
 
 				@Override
 				public IStatus validate(Object value) {
-					if (value instanceof ComponentsSubContainer) {
+					if (!(value instanceof SoftPkg)) {
 						return ValidationStatus.error("Must select an spd");
 					}
 					return ValidationStatus.ok();

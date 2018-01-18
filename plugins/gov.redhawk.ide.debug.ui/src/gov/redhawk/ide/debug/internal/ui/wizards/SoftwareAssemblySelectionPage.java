@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
-import gov.redhawk.ide.sdr.WaveformsSubContainer;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter;
@@ -98,7 +97,7 @@ public class SoftwareAssemblySelectionPage extends WizardPage {
 
 				@Override
 				public IStatus validate(Object value) {
-					if (value instanceof WaveformsSubContainer) {
+					if (!(value instanceof SoftwareAssembly)) {
 						return ValidationStatus.error("Must select a waveform");
 					}
 					return ValidationStatus.ok();

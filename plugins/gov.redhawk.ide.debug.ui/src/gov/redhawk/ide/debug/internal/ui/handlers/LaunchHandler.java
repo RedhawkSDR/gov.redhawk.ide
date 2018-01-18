@@ -15,7 +15,6 @@ import gov.redhawk.ide.debug.internal.ui.wizards.LaunchComponentWizard;
 import gov.redhawk.ide.debug.internal.ui.wizards.LaunchLocalWaveformWizard;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
-import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
@@ -158,15 +157,6 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 			} else {
 				wizard.setWindowTitle("Launch Component");
 				wizard.setSpdContainer(root.getComponentsContainer());
-			}
-		} else if (element instanceof ComponentsSubContainer) {
-			ComponentsSubContainer container = (ComponentsSubContainer) element;
-			if (!(container.getComponents().isEmpty())) {
-				setLaunchValues(event, wizard, container.getComponents().get(0));
-			} else if (!(container.getSubContainers().isEmpty())) {
-				setLaunchValues(event, wizard, container.getSubContainers().get(0));
-			} else {
-				throw new CoreException(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Unable to determine type of launch element"));
 			}
 		}
 	}
