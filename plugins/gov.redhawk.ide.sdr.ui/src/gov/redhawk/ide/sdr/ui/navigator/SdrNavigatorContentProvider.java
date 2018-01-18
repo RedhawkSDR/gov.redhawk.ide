@@ -43,6 +43,14 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 	}
 
 	@Override
+	public Object[] getChildren(Object object) {
+		if (object instanceof SoftPkg) {
+			return EMPTY_OBJECTS; 
+		}
+		return super.getChildren(object);
+	}
+
+	@Override
 	public boolean hasChildren(final Object object) {
 		if (object instanceof SoftPkg) {
 			return false;
