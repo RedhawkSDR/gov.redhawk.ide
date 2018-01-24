@@ -30,8 +30,6 @@ public class ServiceUtils {
 
 	/** create REDHAWK Service in Workspace using default location */
 	public static void createServiceProject(SWTBot bot, String serviceProjectName, String interfaceName, String progLanguage) {
-		SWTBotShell origShell = bot.activeShell();
-
 		StandardTestActions.configurePyDev(bot);
 
 		bot.menu("File").menu("New").menu("Project...").click();
@@ -51,11 +49,7 @@ public class ServiceUtils {
 		wizardBot.button("Finish").click();
 
 		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
-
-		// For some reason, the main shell doesn't always receive focus back when using SWTBot
-		if (!origShell.isActive()) {
-			origShell.activate();
-		}
+		StandardTestActions.forceMainShellActive();
 	}
 
 	public static void setServiceIdl(SWTBot bot, String interfaceName) {

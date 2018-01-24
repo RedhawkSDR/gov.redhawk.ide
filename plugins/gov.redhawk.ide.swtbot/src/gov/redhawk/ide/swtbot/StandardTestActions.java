@@ -72,6 +72,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.intro.IIntroManager;
@@ -706,6 +707,19 @@ public final class StandardTestActions {
 		bot.closeAllEditors();
 
 		StandardTestActions.clearWorkspace();
+	}
+
+	/**
+	 * Per https://wiki.eclipse.org/SWTBot/Troubleshooting, there appears to be a known issue with window focus when
+	 * using SWTBot. SWTBot will throw a {@link WidgetNotFoundException} when trying to find the active shell. SWTBot
+	 * recommends forcing activation of the workbench window's shell at the beginning of a test, which is what this
+	 * method does.
+	 */
+	public static void forceMainShellActive() {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		workbench.getDisplay().syncExec(() -> {
+			workbench.getActiveWorkbenchWindow().getShell().forceActive();
+		});
 	}
 
 	/**
