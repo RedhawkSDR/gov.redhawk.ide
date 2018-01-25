@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.variables.tests;
 
+import static org.hamcrest.core.StringContains.containsString;
+import static org.hamcrest.core.IsNot.not;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -57,36 +60,114 @@ public class ExecParamResolverTest {
 	}
 
 	/**
-	 * Ensure that non-null execparams get expanded when launching a component.
-	 * IDE-1006
+	 * IDE-1006 Ensure that non-null 'execparam' kind properties are passed on the command line to the component
 	 */
 	@Test
-	public void execparams_expanded() throws CoreException {
+	public void execparamsWithValue() throws CoreException {
 		final String EXEC_PARAM_SPD_PATH = "resources/execparam/execparam.spd.xml";
 		final String IMPL_NAME = "cpp";
 		String execParams = common(EXEC_PARAM_SPD_PATH, IMPL_NAME);
 
 		Assert.assertNotNull(execParams);
-		Assert.assertTrue("Didn't find exec param 'with_value'", execParams.contains("with_value \"my string\""));
-		Assert.assertTrue("Didn't find exec param 'with_value_config_too'", execParams.contains("with_value_config_too \"my other value\""));
-		Assert.assertFalse("Property 'no_value' should not have been passed", execParams.contains("no_value"));
-		Assert.assertFalse("Property 'no_value_config_too' should not have been passed", execParams.contains("no_value_config_too"));
+		for (String substring : new String[] { //
+			"boolean_withvalue \"true\"", "boolean_withvalue_configtoo \"true\"", //
+			"char_withvalue \"a\"", "char_withvalue_configtoo \"a\"", //
+			"double_withvalue \"1250.0\"", "double_withvalue_configtoo \"1250.0\"", //
+			"float_withvalue \"25000.0\"", "float_withvalue_configtoo \"25000.0\"", //
+			"short_withvalue \"-1\"", "short_withvalue_configtoo \"-1\"", //
+			"long_withvalue \"-2\"", "long_withvalue_configtoo \"-2\"", //
+			"longlong_withvalue \"-3\"", "longlong_withvalue_configtoo \"-3\"", //
+			"octet_withvalue \"1\"", "octet_withvalue_configtoo \"1\"", //
+			"string_withvalue \"abc\"", "string_withvalue_configtoo \"abc\"", //
+			"ulong_withvalue \"2\"", "ulong_withvalue_configtoo \"2\"", //
+			"ulonglong_withvalue \"3\"", "ulonglong_withvalue_configtoo \"3\"", //
+			"ushort_withvalue \"4\"", "ushort_withvalue_configtoo \"4\"" }) {
+			Assert.assertThat(execParams, containsString(substring));
+		}
 	}
 
 	/**
-	 * Ensure that non-null commandline 'property' kinds get expanded when launching a component.
-	 * IDE-1392
+	 * IDE-1006 Ensure that null 'execparam' kind properties are not passed on the command line to the component
+	 */
+	@Test
+	public void execparamsWithoutValue() throws CoreException {
+		final String EXEC_PARAM_SPD_PATH = "resources/execparam/execparam.spd.xml";
+		final String IMPL_NAME = "cpp";
+		String execParams = common(EXEC_PARAM_SPD_PATH, IMPL_NAME);
+
+		Assert.assertNotNull(execParams);
+		for (String substring : new String[] { //
+			"boolean_novalue", "boolean_novalue_configtoo", //
+			"char_novalue", "char_novalue_configtoo", //
+			"double_novalue", "double_novalue_configtoo", //
+			"float_novalue", "float_novalue_configtoo", //
+			"short_novalue", "short_novalue_configtoo", //
+			"long_novalue", "long_novalue_configtoo", //
+			"longlong_novalue", "longlong_novalue_configtoo", //
+			"octet_novalue", "octet_novalue_configtoo", //
+			"string_novalue", "string_novalue_configtoo", //
+			"ulong_novalue", "ulong_novalue_configtoo", //
+			"ulonglong_novalue", "ulonglong_novalue_configtoo", //
+			"ushort_novalue", "ushort_novalue_configtoo" }) {
+			Assert.assertThat(execParams, not(containsString(substring)));
+		}
+	}
+
+	/**
+	 * IDE-1392 Ensure that non-null 'commandline=true' 'property' kind properties are passed on the command line to
+	 * the component
 	 * @throws CoreException
 	 */
 	@Test
-	public void commandline_properties_expanded() throws CoreException {
+	public void commandlineWithValue() throws CoreException {
 		final String EXEC_PARAM_SPD_PATH = "resources/commandline/commandline.spd.xml";
 		final String IMPL_NAME = "cpp";
 		String execParams = common(EXEC_PARAM_SPD_PATH, IMPL_NAME);
 
 		Assert.assertNotNull(execParams);
-		Assert.assertTrue("Didn't find exec param 'commandline_property_with_value'",
-			execParams.contains("commandline_property_with_value \"commandline attribute\""));
-		Assert.assertFalse("Property 'commandline_property_no_value' should not have been passed", execParams.contains("commandline_property_no_value"));
+		for (String substring : new String[] { //
+			"boolean_withvalue \"true\"", //
+			"char_withvalue \"a\"", //
+			"double_withvalue \"1250.0\"", //
+			"float_withvalue \"25000.0\"", //
+			"short_withvalue \"-1\"", //
+			"long_withvalue \"-2\"", //
+			"longlong_withvalue \"-3\"", //
+			"octet_withvalue \"1\"", //
+			"string_withvalue \"abc\"", //
+			"ulong_withvalue \"2\"", //
+			"ulonglong_withvalue \"3\"", //
+			"ushort_withvalue \"4\"" }) {
+			Assert.assertThat(execParams, containsString(substring));
+		}
+	}
+
+	/**
+	 * IDE-1392 Ensure that null 'commandline=true' 'property' kind proeprties are not passed on the command line to
+	 * the component
+	 * @throws CoreException
+	 */
+	@Test
+	public void commandlineWithoutValue() throws CoreException {
+		final String EXEC_PARAM_SPD_PATH = "resources/commandline/commandline.spd.xml";
+		final String IMPL_NAME = "cpp";
+		String execParams = common(EXEC_PARAM_SPD_PATH, IMPL_NAME);
+
+		Assert.assertNotNull(execParams);
+		for (String substring : new String[] { //
+			"boolean_novalue", //
+			"char_novalue", //
+			"double_novalue", //
+			"float_novalue", //
+			"short_novalue", //
+			"long_novalue", //
+			"longlong_novalue", //
+			"octet_novalue", //
+			"string_novalue", //
+			"ulong_novalue", //
+			"ulonglong_novalue", //
+			"ushort_novalue" }) {
+			Assert.assertThat(execParams, not(containsString(substring)));
+		}
 	}
 }
