@@ -18,15 +18,18 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.sca.properties.Category;
 import gov.redhawk.sca.properties.IPropertiesProvider;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
 public class WorkspacePropertiesProvider implements IPropertiesProvider {
 
@@ -88,9 +91,11 @@ public class WorkspacePropertiesProvider implements IPropertiesProvider {
 
 	@Override
 	public List<Category> getCategories() {
+		AdapterFactory adapterFactory = new SpdItemProviderAdapterFactory();
+		AdapterFactoryLabelProvider labelProvider = new AdapterFactoryLabelProvider(adapterFactory);
 		List<Category> categories = new ArrayList<Category>();
 		for (SoftPkg spd : pathToSpd) {
-			categories.add(new SpdCategory(spd));
+			categories.add(new SpdCategory(spd, labelProvider));
 		}
 		return categories;
 	}

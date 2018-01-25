@@ -23,21 +23,21 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.jface.viewers.ILabelProvider;
 
-/**
- * @since 6.0
- */
 public class SpdCategory implements Category {
 
-	private final SoftPkg softPkg;
+	private SoftPkg softPkg;
+	private ILabelProvider labelProvider;
 
-	public SpdCategory(final SoftPkg softPkg) {
+	public SpdCategory(final SoftPkg softPkg, ILabelProvider labelProvider) {
 		this.softPkg = softPkg;
+		this.labelProvider = labelProvider;
 	}
 
 	@Override
 	public String getName() {
-		return this.softPkg.getName();
+		return labelProvider.getText(softPkg);
 	}
 
 	@Override

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.internal.ui.properties;
 
+import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.sca.properties.Category;
 
 import java.util.ArrayList;
@@ -21,23 +22,18 @@ import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.viewers.ILabelProvider;
 
-/**
- * @since 5.0
- */
 public class ComponentCategory implements Category {
 
-	private final List<SoftPkg> components;
-	private final String name;
+	private SoftPkgRegistry registry;
 	private ComponentType type;
+	private ILabelProvider labelProvider;
 
-	/**
-	 * @since 6.0
-	 */
-	public ComponentCategory(final List<SoftPkg> components, final String name, ComponentType type) {
-		this.components = components;
-		this.name = name;
+	public ComponentCategory(SoftPkgRegistry registry, ComponentType type, ILabelProvider labelProvider) {
+		this.registry = registry;
 		this.type = type;
+		this.labelProvider = labelProvider;
 	}
 
 	public ComponentType getType() {
@@ -46,7 +42,7 @@ public class ComponentCategory implements Category {
 
 	@Override
 	public String getName() {
-		return this.name;
+		return labelProvider.getText(registry);
 	}
 
 	@Override
@@ -84,8 +80,12 @@ public class ComponentCategory implements Category {
 	@Override
 	public List<Category> getCategories() {
 		final List<Category> myList = new ArrayList<Category>();
-		for (final SoftPkg softPkg : this.components) {
-			myList.add(new SpdCategory(softPkg));
+		for (final SoftPkg softPkg : registry.getComponents()) {
+			myList.add(new SpdCategory(softPkg, labelProvider));
+		}
+		for (EObject child : registry.eContents()) {
+			SoftPkgRegistry childRegistry = (SoftPkgRegistry) child;
+			myList.add(new ComponentCategory(childRegistry, type, labelProvider));
 		}
 		return myList;
 	}

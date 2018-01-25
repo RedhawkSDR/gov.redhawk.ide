@@ -11,18 +11,21 @@
 package gov.redhawk.ide.sdr.internal.ui.properties;
 
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.provider.SdrItemProviderAdapterFactory;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.sca.properties.Category;
 import gov.redhawk.sca.properties.IPropertiesProvider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import mil.jpeojtrs.sca.scd.ComponentType;
+import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 
-/**
- * @since 5.0
- */
+import mil.jpeojtrs.sca.scd.ComponentType;
+import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
+
 public class SdrPropertiesProvider implements IPropertiesProvider {
 
 	public SdrPropertiesProvider() {
@@ -52,11 +55,14 @@ public class SdrPropertiesProvider implements IPropertiesProvider {
 
 	@Override
 	public List<Category> getCategories() {
-		final List<Category> myList = new ArrayList<Category>();
 		SdrRoot targetSdr = SdrUiPlugin.getDefault().getTargetSdrRoot();
-		myList.add(new ComponentCategory(targetSdr.getComponentsContainer().getComponents(), "Components", ComponentType.RESOURCE));
-		myList.add(new ComponentCategory(targetSdr.getDevicesContainer().getComponents(), "Devices", ComponentType.DEVICE));
-		myList.add(new ComponentCategory(targetSdr.getServicesContainer().getComponents(), "Services", ComponentType.SERVICE));
+		ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(Arrays.asList(new SdrItemProviderAdapterFactory(), new SpdItemProviderAdapterFactory()));
+		AdapterFactoryLabelProvider labelProvider = new AdapterFactoryLabelProvider(adapterFactory);
+
+		final List<Category> myList = new ArrayList<Category>();
+		myList.add(new ComponentCategory(targetSdr.getComponentsContainer(), ComponentType.RESOURCE, labelProvider));
+		myList.add(new ComponentCategory(targetSdr.getDevicesContainer(), ComponentType.DEVICE, labelProvider));
+		myList.add(new ComponentCategory(targetSdr.getServicesContainer(), ComponentType.SERVICE, labelProvider));
 		return myList;
 	}
 }
