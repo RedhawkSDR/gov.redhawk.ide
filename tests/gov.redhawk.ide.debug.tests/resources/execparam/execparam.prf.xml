@@ -11,22 +11,242 @@
 -->
 <!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
 <properties>
-  <simple id="no_value" mode="readwrite" type="string">
+  <simple id="boolean_novalue" mode="readwrite" name="boolean_novalue" type="boolean" commandline="true">
     <kind kindtype="execparam"/>
     <action type="external"/>
   </simple>
-  <simple id="with_value" mode="readwrite" type="string">
-    <value>my string</value>
-    <kind kindtype="execparam"/>
-    <action type="external"/>
-  </simple>
-  <simple id="no_value_config_too" mode="readwrite" type="string">
+  <simple id="boolean_novalue_configtoo" mode="readwrite" name="boolean_novalue" type="boolean" commandline="true">
     <kind kindtype="configure"/>
     <kind kindtype="execparam"/>
     <action type="external"/>
   </simple>
-  <simple id="with_value_config_too" mode="readwrite" type="string">
-    <value>my other value</value>
+  <simple id="boolean_withvalue" mode="readwrite" name="boolean_withvalue" type="boolean" commandline="true">
+    <value>TrUe</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="boolean_withvalue_configtoo" mode="readwrite" name="boolean_withvalue" type="boolean" commandline="true">
+    <value>TrUe</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="char_novalue" mode="readwrite" name="char_novalue" type="char" commandline="true">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="char_novalue_configtoo" mode="readwrite" name="char_novalue" type="char" commandline="true">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="char_withvalue" mode="readwrite" name="char_withvalue" type="char" commandline="true">
+    <value>a</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="char_withvalue_configtoo" mode="readwrite" name="char_withvalue" type="char" commandline="true">
+    <value>a</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="double_novalue" mode="readwrite" name="double_novalue" type="double" commandline="true">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="double_novalue_configtoo" mode="readwrite" name="double_novalue" type="double" commandline="true">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="double_withvalue" mode="readwrite" name="double_withvalue" type="double" commandline="true">
+    <value>1.25e3</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="double_withvalue_configtoo" mode="readwrite" name="double_withvalue" type="double" commandline="true">
+    <value>1.25e3</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="float_novalue" mode="readwrite" name="float_novalue" type="float" commandline="true">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="float_novalue_configtoo" mode="readwrite" name="float_novalue" type="float" commandline="true">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="float_withvalue" mode="readwrite" name="float_withvalue" type="float" commandline="true">
+    <value>2.5e4</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="float_withvalue_configtoo" mode="readwrite" name="float_withvalue" type="float" commandline="true">
+    <value>2.5e4</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="short_novalue" mode="readwrite" name="short_novalue" type="short" commandline="true">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="short_novalue_configtoo" mode="readwrite" name="short_novalue" type="short" commandline="true">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="short_withvalue" mode="readwrite" name="short_withvalue" type="short" commandline="true">
+    <value>-1</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="short_withvalue_configtoo" mode="readwrite" name="short_withvalue" type="short" commandline="true">
+    <value>-1</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="long_novalue" mode="readwrite" name="long_novalue" type="long" commandline="true">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="long_novalue_configtoo" mode="readwrite" name="long_novalue" type="long" commandline="true">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="long_withvalue" mode="readwrite" name="long_withvalue" type="long" commandline="true">
+    <value>-2</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="long_withvalue_configtoo" mode="readwrite" name="long_withvalue" type="long" commandline="true">
+    <value>-2</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="longlong_novalue" mode="readwrite" name="longlong_novalue" type="longlong" commandline="true">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="longlong_novalue_configtoo" mode="readwrite" name="longlong_novalue" type="longlong" commandline="true">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="longlong_withvalue" mode="readwrite" name="longlong_withvalue" type="longlong" commandline="true">
+    <value>-3</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="longlong_withvalue_configtoo" mode="readwrite" name="longlong_withvalue" type="longlong" commandline="true">
+    <value>-3</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="octet_novalue" mode="readwrite" name="octet_novalue" type="octet" commandline="true">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="octet_novalue_configtoo" mode="readwrite" name="octet_novalue" type="octet" commandline="true">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="octet_withvalue" mode="readwrite" name="octet_withvalue" type="octet" commandline="true">
+    <value>1</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="octet_withvalue_configtoo" mode="readwrite" name="octet_withvalue" type="octet" commandline="true">
+    <value>1</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="string_novalue" mode="readwrite" name="string_novalue" type="string" commandline="true">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="string_novalue_configtoo" mode="readwrite" name="string_novalue" type="string" commandline="true">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="string_withvalue" mode="readwrite" name="string_withvalue" type="string" commandline="true">
+    <value>abc</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="string_withvalue_configtoo" mode="readwrite" name="string_withvalue" type="string" commandline="true">
+    <value>abc</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ulong_novalue" mode="readwrite" name="ulong_novalue" type="ulong" commandline="true">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ulong_novalue_configtoo" mode="readwrite" name="ulong_novalue" type="ulong" commandline="true">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ulong_withvalue" mode="readwrite" name="ulong_withvalue" type="ulong" commandline="true">
+    <value>2</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ulong_withvalue_configtoo" mode="readwrite" name="ulong_withvalue" type="ulong" commandline="true">
+    <value>2</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ulonglong_novalue" mode="readwrite" name="ulonglong_novalue" type="ulonglong" commandline="true">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ulonglong_novalue_configtoo" mode="readwrite" name="ulonglong_novalue" type="ulonglong" commandline="true">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ulonglong_withvalue" mode="readwrite" name="ulonglong_withvalue" type="ulonglong" commandline="true">
+    <value>3</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ulonglong_withvalue_configtoo" mode="readwrite" name="ulonglong_withvalue" type="ulonglong" commandline="true">
+    <value>3</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ushort_novalue" mode="readwrite" name="ushort_novalue" type="ushort" commandline="true">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ushort_novalue_configtoo" mode="readwrite" name="ushort_novalue" type="ushort" commandline="true">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ushort_withvalue" mode="readwrite" name="ushort_withvalue" type="ushort" commandline="true">
+    <value>4</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="ushort_withvalue_configtoo" mode="readwrite" name="ushort_withvalue" type="ushort" commandline="true">
+    <value>4</value>
     <kind kindtype="configure"/>
     <kind kindtype="execparam"/>
     <action type="external"/>
