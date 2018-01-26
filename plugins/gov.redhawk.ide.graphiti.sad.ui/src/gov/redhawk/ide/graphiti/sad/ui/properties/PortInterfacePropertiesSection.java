@@ -16,7 +16,6 @@ import gov.redhawk.eclipsecorba.idl.operations.provider.OperationsItemProviderAd
 import gov.redhawk.eclipsecorba.idl.provider.IdlItemProviderAdapterFactory;
 import gov.redhawk.eclipsecorba.idl.types.provider.TypesItemProviderAdapterFactory;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.sca.ui.ScaComponentFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +46,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
-/**
- * 
- */
 public class PortInterfacePropertiesSection extends GFPropertySection implements ITabbedPropertyConstants, IEditingDomainProvider {
 
 	private AdapterFactory adapterFactory;
@@ -57,9 +53,6 @@ public class PortInterfacePropertiesSection extends GFPropertySection implements
 	private Label label;
 	private TreePath[] expandedPaths;
 
-	/**
-	 * 
-	 */
 	public PortInterfacePropertiesSection() {
 	}
 
@@ -72,7 +65,6 @@ public class PortInterfacePropertiesSection extends GFPropertySection implements
 		if (this.adapterFactory == null) {
 			ComposedAdapterFactory newFactory = new ComposedAdapterFactory();
 			this.adapterFactory = newFactory;
-//			newFactory.addAdapterFactory(new LibraryItemProviderAdapterFactory());
 			newFactory.addAdapterFactory(new IdlItemProviderAdapterFactory());
 			newFactory.addAdapterFactory(new OperationsItemProviderAdapterFactory());
 			newFactory.addAdapterFactory(new ExpressionsAdapterFactory());
@@ -104,10 +96,6 @@ public class PortInterfacePropertiesSection extends GFPropertySection implements
 
 		});
 		this.viewer.setLabelProvider(new AdapterFactoryLabelProvider(adapterFactory));
-	}
-
-	protected TreeViewer createTreeViewer(final Composite parent) {
-		return ScaComponentFactory.createPropertyTable(getWidgetFactory(), parent, SWT.SINGLE, this.adapterFactory);
 	}
 
 	@Override

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="gov.redhawk.ide.graphiti.sad.ui" version="2">
+    <resource path="src/gov/redhawk/ide/graphiti/sad/ui/properties/PortInterfacePropertiesSection.java" type="gov.redhawk.ide.graphiti.sad.ui.properties.PortInterfacePropertiesSection">
+        <filter comment="Dead code" id="338792546">
+            <message_arguments>
+                <message_argument value="gov.redhawk.ide.graphiti.sad.ui.properties.PortInterfacePropertiesSection"/>
+                <message_argument value="createTreeViewer(Composite)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
