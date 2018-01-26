@@ -73,6 +73,10 @@ public class PropertiesSection extends AbstractPropertiesSection implements IEdi
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof ScaAbstractProperty< ? >) {
+					if (parentElement instanceof ScaAbstractProperty< ? >) {
+						// Props that are children of props are members, and hence are always shown
+						return true;
+					}
 					AbstractProperty propDef = ((ScaAbstractProperty< ? >) element).getDefinition();
 					return (propDef == null) || PropertiesUtil.canOverride(propDef);
 				}
