@@ -37,7 +37,9 @@ public class ComponentUtils {
 	public static void createComponentProject(SWTBot bot, String componentProjectName, String progLanguage) {
 		StandardTestActions.configurePyDev(bot);
 
-		bot.menu("File").menu("New").menu("Project...").click();
+		StandardTestActions.forceMainShellActive();
+		bot.menu().menu("File", "New", "Project...").click();
+
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
 		final SWTBot wizardBot = wizardShell.bot();
@@ -52,7 +54,6 @@ public class ComponentUtils {
 		wizardBot.button("Finish").click();
 
 		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
-		StandardTestActions.forceMainShellActive();
 	}
 
 	public static void addComponentPort(SWTBot editorBot, String portName, PortDirection portDirection) {

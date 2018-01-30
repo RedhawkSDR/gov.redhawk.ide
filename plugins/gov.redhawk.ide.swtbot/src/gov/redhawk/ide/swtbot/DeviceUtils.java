@@ -33,7 +33,9 @@ public class DeviceUtils {
 	public static void createDeviceProject(SWTBot bot, String deviceProjectName, String progLanguage) {
 		StandardTestActions.configurePyDev(bot);
 
-		bot.menu("File").menu("New").menu("Project...").click();
+		StandardTestActions.forceMainShellActive();
+		bot.menu().menu("File", "New", "Project...").click();
+
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
 		final SWTBot wizardBot = wizardShell.bot();
@@ -48,7 +50,6 @@ public class DeviceUtils {
 		wizardBot.button("Finish").click();
 
 		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
-		StandardTestActions.forceMainShellActive();
 	}
 
 }
