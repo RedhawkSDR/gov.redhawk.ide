@@ -32,7 +32,9 @@ public class ServiceUtils {
 	public static void createServiceProject(SWTBot bot, String serviceProjectName, String interfaceName, String progLanguage) {
 		StandardTestActions.configurePyDev(bot);
 
-		bot.menu("File").menu("New").menu("Project...").click();
+		StandardTestActions.forceMainShellActive();
+		bot.menu().menu("File", "New", "Project...").click();
+
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
 		final SWTBot wizardBot = wizardShell.bot();
@@ -49,7 +51,6 @@ public class ServiceUtils {
 		wizardBot.button("Finish").click();
 
 		bot.waitUntil(Conditions.shellCloses(wizardShell), CREATE_NEW_PROJECT_DELAY);
-		StandardTestActions.forceMainShellActive();
 	}
 
 	public static void setServiceIdl(SWTBot bot, String interfaceName) {
