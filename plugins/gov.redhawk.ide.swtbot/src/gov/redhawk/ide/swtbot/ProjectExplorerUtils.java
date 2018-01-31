@@ -15,7 +15,7 @@ import java.util.Arrays;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
-import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class ProjectExplorerUtils {
@@ -38,34 +38,16 @@ public class ProjectExplorerUtils {
 	 * Expands nodes in the project explorer to the given point, and selects the lowest level tree item
 	 * @return
 	 */
-	public static SWTBotTreeItem selectNode(SWTWorkbenchBot bot, String... nodes) {
-		SWTBotView view = bot.viewById(PROJECT_EXPLORER_VIEW_ID);
-		view.setFocus();
-		SWTBotTreeItem node = StandardTestActions.waitForTreeItemToAppear(view.bot(), view.bot().tree(), Arrays.asList(nodes));
-		node.select();
-		return node;
+	public static SWTBotTreeItem selectNode(SWTWorkbenchBot bot, String... nodePath) {
+		SWTBotTreeItem treeItem = waitUntilNodeAppears(bot, nodePath);
+		treeItem.select();
+		return treeItem;
 	}
 
 	public static SWTBotTreeItem waitUntilNodeAppears(SWTWorkbenchBot bot, final String... nodePath) {
 		SWTBotView view = bot.viewById(PROJECT_EXPLORER_VIEW_ID);
 		view.setFocus();
-
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return nodePath + " did not load into Project Explorer";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				SWTBotTreeItem treeItem = selectNode((SWTWorkbenchBot) bot, nodePath);
-				if (treeItem != null) {
-					return true;
-				}
-				return false;
-			}
-		});
-
-		return selectNode((SWTWorkbenchBot) bot, nodePath);
+		SWTBot viewBot = view.bot();
+		return StandardTestActions.waitForTreeItemToAppear(viewBot, viewBot.tree(), Arrays.asList(nodePath));
 	}
 }
