@@ -15,7 +15,6 @@ import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotCanvas;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
@@ -88,8 +87,8 @@ public class ViewUtils {
 	 */
 	public static void startAquireOnDataListView(SWTWorkbenchBot bot) {
 		final SWTBotView dataListView = ViewUtils.getDataListView(bot);
-		SWTBotButton startButton = dataListView.bot().buttonWithTooltip("Start Acquire");
-		startButton.click();
+		dataListView.setFocus();
+		dataListView.bot().buttonWithTooltip("Start Acquire").click();
 	}
 
 	/**

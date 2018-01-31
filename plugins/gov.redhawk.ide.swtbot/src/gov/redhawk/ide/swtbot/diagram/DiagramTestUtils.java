@@ -835,6 +835,7 @@ public class DiagramTestUtils {
 	 * {@link #OVERVIEW_TAB}, {@link #PROPERTIES_TAB}, {@link #IMPLEMENTATIONS} and {@link #DIAGRAM_TAB}
 	 */
 	public static void openTabInEditor(SWTBotEditor editor, String tabName) {
+		editor.setFocus();
 		editor.bot().cTabItem(tabName).activate();
 	}
 

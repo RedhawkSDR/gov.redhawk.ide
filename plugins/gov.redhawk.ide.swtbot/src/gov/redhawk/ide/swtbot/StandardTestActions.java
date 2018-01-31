@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withText;
+import static org.eclipse.swtbot.swt.finder.waits.Conditions.waitForShell;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -87,6 +90,7 @@ import org.python.pydev.ui.pythonpathconf.IInterpreterProviderFactory.Interprete
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
+import gov.redhawk.ide.swtbot.condition.ConditionSequence;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.internal.ProjectRecord;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
@@ -213,33 +217,28 @@ public final class StandardTestActions {
 
 		editor.bot().toolbarButton(0).click();
 
-		try {
+		// Go through the sequence of dialogs
+		ConditionSequence seq = new ConditionSequence();
+		seq.addOptionalCondition(waitForShell(withText("File Changed")), () -> {
 			SWTBotShell fileChangedShell = bot.shell("File Changed");
 			fileChangedShell.bot().button("Yes").click();
 			bot.waitUntil(Conditions.shellCloses(fileChangedShell));
-		} catch (WidgetNotFoundException e) {
-			// PASS
-		}
-
-		bot.waitUntil(Conditions.shellIsActive("Regenerate Files"), 10000);
-		SWTBotShell fileShell = bot.shell("Regenerate Files");
-
-		fileShell.bot().button("OK").click();
-
-		try {
+		});
+		seq.addCondition(waitForShell(withText("Regenerate Files")), 10000, () -> {
+			SWTBotShell fileShell = bot.shell("Regenerate Files");
+			fileShell.bot().button("OK").click();
+			bot.waitUntil(Conditions.shellCloses(fileShell));
+		});
+		seq.addOptionalCondition(waitForShell(withText("Generating...")), () -> {
 			SWTBotShell genShell = bot.shell("Generating...");
 			bot.waitUntil(Conditions.shellCloses(genShell), 10000);
-		} catch (WidgetNotFoundException e) {
-			// PASS
-		}
-
-		try {
+		});
+		seq.addOptionalCondition(waitForShell(withText("File Changed")), () -> {
 			SWTBotShell fileChangedShell = bot.shell("File Changed");
 			fileChangedShell.bot().button("OK").click();
-			bot.waitUntil(Conditions.shellCloses(fileChangedShell), 10000);
-		} catch (WidgetNotFoundException e) {
-			// PASS
-		}
+			bot.waitUntil(Conditions.shellCloses(fileChangedShell));
+		});
+		seq.run(bot);
 	}
 
 	public static void assertNoOpenDialogs() {
