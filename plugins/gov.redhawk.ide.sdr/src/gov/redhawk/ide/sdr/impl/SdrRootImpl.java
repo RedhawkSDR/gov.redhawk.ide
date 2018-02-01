@@ -22,11 +22,13 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -34,10 +36,11 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.command.SetCommand;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
+import org.xml.sax.SAXParseException;
 
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.ide.sdr.ComponentsContainer;
@@ -773,8 +776,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			// overallLoadStatus.merge(loadWorkspaceRoot(editingDomain, subMonitor.newChild(1)));
 
 			// If the SDR is OK up to this point, try to load it
-			overallLoadStatus.merge(loadDomFileSystem(editingDomain, subMonitor.newChild(1)));
-			overallLoadStatus.merge(loadDevFileSystem(editingDomain, subMonitor.newChild(1)));
+			overallLoadStatus.merge(loadDomFileSystem(eResource().getResourceSet(), subMonitor.newChild(1)));
+			overallLoadStatus.merge(loadDevFileSystem(eResource().getResourceSet(), subMonitor.newChild(1)));
 			overallLoadStatus.merge(loadIdlLibrary(subMonitor.newChild(1)));
 			overallLoadStatus.merge(checkForDuplicates());
 
@@ -833,8 +836,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	private void updateDuplicateMap(CustomMultiStatus duplicateStatus, Map<String, EObject> duplicatesMap, EObject newObj, String key) {
 		EObject exitingObj = duplicatesMap.put(key, newObj);
 		if (exitingObj != null) {
-			duplicateStatus.merge(new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, convertFileURI(newObj.eResource().getURI()) + " duplicate ID of "
-				+ convertFileURI(exitingObj.eResource().getURI()) + ". IDs should be unique."));
+			duplicateStatus.merge(new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, convertToFilePath(newObj.eResource().getURI()) + " duplicate ID of "
+				+ convertToFilePath(exitingObj.eResource().getURI()) + ". IDs should be unique."));
 		}
 	}
 
@@ -851,44 +854,49 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		// BEGIN GENERATED CODE
 	}
 
-	private IStatus loadDevFileSystem(TransactionalEditingDomain editingDomain, IProgressMonitor monitor) {
+	private IStatus loadDevFileSystem(ResourceSet resourceSet, IProgressMonitor monitor) {
 		// END GENERATED CODE
-		if (getDevFileSystemRoot() != null) {
-			IFileStore devRoot;
-			try {
-				devRoot = EFS.getStore(java.net.URI.create(getDevFileSystemRoot().toString()));
-			} catch (CoreException e) {
-				return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to load dev file system " + getDevFileSystemRoot(), e);
-			}
-			if (!devRoot.fetchInfo().exists()) {
-				// This isn't necessarily an error, since the SDR doesn't have to contain a dev file system
-				return new Status(IStatus.WARNING, IdeSdrActivator.PLUGIN_ID, "SDR Device Root does not exist", null);
-			} else {
-				return processStore(editingDomain, devRoot, monitor);
-			}
-		} else {
+		SubMonitor progress = SubMonitor.convert(monitor, 20);
+
+		if (getDevFileSystemRoot() == null) {
 			return new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, "SDR Dev Root is 'null'", null);
 		}
+
+		IFileStore devRoot;
+		try {
+			devRoot = EFS.getStore(java.net.URI.create(getDevFileSystemRoot().toString()));
+			if (!devRoot.fetchInfo(EFS.NONE, progress.newChild(1)).exists()) {
+				// This isn't necessarily an error, since the SDR doesn't have to contain a dev file system
+				return new Status(IStatus.WARNING, IdeSdrActivator.PLUGIN_ID, "SDR Device Root does not exist", null);
+			}
+		} catch (CoreException e) {
+			return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to load dev file system " + getDevFileSystemRoot(), e);
+		}
+
+		return processStore(resourceSet, devRoot, progress.newChild(19));
 		// BEGIN GENERATED CODE
 	}
 
-	private IStatus loadDomFileSystem(TransactionalEditingDomain editingDomain, IProgressMonitor monitor) {
+	private IStatus loadDomFileSystem(ResourceSet resourceSet, IProgressMonitor monitor) {
 		// END GENERATED CODE
-		if (getDomFileSystemRoot() != null) {
-			try {
-				IFileStore domRoot = EFS.getStore(java.net.URI.create(getDomFileSystemRoot().toString()));
-				if (!domRoot.fetchInfo().exists()) {
-					// This isn't necessarily an error, since the SDR doesn't have to contain a dom file system
-					return new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, "SDR Domain Root does not exist", null);
-				} else {
-					return processStore(editingDomain, domRoot, monitor);
-				}
-			} catch (CoreException e) {
-				return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to load dom file system " + getDomFileSystemRoot(), e);
-			}
-		} else {
+		SubMonitor progress = SubMonitor.convert(monitor, 20);
+
+		if (getDomFileSystemRoot() == null) {
 			return new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, "SDR Domain Root is 'null'", null);
 		}
+
+		IFileStore domRoot;
+		try {
+			domRoot = EFS.getStore(java.net.URI.create(getDomFileSystemRoot().toString()));
+			if (!domRoot.fetchInfo(EFS.NONE, progress.newChild(1)).exists()) {
+				// This isn't necessarily an error, since the SDR doesn't have to contain a dom file system
+				return new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, "SDR Domain Root does not exist", null);
+			}
+		} catch (CoreException e) {
+			return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to load dom file system " + getDomFileSystemRoot(), e);
+		}
+
+		return processStore(resourceSet, domRoot, monitor);
 		// BEGIN GENERATED CODE
 	}
 
@@ -1266,13 +1274,12 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	}
 
 	/**
+	 * @param resourceSet
 	 * @param parent
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * @param monitor
 	 * @throws CoreException
 	 */
-	private IStatus processDirectory(EditingDomain domain, final IFileStore parent, final IProgressMonitor monitor) {
+	private IStatus processDirectory(ResourceSet resourceSet, final IFileStore parent, final IProgressMonitor monitor) {
 		// END GENERATED CODE
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Processing directory " + parent.getName(), 100);
 		IFileStore[] childStores;
@@ -1285,36 +1292,34 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		final SubMonitor loopProgress = subMonitor.newChild(90).setWorkRemaining(childStores.length); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 		CustomMultiStatus multiStatus = new CustomMultiStatus(IdeSdrActivator.PLUGIN_ID, Status.OK, "Failed to process children.", null);
 		for (final IFileStore child : childStores) {
-			multiStatus.merge(processStore(domain, child, loopProgress.newChild(1)));
+			multiStatus.merge(processStore(resourceSet, child, loopProgress.newChild(1)));
 		}
 		return multiStatus;
 		// BEGIN GENERATED CODE
 	}
 
 	/**
+	 * @param resourceSet
 	 * @param child
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * @param monitor
 	 * @throws CoreException
 	 */
-	private IStatus processStore(EditingDomain domain, final IFileStore child, final IProgressMonitor monitor) {
+	private IStatus processStore(ResourceSet resourceSet, final IFileStore child, final IProgressMonitor monitor) {
 		// END GENERATED CODE
-		final SubMonitor submonitor = SubMonitor.convert(monitor, 1);
 		if (child.getName().startsWith(".")) {
 			return Status.OK_STATUS;
 		}
 		if (child.fetchInfo().isDirectory()) {
-			return processDirectory(domain, child, submonitor.newChild(1));
+			return processDirectory(resourceSet, child, monitor);
 		} else {
 			if (child.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-				return loadSpd(domain, child, submonitor.newChild(1));
+				return loadSpd(resourceSet, child, monitor);
 			} else if (child.getName().endsWith(SadPackage.FILE_EXTENSION)) {
-				return loadSad(domain, child, submonitor.newChild(1));
+				return loadSad(resourceSet, child, monitor);
 			} else if (child.getName().endsWith(DcdPackage.FILE_EXTENSION)) {
-				return loadDcd(domain, child, submonitor.newChild(1));
+				return loadDcd(resourceSet, child, monitor);
 			} else if (child.getName().endsWith(DmdPackage.FILE_EXTENSION)) {
-				return loadDmd(domain, child, submonitor.newChild(1));
+				return loadDmd(resourceSet, child, monitor);
 			} else {
 				return Status.OK_STATUS;
 			}
@@ -1323,22 +1328,22 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	}
 
 	/**
-	 * 
+	 * @param resourceSet
 	 * @param spdFile
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * @param monitor
 	 */
-	private IStatus loadSpd(EditingDomain domain, final IFileStore spdFile, final IProgressMonitor monitor) {
+	private IStatus loadSpd(ResourceSet resourceSet, final IFileStore spdFile, final IProgressMonitor monitor) {
 		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading SPD " + spdFile.getName(), 2); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
-		final String spdFileUri = spdFile.toURI().toString();
+		URI spdFileUri = URI.createURI(spdFile.toURI().toString());
 		SoftPkg softPkg;
 		try {
-			softPkg = SoftPkg.Util.getSoftPkg(domain.loadResource(spdFileUri));
-		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
-			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load SPD " + spdFileUri, e);
+			softPkg = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdFileUri, true));
+		} catch (WrappedException e) {
+			return statusForWrappedException(e, spdFileUri);
+		} catch (Exception e) { // SUPPRESS CHECKSTYLE Exception is returned in status
+			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load " + convertToFilePath(spdFileUri), e);
 		}
 		if (softPkg == null) {
 			Exception e = new Exception("Null SPD " + spdFileUri);
@@ -1353,7 +1358,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(component);
 			switch (type) {
 			case DEVICE:
-				addDevice(domain, softPkg, component);
+				addDevice(softPkg, component);
 				break;
 			case OTHER:
 			case FILE_MANAGER:
@@ -1362,11 +1367,11 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			case NAMING_SERVICE:
 			case RESOURCE_FACTORY:
 			case RESOURCE:
-				addResource(domain, softPkg, component);
+				addResource(softPkg, component);
 				break;
 			case EVENT_SERVICE:
 			case SERVICE:
-				addService(domain, softPkg, component);
+				addService(softPkg, component);
 				break;
 			case DEVICE_MANAGER:
 			case DOMAIN_MANAGER:
@@ -1379,7 +1384,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		} else {
 			// Treat it as a resource because all other types *must* have an
 			// scd file
-			addResource(domain, softPkg, null);
+			addResource(softPkg, null);
 		}
 		submonitor.worked(1);
 		return Status.OK_STATUS;
@@ -1402,7 +1407,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param softPkg
 	 * @param component
 	 */
-	private void addResource(EditingDomain domain, final SoftPkg softPkg, final SoftwareComponent component) {
+	private void addResource(final SoftPkg softPkg, final SoftwareComponent component) {
 		// END GENERATED CODE
 		if (component != null) {
 			for (final SupportsInterface iface : component.getComponentFeatures().getSupportsInterface()) {
@@ -1412,7 +1417,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 						DEBUG.message("Component \"{0}\" forced to be device based on supported interfaces.  Component should be of type \"device\".",
 							softPkg.getName());
 					}
-					addDevice(domain, softPkg, component);
+					addDevice(softPkg, component);
 					return;
 				}
 			}
@@ -1480,7 +1485,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param softPkg
 	 * @param component
 	 */
-	private void addDevice(EditingDomain domain, final SoftPkg softPkg, final SoftwareComponent component) {
+	private void addDevice(final SoftPkg softPkg, final SoftwareComponent component) {
 		// END GENERATED CODE
 		ScaModelCommand.execute(getComponentsContainer(), () -> {
 			// Root container
@@ -1513,7 +1518,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param softPkg
 	 * @param component
 	 */
-	private void addService(EditingDomain domain, final SoftPkg softPkg, final SoftwareComponent component) {
+	private void addService(final SoftPkg softPkg, final SoftwareComponent component) {
 		// END GENERATED CODE
 		ScaModelCommand.execute(getComponentsContainer(), () -> {
 			// Root container
@@ -1542,37 +1547,62 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		// BEGIN GENERATED CODE
 	}
 
-	private String convertFileURI(org.eclipse.emf.common.util.URI fileURI) {
+	/**
+	 * Converts the URI to a file path for display, if possible. Falls back on <code>toString()</code> if the URI can't
+	 * be converted.
+	 * @param fileURI
+	 * @return
+	 */
+	private String convertToFilePath(org.eclipse.emf.common.util.URI fileURI) {
 		// END GENERATED CODE
+		final String uriToString = fileURI.toString();
 		if (ScaFileSystemConstants.SCHEME.equals(fileURI.scheme())) {
 			Map<String, String> query = QueryParser.parseQuery(fileURI.query());
-			if (query != null) {
-				String fs = query.get(ScaFileSystemConstants.QUERY_PARAM_FS);
-				if (fs != null) {
-					return fs + fileURI.path();
-				}
+			if (query == null) {
+				return uriToString;
 			}
+			String fs = query.get(ScaFileSystemConstants.QUERY_PARAM_FS);
+			if (fs == null) {
+				return uriToString;
+			}
+			return new Path(URI.createURI(fs).toFileString()).append(fileURI.path()).toOSString();
 		}
-		return fileURI.toString();
+		return uriToString;
 		// BEGIN GENERATED CODE
 	}
 
 	/**
-	 * @param sadFile
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * Provides an error status for a {@link WrappedException} generated by an attempted EMF resource load.
+	 * @param e
+	 * @param spdFileUri
+	 * @return
 	 */
-	private IStatus loadSad(EditingDomain domain, final IFileStore sadFile, final IProgressMonitor monitor) {
+	private IStatus statusForWrappedException(WrappedException e, URI spdFileUri) {
+		if (e.getCause() instanceof SAXParseException) {
+			SAXParseException sax = (SAXParseException) e.getCause();
+			String msg = String.format("Failed to parse %s at line %d, column %d: %s", convertToFilePath(spdFileUri), sax.getLineNumber(), sax.getColumnNumber(), sax.getMessage());
+			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, msg, e.getCause());
+		}
+		return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load " + convertToFilePath(spdFileUri), e.getCause());
+	}
+
+	/**
+	 * @param resourceSet
+	 * @param sadFile
+	 * @param monitor
+	 */
+	private IStatus loadSad(ResourceSet resourceSet, final IFileStore sadFile, final IProgressMonitor monitor) {
 		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading SAD " + sadFile.getName(), 2); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
-		final String sadFileUri = sadFile.toURI().toString();
+		URI sadFileUri = URI.createURI(sadFile.toURI().toString());
 		SoftwareAssembly sad;
 		try {
-			sad = SoftwareAssembly.Util.getSoftwareAssembly(domain.loadResource(sadFileUri));
-		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
-			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load SAD " + sadFileUri, e);
+			sad = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(sadFileUri, true));
+		} catch (WrappedException e) {
+			return statusForWrappedException(e, sadFileUri);
+		} catch (Exception e) { // SUPPRESS CHECKSTYLE Exception is returned in status
+			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load " + convertToFilePath(sadFileUri), e);
 		}
 		submonitor.worked(1);
 
@@ -1580,7 +1610,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		for (SoftwareAssembly currentSad : getWaveformsContainer().getWaveforms()) {
 			if (PluginUtil.equals(currentSad.getId(), sad.getId())) {
 				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID,
-					sadFileUri + " duplicate ID of " + convertFileURI(currentSad.eResource().getURI()) + ". IDs should be unique.");
+					sadFileUri + " duplicate ID of " + convertToFilePath(currentSad.eResource().getURI()) + ". IDs should be unique.");
 				break;
 			}
 		}
@@ -1616,28 +1646,29 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	}
 
 	/**
+	 * @param resourceSet
 	 * @param dcdFile
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * @param monitor
 	 */
-	private IStatus loadDcd(EditingDomain domain, final IFileStore dcdFile, final IProgressMonitor monitor) {
+	private IStatus loadDcd(ResourceSet resourceSet, final IFileStore dcdFile, final IProgressMonitor monitor) {
 		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading DCD " + dcdFile.getName(), 2); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
-		final String dcdFileURI = dcdFile.toURI().toString();
+		URI dcdFileUri = URI.createURI(dcdFile.toURI().toString());
 		DeviceConfiguration dcd;
 		try {
-			dcd = DeviceConfiguration.Util.getDeviceConfiguration(domain.loadResource(dcdFileURI));
-		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
-			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load DCD " + dcdFileURI, e);
+			dcd = DeviceConfiguration.Util.getDeviceConfiguration(resourceSet.getResource(dcdFileUri, true));
+		} catch (WrappedException e) {
+			return statusForWrappedException(e, dcdFileUri);
+		} catch (Exception e) { // SUPPRESS CHECKSTYLE Exception is returned in status
+			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load " + convertToFilePath(dcdFileUri), e);
 		}
 
 		IStatus retVal = Status.OK_STATUS;
 		for (DeviceConfiguration current : getNodesContainer().getNodes()) {
 			if (PluginUtil.equals(current.getId(), dcd.getId())) {
 				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID,
-					dcdFileURI + " duplicate ID of " + convertFileURI(current.eResource().getURI()) + ". IDs should be unique.");
+					dcdFileUri + " duplicate ID of " + convertToFilePath(current.eResource().getURI()) + ". IDs should be unique.");
 				break;
 			}
 		}
@@ -1677,25 +1708,29 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
 	 *  reported and that the operation cannot be canceled.
 	 */
-	private IStatus loadDmd(EditingDomain domain, final IFileStore dmdFile, final IProgressMonitor monitor) {
+	private IStatus loadDmd(ResourceSet resourceSet, final IFileStore dmdFile, final IProgressMonitor monitor) {
 		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading DMD " + dmdFile.getName(), 1); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
-		final String dmdURI = dmdFile.toURI().toString();
+		URI dmdUri = URI.createURI(dmdFile.toURI().toString());
 		DomainManagerConfiguration dmd;
 		try {
-			dmd = DomainManagerConfiguration.Util.getDomainManagerConfiguration(domain.loadResource(dmdURI));
+			dmd = DomainManagerConfiguration.Util.getDomainManagerConfiguration(resourceSet.getResource(dmdUri, true));
 			submonitor.worked(1);
-		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
-			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load DMD " + dmdURI, e);
+		} catch (WrappedException e) {
+			return statusForWrappedException(e, dmdUri);
+		} catch (Exception e) { // SUPPRESS CHECKSTYLE Exception is returned in status
+			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load " + convertToFilePath(dmdUri), e);
 		}
 
 		IStatus retVal = Status.OK_STATUS;
 		if (getDomainConfiguration() != null) {
-			return new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, "Multiple DMD files found and only one supported.  Ignoring " + dmdURI);
+			return new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, "Multiple DMD files found and only one supported.  Ignoring " + dmdUri);
 		}
 
-		domain.getCommandStack().execute(SetCommand.create(domain, this, SdrPackage.Literals.SDR_ROOT__DOMAIN_CONFIGURATION, dmd));
+		ScaModelCommand.execute(this, () -> {
+			setDomainConfiguration(dmd);
+		});
 		submonitor.worked(1);
 		return retVal;
 		// BEGIN GENERATED CODE
