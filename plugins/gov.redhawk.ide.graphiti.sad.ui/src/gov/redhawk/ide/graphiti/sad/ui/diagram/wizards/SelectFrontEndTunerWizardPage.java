@@ -10,90 +10,57 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.wizards;
 
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-import mil.jpeojtrs.sca.prf.AbstractProperty;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.SpdFactory;
-import mil.jpeojtrs.sca.spd.impl.SoftPkgImpl;
-import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
-
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
-import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.PlatformUI;
 
 import ExtendedCF.WKP.DEVICEKIND;
 import FRONTEND.FE_TUNER_DEVICE_KIND;
+import gov.redhawk.ide.sdr.SoftPkgRegistry;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
+import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
+import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.Simple;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdFactory;
 
 public class SelectFrontEndTunerWizardPage extends WizardPage {
 
 	private static final ImageDescriptor TITLE_IMAGE = null;
-	
-	private final SoftPkg[] targetSDRFrontEndDevices;
+
 	private SoftPkg selectedDevice = null;
-	private TableViewer tableViewer;
-	
+	private TreeViewer treeViewer;
+	private SoftPkg genericFeiDevice;
+
 	public SelectFrontEndTunerWizardPage() {
 		super("SelectFrontEndTunerWizardPage", "Select Target Device", TITLE_IMAGE);
 		this.setDescription("Select a FrontEnd tuner installed on your system.\nThis will pre-populate many of the fields in the following wizard pages.");
-
-		SoftPkg[] targetSDRDevices = SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer().getComponents().toArray(new SoftPkg[0]);
-		targetSDRFrontEndDevices = getFrontEndDevices(targetSDRDevices).toArray(new SoftPkg[0]);
-		
+		genericFeiDevice = SpdFactory.eINSTANCE.createSoftPkg();
+		genericFeiDevice.setName("Generic FrontEnd Device");
 	}
 
-	/**
-	 * Return all FrontEnd Devices from the provided list
-	 * @param devices
-	 * @return
-	 */
-	public List<SoftPkg> getFrontEndDevices(SoftPkg[] devices) {
-		List<SoftPkg> frontEndDevices = new ArrayList<SoftPkg>();
-		
-		//add Generic
-		SoftPkg genericEntry = SpdFactory.eINSTANCE.createSoftPkg();
-		genericEntry.setName("Generic FrontEnd Device");
-		frontEndDevices.add(genericEntry);
-		
-		for (SoftPkg d: devices) {
-			//null checks
-			if (d.getPropertyFile() != null
-					&& d.getPropertyFile().getProperties() != null) {
-				AbstractProperty property = d.getPropertyFile().getProperties().getProperty(DEVICEKIND.value);
-				if (property != null && property.toAny() != null
-						&& property.toAny().toString().equals(FE_TUNER_DEVICE_KIND.value)) {
-					frontEndDevices.add(d);
-				}
-			}
-		}
-		return frontEndDevices;
-		
-	}
-
-	
 	@Override
 	public void createControl(Composite parent) {
-
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(1, false));
@@ -102,54 +69,101 @@ public class SelectFrontEndTunerWizardPage extends WizardPage {
 		usesDeviceIdLabel.setText("Which FrontEnd Device you would like to use?");
 
 		createFrontEndDeviceTable(composite);
-		
+
 		setControl(composite);
-		setPageComplete(true);
-
 	}
-	
+
 	private void createFrontEndDeviceTable(final Composite parent) {
-		GridDataFactory dataFactory = GridDataFactory.fillDefaults();
-		
-		tableViewer = new TableViewer(new Table(parent, SWT.BORDER));
-		tableViewer.getControl().setLayoutData(dataFactory.span(1, 1).grab(true, true).create());
+		treeViewer = new TreeViewer(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
+		treeViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().span(1, 1).grab(true, true).minSize(1, 160).create());
+		treeViewer.setContentProvider(new SdrNavigatorContentProvider() {
+			@Override
+			public Object[] getElements(Object inputElement) {
+				Object[] parentElements = super.getElements(inputElement);
 
-		final ComposedAdapterFactory factory = new ComposedAdapterFactory();
-		factory.addAdapterFactory(new SpdItemProviderAdapterFactory());
-
-		tableViewer.setContentProvider(new ArrayContentProvider());
-		tableViewer.setLabelProvider(new DecoratingLabelProvider(new AdapterFactoryLabelProvider(factory), 
-			PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()) {
+				// Add an entry at the beginning for a generic FEI device
+				Object[] elements = Arrays.copyOf(parentElements, parentElements.length + 1);
+				elements[elements.length - 1] = genericFeiDevice;
+				return elements;
+			}
 
 			@Override
-			public String getText(final Object element) {
-				if (element instanceof SoftPkgImpl) {
-					final SoftPkgImpl softPkg = (SoftPkgImpl) element;
-					if (softPkg.getId() != null) {
-						final URI uri = softPkg.eResource().getURI();
-						return softPkg.getName() + " (" + uri.path().replace(uri.lastSegment(), "") + ")";
-					} else {
-						return softPkg.getName();
-					}
+			public Object[] getChildren(Object object) {
+				if (object instanceof SoftPkg) {
+					return new Object[0];
 				}
-	
-				return "";
+				return super.getChildren(object);
 			}
-		});
-		
-		//set selection
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				List<Object> selection = Arrays.asList(((IStructuredSelection) event.getSelection()).toArray());
-				for (Object obj : selection) {
-					selectedDevice = (SoftPkg) obj;
+			public boolean hasChildren(Object object) {
+				if (object instanceof SoftPkg) {
+					return false;
 				}
+				return super.hasChildren(object);
 			}
 		});
-		tableViewer.setInput(targetSDRFrontEndDevices);
-		
+		treeViewer.setLabelProvider(new SdrNavigatorLabelProvider());
+		treeViewer.addFilter(new ViewerFilter() {
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				// Show folders and the generic FEI device
+				if (element instanceof SoftPkgRegistry || element == genericFeiDevice) {
+					return true;
+				}
+
+				// Show SPD's whose device kind shows they are an FEI device
+				SoftPkg device = (SoftPkg) element;
+				if (device.getPropertyFile() == null || device.getPropertyFile().getProperties() == null) {
+					return false;
+				}
+				AbstractProperty property = device.getPropertyFile().getProperties().getProperty(DEVICEKIND.value);
+				return property instanceof Simple && FE_TUNER_DEVICE_KIND.value.equals(((Simple) property).getValue());
+			}
+		});
+		treeViewer.setComparator(new ViewerComparator() {
+			@Override
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				// Show the generic FEI device first
+				if (e1 == genericFeiDevice) {
+					return -1;
+				}
+				if (e2 == genericFeiDevice) {
+					return 1;
+				}
+				return super.compare(viewer, e1, e2);
+			}
+		});
+		treeViewer.addSelectionChangedListener(event -> {
+			Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
+			if (element instanceof SoftPkg) {
+				selectedDevice = (SoftPkg) element;
+				setPageComplete(true);
+			} else {
+				selectedDevice = null;
+				setPageComplete(false);
+			}
+		});
+
+		databind();
+
+		treeViewer.setInput(SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer());
+		treeViewer.setSelection(new StructuredSelection(genericFeiDevice));
+	}
+
+	@SuppressWarnings("unchecked")
+	private void databind() {
+		DataBindingContext dbc = new DataBindingContext();
+		dbc.bindValue(ViewersObservables.observeSingleSelection(treeViewer),
+			BeanProperties.value(SelectFrontEndTunerWizardPage.class, "selectedDevice").observe(this),
+			new UpdateValueStrategy().setBeforeSetValidator(value -> {
+				if (!(value instanceof SoftPkg)) {
+					return ValidationStatus.error("Must select a device");
+				}
+				return ValidationStatus.ok();
+			}), null);
+
+		WizardPageSupport.create(this, dbc);
 	}
 
 	public SoftPkg getSelectedDevice() {
