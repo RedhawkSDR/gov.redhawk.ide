@@ -12,10 +12,17 @@ package gov.redhawk.ide.codegen.ui;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.progress.WorkbenchJob;
 
-import gov.redhawk.ide.codegen.ui.internal.job.GenerateFilesJob;
+import gov.redhawk.ide.codegen.ui.internal.job.CodegenFileStatusJob;
+import gov.redhawk.ide.codegen.ui.internal.job.CodegenJob;
+import gov.redhawk.ide.codegen.ui.internal.job.OpenEditorJob;
+import gov.redhawk.ide.codegen.ui.internal.job.UserFileSelectionJob;
 import mil.jpeojtrs.sca.spd.Implementation;
 
 /**
@@ -40,8 +47,53 @@ public final class GenerateCode {
 			return;
 		}
 
-		Job getFilesJob = new GenerateFilesJob("Calculating files to generate...", shell, impls);
-		getFilesJob.setUser(true);
+		// First ask the codegen what files it will act on
+		final CodegenFileStatusJob getFilesJob = new CodegenFileStatusJob(impls);
+
+		// Prompt the user, if necessary, and determine what files we'll actually generate
+		final UserFileSelectionJob selectFilesJob = new UserFileSelectionJob(shell);
+
+		// Perform code generation
+		final CodegenJob codegenJob = new CodegenJob();
+
+		// Job change adapters to pass results from one job to the next
+		getFilesJob.addJobChangeListener(new JobChangeAdapter() {
+			@Override
+			public void done(IJobChangeEvent event) {
+				if (!event.getResult().isOK()) {
+					return;
+				}
+				selectFilesJob.setImplementationsAndFiles(getFilesJob.getFilesForImplementation());
+				selectFilesJob.schedule();	
+			}
+		});
+		selectFilesJob.addJobChangeListener(new JobChangeAdapter() {
+			@Override
+			public void done(IJobChangeEvent event) {
+				if (!event.getResult().isOK()) {
+					return;
+				}
+				codegenJob.setImplementationsAndFiles(selectFilesJob.getFilesForImplementation());
+				codegenJob.schedule();	
+			}
+		});
+		codegenJob.addJobChangeListener(new JobChangeAdapter() {
+			@Override
+			public void done(IJobChangeEvent event) {
+				if (!event.getResult().isOK()) {
+					return;
+				}
+
+				// Open editors for new "primary" files in projects
+				for (IFile file : codegenJob.getFilesToOpen()) {
+					WorkbenchJob openJob = new OpenEditorJob(file);
+					openJob.setPriority(Job.SHORT);
+					openJob.schedule();
+				}
+			}
+		});
+
+		// Start
 		getFilesJob.schedule();
 	}
 }
