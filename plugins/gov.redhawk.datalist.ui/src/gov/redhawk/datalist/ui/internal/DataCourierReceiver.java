@@ -1,33 +1,34 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.datalist.ui.internal;
 
-import gov.redhawk.bulkio.util.BulkIOType;
-import gov.redhawk.datalist.ui.DataListPlugin;
-import gov.redhawk.datalist.ui.Sample;
-import gov.redhawk.ide.snapshot.capture.IDataReceiver;
-import gov.redhawk.ide.snapshot.writer.IDataWriter;
-import gov.redhawk.ide.snapshot.writer.IDataWriterSettings;
-
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import BULKIO.PrecisionUTCTime;
+import BULKIO.BitSequence;
+import BULKIO.StreamSRI;
+import gov.redhawk.bulkio.util.BulkIOType;
+import gov.redhawk.bulkio.util.StreamSRIUtil;
+import gov.redhawk.datalist.ui.DataListPlugin;
+import gov.redhawk.ide.snapshot.capture.IDataReceiver;
+import gov.redhawk.ide.snapshot.writer.IDataWriter;
 
+/**
+ * Handles taking the data from a {@link DataCourier} (which holds the data from a data list operation) and passing it
+ * to an {@link IDataReceiver}, which is how the snapshot functionality receives data.
+ */
 public class DataCourierReceiver implements IDataReceiver {
 
 	private DataCourier courier;
@@ -50,72 +51,64 @@ public class DataCourierReceiver implements IDataReceiver {
 
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
-		int dimensions = courier.getDimensions();
-		BulkIOType type = courier.getType();
-		IDataWriterSettings settings = writer.getSettings();
-		settings.setType(type);
-		writer.setSettings(settings);
-		List<Sample> buffer = courier.getBuffer();
-		int length = buffer.size();
-		Object data = Array.newInstance(type.getJavaType(), length);
-		PrecisionUTCTime time = buffer.get(0).getTime();
-		Iterator<Sample> iterator = buffer.iterator();
-		for (int i = 0; i < length; i++) {
-			Sample s = iterator.next();
-			if (dimensions == 1) {
-				Array.set(data, i, s.getData());
-			} else {
-				System.arraycopy(s.getData(), 0, data, i * dimensions, dimensions);
-			}
+		List<BulkioPush> buffers = courier.getBuffer().getBuffers();
+		if (buffers.size() == 0) {
+			return new Status(IStatus.ERROR, DataListPlugin.PLUGIN_ID, "No data to write");
 		}
+		BulkIOType type = courier.getType();
+		writer.getSettings().setType(type);
+
 		try {
-			writer.pushSRI(this.courier.getStreamSRI());
+			StreamSRI lastSRIPushed = buffers.get(0).getSRI();
+			writer.pushSRI(lastSRIPushed);
 			writer.open();
-			try {
+
+			for (BulkioPush buffer : buffers) {
+				// Push SRI if it has changed
+				if (!StreamSRIUtil.equals(lastSRIPushed, buffer.getSRI())) {
+					writer.pushSRI(buffer.getSRI());
+					lastSRIPushed = buffer.getSRI();
+				}
+
+				// Push packet
 				switch (type) {
+				case BIT:
+					writer.pushPacket((BitSequence) buffer.getData(), buffer.getTime(), buffer.getEOS(), buffer.getStreamID());
+					break;
 				case CHAR:
-					writer.pushPacket((char[]) data, 0, length, time);
+					writer.pushPacket((char[]) buffer.getData(), buffer.getTime(), buffer.getEOS(), buffer.getStreamID());
 					break;
 				case DOUBLE:
-					writer.pushPacket((double[]) data, 0, length, time);
+					writer.pushPacket((double[]) buffer.getData(), buffer.getTime(), buffer.getEOS(), buffer.getStreamID());
 					break;
 				case FLOAT:
-					writer.pushPacket((float[]) data, 0, length, time);
+					writer.pushPacket((float[]) buffer.getData(), buffer.getTime(), buffer.getEOS(), buffer.getStreamID());
 					break;
 				case LONG:
-					writer.pushPacket((int[]) data, 0, length, time);
+				case ULONG:
+					writer.pushPacket((int[]) buffer.getData(), buffer.getTime(), buffer.getEOS(), buffer.getStreamID());
 					break;
 				case LONG_LONG:
-					writer.pushPacket((long[]) data, 0, length, time);
+				case ULONG_LONG:
+					writer.pushPacket((long[]) buffer.getData(), buffer.getTime(), buffer.getEOS(), buffer.getStreamID());
 					break;
 				case OCTET:
-					writer.pushPacket((byte[]) data, 0, length, time);
+					writer.pushPacket((byte[]) buffer.getData(), buffer.getTime(), buffer.getEOS(), buffer.getStreamID());
 					break;
 				case SHORT:
-					writer.pushPacket((short[]) data, 0, length, time);
-					break;
-				case ULONG:
-					writer.pushPacket((int[]) data, 0, length, time);
-					break;
-				case ULONG_LONG:
-					writer.pushPacket((long[]) data, 0, length, time);
-					break;
 				case USHORT:
-					writer.pushPacket((short[]) data, 0, length, time);
+					writer.pushPacket((short[]) buffer.getData(), buffer.getTime(), buffer.getEOS(), buffer.getStreamID());
 					break;
 				default:
-					return new Status(Status.ERROR, DataListPlugin.PLUGIN_ID, "Unknown data type: " + type, null);
 				}
-			} catch (IOException e) {
-				return new Status(Status.ERROR, DataListPlugin.PLUGIN_ID, "Failed to write packet data", e);
 			}
 		} catch (IOException e) {
-			return new Status(Status.ERROR, DataListPlugin.PLUGIN_ID, "Failed to open writer", e);
+			return new Status(Status.ERROR, DataListPlugin.PLUGIN_ID, "Failed to write data", e);
 		} finally {
 			try {
 				writer.close();
 			} catch (IOException e) {
-				return new Status(Status.ERROR, DataListPlugin.PLUGIN_ID, "Failed to close writer", e);
+				// PASS
 			}
 		}
 

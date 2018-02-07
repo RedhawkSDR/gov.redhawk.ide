@@ -1,31 +1,17 @@
-/******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.datalist.ui.internal;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import gov.redhawk.bulkio.util.BulkIOType;
-import gov.redhawk.datalist.ui.DataCollectionSettings;
-import gov.redhawk.datalist.ui.DataListPlugin;
-import gov.redhawk.datalist.ui.Sample;
-import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.statistics.ui.views.StatisticsView;
-
-import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -33,28 +19,21 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import BULKIO.StreamSRI;
+import gov.redhawk.bulkio.util.BulkIOType;
+import gov.redhawk.datalist.ui.DataCollectionSettings;
+import gov.redhawk.datalist.ui.DataListPlugin;
+import gov.redhawk.model.sca.ScaUsesPort;
+import gov.redhawk.statistics.ui.views.StatisticsView;
 
 /**
  * @since 1.1
  */
 public class DataCourier {
 
-	private DataBuffer dataBuffer;
-
 	public static final int REAL = 0, IMAGINARY = 1, ALL = -1;
 
-	private StatisticsView sView;
+	private DataBuffer dataBuffer;
 	private ScaUsesPort source;
-
-	private DisposeListener disposeListener = new DisposeListener() {
-
-		@Override
-		public void widgetDisposed(DisposeEvent e) {
-			sView = null;
-		}
-
-	};
-
 	private BulkIOType type;
 	private ListenerList<IDataCourierListener> listeners = new ListenerList<IDataCourierListener>();
 
@@ -69,59 +48,35 @@ public class DataCourier {
 	public void openStatisticsView(String secondaryID) {
 		try {
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			sView = (StatisticsView) window.getActivePage().showView(StatisticsView.ID, secondaryID, IWorkbenchPage.VIEW_ACTIVATE);
-			sView.addDisposeListener(disposeListener);
-			updateStatisticsView();
+			StatisticsView statsView = (StatisticsView) window.getActivePage().showView(StatisticsView.ID, secondaryID, IWorkbenchPage.VIEW_ACTIVATE);
+			statsView.setInput(convertToDataSet(dataBuffer));
 		} catch (PartInitException e) {
 			StatusManager.getManager().handle(new Status(Status.WARNING, DataListPlugin.PLUGIN_ID, "Problem opening Stats View.", e),
 				StatusManager.SHOW | StatusManager.LOG);
 		}
 	}
 
-	private void updateStatisticsView() {
-		if (sView != null) {
-			sView.setInput(convertToDataSet(dataBuffer.getBuffer()));
-		}
-	}
+	/**
+	 * TODO: There's no need to reformat the data. The stats code could directly use the buffer, which would save time
+	 * and memory.
+	 * @param buffer
+	 * @return
+	 */
+	private Number[][] convertToDataSet(DataBuffer buffer) {
+		int dimensions = buffer.getDimension();
+		int totalSamples = buffer.size();
 
-	private Number[][] convertToDataSet(List<Sample> buffer) {
-		Number[][] dataSet = new Number[buffer.size()][];
-		Iterator<Sample> iterator = buffer.iterator();
-		for (int i = 0; i < dataSet.length; i++) {
-			Object data = iterator.next().getData();
-			if (data instanceof Number[]) {
-				dataSet[i] = (Number[]) data;
-			} else if (data instanceof Number) {
-				dataSet[i] = new Number[] { (Number) data };
-			} else if (data instanceof double[]) {
-				dataSet[i] = ArrayUtils.toObject((double[]) data);
-			} else if (data instanceof float[]) {
-				dataSet[i] = ArrayUtils.toObject((float[]) data);
-			} else if (data instanceof long[]) {
-				dataSet[i] = ArrayUtils.toObject((long[]) data);
-			} else if (data instanceof int[]) {
-				dataSet[i] = ArrayUtils.toObject((int[]) data);
-			} else if (data instanceof short[]) {
-				dataSet[i] = ArrayUtils.toObject((short[]) data);
-			} else if (data instanceof byte[]) {
-				dataSet[i] = ArrayUtils.toObject((byte[]) data);
-			} else if (data instanceof Object[]) {
-				Object[] objArray = (Object[]) data;
-				dataSet[i] = new Number[objArray.length];
-				for (int j = 0; j < objArray.length; j++) {
-					dataSet[i][j] = (Number) objArray[j];
-				}
-			} else {
-				throw new IllegalStateException("Unsupported type: " + data.getClass());
-			}
-
+		// Create 2D array
+		Number[][] retVal = new Number[dimensions][];
+		for (int dimension = 0; dimension < dimensions; dimension++) {
+			retVal[dimension] = new Number[totalSamples];
 		}
 
-		// Transpose the result
-		Number[][] retVal = new Number[dataSet[0].length][dataSet.length];
-		for (int i = 0; i < retVal.length; i++) {
-			for (int j = 0; j < retVal[i].length; j++) {
-				retVal[i][j] = dataSet[j][i];
+		// Populate with sample data
+		for (int sampleIndex = 0; sampleIndex < totalSamples; sampleIndex++) {
+			Object[] sample = buffer.getSample(sampleIndex);
+			for (int dimension = 0; dimension < dimensions; dimension++) {
+				retVal[dimension][sampleIndex] = (Number) sample[dimension];
 			}
 		}
 
@@ -136,11 +91,8 @@ public class DataCourier {
 		return dataBuffer.getDimension();
 	}
 
-	public List<Sample> getBuffer() {
-		if (dataBuffer == null) {
-			return Collections.emptyList();
-		}
-		return dataBuffer.getBuffer();
+	public DataBuffer getBuffer() {
+		return dataBuffer;
 	}
 
 	public int getSize() {
