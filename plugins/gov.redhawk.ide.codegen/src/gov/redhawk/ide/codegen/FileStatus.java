@@ -11,20 +11,25 @@
 package gov.redhawk.ide.codegen;
 
 /**
+ * Gives information about a file that code generation will perform an action on. A {@link FileStatus} is {@link #equals(Object)} to
+ * another instance if they describe the same file (regardless of how they describe it).
  * @since 10.0
- * 
  */
 public class FileStatus {
 	public static enum Action {
-		ADDING, REMOVING, REGEN
+		ADDING,
+		REMOVING,
+		REGEN
 	}
-	
+
 	public static enum State {
-		MODIFIED, MATCHES
+		MODIFIED,
+		MATCHES
 	}
-	
+
 	public static enum Type {
-		SYSTEM, USER
+		SYSTEM,
+		USER
 	}
 
 	private final String filename;
@@ -78,11 +83,11 @@ public class FileStatus {
 		}
 		this.doItDefault = doIt;
 	}
-	
+
 	public void setToDefault() {
 		this.doIt = this.doItDefault;
 	}
-	
+
 	public boolean getDoItDefault() {
 		return doItDefault;
 	}
@@ -90,68 +95,45 @@ public class FileStatus {
 	public State getState() {
 		return state;
 	}
-	
+
 	public boolean isDoIt() {
 		return doIt;
 	}
-	
+
 	public void setDoIt(boolean doIt) {
 		this.doIt = doIt;
 	}
-	
+
 	public String getFilename() {
 		return filename;
 	}
-	
+
 	public Action getDesiredAction() {
 		return desiredAction;
 	}
-	
+
 	public Type getType() {
 		return type;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((filename == null) ? 0 : filename.hashCode());
-		return result;
+		return 31 * 17 + filename.hashCode();
 	}
-	
+
 	@Override
 	public String toString() {
 		return filename;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
-			return false;
+		if (obj instanceof FileStatus) {
+			return filename.equals(((FileStatus) obj).filename);
 		}
-		if (!(obj instanceof FileStatus)) {
-			return false;
-		}
-		FileStatus other = (FileStatus) obj;
-		if (filename == null) {
-			if (other.filename != null) {
-				return false;
-			}
-		} else if (!filename.equals(other.filename)) {
-			return false;
-		}
-		return true;
+		return false;
 	}
-	
-	
-
 }
