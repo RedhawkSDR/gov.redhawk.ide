@@ -25,9 +25,8 @@ public class OpenEditorJob extends WorkbenchJob {
 
 	private IFile mainFile;
 
-	public OpenEditorJob(String name, IFile mainFile) {
-		super(name);
-		
+	public OpenEditorJob(IFile mainFile) {
+		super("Open editor");
 		this.mainFile = mainFile;
 	}
 
@@ -38,8 +37,6 @@ public class OpenEditorJob extends WorkbenchJob {
 		} catch (final PartInitException p) {
 			return new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to open main file for editing.");
 		}
-		return new Status(IStatus.OK, RedhawkCodegenUiActivator.PLUGIN_ID, "");
+		return Status.OK_STATUS;
 	}
-
-
 }

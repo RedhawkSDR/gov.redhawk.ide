@@ -1,18 +1,17 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.codegen.ui.internal.job;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,9 +32,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.edit.command.AddCommand;
@@ -44,17 +41,13 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.RunnableWithResult;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.framework.Version;
 
 import gov.redhawk.ide.codegen.CodegenPackage;
 import gov.redhawk.ide.codegen.CodegenUtil;
-import gov.redhawk.ide.codegen.FileStatus;
 import gov.redhawk.ide.codegen.FileToCRCMap;
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
 import gov.redhawk.ide.codegen.IScaComponentCodegen;
@@ -63,12 +56,10 @@ import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
-import gov.redhawk.ide.codegen.ui.internal.GenerateFilesDialog;
 import gov.redhawk.ide.codegen.ui.internal.GeneratorConsole;
 import gov.redhawk.ide.codegen.ui.internal.GeneratorUtil;
 import gov.redhawk.ide.codegen.ui.internal.SaveXmlUtils;
 import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
-import gov.redhawk.ide.codegen.ui.preferences.CodegenPreferenceConstants;
 import gov.redhawk.ide.codegen.ui.utils.DocumentationUtils;
 import gov.redhawk.ide.codegen.util.PropertyUtil;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -83,249 +74,174 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdDocumentRoot;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
-/**
- * Performs code generation for each of the projects declared implementations
- */
-public class ProcessImplsJob extends WorkbenchJob {
+public class CodegenJob extends WorkspaceJob {
 
-	private Shell shell;
-	private Map<Implementation, Set<FileStatus>> implMap;
+	private Map<Implementation, String[]> implMap;
 
-	/** A set of all files that we want to open an editor for after codegen completes **/
+	/**
+	 * A set of all files that we want to open an editor for after codegen completes
+	 */
 	private Set<IFile> mainFileSet = new HashSet<>();
 
-	public ProcessImplsJob(String name, Shell shell, Map<Implementation, Set<FileStatus>> implMap) {
-		super(name);
-		this.shell = shell;
-		this.implMap = implMap;
+	/**
+	 * Must call {@link #setImplementationsAndFiles(Map)} before scheduling the job.
+	 */
+	public CodegenJob() {
+		super("Generating...");
+		setUser(true);
+	}
+
+	/**
+	 * Provides the set of files the code generator will be asked to generate for each implementation.
+	 * @param filesForImplementation
+	 */
+	public void setImplementationsAndFiles(Map<Implementation, String[]> filesForImplementation) {
+		this.implMap = filesForImplementation;
 	}
 
 	@Override
-	public IStatus runInUIThread(IProgressMonitor monitor) {
+	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+		SubMonitor progress = SubMonitor.convert(monitor, "Generating...", implMap.size() + 2);
+		final SoftPkg softPkg = (SoftPkg) implMap.entrySet().iterator().next().getKey().eContainer();
+		final TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(softPkg);
+		final IProject project = ModelUtil.getProject(softPkg);
+		final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings(softPkg);
 
-		Set<FileStatus> aggregate = new HashSet<FileStatus>();
-		for (Set<FileStatus> v : implMap.values()) {
-			aggregate.addAll(v);
-		}
-		final IPreferenceStore store = RedhawkCodegenUiActivator.getDefault().getPreferenceStore();
-		List<String> filesToGenerate = new ArrayList<String>();
-		boolean showDialog = false;
-		boolean generateDefault = store.getBoolean(CodegenPreferenceConstants.P_ALWAYS_GENERATE_DEFAULTS);
-		if (generateDefault) {
-			for (FileStatus s : aggregate) {
-				if (!s.isDoIt() && s.getType() != FileStatus.Type.USER) {
-					showDialog = true;
-					break;
-				}
-			}
-		} else {
-			showDialog = true;
-		}
+		// Refresh project before generating code
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 
-		if (showDialog) {
-			GenerateFilesDialog dialog = new GenerateFilesDialog(shell, aggregate);
-			dialog.setBlockOnOpen(true);
-			if (dialog.open() == Window.OK) {
-				String[] result = dialog.getFilesToGenerate();
-				if (result != null) {
-					filesToGenerate.addAll(Arrays.asList(result));
-				}
-			} else {
+		final MultiStatus retStatus = new MultiStatus(RedhawkCodegenUiActivator.PLUGIN_ID, IStatus.OK, "Problems while generating code", null);
+		for (Map.Entry<Implementation, String[]> entry : implMap.entrySet()) {
+			if (progress.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
-		} else {
-			for (FileStatus s : aggregate) {
-				if (s.isDoIt()) {
-					filesToGenerate.add(s.getFilename());
+
+			SubMonitor implGenerateWork = progress.newChild(1);
+			implGenerateWork.beginTask("Generating " + entry.getKey().getId(), 1);
+
+			final Implementation impl = entry.getKey();
+			IStatus status = validate(project, softPkg, impl, waveDev);
+			if (!status.isOK()) {
+				retStatus.add(status);
+				if (retStatus.getSeverity() == IStatus.ERROR) {
+					return retStatus;
 				}
 			}
-		}
 
-		final Map<Implementation, String[]> implFileMap = new HashMap<Implementation, String[]>();
-		for (Map.Entry<Implementation, Set<FileStatus>> entry : implMap.entrySet()) {
-			Set<String> subsetFilesToGenerate = new HashSet<String>();
-			for (FileStatus s : entry.getValue()) {
-				subsetFilesToGenerate.add(s.getFilename());
-			}
-			Set<String> filesToRemove = new HashSet<String>(subsetFilesToGenerate);
-			filesToRemove.removeAll(filesToGenerate);
-			subsetFilesToGenerate.removeAll(filesToRemove);
+			// Generate code for each implementation
+			final EMap<String, ImplementationSettings> implSet = waveDev.getImplSettings();
+			// Generate code for implementation
+			final ImplementationSettings settings = implSet.get(impl.getId());
+			final ArrayList<FileToCRCMap> mapping = new ArrayList<FileToCRCMap>();
 
-			implFileMap.put(entry.getKey(), subsetFilesToGenerate.toArray(new String[subsetFilesToGenerate.size()]));
-		}
-
-		final WorkspaceJob processJob = new WorkspaceJob("Generating...") {
-
-			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-				return processImpls(implFileMap, monitor);
-			}
-		};
-		processJob.setUser(true);
-		processJob.addJobChangeListener(new JobChangeAdapter() {
-			@Override
-			public void done(IJobChangeEvent event) {
-
-				/** As a final step, open the default file editor for every generated implementation */
-				for (IFile file : mainFileSet) {
-					WorkbenchJob openJob = new OpenEditorJob("Open editor", file);
-					openJob.setPriority(Job.SHORT);
-					openJob.schedule();
+			String[] filesToGenerate = entry.getValue();
+			status = generateImplementation(filesToGenerate, impl, settings, implGenerateWork.newChild(1), softPkg, mapping);
+			if (!status.isOK()) {
+				retStatus.add(status);
+				if (status.getSeverity() == IStatus.ERROR) {
+					return retStatus;
 				}
 			}
-		});
-		processJob.schedule();
 
-		return Status.OK_STATUS;
-	}
+			// Update CRCs for implementation
+			try {
+				updateCRCs(domain, settings, mapping);
+			} catch (final IOException e) {
+				retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Problem while generating CRCs for implementations", e));
+			}
 
-	private IStatus processImpls(Map<Implementation, String[]> implMap, IProgressMonitor monitor) throws CoreException {
-		try {
-			SubMonitor progress = SubMonitor.convert(monitor, "Generating...", implMap.size() + 2);
-			final SoftPkg softPkg = (SoftPkg) implMap.entrySet().iterator().next().getKey().eContainer();
-			final TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(softPkg);
-			final IProject project = ModelUtil.getProject(softPkg);
-			final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings(softPkg);
+			// Gather some info to update the XML
+			ImplementationSettings implSettings = WaveDevUtil.getImplSettings(impl);
+			final IScaComponentCodegen generator = GeneratorUtil.getGenerator(implSettings);
+			final Version codeGenVersion = generator.getCodegenVersion();
+			String headerContents = DocumentationUtils.getHeaderContents(project);
+			SpdDocumentRoot spdRoot = ScaEcoreUtils.getEContainerOfType(softPkg, SpdDocumentRoot.class);
+			Properties prf = (softPkg.getPropertyFile() == null) ? null : softPkg.getPropertyFile().getProperties();
+			PrfDocumentRoot prfRoot = ScaEcoreUtils.getEContainerOfType(prf, PrfDocumentRoot.class);
+			SoftwareComponent scd = (softPkg.getDescriptor() == null) ? null : softPkg.getDescriptor().getComponent();
+			ScdDocumentRoot scdRoot = ScaEcoreUtils.getEContainerOfType(scd, ScdDocumentRoot.class);
 
-			// Refresh project before generating code
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			RunnableWithResult<Void> runnable = new RunnableWithResult.Impl<Void>() {
+				public void run() {
+					boolean changes = false;
 
-			final MultiStatus retStatus = new MultiStatus(RedhawkCodegenUiActivator.PLUGIN_ID, IStatus.OK, "Problems while generating code", null);
-			for (Map.Entry<Implementation, String[]> entry : implMap.entrySet()) {
-				if (progress.isCanceled()) {
-					return Status.CANCEL_STATUS;
-				}
-
-				SubMonitor implGenerateWork = progress.newChild(1);
-				implGenerateWork.beginTask("Generating " + entry.getKey().getId(), 1);
-
-				final Implementation impl = entry.getKey();
-				IStatus status = validate(project, softPkg, impl, waveDev);
-				if (!status.isOK()) {
-					retStatus.add(status);
-					if (retStatus.getSeverity() == IStatus.ERROR) {
-						return retStatus;
-					}
-				}
-
-				// Generate code for each implementation
-				final EMap<String, ImplementationSettings> implSet = waveDev.getImplSettings();
-				// Generate code for implementation
-				final ImplementationSettings settings = implSet.get(impl.getId());
-				final ArrayList<FileToCRCMap> mapping = new ArrayList<FileToCRCMap>();
-
-				String[] filesToGenerate = entry.getValue();
-				status = generateImplementation(filesToGenerate, impl, settings, implGenerateWork.newChild(1), softPkg, mapping);
-				if (!status.isOK()) {
-					retStatus.add(status);
-					if (status.getSeverity() == IStatus.ERROR) {
-						return retStatus;
-					}
-				}
-
-				// Update CRCs for implementation
-				try {
-					updateCRCs(domain, settings, mapping);
-				} catch (final IOException e) {
-					retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Problem while generating CRCs for implementations", e));
-				}
-
-				// Gather some info to update the XML
-				ImplementationSettings implSettings = WaveDevUtil.getImplSettings(impl);
-				final IScaComponentCodegen generator = GeneratorUtil.getGenerator(implSettings);
-				final Version codeGenVersion = generator.getCodegenVersion();
-				String headerContents = DocumentationUtils.getHeaderContents(project);
-				SpdDocumentRoot spdRoot = ScaEcoreUtils.getEContainerOfType(softPkg, SpdDocumentRoot.class);
-				Properties prf = (softPkg.getPropertyFile() == null) ? null : softPkg.getPropertyFile().getProperties();
-				PrfDocumentRoot prfRoot = ScaEcoreUtils.getEContainerOfType(prf, PrfDocumentRoot.class);
-				SoftwareComponent scd = (softPkg.getDescriptor() == null) ? null : softPkg.getDescriptor().getComponent();
-				ScdDocumentRoot scdRoot = ScaEcoreUtils.getEContainerOfType(scd, ScdDocumentRoot.class);
-
-				RunnableWithResult<Void> runnable = new RunnableWithResult.Impl<Void>() {
-					public void run() {
-						boolean changes = false;
-
-						String codegenVersion = generator.getCodegenVersion().toString();
-						if (new Version(1, 10, 0).compareTo(codeGenVersion) <= 0 && !codegenVersion.equals(softPkg.getType())) {
-							// Set the SPD's type field to the code generator's version
-							ScaModelCommand.execute(softPkg, new ScaModelCommand() {
-								@Override
-								public void execute() {
-									softPkg.setType(codegenVersion);
-								}
-							});
-							changes = true;
-						}
-
-						// Apply header to XML files
-						if (spdRoot != null) {
-							changes |= DocumentationUtils.setXMLCommentHeader(domain, spdRoot.getMixed(), headerContents);
-						}
-						if (prfRoot != null) {
-							changes |= DocumentationUtils.setXMLCommentHeader(domain, prfRoot.getMixed(), headerContents);
-						}
-						if (scdRoot != null) {
-							changes |= DocumentationUtils.setXMLCommentHeader(domain, scdRoot.getMixed(), headerContents);
-						}
-
-						// Save XML files (SPD, PRF, SCD) and wavedev
-						// This should include codegen version, header updates, file CRCs
-						if (changes) {
-							try {
-								SaveXmlUtils.save(softPkg, prf, scd);
-							} catch (CoreException e) {
-								setStatus(new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save changes to XML", e));
-								return;
+					String codegenVersion = generator.getCodegenVersion().toString();
+					if (new Version(1, 10, 0).compareTo(codeGenVersion) <= 0 && !codegenVersion.equals(softPkg.getType())) {
+						// Set the SPD's type field to the code generator's version
+						ScaModelCommand.execute(softPkg, new ScaModelCommand() {
+							@Override
+							public void execute() {
+								softPkg.setType(codegenVersion);
 							}
-						}
-
-						setStatus(Status.OK_STATUS);
-					};
-				};
-				shell.getDisplay().syncExec(runnable);
-
-				if (!runnable.getStatus().isOK()) {
-					return runnable.getStatus();
-				}
-			}
-
-			// Remove top-level build.sh script builder if it exists, as this was only needed in support of 1.8 projects
-			progress.setTaskName("Updating builders");
-			CodegenUtil.removeDeprecatedBuilders(project, progress.newChild(1));
-
-			// Refresh project after generating code
-			progress.setTaskName("Refreshing project");
-			project.refreshLocal(IResource.DEPTH_INFINITE, progress.newChild(1));
-
-			if (ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding()) {
-				// Schedule a new job which will run a full build; this should ensure all resource change
-				// notifications are dispatched before beginning the build
-				final WorkspaceJob buildJob = new WorkspaceJob("Building Project " + project.getName()) {
-					@Override
-					public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
-						final int CLEAN_WORK = 15;
-						final int BUILD_WORK = 85;
-						SubMonitor progress = SubMonitor.convert(monitor, CLEAN_WORK + BUILD_WORK);
-
-						project.build(IncrementalProjectBuilder.CLEAN_BUILD, progress.newChild(CLEAN_WORK));
-						if (monitor.isCanceled()) {
-							return Status.CANCEL_STATUS;
-						}
-
-						project.build(IncrementalProjectBuilder.FULL_BUILD, progress.newChild(BUILD_WORK));
-						return Status.OK_STATUS;
+						});
+						changes = true;
 					}
-				};
-				buildJob.setPriority(Job.LONG);
-				buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
-				buildJob.schedule();
-			}
 
-			return retStatus;
-		} finally {
-			monitor.done();
+					// Apply header to XML files
+					if (spdRoot != null) {
+						changes |= DocumentationUtils.setXMLCommentHeader(domain, spdRoot.getMixed(), headerContents);
+					}
+					if (prfRoot != null) {
+						changes |= DocumentationUtils.setXMLCommentHeader(domain, prfRoot.getMixed(), headerContents);
+					}
+					if (scdRoot != null) {
+						changes |= DocumentationUtils.setXMLCommentHeader(domain, scdRoot.getMixed(), headerContents);
+					}
+
+					// Save XML files (SPD, PRF, SCD) and wavedev
+					// This should include codegen version, header updates, file CRCs
+					if (changes) {
+						try {
+							SaveXmlUtils.save(softPkg, prf, scd);
+						} catch (CoreException e) {
+							setStatus(new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save changes to XML", e));
+							return;
+						}
+					}
+
+					setStatus(Status.OK_STATUS);
+				};
+			};
+			PlatformUI.getWorkbench().getDisplay().syncExec(runnable);
+
+			if (!runnable.getStatus().isOK()) {
+				return runnable.getStatus();
+			}
 		}
 
+		// Remove top-level build.sh script builder if it exists, as this was only needed in support of 1.8 projects
+		progress.setTaskName("Updating builders");
+		CodegenUtil.removeDeprecatedBuilders(project, progress.newChild(1));
+
+		// Refresh project after generating code
+		progress.setTaskName("Refreshing project");
+		project.refreshLocal(IResource.DEPTH_INFINITE, progress.newChild(1));
+
+		if (ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding()) {
+			// Schedule a new job which will run a full build; this should ensure all resource change
+			// notifications are dispatched before beginning the build
+			final WorkspaceJob buildJob = new WorkspaceJob("Building Project " + project.getName()) {
+				@Override
+				public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+					final int CLEAN_WORK = 15;
+					final int BUILD_WORK = 85;
+					SubMonitor progress = SubMonitor.convert(monitor, CLEAN_WORK + BUILD_WORK);
+
+					project.build(IncrementalProjectBuilder.CLEAN_BUILD, progress.newChild(CLEAN_WORK));
+					if (monitor.isCanceled()) {
+						return Status.CANCEL_STATUS;
+					}
+
+					project.build(IncrementalProjectBuilder.FULL_BUILD, progress.newChild(BUILD_WORK));
+					return Status.OK_STATUS;
+				}
+			};
+			buildJob.setPriority(Job.LONG);
+			buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
+			buildJob.schedule();
+		}
+
+		return retStatus;
 	}
 
 	private IStatus generateImplementation(final String[] files, final Implementation impl, final ImplementationSettings settings,
@@ -545,5 +461,12 @@ public class ProcessImplsJob extends WorkbenchJob {
 				crcEntry.getKey().setCrc(crcEntry.getValue().getCrc());
 			}
 		}
+	}
+
+	/**
+	 * @return The set of files that should be opened in their respective editors
+	 */
+	public Set<IFile> getFilesToOpen() {
+		return mainFileSet;
 	}
 }
