@@ -106,13 +106,13 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 	@Override
 	protected Object createModelObject(EStructuralFeature feature, Object value) {
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
-			SimpleRef ref = PrfFactory.eINSTANCE.createSimpleRef();
-			ref.setRefID(getID());
-
-			// If ("\"\"") is entered, convert it to an empty string before passing to the model object
+			// Convert "" to an empty string
 			if ("\"\"".equals(value)) {
 				value = "";
 			}
+
+			SimpleRef ref = PrfFactory.eINSTANCE.createSimpleRef();
+			ref.setRefID(getID());
 			ref.setValue((String) value);
 			return ref;
 		}
@@ -121,11 +121,12 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 
 	@Override
 	protected Command createSetCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
-		// If ("\"\"") is entered, convert it to an empty string before passing to the model object
-		if ("\"\"".equals(value)) {
-			value = "";
-		}
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
+			// Convert "" to an empty string
+			if ("\"\"".equals(value)) {
+				value = "";
+			}
+
 			return SetCommand.create(domain, owner, PrfPackage.Literals.SIMPLE_REF__VALUE, value);
 		}
 		return super.createSetCommand(domain, owner, feature, value);
