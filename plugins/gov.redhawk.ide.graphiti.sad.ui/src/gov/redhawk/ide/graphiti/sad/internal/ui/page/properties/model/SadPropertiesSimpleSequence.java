@@ -104,9 +104,10 @@ public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence>
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected Object createModelObject(EStructuralFeature feature, Object value) {
-		// Make sure double-quotes are interpreted as empty strings
-		Collections.replaceAll((List) value, "\"\"", "");
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
+			// Convert "" to an empty string
+			Collections.replaceAll((List) value, "\"\"", "");
+
 			SimpleSequenceRef ref = PrfFactory.eINSTANCE.createSimpleSequenceRef();
 			ref.setRefID(getID());
 			ref.setValues(PrfFactory.eINSTANCE.createValues());
@@ -119,9 +120,10 @@ public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence>
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Command createSetCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
-		// Make sure double-quotes are interpreted as empty strings
-		Collections.replaceAll((List) value, "\"\"", "");
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
+			// Convert "" to an empty string
+			Collections.replaceAll((List) value, "\"\"", "");
+
 			return SetCommand.create(domain, ((SimpleSequenceRef) owner).getValues(), PrfPackage.Literals.VALUES__VALUE, value);
 		}
 		return super.createSetCommand(domain, owner, feature, value);
