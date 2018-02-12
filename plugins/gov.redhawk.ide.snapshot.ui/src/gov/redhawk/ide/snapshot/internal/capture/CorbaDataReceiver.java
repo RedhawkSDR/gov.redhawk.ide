@@ -1,4 +1,4 @@
-/*******************************************************************************
+/**
  * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
@@ -6,8 +6,8 @@
  *
  * All rights reserved.  This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.snapshot.internal.capture;
 
 import gov.redhawk.bulkio.util.AbstractUberBulkIOPort;
@@ -27,12 +27,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 
+import BULKIO.BitSequence;
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
 
-/**
- *
- */
 public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataReceiver {
 
 	private IDataWriter writer;
@@ -50,17 +48,11 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 		return port;
 	}
 
-	/* (non-Javadoc)
-	 * @see gov.redhawk.ide.snapshot.capture.IDataReceiver#setDataWriter(gov.redhawk.ide.snapshot.writer.IDataWriter)
-	 */
 	@Override
 	public void setDataWriter(IDataWriter writer) {
 		this.writer = writer;
 	}
 
-	/* (non-Javadoc)
-	 * @see gov.redhawk.ide.snapshot.capture.IDataReceiver#getDataWriter()
-	 */
 	@Override
 	public IDataWriter getDataWriter() {
 		return writer;
@@ -89,9 +81,6 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see gov.redhawk.ide.snapshot.capture.IDataReceiver#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, "Taking Snapshot...", 100);
@@ -212,8 +201,8 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 		setProcessing(false);
 	}
 
-	public int getSamplesToProcess(int length, PrecisionUTCTime time) {
-		return length;
+	protected < T > T getSamplesToProcess(T data, Class<T> dataClass, int length, PrecisionUTCTime time) {
+		return data;
 	}
 
 	@Override
@@ -226,17 +215,31 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 	}
 
 	@Override
+	public void pushPacket(BitSequence data, PrecisionUTCTime time, boolean eos, String streamID) {
+		if (!pushPacket(data.bits, time, eos, streamID)) {
+			return;
+		}
+		BitSequence dataToProcess = getSamplesToProcess(data, BitSequence.class, data.bits, time);
+		try {
+			writer.pushPacket(data, time, eos, streamID);
+		} catch (IOException e) {
+			setException(e);
+		}
+		postPushPacket(dataToProcess.bits, time);
+	}
+
+	@Override
 	public void pushPacket(short[] data, PrecisionUTCTime time, boolean eos, String streamID) {
 		if (!pushPacket(data.length, time, eos, streamID)) {
 			return;
 		}
-		int samplesToProcess = getSamplesToProcess(data.length, time);
+		short[] dataToProcess = getSamplesToProcess(data, short[].class, data.length, time);
 		try {
-			writer.pushPacket(data, 0, samplesToProcess, time);
+			writer.pushPacket(dataToProcess, time, eos, streamID);
 		} catch (IOException e) {
 			setException(e);
 		}
-		postPushPacket(samplesToProcess, time);
+		postPushPacket(dataToProcess.length, time);
 	}
 
 	@Override
@@ -244,13 +247,13 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 		if (!pushPacket(data.length, time, eos, streamID)) {
 			return;
 		}
-		int samplesToProcess = getSamplesToProcess(data.length, time);
+		char[] dataToProcess = getSamplesToProcess(data, char[].class, data.length, time);
 		try {
-			writer.pushPacket(data, 0, samplesToProcess, time);
+			writer.pushPacket(dataToProcess, time, eos, streamID);
 		} catch (IOException e) {
 			setException(e);
 		}
-		postPushPacket(samplesToProcess, time);
+		postPushPacket(dataToProcess.length, time);
 	}
 
 	@Override
@@ -258,13 +261,13 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 		if (!pushPacket(data.length, time, eos, streamID)) {
 			return;
 		}
-		int samplesToProcess = getSamplesToProcess(data.length, time);
+		double[] dataToProcess = getSamplesToProcess(data, double[].class, data.length, time);
 		try {
-			writer.pushPacket(data, 0, samplesToProcess, time);
+			writer.pushPacket(dataToProcess, time, eos, streamID);
 		} catch (IOException e) {
 			setException(e);
 		}
-		postPushPacket(samplesToProcess, time);
+		postPushPacket(dataToProcess.length, time);
 	}
 
 	@Override
@@ -272,13 +275,13 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 		if (!pushPacket(data.length, time, eos, streamID)) {
 			return;
 		}
-		int samplesToProcess = getSamplesToProcess(data.length, time);
+		float[] dataToProcess = getSamplesToProcess(data, float[].class, data.length, time);
 		try {
-			writer.pushPacket(data, 0, samplesToProcess, time);
+			writer.pushPacket(dataToProcess, time, eos, streamID);
 		} catch (IOException e) {
 			setException(e);
 		}
-		postPushPacket(samplesToProcess, time);
+		postPushPacket(dataToProcess.length, time);
 	}
 
 	@Override
@@ -286,13 +289,13 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 		if (!pushPacket(data.length, time, eos, streamID)) {
 			return;
 		}
-		int samplesToProcess = getSamplesToProcess(data.length, time);
+		long[] dataToProcess = getSamplesToProcess(data, long[].class, data.length, time);
 		try {
-			writer.pushPacket(data, 0, samplesToProcess, time);
+			writer.pushPacket(dataToProcess, time, eos, streamID);
 		} catch (IOException e) {
 			setException(e);
 		}
-		postPushPacket(samplesToProcess, time);
+		postPushPacket(dataToProcess.length, time);
 	}
 
 	@Override
@@ -300,13 +303,13 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 		if (!pushPacket(data.length, time, eos, streamID)) {
 			return;
 		}
-		int samplesToProcess = getSamplesToProcess(data.length, time);
+		int[] dataToProcess = getSamplesToProcess(data, int[].class, data.length, time);
 		try {
-			writer.pushPacket(data, 0, samplesToProcess, time);
+			writer.pushPacket(dataToProcess, time, eos, streamID);
 		} catch (IOException e) {
 			setException(e);
 		}
-		postPushPacket(samplesToProcess, time);
+		postPushPacket(dataToProcess.length, time);
 	}
 
 	@Override
@@ -314,17 +317,16 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 		if (!pushPacket(data.length, time, eos, streamID)) {
 			return;
 		}
-		int samplesToProcess = getSamplesToProcess(data.length, time);
+		byte[] dataToProcess = getSamplesToProcess(data, byte[].class, data.length, time);
 		try {
-			writer.pushPacket(data, 0, samplesToProcess, time);
+			writer.pushPacket(dataToProcess, time, eos, streamID);
 		} catch (IOException e) {
 			setException(e);
 		}
-		postPushPacket(samplesToProcess, time);
+		postPushPacket(dataToProcess.length, time);
 	}
 
 	protected void postPushPacket(int samplesProcessed, PrecisionUTCTime time) {
-
 	}
 
 }

@@ -1,15 +1,16 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.snapshot.internal.capture;
 
+import gov.redhawk.bulkio.util.BufferCopy;
 import gov.redhawk.sca.util.SubMonitor;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -61,15 +62,15 @@ public class CorbaNumSamplesReceiver extends CorbaDataReceiver {
 	}
 
 	@Override
-	public int getSamplesToProcess(int length, PrecisionUTCTime time) {
+	protected < T > T getSamplesToProcess(T data, Class<T> dataClass, int length, PrecisionUTCTime time) {
 		StreamSRI streamSri = getStreamSRI();
 		if (streamSri != null) {
 			int sampleSize = (streamSri.mode == 1) ? 2 : 1;
 			int receivedSamples = length / sampleSize;
 			int samplesToProcess = (int) Math.min(receivedSamples, this.samples - currentSamples);
-			return samplesToProcess * sampleSize;
+			return BufferCopy.copyOf(data, dataClass, samplesToProcess * sampleSize);
 		} else {
-			return 0;
+			return BufferCopy.copyOf(data, dataClass, 0);
 		}
 	}
 

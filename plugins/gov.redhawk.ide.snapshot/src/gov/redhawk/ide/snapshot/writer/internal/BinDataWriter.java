@@ -10,13 +10,6 @@
  */
 package gov.redhawk.ide.snapshot.writer.internal;
 
-import gov.redhawk.bulkio.util.BulkIOType;
-import gov.redhawk.ide.internal.snapshot.metadata.CFDataType;
-import gov.redhawk.ide.internal.snapshot.metadata.SnapshotMetadataFactory;
-import gov.redhawk.ide.internal.snapshot.metadata.Value;
-import gov.redhawk.ide.snapshot.writer.BaseDataWriter;
-import gov.redhawk.ide.snapshot.writer.IDataWriterSettings;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -29,11 +22,12 @@ import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
 
-import mil.jpeojtrs.sca.util.AnyUtils;
-import mil.jpeojtrs.sca.util.UnsignedUtils;
+import BULKIO.BitSequence;
 import BULKIO.PrecisionUTCTime;
-import CF.DataType;
-import CF.DataTypeHelper;
+import gov.redhawk.bulkio.util.BulkIOType;
+import gov.redhawk.ide.snapshot.writer.BaseDataWriter;
+import gov.redhawk.ide.snapshot.writer.IDataWriterSettings;
+import mil.jpeojtrs.sca.util.UnsignedUtils;
 
 /**
  * NOTE1: the BulkIO data type MUST NOT be changing during a Port snapshot.
@@ -46,37 +40,9 @@ public abstract class BinDataWriter extends BaseDataWriter {
 	private FileChannel fileChannel;
 	private ByteBuffer byteBuffer;
 	private ByteOrder byteOrder;
-
 	private long numSamples;
+	private BitStream bitStream;
 
-	/**
-	 * This method collects the information in the CF.DataType and stores it 
-	 * in the EMF model CFDataType
-	 * @param cfType : the EMF model for the CF.DataType
-	 * @param data	:a CF.DataType to be processed
-	 * @return the EMF model containing the data from the CF.DataType
-	 */
-	protected CFDataType readCFDataType(CFDataType cfType, DataType data) {
-		Object temp;
-		if (DataTypeHelper.type().equivalent(data.value.type())) {
-			temp = DataTypeHelper.extract(data.value);
-		} else {
-			temp = AnyUtils.convertAny(data.value);
-		}
-		cfType.setId(data.id);
-		if (temp instanceof DataType) {
-			cfType.setValue(readCFDataType(SnapshotMetadataFactory.eINSTANCE.createCFDataType(), (DataType) temp));
-		} else {
-			Value value = SnapshotMetadataFactory.eINSTANCE.createValue();
-			value.setValue(temp.toString());
-			//value.setJavaType(DataReceiverUtils.getAnyTypeDataType(temp));
-			value.setJavaType(temp.getClass().getName());
-			cfType.setValue(value);
-		}
-		return cfType;
-	}
-	
-	
 	public long getNumSamples() {
 		return numSamples;
 	}
@@ -88,8 +54,11 @@ public abstract class BinDataWriter extends BaseDataWriter {
 		}
 		raf = new RandomAccessFile(getFileDestination(), "rw");
 		fileChannel = raf.getChannel();
-		
+
 		IDataWriterSettings settings = getSettings();
+		if (settings.getType() == BulkIOType.BIT) {
+			bitStream = new BitStream();
+		}
 		if (settings instanceof BinDataWriterSettings) {
 			BinDataWriterSettings binSettings = (BinDataWriterSettings) settings;
 			byteOrder = binSettings.getByteOrder();
@@ -113,114 +82,132 @@ public abstract class BinDataWriter extends BaseDataWriter {
 	}
 
 	@Override
-	public void pushPacket(char[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		ByteBuffer buffer = allocateByteBuffer(length * getSettings().getType().getBytePerAtom());
-		for (int i = offset; i < length; i++) {
+	public void pushPacket(BitSequence data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
+		BitSequence newBuffer = bitStream.handleBitBuffer(data);
+		fileChannel.write(ByteBuffer.wrap(newBuffer.data, 0, newBuffer.bits / 8));
+		numSamples += newBuffer.bits;
+	}
+
+	@Override
+	public void pushPacket(char[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
+		ByteBuffer buffer = allocateByteBuffer(data.length * getSettings().getType().getBytePerAtom());
+		for (int i = 0; i < data.length; i++) {
 			buffer.putChar(data[i]);
 		}
 		fileChannel.write(buffer);
-		numSamples += length;
+		numSamples += data.length;
 	}
 
 	@Override
-	public void pushPacket(double[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		ByteBuffer buffer = allocateByteBuffer(length * getSettings().getType().getBytePerAtom());
+	public void pushPacket(double[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
+		ByteBuffer buffer = allocateByteBuffer(data.length * getSettings().getType().getBytePerAtom());
 		DoubleBuffer tBuff = buffer.asDoubleBuffer();
-		tBuff.put(data, offset, length); 
+		tBuff.put(data, 0, data.length);
 		fileChannel.write(buffer);
-		numSamples += length;
+		numSamples += data.length;
 	}
 
 	@Override
-	public void pushPacket(float[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		ByteBuffer buffer = allocateByteBuffer(length * getSettings().getType().getBytePerAtom());
+	public void pushPacket(float[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
+		ByteBuffer buffer = allocateByteBuffer(data.length * getSettings().getType().getBytePerAtom());
 		FloatBuffer tBuff = buffer.asFloatBuffer();
-		tBuff.put(data, offset, length); 
+		tBuff.put(data, 0, data.length);
 		fileChannel.write(buffer);
-		numSamples += length;
+		numSamples += data.length;
 	}
 
 	@Override
-	public void pushPacket(long[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(long[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		ByteBuffer buffer;
 		boolean upcastUnsignedType = getSettings().isUpcastUnsigned() && getSettings().getType().isUnsigned();
 		if (upcastUnsignedType) {
 			throw new IOException("Can not store ulong long as upcasted value.");
 			// TODO -should we still have to signed 64-bit integer and cap upper value like in corbareceiver?
 		} else {
-			buffer = allocateByteBuffer(length * getSettings().getType().getBytePerAtom());
+			buffer = allocateByteBuffer(data.length * getSettings().getType().getBytePerAtom());
 			LongBuffer tBuff = buffer.asLongBuffer();
-			tBuff.put(data, offset, length); 
+			tBuff.put(data, 0, data.length);
 		}
 		fileChannel.write(buffer);
-		numSamples += length;
+		numSamples += data.length;
 	}
 
 	@Override
-	public void pushPacket(int[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(int[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		ByteBuffer buffer;
 		boolean upcastUnsignedType = getSettings().isUpcastUnsigned() && getSettings().getType().isUnsigned();
 		if (upcastUnsignedType) {
-			buffer = allocateByteBuffer(length * BulkIOType.LONG_LONG.getBytePerAtom());
+			buffer = allocateByteBuffer(data.length * BulkIOType.LONG_LONG.getBytePerAtom());
 			LongBuffer tBuff = buffer.asLongBuffer();
-			for (int i = offset; i < length; i++) {
+			for (int i = 0; i < data.length; i++) {
 				tBuff.put(UnsignedUtils.toSigned(data[i]));
 			}
 		} else {
-			buffer = allocateByteBuffer(length * getSettings().getType().getBytePerAtom());
+			buffer = allocateByteBuffer(data.length * getSettings().getType().getBytePerAtom());
 			IntBuffer tBuff = buffer.asIntBuffer();
-			tBuff.put(data, offset, length); 
+			tBuff.put(data, 0, data.length);
 		}
 		fileChannel.write(buffer);
-		numSamples += length;
+		numSamples += data.length;
 	}
 
 	@Override
-	public void pushPacket(short[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(short[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		ByteBuffer buffer;
 		boolean upcastUnsignedType = getSettings().isUpcastUnsigned() && getSettings().getType().isUnsigned();
 		if (upcastUnsignedType) {
-			buffer = allocateByteBuffer(length * BulkIOType.LONG.getBytePerAtom());
+			buffer = allocateByteBuffer(data.length * BulkIOType.LONG.getBytePerAtom());
 			IntBuffer tBuff = buffer.asIntBuffer();
-			for (int i = offset; i < length; i++) {
+			for (int i = 0; i < data.length; i++) {
 				tBuff.put(UnsignedUtils.toSigned(data[i]));
 			}
 		} else {
-			buffer = allocateByteBuffer(length * getSettings().getType().getBytePerAtom());
+			buffer = allocateByteBuffer(data.length * getSettings().getType().getBytePerAtom());
 			ShortBuffer tBuf = buffer.asShortBuffer();
-			tBuf.put(data, offset, length);
+			tBuf.put(data, 0, data.length);
 		}
 		fileChannel.write(buffer);
-		numSamples += length;
+		numSamples += data.length;
 	}
 
 	@Override
-	public void pushPacket(byte[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(byte[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		ByteBuffer buffer;
 		boolean upcastUnsignedType = getSettings().isUpcastUnsigned() && getSettings().getType().isUnsigned();
 		if (upcastUnsignedType) {
-			buffer = allocateByteBuffer(length * BulkIOType.SHORT.getBytePerAtom());
+			buffer = allocateByteBuffer(data.length * BulkIOType.SHORT.getBytePerAtom());
 			ShortBuffer tBuff = buffer.asShortBuffer();
-			for (int i = offset; i < length; i++) {
+			for (int i = 0; i < data.length; i++) {
 				tBuff.put(UnsignedUtils.toSigned(data[i]));
 			}
 		} else {
-			buffer = ByteBuffer.wrap(data, offset, length);
+			buffer = ByteBuffer.wrap(data, 0, data.length);
 		}
 		fileChannel.write(buffer);
-		numSamples += length;
+		numSamples += data.length;
 	}
 
 	@Override
 	public void close() throws IOException {
 		setOpen(false);
 		if (fileChannel != null) {
+			// Write any left over bits
+			BitSequence finalBits = bitStream.getFinalBits();
+			if (finalBits.bits > 0) {
+				fileChannel.write(ByteBuffer.wrap(finalBits.data, 0, 1));
+				numSamples += finalBits.bits;
+			}
 
 			saveMetaData();
 
 			// truncate file to actual size for case when we are overwriting an existing file
 			BulkIOType type = getSettings().getType();
-			long fileSizeInBytes = numSamples * type.getBytePerAtom();
+			long fileSizeInBytes;
+			if (type == BulkIOType.BIT) {
+				fileSizeInBytes = (long) Math.ceil(numSamples / 8.0);
+			} else {
+				fileSizeInBytes = numSamples * type.getBytePerAtom();
+			}
 
 			fileChannel.truncate(fileSizeInBytes);
 			fileChannel.close();

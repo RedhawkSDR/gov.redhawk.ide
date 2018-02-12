@@ -1,4 +1,4 @@
-/*******************************************************************************
+/**
  * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
@@ -6,15 +6,13 @@
  *
  * All rights reserved.  This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.snapshot.ui;
 
 import gov.redhawk.sca.util.PropertyChangeSupport;
 
 import java.beans.PropertyChangeListener;
-
-import org.eclipse.jdt.annotation.NonNull;
 
 /**
  *
@@ -52,7 +50,7 @@ public class BulkIOSnapshotSettings {
 		return captureMethod;
 	}
 
-	public void setCaptureMethod(@NonNull CaptureMethod captureMethod) {
+	public void setCaptureMethod(CaptureMethod captureMethod) {
 		if (this.captureMethod != captureMethod) {
 			CaptureMethod oldValue = this.captureMethod;
 			this.captureMethod = captureMethod;

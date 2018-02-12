@@ -1,16 +1,14 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.snapshot.ui;
-
-import org.eclipse.jdt.annotation.NonNull;
 
 public enum CaptureMethod {
 	/**
@@ -33,7 +31,7 @@ public enum CaptureMethod {
 	/** the description of the enum, outputted by toString()*/
 	private String description;
 
-	private CaptureMethod(@NonNull String description) {
+	private CaptureMethod(String description) {
 		this.description = description;
 	}
 

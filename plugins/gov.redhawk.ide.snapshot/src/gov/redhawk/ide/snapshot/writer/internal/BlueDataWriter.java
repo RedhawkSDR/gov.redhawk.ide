@@ -15,6 +15,7 @@ import gov.redhawk.ide.snapshot.writer.BaseDataWriter;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteOrder;
 
 import mil.jpeojtrs.sca.util.UnsignedUtils;
 import nxm.sys.lib.Convert;
@@ -22,185 +23,191 @@ import nxm.sys.lib.Data;
 import nxm.sys.lib.DataFile;
 import nxm.sys.lib.Midas;
 import nxm.sys.lib.NeXtMidas;
+import BULKIO.BitSequence;
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
 
 public class BlueDataWriter extends BaseDataWriter {
 
-	/** the Object used to write data to a Midas .BLUE file */
+	/**
+	 * the Object used to write data to a Midas .BLUE file
+	 */
 	private DataFile df;
-	/** the format specification of a .BLUE file*/
-	private Data dataFormat;
 
-	private StreamSRI sri;
+	private StreamSRI currentSRI;
+
+	private BitStream bitStream;
 
 	/**
-	 * This method maps a BulkIOType to a Data
-	 * @param t : the BulkIOType to map to the DataTypes type
-	 * @return the equivalent Data Type
+	 * Returns the Midas format for the data stream (e.g. "SI", "CF", etc)
+	 * @param sri The BULKIO SRI (used to determine scalar / complex)
+	 * @return
 	 */
-	private Data getMidasDataType(BulkIOType t) {
-		Data data = new Data();
-		switch (t) {
-		case CHAR:
-			data.setFormatType(Data.INT);  // treat char as 16-bit integer
-			break;
-		case DOUBLE:
-			data.setFormatType(Data.DOUBLE);
-			break;
-		case FLOAT:
-			data.setFormatType(Data.FLOAT);
-			break;
-		case LONG:
-			data.setFormatType(Data.LONG);
-			break;
-		case LONG_LONG:
-			data.setFormatType(Data.XLONG);
-			break;
-		case SHORT:
-			data.setFormatType(Data.INT);
-			break;
+	private String getMidasDataType(StreamSRI sri) {
+		char[] format = new char[2];
+
+		format[0] = (sri.mode == 0) ? 'S' : 'C';
+
+		switch (getSettings().getType()) {
 		case OCTET:
-			data.setFormatType(Data.INT);   // upcast to next larger signed type (TODO: give option not to upcast?)
+			format[1] = Data.INT; // upcast to next larger signed type (TODO: give option not to upcast?)
 			break;
 		case ULONG:
-			data.setFormatType(Data.XLONG); // upcast to next larger signed type
+			format[1] = Data.XLONG; // upcast to next larger signed type
 			break;
 		case ULONG_LONG:
-			data.setFormatType(Data.XLONG); // CANNOT upcast
+			format[1] = Data.XLONG; // CANNOT upcast
 			break;
 		case USHORT:
-			data.setFormatType(Data.LONG);  // upcast to next larger signed type
+			format[1] = Data.LONG; // upcast to next larger signed type
 			break;
 		default:
-			throw new IllegalArgumentException("The BulkIOType was not a recognized Type");
+			format[1] = getSettings().getType().getMidasType();
 		}
-		return data;
+
+		return new String(format);
 	}
 
 	@Override
 	public void open() throws IOException {
 		File file = getFileDestination();
-		BulkIOType type = getSettings().getType();
-
 		Midas m = NeXtMidas.getGlobalInstance().getMidasContext();
 		this.df = new DataFile(m, file.getAbsolutePath());
-		this.df.open(DataFile.OUTPUT);
-		this.dataFormat = this.getMidasDataType(type);
 
-		dataFormat.setFormatMode((sri.mode == 0) ? 'S' : 'C');
-		df.setFormat(dataFormat.getFormat());
-		double xdelta = (sri.xdelta == 0) ? 1.0 : sri.xdelta; // delta should NOT be zero
-		double ydelta = (sri.ydelta == 0) ? 1.0 : sri.ydelta; // delta should NOT be zero
-		df.setXStart(sri.xstart);
-		df.setXDelta(xdelta);
-		df.setXUnits(sri.xunits);
-		df.setYStart(sri.ystart);
-		df.setYDelta(ydelta);
-		df.setYUnits(sri.yunits);
-		df.setFrameSize(sri.subsize);
-		df.getKeywordsObject().put("hversion", sri.hversion + "");
-		df.getKeywordsObject().put("streamID", sri.streamID + "");
-		df.getKeywordsObject().put("blocking", sri.blocking + "");
-		
+		this.df.open(DataFile.OUTPUT);
+
+		df.setFormat(getMidasDataType(currentSRI));
+		if (getSettings().getType() == BulkIOType.BIT) {
+			bitStream = new BitStream();
+			// Per "Midas BLUE File Format" version 1.1.0, "Bits are packed into bytes starting with the most
+			// significant bit (MSB0): mask = 0x80 >> (idx mod 8)". However, NeXtMidas (unlike X-Midas) uses the
+			// data_rep to determine the *bit* ordering. We thus adjust the data_rep purely for NeXtMidas. Note
+			// however that due to NeXtMidas's preference for LSB0, it appears to incorrectly read the bits in the
+			// final byte if that byte isn't fully packed. X-Midas doesn't have this problem.
+			df.setDataRep((ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN) ? "EEEI" : "IEEE");
+		}
+		df.setXStart(currentSRI.xstart);
+		df.setXDelta(currentSRI.xdelta);
+		df.setXUnits(currentSRI.xunits);
+		df.setYStart(currentSRI.ystart);
+		df.setYDelta(currentSRI.ydelta);
+		df.setYUnits(currentSRI.yunits);
+		df.setFrameSize(currentSRI.subsize);
+		df.getKeywordsObject().put("hversion", Integer.toString(currentSRI.hversion)); //$NON-NLS-1$
+		df.getKeywordsObject().put("streamID", currentSRI.streamID); //$NON-NLS-1$
+		df.getKeywordsObject().put("blocking", Boolean.toString(currentSRI.blocking)); //$NON-NLS-1$
+
 		setOpen(true);
 	}
 
 	@Override
 	public void pushSRI(StreamSRI sri) throws IOException {
-		this.sri = sri;
+		this.currentSRI = sri;
 	}
 
 	@Override
-	public void pushPacket(char[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		final byte type = Data.INT; 
-		final int bufferSize = length * Data.getBPS(type);
+	public void pushPacket(BitSequence data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
+		BitSequence newBuffer = bitStream.handleBitBuffer(data);
+		df.write(newBuffer.data, 0, newBuffer.bits / 8);
+	}
+
+	@Override
+	public void pushPacket(char[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
+		final byte type = Data.INT;
+		final int bufferSize = data.length * Data.getBPS(type);
 		byte[] byteBuffer = new byte[bufferSize];
-		Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
+		Convert.ja2bb(data, 0, type, byteBuffer, 0, type, data.length);
 		df.write(byteBuffer, 0, bufferSize);
 	}
 
 	@Override
-	public void pushPacket(double[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(double[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		final byte type = Data.DOUBLE;
-		final int bufferSize = length * Data.getBPS(type);
+		final int bufferSize = data.length * Data.getBPS(type);
 		byte[] byteBuffer = new byte[bufferSize];
-		Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
+		Convert.ja2bb(data, 0, type, byteBuffer, 0, type, data.length);
 		df.write(byteBuffer, 0, bufferSize);
 	}
 
 	@Override
-	public void pushPacket(float[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(float[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		final byte type = Data.FLOAT;
-		final int bufferSize = length * Data.getBPS(type);
+		final int bufferSize = data.length * Data.getBPS(type);
 		byte[] byteBuffer = new byte[bufferSize];
-		Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
+		Convert.ja2bb(data, 0, type, byteBuffer, 0, type, data.length);
 		df.write(byteBuffer, 0, bufferSize);
 	}
 
 	@Override
-	public void pushPacket(long[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(long[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		if (isUnsignedData()) {
 			throw new IOException("Can not upcast unsigned long");
 			// should we clip to Long.MAX_VALUE like corbareceiver?
 		} else {
 			final byte type = Data.XLONG;
-			final int bufferSize = length * Data.getBPS(type);
+			final int bufferSize = data.length * Data.getBPS(type);
 			byte[] byteBuffer = new byte[bufferSize];
-			Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
+			Convert.ja2bb(data, 0, type, byteBuffer, 0, type, data.length);
 			df.write(byteBuffer, 0, bufferSize);
 		}
 	}
 
 	@Override
-	public void pushPacket(int[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(int[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		if (isUnsignedData()) {
 			final byte type = Data.XLONG; // upcast to next larger signed type
-			final int bufferSize = length * Data.getBPS(type);
+			final int bufferSize = data.length * Data.getBPS(type);
 			byte[] byteBuffer = new byte[bufferSize];
-			Convert.ja2bb(UnsignedUtils.toSigned(data), offset, type, byteBuffer, 0, type, length);
+			Convert.ja2bb(UnsignedUtils.toSigned(data), 0, type, byteBuffer, 0, type, data.length);
 			df.write(byteBuffer, 0, bufferSize);
 		} else {
 			final byte type = Data.LONG;
-			final int bufferSize = length * Data.getBPS(type);
+			final int bufferSize = data.length * Data.getBPS(type);
 			byte[] byteBuffer = new byte[bufferSize];
-			Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
+			Convert.ja2bb(data, 0, type, byteBuffer, 0, type, data.length);
 			df.write(byteBuffer, 0, bufferSize);
 		}
 	}
 
 	@Override
-	public void pushPacket(short[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(short[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		if (isUnsignedData()) {
 			final byte type = Data.LONG; // upcast to next larger signed type
-			final int bufferSize = length * Data.getBPS(type);
+			final int bufferSize = data.length * Data.getBPS(type);
 			byte[] byteBuffer = new byte[bufferSize];
-			Convert.ja2bb(UnsignedUtils.toSigned(data), offset, type, byteBuffer, 0, type, length);
+			Convert.ja2bb(UnsignedUtils.toSigned(data), 0, type, byteBuffer, 0, type, data.length);
 			df.write(byteBuffer, 0, bufferSize);
 		} else {
 			final byte type = Data.INT;
-			final int bufferSize = length * Data.getBPS(type);
+			final int bufferSize = data.length * Data.getBPS(type);
 			byte[] byteBuffer = new byte[bufferSize];
-			Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
+			Convert.ja2bb(data, 0, type, byteBuffer, 0, type, data.length);
 			df.write(byteBuffer, 0, bufferSize);
 		}
 	}
-	
+
 	@Override
-	public void pushPacket(byte[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(byte[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		if (isUnsignedData()) {
 			final byte type = Data.INT; // upcast to next larger signed type
-			final int bufferSize = length * Data.getBPS(type);
+			final int bufferSize = data.length * Data.getBPS(type);
 			byte[] byteBuffer = new byte[bufferSize];
-			Convert.ja2bb(UnsignedUtils.toSigned(data), offset, type, byteBuffer, 0, type, length);
+			Convert.ja2bb(UnsignedUtils.toSigned(data), 0, type, byteBuffer, 0, type, data.length);
 			df.write(byteBuffer, 0, bufferSize);
 		} else {
-			df.write(data, offset, length);
+			df.write(data, 0, data.length);
 		}
 	}
 
 	@Override
 	public void close() throws IOException {
+		// Write any left over bits
+		BitSequence finalBits = bitStream.getFinalBits();
+		if (finalBits.bits > 0) {
+			df.write(finalBits.data, 0, 1);
+			df.setSize(df.getOffset() - (8 - finalBits.bits));
+		}
+
 		if (df != null) {
 			setOpen(false);
 			df.close();

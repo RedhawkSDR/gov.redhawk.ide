@@ -18,23 +18,33 @@ import gov.redhawk.bulkio.util.BulkIOType;
 public interface IDataWriterSettings {
 
 	/**
-	 * @return  The file to start saving with
+	 * @return The {@link org.eclipse.core.resources.IFile} or {@link java.io.File} to save to
 	 */
 	Object getDestination();
-	
-	void setDestination(Object destination);
+
 	/**
-	 * 
-	 * @return  The BulkIOType of the port
+	 * @param destination The {@link org.eclipse.core.resources.IFile} or {@link java.io.File} to save to
 	 */
-	BulkIOType getType(); 
-	
-	void setType(BulkIOType type);
-	
+	void setDestination(Object destination);
+
 	/**
-	 * @return whether or not unsigned data should be upcast to next larger signed type that can represent it 
+	 * @return The type of BULKIO port to snapshot
+	 */
+	BulkIOType getType();
+
+	/**
+	 * @param type The type of BULKIO port to snapshot
+	 */
+	void setType(BulkIOType type);
+
+	/**
+	 * @return Whether or not unsigned data should be upcast to next larger signed type that can represent it
 	 */
 	boolean isUpcastUnsigned();
-	
+
+	/**
+	 * @param upcastUnsigned Whether or not unsigned data should be upcast to next larger signed type that can represent
+	 * it
+	 */
 	void setUpcastUnsigned(boolean upcastUnsigned);
 }

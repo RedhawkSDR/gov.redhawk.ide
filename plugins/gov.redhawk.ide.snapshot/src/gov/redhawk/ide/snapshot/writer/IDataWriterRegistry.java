@@ -14,6 +14,9 @@ package gov.redhawk.ide.snapshot.writer;
  * @since 1.0
  */
 public interface IDataWriterRegistry {
-	public IDataWriterDesc getRecieverDesc(String id);
+	/**
+	 * @since 1.0
+	 */
+	public IDataWriterDesc getReceiverDesc(String id);
 	public IDataWriterDesc [] getRecieverDescs();
 }

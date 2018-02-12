@@ -25,9 +25,7 @@ import BULKIO.StreamSRI;
 public abstract class BaseDataWriter implements IDataWriter {
 
 	private IDataWriterSettings settings;
-
 	private boolean open;
-
 	private StreamSRI sri;
 
 	@Override

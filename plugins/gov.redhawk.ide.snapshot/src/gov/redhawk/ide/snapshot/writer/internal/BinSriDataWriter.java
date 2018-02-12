@@ -23,13 +23,14 @@ import java.util.Date;
 import java.util.List;
 
 import nxm.sys.lib.Table;
+import BULKIO.BitSequence;
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
 
 public class BinSriDataWriter extends BinDataWriter {
 
 	private static final String METADATA_FILE_EXENSION = "sri";
-	/**the string representation of the format to print the start and end times of files*/
+	/** the string representation of the format to print the start and end times of files */
 	private final String timeFormat = "yyyy-MM-dd HH:mm:ss:SSS z";
 	private PrecisionUTCTime startTime;
 	private PrecisionUTCTime endTime;
@@ -47,66 +48,75 @@ public class BinSriDataWriter extends BinDataWriter {
 	}
 
 	@Override
-	public void pushPacket(byte[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(BitSequence data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		if (startTime == null) {
 			startTime = time;
 		}
 		endTime = time;
-		super.pushPacket(data, offset, length, time);
+		super.pushPacket(data, time, eos, streamID);
 	}
 
 	@Override
-	public void pushPacket(char[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(byte[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		if (startTime == null) {
 			startTime = time;
 		}
 		endTime = time;
-		super.pushPacket(data, offset, length, time);
+		super.pushPacket(data, time, eos, streamID);
 	}
 
 	@Override
-	public void pushPacket(double[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(char[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		if (startTime == null) {
 			startTime = time;
 		}
 		endTime = time;
-		super.pushPacket(data, offset, length, time);
+		super.pushPacket(data, time, eos, streamID);
 	}
 
 	@Override
-	public void pushPacket(float[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(double[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		if (startTime == null) {
 			startTime = time;
 		}
 		endTime = time;
-		super.pushPacket(data, offset, length, time);
+		super.pushPacket(data, time, eos, streamID);
 	}
 
 	@Override
-	public void pushPacket(int[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(float[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		if (startTime == null) {
 			startTime = time;
 		}
 		endTime = time;
-		super.pushPacket(data, offset, length, time);
+		super.pushPacket(data, time, eos, streamID);
 	}
 
 	@Override
-	public void pushPacket(long[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(int[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		if (startTime == null) {
 			startTime = time;
 		}
 		endTime = time;
-		super.pushPacket(data, offset, length, time);
+		super.pushPacket(data, time, eos, streamID);
 	}
 
 	@Override
-	public void pushPacket(short[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+	public void pushPacket(long[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
 		if (startTime == null) {
 			startTime = time;
 		}
 		endTime = time;
-		super.pushPacket(data, offset, length, time);
+		super.pushPacket(data, time, eos, streamID);
+	}
+
+	@Override
+	public void pushPacket(short[] data, PrecisionUTCTime time, boolean eos, String streamID) throws IOException {
+		if (startTime == null) {
+			startTime = time;
+		}
+		endTime = time;
+		super.pushPacket(data, time, eos, streamID);
 	}
 
 	@Override
@@ -164,5 +174,4 @@ public class BinSriDataWriter extends BinDataWriter {
 	protected String getMetaDataFileExtension() {
 		return METADATA_FILE_EXENSION;
 	}
-
 }

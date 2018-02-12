@@ -10,16 +10,18 @@
  */
 package gov.redhawk.ide.snapshot.writer;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import BULKIO.BitSequence;
 import BULKIO.StreamSRI;
 
 /**
  * @since 1.0
  */
-public interface IDataWriter {
+public interface IDataWriter extends Closeable {
 
 	void setSettings(IDataWriterSettings settings);
 
@@ -31,21 +33,45 @@ public interface IDataWriter {
 
 	void pushSRI(StreamSRI sri) throws IOException;
 
-	void pushPacket(char[] data, int offset, int length, BULKIO.PrecisionUTCTime time) throws IOException;
+	/**
+	 * @since 1.0
+	 */
+	void pushPacket(BitSequence data, BULKIO.PrecisionUTCTime time, boolean eos, String streamID) throws IOException;
 
-	void pushPacket(double[] data, int offset, int length, BULKIO.PrecisionUTCTime time) throws IOException;
+	/**
+	 * @since 1.0
+	 */
+	void pushPacket(char[] data, BULKIO.PrecisionUTCTime time, boolean eos, String streamID) throws IOException;
 
-	void pushPacket(float[] data, int offset, int length, BULKIO.PrecisionUTCTime time) throws IOException;
+	/**
+	 * @since 1.0
+	 */
+	void pushPacket(double[] data, BULKIO.PrecisionUTCTime time, boolean eos, String streamID) throws IOException;
 
-	void pushPacket(long[] data, int offset, int length, BULKIO.PrecisionUTCTime time) throws IOException;
+	/**
+	 * @since 1.0
+	 */
+	void pushPacket(float[] data, BULKIO.PrecisionUTCTime time, boolean eos, String streamID) throws IOException;
 
-	void pushPacket(int[] data, int offset, int length, BULKIO.PrecisionUTCTime time) throws IOException;
+	/**
+	 * @since 1.0
+	 */
+	void pushPacket(long[] data, BULKIO.PrecisionUTCTime time, boolean eos, String streamID) throws IOException;
 
-	void pushPacket(byte[] data, int offset, int length, BULKIO.PrecisionUTCTime time) throws IOException;
+	/**
+	 * @since 1.0
+	 */
+	void pushPacket(int[] data, BULKIO.PrecisionUTCTime time, boolean eos, String streamID) throws IOException;
 
-	void pushPacket(short[] data, int offset, int length, BULKIO.PrecisionUTCTime time) throws IOException;
+	/**
+	 * @since 1.0
+	 */
+	void pushPacket(byte[] data, BULKIO.PrecisionUTCTime time, boolean eos, String streamID) throws IOException;
 
-	void close() throws IOException;
+	/**
+	 * @since 1.0
+	 */
+	void pushPacket(short[] data, BULKIO.PrecisionUTCTime time, boolean eos, String streamID) throws IOException;
 
 	/**
 	 * @return files written to by the data receiver

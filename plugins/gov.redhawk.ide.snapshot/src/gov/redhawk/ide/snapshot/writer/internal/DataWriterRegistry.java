@@ -56,7 +56,7 @@ public enum DataWriterRegistry implements IExtensionChangeHandler, IDataWriterRe
 	}
 
 	@Override
-	public IDataWriterDesc getRecieverDesc(String id) {
+	public IDataWriterDesc getReceiverDesc(String id) {
 		return registry.get(id);
 	}
 
