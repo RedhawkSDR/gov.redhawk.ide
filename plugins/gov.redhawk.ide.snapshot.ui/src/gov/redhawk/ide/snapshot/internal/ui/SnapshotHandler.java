@@ -11,9 +11,9 @@
 package gov.redhawk.ide.snapshot.internal.ui;
 
 import gov.redhawk.bulkio.util.BulkIOType;
-import gov.redhawk.ide.snapshot.capture.CorbaDataReceiver;
+import gov.redhawk.ide.snapshot.internal.capture.CorbaDataReceiver;
 import gov.redhawk.ide.snapshot.ui.BulkIOSnapshotWizard;
-import gov.redhawk.ide.snapshot.ui.SnapshotActivator;
+import gov.redhawk.ide.snapshot.ui.SnapshotUI;
 import gov.redhawk.ide.snapshot.ui.SnapshotJob;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
 import gov.redhawk.model.sca.ScaUsesPort;
@@ -77,7 +77,7 @@ public class SnapshotHandler extends AbstractHandler {
 									try {
 										lf.start();
 									} catch (StartError e) {
-										return new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Failed to start resource", e);
+										return new Status(Status.ERROR, SnapshotUI.PLUGIN_ID, "Failed to start resource", e);
 									}
 									return Status.OK_STATUS;
 								}

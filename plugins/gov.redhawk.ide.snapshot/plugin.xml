@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="writers" name="Snapshot writers" schema="schema/writers.exsd"/>
+   <extension
+         point="gov.redhawk.ide.snapshot.writers">
+      <writer
+            class="gov.redhawk.ide.snapshot.writer.internal.BinXMLDataWriter"
+            id="gov.redhawk.ide.snapshot.writer.BinXMLDataWriter"
+            name="Binary files (.bin and .xml)"
+            settings="gov.redhawk.ide.snapshot.writer.internal.BinDataWriterSettings">
+      </writer>
+      <writer
+            class="gov.redhawk.ide.snapshot.writer.internal.BinSriDataWriter"
+            id="gov.redhawk.ide.snapshot.writer.BinSriDataWriter"
+            name="Binary files (.bin and .sri)"
+            settings="gov.redhawk.ide.snapshot.writer.internal.BinDataWriterSettings">
+      </writer>
+      <writer
+            class="gov.redhawk.ide.snapshot.writer.internal.BlueDataWriter"
+            id="gov.redhawk.ide.snapshot.writer.BlueDataWriter"
+            name="Midas BLUE file (.tmp)">
+      </writer>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated SnapshotMetaData -->
+      <package
+            uri="https://redhawksdr.org/gov.redhawk.ide.snapshot/metadata"
+            class="gov.redhawk.ide.internal.snapshot.metadata.SnapshotMetadataPackage"
+            genModel="model/SnapshotMetaData.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated SnapshotMetaData -->
+      <parser
+            type="snapshotmetadata"
+            class="gov.redhawk.ide.internal.snapshot.metadata.util.SnapshotMetadataResourceFactoryImpl"/>
+   </extension>
+</plugin>

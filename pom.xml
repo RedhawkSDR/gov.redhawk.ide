@@ -203,6 +203,7 @@
         <module>plugins/gov.redhawk.ide.sdr</module>
         <module>plugins/gov.redhawk.ide.sdr.edit</module>
         <module>plugins/gov.redhawk.ide.sdr.ui</module>
+        <module>plugins/gov.redhawk.ide.snapshot</module>
         <module>plugins/gov.redhawk.ide.snapshot.ui</module>
         <module>plugins/gov.redhawk.ide.spd</module>
         <module>plugins/gov.redhawk.ide.spd.ui</module>

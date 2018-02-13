@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.capture;
 
-import gov.redhawk.ide.snapshot.ui.SnapshotActivator;
+import gov.redhawk.ide.snapshot.ui.SnapshotUI;
 import gov.redhawk.ide.snapshot.writer.IDataWriter;
 
 import java.io.IOException;
@@ -79,19 +79,19 @@ public class RawDataReceiver implements IDataReceiver {
 				} else if (array instanceof char[]) {
 					writer.pushPacket((char[]) array, 0, Array.getLength(array), time);
 				} else {
-					return new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Unknown buffer type: " + array.getClass(), null);
+					return new Status(Status.ERROR, SnapshotUI.PLUGIN_ID, "Unknown buffer type: " + array.getClass(), null);
 				}
 			} catch (IOException e) {
-				return new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Error during write", e);
+				return new Status(Status.ERROR, SnapshotUI.PLUGIN_ID, "Error during write", e);
 			}
 		} catch (IOException e) {
-			return new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Error during open" , e);
+			return new Status(Status.ERROR, SnapshotUI.PLUGIN_ID, "Error during open" , e);
 		} finally {
 			if (writer.isOpen()) {
 				try {
 					writer.close();
 				} catch (IOException e) {
-					return new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Error during close" , e);
+					return new Status(Status.ERROR, SnapshotUI.PLUGIN_ID, "Error during close" , e);
 				}
 			}
 		}

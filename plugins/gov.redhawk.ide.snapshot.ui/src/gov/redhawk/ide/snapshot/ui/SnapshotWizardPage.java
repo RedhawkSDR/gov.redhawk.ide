@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.ui;
 
+import gov.redhawk.ide.snapshot.SnapshotActivator;
 import gov.redhawk.ide.snapshot.writer.IDataWriterDesc;
 import gov.redhawk.ui.util.EmptyStringToNullConverter;
 
