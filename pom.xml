@@ -221,6 +221,7 @@
         <module>tests/gov.redhawk.ide.prf.tests</module>
         <module>tests/gov.redhawk.ide.sad.tests</module>
         <module>tests/gov.redhawk.ide.sdr.tests</module>
+        <module>tests/gov.redhawk.ide.snapshot.tests</module>
         <module>tests/gov.redhawk.ide.spd.tests</module>
         <module>tests/gov.redhawk.mfile.parser.tests</module>
         <module>tests/gov.redhawk.spd.validation.tests</module>
