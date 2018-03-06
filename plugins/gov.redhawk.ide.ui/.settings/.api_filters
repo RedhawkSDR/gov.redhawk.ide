@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="gov.redhawk.ide.ui" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="gov.redhawk.ide.ui.preferences.RedhawkIdePreferences">
+        <filter comment="Unused class" id="305324134">
+            <message_arguments>
+                <message_argument value="gov.redhawk.ide.ui.preferences.RedhawkIdePreferences"/>
+                <message_argument value="gov.redhawk.ide.ui_11.0.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/gov/redhawk/ide/ui/wizard/RedhawkImportArchiveUtil.java" type="gov.redhawk.ide.ui.wizard.RedhawkImportArchiveUtil">
         <filter id="643846161">
             <message_arguments>
