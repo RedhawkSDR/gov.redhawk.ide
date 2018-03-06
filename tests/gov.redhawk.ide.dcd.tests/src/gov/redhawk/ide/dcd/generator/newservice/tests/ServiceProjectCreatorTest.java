@@ -12,10 +12,11 @@
 package gov.redhawk.ide.dcd.generator.newservice.tests;
 
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
+import gov.redhawk.eclipsecorba.library.LibraryFactory;
 import gov.redhawk.ide.builders.SCABuilder;
 import gov.redhawk.ide.dcd.generator.newdevice.DeviceProjectCreator;
 import gov.redhawk.ide.dcd.generator.newservice.ServiceProjectCreator;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.preferences.RedhawkIdePreferenceInitializer;
 
 import org.junit.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
@@ -67,7 +68,9 @@ public class ServiceProjectCreatorTest {
 	@Test
 	public void testCreateServiceFiles() throws CoreException {
 		final IProject project = DeviceProjectCreator.createEmptyProject("serviceProjectTest", null, new NullProgressMonitor());
-		final IdlLibrary library = SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
+		final IdlLibrary library = LibraryFactory.eINSTANCE.createIdlLibrary();
+		RedhawkIdePreferenceInitializer.initializeIdlLibraryToDefaults(library);
+		library.load(new NullProgressMonitor());
 		Assert.assertNotNull(project);
 		Assert.assertTrue("serviceProjectTest".equals(project.getName()));
 		ServiceProjectCreator.createServiceFiles(project, "serviceProjectTest",
