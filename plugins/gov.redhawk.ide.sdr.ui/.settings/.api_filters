@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="gov.redhawk.ide.sdr.ui" version="2">
     <resource path="src/gov/redhawk/ide/sdr/ui/export/ExportUtils.java" type="gov.redhawk.ide.sdr.ui.export.ExportUtils">
-        <filter comment="Changed return value from void to boolean" id="338792546">
-            <message_arguments>
-                <message_argument value="gov.redhawk.ide.sdr.ui.export.ExportUtils"/>
-                <message_argument value="exportComponent(IProject, IScaExporter, IProgressMonitor)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Changed return value from void to boolean" id="338792546">
-            <message_arguments>
-                <message_argument value="gov.redhawk.ide.sdr.ui.export.ExportUtils"/>
-                <message_argument value="exportNode(IProject, IScaExporter, IProgressMonitor)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Changed return value from void to boolean" id="338792546">
-            <message_arguments>
-                <message_argument value="gov.redhawk.ide.sdr.ui.export.ExportUtils"/>
-                <message_argument value="exportWaveform(IProject, IScaExporter, IProgressMonitor)"/>
-            </message_arguments>
-        </filter>
         <filter comment="Changed return value from void to boolean" id="1141899266">
             <message_arguments>
                 <message_argument value="2.0"/>
