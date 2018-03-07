@@ -73,6 +73,7 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 public class ComponentsDetailsPage extends ScaDetails {
 
 	private SadComponentComposite componentComposite;
+	private SadLoggingComposite loggingComposite;
 	private ControlDecoration uriControlDecoration;
 	private Binding loggingUriBinding;
 	private Binding logLevelBinding;
@@ -108,6 +109,7 @@ public class ComponentsDetailsPage extends ScaDetails {
 	protected void createSpecificContent(Composite parent) {
 		final FormToolkit toolkit = getManagedForm().getToolkit();
 		createComponentSection(toolkit, parent);
+		createLoggingSection(toolkit, parent);
 	}
 
 	private void createComponentSection(final FormToolkit toolkit, final Composite parent) {
@@ -119,10 +121,25 @@ public class ComponentsDetailsPage extends ScaDetails {
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 
-		this.componentComposite = new SadComponentComposite(section, SWT.NONE, toolkit, this.getEditor());
-		toolkit.adapt(this.componentComposite);
+		componentComposite = new SadComponentComposite(section, SWT.NONE, toolkit, getEditor());
+		toolkit.adapt(componentComposite);
 
-		section.setClient(this.componentComposite);
+		section.setClient(componentComposite);
+	}
+
+	private void createLoggingSection(final FormToolkit toolkit, final Composite parent) {
+		final Section section = toolkit.createSection(parent,
+			Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | ExpandableComposite.EXPANDED);
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
+		section.setText("Logging");
+		section.setDescription("Edit the logging configuration for the component");
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+
+		loggingComposite = new SadLoggingComposite(section, SWT.NONE, toolkit, getEditor());
+		toolkit.adapt(loggingComposite);
+
+		section.setClient(loggingComposite);
 	}
 
 	/**
@@ -148,7 +165,7 @@ public class ComponentsDetailsPage extends ScaDetails {
 		final List<Binding> retVal = new ArrayList<>();
 
 		/** Bind Component Instantiation -> Usage Name **/
-		retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getNameEntry(), getEditingDomain(),
+		retVal.add(FormEntryBindingFactory.bind(context, componentComposite.getNameEntry(), getEditingDomain(),
 			PartitioningPackage.Literals.COMPONENT_INSTANTIATION__USAGE_NAME, compInst, new EMFEmptyStringToNullUpdateValueStrategy(), null));
 
 		/** Bind Component Instantiation -> Find Component **/
@@ -171,7 +188,7 @@ public class ComponentsDetailsPage extends ScaDetails {
 				}
 			}
 		});
-		retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getNameEntry(), getEditingDomain(),
+		retVal.add(FormEntryBindingFactory.bind(context, componentComposite.getNameEntry(), getEditingDomain(),
 			SadPackage.Literals.SAD_COMPONENT_INSTANTIATION__FIND_COMPONENT, compInst, fcTargetToModel,
 			new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST)));
 
@@ -181,7 +198,7 @@ public class ComponentsDetailsPage extends ScaDetails {
 			namingService = compInst.getFindComponent().getNamingService();
 		}
 		if (namingService != null) {
-			retVal.add(FormEntryBindingFactory.bind(context, this.componentComposite.getNameEntry(), getEditingDomain(),
+			retVal.add(FormEntryBindingFactory.bind(context, componentComposite.getNameEntry(), getEditingDomain(),
 				PartitioningPackage.Literals.NAMING_SERVICE__NAME, namingService, new EMFEmptyStringToNullUpdateValueStrategy(),
 				new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST)));
 		}
@@ -196,12 +213,12 @@ public class ComponentsDetailsPage extends ScaDetails {
 			@Override
 			public Object convert(Object fromObject) {
 				if (fromObject == null) {
-					ComponentsDetailsPage.this.componentComposite.getLevelViewer().getCombo().deselectAll();
+					ComponentsDetailsPage.this.loggingComposite.getLevelViewer().getCombo().deselectAll();
 				}
 				return fromObject;
 			}
 		});
-		this.logLevelBinding = context.bindValue(WidgetProperties.selection().observe(this.componentComposite.getLevelViewer().getCombo()), levelObserver,
+		logLevelBinding = context.bindValue(WidgetProperties.selection().observe(loggingComposite.getLevelViewer().getCombo()), levelObserver,
 			new EMFEmptyStringToNullUpdateValueStrategy(), levelModelToTarget);
 		retVal.add(logLevelBinding);
 
@@ -211,10 +228,10 @@ public class ComponentsDetailsPage extends ScaDetails {
 		@SuppressWarnings("unchecked")
 		IObservableValue< ? > uriObserver = uriProperty.observe(compInst);
 		EMFUpdateValueStrategy uriTargetToModel = new EMFUpdateValueStrategy();
-		ControlDecoration controlDecoration = getUriControlDecoration(componentComposite.getLoggingUri().getText());
+		ControlDecoration controlDecoration = getUriControlDecoration(loggingComposite.getLoggingUri().getText());
 		uriTargetToModel.setAfterConvertValidator(new LoggingUriValidator(compInst, controlDecoration));
-		this.loggingUriBinding = context.bindValue(
-			WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), this.componentComposite.getLoggingUri().getText()),
+		loggingUriBinding = context.bindValue(
+			WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), loggingComposite.getLoggingUri().getText()),
 			uriObserver, uriTargetToModel, null);
 		retVal.add(loggingUriBinding);
 
@@ -241,27 +258,27 @@ public class ComponentsDetailsPage extends ScaDetails {
 			}
 
 		});
-		retVal.add(context.bindValue(WidgetProperties.selection().observe(this.componentComposite.getEnableLoggingButton()),
+		retVal.add(context.bindValue(WidgetProperties.selection().observe(loggingComposite.getEnableLoggingButton()),
 			EMFEditObservables.observeValue(getEditingDomain(), compInst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__LOGGING_CONFIG), targetToModel,
 			modelToTarget));
 
 		/** Bind Logging Config enabled button to enable/disable Log Level combo and Logging URI text **/
-		retVal.add(context.bindValue(WidgetProperties.enabled().observe(componentComposite.getLoggingUri().getText()),
-			WidgetProperties.selection().observe(componentComposite.getEnableLoggingButton())));
-		retVal.add(context.bindValue(WidgetProperties.enabled().observe(componentComposite.getLevelViewer().getCombo()),
-			WidgetProperties.selection().observe(componentComposite.getEnableLoggingButton())));
+		retVal.add(context.bindValue(WidgetProperties.enabled().observe(loggingComposite.getLoggingUri().getText()),
+			WidgetProperties.selection().observe(loggingComposite.getEnableLoggingButton())));
+		retVal.add(context.bindValue(WidgetProperties.enabled().observe(loggingComposite.getLevelViewer().getCombo()),
+			WidgetProperties.selection().observe(loggingComposite.getEnableLoggingButton())));
 
 		/** Add listener for EnableLoggingButton **/
 		// NOTE: MUST remove listeners prior to adding since
 		// 1.) We don't want multiple listeners
 		// 2.) This listener MUST be triggered AFTER the binding listener, therefore, it is adding every time in the
 		// bind method
-		this.componentComposite.getEnableLoggingButton().removeSelectionListener(this.loggingEnabledListener);
-		this.componentComposite.getEnableLoggingButton().addSelectionListener(this.loggingEnabledListener);
+		loggingComposite.getEnableLoggingButton().removeSelectionListener(loggingEnabledListener);
+		loggingComposite.getEnableLoggingButton().addSelectionListener(loggingEnabledListener);
 
 		/** Make all composite fields editable/un-editable depending on the context **/
 		if (!SCAEditorUtil.isEditableResource(getPage(), compInst.eResource())) {
-			this.componentComposite.setEditable(false);
+			componentComposite.setEditable(false);
 		}
 
 		return retVal;
@@ -269,7 +286,7 @@ public class ComponentsDetailsPage extends ScaDetails {
 
 	private ControlDecoration getUriControlDecoration(Text text) {
 		if (uriControlDecoration == null) {
-			uriControlDecoration = new ControlDecoration(componentComposite.getLoggingUri().getText(), SWT.BOTTOM | SWT.LEFT);
+			uriControlDecoration = new ControlDecoration(loggingComposite.getLoggingUri().getText(), SWT.BOTTOM | SWT.LEFT);
 			uriControlDecoration.setDescriptionText("Invalid entry");
 			FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
 			uriControlDecoration.setImage(fieldDecoration.getImage());
