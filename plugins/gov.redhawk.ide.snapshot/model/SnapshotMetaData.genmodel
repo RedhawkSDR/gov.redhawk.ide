@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   This file is protected by Copyright.
+   Please refer to the COPYRIGHT file distributed with this source distribution.
+
+   This file is part of REDHAWK IDE.
+
+   All rights reserved.  This program and the accompanying materials are made available under
+   the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+   http://www.eclipse.org/legal/epl-v10.html.
+-->
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/gov.redhawk.ide.snapshot/src-model" editDirectory=""
+    editorDirectory="" modelPluginID="gov.redhawk.ide.snapshot" templateDirectory="/gov.redhawk.ide.snapshot/templates"
+    dynamicTemplates="true" redirection="" forceOverwrite="true" modelName="metadata"
+    modelPluginClass="" editPluginClass="" editorPluginClass="" codeFormatting="true"
+    testsDirectory="" testSuiteClass="" importerID="org.eclipse.xsd.ecore.importer"
+    complianceLevel="8.0" copyrightFields="false" editPluginID="gov.redhawk.ide.snapshot.edit"
+    editorPluginID="gov.redhawk.ide.snapshot.edit" testsPluginID="gov.redhawk.ide.snapshot.edit"
+    runtimeVersion="2.12" usedGenPackages="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore platform:/plugin/mil.jpeojtrs.sca.prf/model/prf.genmodel#//prf"
+    importOrganizing="true">
+  <foreignModel>snapshotMetaData.xsd</foreignModel>
+  <genPackages prefix="SnapshotMetadata" basePackage="gov.redhawk.ide.internal.snapshot"
+      resource="XML" disposableProviderFactory="true" ecorePackage="SnapshotMetadata.ecore#/">
+    <genClasses ecoreClass="SnapshotMetadata.ecore#//CFDataType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//CFDataType/mixed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference SnapshotMetadata.ecore#//CFDataType/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//CFDataType/id"/>
+    </genClasses>
+    <genClasses ecoreClass="SnapshotMetadata.ecore#//KeywordsType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//KeywordsType/mixed"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference SnapshotMetadata.ecore#//KeywordsType/cFDataType"/>
+    </genClasses>
+    <genClasses ecoreClass="SnapshotMetadata.ecore#//Model">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Model/mixed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Model/numberOfSamples"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Model/dataByteOrder"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference SnapshotMetadata.ecore#//Model/time"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Model/bulkIOType"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference SnapshotMetadata.ecore#//Model/streamSRI"/>
+    </genClasses>
+    <genClasses ecoreClass="SnapshotMetadata.ecore#//SRI">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//SRI/mixed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//SRI/hversion"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//SRI/xstart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//SRI/xdelta"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//SRI/xunits"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//SRI/subsize"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//SRI/ystart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//SRI/ydelta"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//SRI/yunits"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//SRI/mode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//SRI/streamID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//SRI/blocking"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference SnapshotMetadata.ecore#//SRI/keywords"/>
+    </genClasses>
+    <genClasses ecoreClass="SnapshotMetadata.ecore#//Time">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Time/startTime"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Time/endTime"/>
+    </genClasses>
+    <genClasses ecoreClass="SnapshotMetadata.ecore#//Value">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Value/mixed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Value/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Value/javaType"/>
+    </genClasses>
+    <genClasses ecoreClass="SnapshotMetadata.ecore#//StructSeq">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//StructSeq/mixed"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference SnapshotMetadata.ecore#//StructSeq/struct"/>
+    </genClasses>
+    <genClasses ecoreClass="SnapshotMetadata.ecore#//Struct">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Struct/id"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Struct/mixed"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference SnapshotMetadata.ecore#//Struct/simple"/>
+    </genClasses>
+    <genClasses ecoreClass="SnapshotMetadata.ecore#//Simple">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Simple/mixed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Simple/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Simple/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SnapshotMetadata.ecore#//Simple/javaType"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

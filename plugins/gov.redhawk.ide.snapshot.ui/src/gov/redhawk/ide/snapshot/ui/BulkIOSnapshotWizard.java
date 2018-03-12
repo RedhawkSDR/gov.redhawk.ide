@@ -12,10 +12,10 @@ package gov.redhawk.ide.snapshot.ui;
 
 import java.util.Map;
 
-import gov.redhawk.ide.snapshot.capture.CorbaDataReceiver;
-import gov.redhawk.ide.snapshot.capture.CorbaNumSamplesReceiver;
-import gov.redhawk.ide.snapshot.capture.CorbaSignalTimeReceiver;
-import gov.redhawk.ide.snapshot.capture.CorbaSystemTimeReceiver;
+import gov.redhawk.ide.snapshot.internal.capture.CorbaDataReceiver;
+import gov.redhawk.ide.snapshot.internal.capture.CorbaNumSamplesReceiver;
+import gov.redhawk.ide.snapshot.internal.capture.CorbaSignalTimeReceiver;
+import gov.redhawk.ide.snapshot.internal.capture.CorbaSystemTimeReceiver;
 import gov.redhawk.model.sca.ScaUsesPort;
 
 /**
@@ -44,6 +44,9 @@ public class BulkIOSnapshotWizard extends SnapshotWizard {
 		addPage(bulkIOPage);
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	public CorbaDataReceiver getCorbaReceiver() {
 		return this.corbaReceiver;
 	}

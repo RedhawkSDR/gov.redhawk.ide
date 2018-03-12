@@ -1,13 +1,13 @@
-/******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.datalist.ui.views;
 
 import gov.redhawk.datalist.ui.DataCollectionSettings;
@@ -55,7 +55,16 @@ import org.eclipse.swt.widgets.Text;
  */
 public abstract class OptionsComposite {
 
+	public static final String REAL = "Real", IMAGINARY = "Imaginary", COMPLEX = "Complex";
+
 	private final DataCollectionSettings settings = new DataCollectionSettings();
+	private State state = new State();
+
+	private DataBindingContext ctx = new DataBindingContext();
+
+	private Text samplesTxt;
+	private Button button;
+	private ImageRegistry resources = new ImageRegistry();
 
 	private static class State {
 		private boolean isRunning = false;
@@ -67,30 +76,21 @@ public abstract class OptionsComposite {
 			pcs.firePropertyChange("running", oldValue, isRunning);
 		}
 
+		@SuppressWarnings("unused") // Java bean
 		public boolean isRunning() {
 			return isRunning;
 		}
 
+		@SuppressWarnings("unused") // Java bean
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			pcs.addPropertyChangeListener(listener);
 		}
 
+		@SuppressWarnings("unused") // Java bean
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			pcs.removePropertyChangeListener(listener);
 		}
 	}
-
-	private State state = new State();
-
-	private DataBindingContext ctx = new DataBindingContext();
-
-	private Text samplesTxt;
-
-	private Button button;
-
-	private ImageRegistry resources = new ImageRegistry();
-//	
-	public static final String REAL = "Real", IMAGINARY = "Imaginary", COMPLEX = "Complex";
 
 	public static enum CaptureMethod {
 		NUMBER("Number of Samples"),
@@ -139,17 +139,18 @@ public abstract class OptionsComposite {
 
 		samplesTxt = new Text(parent, SWT.BORDER);
 		samplesTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		ctx.bindValue(WidgetProperties.enabled().observe(samplesTxt), BeanProperties.value("processType").observe(settings), new UpdateValueStrategy(
-			UpdateValueStrategy.POLICY_NEVER), new UpdateValueStrategy().setConverter(new Converter(CaptureMethod.class, Boolean.class) {
+		ctx.bindValue(WidgetProperties.enabled().observe(samplesTxt), BeanProperties.value("processType").observe(settings),
+			new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
+			new UpdateValueStrategy().setConverter(new Converter(CaptureMethod.class, Boolean.class) {
 
-			@Override
-			public Object convert(Object fromObject) {
-				if (fromObject == CaptureMethod.INDEFINITELY) {
-					return false;
+				@Override
+				public Object convert(Object fromObject) {
+					if (fromObject == CaptureMethod.INDEFINITELY) {
+						return false;
+					}
+					return true;
 				}
-				return true;
-			}
-		}));
+			}));
 		Binding binding = ctx.bindValue(WidgetProperties.text(SWT.Modify).observe(samplesTxt), BeanProperties.value("samples").observe(settings),
 			new UpdateValueStrategy().setBeforeSetValidator(new IValidator() {
 
@@ -224,14 +225,14 @@ public abstract class OptionsComposite {
 		columnsCombo.add(REAL, 0);
 		columnsCombo.add(COMPLEX, 1);
 		columnsCombo.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		ctx.bindValue(WidgetProperties.enabled().observe(columnsCombo), BeanProperties.value("running").observe(state), new UpdateValueStrategy(
-			UpdateValueStrategy.POLICY_NEVER), new UpdateValueStrategy().setConverter(new Converter(Boolean.class, Boolean.class) {
+		ctx.bindValue(WidgetProperties.enabled().observe(columnsCombo), BeanProperties.value("running").observe(state),
+			new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), new UpdateValueStrategy().setConverter(new Converter(Boolean.class, Boolean.class) {
 
-			@Override
-			public Boolean convert(Object fromObject) {
-				return !((Boolean) fromObject);
-			}
-		}));
+				@Override
+				public Boolean convert(Object fromObject) {
+					return !((Boolean) fromObject);
+				}
+			}));
 		binding = ctx.bindValue(WidgetProperties.selection().observe(columnsCombo), BeanProperties.value("dimensions").observe(settings),
 			new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
 
@@ -313,7 +314,7 @@ public abstract class OptionsComposite {
 			button.setToolTipText("Start Acquire");
 		}
 	}
-	
+
 	/**
 	 * @since 2.1
 	 */
@@ -321,21 +322,11 @@ public abstract class OptionsComposite {
 		return button;
 	}
 
-	public boolean isIndefinite() {
-		return settings.getProcessType() == CaptureMethod.INDEFINITELY;
-	}
-
 	public DataCollectionSettings getSettings() {
 		return settings;
 	}
 
-	/**
-	 * Passing the focus request to the viewer's control.
-	 */
 	public void setFocus() {
-		if (this.samplesTxt != null && !this.samplesTxt.isDisposed()) {
-			this.samplesTxt.setFocus();
-		}
+		this.samplesTxt.setFocus();
 	}
-
 }

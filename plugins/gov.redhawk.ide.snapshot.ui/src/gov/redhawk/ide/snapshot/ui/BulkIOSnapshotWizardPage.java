@@ -61,7 +61,7 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 	}
 
 	/**
-	 * @since 2.1
+	 * @since 3.0
 	 */
 	public BulkIOSnapshotWizardPage(String pageName, ImageDescriptor titleImage, Map<String, Boolean> connectionIds) {
 		super(pageName, "Port Snapshot", titleImage);
@@ -156,7 +156,7 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 					if (element instanceof Entry) {
 						Boolean isValid = (Boolean) ((Entry< ? , ? >) element).getValue();
 						if (!isValid) {
-							return new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Selected connection ID is already in use");
+							return new Status(Status.ERROR, SnapshotUI.PLUGIN_ID, "Selected connection ID is already in use");
 						}
 					}
 					return Status.OK_STATUS;

@@ -203,6 +203,7 @@
         <module>plugins/gov.redhawk.ide.sdr</module>
         <module>plugins/gov.redhawk.ide.sdr.edit</module>
         <module>plugins/gov.redhawk.ide.sdr.ui</module>
+        <module>plugins/gov.redhawk.ide.snapshot</module>
         <module>plugins/gov.redhawk.ide.snapshot.ui</module>
         <module>plugins/gov.redhawk.ide.spd</module>
         <module>plugins/gov.redhawk.ide.spd.ui</module>
@@ -220,6 +221,7 @@
         <module>tests/gov.redhawk.ide.prf.tests</module>
         <module>tests/gov.redhawk.ide.sad.tests</module>
         <module>tests/gov.redhawk.ide.sdr.tests</module>
+        <module>tests/gov.redhawk.ide.snapshot.tests</module>
         <module>tests/gov.redhawk.ide.spd.tests</module>
         <module>tests/gov.redhawk.mfile.parser.tests</module>
         <module>tests/gov.redhawk.spd.validation.tests</module>

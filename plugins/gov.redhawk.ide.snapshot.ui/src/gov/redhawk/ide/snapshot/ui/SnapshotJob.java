@@ -73,7 +73,7 @@ public class SnapshotJob extends WorkspaceJob {
 					try {
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(IProgressConstants.PROGRESS_VIEW_ID);
 					} catch (PartInitException e) {
-						return new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Failed to open progress view.\n"
+						return new Status(Status.ERROR, SnapshotUI.PLUGIN_ID, "Failed to open progress view.\n"
 							+ "The Progress of the Snapshot is displayed in the Progress View\n"
 							+ "which can be opened by going to Window > Show View > Other... > General > Progress", e);
 					}

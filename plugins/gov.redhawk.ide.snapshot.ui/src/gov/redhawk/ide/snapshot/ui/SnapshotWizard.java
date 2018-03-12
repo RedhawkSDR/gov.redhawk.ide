@@ -72,12 +72,12 @@ public class SnapshotWizard extends Wizard {
 			IDataWriterSettings writerSettings = desc.createWriterSettings();
 			if (settings.isSaveToWorkspace()) {
 				if (settings.getPath() == null || settings.getPath().trim().length() == 0) {
-					throw new CoreException(new Status(IStatus.WARNING, SnapshotActivator.PLUGIN_ID, "Workspace File Name must be specified."));
+					throw new CoreException(new Status(IStatus.WARNING, SnapshotUI.PLUGIN_ID, "Workspace File Name must be specified."));
 				}
 				writerSettings.setDestination(settings.getIFile());
 			} else {
 				if (settings.getFileName() == null || settings.getFileName().trim().length() == 0) {
-					throw new CoreException(new Status(IStatus.WARNING, SnapshotActivator.PLUGIN_ID, "File Name must be specified."));
+					throw new CoreException(new Status(IStatus.WARNING, SnapshotUI.PLUGIN_ID, "File Name must be specified."));
 				}
 				writerSettings.setDestination(settings.getDestinationFile());
 			}
@@ -94,7 +94,7 @@ public class SnapshotWizard extends Wizard {
 				}
 			}
 		} catch (CoreException e) {
-			IStatus status = new Status(e.getStatus().getSeverity(), SnapshotActivator.PLUGIN_ID, e.getLocalizedMessage(), e);
+			IStatus status = new Status(e.getStatus().getSeverity(), SnapshotUI.PLUGIN_ID, e.getLocalizedMessage(), e);
 			StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
 			return false;
 		}

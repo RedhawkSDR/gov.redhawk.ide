@@ -46,23 +46,23 @@ public class DataListHandler extends AbstractHandler {
 			for (final Object obj : ss.toArray()) {
 				final ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, obj, true);
 				if (port != null) {
-					try {
-						final IViewPart view = window.getActivePage().showView(DataListView.ID, String.valueOf(port.hashCode()), IWorkbenchPage.VIEW_ACTIVATE);
-						if (view instanceof DataListView) {
-							final DataListView dView = (DataListView) view;
-							dView.setInput(port);
-						}
-					} catch (final PartInitException e) {
-						e.fillInStackTrace();
-						DataListPlugin.getDefault().getLog().log(new Status(
-								Status.WARNING, 
-								DataListPlugin.PLUGIN_ID, 
-								"Problem initializing part.", e));
-					}
+					openDataList(window, port);
 				}
 			}
 		}
 		return null;
+	}
+
+	private void openDataList(IWorkbenchWindow window, ScaUsesPort port) {
+		try {
+			final IViewPart view = window.getActivePage().showView(DataListView.ID, String.valueOf(port.hashCode()), IWorkbenchPage.VIEW_ACTIVATE);
+			if (view instanceof DataListView) {
+				((DataListView) view).setInput(port);
+			}
+		} catch (final PartInitException e) {
+			e.fillInStackTrace();
+			DataListPlugin.getDefault().getLog().log(new Status(Status.WARNING, DataListPlugin.PLUGIN_ID, "Problem initializing part.", e));
+		}
 	}
 
 	@Override

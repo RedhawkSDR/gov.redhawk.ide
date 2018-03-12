@@ -1,4 +1,4 @@
-/*******************************************************************************
+/**
  * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
@@ -6,10 +6,11 @@
  *
  * All rights reserved.  This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.snapshot.ui;
 
+import gov.redhawk.ide.snapshot.SnapshotActivator;
 import gov.redhawk.ide.snapshot.writer.IDataWriterDesc;
 import gov.redhawk.ui.util.EmptyStringToNullConverter;
 
@@ -418,7 +419,7 @@ public class SnapshotWizardPage extends WizardPage {
 		String tmp;
 		tmp = pageSettings.get(SS_FILE_TYPE_ID);
 		if (tmp != null) {
-			IDataWriterDesc dwd = SnapshotActivator.getDataReceiverRegistry().getRecieverDesc(tmp);
+			IDataWriterDesc dwd = SnapshotActivator.getDataReceiverRegistry().getReceiverDesc(tmp);
 			if (dwd != null) {
 				sss.setDataWriter(dwd);
 			}
