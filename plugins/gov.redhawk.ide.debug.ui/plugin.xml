@@ -400,7 +400,8 @@
          <command
                commandId="gov.redhawk.ide.debug.ui.showConsole"
                icon="icons/obj16/console_view.gif"
-               style="push">
+               style="push"
+               tooltip="Show the console with stdout/stderr of the process">
             <visibleWhen
                   checkEnabled="false">
                <and>
@@ -420,7 +421,8 @@
          <command
                commandId="org.eclipse.debug.ui.commands.Terminate"
                icon="icons/obj16/Terminate.gif"
-               style="push">
+               style="push"
+               tooltip="Kill the process(es) containing the resource(s)">
             <visibleWhen
                   checkEnabled="false">
                   <iterate
