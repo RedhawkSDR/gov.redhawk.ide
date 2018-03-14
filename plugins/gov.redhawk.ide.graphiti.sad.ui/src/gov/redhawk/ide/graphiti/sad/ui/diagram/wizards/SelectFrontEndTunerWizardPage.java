@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.wizards;
 
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 
 import org.eclipse.core.databinding.DataBindingContext;
@@ -19,7 +20,6 @@ import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -39,6 +39,7 @@ import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
+import gov.redhawk.sca.util.PropertyChangeSupport;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -46,14 +47,16 @@ import mil.jpeojtrs.sca.spd.SpdFactory;
 
 public class SelectFrontEndTunerWizardPage extends WizardPage {
 
-	private static final ImageDescriptor TITLE_IMAGE = null;
+	private static final String SELECTED_DEVICE = "selectedDevice";
 
 	private SoftPkg selectedDevice = null;
-	private TreeViewer treeViewer;
 	private SoftPkg genericFeiDevice;
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+	private TreeViewer treeViewer;
 
 	public SelectFrontEndTunerWizardPage() {
-		super("SelectFrontEndTunerWizardPage", "Select Target Device", TITLE_IMAGE);
+		super("SelectFrontEndTunerWizardPage", "Select Target Device", null);
 		this.setDescription("Select a FrontEnd tuner installed on your system.\nThis will pre-populate many of the fields in the following wizard pages.");
 		genericFeiDevice = SpdFactory.eINSTANCE.createSoftPkg();
 		genericFeiDevice.setName("Generic FrontEnd Device");
@@ -155,8 +158,7 @@ public class SelectFrontEndTunerWizardPage extends WizardPage {
 	private void databind() {
 		DataBindingContext dbc = new DataBindingContext();
 		dbc.bindValue(ViewersObservables.observeSingleSelection(treeViewer),
-			BeanProperties.value(SelectFrontEndTunerWizardPage.class, "selectedDevice").observe(this),
-			new UpdateValueStrategy().setBeforeSetValidator(value -> {
+			BeanProperties.value(SelectFrontEndTunerWizardPage.class, SELECTED_DEVICE).observe(this), new UpdateValueStrategy().setBeforeSetValidator(value -> {
 				if (!(value instanceof SoftPkg)) {
 					return ValidationStatus.error("Must select a device");
 				}
@@ -169,4 +171,19 @@ public class SelectFrontEndTunerWizardPage extends WizardPage {
 	public SoftPkg getSelectedDevice() {
 		return selectedDevice;
 	}
+
+	public void setSelectedDevice(SoftPkg selectedDevice) {
+		SoftPkg oldValue = this.selectedDevice;
+		this.selectedDevice = selectedDevice;
+		pcs.firePropertyChange(SELECTED_DEVICE, oldValue, this.selectedDevice);
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+	}
+
 }
