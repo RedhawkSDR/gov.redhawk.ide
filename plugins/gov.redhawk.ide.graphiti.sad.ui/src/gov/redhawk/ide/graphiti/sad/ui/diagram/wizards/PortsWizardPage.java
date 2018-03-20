@@ -37,6 +37,10 @@ public class PortsWizardPage extends AbstractPortWizardPage {
 		model = new Model();
 	}
 
+	/**
+	 * @deprecated Use the no-args constructor and {@link #getModel()}
+	 */
+	@Deprecated
 	public PortsWizardPage(List<String> providesPortNames, List<String> usesPortNames) {
 		this();
 		getModel().setUsesPortNames(usesPortNames);

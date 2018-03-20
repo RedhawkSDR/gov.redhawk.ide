@@ -10,15 +10,26 @@
  */
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalCommandStack;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.features.context.ICreateContext;
+
+import ExtendedCF.WKP.DEVICEKIND;
+import ExtendedCF.WKP.DEVICEMODEL;
+import FRONTEND.FE_TUNER_DEVICE_KIND;
 import gov.redhawk.core.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
+import gov.redhawk.frontend.util.TunerProperties.ListenerAllocationProperty;
+import gov.redhawk.frontend.util.TunerProperties.ScannerAllocationProperty;
+import gov.redhawk.frontend.util.TunerProperties.TunerAllocationProperty;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.UsesDeviceFrontEndTunerWizard;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.model.sca.ScaStructProperty;
-
-import java.util.List;
-
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
@@ -31,17 +42,6 @@ import mil.jpeojtrs.sca.sad.UsesDeviceDependencies;
 import mil.jpeojtrs.sca.spd.PropertyRef;
 import mil.jpeojtrs.sca.spd.SpdFactory;
 import mil.jpeojtrs.sca.spd.UsesDevice;
-
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.graphiti.features.context.ICreateContext;
-
-import ExtendedCF.WKP.DEVICEKIND;
-import ExtendedCF.WKP.DEVICEMODEL;
-import FRONTEND.FE_TUNER_DEVICE_KIND;
 
 public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern implements IDialogEditingPattern {
 
@@ -80,31 +80,30 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 		}
 		return false;
 	}
-//	
-//	@Override
-//	protected boolean isPatternRoot(PictogramElement pictogramElement) {
-//		return false;
-//	}
 
 	// DIAGRAM FEATURES
 	@Override
 	public Object[] create(ICreateContext context) {
-		
+
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
-		
-		// prompt user for 
-		final UsesDeviceFrontEndTunerWizard wizard = (UsesDeviceFrontEndTunerWizard) openWizard(
-			new UsesDeviceFrontEndTunerWizard(sad));
+
+		// prompt user for
+		final UsesDeviceFrontEndTunerWizard wizard = (UsesDeviceFrontEndTunerWizard) openWizard(new UsesDeviceFrontEndTunerWizard(sad));
 		if (wizard == null) {
 			return null;
 		}
-		
-		//extract values from wizard
+
+		// extract values from wizard
 		final String usesDeviceId = wizard.getNamePage().getModel().getUsesDeviceId();
 		final String deviceModel = wizard.getNamePage().getModel().getDeviceModel();
-		ScaStructProperty allocationStruct = wizard.getAllocationPage().getAllocationStruct();
-		final StructRef allocationStructRef = allocationStruct.createPropertyRef();
+		final StructRef allocationStructRef = wizard.getAllocationPage().getAllocationStruct().createPropertyRef();
+		final StructRef scannerAllocationStructRef;
+		if (wizard.getAllocationPage().isScannerAllocation()) {
+			scannerAllocationStructRef = wizard.getScannerPage().getScannerAllocationStruct().createPropertyRef();
+		} else {
+			scannerAllocationStructRef = null;
+		}
 		final List<String> usesPortNames = wizard.getPortsWizardPage().getModel().getUsesPortNames();
 		final List<String> providesPortNames = wizard.getPortsWizardPage().getModel().getProvidesPortNames();
 
@@ -118,41 +117,45 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				
-				//set uses device dependencies if not already set
+
+				// set uses device dependencies if not already set
 				UsesDeviceDependencies usesDeviceDependencies = sad.getUsesDeviceDependencies();
 				if (usesDeviceDependencies == null) {
 					usesDeviceDependencies = SadFactory.eINSTANCE.createUsesDeviceDependencies();
 					sad.setUsesDeviceDependencies(usesDeviceDependencies);
 				}
-				
-				//create device	
-				//WE ADD DEVICE TO BOTH UsesDeviceStub & UsesDeviceDependencies
-				//UsesDeviceStub is contained in the Graphiti diagram file, UsesDeviceDependencies is stored in the sad file
+
+				// create device
+				// WE ADD DEVICE TO BOTH UsesDeviceStub & UsesDeviceDependencies
+				// UsesDeviceStub is contained in the Graphiti diagram file, UsesDeviceDependencies is stored in the sad
+				// file
 				UsesDevice usesDevice = SpdFactory.eINSTANCE.createUsesDevice();
 				usesDeviceDependencies.getUsesdevice().add(usesDevice);
 				usesDevice.setId(usesDeviceId);
-				//usesDevice.setType(); //not using this type on purpose, no value according to Core Framework team
+				// usesDevice.setType(); //not using this type on purpose, no value according to Core Framework team
 
 				PropertyRef deviceKindPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
 				deviceKindPropertyRef.setRefId(DEVICEKIND.value);
 				deviceKindPropertyRef.setValue(FE_TUNER_DEVICE_KIND.value);
 				usesDevice.getPropertyRef().add(deviceKindPropertyRef);
-				
+
 				if (deviceModel != null && !deviceModel.isEmpty()) {
-					//add deviceModel if set
+					// add deviceModel if set
 					PropertyRef deviceModelPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
 					deviceModelPropertyRef.setRefId(DEVICEMODEL.value);
 					deviceModelPropertyRef.setValue(deviceModel);
 					usesDevice.getPropertyRef().add(deviceModelPropertyRef);
 				}
-				
-				//set tuner allocation struct in device from tuner allocation struct in wizard
+
+				// set tuner allocation struct in device from tuner allocation struct in wizard
 				usesDevice.getStructRef().add(allocationStructRef);
-				
-				//UsesDeviceStub
+				if (scannerAllocationStructRef != null) {
+					usesDevice.getStructRef().add(scannerAllocationStructRef);
+				}
+
+				// UsesDeviceStub
 				usesDeviceStubs[0] = createUsesDeviceStub(usesDevice);
-				
+
 				// if applicable add uses port stub(s)
 				if (usesPortNames != null) {
 					for (String usesPortName : usesPortNames) {
@@ -170,11 +173,11 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 						usesDeviceStubs[0].getProvidesPortStubs().add(providesPortStub);
 					}
 				}
-				
+
 			}
 		});
-		
-		//store UsesDeviceStub in graphiti diagram
+
+		// store UsesDeviceStub in graphiti diagram
 		getDiagram().eResource().getContents().add(usesDeviceStubs[0]);
 
 		addGraphicalRepresentation(context, usesDeviceStubs[0]);
@@ -189,7 +192,7 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 	 */
 	public static String getFEUsesDeviceTunerAllocationProp(UsesDevice usesDevice, String propRefId) {
 		EList<SimpleRef> props = usesDevice.getStructRef().get(0).getSimpleRef();
-		for (SimpleRef p: props) {
+		for (SimpleRef p : props) {
 			if (propRefId.equals(p.getRefID())) {
 				return p.getValue();
 			}
@@ -213,11 +216,16 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 			return false;
 		}
 
-		//extract values from wizard
+		// extract values from wizard
 		final String usesDeviceId = wizard.getNamePage().getModel().getUsesDeviceId();
 		final String deviceModel = wizard.getNamePage().getModel().getDeviceModel();
-		ScaStructProperty allocationStruct = wizard.getAllocationPage().getAllocationStruct();
-		final StructRef allocationStructRef = allocationStruct.createPropertyRef();
+		final StructRef allocationStructRef = wizard.getAllocationPage().getAllocationStruct().createPropertyRef();
+		final StructRef scannerAllocationStructRef;
+		if (wizard.getAllocationPage().isScannerAllocation()) {
+			scannerAllocationStructRef = wizard.getScannerPage().getScannerAllocationStruct().createPropertyRef();
+		} else {
+			scannerAllocationStructRef = null;
+		}
 		final List<String> usesPortNames = wizard.getPortsWizardPage().getModel().getUsesPortNames();
 		final List<String> providesPortNames = wizard.getPortsWizardPage().getModel().getProvidesPortNames();
 
@@ -230,35 +238,42 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 			protected void doExecute() {
 				UsesDevice usesDevice = usesDeviceStub.getUsesDevice();
 
-				//uses device id
+				// uses device id
 				usesDevice.setId(usesDeviceId);
 
-				//device model
-				PropertyRef deviceModelPropertyRef = null;
-				for (PropertyRef propRef: usesDevice.getPropertyRef()) {
+				// Remove existing FEI properties (device model, allocation struct, scanner allocation struct)
+				Iterator<PropertyRef> propRefIter = usesDevice.getPropertyRef().iterator();
+				while (propRefIter.hasNext()) {
+					PropertyRef propRef = propRefIter.next();
 					if (DEVICEMODEL.value.equals(propRef.getRefId())) {
-						deviceModelPropertyRef = propRef;
+						propRefIter.remove();
 					}
 				}
-				if (deviceModel == null || deviceModel.isEmpty()) {
-					if (deviceModelPropertyRef != null) {
-						//delete PropertyRef containing deviceModel
-						EcoreUtil.delete(deviceModelPropertyRef);
+				Iterator<StructRef> structRefIter = usesDevice.getStructRef().iterator();
+				while (structRefIter.hasNext()) {
+					String structRefID = structRefIter.next().getRefID();
+					if (TunerAllocationProperty.INSTANCE.getId().equals(structRefID)
+						|| ListenerAllocationProperty.INSTANCE.getId().equals(structRefID)
+						|| ScannerAllocationProperty.INSTANCE.getId().equals(structRefID)) {
+						structRefIter.remove();
 					}
-				} else if (deviceModelPropertyRef == null) {
-					deviceModelPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
-					usesDevice.getPropertyRef().add(deviceModelPropertyRef);
+				}
+
+				// Add device model
+				if (deviceModel != null && !deviceModel.isEmpty()) {
+					PropertyRef deviceModelPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
+					usesDevice.getPropertyRef().add(0, deviceModelPropertyRef);
 					deviceModelPropertyRef.setRefId(DEVICEMODEL.value);
 					deviceModelPropertyRef.setValue(deviceModel);
-				} else {
-					deviceModelPropertyRef.setValue(deviceModel);
 				}
 
-				//replace existing structs
-				usesDevice.getStructRef().clear();
-				usesDevice.getStructRef().add(allocationStructRef);
+				// Add allocation struct(s)
+				usesDevice.getStructRef().add(0, allocationStructRef);
+				if (scannerAllocationStructRef != null) {
+					usesDevice.getStructRef().add(1, scannerAllocationStructRef);
+				}
 
-				//update ports
+				// update ports
 				updateUsesPortStubs(usesDeviceStub, usesPortNames);
 				updateProvidesPortStubs(usesDeviceStub, providesPortNames);
 			}

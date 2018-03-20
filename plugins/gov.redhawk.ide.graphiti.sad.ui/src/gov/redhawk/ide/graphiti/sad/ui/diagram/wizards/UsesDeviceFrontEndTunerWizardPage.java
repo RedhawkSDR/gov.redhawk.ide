@@ -113,19 +113,26 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 	
 		this.sad = sad;
 	}
-	
+
+	/**
+	 * @deprecated Use the no-args constructor and {@link #getModel()}
+	 */
+	@Deprecated
 	public UsesDeviceFrontEndTunerWizardPage(SoftwareAssembly sad, String usesDeviceId) {
 		this(sad);
 		model.setUsesDeviceId(usesDeviceId);
 	
 	}
-	
+
+	/**
+	 * @deprecated Use the no-args constructor and {@link #getModel()}
+	 */
+	@Deprecated
 	public UsesDeviceFrontEndTunerWizardPage(SoftwareAssembly sad, String usesDeviceId, String deviceModel) {
 		this(sad, usesDeviceId);
 		model.setDeviceModel(deviceModel);
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void createControl(Composite parent) {

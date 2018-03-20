@@ -17,20 +17,20 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
 import ExtendedCF.WKP.DEVICEMODEL;
+import gov.redhawk.frontend.ui.wizard.FEIStructDefaults;
+import gov.redhawk.frontend.ui.wizard.ScannerAllocationWizardPage;
 import gov.redhawk.frontend.ui.wizard.TunerAllocationWizardPage;
-import gov.redhawk.frontend.util.TunerProperties.ListenerAllocationProperties;
 import gov.redhawk.frontend.util.TunerProperties.ListenerAllocationProperty;
-import gov.redhawk.frontend.util.TunerProperties.TunerAllocationProperties;
+import gov.redhawk.frontend.util.TunerProperties.ScannerAllocationProperty;
 import gov.redhawk.frontend.util.TunerProperties.TunerAllocationProperty;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
-import gov.redhawk.model.sca.ScaFactory;
-import gov.redhawk.model.sca.ScaSimpleProperty;
+import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaStructProperty;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.scd.ComponentFeatures;
@@ -42,15 +42,19 @@ import mil.jpeojtrs.sca.scd.Uses;
 import mil.jpeojtrs.sca.spd.Descriptor;
 import mil.jpeojtrs.sca.spd.PropertyRef;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.collections.FeatureMapList;
 
 public class UsesDeviceFrontEndTunerWizard extends Wizard {
 
 	private SoftwareAssembly sad;
 	private UsesDeviceStub existingUsesDeviceStub;
+
 	private SelectFrontEndTunerWizardPage selectFrontEndTunerWizardPage;
 	private UsesDeviceFrontEndTunerWizardPage namePage;
 	private TunerAllocationWizardPage allocationPage;
+	private ScannerAllocationWizardPage scannerPage;
 	private PortsWizardPage portsWizardPage;
+
 	private static final String DEFAULT_DEVICE_ID_PREFIX = "FrontEndTuner_"; //$NON-NLS-1$
 
 	public UsesDeviceFrontEndTunerWizard(SoftwareAssembly sad) {
@@ -65,87 +69,107 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 
 	@Override
 	public void addPages() {
-		ScaStructProperty tunerAllocationStruct = null;
-		ScaStructProperty listenerAllocationStruct = null;
-
+		namePage = new UsesDeviceFrontEndTunerWizardPage(sad);
+		portsWizardPage = new PortsWizardPage();
 		if (existingUsesDeviceStub == null) {
-			selectFrontEndTunerWizardPage = new SelectFrontEndTunerWizardPage();
-			addPage(selectFrontEndTunerWizardPage);
-			String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, DEFAULT_DEVICE_ID_PREFIX);
-			namePage = new UsesDeviceFrontEndTunerWizardPage(sad, deviceId);
-			allocationPage = new TunerAllocationWizardPage();
-			portsWizardPage = new PortsWizardPage();
+			addPagesNoExistingXML();
 		} else {
-			// get device model
-			String deviceModel = null;
-			for (PropertyRef propRef : existingUsesDeviceStub.getUsesDevice().getPropertyRef()) {
-				if (DEVICEMODEL.value.equals(propRef.getRefId())) {
-					deviceModel = propRef.getValue();
-				}
-			}
+			addPagesExistingXML();
+		}
+		addPage(namePage);
+		addPage(allocationPage);
+		addPage(scannerPage);
+		addPage(portsWizardPage);
+	}
 
-			// create name page for wizard
-			namePage = new UsesDeviceFrontEndTunerWizardPage(sad, existingUsesDeviceStub.getUsesDevice().getId(), deviceModel);
+	private void addPagesNoExistingXML() {
+		selectFrontEndTunerWizardPage = new SelectFrontEndTunerWizardPage();
+		addPage(selectFrontEndTunerWizardPage);
 
-			// ports
-			List<String> providesPortNames = new ArrayList<String>();
-			for (ProvidesPortStub p : existingUsesDeviceStub.getProvidesPortStubs()) {
-				providesPortNames.add(p.getName());
-			}
-			List<String> usesPortNames = new ArrayList<String>();
-			for (UsesPortStub p : existingUsesDeviceStub.getUsesPortStubs()) {
-				usesPortNames.add(p.getName());
-			}
-			portsWizardPage = new PortsWizardPage(providesPortNames, usesPortNames);
+		String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, DEFAULT_DEVICE_ID_PREFIX);
+		namePage.getModel().setUsesDeviceId(deviceId);
 
-			// determine which struct was set in Device, tuner_allocation or listener_allocation
-			String structRefId = getFrontEndTunerStructRefId(existingUsesDeviceStub);
+		allocationPage = new TunerAllocationWizardPage();
+		scannerPage = new ScannerAllocationWizardPage();
+	}
 
-			if (structRefId == null) {
-				// no allocation structure found in sad
-				allocationPage = new TunerAllocationWizardPage();
-			} else if (TunerAllocationProperty.INSTANCE.getId().equals(structRefId)) {
-				// populate StructRef with tuner_allocation properties
-				tunerAllocationStruct = ScaFactory.eINSTANCE.createScaStructProperty();
-				tunerAllocationStruct.setId(structRefId);
-				tunerAllocationStruct.setDefinition(TunerAllocationProperty.INSTANCE.createProperty());
-				for (TunerAllocationProperties propDetails : TunerAllocationProperties.values()) {
-					ScaSimpleProperty simple = tunerAllocationStruct.getSimple(propDetails.getId());
-					String value = UsesDeviceFrontEndTunerPattern.getFEUsesDeviceTunerAllocationProp(existingUsesDeviceStub.getUsesDevice(),
-						propDetails.getId());
-					switch (simple.getDefinition().getType()) {
-					case STRING:
-						simple.setValue(value);
-						break;
-					case BOOLEAN:
-						simple.setValue(Boolean.valueOf(value));
-						break;
-					case DOUBLE:
-						simple.setValue(Double.valueOf(value));
-						break;
-					default:
-						break;
-					}
-				}
-				allocationPage = new TunerAllocationWizardPage(tunerAllocationStruct);
-			} else if (ListenerAllocationProperty.INSTANCE.getId().equals(structRefId)) {
-				// populate StructRef with listener_allocation properties
-				listenerAllocationStruct = ScaFactory.eINSTANCE.createScaStructProperty();
-				listenerAllocationStruct.setId(structRefId);
-				listenerAllocationStruct.setDefinition(ListenerAllocationProperty.INSTANCE.createProperty());
-				for (ListenerAllocationProperties propDetails : ListenerAllocationProperties.values()) {
-					ScaSimpleProperty simple = listenerAllocationStruct.getSimple(propDetails.getId());
-					String value = UsesDeviceFrontEndTunerPattern.getFEUsesDeviceTunerAllocationProp(existingUsesDeviceStub.getUsesDevice(),
-						propDetails.getId());
-					simple.setValue(value);
-				}
-				allocationPage = new TunerAllocationWizardPage(listenerAllocationStruct);
+	private void addPagesExistingXML() {
+		// Device ID / model
+		namePage.getModel().setUsesDeviceId(existingUsesDeviceStub.getUsesDevice().getId());
+		for (PropertyRef propRef : existingUsesDeviceStub.getUsesDevice().getPropertyRef()) {
+			if (DEVICEMODEL.value.equals(propRef.getRefId())) {
+				namePage.getModel().setDeviceModel(propRef.getValue());
+				break;
 			}
 		}
 
-		addPage(namePage);
-		addPage(allocationPage);
-		addPage(portsWizardPage);
+		// Ports
+		for (ProvidesPortStub p : existingUsesDeviceStub.getProvidesPortStubs()) {
+			portsWizardPage.getModel().getProvidesPortNames().add(p.getName());
+		}
+		for (UsesPortStub p : existingUsesDeviceStub.getUsesPortStubs()) {
+			portsWizardPage.getModel().getUsesPortNames().add(p.getName());
+		}
+
+		// Allocation structs
+		ScaStructProperty tunerAllocationStruct = null;
+		ScaStructProperty listenerAllocationStruct = null;
+		ScaStructProperty scannerAllocationStruct = null;
+		for (StructRef structRef : existingUsesDeviceStub.getUsesDevice().getStructRef()) {
+			String structRefID = structRef.getRefID();
+			if (TunerAllocationProperty.INSTANCE.getId().equals(structRefID)) {
+				tunerAllocationStruct = FEIStructDefaults.defaultTunerAllocationStruct(""); //$NON-NLS-1$
+				setValuesFromRefs(tunerAllocationStruct, structRef);
+			} else if (ListenerAllocationProperty.INSTANCE.getId().equals(structRefID)) {
+				listenerAllocationStruct = FEIStructDefaults.defaultListenerAllocationStruct();
+				setValuesFromRefs(listenerAllocationStruct, structRef);
+			} else if (ScannerAllocationProperty.INSTANCE.getId().equals(structRefID)) {
+				scannerAllocationStruct = FEIStructDefaults.defaultScannerAllocationStruct();
+				setValuesFromRefs(scannerAllocationStruct, structRef);
+			}
+		}
+		if (tunerAllocationStruct != null) {
+			allocationPage = new TunerAllocationWizardPage(tunerAllocationStruct);
+		} else if (listenerAllocationStruct != null) {
+			allocationPage = new TunerAllocationWizardPage(listenerAllocationStruct);
+		} else {
+			allocationPage = new TunerAllocationWizardPage();
+		}
+		if (scannerAllocationStruct != null) {
+			scannerPage = new ScannerAllocationWizardPage(scannerAllocationStruct);
+		} else {
+			scannerPage = new ScannerAllocationWizardPage();
+		}
+	}
+
+	private void setValuesFromRefs(ScaStructProperty struct, StructRef structRef) {
+		for (AbstractPropertyRef< ? > existingField : new FeatureMapList<>(structRef.getRefs(), AbstractPropertyRef.class)) {
+			String refId = existingField.getRefID();
+			ScaAbstractProperty< ? > newField = struct.getField(refId);
+			if (newField != null) {
+				newField.setValueFromRef(existingField);
+			}
+		}
+	}
+
+	private boolean isScannerAllocation() {
+		return allocationPage.isScannerAllocation();
+	}
+
+	@Override
+	public boolean canFinish() {
+		IWizardPage[] pages;
+		if (isScannerAllocation()) {
+			pages = new IWizardPage[] { namePage, allocationPage, scannerPage, portsWizardPage };
+		} else {
+			pages = new IWizardPage[] { namePage, allocationPage, portsWizardPage };
+		}
+		for (IWizardPage page : pages) {
+			if (!page.isPageComplete()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -204,28 +228,24 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 				portsWizardPage.getModel().setProvidesPortNames(providesPortNames);
 				portsWizardPage.getModel().setUsesPortNames(usesPortNames);
 			}
+		} else if (page == allocationPage && !isScannerAllocation()) {
+			return portsWizardPage;
 		}
 
 		return super.getNextPage(page);
 	}
 
 	@Override
-	public boolean performFinish() {
-		return true;
+	public int getPageCount() {
+		int count = super.getPageCount();
+
+		// Report 1 fewer page if using the allocate wizard pages, and scanner isn't chosen
+		return (!isScannerAllocation()) ? count - 1 : count;
 	}
 
-	/**
-	 * Return the first struct ref id
-	 * @param usesDeviceStub
-	 * @return
-	 */
-	private static String getFrontEndTunerStructRefId(UsesDeviceStub usesDeviceStub) {
-		if (usesDeviceStub.getUsesDevice().getStructRef() == null || usesDeviceStub.getUsesDevice().getStructRef().size() < 1) {
-			return null;
-		}
-
-		StructRef structRef = usesDeviceStub.getUsesDevice().getStructRef().get(0);
-		return structRef.getRefID();
+	@Override
+	public boolean performFinish() {
+		return true;
 	}
 
 	public SelectFrontEndTunerWizardPage getSelectFrontEndTunerWizardPage() {
@@ -238,6 +258,10 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 
 	public TunerAllocationWizardPage getAllocationPage() {
 		return allocationPage;
+	}
+
+	public ScannerAllocationWizardPage getScannerPage() {
+		return scannerPage;
 	}
 
 	public PortsWizardPage getPortsWizardPage() {
