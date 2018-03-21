@@ -20,3 +20,4 @@ Bundle-ActivationPolicy: lazy
 Import-Package: BULKIO;version="2.1.3"
 Export-Package: gov.redhawk.ide.snapshot,
  gov.redhawk.ide.snapshot.writer
+Automatic-Module-Name: gov.redhawk.ide.snapshot
