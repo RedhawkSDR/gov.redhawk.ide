@@ -46,3 +46,4 @@ Export-Package: gov.redhawk.ide.graphiti.dcd.internal.ui.editor,
  gov.redhawk.ide.graphiti.dcd.ui,
  gov.redhawk.ide.graphiti.dcd.ui.diagram.providers,
  gov.redhawk.ide.graphiti.dcd.ui.project.wizards
+Automatic-Module-Name: gov.redhawk.ide.graphiti.dcd.ui

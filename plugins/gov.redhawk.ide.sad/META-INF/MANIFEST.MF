@@ -14,3 +14,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.sad,
  gov.redhawk.ide.sad.generator.newwaveform;x-friends:="gov.redhawk.ide.sad.tests"
 Bundle-Vendor: %Bundle-Vendor
+Automatic-Module-Name: gov.redhawk.ide.sad

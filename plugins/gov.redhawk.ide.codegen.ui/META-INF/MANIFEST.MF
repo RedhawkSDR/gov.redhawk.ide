@@ -35,3 +35,4 @@ Bundle-Vendor: %Bundle-Vendor
 Import-Package: gov.redhawk.ide.ui,
  gov.redhawk.ide.ui.wizard,
  org.apache.commons.io
+Automatic-Module-Name: gov.redhawk.ide.codegen.ui

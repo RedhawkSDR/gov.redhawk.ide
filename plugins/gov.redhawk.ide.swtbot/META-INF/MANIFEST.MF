@@ -41,3 +41,4 @@ Export-Package: gov.redhawk.ide.swtbot,
  gov.redhawk.ide.swtbot.finder,
  gov.redhawk.ide.swtbot.finder.widgets,
  gov.redhawk.ide.swtbot.scaExplorer
+Automatic-Module-Name: gov.redhawk.ide.swtbot

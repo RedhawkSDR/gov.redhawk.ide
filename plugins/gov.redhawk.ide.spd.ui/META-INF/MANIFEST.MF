@@ -56,4 +56,5 @@ Export-Package: gov.redhawk.ide.spd.internal.ui;x-friends:="gov.redhawk.ide.spd.
 Bundle-Vendor: %Bundle-Vendor
 Import-Package: org.omg.CosEventChannelAdmin,
  org.omg.CosEventComm
+Automatic-Module-Name: gov.redhawk.ide.spd.ui
 

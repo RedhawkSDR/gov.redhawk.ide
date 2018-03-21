@@ -31,7 +31,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gef,
  org.eclipse.emf.common.ui,
  gov.redhawk.ui,
- idl.bulkio;bundle-version="2.0.0",
  gov.redhawk.sca.ui;bundle-version="10.0.0",
  gov.redhawk.ide.debug,
  org.eclipse.debug.ui,
@@ -60,3 +59,4 @@ Import-Package: gov.redhawk.model.sca,
  gov.redhawk.sca.ui.properties,
  mil.jpeojtrs.sca.profile.provider,
  org.eclipse.wst.sse.ui
+Automatic-Module-Name: gov.redhawk.ide.graphiti.ui

@@ -24,3 +24,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor
 Import-Package: nxm.dsp.prim
+Automatic-Module-Name: gov.redhawk.ide.ui.templates

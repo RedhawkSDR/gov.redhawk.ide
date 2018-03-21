@@ -13,10 +13,11 @@ Require-Bundle: org.eclipse.ui,
  mil.jpeojtrs.sca.scd.edit,
  mil.jpeojtrs.sca.util,
  org.eclipse.core.databinding.property;bundle-version="1.5.0",
- gov.redhawk.eclipsecorba.library.ui
+ gov.redhawk.eclipsecorba.library.ui,
+ idl.cf;bundle-version="2.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: gov.redhawk.ide.scd.ui.editor.page,
  gov.redhawk.ide.scd.ui.provider
-Import-Package: CF;version="2.0.0",
- org.omg.CosEventChannelAdmin
+Import-Package: org.omg.CosEventChannelAdmin
+Automatic-Module-Name: gov.redhawk.ide.scd.ui

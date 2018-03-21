@@ -18,8 +18,7 @@ Export-Package: gov.redhawk.ide.graphiti.sad.internal.ui.editor,
  gov.redhawk.ide.graphiti.sad.ui.diagram.patterns,
  gov.redhawk.ide.graphiti.sad.ui.diagram.providers,
  gov.redhawk.ide.graphiti.sad.ui.properties
-Import-Package: mil.jpeojtrs.sca.profile.provider,
- org.eclipse.wst.sse.ui;resolution:=optional
+Import-Package: org.eclipse.wst.sse.ui;resolution:=optional
 Require-Bundle: org.eclipse.ui.forms,
  mil.jpeojtrs.sca.sad,
  org.eclipse.equinox.common,
@@ -58,4 +57,5 @@ Require-Bundle: org.eclipse.ui.forms,
  org.eclipse.ui.views.properties.tabbed,
  gov.redhawk.core.graphiti.ui,
  gov.redhawk.ide.sdr
+Automatic-Module-Name: gov.redhawk.ide.graphiti.sad.ui
 

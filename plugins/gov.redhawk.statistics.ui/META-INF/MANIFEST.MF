@@ -20,3 +20,4 @@ Bundle-ClassPath: .,
  lib/jfreechart-1.0.15-experimental.jar,
  lib/swtgraphics2d.jar
 Export-Package: gov.redhawk.statistics.ui.views
+Automatic-Module-Name: gov.redhawk.statistics.ui
