@@ -26,7 +26,6 @@ Require-Bundle: gov.redhawk.eclipsecorba.library.ui,
  gov.redhawk.sca.ui;visibility:=reexport,
  gov.redhawk.ui;bundle-version="7.1.0";visibility:=reexport,
  gov.redhawk.validation;bundle-version="1.0.0",
- idl.bulkio,
  mil.jpeojtrs.sca.scd,
  org.eclipse.core.databinding,
  org.eclipse.core.databinding.beans;bundle-version="1.2.200",
@@ -64,7 +63,6 @@ Export-Package: gov.redhawk.ide.graphiti.sad.internal.ui.editor,
  gov.redhawk.ide.graphiti.sad.ui.diagram.patterns,
  gov.redhawk.ide.graphiti.sad.ui.diagram.providers,
  gov.redhawk.ide.graphiti.sad.ui.properties
-Import-Package: mil.jpeojtrs.sca.profile.provider,
- org.eclipse.wst.sse.ui;resolution:=optional
+Import-Package: org.eclipse.wst.sse.ui;resolution:=optional
 Automatic-Module-Name: gov.redhawk.ide.graphiti.sad.ui
 
