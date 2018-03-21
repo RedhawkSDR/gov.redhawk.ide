@@ -59,3 +59,4 @@ Import-Package: gov.redhawk.model.sca,
  gov.redhawk.sca.ui.properties,
  mil.jpeojtrs.sca.profile.provider,
  org.eclipse.wst.sse.ui
+Automatic-Module-Name: gov.redhawk.ide.graphiti.ui

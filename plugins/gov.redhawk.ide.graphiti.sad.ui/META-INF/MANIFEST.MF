@@ -66,4 +66,5 @@ Export-Package: gov.redhawk.ide.graphiti.sad.internal.ui.editor,
  gov.redhawk.ide.graphiti.sad.ui.properties
 Import-Package: mil.jpeojtrs.sca.profile.provider,
  org.eclipse.wst.sse.ui;resolution:=optional
+Automatic-Module-Name: gov.redhawk.ide.graphiti.sad.ui
 

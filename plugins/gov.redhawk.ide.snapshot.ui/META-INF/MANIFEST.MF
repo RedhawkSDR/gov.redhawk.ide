@@ -39,3 +39,4 @@ Export-Package: gov.redhawk.ide.snapshot.capture,gov.redhawk.ide.snaps
  ternal.ui.SnapshotMetaData.util;x-internal:=true,gov.redhawk.ide.snap
  shot.ui,gov.redhawk.ide.snapshot.writer,gov.redhawk.ide.snapshot.writ
  er.internal;x-internal:=true
+Automatic-Module-Name: gov.redhawk.ide.snapshot.ui

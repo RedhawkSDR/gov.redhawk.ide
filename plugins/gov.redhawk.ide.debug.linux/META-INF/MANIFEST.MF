@@ -8,3 +8,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Eclipse-PlatformFilter: (& (osgi.os=linux))
 Export-Package: gov.redhawk.ide.debug.linux
 Bundle-Vendor: %Bundle-Vendor
+Automatic-Module-Name: gov.redhawk.ide.debug.linux

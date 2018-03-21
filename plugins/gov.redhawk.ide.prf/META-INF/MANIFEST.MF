@@ -10,3 +10,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.prf.generator;x-friends:="gov.redhawk.
  ide.prf.ui,gov.redhawk.ide.prf.tests"
 Bundle-Vendor: %Bundle-Vendor
+Automatic-Module-Name: gov.redhawk.ide.prf

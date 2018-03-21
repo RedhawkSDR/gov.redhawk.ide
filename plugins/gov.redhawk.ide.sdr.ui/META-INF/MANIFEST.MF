@@ -45,4 +45,5 @@ Export-Package: gov.redhawk.ide.sdr.internal.ui;x-internal:=true,
  gov.redhawk.ide.sdr.ui.preferences,
  gov.redhawk.ide.sdr.ui.util
 Service-Component: OSGI-INF/service.xml
+Automatic-Module-Name: gov.redhawk.ide.sdr.ui
 

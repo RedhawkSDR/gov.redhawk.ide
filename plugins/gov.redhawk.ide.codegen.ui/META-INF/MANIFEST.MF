@@ -33,3 +33,4 @@ Export-Package: gov.redhawk.ide.codegen.ui,
 Bundle-Vendor: %Bundle-Vendor
 Import-Package: gov.redhawk.ide.ui,
  gov.redhawk.ide.ui.wizard
+Automatic-Module-Name: gov.redhawk.ide.codegen.ui

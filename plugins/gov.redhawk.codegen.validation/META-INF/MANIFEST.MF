@@ -13,3 +13,4 @@ Bundle-Vendor: %Bundle-Vendor
 Eclipse-ExtensibleAPI: true
 Export-Package: gov.redhawk.codegen.internal.validation;x-internal:=tr
  ue,gov.redhawk.codegen.validation
+Automatic-Module-Name: gov.redhawk.codegen.validation

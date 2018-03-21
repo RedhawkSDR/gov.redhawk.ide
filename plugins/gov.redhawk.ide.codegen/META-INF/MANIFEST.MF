@@ -30,3 +30,4 @@ Export-Package: gov.redhawk.ide.codegen,
  gov.redhawk.ide.codegen.util
 Bundle-Localization: plugin
 Bundle-Vendor: %Bundle-Provider.0
+Automatic-Module-Name: gov.redhawk.ide.codegen

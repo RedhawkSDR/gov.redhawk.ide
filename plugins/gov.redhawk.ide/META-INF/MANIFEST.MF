@@ -23,3 +23,4 @@ Export-Package: gov.redhawk.ide,
  gov.redhawk.ide.preferences,
  gov.redhawk.ide.util
 Bundle-Vendor: %Bundle-Vendor
+Automatic-Module-Name: gov.redhawk.ide

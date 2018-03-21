@@ -19,3 +19,4 @@ Bundle-ActivationPolicy: lazy
 Export-Package: gov.redhawk.ide.scd.ui.editor.page,
  gov.redhawk.ide.scd.ui.provider
 Import-Package: org.omg.CosEventChannelAdmin
+Automatic-Module-Name: gov.redhawk.ide.scd.ui
