@@ -12,84 +12,8 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc label="REDHAWK" topic="html/index.html">
-   <topic href="html/gettingstarted/main.html" label="Getting Started">
-      <topic href="html/gettingstarted/mainli1.html" label="What is REDHAWK?">
-      </topic>
-      <topic href="html/gettingstarted/mainli2.html" label="REDHAWK’s Approach to Process Management and Interaction">
-      </topic>
-      <topic href="html/gettingstarted/mainli3.html" label="Getting Started">
-      </topic>
-      <topic href="html/gettingstarted/mainli4.html" label="IDE Quickstart">
-      </topic>
-      <topic href="html/gettingstarted/mainli5.html" label="Further Reading">
-      </topic>
+   <topic href="html/getting-started/index.html" label="Getting Started">
    </topic>
-   <topic href="html/main.html" label="Documentation">
-      <topic href="html/mainch1.html" label="Introduction">
-      </topic>
-      <topic href="html/mainch2.html" label="Installation">
-      </topic>
-      <topic label="Concepts">
-      <topic href="html/mainch3.html" label="Components">
-      <topic href="html/mainch4.html" label="Component Structure">
-      </topic>
-      </topic>
-      <topic href="html/mainch5.html" label="Libraries">
-      </topic>
-      <topic href="html/mainch6.html" label="Connections">
-      </topic>
-      <topic href="html/mainch7.html" label="Waveforms">
-      </topic>
-      <topic href="html/mainch8.html" label="Devices">
-      </topic>
-      <topic href="html/mainch9.html" label="Services">
-      </topic>
-      <topic href="html/mainch10.html" label="Nodes">
-      </topic>
-      </topic>
-      <topic href="html/mainch12.html" label="Runtime Environment">
-         <topic href="html/mainch13.html" label="Runtime Environment Inspection">
-         </topic>
-      </topic>
-      <topic label="Programmer&apos;s Guide">
-      <topic href="html/mainch11.html" label="Sandbox">
-      </topic>
-      <topic href="html/mainch14.html" label="Logging">
-      </topic>
-      </topic>
-      <topic href="html/mainch15.html" label="IDE User Guide">
-         <topic href="html/mainch16.html" label="Sharing REDHAWK Projects With Others">
-         </topic>
-         <topic href="html/mainch17.html" label="Exploring SDRROOT">
-         </topic>
-         <topic href="html/mainch18.html" label="Exploring a Running Domain">
-         </topic>
-      </topic>
-      <topic label="Reference">
-         <topic href="html/mainap1.html" label="REDHAWK Yum Repository and Packages">
-         </topic>
-         <topic href="html/mainap2.html" label="External Dependencies">
-         </topic>
-         <topic href="html/mainap3.html" label="Installing a Stand-alone IDE">
-         </topic>
-         <topic href="html/mainap4.html" label="Building and Installing REDHAWK from Source">
-         </topic>
-         <topic href="html/mainap5.html" label="Optimization">
-      	 </topic>
-         <topic href="html/mainap6.html" label="FrontEnd Interfaces">
-         </topic>
-         <topic href="html/mainap7.html" label="REDHAWK Persona Device Pattern">
-         </topic>
-         <topic href="html/mainap8.html" label="Troubleshooting">
-         </topic>
-         <topic href="html/mainap9.html" label="Logging Configuration Plugin">
-         </topic>
-         <topic href="html/mainap10.html" label="List of Acronyms">
-         </topic>
-      </topic>
-   </topic>
-   <topic href="html/download.html" label="Download">
-   </topic>
-   <topic href="html/community.html" label="Community">
+   <topic href="html/manual/index.html" label="REDHAWK Manual">
    </topic>
 </toc>
