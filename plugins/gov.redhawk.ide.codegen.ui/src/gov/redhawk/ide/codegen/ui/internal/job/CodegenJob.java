@@ -60,6 +60,7 @@ import gov.redhawk.ide.codegen.ITemplateDesc;
 import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
+import gov.redhawk.ide.codegen.ui.GenerateCode;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.ide.codegen.ui.internal.GeneratorConsole;
 import gov.redhawk.ide.codegen.ui.internal.GeneratorUtil;
@@ -461,5 +462,10 @@ public class CodegenJob extends WorkspaceJob {
 	 */
 	public Set<IFile> getFilesToOpen() {
 		return mainFileSet;
+	}
+
+	@Override
+	public boolean belongsTo(Object family) {
+		return GenerateCode.FAMILY_GENERATE_CODE == family;
 	}
 }

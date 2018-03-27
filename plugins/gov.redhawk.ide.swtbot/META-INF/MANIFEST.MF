@@ -26,7 +26,8 @@ Require-Bundle: org.eclipse.ui,
  org.jacorb;bundle-version="3.3.0";visibility:=reexport,
  gov.redhawk.core.graphiti.ui,
  gov.redhawk.core.graphiti.sad.ui,
- org.eclipse.ui.console
+ org.eclipse.ui.console,
+ gov.redhawk.ide.codegen.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: REDHAWK

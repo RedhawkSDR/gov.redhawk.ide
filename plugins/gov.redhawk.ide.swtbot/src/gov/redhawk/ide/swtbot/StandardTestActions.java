@@ -91,6 +91,9 @@ import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
 import gov.redhawk.ide.swtbot.condition.ConditionSequence;
+import gov.redhawk.ide.swtbot.condition.JobConditions;
+import gov.redhawk.ide.swtbot.condition.NotCondition;
+import gov.redhawk.ide.swtbot.condition.WaitForTargetSdrRootLoad;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.internal.ProjectRecord;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
@@ -209,8 +212,8 @@ public final class StandardTestActions {
 	}
 
 	/**
-	 * Generates the project using the Generate button in the overview tab
-	 * Generates all files
+	 * Performs code generation for a project via the the Generate button in the Overview tab. Generates all files.
+	 * When the method returns, generation is complete, but the build may be in progress.
 	 */
 	public static void generateProject(SWTWorkbenchBot bot, SWTBotEditor editor) {
 		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.OVERVIEW_TAB);
@@ -229,9 +232,8 @@ public final class StandardTestActions {
 			fileShell.bot().button("OK").click();
 			bot.waitUntil(Conditions.shellCloses(fileShell));
 		});
-		seq.addOptionalCondition(waitForShell(withText("Generating...")), () -> {
-			SWTBotShell genShell = bot.shell("Generating...");
-			bot.waitUntil(Conditions.shellCloses(genShell), 10000);
+		seq.addOptionalCondition(new NotCondition(JobConditions.generateCode()), () -> {
+			bot.waitUntil(JobConditions.generateCode(), 10000);
 		});
 		seq.addOptionalCondition(waitForShell(withText("File Changed")), () -> {
 			SWTBotShell fileChangedShell = bot.shell("File Changed");
@@ -420,9 +422,9 @@ public final class StandardTestActions {
 	/**
 	 * Export a project from the Project Explorer to the Target SDR. Does <b>NOT</b> wait for the export to complete.
 	 * <p/>
-	 * If you need to wait for the export to complete, consider
-	 * {@link gov.redhawk.ide.swtbot.condition.WaitForExport WaitForExport} followed by
-	 * {@link gov.redhawk.ide.swtbot.condition.WaitForTargetSdrRootLoad WaitForTargetSdrRootLoad}.
+	 * If you need to wait for the export to complete, consider using
+	 * {@link org.eclipse.swtbot.eclipse.finder.waits.Conditions.waitForJobs(Object, String)} with job family
+	 * {@link SdrUiPlugin#FAMILY_EXPORT_TO_SDR}. Then use {@link WaitForTargetSdrRootLoad}.
 	 * @param projectName
 	 * @param bot
 	 */

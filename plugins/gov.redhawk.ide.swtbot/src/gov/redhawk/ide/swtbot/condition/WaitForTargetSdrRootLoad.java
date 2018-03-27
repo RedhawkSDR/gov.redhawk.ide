@@ -32,12 +32,10 @@ public class WaitForTargetSdrRootLoad extends DefaultCondition {
 		lastObservedState = SdrUiPlugin.getDefault().getTargetSdrRoot().getState();
 
 		// Ensure the refresh job isn't queued / running
-		Job[] jobs = Job.getJobManager().find(null);
-		for (Job job : jobs) {
-			if ("RefreshSdrJob".equals(job.getClass().getSimpleName())) {
-				jobRunning = true;
-				return false;
-			}
+		Job[] jobs = Job.getJobManager().find(SdrUiPlugin.FAMILY_REFRESH_SDR);
+		if (jobs.length != 0) {
+			jobRunning = true;
+			return false;
 		}
 		jobRunning = false;
 

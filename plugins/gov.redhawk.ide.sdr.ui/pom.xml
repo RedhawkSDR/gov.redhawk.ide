@@ -20,6 +20,6 @@
   </parent>
   <groupId>gov.redhawk.ide</groupId>
   <artifactId>gov.redhawk.ide.sdr.ui</artifactId>
-  <version>4.2.0-SNAPSHOT</version>
+  <version>4.3.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

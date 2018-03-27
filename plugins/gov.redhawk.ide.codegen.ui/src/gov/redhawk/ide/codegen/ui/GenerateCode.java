@@ -31,6 +31,13 @@ import mil.jpeojtrs.sca.spd.Implementation;
  */
 public final class GenerateCode {
 
+	/**
+	 * The job family for the job which performs actual code generation. This does not include jobs that are executed
+	 * leading up to code generation, including anything for determining what file(s) should be generated.
+	 * @since 10.1
+	 */
+	public static final Object FAMILY_GENERATE_CODE = new Object();
+
 	private GenerateCode() {
 	}
 
