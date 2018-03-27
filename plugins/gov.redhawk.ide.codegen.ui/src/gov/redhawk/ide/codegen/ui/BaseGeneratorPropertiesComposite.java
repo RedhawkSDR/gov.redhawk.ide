@@ -150,7 +150,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 	}
 
 	/**
-	 * @since 10.0
+	 * @since 10.1
 	 */
 	protected ICodeGeneratorDescriptor[] getCodegens() {
 		return RedhawkCodegenActivator.getCodeGeneratorsRegistry().getCodegens();

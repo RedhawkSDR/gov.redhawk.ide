@@ -98,7 +98,7 @@ public class DefaultGeneratorPropertiesComposite extends BaseGeneratorProperties
 	}
 
 	/**
-	 * @since 10.0
+	 * @since 10.1
 	 */
 	public DefaultGeneratorPropertiesComposite(Implementation impl, String codegenId, Composite parent, int style, FormToolkit toolkit) {
 		super(parent, style, toolkit);
