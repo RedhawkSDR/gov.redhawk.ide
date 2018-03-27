@@ -116,4 +116,9 @@ public class ExportToSdrRootJob extends Job {
 	public List<IProject> getExportedProjects() {
 		return Collections.unmodifiableList(exportedProjects);
 	}
+
+	@Override
+	public boolean belongsTo(Object family) {
+		return SdrUiPlugin.FAMILY_EXPORT_TO_SDR == family;
+	}
 }

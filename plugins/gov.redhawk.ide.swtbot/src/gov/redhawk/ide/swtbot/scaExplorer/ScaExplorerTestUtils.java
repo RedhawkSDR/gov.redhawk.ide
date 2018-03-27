@@ -10,12 +10,15 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.scaExplorer;
 
+import static org.eclipse.swtbot.eclipse.finder.waits.Conditions.waitForJobs;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
@@ -29,7 +32,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.condition.WaitForModalContext;
-import gov.redhawk.ide.swtbot.condition.WaitForOpenDiagramJobs;
+import gov.redhawk.sca.ui.ScaUI;
 
 public class ScaExplorerTestUtils {
 
@@ -98,7 +101,7 @@ public class ScaExplorerTestUtils {
 		case GRAPHITI_CHALKBOARD:
 		case GRAPHITI_NODE_EXPLORER:
 		case GRAPHITI_WAVEFORM_EXPLORER:
-			bot.waitUntil(new WaitForOpenDiagramJobs(), WaitForOpenDiagramJobs.DEFAULT_TIMEOUT);
+			bot.waitUntil(waitForJobs(ScaUI.FAMILY_OPEN_EDITOR, "Editor open"), 10000);
 			break;
 		default:
 		}

@@ -54,6 +54,18 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	 */
 	public static final String EDITING_DOMAIN_ID = SdrUiPlugin.PLUGIN_ID + ".editingDomain";
 
+	/**
+	 * The job group for a job that exports project(s) to the SDR root.
+	 * @since 5.0
+	 */
+	public static final Object FAMILY_EXPORT_TO_SDR = new Object();
+
+	/**
+	 * The job group for a job that refreshes the SDR root model.
+	 * @since 5.0
+	 */
+	public static final Object FAMILY_REFRESH_SDR = new Object();
+
 	// The shared instance
 	private static SdrUiPlugin plugin;
 

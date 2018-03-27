@@ -23,4 +23,18 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/gov/redhawk/ide/sdr/ui/SdrUiPlugin.java" type="gov.redhawk.ide.sdr.ui.SdrUiPlugin">
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="gov.redhawk.ide.sdr.ui.SdrUiPlugin"/>
+                <message_argument value="FAMILY_EXPORT_TO_SDR"/>
+            </message_arguments>
+        </filter>
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="gov.redhawk.ide.sdr.ui.SdrUiPlugin"/>
+                <message_argument value="FAMILY_REFRESH_SDR"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

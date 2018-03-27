@@ -31,7 +31,8 @@ Require-Bundle: org.eclipse.ui,
  gov.redhawk.ui,
  gov.redhawk.ide.graphiti.ui,
  gov.redhawk.sca.ui,
- gov.redhawk.ide.sdr
+ gov.redhawk.ide.sdr,
+ gov.redhawk.ide.codegen.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: REDHAWK

@@ -10,29 +10,35 @@
  */
 package gov.redhawk.ide.swtbot.condition;
 
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
-
-import gov.redhawk.sca.ui.ScaUI;
+import org.eclipse.swtbot.swt.finder.waits.ICondition;
 
 /**
- * Returns true while there are unfinished jobs to open diagrams.
+ * Inverts a condition's test
  */
-public class WaitForOpenDiagramJobs extends DefaultCondition {
+public class NotCondition extends DefaultCondition {
 
-	/**
-	 * Default timeout that should be used when opening runtime diagrams
-	 */
-	public static final long DEFAULT_TIMEOUT = 10000;
+	private ICondition invertCondition;
+
+	public NotCondition(ICondition invertCondition) {
+		this.invertCondition = invertCondition;
+	}
 
 	@Override
 	public boolean test() throws Exception {
-		return Job.getJobManager().find(ScaUI.FAMILY_OPEN_EDITOR).length == 0;
+		return !invertCondition.test();
+	}
+
+	@Override
+	public void init(SWTBot bot) {
+		super.init(bot);
+		invertCondition.init(bot);
 	}
 
 	@Override
 	public String getFailureMessage() {
-		return "Editor open jobs did not complete";
+		return "NOT (" + invertCondition.getFailureMessage() + ")";
 	}
 
 }
