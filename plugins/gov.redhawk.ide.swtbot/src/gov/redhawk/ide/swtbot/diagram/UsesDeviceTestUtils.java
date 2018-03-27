@@ -11,11 +11,15 @@
  */
 package gov.redhawk.ide.swtbot.diagram;
 
+import java.util.Arrays;
+
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotCombo;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
+
+import gov.redhawk.ide.swtbot.StandardTestActions;
 
 public class UsesDeviceTestUtils {
 
@@ -35,46 +39,49 @@ public class UsesDeviceTestUtils {
 	public static void completeUsesFEDeviceWizard(SWTBot bot, String deviceTemplate, FETunerControl feTunerControl, String[] provides, String[] uses) {
 		SWTBotShell allocateTunerShell = bot.shell("Allocate Tuner");
 		allocateTunerShell.setFocus();
+		SWTBot shellBot = allocateTunerShell.bot();
 
 		// Device to use as a template
 		if (deviceTemplate != null) {
-			bot.table(0).getTableItem(deviceTemplate).select();
+			StandardTestActions.waitForTreeItemToAppear(shellBot, shellBot.tree(), Arrays.asList(deviceTemplate.split("\\."))).select();
 		}
-		bot.button("&Next >").click();
+		shellBot.button("&Next >").click();
 
 		// Stick with the default values
-		bot.button("&Next >").click();
+		shellBot.button("&Next >").click();
 
 		// Allocate new tuner
-		SWTBotCombo tunerTypeComboField = bot.comboBox(1);
+		SWTBotCombo tunerTypeComboField = shellBot.comboBox(1);
 		tunerTypeComboField.setFocus();
 		tunerTypeComboField.setSelection(feTunerControl.getTunerType());
 
-		SWTBotText newAllocationIdText = bot.textWithLabel("New Allocation ID");
+		SWTBotText newAllocationIdText = shellBot.textWithLabel("New Allocation ID");
 		newAllocationIdText.setFocus();
 		newAllocationIdText.typeText(feTunerControl.getNewAllocationID());
 
-		SWTBotText centerFrequencyText = bot.textWithLabel("Center Frequency (MHz)");
+		SWTBotText centerFrequencyText = shellBot.textWithLabel("Center Frequency (MHz)");
 		centerFrequencyText.setFocus();
 		centerFrequencyText.typeText(feTunerControl.getCenterFrequency());
 
-		SWTBotText bandwidthText = bot.textWithLabel("Bandwidth (MHz)");
+		SWTBotText bandwidthText = shellBot.textWithLabel("Bandwidth (MHz)");
 		bandwidthText.setFocus();
 		bandwidthText.typeText(feTunerControl.getBandwidth());
 
-		SWTBotText sampleRateText = bot.textWithLabel("Sample Rate (Msps)");
+		SWTBotText sampleRateText = shellBot.textWithLabel("Sample Rate (Msps)");
 		sampleRateText.setFocus();
 		sampleRateText.setText(""); // clear first because the focus method caused the wizard to pre-populate the field
 		sampleRateText.typeText(feTunerControl.getSampleRate());
 
-		SWTBotText groupIdText = bot.textWithLabel("Group ID");
+		SWTBotText groupIdText = shellBot.textWithLabel("Group ID");
 		groupIdText.setFocus();
 		groupIdText.setText(""); // clear first because the focus method caused the wizard to pre-populate the field
 		groupIdText.typeText(feTunerControl.getGroupID());
 
-		bot.button("&Next >").click();
+		shellBot.button("&Next >").click();
 
-		completeAddPortsPage(bot, provides, uses);
+		completeAddPortsPage(shellBot, provides, uses);
+
+		bot.waitUntil(Conditions.shellCloses(allocateTunerShell));
 	}
 
 	/**
