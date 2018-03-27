@@ -28,7 +28,7 @@ public class WaitForBuild extends DefaultCondition {
 	/**
 	 * The recommended timeout when using this condition
 	 */
-	public static final long TIMEOUT = 45000;
+	public static final long TIMEOUT = 60000;
 
 	private long startingWaitTime = 0;
 
@@ -105,9 +105,9 @@ public class WaitForBuild extends DefaultCondition {
 	}
 
 	private boolean isGenerateCodeBuildRunning() {
-		Job[] jobs = Job.getJobManager().find(null);
+		Job[] jobs = Job.getJobManager().find(ResourcesPlugin.FAMILY_MANUAL_BUILD);
 		for (Job job : jobs) {
-			if (job.getClass().getName().startsWith("gov.redhawk.ide.codegen.ui.internal.job.ProcessImplsJob$") && job.getName().startsWith("Building Project")) {
+			if (job.getClass().getName().startsWith("gov.redhawk.ide.codegen.ui.internal.job.CodegenJob$")) {
 				return true;
 			}
 		}

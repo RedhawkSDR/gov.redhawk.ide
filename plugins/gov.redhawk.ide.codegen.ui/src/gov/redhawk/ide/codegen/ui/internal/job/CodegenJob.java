@@ -223,6 +223,11 @@ public class CodegenJob extends WorkspaceJob {
 					project.build(IncrementalProjectBuilder.FULL_BUILD, progress.newChild(BUILD_WORK));
 					return Status.OK_STATUS;
 				}
+
+				@Override
+				public boolean belongsTo(Object family) {
+					return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
+				}
 			};
 			buildJob.setPriority(Job.LONG);
 			buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
