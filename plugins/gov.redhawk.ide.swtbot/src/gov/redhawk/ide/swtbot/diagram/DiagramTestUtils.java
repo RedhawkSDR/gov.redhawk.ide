@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.diagram;
 
+import static org.eclipse.swtbot.eclipse.finder.waits.Conditions.waitForJobs;
+
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -62,10 +64,10 @@ import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.core.graphiti.ui.util.StyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.StandardTestActions;
-import gov.redhawk.ide.swtbot.condition.WaitForOpenDiagramJobs;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 import gov.redhawk.logging.ui.LogLevels;
+import gov.redhawk.sca.ui.ScaUI;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
@@ -814,7 +816,7 @@ public class DiagramTestUtils {
 	/** Helper method to open Sandbox "Waveform" Chalkboard Graphiti Diagram */
 	public static RHBotGefEditor openChalkboardDiagram(RHSWTGefBot gefBot) {
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, new String[] { "Sandbox" }, "Chalkboard", DiagramType.GRAPHITI_CHALKBOARD);
-		gefBot.waitUntil(new WaitForOpenDiagramJobs(), WaitForOpenDiagramJobs.DEFAULT_TIMEOUT);
+		gefBot.waitUntil(waitForJobs(ScaUI.FAMILY_OPEN_EDITOR, "Editor open"), 10000);
 		RHBotGefEditor editor = gefBot.rhGefEditor("Chalkboard");
 		editor.setFocus();
 		return editor;
@@ -823,7 +825,7 @@ public class DiagramTestUtils {
 	/** Helper method to open Sandbox Device Manager Graphiti Chalkboard Diagram */
 	public static RHBotGefEditor openNodeChalkboardDiagram(SWTWorkbenchBot gefBot) {
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, new String[] { "Sandbox" }, "Device Manager", DiagramType.GRAPHITI_CHALKBOARD);
-		gefBot.waitUntil(new WaitForOpenDiagramJobs(), WaitForOpenDiagramJobs.DEFAULT_TIMEOUT);
+		gefBot.waitUntil(waitForJobs(ScaUI.FAMILY_OPEN_EDITOR, "Editor open"), 10000);
 		RHBotGefEditor editor = new RHSWTGefBot().rhGefEditor("Device Manager");
 		return editor;
 	}
