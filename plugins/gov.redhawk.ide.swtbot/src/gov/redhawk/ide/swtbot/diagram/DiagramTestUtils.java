@@ -11,6 +11,7 @@
 package gov.redhawk.ide.swtbot.diagram;
 
 import static org.eclipse.swtbot.eclipse.finder.waits.Conditions.waitForJobs;
+import static org.eclipse.swtbot.swt.finder.finders.UIThreadRunnable.syncExec;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -54,6 +55,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
+import org.eclipse.ui.IEditorPart;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Assert;
@@ -837,7 +839,11 @@ public class DiagramTestUtils {
 	 * {@link #OVERVIEW_TAB}, {@link #PROPERTIES_TAB}, {@link #IMPLEMENTATIONS} and {@link #DIAGRAM_TAB}
 	 */
 	public static void openTabInEditor(SWTBotEditor editor, String tabName) {
-		editor.setFocus();
+		StandardTestActions.forceMainShellActive();
+		syncExec(() -> {
+			IEditorPart editorPart = editor.getReference().getEditor(true);
+			editor.getReference().getPage().activate(editorPart);
+		});
 		editor.bot().cTabItem(tabName).activate();
 	}
 
