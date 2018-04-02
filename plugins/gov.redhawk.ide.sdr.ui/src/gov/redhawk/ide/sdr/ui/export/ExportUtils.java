@@ -615,13 +615,15 @@ public class ExportUtils {
 
 	/**
 	 * Invokes "build.sh install" for a project.
-	 * @param progress
+	 * @param monitor
 	 * @param project
 	 * @throws CoreException
 	 * @throws IOException
 	 * @throws DebugException
 	 */
-	private static void buildSH(final IProgressMonitor progress, IProject project) throws CoreException, IOException, DebugException {
+	private static void buildSH(final IProgressMonitor monitor, IProject project) throws CoreException, IOException, DebugException {
+		SubMonitor progress = SubMonitor.convert(monitor, 10);
+
 		String configTypeId = IExternalToolConstants.ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE;
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		final String launchConfigName = launchManager.generateLaunchConfigurationName("Build Install " + project.getName());
@@ -647,7 +649,7 @@ public class ExportUtils {
 		}
 		retVal.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, project.getLocation().toOSString());
 
-		ILaunch launch = retVal.launch("run", progress, false);
+		ILaunch launch = retVal.launch("run", progress.newChild(1), false);
 		while (!launch.isTerminated()) {
 			try {
 				Thread.sleep(500);
@@ -659,6 +661,7 @@ public class ExportUtils {
 				break;
 			}
 		}
+		progress.newChild(9);
 		if (launch.getProcesses()[0].getExitValue() != 0) {
 			throw new CoreException(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID,
 				"Install script returned with error code " + launch.getProcesses()[0].getExitValue() + "\n\nSee console output for details.", null));
