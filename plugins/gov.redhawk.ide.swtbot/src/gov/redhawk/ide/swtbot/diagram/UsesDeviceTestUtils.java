@@ -13,11 +13,14 @@ package gov.redhawk.ide.swtbot.diagram;
 
 import java.util.Arrays;
 
+import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotCombo;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
+import org.junit.Assert;
 
 import gov.redhawk.ide.swtbot.StandardTestActions;
 
@@ -50,38 +53,41 @@ public class UsesDeviceTestUtils {
 		// Stick with the default values
 		shellBot.button("&Next >").click();
 
-		// Allocate new tuner
-		SWTBotCombo tunerTypeComboField = shellBot.comboBox(1);
-		tunerTypeComboField.setFocus();
-		tunerTypeComboField.setSelection(feTunerControl.getTunerType());
-
-		SWTBotText newAllocationIdText = shellBot.textWithLabel("New Allocation ID");
-		newAllocationIdText.setFocus();
-		newAllocationIdText.typeText(feTunerControl.getNewAllocationID());
-
-		SWTBotText centerFrequencyText = shellBot.textWithLabel("Center Frequency (MHz)");
-		centerFrequencyText.setFocus();
-		centerFrequencyText.typeText(feTunerControl.getCenterFrequency());
-
-		SWTBotText bandwidthText = shellBot.textWithLabel("Bandwidth (MHz)");
-		bandwidthText.setFocus();
-		bandwidthText.typeText(feTunerControl.getBandwidth());
-
-		SWTBotText sampleRateText = shellBot.textWithLabel("Sample Rate (Msps)");
-		sampleRateText.setFocus();
-		sampleRateText.setText(""); // clear first because the focus method caused the wizard to pre-populate the field
-		sampleRateText.typeText(feTunerControl.getSampleRate());
-
-		SWTBotText groupIdText = shellBot.textWithLabel("Group ID");
-		groupIdText.setFocus();
-		groupIdText.setText(""); // clear first because the focus method caused the wizard to pre-populate the field
-		groupIdText.typeText(feTunerControl.getGroupID());
-
+		completeTunerAllocationPage(shellBot, feTunerControl);
 		shellBot.button("&Next >").click();
+
+		if ("RX_SCANNER_DIGITIZER".equals(feTunerControl.getTunerType())) {
+			if (provides != null || uses != null) {
+				Assert.fail("This helper doesn't handle scanners with ports");
+			}
+			return;
+		}
 
 		completeAddPortsPage(shellBot, provides, uses);
 
+		shellBot.button("&Finish").click();
 		bot.waitUntil(Conditions.shellCloses(allocateTunerShell));
+	}
+
+	private static void completeTunerAllocationPage(SWTBot shellBot, FETunerControl feTunerControl) {
+		shellBot.textWithLabel("New Allocation ID").typeText(feTunerControl.getNewAllocationID());
+		shellBot.comboBoxWithLabel("Tuner Type").setSelection(feTunerControl.getTunerType());
+		shellBot.textWithLabel("Center Frequency (MHz)").typeText(feTunerControl.getCenterFrequency());
+		if (feTunerControl.getBandwidth() == null) {
+			shellBot.checkBox("Any Value", 0).click();
+		} else {
+			shellBot.textWithLabel("Bandwidth (MHz)").typeText(feTunerControl.getBandwidth());
+		}
+		if (feTunerControl.getSampleRate() == null) {
+			shellBot.checkBox("Any Value", 1).click();
+		} else {
+			SWTBotText sampleRateText = shellBot.textWithLabel("Sample Rate (Msps)");
+			sampleRateText.setFocus();
+			sampleRateText.setText(""); // clear first because the focus method caused the wizard to pre-populate
+			sampleRateText.typeText(feTunerControl.getSampleRate());
+		}
+		shellBot.textWithLabel("RF Flow ID").typeText(feTunerControl.getRFFlowID());
+		shellBot.textWithLabel("Group ID").typeText(feTunerControl.getGroupID());
 	}
 
 	/**
@@ -120,6 +126,8 @@ public class UsesDeviceTestUtils {
 		shellBot.button("&Next >").click();
 
 		completeAddPortsPage(shellBot, provides, uses);
+
+		shellBot.button("&Finish").click();
 		bot.waitUntil(Conditions.shellCloses(allocateTunerShell));
 	}
 
@@ -139,9 +147,6 @@ public class UsesDeviceTestUtils {
 				bot.buttonWithTooltip("Add uses port").click();
 			}
 		}
-
-		// finish
-		bot.button("&Finish").click();
 	}
 
 }
