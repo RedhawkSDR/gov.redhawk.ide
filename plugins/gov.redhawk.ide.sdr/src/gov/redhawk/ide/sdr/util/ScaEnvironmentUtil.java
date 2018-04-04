@@ -27,20 +27,6 @@ public final class ScaEnvironmentUtil {
 	}
 
 	/**
-	 * @deprecated Use {@link #getLauncherEnvMap(Implementation)} instead.
-	 * @return
-	 */
-	@Deprecated
-	public static Map<String, String> getLauncherEnvMap() {
-		try {
-			return getLauncherEnvMap(null);
-		} catch (CoreException e) {
-			// This should never happen since the impl is null
-			throw new IllegalStateException("Core Exception when loading envirornment map.", e);
-		}
-	}
-
-	/**
 	 * 
 	 * @param impl
 	 * @return

@@ -48,14 +48,6 @@ public class WaitForBuild extends DefaultCondition {
 	}
 
 	/**
-	 * @deprecated Use {@link #WaitForBuild(BuildType)}
-	 */
-	@Deprecated
-	public WaitForBuild() {
-		this(BuildType.AUTO);
-	}
-
-	/**
 	 * @param buildType
 	 */
 	public WaitForBuild(BuildType buildType) {

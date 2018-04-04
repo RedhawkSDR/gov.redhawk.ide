@@ -85,15 +85,6 @@ public class LocalScaComponentItemProvider extends ScaComponentItemProvider {
 	}
 
 	/**
-	 * 
-	 * @deprecated Use {@link #addExecParamPropertyDescriptor(Object)}
-	 */
-	@Deprecated
-	protected void addExecParamsPropertyDescriptor(Object object) {
-		addExecParamPropertyDescriptor(object);
-	}
-
-	/**
 	 * This adds a property descriptor for the Exec Param feature.
 	 * <!-- begin-user-doc -->
 	 * @since 1.1

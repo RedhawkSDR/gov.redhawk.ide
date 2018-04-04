@@ -104,19 +104,6 @@
       </constraintProvider>
    </extension>
    <extension
-         id="gov.redhawk.ide.codegen.builders.TopLevelBuildScript"
-         name="%extension.name"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            callOnEmptyDelta="false"
-            hasNature="false"
-            isConfigurable="false">
-         <run
-               class="gov.redhawk.ide.codegen.builders.TopLevelBuildScript">
-         </run>
-      </builder>
-   </extension>
-   <extension
          id="gov.redhawk.ide.codegen.builders.TopLevelRPMSpec"
          name="%extension.name.0"
          point="org.eclipse.core.resources.builders">

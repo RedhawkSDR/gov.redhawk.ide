@@ -35,11 +35,6 @@ public class GeneratorArgsBase {
 	 * @since 10.0
 	 */
 	public static final String SOFT_PKG_ID_KEY = "soft_pkg_id";
-	/**
-	 * @deprecated Use {@link #SOFT_PKG_ID_KEY} instead
-	 */
-	@Deprecated
-	public static final String PROJECT_ID_KEY = SOFT_PKG_ID_KEY;
 
 	public void setProperty(String k, String v) {
 		m.put(k, v);
@@ -55,37 +50,6 @@ public class GeneratorArgsBase {
 
 	public String getProjectName() {
 		return this.getProperty(PROJECT_NAME_KEY);
-	}
-	
-	/**
-	 * @deprecated Use {@link #setProperty(SOFTPKG_FILE_KEY, softPkgFile)}
-	 */
-	@Deprecated
-	public void setSoftPkgFile(final String softPkgFile) {
-		this.setProperty(SOFTPKG_FILE_KEY, softPkgFile);
-	}
-	/**
-	 * @deprecated Use {@link #getProperty(SOFTPKG_FILE_KEY)}
-	 */
-	@Deprecated
-	public String getSoftPkgFile() {
-		return this.getProperty(SOFTPKG_FILE_KEY);
-	}
-	
-	/**
-	 * @deprecated Use setSoftPkgId instead.
-	 */
-	@Deprecated
-	public void setProjectId(final String projectId) {
-		this.setProperty(SOFT_PKG_ID_KEY, projectId);
-	}
-	
-	/**
-	 * @deprecated Use getSoftPkgId instead.
-	 */
-	@Deprecated
-	public String getProjectId() {
-		return this.getProperty(SOFT_PKG_ID_KEY);
 	}
 	
 	public void setAuthorName(final String authorName) {

@@ -55,32 +55,6 @@ public class DeviceProjectCreator extends ProjectCreator {
 		return project;
 	}
 
-	
-	
-	/**
-	 * Creates the basic files for a device in an empty REDHAWK resource project. Should be invoked in the context of a
-	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
-	 * 
-	 * @param project The project to generate files in
-	 * @param projectID The project's ID (DCE)
-	 * @param authorName The name of the device author
-	 * @param deviceType the type of device
-	 * @param aggregateDevice True if an aggregate device
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
-	 * @return The newly created DCD file
-	 * @throws CoreException An error occurs while generating files
-	 * @deprecated This method is deprecated.  Please use the method which also takes in the spd name and ID.
-	 */
-	@Deprecated
-	public static IFile createDeviceFiles(final IProject project, final String projectID, final String authorName, final String deviceType,
-	        final boolean aggregateDevice, final IProgressMonitor monitor) throws CoreException {
-		String[] tokens = project.getName().split("\\.");
-		return createDeviceFiles(project, tokens[tokens.length - 1], projectID, authorName, deviceType, aggregateDevice, monitor);
-	}
-	
-	
 	/**
 	 * Creates the basic files for a device in an empty REDHAWK resource project. Should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.

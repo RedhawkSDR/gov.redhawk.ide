@@ -491,26 +491,6 @@ public abstract class ProjectCreator {
 	 * <p />
 	 * This should be invoked in the context of a {@link org.eclipse.ui.actions.WorkspaceModifyOperation
 	 * WorkspaceModifyOperation}.
-	 * @param project
-	 * @param impl
-	 * @param settings
-	 * @param monitor
-	 * @deprecated This method will be removed in the future. Use the updated method which takes in the String spdName.
-	 */
-	@Deprecated
-	public static void addImplementation(final IProject project, final Implementation impl, final ImplementationSettings settings,
-		final IProgressMonitor monitor) throws CoreException {
-		addImplementation(project, null, impl, settings, monitor);
-	}
-
-	/**
-	 * Directly adds an implementation to a {@link SoftPkg}.
-	 * 
-	 * The {@link Implementation} will have its {@link Code} entry filled in
-	 * based on the code generator template specified in {@link ImplementationSettings}.
-	 * <p />
-	 * This should be invoked in the context of a {@link org.eclipse.ui.actions.WorkspaceModifyOperation
-	 * WorkspaceModifyOperation}.
 	 * 
 	 * @param project
 	 * @param impl

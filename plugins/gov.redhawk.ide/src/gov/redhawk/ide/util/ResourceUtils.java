@@ -10,15 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.util;
 
-import gov.redhawk.eclipsecorba.library.IdlLibrary;
-import gov.redhawk.eclipsecorba.library.LibraryFactory;
-import gov.redhawk.eclipsecorba.library.util.LibraryResourceImpl;
 import gov.redhawk.ide.RedhawkIdeActivator;
-import gov.redhawk.ide.preferences.RedhawkIdePreferenceInitializer;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -35,8 +30,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 
 public final class ResourceUtils {
-	private ResourceUtils() {
 
+	private ResourceUtils() {
 	}
 
 	/**
@@ -154,36 +149,5 @@ public final class ResourceUtils {
 		};
 		job.setSystem(true);
 		job.schedule();
-	}
-
-	/**
-	 * @since 3.0
-	 */
-	public static void createIdlLibraryResource(final IFile libraryFile, final IProgressMonitor m) throws CoreException {
-		final IdlLibrary library = LibraryFactory.eINSTANCE.createIdlLibrary();
-		RedhawkIdePreferenceInitializer.initializeIdlLibraryToDefaults(library);
-		final LibraryResourceImpl tmpResource = new LibraryResourceImpl(null);
-		tmpResource.getContents().add(library);
-		final ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		try {
-			tmpResource.save(stream, null);
-		} catch (final IOException e) {
-			// PASS With not happen
-		}
-
-		if (libraryFile.exists()) {
-			libraryFile.setContents(new ByteArrayInputStream(stream.toByteArray()), IResource.FORCE, m);
-		} else {
-			libraryFile.create(new ByteArrayInputStream(stream.toByteArray()), true, m);
-		}
-	}
-
-	/**
-	 * @since 3.0
-	 * @deprecated .library Files are not used any more
-	 */
-	@Deprecated
-	public static void createIdlLibraryResource(final IProject project, final IProgressMonitor m) throws CoreException {
-		ResourceUtils.createIdlLibraryResource(project.getFile(".library"), m);
 	}
 }

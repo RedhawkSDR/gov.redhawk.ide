@@ -14,7 +14,9 @@ package gov.redhawk.ide.codegen;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -37,16 +39,15 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
-import gov.redhawk.ide.codegen.builders.TopLevelBuildScript;
-import gov.redhawk.ide.codegen.builders.TopLevelRPMSpec;
-import gov.redhawk.ide.natures.ScaComponentProjectNature;
 import gov.redhawk.sca.util.Debug;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 public class CodegenUtil {
+
 	private static final Debug DEBUG = new Debug(RedhawkCodegenActivator.PLUGIN_ID, "codgenUtil");
+
 	/**
 	 * @since 9.0
 	 */
@@ -275,42 +276,6 @@ public class CodegenUtil {
 	}
 
 	/**
-	 * Adds the top level build script generator to a REDHAWK project, if applicable for the project type.
-	 * @param project The project to add the top level build script generator to
-	 * @param progress the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 * to call done() on the given monitor. Accepts null, indicating that no progress should be reported and that the
-	 * operation cannot be canceled.
-	 * @throws CoreException A problem occurs adjusting the project description
-	 * @since 7.0
-	 * @deprecated Preserved for 1.8 codegen projects only. Does not apply to 1.9 and future.
-	 */
-	@Deprecated
-	public static void addTopLevelBuildScriptBuilder(final IProject project, final IProgressMonitor progress) throws CoreException {
-		if (project.hasNature(ScaComponentProjectNature.ID)) {
-			final IProjectDescription desc = project.getDescription();
-			final ICommand[] commands = desc.getBuildSpec();
-
-			// If the builder is already added, we're done
-			for (int i = 0; i < commands.length; ++i) {
-				if (commands[i].getBuilderName().equals(TopLevelBuildScript.ID)) {
-					return;
-				}
-			}
-
-			// Add builder to project
-			final ICommand command = desc.newCommand();
-			command.setBuilderName(TopLevelBuildScript.ID);
-			final ICommand[] newCommands = new ICommand[commands.length + 1];
-
-			// Add it before other builders.
-			System.arraycopy(commands, 0, newCommands, 1, commands.length);
-			newCommands[0] = command;
-			desc.setBuildSpec(newCommands);
-			project.setDescription(desc, progress);
-		}
-	}
-
-	/**
 	 * Removes the builders for the top-level build.sh and spec file.
 	 * @param project The project to modify
 	 * @param progress the progress monitor to use for reporting progress to the user. It is the caller's responsibility
@@ -327,7 +292,7 @@ public class CodegenUtil {
 		// Keep everything except the two we don't want
 		for (ICommand command : oldCommands) {
 			String builderName = command.getBuilderName();
-			if (TopLevelBuildScript.ID.equals(builderName) || TopLevelRPMSpec.ID.equals(builderName)) {
+			if (getDeprecatedBuilders().contains(builderName)) {
 				continue;
 			}
 			newCommands.add(command);
@@ -341,37 +306,21 @@ public class CodegenUtil {
 	}
 
 	/**
-	 * Adds the top level RPM spec file generator to a project.
-	 * 
-	 * @param project The project to add the top level RPM spec file generator to
-	 * @param progress the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 * to call done() on the given monitor. Accepts null, indicating that no progress should be reported and that the
-	 * operation cannot be canceled.
-	 * @throws CoreException A problem occurs adjusting the project description
-	 * @since 7.0
+	 * @return
 	 */
-	public static void addTopLevelRPMSpecBuilder(final IProject project, final IProgressMonitor progress) throws CoreException {
-		final IProjectDescription desc = project.getDescription();
-		final ICommand[] commands = desc.getBuildSpec();
+	private static Set<String> getDeprecatedBuilders() {
+		Set<String> retVal = new HashSet<>();
 
-		// If the builder is already added, we're done
-		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(TopLevelRPMSpec.ID)) {
-				return;
-			}
-		}
+		// ID of the builder that was used in Redhawk 1.8 to automatically add a build.sh to the top-level of a
+		// component or device project.
+		retVal.add("gov.redhawk.ide.codegen.builders.TopLevelBuildScript");
 
-		// Add builder to project
-		final ICommand command = desc.newCommand();
-		command.setBuilderName(TopLevelRPMSpec.ID);
-		final ICommand[] newCommands = new ICommand[commands.length + 1];
+		// ID of the builder that was used in Redhawk 2.0 and earlier to automatically add a .spec file to the
+		// top-level of a waveform or node project.
+		retVal.add("gov.redhawk.ide.codegen.builders.TopLevelRPMSpec");
 
-		// Add it before other builders.
-		System.arraycopy(commands, 0, newCommands, 1, commands.length);
-		newCommands[0] = command;
-		desc.setBuildSpec(newCommands);
-		project.setDescription(desc, progress);
-	}
+		return retVal;
+	};
 
 	/**
 	 * This method returns true if the given programming language name can be

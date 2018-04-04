@@ -60,28 +60,6 @@ public class ComponentProjectCreator extends ProjectCreator {
 		return project;
 	}
 
-	
-	/**
-	 * Creates the basic files for a component (SPD, PRF, SCD and test file) in an empty REDHAWK component project. Should
-	 * be invoked in the context of a {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
-	 * 
-	 * @param project The project to generate files in
-	 * @param projectID The project's ID (DCE)
-	 * @param authorName The name of the component author
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
-	 * @return The newly created SPD file
-	 * @throws CoreException An error occurs while generating files
-	 * @deprecated Please use the createComponentFiles method which takes the spdName and spdId.
-	 */
-	@Deprecated
-	public static IFile createComponentFiles(final IProject project, final String projectID, final String authorName, final IProgressMonitor monitor)
-	        throws CoreException {
-		String[] tokens = project.getName().split("\\.");
-		return createComponentFiles(project, tokens[tokens.length - 1], projectID, authorName, monitor);
-	}
-	
 	/**
 	 * Creates the basic files for a component (SPD, PRF, SCD and test file) in an empty REDHAWK component project. Should
 	 * be invoked in the context of a {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.

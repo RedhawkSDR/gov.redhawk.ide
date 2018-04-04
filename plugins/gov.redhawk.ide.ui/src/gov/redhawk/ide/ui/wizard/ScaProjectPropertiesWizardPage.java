@@ -132,10 +132,8 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 
 	/**
 	 * Returns the possibly null contents group
-	 * @deprecated use {@link #isCreateNewResource()} instead if that is needed
 	 * @return
 	 */
-	@Deprecated
 	public ContentsGroup getContentsGroup() {
 		return this.contentsGroup;
 	}

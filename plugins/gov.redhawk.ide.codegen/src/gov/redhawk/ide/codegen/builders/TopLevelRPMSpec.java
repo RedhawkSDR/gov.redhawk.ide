@@ -20,7 +20,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import gov.redhawk.ide.codegen.CodegenUtil;
 
 /**
- * An incremental builder that adds a top-level RPM spec file to waveforms and nodes.
+ * This builder was used in Redhawk 2.0 and earlier. It now automatically removes itself.
+ * <p/>
+ * Old description: An incremental builder that adds a top-level RPM spec file to waveforms and nodes.
  * @deprecated Spec file generation is now handled by invoking either GenerateNodeHandler or GenerateWaveformHandler
  */
 @Deprecated

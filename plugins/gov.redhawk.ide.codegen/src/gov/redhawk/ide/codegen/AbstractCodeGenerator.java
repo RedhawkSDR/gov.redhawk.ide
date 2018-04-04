@@ -188,7 +188,6 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 	/**
 	 * @since 10.0
 	 */
-	@Deprecated
 	public Map<String, Boolean> getGeneratedFiles(final ImplementationSettings implSettings, final SoftPkg softPkg) throws CoreException {
 		final IProject project = ModelUtil.getProject(softPkg);
 		final HashMap<String, Boolean> fileMap = new HashMap<String, Boolean>();

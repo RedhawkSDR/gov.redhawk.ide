@@ -151,22 +151,6 @@ public class CleanUpComponentFilesAction extends Action {
 		this.root = root;
 	}
 
-	/**
-	 * @deprecated Use {@link #setRoot(EObject)} instead
-	 */
-	@Deprecated
-	public void setSoftwareAssembly(final SoftwareAssembly sad) {
-		setRoot(sad);
-	}
-
-	/**
-	 * @deprecated Use {@link #setRoot(EObject)} instead
-	 */
-	@Deprecated
-	public void setDeviceConfiguration(final DeviceConfiguration dcd) {
-		setRoot(dcd);
-	}
-
 	public boolean isResourceDirty() {
 		return this.dirtied;
 	}

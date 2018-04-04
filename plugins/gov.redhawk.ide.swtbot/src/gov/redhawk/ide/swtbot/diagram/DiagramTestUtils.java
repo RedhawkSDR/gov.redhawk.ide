@@ -230,14 +230,6 @@ public class DiagramTestUtils {
 	}
 
 	/**
-	 * @deprecated Use {@link #addUseFrontEndTunerDeviceToDiagram(SWTGefBot, RHBotGefEditor, int, int)}
-	 */
-	@Deprecated
-	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, RHBotGefEditor editor) {
-		addUseFrontEndTunerDeviceToDiagram(gefBot, editor, 0, 0);
-	}
-
-	/**
 	 * Add a Use FrontEnd Tuner Device to the SAD diagram editor at the specified coordinates
 	 */
 	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, RHBotGefEditor editor, int xPosition, int yPosition) {
@@ -1023,26 +1015,6 @@ public class DiagramTestUtils {
 				return editor.getEditPart(componentName) == null;
 			}
 		});
-	}
-
-	/**
-	 * Waits until Component appears started in ChalkboardDiagram
-	 * @param componentName
-	 * @deprecated Use {@link #waitForComponentState(SWTBot, SWTBotGefEditor, String, ComponentState)}
-	 */
-	@Deprecated
-	public static void waitUntilComponentAppearsStartedInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
-		waitForComponentState(bot, editor, componentName, ComponentState.STARTED);
-	}
-
-	/**
-	 * Waits until Component appears stopped in ChalkboardDiagram
-	 * @param componentName
-	 * @deprecated Use {@link #waitForComponentState(SWTBot, SWTBotGefEditor, String, ComponentState)}
-	 */
-	@Deprecated
-	public static void waitUntilComponentAppearsStoppedInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
-		waitForComponentState(bot, editor, componentName, ComponentState.STOPPED);
 	}
 
 	public enum ComponentState {
