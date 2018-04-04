@@ -14,8 +14,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -42,7 +40,7 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 	private IdlLibrary library;
 	private IStatus status;
 	private IdlFilter filter;
-	
+
 	/**
 	 * @deprecated Use {@link #IdlInterfaceSelectionDialog(Shell, IdlLibrary, IdlFilter)}
 	 */
@@ -66,34 +64,33 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 		setTitle("Select an interface");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		
+
 		final Label headerLabel = new Label(composite, SWT.NONE);
 		headerLabel.setText("Select an IDL interface (? = any character, * = any string)");
 		headerLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		filteredTree = new IdlFilteredTree(composite, library, filter);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		applyDialogFont(filteredTree.getViewer().getTree());
 		gd.heightHint = filteredTree.getViewer().getTree().getItemHeight() * 15; // hint to show 15 items
-        filteredTree.setLayoutData(gd);
-        filteredTree.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-			
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				StructuredSelection selection = (StructuredSelection) event.getSelection();
-				handleSelected(selection);
+		filteredTree.setLayoutData(gd);
+		filteredTree.getViewer().addSelectionChangedListener(event -> {
+			StructuredSelection selection = (StructuredSelection) event.getSelection();
+			handleSelected(selection);
+		});
+		filteredTree.getViewer().addDoubleClickListener(event -> {
+			filteredTree.getViewer().setSelection(event.getSelection());
+			if (getOkButton().isEnabled()) {
+				okPressed();
 			}
 		});
-        final Button showAllButton = new Button(composite, SWT.CHECK);
-        showAllButton.setText("Show all interfaces");
-        showAllButton.setSelection(false);
-        showAllButton.addSelectionListener(new SelectionAdapter() {
+		final Button showAllButton = new Button(composite, SWT.CHECK);
+		showAllButton.setText("Show all interfaces");
+		showAllButton.setSelection(false);
+		showAllButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (showAllButton.getSelection()) {
@@ -103,18 +100,18 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 				}
 			}
 		});
-        
-        updateStatus(new Status(IStatus.ERROR, LibraryUIPlugin.PLUGIN_ID, IStatus.ERROR, "", null));
+
+		updateStatus(new Status(IStatus.ERROR, LibraryUIPlugin.PLUGIN_ID, IStatus.ERROR, "", null));
 		return composite;
 	}
 
 	/**
-	 * Handle a selection change in the viewer.  Ensures that the correct number of items
+	 * Handle a selection change in the viewer. Ensures that the correct number of items
 	 * of the correct type are selected.
 	 */
 	protected void handleSelected(StructuredSelection selection) {
-		IStatus s =  new Status(IStatus.OK, LibraryUIPlugin.PLUGIN_ID, IStatus.OK, "", null);
-		
+		IStatus s = new Status(IStatus.OK, LibraryUIPlugin.PLUGIN_ID, IStatus.OK, "", null);
+
 		// You can only select one item and it must be an interface
 		if (selection.size() != 1) {
 			s = new Status(IStatus.ERROR, LibraryUIPlugin.PLUGIN_ID, IStatus.ERROR, "", null);
@@ -123,21 +120,15 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 				s = new Status(IStatus.ERROR, LibraryUIPlugin.PLUGIN_ID, IStatus.ERROR, "", null);
 			}
 		}
-		updateStatus(s);	
+		updateStatus(s);
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
+
 	@Override
 	protected void updateStatus(IStatus status) {
 		this.status = status;
 		super.updateStatus(status);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void okPressed() {
 		if (status != null && (status.isOK() || status.getCode() == IStatus.INFO)) {
@@ -145,22 +136,19 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void computeResult() {
 		java.util.List< ? > selectedElements = ((StructuredSelection) filteredTree.getViewer().getSelection()).toList();
 		setResult(selectedElements);
 	}
-	
+
 	/**
 	 * @deprecated Use {@link #open(Shell, IdlFilter)}
 	 */
 	@Deprecated
 	public static IdlInterfaceDcl create(Shell parent) {
 		// No library was supplied, using the IDL Library from the SDR Root.
-		IdlLibrary library =  SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
+		IdlLibrary library = SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
 		return open(parent, library, IdlFilter.ALL);
 	}
 
@@ -180,7 +168,7 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 	 * @since 1.2
 	 */
 	public static IdlInterfaceDcl open(Shell parent, IdlFilter filter) {
-		IdlLibrary library =  SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
+		IdlLibrary library = SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
 		return open(parent, library, filter);
 	}
 
