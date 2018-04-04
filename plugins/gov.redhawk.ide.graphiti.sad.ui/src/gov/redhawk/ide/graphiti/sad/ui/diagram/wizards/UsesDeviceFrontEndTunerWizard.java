@@ -177,7 +177,13 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 				Ports ports = features.getPorts();
 
 				// pre-populate deviceId
-				String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, spd.getName() + "_"); //$NON-NLS-1$
+				String baseName;
+				if (spd.getName().indexOf('.') == -1) {
+					baseName = spd.getName();
+				} else {
+					baseName = spd.getName().substring(spd.getName().lastIndexOf('.') + 1);
+				}
+				String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, baseName + "_"); //$NON-NLS-1$
 				namePage.getModel().setUsesDeviceId(deviceId);
 
 				// pre-populate device_model
