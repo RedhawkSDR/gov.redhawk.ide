@@ -19,7 +19,5 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %Bundle-Vendor
-Export-Package: gov.redhawk.eclipsecorba.library.internal;x-internal:=true,
- gov.redhawk.eclipsecorba.library.internal.ui;x-internal:=true,
- gov.redhawk.eclipsecorba.library.ui
+Export-Package: gov.redhawk.eclipsecorba.library.ui
 Automatic-Module-Name: gov.redhawk.eclipsecorba.library.ui
