@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: gov.redhawk.eclipsecorba.library.ui;singleton:=true
-Bundle-Version: 1.2.0.qualifier
+Bundle-Version: 1.3.0.qualifier
 Bundle-Activator: gov.redhawk.eclipsecorba.library.ui.LibraryUIPlugin
 Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.core.runtime;bundle-version="3.6.0",
@@ -17,7 +17,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  gov.redhawk.ide.sdr.ui;bundle-version="3.2.0",
  gov.redhawk.ide.sdr
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: gov.redhawk.eclipsecorba.library.internal;x-internal:=true,
  gov.redhawk.eclipsecorba.library.internal.ui;x-internal:=true,
