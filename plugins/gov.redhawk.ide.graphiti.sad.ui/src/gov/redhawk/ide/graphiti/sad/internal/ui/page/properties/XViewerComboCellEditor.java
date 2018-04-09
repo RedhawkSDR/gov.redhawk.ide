@@ -52,15 +52,12 @@ public class XViewerComboCellEditor extends XViewerCellEditor {
 	@Override
 	protected void doSetValue(Object value) {
 		if (value != null) {
-			combo.removeModifyListener(modifyListener);
 			combo.setText((String) value);
-			combo.addModifyListener(modifyListener);
-			doValidate((String) value);
 		}
 	}
 
 	@Override
-	protected Object doGetValue() {
+	public Object getValue() {
 		return combo.getText();
 	}
 

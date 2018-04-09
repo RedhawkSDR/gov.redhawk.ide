@@ -75,15 +75,7 @@ public abstract class XViewerCellEditor extends Composite {
 
 	protected abstract void doSetValue(Object value);
 
-	public Object getValue() {
-		if (!valid) {
-			return null;
-		}
-
-		return doGetValue();
-	}
-
-	protected abstract Object doGetValue();
+	public abstract Object getValue();
 
 	protected void deactivate() {
 		Event event = new Event();

@@ -47,14 +47,12 @@ public class XViewerTextCellEditor extends XViewerCellEditor {
 	@Override
 	protected void doSetValue(Object value) {
 		if (value != null) {
-			text.removeModifyListener(modifyListener);
 			text.setText((String) value);
-			text.addModifyListener(modifyListener);
 		}
 	}
 
 	@Override
-	protected Object doGetValue() {
+	public Object getValue() {
 		return text.getText();
 	}
 

@@ -160,8 +160,8 @@ public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence>
 			protected Object openDialogBox() {
 				ValuesWizard wizard = new ValuesWizard(getDef().getType(), getDef().isComplex());
 				List<String> values = new ArrayList<String>();
-				if (doGetValue() != null) {
-					for (Object item : (Collection< ? >) doGetValue()) {
+				if (getValue() != null) {
+					for (Object item : (Collection< ? >) getValue()) {
 						values.add((String) item);
 					}
 				}

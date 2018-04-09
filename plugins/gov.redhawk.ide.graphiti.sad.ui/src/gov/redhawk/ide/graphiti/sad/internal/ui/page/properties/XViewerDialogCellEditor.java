@@ -104,7 +104,7 @@ public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 	}
 
 	@Override
-	protected Object doGetValue() {
+	public Object getValue() {
 		return value;
 	}
 
