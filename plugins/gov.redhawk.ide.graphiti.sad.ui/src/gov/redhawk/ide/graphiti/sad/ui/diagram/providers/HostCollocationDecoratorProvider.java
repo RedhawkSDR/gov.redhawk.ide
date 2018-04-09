@@ -26,7 +26,7 @@ import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.UsesDeviceRef;
 
 /**
- * @since 2.0
+ * @since 2.1
  */
 public class HostCollocationDecoratorProvider implements IDecoratorProvider {
 

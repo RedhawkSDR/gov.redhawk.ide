@@ -22,7 +22,7 @@ import gov.redhawk.core.graphiti.ui.util.DUtil;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 /**
- * @since 2.0
+ * @since 2.1
  */
 public class SoftwareAssemblyFilter extends CompoundFilter {
 

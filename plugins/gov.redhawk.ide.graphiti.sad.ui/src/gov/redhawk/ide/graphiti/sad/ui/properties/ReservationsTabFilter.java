@@ -25,7 +25,7 @@ import mil.jpeojtrs.sca.sad.HostCollocation;
 /**
  * Filter used to ensure the Reservations property tab is only displayed for {@link ComponentInstantiation}
  * objects in design-time diagrams.
- * @since 2.0
+ * @since 2.1
  */
 public class ReservationsTabFilter extends CompoundFilter {
 

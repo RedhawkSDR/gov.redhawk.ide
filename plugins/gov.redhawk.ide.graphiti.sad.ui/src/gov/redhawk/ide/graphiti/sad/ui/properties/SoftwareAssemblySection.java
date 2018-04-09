@@ -20,7 +20,7 @@ import org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 /**
- * @since 2.0
+ * @since 2.1
  */
 public class SoftwareAssemblySection extends AdvancedPropertySection {
 

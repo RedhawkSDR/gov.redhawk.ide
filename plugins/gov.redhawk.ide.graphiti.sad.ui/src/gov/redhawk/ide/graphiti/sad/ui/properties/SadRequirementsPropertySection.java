@@ -19,7 +19,7 @@ import mil.jpeojtrs.sca.partitioning.Requirements;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 /**
- * @since 2.0
+ * @since 2.1
  */
 public class SadRequirementsPropertySection extends AbstractRequirementsPropertySection {
 

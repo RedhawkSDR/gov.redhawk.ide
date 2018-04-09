@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Image;
 import mil.jpeojtrs.sca.sad.Reservation;
 
 /**
- * @since 2.0
+ * @since 2.1
  */
 public class ReservationsLabelProvider extends BaseLabelProvider implements ITableLabelProvider {
 

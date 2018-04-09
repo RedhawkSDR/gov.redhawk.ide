@@ -27,7 +27,7 @@ import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SadPackage;
 
 /**
- * @since 2.0
+ * @since 2.1
  */
 public class SadReservationsPropertySection extends AbstractKeyValuePropertiesSection {
 
