@@ -99,7 +99,7 @@ public class XViewerListCellEditor extends XViewerCellEditor {
 	}
 
 	@Override
-	protected Object doGetValue() {
+	public Object getValue() {
 		int index = list.getSelectionIndex();
 		if (index >= 0) {
 			return items.get(index);
