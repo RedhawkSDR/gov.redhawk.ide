@@ -24,7 +24,6 @@ import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
 
 import java.lang.reflect.Array;
-import java.text.DecimalFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -212,18 +211,11 @@ public class DataListView extends ViewPart {
 				} else {
 					value = data;
 				}
-				DecimalFormat form;
-				if (value != null && value instanceof Number) {
-					double doubleValue = ((Number) value).doubleValue();
-					if (doubleValue != 0 && (Math.abs(doubleValue) * 10 < 1 || Math.abs(doubleValue) / 10 > 99)) {
-						form = new DecimalFormat("0.0#E0");
-					} else {
-						form = new DecimalFormat();
-						form.setMaximumFractionDigits(3);
-						form.setMaximumIntegerDigits(2);
-					}
-					return form.format(value);
+
+				if (value == null) {
+					return "(null)";
 				}
+				return value.toString();
 			}
 			return super.getText(element);
 		}
