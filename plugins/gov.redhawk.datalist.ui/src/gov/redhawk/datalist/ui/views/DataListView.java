@@ -47,7 +47,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -82,7 +81,6 @@ public class DataListView extends ViewPart {
 	private Composite tableComposite;
 
 	private int prevCols;
-	private int selectedIndex;
 
 	private class ViewContentProvider implements ILazyContentProvider {
 		private TableViewer viewer;
@@ -325,22 +323,6 @@ public class DataListView extends ViewPart {
 		indexColumn.getColumn().setResizable(true);
 		indexColumn.getColumn().setMoveable(false);
 		indexColumn.getColumn().setWidth(50);
-
-		indexColumn.getColumn().addSelectionListener(new SelectionListener() {
-
-			/**
-			 * Called when the index column's header is selected.
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				selectedIndex = DataCourier.ALL;
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
 		indexColumn.setLabelProvider(new IndexColumnLabelProvider());
 		layout.setColumnData(indexColumn.getColumn(), new ColumnPixelData(100, true));
 
@@ -359,21 +341,6 @@ public class DataListView extends ViewPart {
 					dataColumn.getColumn().setText(IMAGINARY);
 				}
 			}
-
-			dataColumn.getColumn().addSelectionListener(new SelectionListener() {
-
-				/**
-				 * Called when the column header is selected.
-				 */
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					selectedIndex = (Integer) dataColumn.getColumn().getData();
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
-			});
 
 			dataColumn.setLabelProvider(new ValueColumnLabelProvider(i));
 			layout.setColumnData(dataColumn.getColumn(), new ColumnWeightData(100, 75, true));
