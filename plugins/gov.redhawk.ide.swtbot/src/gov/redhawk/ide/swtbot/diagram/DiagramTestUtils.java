@@ -295,7 +295,6 @@ public class DiagramTestUtils {
 	public static void showConnectionWizardForUsesPort(SWTBotGefEditor editor, String componentName, String portName) {
 		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
 		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
-		editor.setFocus();
 		usesPortAnchor.select();
 		editor.clickContextMenu("Connect");
 	}
