@@ -97,8 +97,22 @@ BuildRoot: %{_tmppath}/%{name}-%{version}
 %__rm -rf $RPM_BUILD_ROOT
 %__mkdir_p "$RPM_BUILD_ROOT%{_prefix}<%=waveformSubDir%>"
 %__install -m 644 <%=sadFileName%> $RPM_BUILD_ROOT%{_prefix}<%=waveformSubDir%>/<%=sadFileName%>
+<%
+    for (String fileName : params.getFilesToInstall()) {
+%>
+%__install -m 644 <%=fileName%> $RPM_BUILD_ROOT%{_prefix}<%=waveformSubDir%>/<%=fileName%>
+<%
+    }
+%>
 
 %files
 %defattr(-,redhawk,redhawk)
 <%=directoryBlock%>
 %{_prefix}<%=waveformSubDir%>/<%=sadFileName%>
+<%
+    for (String fileName : params.getFilesToInstall()) {
+%>
+%{_prefix}<%=waveformSubDir%>/<%=fileName%>
+<%
+    }
+%>

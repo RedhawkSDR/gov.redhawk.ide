@@ -11,6 +11,7 @@
 package gov.redhawk.ide.codegen.ui.internal.command;
 
 import java.io.ByteArrayInputStream;
+import java.util.Arrays;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;
@@ -18,6 +19,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -103,8 +105,20 @@ public class GenerateNodeHandler extends AbstractGenerateCodeHandler {
 					// Update the DCD file's header
 					updateDcdFileHeader(shell, dcd, headerContent, progress.newChild(1));
 
+					DcdTemplateParameter params = new DcdTemplateParameter(dcd, headerContent);
+					String basename = dcd.eResource().getURI().lastSegment();
+					basename = basename.substring(0, basename.length() - DcdPackage.FILE_EXTENSION.length());
+
+					// Determine other files to install
+					for (String siblingFileName : Arrays.asList(basename + DcdPackage.DIAGRAM_FILE_EXTENSION)) {
+						IFile siblingFile = project.getFile(new Path(siblingFileName));
+						if (siblingFile.exists()) {
+							params.addFileToInstall(siblingFileName);
+						}
+					}
+
 					// Generate the RPM spec file
-					updateSpecFile(headerContent, progress.newChild(1));
+					updateSpecFile(params, progress.newChild(1));
 				} catch (CoreException e) {
 					StatusManager.getManager().handle(new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
 						StatusManager.SHOW | StatusManager.LOG);
@@ -139,10 +153,10 @@ public class GenerateNodeHandler extends AbstractGenerateCodeHandler {
 				progress.done();
 			}
 
-			private void updateSpecFile(String headerContent, SubMonitor progress) throws CoreException {
+			private void updateSpecFile(DcdTemplateParameter params, SubMonitor progress) throws CoreException {
 				// Generate content for the RPM spec file
 				final TopLevelDcdRpmSpecTemplate template = new TopLevelDcdRpmSpecTemplate();
-				final byte[] rpmSpecFileContent = template.generate(new DcdTemplateParameter(dcd, headerContent)).getBytes();
+				final byte[] rpmSpecFileContent = template.generate(params).getBytes();
 
 				// Write the file to disk
 				final IFile rpmSpecFile = project.getFile(dcd.getName() + ".spec");
