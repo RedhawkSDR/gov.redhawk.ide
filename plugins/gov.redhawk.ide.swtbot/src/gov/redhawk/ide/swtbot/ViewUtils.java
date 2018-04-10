@@ -140,25 +140,6 @@ public class ViewUtils {
 	}
 
 	/**
-	 * Waits until Data List View displays
-	 * @param bot
-	 */
-	public static SWTBotView waitUntilDataListViewDisplays(final SWTWorkbenchBot bot) {
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return "DataList View isn't displayed";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				return getDataListView((SWTWorkbenchBot) bot) != null;
-			}
-		});
-		return getDataListView((SWTWorkbenchBot) bot);
-	}
-
-	/**
 	 * Waits until Data List View populates
 	 * @param bot
 	 */
