@@ -52,6 +52,16 @@ public interface IScaExporter {
 	public void write(IResource resource, IPath outputPath, IProgressMonitor monitor) throws IOException, CoreException;
 
 	/**
+	 * Deletes a target file if it exists from a previous export.
+	 * @param deletePath The path to delete, if it exists
+	 * @param monitor
+	 * @throws IOException
+	 * @throws CoreException
+	 * @since 5.0
+	 */
+	void delete(IPath deletePath, IProgressMonitor monitor) throws IOException, CoreException;
+
+	/**
 	 * Returns the target export root location of the exporter.
 	 * 
 	 * @return The target export root location

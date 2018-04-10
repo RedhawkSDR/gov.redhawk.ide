@@ -15,12 +15,15 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -113,20 +116,18 @@ public class ExportUtils {
 		}
 
 		// Find .sad.xml files
-		final List<IResource> sadFiles = new ArrayList<IResource>();
-		for (final IResource child : proj.members()) {
-			if (child.getName().endsWith(SadPackage.FILE_EXTENSION)) {
-				sadFiles.add(child);
-			}
-		}
+		final List<IResource> sadFiles = Arrays.stream(proj.members()) //
+				.filter(resource -> resource.getName().endsWith(SadPackage.FILE_EXTENSION)) //
+				.collect(Collectors.toList());
 
-		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting waveforms", sadFiles.size() * 3);
+		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting waveforms", sadFiles.size() * 3 + 2);
 		Map<IResource, IPath> sourceFileToTargetFolder = new HashMap<>();
+		Map<IResource, IPath> deletedFileToTargetFolder = new HashMap<>();
 		for (final IResource sadFile : sadFiles) {
 			// Load the SAD file
 			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 			final Resource resource = resourceSet.getResource(URI.createURI(sadFile.getLocationURI().toString()), true);
-			final SoftwareAssembly sad = ModelUtil.getSoftwareAssembly(resource);
+			final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
 
 			// Validate name
 			String name = sad.getName();
@@ -143,17 +144,35 @@ public class ExportUtils {
 			// Determine install location
 			final IPath outputFolder = new Path("dom/waveforms").append(name.replace('.', File.separatorChar));
 			sourceFileToTargetFolder.put(sadFile, outputFolder);
+
+			String basename = sadFile.getName().substring(0, sadFile.getName().length() - SadPackage.FILE_EXTENSION.length());
+
+			// If there's a matching diagram file, include it
+			for (String siblingFileName : Arrays.asList(basename + SadPackage.DIAGRAM_FILE_EXTENSION)) {
+				IFile siblingFile = sadFile.getParent().getFile(new Path(siblingFileName));
+				if (siblingFile.exists()) {
+					sourceFileToTargetFolder.put(siblingFile, outputFolder);
+				} else {
+					deletedFileToTargetFolder.put(siblingFile, outputFolder);
+				}
+			}
+
 			progress.worked(1);
 		}
 
-		// Install each file
-		for (IResource sadFile : sourceFileToTargetFolder.keySet()) {
-			IPath outputFolder = sourceFileToTargetFolder.get(sadFile);
-			exporter.mkdir(outputFolder, progress.newChild(1));
-			exporter.write(sadFile, outputFolder.append(sadFile.getName()), progress.newChild(1));
+		// Install each file, delete files
+		SubMonitor subProgress = progress.newChild(1).setWorkRemaining(sourceFileToTargetFolder.size() * 2);
+		for (IResource sourceFile : sourceFileToTargetFolder.keySet()) {
+			IPath outputFolder = sourceFileToTargetFolder.get(sourceFile);
+			exporter.mkdir(outputFolder, subProgress.newChild(1));
+			exporter.write(sourceFile, outputFolder.append(sourceFile.getName()), subProgress.newChild(1));
+		}
+		subProgress = progress.newChild(1).setWorkRemaining(deletedFileToTargetFolder.size());
+		for (IResource deletedFile : deletedFileToTargetFolder.keySet()) {
+			IPath outputFolder = deletedFileToTargetFolder.get(deletedFile);
+			exporter.delete(outputFolder.append(deletedFile.getName()), subProgress.newChild(1));
 		}
 
-		progress.done();
 		return true;
 	}
 
@@ -261,20 +280,20 @@ public class ExportUtils {
 		}
 
 		// Find node files
-		final List<IResource> dcdFiles = new ArrayList<IResource>();
-		for (final IResource child : proj.members()) {
-			if (child.getName().endsWith(DcdPackage.FILE_EXTENSION)) {
-				dcdFiles.add(child);
-			}
-		}
+		final List<IResource> dcdFiles = Arrays.stream(proj.members()) //
+				.filter(resource -> resource.getName().endsWith(DcdPackage.FILE_EXTENSION)) //
+				.collect(Collectors.toList());
 
-		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting nodes", dcdFiles.size() * 3);
+		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting nodes", dcdFiles.size() * 3 + 2);
+
+		// Validate each file and determine where we'll install it
 		Map<IResource, IPath> sourceFileToTargetFolder = new HashMap<>();
+		Map<IResource, IPath> deletedFileToTargetFolder = new HashMap<>();
 		for (final IResource dcdFile : dcdFiles) {
 			// Load the DCD file
 			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 			final Resource resource = resourceSet.getResource(URI.createURI(dcdFile.getLocationURI().toString()), true);
-			final DeviceConfiguration dcd = ModelUtil.getDeviceConfiguration(resource);
+			final DeviceConfiguration dcd = DeviceConfiguration.Util.getDeviceConfiguration(resource);
 
 			// Validate name
 			String name = dcd.getName();
@@ -291,14 +310,31 @@ public class ExportUtils {
 			// Determine install location
 			final IPath outputFolder = new Path("dev/nodes").append(name.replace('.', File.separatorChar));
 			sourceFileToTargetFolder.put(dcdFile, outputFolder);
+
+			String basename = dcdFile.getName().substring(0, dcdFile.getName().length() - DcdPackage.FILE_EXTENSION.length());
+
+			// If there's a matching diagram file, include it
+			for (String siblingFileName : Arrays.asList(basename + DcdPackage.DIAGRAM_FILE_EXTENSION)) {
+				IFile siblingFile = dcdFile.getParent().getFile(new Path(siblingFileName));
+				if (siblingFile.exists()) {
+					sourceFileToTargetFolder.put(siblingFile, outputFolder);
+				}
+			}
+
 			progress.worked(1);
 		}
 
-		// Install each file
-		for (IResource dcdFile : sourceFileToTargetFolder.keySet()) {
-			IPath outputFolder = sourceFileToTargetFolder.get(dcdFile);
-			exporter.mkdir(outputFolder, progress.newChild(1));
-			exporter.write(dcdFile, outputFolder.append(dcdFile.getName()), progress.newChild(1));
+		// Install each file, delete files
+		SubMonitor subProgress = progress.newChild(1).setWorkRemaining(sourceFileToTargetFolder.size() * 2);
+		for (IResource sourceFile : sourceFileToTargetFolder.keySet()) {
+			IPath outputFolder = sourceFileToTargetFolder.get(sourceFile);
+			exporter.mkdir(outputFolder, subProgress.newChild(1));
+			exporter.write(sourceFile, outputFolder.append(sourceFile.getName()), subProgress.newChild(1));
+		}
+		subProgress = progress.newChild(1).setWorkRemaining(deletedFileToTargetFolder.size());
+		for (IResource deletedFile : deletedFileToTargetFolder.keySet()) {
+			IPath outputFolder = deletedFileToTargetFolder.get(deletedFile);
+			exporter.delete(outputFolder.append(deletedFile.getName()), subProgress.newChild(1));
 		}
 
 		progress.done();
@@ -395,7 +431,7 @@ public class ExportUtils {
 			// Now load the SPD file and copy the prf and scd files, if any
 			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 			final Resource resource = resourceSet.getResource(URI.createURI(spdResource.getLocationURI().toString()), true);
-			final SoftPkg softPkg = ModelUtil.getSoftPkg(resource);
+			final SoftPkg softPkg = SoftPkg.Util.getSoftPkg(resource);
 
 			ComponentType type = ComponentType.OTHER;
 			if ((softPkg.getDescriptor() != null) && (softPkg.getDescriptor().getComponent() != null)) {
