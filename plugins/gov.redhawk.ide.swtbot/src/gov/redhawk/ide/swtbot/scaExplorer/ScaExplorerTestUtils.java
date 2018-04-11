@@ -282,6 +282,10 @@ public class ScaExplorerTestUtils {
 		wizardBot.button("Finish").click();
 		wizardBot.waitUntil(new WaitForModalContext(), 30000);
 		bot.waitUntil(Conditions.shellCloses(wizardShell));
+
+		// Ensure focus returns to the main shell
+		StandardTestActions.forceMainShellActive();
+
 		return waveformName;
 	}
 
