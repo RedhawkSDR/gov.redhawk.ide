@@ -11,14 +11,12 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
-import gov.redhawk.ide.sdr.SdrFactory;
-import gov.redhawk.ide.sdr.SdrRoot;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
@@ -26,6 +24,10 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+
+import gov.redhawk.ide.sdr.SdrFactory;
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.commands.SetSdrRootCommand;
 
 /**
  * This class is used primarily by tests to load an {@link SdrRoot} model object for an SDRROOT located within a bundle.
@@ -55,11 +57,11 @@ public class SdrPluginLoader {
 		Assert.isNotNull(sdrRootPath);
 		final TransactionalEditingDomain editingDomain = TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain();
 		final ResourceSet resourceSet = editingDomain.getResourceSet();
-		final SdrRoot sdrRoot = SdrFactory.eINSTANCE.createSdrRoot();
 		final Resource sdrResource = resourceSet.createResource(URI.createURI("virtual://sdr.sdr"));
-		sdrRoot.setSdrRoot(sdrRootPath, "dom", "dev");
+		final SdrRoot sdrRoot = SdrFactory.eINSTANCE.createSdrRoot();
 		editingDomain.getCommandStack().execute(new AddCommand(editingDomain, sdrResource.getContents(), sdrRoot));
-		sdrRoot.load(null);
+		editingDomain.getCommandStack().execute(new SetSdrRootCommand(sdrRoot, sdrRootPath, "dom", "dev"));
+		sdrRoot.load(new NullProgressMonitor());
 		Assert.isNotNull(sdrRoot.getComponentsContainer(), "Failed to load Components SDR Root for path: " + sdrRootPath);
 		Assert.isNotNull(sdrRoot.getDevicesContainer(), "Failed to load Devices SDR Root for path: " + sdrRootPath);
 		Assert.isNotNull(sdrRoot.getWaveformsContainer(), "Failed to load Waveforms SDR Root for path: " + sdrRootPath);

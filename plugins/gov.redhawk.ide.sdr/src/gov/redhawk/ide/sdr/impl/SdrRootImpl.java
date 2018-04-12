@@ -899,19 +899,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	public synchronized void unload(IProgressMonitor monitor) {
 		// END GENERATED CODE
 		SubMonitor subMonitor = SubMonitor.convert(monitor, "Unloading...", 2);
-		TransactionalEditingDomain editingDomain = TransactionUtil.getEditingDomain(this);
 
-		if (editingDomain == null) {
-			getNodesContainer().getNodes().clear();
-			getComponentsContainer().getComponents().clear();
-			getDevicesContainer().getComponents().clear();
-			getServicesContainer().getComponents().clear();
-			getWaveformsContainer().getWaveforms().clear();
-			setLoadStatus(null);
-			setState(LoadState.UNLOADED);
-			return;
-		}
-		final Resource[] resources = editingDomain.getResourceSet().getResources().toArray(new Resource[eResource().getResourceSet().getResources().size()]);
+		// Unload each XML file and remove the resource
+		final Resource[] resources = eResource().getResourceSet().getResources().toArray(new Resource[eResource().getResourceSet().getResources().size()]);
 		for (final Resource resource : resources) {
 			if (resource == eResource()) {
 				continue;
@@ -921,21 +911,18 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			}
 		}
 		subMonitor.worked(1);
-		editingDomain.getCommandStack().execute(new ScaModelCommand() {
 
-			@Override
-			public void execute() {
-				getNodesContainer().getNodes().clear();
-				getComponentsContainer().getComponents().clear();
-				getSharedLibrariesContainer().getComponents().clear();
-				getDevicesContainer().getComponents().clear();
-				getServicesContainer().getComponents().clear();
-				getWaveformsContainer().getWaveforms().clear();
-				setLoadStatus(null);
-				domainConfiguration = null;
-				setState(LoadState.UNLOADED);
-			}
-
+		// Empty this object of its references, etc
+		ScaModelCommand.execute(this, () -> {
+			getComponentsContainer().getComponents().clear();
+			getDevicesContainer().getComponents().clear();
+			getNodesContainer().getNodes().clear();
+			getServicesContainer().getComponents().clear();
+			getSharedLibrariesContainer().getComponents().clear();
+			getWaveformsContainer().getWaveforms().clear();
+			setLoadStatus(null);
+			setState(LoadState.UNLOADED);
+			setDomainConfiguration(null);
 		});
 		subMonitor.worked(1);
 		subMonitor.done();
