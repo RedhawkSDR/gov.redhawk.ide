@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.diagram;
 
+import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.gef.EditPartViewer;
@@ -32,6 +33,8 @@ import gov.redhawk.core.graphiti.dcd.ui.diagram.feature.ServiceCreateFeature;
 public class DiagramDropTargetListener extends AbstractTransferDropTargetListener {
 
 	private DiagramBehavior diagramBehavior;
+	private String[] allowedTypes = new String[] { ComponentType.DEVICE.getLiteral(), "loadabledevice", "executabledevice",
+		ComponentType.SERVICE.getLiteral() };
 
 	public DiagramDropTargetListener(EditPartViewer viewer, DiagramBehavior diagramBehavior) {
 		super(viewer, LocalSelectionTransfer.getTransfer());
@@ -119,15 +122,10 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 			// Only allow devices or services to be dropped
 			String componentType = spd.getDescriptor().getComponent().getComponentType();
 
-			String[] deviceTypes = { mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral(), "loadabledevice", "executabledevice" };
-			for (String deviceType : deviceTypes) {
-				if (deviceType.equals(componentType)) {
+			for (String allowedType : allowedTypes) {
+				if (allowedType.equals(componentType)) {
 					return true;
 				}
-			}
-
-			if (componentType.equals(mil.jpeojtrs.sca.scd.ComponentType.SERVICE.getLiteral())) {
-				return true;
 			}
 		}
 		return false;
