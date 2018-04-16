@@ -30,8 +30,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.omg.CORBA.ORB;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
@@ -51,6 +51,7 @@ import gov.redhawk.ide.debug.SpdResourceFactory;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.MutexRule;
@@ -66,7 +67,23 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 	private static final String SDR_CATEGORY = "SDR";
 	private boolean debug;
 
-	private class SPDListener extends AdapterImpl {
+	private class SPDListener extends EContentAdapter {
+
+		@Override
+		protected void addAdapter(Notifier notifier) {
+			if (notifier instanceof SoftPkgRegistry) {
+				addSoftPkgs(((SoftPkgRegistry) notifier).getComponents());
+				super.addAdapter(notifier);
+			}
+		}
+
+		@Override
+		protected void removeAdapter(Notifier notifier) {
+			if (notifier instanceof SoftPkgRegistry) {
+				removeSoftPkgs(((SoftPkgRegistry) notifier).getComponents());
+			}
+			super.removeAdapter(notifier);
+		}
 
 		@Override
 		public void notifyChanged(final org.eclipse.emf.common.notify.Notification msg) {
@@ -76,45 +93,48 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 				}
 				return;
 			}
+
 			if (msg.getFeature() == SdrPackage.Literals.SOFT_PKG_REGISTRY__COMPONENTS) {
 				switch (msg.getEventType()) {
 				case Notification.ADD:
-					try {
-						SoftPkg spd = (SoftPkg) msg.getNewValue();
-						SpdResourceFactory resFactory = SpdResourceFactory.createResourceFactory(spd);
-						addResource(spd, resFactory);
-					} catch (IllegalArgumentException e) {
-						if (debug) {
-							ScaDebugUiPlugin.log(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, "Invalid SPD file was not added to the sandbox", e));
-						}
-					}
+					addSoftPkgs(Collections.singletonList(msg.getNewValue()));
 					break;
 				case Notification.ADD_MANY:
-					MultiStatus status = new MultiStatus(ScaDebugUiPlugin.PLUGIN_ID, 0, "Invalid SPD file(s) were not added to the sandbox", null);
-					for (final Object obj : (Collection< ? >) msg.getNewValue()) {
-						SoftPkg spd = (SoftPkg) obj;
-						try {
-							SpdResourceFactory resFactory = SpdResourceFactory.createResourceFactory(spd);
-							addResource(spd, resFactory);
-						} catch (IllegalArgumentException e) {
-							status.add(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, e.toString(), e));
-						}
-					}
-					if (debug && !status.isOK()) {
-						ScaDebugUiPlugin.log(status);
-					}
+					addSoftPkgs((Collection< ? >) msg.getNewValue());
 					break;
 				case Notification.REMOVE:
-					removeResource((SoftPkg) msg.getOldValue());
+					removeSoftPkgs(Collections.singletonList(msg.getOldValue()));
 					break;
 				case Notification.REMOVE_MANY:
-					for (final Object obj : (Collection< ? >) msg.getOldValue()) {
-						removeResource((SoftPkg) obj);
-					}
+					removeSoftPkgs((Collection< ? >) msg.getOldValue());
 					break;
 				default:
 					break;
 				}
+			}
+
+			super.notifyChanged(msg);
+		}
+
+		private void addSoftPkgs(Collection< ? > newSoftPkgs) {
+			MultiStatus status = new MultiStatus(ScaDebugUiPlugin.PLUGIN_ID, 0, "Invalid SPD file(s) were not added to the sandbox", null);
+			for (final Object obj : newSoftPkgs) {
+				SoftPkg spd = (SoftPkg) obj;
+				try {
+					SpdResourceFactory resFactory = SpdResourceFactory.createResourceFactory(spd);
+					addResource(spd, resFactory);
+				} catch (IllegalArgumentException e) {
+					status.add(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, e.toString(), e));
+				}
+			}
+			if (debug && !status.isOK()) {
+				ScaDebugUiPlugin.log(status);
+			}
+		}
+
+		private void removeSoftPkgs(Collection< ? > oldSoftPkgs) {
+			for (final Object obj : oldSoftPkgs) {
+				removeResource((SoftPkg) obj);
 			}
 		}
 	};
