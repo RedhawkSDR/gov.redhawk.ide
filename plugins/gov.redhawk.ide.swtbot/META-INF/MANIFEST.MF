@@ -32,7 +32,8 @@ Require-Bundle: org.eclipse.ui,
  gov.redhawk.ide.graphiti.ui,
  gov.redhawk.sca.ui,
  gov.redhawk.ide.sdr,
- gov.redhawk.ide.codegen.ui
+ gov.redhawk.ide.codegen.ui,
+ org.python.pydev.ast;bundle-version="6.3.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: REDHAWK

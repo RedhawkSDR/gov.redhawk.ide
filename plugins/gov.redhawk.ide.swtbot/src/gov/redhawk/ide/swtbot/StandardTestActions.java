@@ -84,8 +84,8 @@ import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.junit.Assert;
 import org.osgi.framework.Bundle;
+import org.python.pydev.ast.interpreter_managers.IInterpreterProviderFactory.InterpreterType;
 import org.python.pydev.ui.pythonpathconf.AutoConfigMaker;
-import org.python.pydev.ui.pythonpathconf.IInterpreterProviderFactory.InterpreterType;
 
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
