@@ -409,7 +409,7 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 		if (getLaunch() != null) {
 			// Don't dispose contained components directly. Allow the ComponentHost to handle them as part of its
 			// terminate behavior.
-			if (!SoftPkg.Util.isContainedComponent(getProfileObj().getImplementation(getImplementationID()))) {
+			if (!SoftPkg.Util.isSharedAddressComponent(getProfileObj().getImplementation(getImplementationID()))) {
 				Job terminateJob = new TerminateJob(getLaunch(), getName());
 				terminateJob.setUser(false);
 				terminateJob.setSystem(true);
@@ -429,7 +429,7 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 
 		super.releaseObject();
 
-		if (SoftPkg.Util.isContainedComponent(getProfileObj().getImplementation(getImplementationID()))) {
+		if (SoftPkg.Util.isSharedAddressComponent(getProfileObj().getImplementation(getImplementationID()))) {
 			return;
 		}
 

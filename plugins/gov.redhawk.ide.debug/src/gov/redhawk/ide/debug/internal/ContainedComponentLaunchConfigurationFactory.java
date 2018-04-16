@@ -16,6 +16,6 @@ public class ContainedComponentLaunchConfigurationFactory extends DefaultCompone
 
 	@Override
 	public boolean supports(final SoftPkg spd, final String implId) {
-		return SoftPkg.Util.isContainedComponent(spd.getImplementation(implId));
+		return SoftPkg.Util.isSharedAddressComponent(spd.getImplementation(implId));
 	}
 }

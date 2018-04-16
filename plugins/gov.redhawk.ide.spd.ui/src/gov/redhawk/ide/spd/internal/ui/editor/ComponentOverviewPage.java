@@ -247,7 +247,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 				final Implementation impl = spd.getImplementation(implID);
 
 				// Shared address space components must be launched within a component host
-				if (SoftPkg.Util.isContainedComponent(impl)) {
+				if (SoftPkg.Util.isSharedAddressComponent(impl)) {
 					final ILaunchConfigurationWorkingCopy workingCopy = config.getWorkingCopy();
 					Job job = new Job("Contained component overview tab launch") {
 
