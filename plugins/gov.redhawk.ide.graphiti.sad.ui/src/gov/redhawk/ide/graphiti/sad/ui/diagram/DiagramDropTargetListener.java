@@ -98,8 +98,8 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 	@Override
 	public boolean isEnabled(DropTargetEvent event) {
 		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
-		
-		if (((IStructuredSelection) selection).getFirstElement() instanceof SoftPkg) {
+
+		if (selection != null && ((IStructuredSelection) selection).getFirstElement() instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) ((IStructuredSelection) selection).getFirstElement();
 			// Only allow components to be dropped
 			if (spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.RESOURCE.getLiteral())) {

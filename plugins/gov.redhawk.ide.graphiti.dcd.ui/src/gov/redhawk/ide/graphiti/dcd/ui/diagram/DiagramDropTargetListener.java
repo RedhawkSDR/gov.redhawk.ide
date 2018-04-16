@@ -114,7 +114,7 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 	public boolean isEnabled(DropTargetEvent event) {
 		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 
-		if (((IStructuredSelection) selection).getFirstElement() instanceof SoftPkg) {
+		if (selection != null && ((IStructuredSelection) selection).getFirstElement() instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) ((IStructuredSelection) selection).getFirstElement();
 			// Only allow devices or services to be dropped
 			String componentType = spd.getDescriptor().getComponent().getComponentType();
