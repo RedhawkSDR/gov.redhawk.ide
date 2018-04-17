@@ -474,7 +474,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	public void init(Sandbox sandboxRef, LocalFileManager fileManagerRef, LocalScaWaveform sandboxWaveformRef, LocalScaDeviceManager sandboxDeviceManagerRef,
 		NotifyingNamingContext newRootContext) {
 		// END GENERATED CODE
-		setObj(sandboxRef);
+		setCorbaObj(sandboxRef);
 		setRootContext(newRootContext);
 		setFileManager(fileManagerRef);
 		getWaveforms().add(sandboxWaveformRef);
