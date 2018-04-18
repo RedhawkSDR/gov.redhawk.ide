@@ -47,6 +47,7 @@ import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.workspace.util.WorkspaceSynchronizer;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -876,7 +877,7 @@ public class ComponentEditor extends SCAFormEditor {
 			return false;
 		}
 		for (final Resource r : editingDomain.getResourceSet().getResources()) {
-			final IFile iFile = ModelUtil.getResource(r);
+			final IFile iFile = WorkspaceSynchronizer.getFile(r);
 			if (resource.equals(iFile)) {
 				return true;
 			}
