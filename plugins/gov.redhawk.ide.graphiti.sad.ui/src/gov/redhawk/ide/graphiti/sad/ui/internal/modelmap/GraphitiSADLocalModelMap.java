@@ -89,7 +89,7 @@ public class GraphitiSADLocalModelMap extends GraphitiSADModelMap {
 	 * Launch an instance of the specified SPD.
 	 * @param compInst The instantiation as per the SAD
 	 * @param implID The implementation to launch, or null for any
-	 * @param monitor Not used in the Redhawk 2.0.x series
+	 * @param monitor The progress monitor
 	 * @throws CoreException
 	 */
 	protected LocalScaComponent launch(final SadComponentInstantiation compInst, final String implID, IProgressMonitor monitor) throws CoreException {
@@ -101,6 +101,6 @@ public class GraphitiSADLocalModelMap extends GraphitiSADModelMap {
 		}
 		final URI spdURI = spd.eResource().getURI();
 
-		return localWaveform.launch(compInst.getId(), initConfiguration, spdURI, implID, ILaunchManager.RUN_MODE);
+		return localWaveform.launch(compInst.getId(), initConfiguration, spdURI, implID, ILaunchManager.RUN_MODE, monitor);
 	}
 }
