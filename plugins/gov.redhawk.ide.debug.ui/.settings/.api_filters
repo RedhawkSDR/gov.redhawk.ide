@@ -4,7 +4,7 @@
         <filter comment="Class was abstract and not intended to be used outside the package" id="305324134">
             <message_arguments>
                 <message_argument value="gov.redhawk.ide.debug.ui.tabs.LocalAbstractMainTab"/>
-                <message_argument value="gov.redhawk.ide.debug.ui_3.0.0"/>
+                <message_argument value="gov.redhawk.ide.debug.ui_3.1.0"/>
             </message_arguments>
         </filter>
     </resource>
