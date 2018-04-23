@@ -60,34 +60,33 @@ public class GraphitiDCDLocalModelMap extends GraphitiDCDModelMap {
 		}
 
 		final String implID = ((DcdComponentInstantiationImpl) compInst).getImplID();
-		Job job = new Job("Launching " + compInst.getUsageName()) {
-
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + compInst.getUsageName(), IProgressMonitor.UNKNOWN);
-				LocalAbstractComponent newComp = null;
-				try {
-					newComp = GraphitiDCDLocalModelMap.this.launch(compInst, implID);
-					if (newComp instanceof ScaDevice< ? >) {
-						nodeMapEntry.setScaDevice((ScaDevice< ? >) newComp);
-					} else if (newComp instanceof ScaService) {
-						nodeMapEntry.setScaService((ScaService) newComp);
-					}
-					updateEnabledState(compInst, true);
-					getEditor().refreshSelectedObject(compInst);
-					return Status.OK_STATUS;
-				} catch (final CoreException e) {
-					nodes.remove(nodeMapEntry.getKey());
-					return new Status(e.getStatus().getSeverity(), DCDUIGraphitiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e);
-				} finally {
-					if (nodes.get(nodeMapEntry.getKey()) == null) {
-						delete(compInst);
-					}
-					subMonitor.done();
+		Job job = Job.create("Launching " + compInst.getUsageName(), monitor -> {
+			SubMonitor progress = SubMonitor.convert(monitor, "Launching " + compInst.getUsageName(), 100);
+			try {
+				LocalAbstractComponent newComp = GraphitiDCDLocalModelMap.this.launch(compInst, implID, progress.newChild(90));
+				if (newComp instanceof ScaDevice< ? >) {
+					nodeMapEntry.setScaDevice((ScaDevice< ? >) newComp);
+				} else if (newComp instanceof ScaService) {
+					nodeMapEntry.setScaService((ScaService) newComp);
 				}
-			}
 
-		};
+				updateEnabledState(compInst, true);
+				progress.newChild(5);
+
+				getEditor().refreshSelectedObject(compInst);
+				progress.newChild(5);
+
+				return Status.OK_STATUS;
+			} catch (final CoreException e) {
+				nodes.remove(nodeMapEntry.getKey());
+				return new Status(e.getStatus().getSeverity(), DCDUIGraphitiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e);
+			} finally {
+				if (nodes.get(nodeMapEntry.getKey()) == null) {
+					delete(compInst);
+				}
+				progress.done();
+			}
+		});
 		job.schedule();
 	}
 
@@ -95,9 +94,10 @@ public class GraphitiDCDLocalModelMap extends GraphitiDCDModelMap {
 	 * Launch an instance of the specified SPD.
 	 * @param compInst The instantiation as per the DCD
 	 * @param implID The implementation to launch, or null for any
+	 * @param monitor Not used in the Redhawk 2.0.x series
 	 * @throws CoreException
 	 */
-	protected LocalAbstractComponent launch(final DcdComponentInstantiation compInst, final String implID) throws CoreException {
+	protected LocalAbstractComponent launch(final DcdComponentInstantiation compInst, final String implID, IProgressMonitor monitor) throws CoreException {
 		LocalScaDeviceManager localDeviceManager = (LocalScaDeviceManager) getDeviceManager();
 		DataType[] initConfiguration = getInitialProperties(compInst);
 		final SoftPkg spd = ScaEcoreUtils.getFeature(compInst, AbstractGraphitiModelMap.COMP_INST_TO_SPD_PATH);

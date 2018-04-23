@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
@@ -32,7 +33,6 @@ import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.sca.util.SubMonitor;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
@@ -58,30 +58,30 @@ public class GraphitiSADLocalModelMap extends GraphitiSADModelMap {
 		}
 
 		final String implID = ((SadComponentInstantiation) compInst).getImplID();
-		Job job = new Job("Launching " + compInst.getUsageName()) {
+		Job job = Job.create("Launching " + compInst.getUsageName(), monitor -> {
+			SubMonitor progress = SubMonitor.convert(monitor, "Launching " + compInst.getUsageName(), 100);
+			LocalScaComponent newComp = null;
+			try {
+				newComp = GraphitiSADLocalModelMap.this.launch(compInst, implID, progress.newChild(90));
+				nodeMapEntry.setScaComponent(newComp);
 
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + compInst.getUsageName(), IProgressMonitor.UNKNOWN);
-				LocalScaComponent newComp = null;
-				try {
-					newComp = GraphitiSADLocalModelMap.this.launch(compInst, implID);
-					nodeMapEntry.setScaComponent(newComp);
-					updateEnabledState(compInst, true);
-					getEditor().refreshSelectedObject(compInst);
-					return Status.OK_STATUS;
-				} catch (final CoreException e) {
-					nodes.remove(nodeMapEntry.getKey());
-					return new Status(e.getStatus().getSeverity(), SADUIGraphitiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e);
-				} finally {
-					if (nodes.get(nodeMapEntry.getKey()) == null) {
-						delete(compInst);
-					}
-					subMonitor.done();
+				updateEnabledState(compInst, true);
+				progress.worked(5);
+
+				getEditor().refreshSelectedObject(compInst);
+				progress.worked(5);
+
+				return Status.OK_STATUS;
+			} catch (final CoreException e) {
+				nodes.remove(nodeMapEntry.getKey());
+				return new Status(e.getStatus().getSeverity(), SADUIGraphitiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e);
+			} finally {
+				if (nodes.get(nodeMapEntry.getKey()) == null) {
+					delete(compInst);
 				}
+				progress.done();
 			}
-
-		};
+		});
 		job.schedule();
 	}
 
@@ -89,9 +89,10 @@ public class GraphitiSADLocalModelMap extends GraphitiSADModelMap {
 	 * Launch an instance of the specified SPD.
 	 * @param compInst The instantiation as per the SAD
 	 * @param implID The implementation to launch, or null for any
+	 * @param monitor Not used in the Redhawk 2.0.x series
 	 * @throws CoreException
 	 */
-	protected LocalScaComponent launch(final SadComponentInstantiation compInst, final String implID) throws CoreException {
+	protected LocalScaComponent launch(final SadComponentInstantiation compInst, final String implID, IProgressMonitor monitor) throws CoreException {
 		LocalScaWaveform localWaveform = (LocalScaWaveform) getWaveform();
 		DataType[] initConfiguration = getInitialProperties(compInst);
 		final SoftPkg spd = ScaEcoreUtils.getFeature(compInst, AbstractGraphitiModelMap.COMP_INST_TO_SPD_PATH);
