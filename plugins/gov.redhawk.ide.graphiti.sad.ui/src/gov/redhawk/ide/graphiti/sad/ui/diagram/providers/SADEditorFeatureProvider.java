@@ -59,7 +59,7 @@ public class SADEditorFeatureProvider extends SADGraphitiFeatureProvider {
 	public SADEditorFeatureProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 
-		// Add host collocation pattern
+		// Add full-featured host collocation pattern (supports editing)
 		addPattern(new HostCollocationPattern());
 
 		// Add find by patterns

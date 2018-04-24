@@ -16,12 +16,9 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.graphiti.datatypes.ILocation;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IUpdateFeature;
-import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -29,7 +26,6 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
@@ -138,26 +134,6 @@ public class DUtil extends gov.redhawk.core.graphiti.ui.util.DUtil {
 	}
 
 	/**
-	 * Checks the container shape and all its children and returns any which overlap any of the specified area.
-	 * @param containerShape Usually this should be the {@link Diagram}
-	 * @param width
-	 * @param height
-	 * @param x Absolute x
-	 * @param y Absolute y
-	 * @return
-	 */
-	public static List<Shape> getShapesInArea(final ContainerShape containerShape, int width, int height, int x, int y) {
-		List<Shape> retList = new ArrayList<Shape>();
-		EList<Shape> shapes = containerShape.getChildren();
-		for (Shape s : shapes) {
-			if (shapeExistsPartiallyInArea(s, width, height, x, y)) {
-				retList.add(s);
-			}
-		}
-		return retList;
-	}
-
-	/**
 	 * Returns true if the specified area overlaps any part of a host collocation.
 	 * @param diagram
 	 * @param width
@@ -180,61 +156,6 @@ public class DUtil extends gov.redhawk.core.graphiti.ui.util.DUtil {
 	}
 
 	/**
-	 * Adjust children x/y so they remain in the same relative position after resize
-	 * @param containerShape
-	 * @param context
-	 */
-	public static void shiftChildrenRelativeToParentResize(ContainerShape containerShape, IResizeShapeContext context) {
-
-		int widthDiff = containerShape.getGraphicsAlgorithm().getWidth() - context.getWidth();
-		int heightDiff = containerShape.getGraphicsAlgorithm().getHeight() - context.getHeight();
-		switch (context.getDirection()) {
-		case (IResizeShapeContext.DIRECTION_NORTH_EAST):
-			shiftChildrenYPositionUp(containerShape, heightDiff);
-			break;
-		case (IResizeShapeContext.DIRECTION_WEST):
-		case (IResizeShapeContext.DIRECTION_SOUTH_WEST):
-			shiftChildrenXPositionLeft(containerShape, widthDiff);
-			break;
-		case (IResizeShapeContext.DIRECTION_NORTH_WEST):
-			shiftChildrenXPositionLeft(containerShape, widthDiff);
-			shiftChildrenYPositionUp(containerShape, heightDiff);
-			break;
-		case (IResizeShapeContext.DIRECTION_NORTH): // handle top of box getting smaller
-			shiftChildrenYPositionUp(containerShape, heightDiff);
-			break;
-		default:
-			break;
-		}
-	}
-
-	/**
-	 * Shifts children of container x value to the left by specified amount
-	 * Can be negative
-	 * @param ga
-	 * @param shiftLeftAmount
-	 */
-	private static void shiftChildrenXPositionLeft(ContainerShape containerShape, int shiftLeftAmount) {
-		for (Shape s : containerShape.getChildren()) {
-			GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
-			Graphiti.getGaService().setLocation(ga, ga.getX() - shiftLeftAmount, ga.getY());
-		}
-	}
-
-	/**
-	 * Shifts children of container Y value up by specified amount
-	 * Can be negative
-	 * @param ga
-	 * @param shiftUpAmount
-	 */
-	private static void shiftChildrenYPositionUp(ContainerShape containerShape, int shiftUpAmount) {
-		for (Shape s : containerShape.getChildren()) {
-			GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
-			Graphiti.getGaService().setLocation(ga, ga.getX(), ga.getY() - shiftUpAmount);
-		}
-	}
-
-	/**
 	 * Checks the container shape and all its children and returns any which do not overlap any of the specified area.
 	 * @param containerShape Usually this should be the {@link Diagram}
 	 * @param width
@@ -252,21 +173,6 @@ public class DUtil extends gov.redhawk.core.graphiti.ui.util.DUtil {
 			}
 		}
 		return retList;
-	}
-
-	/**
-	 * Determine if a shape overlaps an area. Coordinates should be absolute.
-	 * @param s
-	 * @param width
-	 * @param height
-	 * @param x
-	 * @param y
-	 * @return
-	 */
-	public static boolean shapeExistsPartiallyInArea(final Shape s, int width, int height, int x, int y) {
-		GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
-		ILocation shapeLoc = GraphitiUi.getUiLayoutService().getLocationRelativeToDiagram(s);
-		return ((x + width) > ga.getX() && x < (shapeLoc.getX() + ga.getWidth()) && (y + height) > ga.getY() && y < (shapeLoc.getY() + ga.getHeight()));
 	}
 
 	/**
