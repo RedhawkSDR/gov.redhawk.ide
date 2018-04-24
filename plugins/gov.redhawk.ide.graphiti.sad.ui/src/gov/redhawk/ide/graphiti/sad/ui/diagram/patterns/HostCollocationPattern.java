@@ -43,8 +43,8 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
 
+import gov.redhawk.core.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.core.graphiti.sad.ui.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.HostCollocationWizard;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.IDialogEditingPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
