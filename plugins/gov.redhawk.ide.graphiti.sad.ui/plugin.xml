@@ -229,14 +229,4 @@
             project="true">
       </wizard>
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            adaptableType="org.eclipse.graphiti.ui.internal.parts.DiagramEditPart"
-            class="gov.redhawk.ide.graphiti.sad.ui.adapters.SoftwareAssemblyAdapter">
-         <adapter
-               type="mil.jpeojtrs.sca.sad.SoftwareAssembly">
-         </adapter>
-      </factory>
-   </extension>
 </plugin>
