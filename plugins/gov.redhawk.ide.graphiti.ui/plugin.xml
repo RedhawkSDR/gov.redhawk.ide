@@ -34,7 +34,7 @@
          </adapter>
       </factory>
       <factory
-            adaptableType="gov.redhawk.core.graphiti.ui.ext.RHContainerShape"
+            adaptableType="org.eclipse.graphiti.mm.pictograms.ContainerShape"
             class="gov.redhawk.ide.graphiti.ui.adapters.ContainerShapeAdapterFactory2">
          <adapter
                type="gov.redhawk.ide.debug.LocalLaunch">
