@@ -1,0 +1,68 @@
+<%@ jet package="gov.redhawk.ide.codegen.jet"
+imports="mil.jpeojtrs.sca.dcd.DcdPackage
+mil.jpeojtrs.sca.partitioning.PartitioningPackage
+mil.jpeojtrs.sca.util.ScaEcoreUtils
+org.eclipse.core.runtime.CoreException"
+class="NodeAdminServiceConfigIni"
+skeleton="../generator.skeleton"
+%>
+<%
+    DcdTemplateParameter params = (DcdTemplateParameter) argument;
+
+    String name = params.getDcd().getName();
+    String baseName;
+    if (name.indexOf('.') == -1) {
+        baseName = name;
+    } else {
+        baseName = name.substring(name.lastIndexOf('.') + 1);
+    }
+    String nameWithSlashes = name.replace('.', '/');
+
+    String nameServiceName = ScaEcoreUtils.getFeature(params.getDcd(),
+         DcdPackage.Literals.DEVICE_CONFIGURATION__DOMAIN_MANAGER, DcdPackage.Literals.DOMAIN_MANAGER__NAMING_SERVICE,
+         PartitioningPackage.Literals.NAMING_SERVICE__NAME);
+    String domainName;
+    if (nameServiceName == null) {
+        domainName = "REDHAWK_DEV";
+    } else {
+        String[] segments = nameServiceName.split("/");
+        domainName = segments[segments.length - 1];
+    }
+
+    if (params.getHeaderContent() != null) {
+%>
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+<%
+        for (String line : params.getHeaderContent().split("\n")) {
+%>
+; <%=line%>
+<%
+        }
+%>
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+<%
+    }
+%>[node:<%=name%>]
+
+;;;;;; Required configuration
+
+; Override the domain name the node will register with
+DOMAIN_NAME=<%=domainName%>
+
+; Specify which node is being launched
+NODE_NAME=<%=name%>
+;DCD_FILE=nodes/<%=nameWithSlashes%>/DeviceManager.dcd.xml
+
+;;;;;; Optional configuration
+
+; Enable/disable this configuration
+;enable=True
+
+; Specify the log level
+; TRACE, DEBUG, INFO, WARN, ERROR, FATAL
+;DEBUG_LEVEL=INFO
+
+; Specify a URI for a logging configuration
+;LOGGING_CONFIG_URI=sca:///nodes/<%=nameWithSlashes%>/<%=baseName%>.log4j

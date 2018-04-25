@@ -17,12 +17,18 @@ skeleton="../generator.skeleton"
     final SadTemplateParameter params = (SadTemplateParameter) argument;
     final SoftwareAssembly sad = params.getSad();
     final String sadFileName = sad.eResource().getURI().lastSegment();
+    boolean iniFiles = false;
+    for (String fileName : params.getFilesToInstall()) {
+        if (fileName.endsWith(".ini")) {
+            iniFiles = true;
+        }
+    }
 
     // The assembly controller isn't specified initially after project creation; ignore if it's not specified, throw
     // an error if it is and we can't get the assembly controller
     final SadComponentInstantiation instance = SoftwareAssembly.Util.getAssemblyControllerInstantiation(sad);
     if (instance == null) {
-    	return null;
+        throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenActivator.PLUGIN_ID, "Assembly controller is not specified in SAD file."));
     }
     final SoftPkg controller = ComponentInstantiation.Util.getSpd(instance);
     if (controller == null){
@@ -47,16 +53,14 @@ skeleton="../generator.skeleton"
         }
 %>
 ###############################################################################
+
+
 <%
     }
-%>
-# RPM package for <%=sad.getName()%>
+%># RPM package for <%=sad.getName()%>
 
-# By default, the RPM will install to the standard REDHAWK SDR root location (/var/redhawk/sdr)
-# You can override this at install time using --prefix /new/sdr/root when invoking rpm (preferred method, if you must)
-%{!?_sdrroot: %global _sdrroot /var/redhawk/sdr}
-%define _prefix %{_sdrroot}
-Prefix: %{_prefix}
+%global _sdrroot /var/redhawk/sdr
+%global _prefix %{_sdrroot}
 
 Name: <%=sad.getName()%>
 Summary: Waveform <%=sad.getName()%>
@@ -65,8 +69,10 @@ Release: 1%{?dist}
 License: None
 Group: REDHAWK/Waveforms
 Source: %{name}-%{version}.tar.gz
+
 # Require the controller whose SPD is referenced
 Requires: <%=controller.getName()%>
+
 # Require each referenced component
 Requires:<%
     for (ComponentFile compFile : componentFiles) {
@@ -78,6 +84,7 @@ Requires:<%
         }
     }
 %>
+
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}
 
@@ -99,20 +106,42 @@ BuildRoot: %{_tmppath}/%{name}-%{version}
 %__install -m 644 <%=sadFileName%> $RPM_BUILD_ROOT%{_prefix}<%=waveformSubDir%>/<%=sadFileName%>
 <%
     for (String fileName : params.getFilesToInstall()) {
+        if (fileName.endsWith(".ini")) {
+%>
+%__install -m 664 -D <%=fileName%> $RPM_BUILD_ROOT%{_sysconfdir}/redhawk/waveforms.d/<%=fileName%>
+<%
+        } else {
 %>
 %__install -m 644 <%=fileName%> $RPM_BUILD_ROOT%{_prefix}<%=waveformSubDir%>/<%=fileName%>
 <%
+        }
     }
 %>
 
 %files
+<%
+    if (iniFiles) {
+%>
+%defattr(-,root,redhawk)
+<%
+        for (String fileName : params.getFilesToInstall()) {
+            if (fileName.endsWith(".ini")) {
+%>
+%config(noreplace) %{_sysconfdir}/redhawk/waveforms.d/<%=fileName%>
+<%
+            }
+        }
+    }
+%>
 %defattr(-,redhawk,redhawk)
 <%=directoryBlock%>
 %{_prefix}<%=waveformSubDir%>/<%=sadFileName%>
 <%
     for (String fileName : params.getFilesToInstall()) {
+        if (!fileName.endsWith(".ini")) {
 %>
 %{_prefix}<%=waveformSubDir%>/<%=fileName%>
 <%
+        }
     }
 %>

@@ -1,0 +1,55 @@
+<%@ jet package="gov.redhawk.ide.codegen.jet"
+imports="org.eclipse.core.runtime.CoreException"
+class="WaveformAdminServiceConfigIni"
+skeleton="../generator.skeleton"
+%>
+<%
+    SadTemplateParameter params = (SadTemplateParameter) argument;
+
+    String name = params.getSad().getName();
+    String baseName;
+    if (name.indexOf('.') == -1) {
+        baseName = name;
+    } else {
+        baseName = name.substring(name.lastIndexOf('.') + 1);
+    }
+    String nameWithSlashes = name.replace('.', '/');
+
+    if (params.getHeaderContent() != null) {
+%>
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+<%
+        for (String line : params.getHeaderContent().split("\n")) {
+%>
+; <%=line%>
+<%
+        }
+%>
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+<%
+    }
+%>; You can add additional sections to start more instances of this waveform
+
+[waveform:<%=baseName%>_1]
+
+;;;;;; Required configuration
+
+; The domain the waveform will be launched in
+DOMAIN_NAME=REDHAWK_DEV
+
+; Specify which waveform is being launched
+WAVEFORM=<%=name%>
+
+;;;;;; Optional configuration
+
+; Enable/disable this configuration
+;enable=True
+
+; Specify the log level
+; TRACE, DEBUG, INFO, WARN, ERROR, FATAL
+;DEBUG_LEVEL=INFO
+
+; Specify a URI for a logging configuration
+;LOGGING_CONFIG_URI=sca:///waveforms/<%=nameWithSlashes%>/<%=baseName%>.log4j
