@@ -33,6 +33,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.ui.RedhawkUiActivator;
@@ -45,18 +46,22 @@ public abstract class AbstractGenerateCodeHandler extends AbstractHandler implem
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		// If the user used a context menu, generate code on the selection(s)
-		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
-		if (selection != null && !selection.isEmpty()) {
-			handleMenuSelection(event, selection);
-			return null;
-		}
+		try {
+			// If the user used a context menu, generate code on the selection(s)
+			final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+			if (selection != null && !selection.isEmpty()) {
+				handleMenuSelection(event, selection);
+				return null;
+			}
 
-		// If the user clicked the generate code button in an editor, generate code on the editor input
-		final IEditorPart editor = HandlerUtil.getActiveEditor(event);
-		if (editor != null) {
-			handleEditorSelection(event, editor);
-			return null;
+			// If the user clicked the generate code button in an editor, generate code on the editor input
+			final IEditorPart editor = HandlerUtil.getActiveEditor(event);
+			if (editor != null) {
+				handleEditorSelection(event, editor);
+				return null;
+			}
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e, RedhawkCodegenUiActivator.PLUGIN_ID);
 		}
 
 		// If we get here, somehow the generate code handler was triggered from somewhere it shouldn't be - log this
@@ -64,9 +69,9 @@ public abstract class AbstractGenerateCodeHandler extends AbstractHandler implem
 		return null;
 	}
 
-	protected abstract void handleEditorSelection(ExecutionEvent event, IEditorPart editor);
+	protected abstract void handleEditorSelection(ExecutionEvent event, IEditorPart editor) throws CoreException;
 
-	protected abstract void handleMenuSelection(ExecutionEvent event, ISelection selection);
+	protected abstract void handleMenuSelection(ExecutionEvent event, ISelection selection) throws CoreException;
 
 	/**
 	 * Tries to save the resources which are in the same project as the editorFile provided. The user is prompted to

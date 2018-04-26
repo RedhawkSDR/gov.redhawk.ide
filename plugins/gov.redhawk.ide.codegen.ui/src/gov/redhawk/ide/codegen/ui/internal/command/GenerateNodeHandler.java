@@ -10,41 +10,35 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen.ui.internal.command;
 
-import java.io.ByteArrayInputStream;
-import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.transaction.RunnableWithResult;
-import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.statushandlers.StatusManager;
 
-import gov.redhawk.ide.codegen.jet.DcdTemplateParameter;
-import gov.redhawk.ide.codegen.jet.TopLevelDcdRpmSpecTemplate;
+import gov.redhawk.ide.codegen.FileStatus;
+import gov.redhawk.ide.codegen.FileStatus.Action;
+import gov.redhawk.ide.codegen.FileStatus.State;
+import gov.redhawk.ide.codegen.FileStatus.Type;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
-import gov.redhawk.ide.codegen.ui.internal.SaveXmlUtils;
-import gov.redhawk.ide.codegen.ui.utils.DocumentationUtils;
+import gov.redhawk.ide.codegen.ui.internal.job.DcdCodegenJob;
+import gov.redhawk.ide.codegen.ui.internal.job.ProjectUserFileSelectionJob;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.editor.SCAFormEditor;
-import mil.jpeojtrs.sca.dcd.DcdDocumentRoot;
 import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 /**
  * * This handler is the main entry point to code generation for Nodes in the UI.
@@ -52,7 +46,7 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 public class GenerateNodeHandler extends AbstractGenerateCodeHandler {
 
 	@Override
-	protected void handleEditorSelection(ExecutionEvent event, IEditorPart editor) {
+	protected void handleEditorSelection(ExecutionEvent event, IEditorPart editor) throws CoreException {
 		if (!(editor instanceof SCAFormEditor)) {
 			RedhawkCodegenUiActivator.logError("Generate node handler was triggered with an invalid selection", null);
 			return;
@@ -70,7 +64,7 @@ public class GenerateNodeHandler extends AbstractGenerateCodeHandler {
 	}
 
 	@Override
-	protected void handleMenuSelection(ExecutionEvent event, ISelection selection) {
+	protected void handleMenuSelection(ExecutionEvent event, ISelection selection) throws CoreException {
 		if (!(selection instanceof IStructuredSelection)) {
 			RedhawkCodegenUiActivator.logError("Generate node handler was triggered with an invalid selection", null);
 			return;
@@ -90,85 +84,53 @@ public class GenerateNodeHandler extends AbstractGenerateCodeHandler {
 
 	/**
 	 * Generates a top-level RPM spec file based on the device manager/devices in the DCD file.
+	 * @throws CoreException
 	 */
-	private void handleDeviceConfiguration(Shell shell, final DeviceConfiguration dcd, final IProject project) {
+	private void handleDeviceConfiguration(Shell shell, final DeviceConfiguration dcd, final IProject project) throws CoreException {
+		// Prompt to save (if necessary) before continuing
+		if (!saveRelatedResources(shell, project)) {
+			return;
+		}
 
-		Job dcdSpecFileJob = new Job("Updating spec file for " + dcd.getName() + "...") {
+		if (dcd.getName() == null || dcd.getName().trim().isEmpty()) {
+			throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "DCD file doesn't have a name set"));
+		}
+
+		Set<FileStatus> fileStatuses = getCodegenFileStatus(dcd, project);
+
+		ProjectUserFileSelectionJob selectFilesJob = new ProjectUserFileSelectionJob(shell, fileStatuses);
+		DcdCodegenJob codegenJob = new DcdCodegenJob(dcd, project);
+
+		// After selecting files -> generate
+		selectFilesJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				final SubMonitor progress = SubMonitor.convert(monitor, "Creating top-level RPM spec file", 1);
-
-				try {
-					// Get the header, if any
-					String headerContent = DocumentationUtils.getHeaderContents(project);
-
-					// Update the DCD file's header
-					updateDcdFileHeader(shell, dcd, headerContent, progress.newChild(1));
-
-					DcdTemplateParameter params = new DcdTemplateParameter(dcd, headerContent);
-					String basename = dcd.eResource().getURI().lastSegment();
-					basename = basename.substring(0, basename.length() - DcdPackage.FILE_EXTENSION.length());
-
-					// Determine other files to install
-					for (String siblingFileName : Arrays.asList(basename + DcdPackage.DIAGRAM_FILE_EXTENSION)) {
-						IFile siblingFile = project.getFile(new Path(siblingFileName));
-						if (siblingFile.exists()) {
-							params.addFileToInstall(siblingFileName);
-						}
-					}
-
-					// Generate the RPM spec file
-					updateSpecFile(params, progress.newChild(1));
-				} catch (CoreException e) {
-					StatusManager.getManager().handle(new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
-						StatusManager.SHOW | StatusManager.LOG);
-				}
-				return Status.OK_STATUS;
-			}
-
-			private void updateDcdFileHeader(Shell shell, DeviceConfiguration dcd, String headerContent, SubMonitor progress) throws CoreException {
-				EditingDomain editingDomain = TransactionUtil.getEditingDomain(dcd);
-				DcdDocumentRoot docRoot = ScaEcoreUtils.getEContainerOfType(dcd, DcdDocumentRoot.class);
-
-				// We need to make and save the changes in the UI thread
-				RunnableWithResult<CoreException> runnable = new RunnableWithResult.Impl<CoreException>() {
-					@Override
-					public void run() {
-						if (!DocumentationUtils.setXMLCommentHeader(editingDomain, docRoot.getMixed(), headerContent)) {
-							return;
-						}
-						try {
-							SaveXmlUtils.save(dcd);
-						} catch (CoreException e) {
-							setResult(e);
-						}
-					}
-				};
-				shell.getDisplay().syncExec(runnable);
-
-				// Re-throw the exception if any
-				if (runnable.getResult() != null) {
-					throw runnable.getResult();
-				}
-				progress.done();
-			}
-
-			private void updateSpecFile(DcdTemplateParameter params, SubMonitor progress) throws CoreException {
-				// Generate content for the RPM spec file
-				final TopLevelDcdRpmSpecTemplate template = new TopLevelDcdRpmSpecTemplate();
-				final byte[] rpmSpecFileContent = template.generate(params).getBytes();
-
-				// Write the file to disk
-				final IFile rpmSpecFile = project.getFile(dcd.getName() + ".spec");
-				if (rpmSpecFile.exists()) {
-					rpmSpecFile.setContents(new ByteArrayInputStream(rpmSpecFileContent), true, false, progress.newChild(1));
-				} else {
-					rpmSpecFile.create(new ByteArrayInputStream(rpmSpecFileContent), true, progress.newChild(1));
+			public void done(IJobChangeEvent event) {
+				if (event.getResult().isOK()) {
+					codegenJob.setFilesToGenerate(selectFilesJob.getFilesToGenerate());
+					codegenJob.schedule();
 				}
 			}
-		};
-		dcdSpecFileJob.setUser(false);
-		dcdSpecFileJob.setSystem(true);
-		dcdSpecFileJob.schedule();
+		});
+
+		// Schedule the first job
+		selectFilesJob.schedule();
+	}
+
+	/**
+	 * @return A simulated list of file status (like we'd get from the code generator)
+	 */
+	private Set<FileStatus> getCodegenFileStatus(DeviceConfiguration dcd, IProject project) {
+		Set<FileStatus> fileStatuses = new HashSet<>();
+
+		String specFileName = dcd.getName() + ".spec";
+		Action action = (project.getFile(specFileName).exists()) ? Action.REGEN : Action.ADDING;
+		fileStatuses.add(new FileStatus(specFileName, action, State.MATCHES, Type.SYSTEM));
+
+		String iniFileName = dcd.getName() + ".ini";
+		action = (project.getFile(iniFileName).exists()) ? Action.REGEN : Action.ADDING;
+		State state = (project.getFile(iniFileName).exists()) ? State.MODIFIED : State.MATCHES;
+		fileStatuses.add(new FileStatus(iniFileName, action, state, Type.USER));
+
+		return fileStatuses;
 	}
 }
