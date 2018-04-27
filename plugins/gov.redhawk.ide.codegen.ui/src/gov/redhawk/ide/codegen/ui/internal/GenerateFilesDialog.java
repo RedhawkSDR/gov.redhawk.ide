@@ -141,9 +141,10 @@ public class GenerateFilesDialog extends Dialog {
 			label.setText("Select files to be generated:");
 		}
 
-		Composite treeContainer = new Composite(container, SWT.None);
-		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+		Composite treeContainer = new Composite(container, SWT.NONE);
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		data.widthHint = 600;
+		data.minimumHeight = 200;
 		treeContainer.setLayoutData(data);
 		TreeColumnLayout layout = new TreeColumnLayout();
 		treeContainer.setLayout(layout);
@@ -152,14 +153,14 @@ public class GenerateFilesDialog extends Dialog {
 		this.treeViewer.getTree().setLinesVisible(true);
 		this.treeViewer.getTree().setHeaderVisible(true);
 
-		TreeViewerColumn column = new TreeViewerColumn(this.treeViewer, SWT.None);
+		TreeViewerColumn column = new TreeViewerColumn(this.treeViewer, SWT.NONE);
 		column.getColumn().setResizable(true);
 		column.getColumn().setMoveable(false);
 		column.getColumn().setText("File Name");
 		column.setLabelProvider(new TreeColumnViewerLabelProvider(new LabelProvider()));
 		layout.setColumnData(column.getColumn(), new ColumnWeightData(80, 80, true));
 
-		column = new TreeViewerColumn(this.treeViewer, SWT.None);
+		column = new TreeViewerColumn(this.treeViewer, SWT.NONE);
 		column.getColumn().setResizable(true);
 		column.getColumn().setMoveable(false);
 		column.getColumn().setText("Action");
@@ -171,7 +172,7 @@ public class GenerateFilesDialog extends Dialog {
 		}));
 		layout.setColumnData(column.getColumn(), new ColumnWeightData(10, 80, true));
 
-		column = new TreeViewerColumn(this.treeViewer, SWT.None);
+		column = new TreeViewerColumn(this.treeViewer, SWT.NONE);
 		column.getColumn().setResizable(true);
 		column.getColumn().setMoveable(false);
 		column.getColumn().setText("Type");
