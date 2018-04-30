@@ -197,15 +197,22 @@ public class WaveformOptionsSection extends ScaSection {
 
 	@Override
 	public void refresh(Resource resource) {
+		if (this.sadResource != null) {
+			SoftwareAssembly oldSad = getSoftwareAssembly();
+			if (oldSad != null) {
+				oldSad.eAdapters().remove(optionsListener);
+			}
+		}
+
 		this.sadResource = resource;
 		SoftwareAssembly sad = getSoftwareAssembly();
 
-		// Make sure input is set when the overview tab first opens and when edits are made in the XML editor.
-		if (sad != null && sad.getOptions() != null) {
+		if (sad != null) {
+			sad.eAdapters().add(optionsListener);
 			getTableViewer().setInput(sad.getOptions());
+		} else {
+			getTableViewer().setInput(null);
 		}
-
-		sad.eAdapters().add(optionsListener);
 	}
 
 	private TableViewer getTableViewer() {
