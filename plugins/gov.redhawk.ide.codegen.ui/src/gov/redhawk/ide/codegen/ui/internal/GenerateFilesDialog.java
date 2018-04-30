@@ -263,6 +263,7 @@ public class GenerateFilesDialog extends Dialog {
 		panel.setLayout(new GridLayout(1, false));
 		Button showUserButton = new Button(panel, SWT.CHECK);
 		showUserButton.setText("Show User Files");
+		showUserButton.setSelection(showUserFiles);
 		showUserButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
