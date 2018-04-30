@@ -10,11 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen.ui.internal.command;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;
@@ -22,23 +19,15 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.ISaveablePart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -189,91 +178,4 @@ public class GenerateComponentHandler extends AbstractGenerateCodeHandler {
 			GenerateCode.generate(shell, impls);
 		}
 	}
-
-	/**
-	 * Tries to save the resources which are in the same project as the editorFile provided. The user is prompted to
-	 * save if any related unsaved resources are present.
-	 * @param event Handler event
-	 * @param editorFile File who's project we are using to find related editor pages.
-	 * @return True if everything saved correctly. False otherwise.
-	 * @throws CoreException
-	 */
-	private boolean saveRelatedResources(final Shell shell, final IProject parentProject) throws CoreException {
-
-		final Set<ISaveablePart> dirtyPartsSet = getRelatedDirtyParts(parentProject);
-
-		// If there were unsaved parts in this project.
-		if (!dirtyPartsSet.isEmpty()) {
-
-			// Prompt the user that they MUST save before generation
-			if (MessageDialog.openQuestion(shell, "File Changed", "Resources in the project '" + parentProject.getName()
-				+ "' have unsaved changes.  Changes must be saved prior to code generation.\n\nDo you want to save these changes now?")) {
-
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
-				try {
-					dialog.run(false, true, new IRunnableWithProgress() {
-						@Override
-						public void run(IProgressMonitor monitor) {
-							monitor.beginTask("Saving Resources ...", dirtyPartsSet.size());
-
-							// Go through and save each of the parts that were previously identified.
-							for (ISaveablePart dirtyPart : dirtyPartsSet) {
-								dirtyPart.doSave(monitor);
-								monitor.worked(1);
-								if (monitor.isCanceled()) {
-									break;
-								}
-							}
-							monitor.done();
-						}
-					});
-				} catch (InvocationTargetException e) {
-					throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, "Error while attempting to save editors", e.getCause()));
-				} catch (InterruptedException e) {
-					return false; // The user canceled this save dialog.
-				}
-
-				if (dialog.getProgressMonitor().isCanceled()) {
-					return false; // The user has canceled another dialog which was passed our monitor.
-				}
-
-				return true; // User saved all unsaved parts with no errors, generate code.
-			}
-
-			// User canceled the save dialog do not generate
-			return false;
-		}
-
-		// Resources don't need to be saved
-		return true;
-	}
-
-	/**
-	 * Returns any ISavableParts which are part of the same project as the given editor file.
-	 * @param editorFile The editor file who's project you want to find the other dirty parts of
-	 * @return A set of dirty ISavableParts from the same project as the editorFile.
-	 */
-	private Set<ISaveablePart> getRelatedDirtyParts(final IProject project) {
-		final Set<ISaveablePart> dirtyPartsSet = new HashSet<ISaveablePart>();
-
-		// Go through each of the workbench windows pages
-		for (IWorkbenchPage page : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages()) {
-			// If the page contains at least one dirty editor
-			if (page.getDirtyEditors().length != 0) {
-				// Go through each of the dirty editor parts and see if they belong to the referenced project.
-				for (IWorkbenchPart dirtyPart : page.getDirtyEditors()) {
-					if (dirtyPart instanceof IEditorPart && ((IEditorPart) dirtyPart).getEditorInput() instanceof IFileEditorInput) {
-						IFileEditorInput input = (IFileEditorInput) ((IEditorPart) dirtyPart).getEditorInput();
-						if (input.getFile().getProject().equals(project)) {
-							if (dirtyPart instanceof ISaveablePart) {
-								dirtyPartsSet.add((ISaveablePart) dirtyPart);
-							}
-						}
-					}
-				}
-			}
-		}
-		return dirtyPartsSet;
-	}
-
 }
