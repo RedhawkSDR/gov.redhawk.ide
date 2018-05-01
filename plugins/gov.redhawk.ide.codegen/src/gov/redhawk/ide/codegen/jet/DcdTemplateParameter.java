@@ -12,22 +12,14 @@ package gov.redhawk.ide.codegen.jet;
 
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
-public class DcdTemplateParameter {
-
-	private DeviceConfiguration dcd;
-	private String headerContent;
+public class DcdTemplateParameter extends CommonTemplateParameter<DeviceConfiguration> {
 
 	public DcdTemplateParameter(DeviceConfiguration dcd, String headerContent) {
-		this.dcd = dcd;
-		this.headerContent = headerContent;
+		super(dcd, headerContent);
 	}
 
 	public DeviceConfiguration getDcd() {
-		return dcd;
-	}
-
-	public String getHeaderContent() {
-		return headerContent;
+		return getModel();
 	}
 
 }

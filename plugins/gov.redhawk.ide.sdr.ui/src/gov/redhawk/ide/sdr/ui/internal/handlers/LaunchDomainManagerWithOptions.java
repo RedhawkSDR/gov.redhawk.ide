@@ -10,31 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.internal.handlers;
 
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLaunchConfiguration;
-import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLauncherUtil;
-import gov.redhawk.ide.sdr.nodebooter.DomainManagerLauncherUtil;
-import gov.redhawk.ide.sdr.nodebooter.DomainManagerLaunchConfiguration;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
-import gov.redhawk.model.sca.DomainConnectionState;
-import gov.redhawk.model.sca.RefreshDepth;
-import gov.redhawk.model.sca.ScaDomainManager;
-import gov.redhawk.model.sca.ScaDomainManagerRegistry;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
-import gov.redhawk.sca.ScaPlugin;
-import gov.redhawk.sca.preferences.ScaPreferenceConstants;
-import gov.redhawk.sca.ui.ScaUiPlugin;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.dmd.DomainManagerConfiguration;
-import mil.jpeojtrs.sca.util.CorbaUtils;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -48,12 +27,30 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLaunchConfiguration;
+import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLauncherUtil;
+import gov.redhawk.ide.sdr.nodebooter.DomainManagerLaunchConfiguration;
+import gov.redhawk.ide.sdr.nodebooter.DomainManagerLauncherUtil;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
+import gov.redhawk.model.sca.DomainConnectionState;
+import gov.redhawk.model.sca.RefreshDepth;
+import gov.redhawk.model.sca.ScaDomainManager;
+import gov.redhawk.model.sca.ScaDomainManagerRegistry;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.sca.ScaPlugin;
+import gov.redhawk.sca.preferences.ScaPreferenceConstants;
+import gov.redhawk.sca.ui.ScaUiPlugin;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.dmd.DomainManagerConfiguration;
+import mil.jpeojtrs.sca.util.CorbaUtils2;
 
 public class LaunchDomainManagerWithOptions extends AbstractHandler implements IHandler {
 
@@ -77,26 +74,12 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 		if (sdrRoot.getLoadStatus() == null) {
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 			try {
-				dialog.run(true, true, new IRunnableWithProgress() {
-
-					@Override
-					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						monitor.beginTask("Loading Target SDR..", IProgressMonitor.UNKNOWN);
-						try {
-							CorbaUtils.invoke(new Callable<Object>() {
-
-								@Override
-								public Object call() throws Exception {
-									sdrRoot.load(monitor);
-									return null;
-								}
-
-							}, monitor);
-						} catch (CoreException e) {
-							throw new InvocationTargetException(e);
-						}
-
-					}
+				dialog.run(true, true, monitor -> {
+					monitor.beginTask("Loading Target SDR..", IProgressMonitor.UNKNOWN);
+					CorbaUtils2.invokeUI(() -> {
+						sdrRoot.load(monitor);
+						return null;
+					}, monitor);
 				});
 			} catch (InvocationTargetException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Failed to load SDR.", e.getCause()),

@@ -130,4 +130,8 @@ public class ZipExporter implements IScaExporter {
 	public IPath getExportLocation() {
 		return this.zipfilePath;
 	}
+
+	public void delete(IPath deletePath, IProgressMonitor monitor) throws IOException, CoreException {
+		// PASS - The zip is fresh, and therefore there are no files that need to be deleted
+	}
 }

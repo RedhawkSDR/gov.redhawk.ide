@@ -11,6 +11,7 @@
 package gov.redhawk.ide.codegen.ui.internal.command;
 
 import java.io.ByteArrayInputStream;
+import java.util.Arrays;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;
@@ -18,6 +19,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -103,8 +105,20 @@ public class GenerateWaveformHandler extends AbstractGenerateCodeHandler {
 					// Update the SAD file's header
 					updateSadFileHeader(shell, sad, headerContent, progress.newChild(1));
 
+					SadTemplateParameter params = new SadTemplateParameter(sad, headerContent);
+					String basename = sad.eResource().getURI().lastSegment();
+					basename = basename.substring(0, basename.length() - SadPackage.FILE_EXTENSION.length());
+
+					// Determine other files to install
+					for (String siblingFileName : Arrays.asList(basename + SadPackage.DIAGRAM_FILE_EXTENSION)) {
+						IFile siblingFile = project.getFile(new Path(siblingFileName));
+						if (siblingFile.exists()) {
+							params.addFileToInstall(siblingFileName);
+						}
+					}
+
 					// Generate the RPM spec file
-					updateSpecFile(headerContent, progress.newChild(1));
+					updateSpecFile(params, progress.newChild(1));
 				} catch (CoreException e) {
 					StatusManager.getManager().handle(new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
 						StatusManager.SHOW | StatusManager.LOG);
@@ -143,9 +157,9 @@ public class GenerateWaveformHandler extends AbstractGenerateCodeHandler {
 				progress.done();
 			}
 
-			private void updateSpecFile(String headerContent, SubMonitor progress) throws CoreException {
+			private void updateSpecFile(SadTemplateParameter params, SubMonitor progress) throws CoreException {
 				final TopLevelSadRpmSpecTemplate template = new TopLevelSadRpmSpecTemplate();
-				final String rpmSpecFileString = template.generate(new SadTemplateParameter(sad, headerContent));
+				final String rpmSpecFileString = template.generate(params);
 				final byte[] rpmSpecFileContent;
 				if (rpmSpecFileString == null) {
 					rpmSpecFileContent = null;

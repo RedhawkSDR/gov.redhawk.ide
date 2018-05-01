@@ -199,4 +199,13 @@ public class FileStoreExporter implements IScaExporter {
 
 		return (retVal == 0);
 	}
+
+	public void delete(IPath deletePath, IProgressMonitor monitor) throws IOException, CoreException {
+		SubMonitor progress = SubMonitor.convert(monitor, 2);
+		final URI destURI = this.rootURI.resolve(deletePath.toString());
+		IFileStore store = EFS.getStore(destURI);
+		if (store.fetchInfo(EFS.NONE, progress.split(1)).exists()) {
+			store.delete(EFS.NONE, progress.split(1));
+		}
+	}
 }

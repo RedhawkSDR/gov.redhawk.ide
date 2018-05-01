@@ -55,11 +55,16 @@ public class TopLevelSadRpmSpecTemplate
   protected final String TEXT_14 = "\"" + NL + "%__install -m 644 ";
   protected final String TEXT_15 = " $RPM_BUILD_ROOT%{_prefix}";
   protected final String TEXT_16 = "/";
-  protected final String TEXT_17 = NL + NL + "%files" + NL + "%defattr(-,redhawk,redhawk)";
-  protected final String TEXT_18 = NL;
-  protected final String TEXT_19 = NL + "%{_prefix}";
-  protected final String TEXT_20 = "/";
+  protected final String TEXT_17 = NL + "%__install -m 644 ";
+  protected final String TEXT_18 = " $RPM_BUILD_ROOT%{_prefix}";
+  protected final String TEXT_19 = "/";
+  protected final String TEXT_20 = NL + NL + "%files" + NL + "%defattr(-,redhawk,redhawk)";
   protected final String TEXT_21 = NL;
+  protected final String TEXT_22 = NL + "%{_prefix}";
+  protected final String TEXT_23 = "/";
+  protected final String TEXT_24 = NL + "%{_prefix}";
+  protected final String TEXT_25 = "/";
+  protected final String TEXT_26 = NL;
 
   public String generate(Object argument) throws CoreException
   {
@@ -143,14 +148,36 @@ public class TopLevelSadRpmSpecTemplate
     stringBuffer.append(waveformSubDir);
     stringBuffer.append(TEXT_16);
     stringBuffer.append(sadFileName);
+    
+    for (String fileName : params.getFilesToInstall()) {
+
     stringBuffer.append(TEXT_17);
+    stringBuffer.append(fileName);
     stringBuffer.append(TEXT_18);
-    stringBuffer.append(directoryBlock);
-    stringBuffer.append(TEXT_19);
     stringBuffer.append(waveformSubDir);
+    stringBuffer.append(TEXT_19);
+    stringBuffer.append(fileName);
+    
+    }
+
     stringBuffer.append(TEXT_20);
-    stringBuffer.append(sadFileName);
     stringBuffer.append(TEXT_21);
+    stringBuffer.append(directoryBlock);
+    stringBuffer.append(TEXT_22);
+    stringBuffer.append(waveformSubDir);
+    stringBuffer.append(TEXT_23);
+    stringBuffer.append(sadFileName);
+    
+    for (String fileName : params.getFilesToInstall()) {
+
+    stringBuffer.append(TEXT_24);
+    stringBuffer.append(waveformSubDir);
+    stringBuffer.append(TEXT_25);
+    stringBuffer.append(fileName);
+    
+    }
+
+    stringBuffer.append(TEXT_26);
     return stringBuffer.toString();
   }
 }

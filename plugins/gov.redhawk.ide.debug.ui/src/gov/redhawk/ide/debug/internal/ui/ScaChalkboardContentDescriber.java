@@ -12,15 +12,12 @@ package gov.redhawk.ide.debug.internal.ui;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.Callable;
 
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 
@@ -36,7 +33,7 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.util.ScaFileSystemUtil;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 import gov.redhawk.sca.ui.editors.IScaContentDescriber;
-import mil.jpeojtrs.sca.util.CorbaUtils;
+import mil.jpeojtrs.sca.util.CorbaUtils2;
 
 /**
  * This {@link IScaContentDescriber} describes {@link ScaWaveform}s, but returns a {@link LocalScaWaveform} that
@@ -104,28 +101,14 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 			if (Display.getCurrent() != null) {
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 				try {
-					dialog.run(true, true, new IRunnableWithProgress() {
-
-						@Override
-						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {
-								CorbaUtils.invoke(new Callable<Object>() {
-
-									@Override
-									public Object call() throws Exception {
-										LocalApplicationFactory.bindApp((ApplicationImpl) waveform.getLocalApp());
-										return null;
-									}
-
-								}, monitor);
-							} catch (CoreException e1) {
-								throw new InvocationTargetException(e1);
-							}
-
-						}
+					dialog.run(true, true, monitor -> {
+						CorbaUtils2.invokeUI(() -> {
+							LocalApplicationFactory.bindApp((ApplicationImpl) waveform.getLocalApp());
+							return null;
+						}, monitor);
 					});
 				} catch (InvocationTargetException e) {
-					throw new IllegalStateException("Failed to bind waveform", e);
+					throw new IllegalStateException("Failed to bind waveform", e.getCause());
 				} catch (InterruptedException e) {
 					// PASS
 				}
@@ -180,24 +163,14 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 		if (Display.getCurrent() != null) {
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 			try {
-				dialog.run(true, true, new IRunnableWithProgress() {
-					@Override
-					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						try {
-							CorbaUtils.invoke(new Callable<Object>() {
-								@Override
-								public Object call() throws Exception {
-									waveform.fetchAttributes(monitor);
-									return null;
-								}
-							}, monitor);
-						} catch (CoreException e) {
-							throw new InvocationTargetException(e);
-						}
-					}
+				dialog.run(true, true, monitor -> {
+					CorbaUtils2.invokeUI(() -> {
+						waveform.fetchAttributes(monitor);
+						return null;
+					}, monitor);
 				});
 			} catch (InvocationTargetException e) {
-				throw new IllegalStateException("Unable to fetch profile URI for waveform", e);
+				throw new IllegalStateException("Unable to fetch profile URI for waveform", e.getCause());
 			} catch (InterruptedException e) {
 				throw new IllegalStateException("Interrupted while fetching profile URI for waveform");
 			}

@@ -20,8 +20,8 @@ import org.eclipse.graphiti.tb.ImageDecorator;
 import org.eclipse.graphiti.tb.TextDecorator;
 
 import gov.redhawk.core.graphiti.ui.diagram.providers.IDecoratorProvider;
+import gov.redhawk.core.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.core.graphiti.ui.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.UsesDeviceRef;
 

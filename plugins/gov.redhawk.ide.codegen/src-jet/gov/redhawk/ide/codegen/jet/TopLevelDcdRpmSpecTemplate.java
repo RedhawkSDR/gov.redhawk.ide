@@ -53,11 +53,15 @@ public class TopLevelDcdRpmSpecTemplate
   protected final String TEXT_13 = "\"" + NL + "%__install -m 644 ";
   protected final String TEXT_14 = " $RPM_BUILD_ROOT%{_prefix}";
   protected final String TEXT_15 = "/";
-  protected final String TEXT_16 = NL + NL + "%files" + NL + "%defattr(-,redhawk,redhawk)";
-  protected final String TEXT_17 = NL;
-  protected final String TEXT_18 = NL + "%{_prefix}";
-  protected final String TEXT_19 = "/";
+  protected final String TEXT_16 = NL + "%__install -m 644 ";
+  protected final String TEXT_17 = " $RPM_BUILD_ROOT%{_prefix}";
+  protected final String TEXT_18 = "/";
+  protected final String TEXT_19 = NL + NL + "%files" + NL + "%defattr(-,redhawk,redhawk)";
   protected final String TEXT_20 = NL;
+  protected final String TEXT_21 = NL + "%{_prefix}";
+  protected final String TEXT_22 = "/";
+  protected final String TEXT_23 = NL + "%{_prefix}";
+  protected final String TEXT_24 = "/";
 
   public String generate(Object argument) throws CoreException
   {
@@ -138,14 +142,35 @@ public class TopLevelDcdRpmSpecTemplate
     stringBuffer.append(nodeSubDir);
     stringBuffer.append(TEXT_15);
     stringBuffer.append(dcdFileName);
+    
+    for (String fileName : params.getFilesToInstall()) {
+
     stringBuffer.append(TEXT_16);
+    stringBuffer.append(fileName);
     stringBuffer.append(TEXT_17);
-    stringBuffer.append(directoryBlock);
-    stringBuffer.append(TEXT_18);
     stringBuffer.append(nodeSubDir);
+    stringBuffer.append(TEXT_18);
+    stringBuffer.append(fileName);
+    
+    }
+
     stringBuffer.append(TEXT_19);
-    stringBuffer.append(dcdFileName);
     stringBuffer.append(TEXT_20);
+    stringBuffer.append(directoryBlock);
+    stringBuffer.append(TEXT_21);
+    stringBuffer.append(nodeSubDir);
+    stringBuffer.append(TEXT_22);
+    stringBuffer.append(dcdFileName);
+    
+    for (String fileName : params.getFilesToInstall()) {
+
+    stringBuffer.append(TEXT_23);
+    stringBuffer.append(nodeSubDir);
+    stringBuffer.append(TEXT_24);
+    stringBuffer.append(fileName);
+    
+    }
+
     return stringBuffer.toString();
   }
 }

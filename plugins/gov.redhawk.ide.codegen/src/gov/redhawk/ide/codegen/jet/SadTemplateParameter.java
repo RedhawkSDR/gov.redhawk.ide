@@ -12,22 +12,14 @@ package gov.redhawk.ide.codegen.jet;
 
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-public class SadTemplateParameter {
-
-	private SoftwareAssembly sad;
-	private String headerContent;
+public class SadTemplateParameter extends CommonTemplateParameter<SoftwareAssembly> {
 
 	public SadTemplateParameter(SoftwareAssembly sad, String headerContent) {
-		this.sad = sad;
-		this.headerContent = headerContent;
+		super(sad, headerContent);
 	}
 
 	public SoftwareAssembly getSad() {
-		return sad;
-	}
-
-	public String getHeaderContent() {
-		return headerContent;
+		return getModel();
 	}
 
 }

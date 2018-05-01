@@ -95,8 +95,22 @@ BuildRoot: %{_tmppath}/%{name}-%{version}
 %__rm -rf $RPM_BUILD_ROOT
 %__mkdir_p "$RPM_BUILD_ROOT%{_prefix}<%=nodeSubDir%>"
 %__install -m 644 <%=dcdFileName%> $RPM_BUILD_ROOT%{_prefix}<%=nodeSubDir%>/<%=dcdFileName%>
+<%
+    for (String fileName : params.getFilesToInstall()) {
+%>
+%__install -m 644 <%=fileName%> $RPM_BUILD_ROOT%{_prefix}<%=nodeSubDir%>/<%=fileName%>
+<%
+    }
+%>
 
 %files
 %defattr(-,redhawk,redhawk)
 <%=directoryBlock%>
 %{_prefix}<%=nodeSubDir%>/<%=dcdFileName%>
+<%
+    for (String fileName : params.getFilesToInstall()) {
+%>
+%{_prefix}<%=nodeSubDir%>/<%=fileName%>
+<%
+    }
+%>
