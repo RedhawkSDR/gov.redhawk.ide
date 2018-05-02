@@ -20,3 +20,4 @@ Bundle-Vendor: %Bundle-Vendor
 Export-Package: gov.redhawk.ide.dcd.generator.newdevice.tests,
  gov.redhawk.ide.dcd.generator.newnode.tests,
  gov.redhawk.ide.dcd.tests
+Automatic-Module-Name: gov.redhawk.ide.dcd.tests

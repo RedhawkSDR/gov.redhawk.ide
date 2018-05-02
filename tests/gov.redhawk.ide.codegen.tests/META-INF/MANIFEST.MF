@@ -14,3 +14,4 @@ Require-Bundle: gov.redhawk.ide.codegen,
  mil.jpeojtrs.sca.sad,
  org.eclipse.core.runtime,
  org.junit
+Automatic-Module-Name: gov.redhawk.ide.codegen.tests
