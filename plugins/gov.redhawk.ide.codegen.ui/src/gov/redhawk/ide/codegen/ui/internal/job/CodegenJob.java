@@ -148,20 +148,16 @@ public class CodegenJob extends WorkspaceJob {
 				retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Problem while generating CRCs for implementations", e));
 			}
 
+			// Set the version
 			ImplementationSettings implSettings = WaveDevUtil.getImplSettings(impl);
 			final IScaComponentCodegen generator = GeneratorUtil.getGenerator(implSettings);
 			final Version codeGenVersion = generator.getCodegenVersion();
-
-			if (new Version(1, 10, 0).compareTo(codeGenVersion) <= 0) {
-				// Set the version
-				ScaModelCommand.execute(softPkg, new ScaModelCommand() {
-					@Override
-					public void execute() {
-						softPkg.setType(generator.getCodegenVersion().toString());
-					}
-				});
-
-			}
+			ScaModelCommand.execute(softPkg, new ScaModelCommand() {
+				@Override
+				public void execute() {
+					softPkg.setType(codeGenVersion.toString());
+				}
+			});
 		}
 
 		// Save updates to the SPD (codegen version) and wavedev (historically, file CRCs)

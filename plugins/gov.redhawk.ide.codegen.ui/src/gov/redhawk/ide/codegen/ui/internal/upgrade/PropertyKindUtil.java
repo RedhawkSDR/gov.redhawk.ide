@@ -11,7 +11,6 @@
 package gov.redhawk.ide.codegen.ui.internal.upgrade;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
@@ -33,13 +32,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.ResourceUtil;
-import org.osgi.framework.Version;
 
-import gov.redhawk.ide.codegen.IScaComponentCodegen;
-import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
-import gov.redhawk.ide.codegen.ui.internal.GeneratorUtil;
-import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
@@ -85,20 +79,6 @@ public class PropertyKindUtil {
 		}
 		final Properties prf = spd.getPropertyFile().getProperties();
 
-		// Get code generator version(s)
-		List<Version> codegenVersions = new ArrayList<Version>();
-		for (Implementation impl : impls) {
-			ImplementationSettings implSettings = WaveDevUtil.getImplSettings(impl);
-			if (implSettings == null) {
-				continue;
-			}
-			IScaComponentCodegen generator = GeneratorUtil.getGenerator(implSettings);
-			if (generator == null) {
-				continue;
-			}
-			codegenVersions.add(generator.getCodegenVersion());
-		}
-
 		// Find if there are configure, execparam and property kinds in the properties file
 		final Set<PropertyConfigurationType> kindTypes = new HashSet<PropertyConfigurationType>();
 		try {
@@ -128,31 +108,18 @@ public class PropertyKindUtil {
 			throw new OperationCanceledException();
 		}
 
-		// Don't allow the user to proceed if they're using an old codegen with the new 'property' kind
-		for (Version codegenVersion : codegenVersions) {
-			if (codegenVersion.compareTo(new Version(2, 0, 0)) < 0 && kindTypes.contains(PropertyConfigurationType.PROPERTY)) {
-				MessageDialog.openError(shell, Messages.OldCodeGen_Title, Messages.OldCodeGen_Message);
-				throw new OperationCanceledException();
-			}
-		}
-
 		// Offer upgrade if using deprecated property kinds with a newer codegen
-		for (Version codegenVersion : codegenVersions) {
-			if (codegenVersion.compareTo(new Version(2, 0, 0)) >= 0 && (kindTypes.contains(PropertyConfigurationType.CONFIGURE)
-				|| kindTypes.contains(PropertyConfigurationType.EXECPARAM) || kindTypes.contains(PropertyConfigurationType.EVENT))) {
-				String[] buttons = new String[] { IDialogConstants.CANCEL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_LABEL };
-				MessageDialog dialog = new MessageDialog(shell, Messages.DeprecatedProps_Title, null, Messages.DeprecatedProps_Message, MessageDialog.QUESTION,
-					buttons, 2);
-				int result = dialog.open();
-				if (result == 2) {
-					upgradeProperties(prf);
-					save(parentProject, spd, prf);
-					break;
-				} else if (result == 1) {
-					break;
-				} else {
-					throw new OperationCanceledException();
-				}
+		if ((kindTypes.contains(PropertyConfigurationType.CONFIGURE) || kindTypes.contains(PropertyConfigurationType.EXECPARAM)
+			|| kindTypes.contains(PropertyConfigurationType.EVENT))) {
+			String[] buttons = new String[] { IDialogConstants.CANCEL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_LABEL };
+			MessageDialog dialog = new MessageDialog(shell, Messages.DeprecatedProps_Title, null, Messages.DeprecatedProps_Message, MessageDialog.QUESTION,
+				buttons, 2);
+			int result = dialog.open();
+			if (result == 2) {
+				upgradeProperties(prf);
+				save(parentProject, spd, prf);
+			} else if (result != 1) {
+				throw new OperationCanceledException();
 			}
 		}
 	}
