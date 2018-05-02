@@ -44,7 +44,6 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
-import org.osgi.framework.Version;
 
 import gov.redhawk.ide.codegen.CodegenPackage;
 import gov.redhawk.ide.codegen.CodegenUtil;
@@ -154,7 +153,8 @@ public class CodegenJob extends WorkspaceJob {
 			// Gather some info to update the XML
 			ImplementationSettings implSettings = WaveDevUtil.getImplSettings(impl);
 			final IScaComponentCodegen generator = GeneratorUtil.getGenerator(implSettings);
-			final Version codeGenVersion = generator.getCodegenVersion();
+			String codegenVersion = generator.getCodegenVersion().toString();
+
 			String headerContents = DocumentationUtils.getHeaderContents(project);
 			SpdDocumentRoot spdRoot = ScaEcoreUtils.getEContainerOfType(softPkg, SpdDocumentRoot.class);
 			Properties prf = (softPkg.getPropertyFile() == null) ? null : softPkg.getPropertyFile().getProperties();
@@ -166,8 +166,7 @@ public class CodegenJob extends WorkspaceJob {
 				public void run() {
 					boolean changes = false;
 
-					String codegenVersion = generator.getCodegenVersion().toString();
-					if (new Version(1, 10, 0).compareTo(codeGenVersion) <= 0 && !codegenVersion.equals(softPkg.getType())) {
+					if (!codegenVersion.equals(softPkg.getType())) {
 						// Set the SPD's type field to the code generator's version
 						ScaModelCommand.execute(softPkg, new ScaModelCommand() {
 							@Override
