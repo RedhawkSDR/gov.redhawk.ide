@@ -10,3 +10,4 @@ Require-Bundle: gov.redhawk.mfile.parser;bundle-version="1.0.0",
 Bundle-Activator: gov.redhawk.mfile.parser.tests.MFileTestActivator
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: REDHAWK
+Automatic-Module-Name: gov.redhawk.mfile.parser.tests
