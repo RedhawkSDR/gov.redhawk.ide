@@ -10,3 +10,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  gov.redhawk.bulkio.util,
  nxm.sys
+Automatic-Module-Name: gov.redhawk.ide.snapshot.tests
