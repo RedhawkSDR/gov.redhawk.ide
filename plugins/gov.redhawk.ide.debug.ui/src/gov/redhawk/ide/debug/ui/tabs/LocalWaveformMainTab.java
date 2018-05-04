@@ -22,6 +22,12 @@ public class LocalWaveformMainTab extends AbstractMainTab {
 		return SadPackage.FILE_EXTENSION;
 	}
 
+	@Override
+	protected IPath getSdrDirectory() {
+		IPath domPath = SdrUiPlugin.getDefault().getTargetSdrDomPath();
+		return (domPath == null) ? null : domPath.append("waveforms");
+	}
+
 	/**
 	 * @since 3.0
 	 */
