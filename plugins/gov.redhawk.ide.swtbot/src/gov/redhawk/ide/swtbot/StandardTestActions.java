@@ -686,6 +686,7 @@ public final class StandardTestActions {
 		bot.closeAllShells(); // SWTBot 2.6.0 or newer required
 		bot.closeAllEditors();
 		StandardTestActions.clearWorkspace();
+		forceMainShellActive();
 	}
 
 	/**
