@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.ui.tabs;
 
+import org.eclipse.core.runtime.IPath;
+
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.sad.SadPackage;
 
 /**
@@ -33,7 +36,7 @@ public class LocalWaveformMainTab extends AbstractMainTab {
 	 */
 	@Override
 	protected String getLocationLabel() {
-		return "Location of Software Assembly File (sad.xml):";
+		return "Location of Software Assembly File (sad.xml)";
 	}
 
 }

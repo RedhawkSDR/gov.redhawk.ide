@@ -1,13 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.debug.internal.ui;
 
 import gov.redhawk.ide.debug.ui.tabs.ImplementationTab;
@@ -19,21 +19,11 @@ import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
-/**
- * 
- */
 public class LocalWaveformLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	/**
-	 * 
-	 */
 	public LocalWaveformLaunchConfigurationTabGroup() {
-		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void createTabs(final ILaunchConfigurationDialog dialog, final String mode) {
 		final LocalWaveformMainTab mainTab = new LocalWaveformMainTab();
