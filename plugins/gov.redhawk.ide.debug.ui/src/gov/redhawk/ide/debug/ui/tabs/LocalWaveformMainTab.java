@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.ui.tabs;
 
+import org.eclipse.core.runtime.IPath;
+
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.sad.SadPackage;
 
 /**
@@ -22,12 +25,18 @@ public class LocalWaveformMainTab extends AbstractMainTab {
 		return SadPackage.FILE_EXTENSION;
 	}
 
+	@Override
+	protected IPath getSdrDirectory() {
+		IPath domPath = SdrUiPlugin.getDefault().getTargetSdrDomPath();
+		return (domPath == null) ? null : domPath.append("waveforms");
+	}
+
 	/**
 	 * @since 3.0
 	 */
 	@Override
 	protected String getLocationLabel() {
-		return "Location of Software Assembly File (sad.xml):";
+		return "Location of Software Assembly File (sad.xml)";
 	}
 
 }

@@ -10,21 +10,25 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.ui.tabs;
 
-import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
-import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
-import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
-import gov.redhawk.sca.launch.ui.ScaUIImages;
-
 import java.io.File;
 
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab2;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,16 +37,25 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsLaunchConfigurationMessages;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+
+import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
+import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
+import gov.redhawk.sca.launch.ui.ScaUIImages;
 
 /**
  * @since 3.0
- * 
  */
 @SuppressWarnings("restriction")
 public abstract class AbstractMainTab extends ExternalToolsMainTab implements ILaunchConfigurationTab2 {
@@ -53,6 +66,11 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 
 	public AbstractMainTab() {
 		this.mainImage = ScaUIImages.DESC_MAIN_TAB.createImage();
+	}
+
+	@Override
+	public String getName() {
+		return "&Main";
 	}
 
 	@Override
@@ -95,11 +113,6 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 		// Nothing added here by default
 	}
 
-	@Override
-	protected boolean validateWorkDirectory() {
-		return true;
-	}
-
 	/**
 	 * Creates the contents of the launch group.
 	 * @param launchConfigGroup
@@ -116,6 +129,7 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 				updateLaunchConfigurationDialog();
 			}
 		});
+
 		final Label timeoutLabel = new Label(parent, SWT.None);
 		timeoutLabel.setText("Timeout:");
 		this.timeout = new Spinner(parent, SWT.BORDER);
@@ -129,7 +143,67 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 				updateLaunchConfigurationDialog();
 			}
 		});
+	}
 
+	/**
+	 * @since 3.1
+	 */
+	@Override
+	protected void handleWorkspaceLocationButtonSelected() {
+		ILabelProvider lp = new WorkbenchLabelProvider();
+		ITreeContentProvider cp = new WorkbenchContentProvider();
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), lp, cp);
+		dialog.addFilter(new ViewerFilter() {
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (!(element instanceof IFile)) {
+					return true;
+				}
+				return ((IFile) element).getName().endsWith(getProfileExtension());
+			}
+		});
+		dialog.setAllowMultiple(false);
+		dialog.setBlockOnOpen(true);
+		dialog.setTitle("Select a File");
+		dialog.setValidator(selection -> {
+			if (selection == null || selection.length != 1 || !(selection[0] instanceof IFile)) {
+				return new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Select a file");
+			}
+			return new Status(IStatus.OK, ScaDebugUiPlugin.PLUGIN_ID, "");
+		});
+		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+		dialog.open();
+		lp.dispose();
+		cp.dispose();
+
+		Object[] results = dialog.getResult();
+		if (results == null || results.length < 1) {
+			return;
+		}
+		IFile file = (IFile) results[0];
+		locationField.setText(newVariableExpression("workspace_loc", file.getFullPath().toString())); //$NON-NLS-1$
+	}
+
+	/**
+	 * @since 3.1
+	 */
+	@Override
+	protected void handleFileLocationButtonSelected() {
+		FileDialog fileDialog = new FileDialog(getShell(), SWT.NONE);
+		fileDialog.setFilterExtensions(new String[] { '*' + getProfileExtension() });
+		IPath filterPath = getSdrDirectory();
+		if (filterPath != null) {
+			fileDialog.setFilterPath(filterPath.toOSString());
+		}
+		String text = fileDialog.open();
+		if (text != null) {
+			locationField.setText(text);
+		}
+	}
+
+	@Override
+	protected boolean validateWorkDirectory() {
+		return true;
 	}
 
 	@Override
@@ -149,27 +223,6 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 		setDirty(false);
 	}
 
-	private void updateTimeout(final ILaunchConfiguration configuration) {
-		int value = ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT;
-		try {
-			value = configuration.getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT, ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
-		} catch (final CoreException e) {
-			ScaDebugUiPlugin.log(e);
-		}
-		this.timeout.setSelection(value);
-
-	}
-
-	private void updateStartButton(final ILaunchConfiguration configuration) {
-		boolean selected = false;
-		try {
-			selected = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
-		} catch (final CoreException e) {
-			ScaDebugUiPlugin.log(e);
-		}
-		this.startButton.setSelection(selected);
-	}
-
 	/**
 	 * @since 3.0
 	 */
@@ -182,6 +235,27 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_Error_reading_configuration_10, ce);
 		}
 		locationField.setText(location);
+	}
+
+	private void updateStartButton(final ILaunchConfiguration configuration) {
+		boolean selected = false;
+		try {
+			selected = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
+		} catch (final CoreException e) {
+			ScaDebugUiPlugin.log(e);
+		}
+		this.startButton.setSelection(selected);
+	}
+
+	private void updateTimeout(final ILaunchConfiguration configuration) {
+		int value = ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT;
+		try {
+			value = configuration.getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT, ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
+		} catch (final CoreException e) {
+			ScaDebugUiPlugin.log(e);
+		}
+		this.timeout.setSelection(value);
+
 	}
 
 	@Override
@@ -309,11 +383,14 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 		return manager.performStringSubstitution(expression);
 	}
 
-	@Override
-	public String getName() {
-		return "&Main";
-	}
-
 	protected abstract String getProfileExtension();
+
+	/**
+	 * @return A directory in the SDR root where files of the appropriate type can be found, or null for unspecified.
+	 * @since 3.1
+	 */
+	protected IPath getSdrDirectory() {
+		return SdrUiPlugin.getDefault().getTargetSdrPath();
+	}
 
 }

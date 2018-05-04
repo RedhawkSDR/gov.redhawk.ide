@@ -683,30 +683,8 @@ public final class StandardTestActions {
 	 * @throws CoreException
 	 */
 	public static void cleanup(SWTWorkbenchBot bot) throws CoreException {
-		final boolean[] dialogsClosed = { false };
-		while (!dialogsClosed[0]) {
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					Shell s = Display.getCurrent().getActiveShell();
-					if (s == null) {
-						dialogsClosed[0] = true;
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().forceActive();
-					} else if (s == PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()) {
-						dialogsClosed[0] = true;
-					} else {
-						s.dispose();
-					}
-				}
-
-			});
-		}
-
-		bot.closeAllShells();
-
+		bot.closeAllShells(); // SWTBot 2.6.0 or newer required
 		bot.closeAllEditors();
-
 		StandardTestActions.clearWorkspace();
 	}
 

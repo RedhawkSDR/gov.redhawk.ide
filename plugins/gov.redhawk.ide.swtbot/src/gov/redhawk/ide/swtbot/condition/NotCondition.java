@@ -41,4 +41,8 @@ public class NotCondition extends DefaultCondition {
 		return "NOT (" + invertCondition.getFailureMessage() + ")";
 	}
 
+	public static NotCondition not(ICondition invertCondition) {
+		return new NotCondition(invertCondition);
+	}
+
 }

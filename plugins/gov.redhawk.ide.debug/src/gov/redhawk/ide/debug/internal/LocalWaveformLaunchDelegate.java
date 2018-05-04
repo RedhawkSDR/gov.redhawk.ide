@@ -110,7 +110,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 
 		try {
 			final SimpleDateFormat dateFormat = new SimpleDateFormat("DDD_HHmmssSSS");
-			final LocalScaWaveform app = factory.create(sad, sad.getName() + "_" + dateFormat.format(new Date()), progress.newChild(WORK_CREATE_WAVEFORM));
+			final LocalScaWaveform app = factory.create(sad, configuration.getName() + "_" + dateFormat.format(new Date()), progress.newChild(WORK_CREATE_WAVEFORM));
 
 			boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 			if (start) {

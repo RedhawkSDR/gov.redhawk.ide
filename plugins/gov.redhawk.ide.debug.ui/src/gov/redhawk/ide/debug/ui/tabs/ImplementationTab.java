@@ -1,18 +1,14 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
 package gov.redhawk.ide.debug.ui.tabs;
-
-import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
-import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
-import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,22 +16,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.sad.HostCollocation;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentPlacement;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
-
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -59,27 +47,47 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-/**
- * 
- */
+import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
+import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
+import gov.redhawk.sca.launch.ui.ScaLauncherActivator;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.sad.HostCollocation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentPlacement;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
+
 public class ImplementationTab extends AbstractLaunchConfigurationTab {
 
 	private static final ImageDescriptor IMAGE_DESC = AbstractUIPlugin.imageDescriptorFromPlugin(ScaDebugUiPlugin.PLUGIN_ID,
-	        "icons/obj16/implementationTab.gif");
+		"icons/obj16/implementationTab.gif");
 
-	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] {
-	        PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-	        PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF,
-	        PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-	        PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG,
-	};
+	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
+		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG, };
 
 	private Image image;
-	private SoftwareAssembly sad;
 	private TableViewer viewer;
 	private SpdItemProviderAdapterFactory adapterFactory = new SpdItemProviderAdapterFactory();
+
 	/**
-	 * < instantiation_id, implementation_id >
+	 * The SAD XML model
+	 * <p/>
+	 * Contains the results from the last time {@link #loadSadAndImpls(ILaunchConfiguration)} was called. It should
+	 * never be assumed to hold the "current" mappings unless it was just loaded.
+	 */
+	private SoftwareAssembly sad;
+
+	/**
+	 * SAD component instantiation ID -> SPD implementation ID
+	 * <p/>
+	 * Contains the results from the last time {@link #loadSadAndImpls(ILaunchConfiguration)} was called. It should
+	 * never be assumed to hold the "current" mappings unless it was just loaded.
 	 */
 	private final Map<String, String> implMap = new HashMap<String, String>();
 
@@ -90,10 +98,15 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 	@Override
 	public void dispose() {
 		this.image.dispose();
+		this.image = null;
 		this.adapterFactory.dispose();
 		this.adapterFactory = null;
-		this.image = null;
 		super.dispose();
+	}
+
+	@Override
+	public String getName() {
+		return "&Implementation";
 	}
 
 	@Override
@@ -101,16 +114,6 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 		return this.image;
 	}
 
-	public void setSoftwareAssembly(final SoftwareAssembly sad) {
-		this.sad = sad;
-		if (this.viewer != null) {
-			this.viewer.setInput(sad);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void createControl(final Composite parent) {
 		final Composite composite = new Composite(parent, SWT.NONE);
@@ -127,12 +130,10 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 
 			@Override
 			public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-
 			}
 
 			@Override
 			public void dispose() {
-
 			}
 
 			@Override
@@ -153,7 +154,6 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 				return new Object[0];
 			}
 		});
-		this.viewer.setInput(this.sad);
 
 		final TableViewerColumn componentColumn = new TableViewerColumn(this.viewer, SWT.CENTER);
 		componentColumn.getColumn().setText("Instantiation");
@@ -164,7 +164,7 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 				return ci.getUsageName();
 			}
 		}));
-		layout.addColumnData(new ColumnWeightData(20, 20, true)); //SUPPRESS CHECKSTYLE MagicNumber
+		layout.addColumnData(new ColumnWeightData(20, 20, true));
 
 		final TableViewerColumn implColumn = new TableViewerColumn(this.viewer, SWT.CENTER);
 		implColumn.getColumn().setText("Implementation");
@@ -229,7 +229,7 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 				return true;
 			}
 		});
-		layout.addColumnData(new ColumnWeightData(100, 20, true)); //SUPPRESS CHECKSTYLE MagicNumber
+		layout.addColumnData(new ColumnWeightData(100, 20, true));
 
 	}
 
@@ -255,84 +255,72 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setDefaults(final ILaunchConfigurationWorkingCopy configuration) {
-		Map<String, String> emptyMap = Collections.emptyMap();
-		configuration.setAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS, emptyMap);
-		if (this.viewer != null) {
-			this.viewer.refresh();
-		}
+		configuration.removeAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void initializeFrom(final ILaunchConfiguration configuration) {
-		updateSoftwareAssembly(configuration);
-		updateImplementations(configuration);
-		if (this.viewer != null) {
-			this.viewer.refresh();
-		}
-	}
-
-	@Override
-	public boolean canSave() {
-		return this.sad != null && super.canSave();
-	}
-
-	@Override
-	public boolean isValid(final ILaunchConfiguration launchConfig) {
-		if (this.sad == null) {
-			setErrorMessage("Invalid Software Assembly");
-			return false;
-		}
-		setErrorMessage(null);
-		return super.isValid(launchConfig);
-	}
-
-	private void updateSoftwareAssembly(final ILaunchConfiguration configuration) {
 		try {
-			URI sadUri = ScaLaunchConfigurationUtil.getProfileURI(configuration);
-			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-			final Resource resource = resourceSet.getResource(sadUri, true);
-			setSoftwareAssembly(SoftwareAssembly.Util.getSoftwareAssembly(resource));
-		} catch (final CoreException e) {
-			setSoftwareAssembly(null);
-			ScaDebugUiPlugin.log(e);
-		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Error
-			setSoftwareAssembly(null);
-			ScaDebugUiPlugin.log(e);
+			loadSadAndImpls(configuration);
+		} catch (CoreException e) {
+			// PASS - Handled in isValid(ILaunchConfiguration)
 		}
+		this.viewer.setInput(this.sad);
 	}
 
-	@SuppressWarnings("unchecked")
-	private void updateImplementations(final ILaunchConfiguration configuration) {
-		this.implMap.clear();
-		try {
-			this.implMap.putAll(configuration.getAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS, (Map<String, String>) Collections.EMPTY_MAP));
-		} catch (final CoreException e) {
-			ScaDebugUiPlugin.log(e);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void performApply(final ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS, this.implMap);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public String getName() {
-		return "&Implementation";
+	public boolean isValid(final ILaunchConfiguration launchConfig) {
+		try {
+			loadSadAndImpls(launchConfig);
+			setWarningMessage(null);
+			setErrorMessage(null);
+			return true;
+		} catch (CoreException e) {
+			if (e.getStatus().getSeverity() == IStatus.WARNING) {
+				setWarningMessage(e.getMessage());
+			} else {
+				setErrorMessage(e.getMessage());
+			}
+			return false;
+		}
 	}
 
+	/**
+	 * Loads the SAD XML into {@link #sad} and what implementations should be used for each instantiation in
+	 * {@link #implMap}.
+	 * @param configuration The configuration to load
+	 * @throws CoreException An error occurs while loading.
+	 */
+	private void loadSadAndImpls(final ILaunchConfiguration configuration) throws CoreException {
+		this.sad = null;
+		this.implMap.clear();
+
+		try {
+			URI sadUri = ScaLaunchConfigurationUtil.getProfileURI(configuration);
+			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+			final Resource resource = resourceSet.getResource(sadUri, true);
+			sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
+		} catch (WrappedException e) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Unable to load SAD file", e));
+		}
+
+		Map<String, String> emptyMap = Collections.emptyMap();
+		this.implMap.putAll(configuration.getAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS, emptyMap));
+	}
+
+	/**
+	 * @deprecated Do not call. No effect.
+	 */
+	@Deprecated
+	public void setSoftwareAssembly(final SoftwareAssembly sad) {
+		ScaLauncherActivator.getDefault().getLog().log(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID,
+			"The method gov.redhawk.ide.debug.ui.tabs.ImplementationTab.setSoftwareAssembly(SoftwareAssembly) is deprecated. Do not use."));
+	}
 }
