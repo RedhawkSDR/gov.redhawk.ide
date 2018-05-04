@@ -681,57 +681,9 @@ public final class StandardTestActions {
 	 * @throws CoreException
 	 */
 	public static void cleanup(SWTWorkbenchBot bot) throws CoreException {
-		final boolean[] dialogsClosed = { false };
-		while (!dialogsClosed[0]) {
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					Shell s = Display.getCurrent().getActiveShell();
-					if (s == null) {
-						dialogsClosed[0] = true;
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().forceActive();
-					} else if (s == PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()) {
-						dialogsClosed[0] = true;
-					} else {
-						s.dispose();
-					}
-				}
-
-			});
-		}
-
-		closeAllShells(bot);
-
+		bot.closeAllShells(); // SWTBot 2.6.0 or newer required
 		bot.closeAllEditors();
-
 		StandardTestActions.clearWorkspace();
-	}
-
-	/**
-	 * This method provides similar results to {@link SWTWorkbenchBot#closeAllShells()}, except that it avoids closing
-	 * the "limbo" shell which is used to by Eclipse to re-parent controls that are hidden. Closing the limbo shell
-	 * appears to be a bug in the SWTBot code, and definitely causes Eclipse to spew lots of errors when the visibility
-	 * state of things is changed.
-	 * @param bot
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=475346
-	 */
-	private static void closeAllShells(SWTWorkbenchBot bot) {
-		RunnableWithResult<Shell> getShellRunnable = new RunnableWithResult.Impl<Shell>() {
-			@Override
-			public void run() {
-				setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-			}
-		};
-		bot.getDisplay().syncExec(getShellRunnable);
-		Shell activeWorkbenchWindowShell = getShellRunnable.getResult();
-
-		SWTBotShell[] shells = bot.shells();
-		for (SWTBotShell shell : shells) {
-			if (activeWorkbenchWindowShell != shell.widget && !shell.toString().contains("PartRenderingEngine's limbo")) {
-				shell.close();
-			}
-		}
 	}
 
 	/**
