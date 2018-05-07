@@ -17,7 +17,7 @@ import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 
 /**
- * 
+ * Label provider for the SCA debug model. Used by the REDHAWK Explorer common navigator.
  */
 public class ScaDebugLabelProvider extends ScaLabelProvider {
 

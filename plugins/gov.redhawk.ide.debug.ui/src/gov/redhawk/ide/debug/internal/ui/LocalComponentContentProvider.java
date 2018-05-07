@@ -10,6 +10,17 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.progress.UIJob;
+
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPackage;
@@ -22,17 +33,6 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.ScaPlugin;
 import gov.redhawk.sca.ui.ScaContentProvider;
 import gov.redhawk.sca.util.PluginUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.ecore.util.EContentAdapter;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * This content provider contributes children ({@link gov.redhawk.ide.debug.LocalScaComponent LocalScaComponent}s) to
@@ -93,14 +93,9 @@ public class LocalComponentContentProvider extends ScaContentProvider {
 	 */
 	public LocalComponentContentProvider() {
 		super(ScaDebugContentProvider.createAdapterFactory());
-		final ScaDebugPlugin activator = ScaDebugPlugin.getInstance();
-		localSca = activator.getLocalSca();
-		ScaModelCommand.execute(localSca, new ScaModelCommand() {
-
-			@Override
-			public void execute() {
-				localSca.eAdapters().add(listener);
-			}
+		localSca = ScaDebugPlugin.getInstance().getLocalSca();
+		ScaModelCommand.execute(localSca, () -> {
+			localSca.eAdapters().add(listener);
 		});
 	}
 
@@ -111,12 +106,8 @@ public class LocalComponentContentProvider extends ScaContentProvider {
 	 */
 	@Override
 	public void dispose() {
-		ScaModelCommand.execute(localSca, new ScaModelCommand() {
-
-			@Override
-			public void execute() {
-				localSca.eAdapters().remove(listener);
-			}
+		ScaModelCommand.execute(localSca, () -> {
+			localSca.eAdapters().remove(listener);
 		});
 		super.dispose();
 	}
@@ -141,7 +132,8 @@ public class LocalComponentContentProvider extends ScaContentProvider {
 
 	@Override
 	public boolean hasChildren(Object object) {
-		return true;
+		// We don't perform an in-depth check, just a quick check on type
+		return object instanceof ScaWaveform;
 	}
 
 	@Override
@@ -158,32 +150,32 @@ public class LocalComponentContentProvider extends ScaContentProvider {
 	 */
 	@Override
 	public Object[] getChildren(Object object) {
-		if (object instanceof LocalScaWaveform) {
-			return new Object[0];
-		}
 		if (object instanceof ScaWaveform) {
+			// Look for a matching local waveform
 			ScaWaveform remoteWaveform = (ScaWaveform) object;
-
-			for (ScaWaveform waveform : localSca.getWaveforms()) {
-				List<ScaComponent> components = new ArrayList<ScaComponent>();
-				if (PluginUtil.equals(waveform.getIdentifier(), remoteWaveform.getIdentifier())) {
-					for (ScaComponent comp : waveform.getComponents()) {
-						boolean found = false;
+			for (ScaWaveform localWaveform : localSca.getWaveforms()) {
+				if (PluginUtil.equals(localWaveform.getIdentifier(), remoteWaveform.getIdentifier())) {
+					// Create a list of the locally-launched components (excluding the remote ones)
+					List<ScaComponent> componentsToAdd = new ArrayList<ScaComponent>();
+					nextComponent: for (ScaComponent localComponent : localWaveform.getComponents()) {
 						for (ScaComponent remoteComponent : remoteWaveform.getComponents()) {
-							if (PluginUtil.equals(remoteComponent.getInstantiationIdentifier(), comp.getInstantiationIdentifier())) {
-								found = true;
-								break;
+							if (PluginUtil.equals(remoteComponent.getInstantiationIdentifier(), localComponent.getInstantiationIdentifier())) {
+								continue nextComponent;
 							}
 						}
-						if (!found) {
-							components.add(comp);
-						}
+						componentsToAdd.add(localComponent);
 					}
-					return components.toArray();
+
+					return componentsToAdd.toArray();
 				}
 			}
+
+			// No matching local waveform
+			return new Object[0];
+		} else {
+			// We don't provide children for this object
+			return new Object[0];
 		}
-		return new Object[0];
 	}
 
 }
