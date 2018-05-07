@@ -108,13 +108,14 @@
             sortOnly="false">
          <triggerPoints>
             <and>
-               <not>
-                  <instanceof
-                        value="gov.redhawk.ide.debug.LocalScaWaveform">
-                  </instanceof></not>
                <instanceof
                      value="gov.redhawk.model.sca.ScaWaveform">
                </instanceof>
+               <not>
+                  <instanceof
+                        value="gov.redhawk.ide.debug.LocalScaWaveform">
+                  </instanceof>
+               </not>
             </and>
          </triggerPoints>
          <possibleChildren>
