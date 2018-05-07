@@ -48,9 +48,14 @@
             providesSaveables="false"
             sortOnly="false">
          <triggerPoints>
-            <instanceof
-                  value="gov.redhawk.model.sca.ScaDomainManagerRegistry">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="gov.redhawk.model.sca.ScaDomainManagerRegistry">
+               </instanceof>
+               <instanceof
+                     value="gov.redhawk.ide.debug.LocalScaComponent">
+               </instanceof>
+            </or>
          </triggerPoints>
          <possibleChildren>
             <and>
