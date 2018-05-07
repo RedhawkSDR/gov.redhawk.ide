@@ -29,7 +29,7 @@
                   pattern="gov.redhawk.ide.debug.internal.ui.LocalScaViewerSorter">
             </contentExtension>
             <contentExtension
-                  isRoot="true"
+                  isRoot="false"
                   pattern="gov.redhawk.ide.debug.ui.navigatorContent.components">
             </contentExtension>
          </includes>

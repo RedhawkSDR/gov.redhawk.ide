@@ -146,7 +146,8 @@ public class LocalComponentContentProvider extends ScaContentProvider {
 
 	@Override
 	public Object[] getElements(Object object) {
-		return getChildren(object);
+		// No root elements contributed
+		return new Object[0];
 	}
 
 	/**
