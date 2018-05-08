@@ -10,23 +10,16 @@
  *******************************************************************************/
 package gov.redhawk.ide.builders;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import mil.jpeojtrs.sca.validator.AdvancedEObjectValidator;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.util.Diagnostic;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EValidator;
@@ -38,6 +31,9 @@ import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
+import org.xml.sax.SAXParseException;
+
+import mil.jpeojtrs.sca.validator.AdvancedEObjectValidator;
 
 /**
  * Utility class for propagating EMF Validation errors to the Problems View.
@@ -48,10 +44,6 @@ public enum SCAMarkerUtil {
 
 	public static final String VALIDATION_MARKER_TYPE = "gov.redhawk.ide.emf.validation.problem"; //$NON-NLS-1$
 	public static final String RULE_ATTRIBUTE = "rule"; //$NON-NLS-1$
-
-	private static final String PLATFORM_SCHEME = "platform"; //$NON-NLS-1$
-	private static final String FILE_SCHEME = "file"; //$NON-NLS-1$
-	private static final String RESOURCE_SEGMENT = "resource"; //$NON-NLS-1$
 
 	private final Diagnostician diagnostician = new Diagnostician() {
 		@Override
@@ -68,7 +60,6 @@ public enum SCAMarkerUtil {
 	};
 
 	private final ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
-	private final Map<URI, IFile> visitedResources = new HashMap<URI, IFile>();
 
 	/**
 	 * Constructor.
@@ -76,52 +67,6 @@ public enum SCAMarkerUtil {
 	private SCAMarkerUtil() {
 		this.adapterFactory.addAdapterFactory(new ResourceItemProviderAdapterFactory());
 		this.adapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
-	}
-
-	/**
-	 * Returns an IFile for the specified resource.
-	 * 
-	 * @param resource
-	 *            the resource to
-	 * @return a cached IFile if it exists, otherwise gets file from workspace
-	 *         root based on uri
-	 * @throws CoreException
-	 */
-	private IFile getFile(final Resource resource) throws CoreException {
-		URI uri = resource.getURI();
-
-		// Normalize the URI to something that we can deal with like file or
-		// platform scheme
-		uri = resource.getResourceSet().getURIConverter().normalize(uri);
-
-		IFile file = this.visitedResources.get(uri);
-
-		if (file == null) {
-			if (SCAMarkerUtil.PLATFORM_SCHEME.equals(uri.scheme()) && uri.segmentCount() > 1 && SCAMarkerUtil.RESOURCE_SEGMENT.equals(uri.segment(0))) {
-				final StringBuffer platformResourcePath = new StringBuffer();
-				for (int j = 1, size = uri.segmentCount(); j < size; ++j) {
-					platformResourcePath.append('/');
-					platformResourcePath.append(URI.decode(uri.segment(j)));
-				}
-
-				file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformResourcePath.toString()));
-			} else if (SCAMarkerUtil.FILE_SCHEME.equals(uri.scheme())) {
-				final StringBuffer fileResourcePath = new StringBuffer();
-				for (int j = 1, size = uri.segmentCount(); j < size; ++j) {
-					fileResourcePath.append('/');
-					fileResourcePath.append(URI.decode(uri.segment(j)));
-				}
-
-				file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileResourcePath.toString()));
-			}
-
-			if (file != null) {
-				file.deleteMarkers(SCAMarkerUtil.VALIDATION_MARKER_TYPE, true, IResource.DEPTH_ZERO);
-				this.visitedResources.put(uri, file);
-			}
-		}
-
-		return file;
 	}
 
 	private AdapterFactory getAdapterFactory() {
@@ -137,7 +82,6 @@ public enum SCAMarkerUtil {
 	 * @throws CoreException
 	 */
 	private void createMarker(final IFile file, final Resource resource, final Diagnostic diagnostic) throws CoreException {
-
 		final IMarker marker = file.createMarker(SCAMarkerUtil.VALIDATION_MARKER_TYPE);
 
 		switch (diagnostic.getSeverity()) {
@@ -157,10 +101,11 @@ public enum SCAMarkerUtil {
 		default:
 			break;
 		}
+
 		marker.setAttribute(IMarker.SOURCE_ID, diagnostic.getSource());
 		marker.setAttribute(IMarker.PROBLEM, diagnostic.getCode());
-
 		marker.setAttribute(IMarker.MESSAGE, diagnostic.getMessage());
+
 		if (diagnostic.getData().size() > 0 && diagnostic.getData().get(0) instanceof EObject) {
 			marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI((EObject) diagnostic.getData().get(0)).toString());
 			if (diagnostic.getData().size() > 1 && diagnostic.getData().get(1) instanceof EStructuralFeature) {
@@ -195,24 +140,43 @@ public enum SCAMarkerUtil {
 	/**
 	 * Creates markers for the specified diagnostic and resource.
 	 * 
-	 * @param eResource
-	 *            the Resource to create markers for
-	 * @param diagnostic
-	 *            the Diagnostic to process
+	 * @param eResource the Resource to create markers for
+	 * @param diagnostic the Diagnostic to process
 	 * @throws CoreException
 	 */
-	public void createMarkers(final Resource eResource, final Diagnostic diagnostic) throws CoreException {
-		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(final IProgressMonitor m) throws CoreException {
-				final IFile file = getFile(eResource);
-				if (file != null) {
-					file.deleteMarkers(SCAMarkerUtil.VALIDATION_MARKER_TYPE, true, IResource.DEPTH_ZERO);
-					analyzeDiagnostic(file, eResource, diagnostic);
-				}
+	public void createMarkers(final Resource resource, final Diagnostic diagnostic) throws CoreException {
+		String platformString = resource.getURI().toPlatformString(true);
+		if (platformString == null) {
+			return;
+		}
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
+
+		ResourcesPlugin.getWorkspace().run(monitor -> {
+			file.deleteMarkers(SCAMarkerUtil.VALIDATION_MARKER_TYPE, true, IResource.DEPTH_ZERO);
+			analyzeDiagnostic(file, resource, diagnostic);
+		}, new NullProgressMonitor());
+	}
+
+	/**
+	 * Create a single marker for an exception that occurred while attempting to load a file.
+	 * @param file
+	 * @param throwable
+	 * @since 6.2
+	 */
+	public void createMarker(IFile file, Throwable throwable) throws CoreException {
+		ResourcesPlugin.getWorkspace().run(monitor -> {
+			file.deleteMarkers(SCAMarkerUtil.VALIDATION_MARKER_TYPE, true, IResource.DEPTH_ZERO);
+
+			IMarker marker = file.createMarker(SCAMarkerUtil.VALIDATION_MARKER_TYPE);
+			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+			marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+			marker.setAttribute(IMarker.MESSAGE, throwable.getLocalizedMessage());
+			if (throwable instanceof SAXParseException) {
+				SAXParseException saxParseEx = (SAXParseException) throwable;
+				marker.setAttribute(IMarker.LINE_NUMBER, saxParseEx.getLineNumber());
+				marker.setAttribute(IMarker.CHAR_END, saxParseEx.getColumnNumber());
 			}
-		};
-		ResourcesPlugin.getWorkspace().run(runnable, null);
+		}, new NullProgressMonitor());
 	}
 
 	/**
