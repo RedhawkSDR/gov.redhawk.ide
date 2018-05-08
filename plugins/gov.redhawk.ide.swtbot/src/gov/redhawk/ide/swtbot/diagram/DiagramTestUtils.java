@@ -99,19 +99,19 @@ public class DiagramTestUtils {
 	 * @param part - part to be delete from diagram
 	 */
 	public static void deleteFromDiagram(SWTBotGefEditor editor, SWTBotGefEditPart part) {
-		part.select();
+		part.click();
 		editor.clickContextMenu("Delete");
 		SWTUtils.sleep(DELAY_MS);
 	}
 
 	public static void releaseFromDiagram(SWTBotGefEditor editor, SWTBotGefEditPart part) {
-		part.select();
+		part.click();
 		editor.clickContextMenu("Release");
 		SWTUtils.sleep(DELAY_MS);
 	}
 
 	public static void terminateFromDiagram(SWTBotGefEditor editor, SWTBotGefEditPart part) {
-		part.select();
+		part.click();
 		editor.clickContextMenu("Terminate");
 		SWTUtils.sleep(DELAY_MS);
 	}
@@ -295,7 +295,7 @@ public class DiagramTestUtils {
 	public static void showConnectionWizardForUsesPort(SWTBotGefEditor editor, String componentName, String portName) {
 		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
 		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
-		usesPortAnchor.select();
+		usesPortAnchor.click().select();
 		editor.clickContextMenu("Connect");
 	}
 
@@ -308,7 +308,7 @@ public class DiagramTestUtils {
 	public static void showConnectionWizardForProvidesPort(SWTBotGefEditor editor, String componentName, String portName) {
 		final SWTBotGefEditPart providesPort = getDiagramProvidesPort(editor, componentName, portName);
 		final SWTBotGefEditPart providesPortAnchor = getDiagramPortAnchor(providesPort);
-		providesPortAnchor.select();
+		providesPortAnchor.click().select();
 		editor.clickContextMenu("Connect");
 	}
 
@@ -541,7 +541,7 @@ public class DiagramTestUtils {
 	public static void plotPortDataOnComponentPort(SWTBotGefEditor editor, String componentName, String portName) {
 		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
 		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
-		usesPortAnchor.select();
+		usesPortAnchor.click().select();
 		editor.clickContextMenu("Plot Port Data");
 	}
 
@@ -554,7 +554,7 @@ public class DiagramTestUtils {
 	public static void playPortDataOnComponentPort(SWTBotGefEditor editor, String componentName, String portName) {
 		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
 		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
-		usesPortAnchor.select();
+		usesPortAnchor.click().select();
 		editor.clickContextMenu("Play Port");
 	}
 
@@ -567,7 +567,7 @@ public class DiagramTestUtils {
 	public static void displaySRIDataOnComponentPort(SWTBotGefEditor editor, String componentName, String portName) {
 		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
 		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
-		usesPortAnchor.select();
+		usesPortAnchor.click().select();
 		editor.clickContextMenu("Display SRI");
 	}
 
@@ -580,7 +580,7 @@ public class DiagramTestUtils {
 	public static void displayDataListViewOnComponentPort(SWTBotGefEditor editor, String componentName, String portName) {
 		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
 		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
-		usesPortAnchor.select();
+		usesPortAnchor.click().select();
 		editor.clickContextMenu("Data List");
 	}
 
@@ -593,7 +593,7 @@ public class DiagramTestUtils {
 	public static void displaySnapshotDialogOnComponentPort(SWTBotGefEditor editor, String componentName, String portName) {
 		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
 		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
-		usesPortAnchor.select();
+		usesPortAnchor.click().select();
 		editor.clickContextMenu("Snapshot");
 	}
 
@@ -605,7 +605,7 @@ public class DiagramTestUtils {
 	 */
 	public static void displayPortMonitorView(SWTBotGefEditor editor, String componentName) {
 		editor.setFocus();
-		editor.getEditPart(componentName).select();
+		editor.getEditPart(componentName).click();
 		editor.clickContextMenu("Monitor Ports");
 	}
 
@@ -619,7 +619,7 @@ public class DiagramTestUtils {
 	public static void displayPortMonitorViewOnUsesPort(SWTBotGefEditor editor, String componentName, String portName) {
 		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
 		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
-		usesPortAnchor.select();
+		usesPortAnchor.click().select();
 		editor.clickContextMenu("Monitor Ports");
 	}
 
@@ -641,38 +641,33 @@ public class DiagramTestUtils {
 	 * @return Returns SWTBotGefEditPart for the specified provides port, or null if none found
 	 */
 	public static SWTBotGefEditPart getDiagramProvidesPort(SWTBotGefEditor editor, String componentName, String portName) {
+		// Find component
 		SWTBotGefEditPart componentEditPart = editor.getEditPart(componentName);
+		Assert.assertNotNull(componentEditPart);
 
 		for (SWTBotGefEditPart child : componentEditPart.children()) {
 			ContainerShape containerShape = (ContainerShape) child.part().getModel();
 			Object bo = DUtil.getBusinessObject(containerShape);
-
-			// We're looking for the container of the provides ports (ProvidesPortStub). It will have all provides
-			// ports as its model objects.
 			if (bo == null || !(bo instanceof ProvidesPortStub)) {
 				continue;
 			}
 
-			List<SWTBotGefEditPart> providesPortsEditParts = child.children();
-			for (SWTBotGefEditPart portEditPart : providesPortsEditParts) {
+			// For each provides port in the provides port container
+			for (SWTBotGefEditPart portEditPart : child.children()) {
 				// If no port name was supplied, return edit part for first provides port
 				if (portName == null) {
 					return portEditPart;
 				}
 
-				// Other wise, check for a matching port name
-				if (portEditPart.part().getModel() instanceof ContainerShape) {
-					Object businessObject = DUtil.getBusinessObject((ContainerShape) portEditPart.part().getModel());
-					if (businessObject instanceof ProvidesPortStub) {
-						ProvidesPortStub portStub = (ProvidesPortStub) businessObject;
-						if (portName != null && portName.equals(portStub.getName())) {
-							return portEditPart;
-						}
-					}
+				// Otherwise check for a matching port name
+				ProvidesPortStub portStub = DUtil.getBusinessObject((PictogramElement) portEditPart.part().getModel(), ProvidesPortStub.class);
+				if (portStub != null && portName.equals(portStub.getName())) {
+					return portEditPart;
 				}
 			}
+			Assert.fail("Unable to find provides port " + portName + " for component " + componentName);
 		}
-		// If you get here, no matching provides port was found
+		Assert.fail("Cannot find provides port container of " + componentName);
 		return null;
 	}
 
@@ -684,19 +679,17 @@ public class DiagramTestUtils {
 	 */
 	public static SWTBotGefEditPart getDiagramProvidesSuperPort(SWTBotGefEditor editor, String componentName) {
 		SWTBotGefEditPart componentEditPart = editor.getEditPart(componentName);
+		Assert.assertNotNull(componentEditPart);
 
 		for (SWTBotGefEditPart child : componentEditPart.children()) {
 			ContainerShape containerShape = (ContainerShape) child.part().getModel();
 			Object bo = DUtil.getBusinessObject(containerShape);
-
-			// Only return objects of type ProvidesPortStub
-			if (bo == null || !(bo instanceof ProvidesPortStub || bo instanceof ComponentSupportedInterfaceStub)) {
+			if (!(bo instanceof ProvidesPortStub || bo instanceof ComponentSupportedInterfaceStub)) {
 				continue;
 			}
 
 			List<SWTBotGefEditPart> providesPortsEditParts = child.children();
-			if (providesPortsEditParts != null && providesPortsEditParts.size() > 0
-				&& providesPortsEditParts.get(0).part().getModel() instanceof FixPointAnchor) {
+			if (providesPortsEditParts.size() > 0 && providesPortsEditParts.get(0).part().getModel() instanceof FixPointAnchor) {
 				return providesPortsEditParts.get(0);
 			}
 		}
@@ -722,36 +715,35 @@ public class DiagramTestUtils {
 	 * @return Returns SWTBotGefEditPart for the specified uses port, or null if none found
 	 */
 	public static SWTBotGefEditPart getDiagramUsesPort(SWTBotGefEditor editor, String componentName, String portName) {
+		// Find component
 		SWTBotGefEditPart componentEditPart = editor.getEditPart(componentName);
 		Assert.assertNotNull(componentEditPart);
+
+		// For each child
 		for (SWTBotGefEditPart child : componentEditPart.children()) {
+			// Is this the uses port container?
 			ContainerShape containerShape = (ContainerShape) child.part().getModel();
 			Object bo = DUtil.getBusinessObject(containerShape);
-
-			// Only return objects of type UsesPortStub
-			if (bo == null || !(bo instanceof UsesPortStub)) {
+			if (!(bo instanceof UsesPortStub)) {
 				continue;
 			}
 
-			List<SWTBotGefEditPart> usesPortsEditParts = child.children();
-			for (SWTBotGefEditPart portEditPart : usesPortsEditParts) {
-				// If no port name was supplied, return edit part for first provides port
+			// For each uses port in the uses port container
+			for (SWTBotGefEditPart portEditPart : child.children()) {
+				// If no port name was supplied, return edit part for first uses port
 				if (portName == null) {
 					return portEditPart;
 				}
 
-				// Other wise, check for a matching port name
-				if (portEditPart.part().getModel() instanceof ContainerShape) {
-					Object businessObject = DUtil.getBusinessObject((ContainerShape) portEditPart.part().getModel());
-					if (businessObject instanceof UsesPortStub) {
-						UsesPortStub portStub = (UsesPortStub) businessObject;
-						if (portName != null && portName.equals(portStub.getName())) {
-							return portEditPart;
-						}
-					}
+				// Otherwise check for a matching port name
+				UsesPortStub portStub = DUtil.getBusinessObject((PictogramElement) portEditPart.part().getModel(), UsesPortStub.class);
+				if (portStub != null && portName.equals(portStub.getName())) {
+					return portEditPart;
 				}
 			}
+			Assert.fail("Unable to find uses port " + portName + " for component " + componentName);
 		}
+		Assert.fail("Cannot find uses port container of " + componentName);
 		return null;
 	}
 
@@ -764,17 +756,16 @@ public class DiagramTestUtils {
 	public static SWTBotGefEditPart getDiagramUsesSuperPort(SWTBotGefEditor editor, String componentName) {
 		SWTBotGefEditPart componentEditPart = editor.getEditPart(componentName);
 		Assert.assertNotNull(componentEditPart);
+
 		for (SWTBotGefEditPart child : componentEditPart.children()) {
 			ContainerShape containerShape = (ContainerShape) child.part().getModel();
 			Object bo = DUtil.getBusinessObject(containerShape);
-
-			// Only return objects of type UsesPortStub
-			if (bo == null || !(bo instanceof UsesPortStub)) {
+			if (!(bo instanceof UsesPortStub)) {
 				continue;
 			}
 
 			List<SWTBotGefEditPart> usesPortsEditParts = child.children();
-			if (usesPortsEditParts != null && usesPortsEditParts.size() > 0 && usesPortsEditParts.get(0).part().getModel() instanceof FixPointAnchor) {
+			if (usesPortsEditParts.size() > 0 && usesPortsEditParts.get(0).part().getModel() instanceof FixPointAnchor) {
 				return usesPortsEditParts.get(0);
 			}
 		}
@@ -949,7 +940,7 @@ public class DiagramTestUtils {
 	public static void startComponentFromDiagram(SWTBotGefEditor editor, String componentName) {
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
-		componentPart.select();
+		componentPart.click();
 		editor.clickContextMenu("Start");
 	}
 
@@ -960,7 +951,7 @@ public class DiagramTestUtils {
 	public static void stopComponentFromDiagram(SWTBotGefEditor editor, String componentName) {
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
-		componentPart.select();
+		componentPart.click();
 		editor.clickContextMenu("Stop");
 	}
 
@@ -972,8 +963,7 @@ public class DiagramTestUtils {
 	public static void changeLogLevelFromDiagram(SWTBotGefEditor editor, String componentName, LogLevels logLevel) {
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
-		componentPart.select();
-		// editor.clickContextMenu("Logging");
+		componentPart.click();
 		editor.clickContextMenu("Log Level");
 
 		final SWTBot editorBot = editor.bot();
@@ -994,8 +984,7 @@ public class DiagramTestUtils {
 	public static void confirmLogLevelFromDiagram(SWTBotGefEditor editor, String componentName, LogLevels logLevel) {
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
-		componentPart.select();
-		// editor.clickContextMenu("Logging");
+		componentPart.click();
 		editor.clickContextMenu("Log Level");
 
 		final SWTBot editorBot = editor.bot();
@@ -1167,7 +1156,7 @@ public class DiagramTestUtils {
 	public static boolean hasContentMenuItem(SWTBotGefEditor editor, String componentName, String menuItem) {
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
-		componentPart.select();
+		componentPart.click();
 		boolean foundMenuItem;
 		try {
 			editor.clickContextMenu(menuItem);
@@ -1181,7 +1170,7 @@ public class DiagramTestUtils {
 	public static void tailLog(RHBotGefEditor editor, String componentName, String logger, LogLevels logLevel) {
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
-		componentPart.select();
+		componentPart.click();
 		editor.clickContextMenu("Tail Log");
 
 		SWTBotShell shell = editor.bot().shell("View log for " + componentName);
@@ -1198,7 +1187,7 @@ public class DiagramTestUtils {
 	 */
 	public static void showConsole(SWTBotGefEditor editor, String componentName) {
 		editor.setFocus();
-		editor.getEditPart(componentName).select();
+		editor.getEditPart(componentName).click();
 		editor.clickContextMenu("Show Console");
 	}
 
@@ -1208,7 +1197,7 @@ public class DiagramTestUtils {
 	 * @param componentName
 	 */
 	public static void showProperties(SWTBotGefEditor editor, String componentName) {
-		editor.getEditPart(componentName).select();
+		editor.getEditPart(componentName).click();
 		editor.clickContextMenu("Show Properties");
 	}
 
@@ -1220,7 +1209,7 @@ public class DiagramTestUtils {
 	public static void showProperties(SWTBotGefEditor editor, String componentName, String portName) {
 		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
 		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
-		usesPortAnchor.select();
+		usesPortAnchor.click();
 		editor.clickContextMenu("Show Properties");
 	}
 }
