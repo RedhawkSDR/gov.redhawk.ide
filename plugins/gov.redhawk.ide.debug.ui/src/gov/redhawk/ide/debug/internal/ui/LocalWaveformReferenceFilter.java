@@ -10,27 +10,21 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui;
 
-import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
-
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+
 /**
- * 
+ * A viewer filter that excludes {@link LocalScaWaveform} without a launch (that are proxying a remote domain
+ * waveform).
  */
 public class LocalWaveformReferenceFilter extends ViewerFilter {
 
-	/**
-	 * 
-	 */
 	public LocalWaveformReferenceFilter() {
-		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof LocalScaWaveform) {

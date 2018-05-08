@@ -29,7 +29,7 @@
                   pattern="gov.redhawk.ide.debug.internal.ui.LocalScaViewerSorter">
             </contentExtension>
             <contentExtension
-                  isRoot="true"
+                  isRoot="false"
                   pattern="gov.redhawk.ide.debug.ui.navigatorContent.components">
             </contentExtension>
          </includes>
@@ -48,9 +48,14 @@
             providesSaveables="false"
             sortOnly="false">
          <triggerPoints>
-            <instanceof
-                  value="gov.redhawk.model.sca.ScaDomainManagerRegistry">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="gov.redhawk.model.sca.ScaDomainManagerRegistry">
+               </instanceof>
+               <instanceof
+                     value="gov.redhawk.ide.debug.LocalScaComponent">
+               </instanceof>
+            </or>
          </triggerPoints>
          <possibleChildren>
             <and>
@@ -108,13 +113,14 @@
             sortOnly="false">
          <triggerPoints>
             <and>
-               <not>
-                  <instanceof
-                        value="gov.redhawk.ide.debug.LocalScaWaveform">
-                  </instanceof></not>
                <instanceof
                      value="gov.redhawk.model.sca.ScaWaveform">
                </instanceof>
+               <not>
+                  <instanceof
+                        value="gov.redhawk.ide.debug.LocalScaWaveform">
+                  </instanceof>
+               </not>
             </and>
          </triggerPoints>
          <possibleChildren>
