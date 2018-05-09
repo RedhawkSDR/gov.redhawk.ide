@@ -10,15 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.builders;
 
-import gov.redhawk.ide.natures.ScaProjectNature;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-
-import mil.jpeojtrs.sca.dcd.DcdPackage;
-import mil.jpeojtrs.sca.prf.PrfPackage;
-import mil.jpeojtrs.sca.sad.SadPackage;
-import mil.jpeojtrs.sca.scd.ScdPackage;
-import mil.jpeojtrs.sca.spd.SpdPackage;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -35,15 +29,26 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+
+import gov.redhawk.ide.natures.ScaProjectNature;
+import mil.jpeojtrs.sca.dcd.DcdPackage;
+import mil.jpeojtrs.sca.prf.PrfPackage;
+import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.scd.ScdPackage;
+import mil.jpeojtrs.sca.spd.SpdPackage;
 
 public class SCABuilder extends IncrementalProjectBuilder {
 
 	/** The ID of this project builder. */
 	public static final String ID = "gov.redhawk.ide.builders.scaproject";
 
+	/**
+	 * Determines if the delta contains SCA XML files.
+	 */
 	private class DeltaVisitor implements IResourceDeltaVisitor {
 
 		private boolean shouldVisit = false;
@@ -74,7 +79,12 @@ public class SCABuilder extends IncrementalProjectBuilder {
 
 	}
 
-	private class SCABuildVisitor implements IResourceVisitor {
+	/**
+	 * Collects a list of SCA XML files.
+	 */
+	private class SCAVisitor implements IResourceVisitor {
+
+		private List<IFile> xmlFiles = new ArrayList<>();
 
 		@Override
 		public boolean visit(final IResource resource) throws CoreException {
@@ -87,30 +97,18 @@ public class SCABuilder extends IncrementalProjectBuilder {
 			}
 
 			if (resource instanceof IFile) {
-				// see if this is it
-				final IFile candidate = (IFile) resource;
-				if (isScaResource(candidate)) {
-					final URI uri = URI.createPlatformResourceURI(resource.getFullPath().toString(), false);
-					if (uri != null) {
-						final ResourceSet set = new ResourceSetImpl();
-						final Resource eResource = set.getResource(uri, true);
-						final Diagnostic diagnostic = SCAMarkerUtil.INSTANCE.getDiagnostician().validate(eResource.getEObject("/"));
-						SCAMarkerUtil.INSTANCE.createMarkers(eResource, diagnostic);
-					}
+				final IFile file = (IFile) resource;
+				if (isScaResource(file)) {
+					xmlFiles.add(file);
 				}
 			}
 			return false;
 		}
-
 	}
 
 	public SCABuilder() {
-
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected IProject[] build(final int kind, @SuppressWarnings("rawtypes") final Map args, final IProgressMonitor monitor) throws CoreException {
 		IResourceDelta delta = null;
@@ -137,7 +135,32 @@ public class SCABuilder extends IncrementalProjectBuilder {
 	}
 
 	private void fullBuild(final IProgressMonitor monitor) throws CoreException {
-		getProject().accept(new SCABuildVisitor());
+		// Collect list of XML files
+		SCAVisitor visitor = new SCAVisitor();
+		getProject().accept(visitor);
+
+		// For each XML file
+		SubMonitor progress = SubMonitor.convert(monitor, visitor.xmlFiles.size() * 2);
+		for (IFile file : visitor.xmlFiles) {
+			// Load EMF resource
+			final URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
+			ResourceSet set = new ResourceSetImpl();
+			Resource eResource;
+			try {
+				eResource = set.getResource(uri, true);
+				progress.worked(1);
+			} catch (WrappedException e) {
+				SCAMarkerUtil.INSTANCE.createMarker(file, e.getCause());
+				continue;
+			}
+
+			// Perform diagnostics
+			Diagnostic diagnostic = SCAMarkerUtil.INSTANCE.getDiagnostician().validate(eResource.getEObject("/"));
+			progress.worked(1);
+
+			// Record markers
+			SCAMarkerUtil.INSTANCE.createMarkers(eResource, diagnostic);
+		}
 	}
 
 	/**
@@ -186,6 +209,6 @@ public class SCABuilder extends IncrementalProjectBuilder {
 	protected boolean isScaResource(final IFile resource) {
 		final String name = resource.getName();
 		return name.endsWith(SpdPackage.FILE_EXTENSION) || name.endsWith(PrfPackage.FILE_EXTENSION) || name.endsWith(ScdPackage.FILE_EXTENSION)
-		        || name.endsWith(SadPackage.FILE_EXTENSION) || name.endsWith(DcdPackage.FILE_EXTENSION);
+			|| name.endsWith(SadPackage.FILE_EXTENSION) || name.endsWith(DcdPackage.FILE_EXTENSION);
 	}
 }
