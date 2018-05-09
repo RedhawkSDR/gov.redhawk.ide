@@ -161,7 +161,7 @@ public enum SCAMarkerUtil {
 	 * Create a single marker for an exception that occurred while attempting to load a file.
 	 * @param file
 	 * @param throwable
-	 * @since 6.2
+	 * @since 7.0
 	 */
 	public void createMarker(IFile file, Throwable throwable) throws CoreException {
 		ResourcesPlugin.getWorkspace().run(monitor -> {
