@@ -43,7 +43,7 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
  * Provides the "Overview" page in the SAD editor.
  */
 public class SadOverviewPage extends AbstractOverviewPage {
- 
+
 	public static final String PAGE_ID = "sadEditorOverviewPage"; //$NON-NLS-1$
 	private static final String TOOLBAR_ID = "gov.redhawk.ide.sad.internal.ui.editor.overview.toolbar"; //$NON-NLS-1$
 	private GeneralInfoSection fInfoSection;
@@ -118,7 +118,7 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		managedForm.addPart(this.fInfoSection);
 		this.fInfoSection.refresh(getInput());
 	}
-	
+
 	private void createWaveformOptionsSection(final IManagedForm managedForm, final Composite left, final FormToolkit toolkit) {
 		this.waveformOptionsSection = new WaveformOptionsSection(this, left);
 		managedForm.addPart(this.waveformOptionsSection);
@@ -148,9 +148,15 @@ public class SadOverviewPage extends AbstractOverviewPage {
 	}
 
 	private void launch(final String mode) {
+		SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(this.getEditor().getMainResource());
+		if (sad == null) {
+			final Status status = new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "The SAD file has XML errors that prevent it from being loaded");
+			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
+			return;
+		}
+
 		try {
-			ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(
-				SoftwareAssembly.Util.getSoftwareAssembly(this.getEditor().getMainResource()), getEditorSite().getShell());
+			ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(sad, getEditorSite().getShell());
 			if (getEditor().getMainResource().getURI().isPlatform()) {
 				ILaunchConfiguration[] oldConfigs = LaunchUtil.findLaunchConfigurations(newConfig);
 				ILaunchConfiguration config = null;

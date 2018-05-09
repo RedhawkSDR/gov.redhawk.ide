@@ -158,9 +158,12 @@ public final class LaunchUtil {
 	}
 
 	public static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final SoftPkg spd, Shell shell) throws CoreException {
-		if (spd.getImplementation().isEmpty()) {
-			return null;
+		if (spd == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "SPD file is null"));
+		} else if (spd.getImplementation().isEmpty()) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "No implementations found in SPD file"));
 		}
+
 		if (spd.getImplementation().size() == 1) {
 			final Implementation impl = spd.getImplementation().get(0);
 			return LaunchUtil.createLaunchConfiguration(impl);
