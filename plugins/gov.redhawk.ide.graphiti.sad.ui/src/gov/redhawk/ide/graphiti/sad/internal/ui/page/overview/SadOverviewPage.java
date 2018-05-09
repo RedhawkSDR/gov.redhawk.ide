@@ -10,15 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.internal.ui.page.overview;
 
-import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.ide.debug.ui.LaunchUtil;
-import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
-import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
-import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.ui.editor.AbstractOverviewPage;
-import gov.redhawk.ui.editor.SCAFormEditor;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -38,6 +29,15 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import gov.redhawk.common.ui.editor.FormLayoutFactory;
+import gov.redhawk.ide.debug.ui.LaunchUtil;
+import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
+import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
+import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.ui.editor.AbstractOverviewPage;
+import gov.redhawk.ui.editor.SCAFormEditor;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 public class SadOverviewPage extends AbstractOverviewPage {
 
@@ -60,7 +60,7 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		// TODO form.setImage();
 		form.setText("Overview");
 		fillBody(managedForm, toolkit);
-		
+
 		final ToolBarManager manager = (ToolBarManager) form.getToolBarManager();
 		final IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
 		service.populateContributionManager(manager, "toolbar:" + SadOverviewPage.TOOLBAR_ID);
@@ -128,8 +128,15 @@ public class SadOverviewPage extends AbstractOverviewPage {
 	}
 
 	private void launch(final String mode) {
+		SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(this.getEditor().getMainResource());
+		if (sad == null) {
+			final Status status = new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "The SAD file has XML errors that prevent it from being loaded");
+			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
+			return;
+		}
+
 		try {
-			ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(SoftwareAssembly.Util.getSoftwareAssembly(this.getEditor().getMainResource()), getEditorSite().getShell());
+			ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(sad, getEditorSite().getShell());
 			if (getEditor().getMainResource().getURI().isPlatform()) {
 				ILaunchConfiguration[] oldConfigs = LaunchUtil.findLaunchConfigurations(newConfig);
 				ILaunchConfiguration config = null;
