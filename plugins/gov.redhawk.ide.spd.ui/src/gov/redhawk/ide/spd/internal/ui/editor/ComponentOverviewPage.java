@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -243,8 +244,15 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	}
 
 	private void launch(final String mode) {
+		SoftPkg spd = SoftPkg.Util.getSoftPkg(spdResource);
+		if (spd == null) {
+			final Status status = new Status(IStatus.ERROR, ComponentUiPlugin.PLUGIN_ID, "The SPD file has XML errors that prevent it from being loaded");
+			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
+			return;
+		}
+
 		try {
-			ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(SoftPkg.Util.getSoftPkg(spdResource), getEditorSite().getShell());
+			ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(spd, getEditorSite().getShell());
 			if (spdResource.getURI().isPlatform()) {
 				ILaunchConfiguration config = LaunchUtil.chooseConfiguration(mode, LaunchUtil.findLaunchConfigurations(newConfig), getEditorSite().getShell());
 				if (config == null) {
