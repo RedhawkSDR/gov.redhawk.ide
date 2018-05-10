@@ -40,6 +40,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.RunnableWithResult;
@@ -1588,8 +1589,14 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 
 		// Load SPD
-		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
+		SoftPkg spd;
+		try {
+			ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+			spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
+		} catch (WrappedException e) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Unable to load SPD file for for " + spdURI, e.getCause()));
+		}
+
 		if (mode == null) {
 			mode = ILaunchManager.RUN_MODE;
 		}

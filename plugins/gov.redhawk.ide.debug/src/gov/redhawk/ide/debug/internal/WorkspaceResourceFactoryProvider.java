@@ -36,11 +36,11 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.URI;
@@ -57,6 +57,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 	private static final MutexRule RULE = new MutexRule(WorkspaceResourceFactoryProvider.class);
 	private static final String WORKSPACE_CATEGORY = "Workspace";
 	private static final Debug TRACE_LOGGER = new Debug(ScaModelPlugin.ID, "WorkspaceResourceFactoryProvider");
+
 	private final IResourceChangeListener listener = new IResourceChangeListener() {
 
 		@Override
@@ -64,66 +65,62 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 			if (disposed) {
 				return;
 			}
-			try {
-				if (event.getResource() == null || !WorkspaceResourceFactoryProvider.shouldVisit(event.getResource().getProject())) {
-					return;
-				}
-			} catch (final CoreException e1) {
-				return;
-			}
-			switch (event.getType()) {
-			case IResourceChangeEvent.PRE_REFRESH:
-			case IResourceChangeEvent.POST_CHANGE:
 
-				if (event.getResource() instanceof IFile) {
-					final IFile file = (IFile) event.getResource();
-					if (file.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-						addSpdResource(file);
-					}
-				} else if (event.getResource() instanceof IProject) {
-					final IProject project = (IProject) event.getResource();
-					try {
-						for (final IResource resource : project.members()) {
-							if (resource instanceof IFile) {
-								final IFile file = (IFile) resource;
-								if (resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-									addSpdResource(file);
-								}
+			switch (event.getType()) {
+			case IResourceChangeEvent.POST_CHANGE:
+				try {
+					event.getDelta().accept(delta -> {
+						IResource resource = delta.getResource();
+						if (resource instanceof IWorkspaceRoot) {
+							return true;
+						} else if (resource instanceof IProject) {
+							return WorkspaceResourceFactoryProvider.shouldVisit((IProject) resource);
+						} else if (resource instanceof IFile && resource.getName().endsWith(SpdPackage.FILE_EXTENSION)
+							&& resource.getParent() instanceof IProject) {
+							switch (delta.getKind()) {
+							case IResourceDelta.ADDED:
+							case IResourceDelta.CHANGED:
+								addSpd((IFile) resource);
+								break;
+							case IResourceDelta.REMOVED:
+								removeSpd((IFile) resource);
+								break;
+							default:
+								break;
 							}
 						}
-					} catch (CoreException e) {
-						ScaDebugPlugin.getInstance().getLog().log(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-							"Failed to search project contents for new resources to add: " + event.getResource().getFullPath(), e));
-					}
+						return false;
+					});
+				} catch (CoreException e) {
+					ScaDebugPlugin.logWarning("Exception while handling changed resources", e);
 				}
 				break;
-
 			case IResourceChangeEvent.PRE_CLOSE:
 			case IResourceChangeEvent.PRE_DELETE:
-				if (event.getResource() instanceof IFile) {
-					removeComponent((IFile) event.getResource());
-				} else if (event.getResource() instanceof IProject) {
-					final IProject project = (IProject) event.getResource();
-					try {
-						for (final IResource resource : project.members()) {
-							if (resource instanceof IFile) {
-								final IFile file = (IFile) resource;
-								if (resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-									removeComponent(file);
-								}
+				// Entire project about to be closed or deleted
+				final IProject project = (IProject) event.getResource();
+				try {
+					if (project == null || !WorkspaceResourceFactoryProvider.shouldVisit(project)) {
+						return;
+					}
+					for (final IResource resource : project.members()) {
+						if (resource instanceof IFile) {
+							final IFile file = (IFile) resource;
+							if (resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
+								removeSpd(file);
 							}
 						}
-					} catch (final CoreException e) {
-						// PASS
 					}
+				} catch (final CoreException e) {
+					ScaDebugPlugin.logWarning("Exception while listing project members", e);
 				}
 				break;
 			default:
 				break;
 			}
-
 		}
 	};
+
 	private final Map<IFile, ResourceDesc> componentMap = Collections.synchronizedMap(new HashMap<IFile, ResourceDesc>());
 	private boolean disposed;
 
@@ -138,7 +135,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 					} else if (resource instanceof IProject) {
 						return WorkspaceResourceFactoryProvider.shouldVisit((IProject) resource);
 					} else if (resource instanceof IFile && resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-						addSpdResource((IFile) resource);
+						addSpd((IFile) resource);
 					}
 					return false;
 				}
@@ -148,7 +145,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 				new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Error while to creating WorkspaceResourceFactoryProvider", e));
 		}
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this.listener,
-			IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_REFRESH);
+			IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
 	}
 
 	private SoftPkg loadSpd(IFile resource) {
@@ -165,10 +162,10 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 		}
 	}
 
-	private void addSpdResource(final IFile resource) {
+	private void addSpd(final IFile resource) {
 		if (componentMap.containsKey(resource)) {
 			// Remove old component previously mapped
-			removeComponent(resource);
+			removeSpd(resource);
 		}
 
 		SoftPkg spd = loadSpd(resource);
@@ -189,7 +186,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 		addResourceDesc(desc);
 	}
 
-	private void removeComponent(final IFile resource) {
+	private void removeSpd(final IFile resource) {
 		final ResourceDesc desc = this.componentMap.remove(resource);
 		if (desc != null) {
 			removeResourceDesc(desc);
