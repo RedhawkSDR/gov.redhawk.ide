@@ -14,9 +14,19 @@
 
    <extension
          point="org.eclipse.help.toc">
-      <tocProvider
-            class="gov.redhawk.ide.help.RedhawkTocProvider">
-      </tocProvider>
+      <toc
+            extradir="/gov.redhawk.ide.help/html/manual"
+            file="manual_toc.xml"
+            primary="true">
+      </toc>
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            extradir="/gov.redhawk.ide.help/html/getting-started"
+            file="getting_started_toc.xml"
+            primary="false">
+      </toc>
    </extension>
 
 </plugin>
