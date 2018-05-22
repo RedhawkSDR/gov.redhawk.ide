@@ -11,9 +11,7 @@
 -->
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="REDHAWK" topic="html/index.html">
-   <topic href="html/getting-started/index.html" label="Getting Started">
-   </topic>
-   <topic href="html/manual/index.html" label="REDHAWK Manual">
+<toc label="Getting Started (ANCHOR ONLY)" link_to="./manual_toc.xml#premanual">
+   <topic href="html/getting-started/index.html" label="Getting Started With REDHAWK">
    </topic>
 </toc>
