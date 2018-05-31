@@ -8,9 +8,12 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  */
-package gov.redhawk.ide.snapshot.tests.bits;
+package gov.redhawk.ide.snapshot.tests.writer.internal.helpers;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import org.junit.Assert;
 
 import BULKIO.BitSequence;
 import BULKIO.PrecisionUTCTime;
@@ -18,14 +21,28 @@ import BULKIO.StreamSRI;
 import BULKIO.TCM_CPU;
 import BULKIO.TCS_VALID;
 import CF.DataType;
+import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.ide.snapshot.writer.IDataWriter;
+import nxm.sys.lib.Data;
 
-public class AbstractBitTest {
+public class BitTestHelper implements ITestHelper {
 
-	protected static final byte[] EXPECTED_BITS = new byte[] { (byte) 0b10101010, (byte) 0b11111111, 0b00000000, (byte) 0b10101010, (byte) 0b11100110, 0b01010000 };
-	protected static final int TOTAL_SAMPLES = 45;
+	public static final byte[] EXPECTED_BITS = new byte[] { (byte) 0b10101010, (byte) 0b11111111, 0b00000000, (byte) 0b10101010, (byte) 0b11100110,
+		0b01010000 };
+	private static final int TOTAL_SAMPLES = 45;
 
-	protected void write(IDataWriter writer) throws IOException {
+	@Override
+	public BulkIOType getType() {
+		return BulkIOType.BIT;
+	}
+
+	@Override
+	public int getSampleCount() {
+		return TOTAL_SAMPLES;
+	}
+
+	@Override
+	public void write(IDataWriter writer) throws IOException {
 		// Write a sequence of various-sized bit buffers
 		final String streamID = "abc";
 		writer.pushSRI(new StreamSRI(1, 0, 0.1, BULKIO.UNITS_TIME.value, 0, 0, 0, BULKIO.UNITS_NONE.value, (short) 0, streamID, true, new DataType[0]));
@@ -48,9 +65,19 @@ public class AbstractBitTest {
 		writer.close();
 	}
 
-	private PrecisionUTCTime createTime(int sampleOffset) {
+	private static PrecisionUTCTime createTime(int sampleOffset) {
 		double timeSec = sampleOffset * 0.1;
 		return new PrecisionUTCTime(TCM_CPU.value, TCS_VALID.value, 0, (int) timeSec, timeSec - (int) timeSec);
+	}
+
+	@Override
+	public void assertData(Data data) {
+		Assert.fail("This method isn't used for bits");
+	}
+
+	@Override
+	public void assertData(ByteBuffer buffer) {
+		Assert.assertArrayEquals(EXPECTED_BITS, buffer.array());
 	}
 
 }

@@ -58,6 +58,8 @@ public abstract class BinDataWriter extends BaseDataWriter {
 		IDataWriterSettings settings = getSettings();
 		if (settings.getType() == BulkIOType.BIT) {
 			bitStream = new BitStream();
+		} else {
+			bitStream = null;
 		}
 		if (settings instanceof BinDataWriterSettings) {
 			BinDataWriterSettings binSettings = (BinDataWriterSettings) settings;
@@ -191,11 +193,14 @@ public abstract class BinDataWriter extends BaseDataWriter {
 	public void close() throws IOException {
 		setOpen(false);
 		if (fileChannel != null) {
-			// Write any left over bits
-			BitSequence finalBits = bitStream.getFinalBits();
-			if (finalBits.bits > 0) {
-				fileChannel.write(ByteBuffer.wrap(finalBits.data, 0, 1));
-				numSamples += finalBits.bits;
+			// Write any left over bits (if applicable)
+			if (bitStream != null) {
+				BitSequence finalBits = bitStream.getFinalBits();
+				if (finalBits.bits > 0) {
+					fileChannel.write(ByteBuffer.wrap(finalBits.data, 0, 1));
+					numSamples += finalBits.bits;
+				}
+				bitStream = null;
 			}
 
 			saveMetaData();

@@ -85,6 +85,8 @@ public class BlueDataWriter extends BaseDataWriter {
 			// however that due to NeXtMidas's preference for LSB0, it appears to incorrectly read the bits in the
 			// final byte if that byte isn't fully packed. X-Midas doesn't have this problem.
 			df.setDataRep((ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN) ? "EEEI" : "IEEE");
+		} else {
+			bitStream = null;
 		}
 		df.setXStart(currentSRI.xstart);
 		df.setXDelta(currentSRI.xdelta);
@@ -201,11 +203,14 @@ public class BlueDataWriter extends BaseDataWriter {
 
 	@Override
 	public void close() throws IOException {
-		// Write any left over bits
-		BitSequence finalBits = bitStream.getFinalBits();
-		if (finalBits.bits > 0) {
-			df.write(finalBits.data, 0, 1);
-			df.setSize(df.getOffset() - (8 - finalBits.bits));
+		if (bitStream != null) {
+			// Write any left over bits
+			BitSequence finalBits = bitStream.getFinalBits();
+			if (finalBits.bits > 0) {
+				df.write(finalBits.data, 0, 1);
+				df.setSize(df.getOffset() - (8 - finalBits.bits));
+			}
+			finalBits = null;
 		}
 
 		if (df != null) {
