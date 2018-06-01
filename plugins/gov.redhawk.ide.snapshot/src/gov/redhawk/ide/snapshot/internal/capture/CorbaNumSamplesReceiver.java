@@ -68,7 +68,11 @@ public class CorbaNumSamplesReceiver extends CorbaDataReceiver {
 			int sampleSize = (streamSri.mode == 1) ? 2 : 1;
 			int receivedSamples = length / sampleSize;
 			int samplesToProcess = (int) Math.min(receivedSamples, this.samples - currentSamples);
-			return BufferCopy.copyOf(data, dataClass, samplesToProcess * sampleSize);
+			if (samplesToProcess == length) {
+				return data;
+			} else {
+				return BufferCopy.copyOf(data, dataClass, samplesToProcess * sampleSize);
+			}
 		} else {
 			return BufferCopy.copyOf(data, dataClass, 0);
 		}
