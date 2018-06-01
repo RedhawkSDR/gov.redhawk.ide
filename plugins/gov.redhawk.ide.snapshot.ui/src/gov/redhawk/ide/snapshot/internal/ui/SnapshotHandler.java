@@ -11,7 +11,7 @@
 package gov.redhawk.ide.snapshot.internal.ui;
 
 import gov.redhawk.bulkio.util.BulkIOType;
-import gov.redhawk.ide.snapshot.internal.capture.CorbaDataReceiver;
+import gov.redhawk.ide.snapshot.capture.IScaPortReceiver;
 import gov.redhawk.ide.snapshot.ui.BulkIOSnapshotWizard;
 import gov.redhawk.ide.snapshot.ui.SnapshotUI;
 import gov.redhawk.ide.snapshot.ui.SnapshotJob;
@@ -91,7 +91,7 @@ public class SnapshotHandler extends AbstractHandler {
 				wizard.setPort(port);
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				if (dialog.open() == Window.OK) {
-					CorbaDataReceiver receiver = wizard.getCorbaReceiver();
+					IScaPortReceiver receiver = wizard.getCorbaReceiver();
 					receiver.setPort(port);
 					receiver.getDataWriter().getSettings().setType(BulkIOType.getType(port.getRepid()));
 

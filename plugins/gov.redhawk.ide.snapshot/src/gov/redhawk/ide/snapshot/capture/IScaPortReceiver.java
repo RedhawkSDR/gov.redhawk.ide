@@ -10,20 +10,16 @@
  */
 package gov.redhawk.ide.snapshot.capture;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import gov.redhawk.model.sca.ScaUsesPort;
 
-import gov.redhawk.ide.snapshot.writer.IDataWriter;
+public interface IScaPortReceiver extends IDataReceiver {
 
-/**
- * Interface for data receiver instances used by snapshot.
- */
-public interface IDataReceiver {
+	ScaUsesPort getPort();
 
-	IDataWriter getDataWriter();
+	void setPort(ScaUsesPort port);
 
-	void setDataWriter(IDataWriter writer);
+	String getConnectionID();
 
-	IStatus run(IProgressMonitor monitor);
+	void setConnectionID(String connectionID);
 
 }

@@ -12,18 +12,13 @@ package gov.redhawk.ide.snapshot.ui;
 
 import java.util.Map;
 
-import gov.redhawk.ide.snapshot.internal.capture.CorbaDataReceiver;
-import gov.redhawk.ide.snapshot.internal.capture.CorbaNumSamplesReceiver;
-import gov.redhawk.ide.snapshot.internal.capture.CorbaSignalTimeReceiver;
-import gov.redhawk.ide.snapshot.internal.capture.CorbaSystemTimeReceiver;
+import gov.redhawk.ide.snapshot.capture.DataReceiverFactory;
+import gov.redhawk.ide.snapshot.capture.IScaPortReceiver;
 import gov.redhawk.model.sca.ScaUsesPort;
 
-/**
- *
- */
 public class BulkIOSnapshotWizard extends SnapshotWizard {
 
-	private CorbaDataReceiver corbaReceiver;
+	private IScaPortReceiver corbaReceiver;
 	private BulkIOSnapshotWizardPage bulkIOPage;
 	private ScaUsesPort port;
 
@@ -47,7 +42,7 @@ public class BulkIOSnapshotWizard extends SnapshotWizard {
 	/**
 	 * @since 3.0
 	 */
-	public CorbaDataReceiver getCorbaReceiver() {
+	public IScaPortReceiver getCorbaReceiver() {
 		return this.corbaReceiver;
 	}
 
@@ -60,19 +55,16 @@ public class BulkIOSnapshotWizard extends SnapshotWizard {
 			bulkIOPage.saveWidgetValues(bulkIOSettings);
 			switch (method) {
 			case CLOCK_TIME:
-				corbaReceiver = new CorbaSystemTimeReceiver();
-				((CorbaSystemTimeReceiver) corbaReceiver).setTimeInSeconds(bulkIOSettings.getSamples());
+				corbaReceiver = DataReceiverFactory.createWallClockTimeReceiver(bulkIOSettings.getSamples());
 				break;
 			case INDEFINITELY:
-				corbaReceiver = new CorbaDataReceiver();
+				corbaReceiver = DataReceiverFactory.createReceiver();
 				break;
 			case NUM_SAMPLES:
-				corbaReceiver = new CorbaNumSamplesReceiver();
-				((CorbaNumSamplesReceiver) corbaReceiver).setSamples((long) bulkIOSettings.getSamples());
+				corbaReceiver = DataReceiverFactory.createSamplesReceiver((long) bulkIOSettings.getSamples());
 				break;
 			case SAMPLE_TIME:
-				corbaReceiver = new CorbaSignalTimeReceiver();
-				((CorbaSignalTimeReceiver) corbaReceiver).setTimeInSeconds(bulkIOSettings.getSamples());
+				corbaReceiver = DataReceiverFactory.createSampleTimeReceiver(bulkIOSettings.getSamples());
 				break;
 			default:
 				throw new IllegalStateException("Unknown capture type: " + method);

@@ -14,7 +14,7 @@ import gov.redhawk.bulkio.util.AbstractUberBulkIOPort;
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.bulkio.util.BulkIOUtilActivator;
 import gov.redhawk.ide.snapshot.SnapshotActivator;
-import gov.redhawk.ide.snapshot.capture.IDataReceiver;
+import gov.redhawk.ide.snapshot.capture.IScaPortReceiver;
 import gov.redhawk.ide.snapshot.writer.IDataWriter;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.sca.util.SubMonitor;
@@ -31,7 +31,7 @@ import BULKIO.BitSequence;
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
 
-public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataReceiver {
+public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IScaPortReceiver {
 
 	private IDataWriter writer;
 	private IOException exception;
