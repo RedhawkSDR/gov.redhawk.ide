@@ -28,6 +28,5 @@ Require-Bundle: gov.redhawk.ide.snapshot;bundle-version="1.0.0",
  gov.redhawk.ui;bundle-version="7.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: gov.redhawk.ide.snapshot.capture,
- gov.redhawk.ide.snapshot.ui
+Export-Package: gov.redhawk.ide.snapshot.ui
 Automatic-Module-Name: gov.redhawk.ide.snapshot.ui

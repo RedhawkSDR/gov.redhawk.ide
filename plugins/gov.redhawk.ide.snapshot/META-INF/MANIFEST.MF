@@ -14,10 +14,12 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  gov.redhawk.bulkio.util;bundle-version="2.1.3",
  nxm.sys,
- mil.jpeojtrs.sca.util
+ mil.jpeojtrs.sca.util,
+ gov.redhawk.sca.model
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: BULKIO;version="2.1.3"
 Export-Package: gov.redhawk.ide.snapshot,
+ gov.redhawk.ide.snapshot.capture,
  gov.redhawk.ide.snapshot.writer
 Automatic-Module-Name: gov.redhawk.ide.snapshot

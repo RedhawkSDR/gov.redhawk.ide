@@ -13,8 +13,8 @@ package gov.redhawk.ide.snapshot.internal.capture;
 import gov.redhawk.bulkio.util.AbstractUberBulkIOPort;
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.bulkio.util.BulkIOUtilActivator;
+import gov.redhawk.ide.snapshot.SnapshotActivator;
 import gov.redhawk.ide.snapshot.capture.IDataReceiver;
-import gov.redhawk.ide.snapshot.ui.SnapshotUI;
 import gov.redhawk.ide.snapshot.writer.IDataWriter;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.sca.util.SubMonitor;
@@ -88,7 +88,7 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 		try {
 			connect(child);
 		} catch (CoreException e) {
-			return new Status(e.getStatus().getSeverity(), SnapshotUI.PLUGIN_ID, e.getLocalizedMessage(), e);
+			return new Status(e.getStatus().getSeverity(), SnapshotActivator.PLUGIN_ID, e.getLocalizedMessage(), e);
 		}
 
 		child = subMonitor.newChild(5);
@@ -96,7 +96,7 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 			open(child);
 			processSamples(subMonitor.newChild(80));
 		} catch (IOException e) {
-			return new Status(Status.ERROR, SnapshotUI.PLUGIN_ID, "Error during open", e);
+			return new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Error during open", e);
 		} finally {
 			child = subMonitor.newChild(5);
 			disconnect(child);
@@ -104,7 +104,7 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 			try {
 				close(child);
 			} catch (IOException e) {
-				return new Status(Status.ERROR, SnapshotUI.PLUGIN_ID, "Error during close", e);
+				return new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Error during close", e);
 			}
 			subMonitor.done();
 		}
