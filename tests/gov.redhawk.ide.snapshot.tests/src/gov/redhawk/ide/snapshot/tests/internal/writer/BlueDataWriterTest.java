@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  */
-package gov.redhawk.ide.snapshot.tests.writer.internal;
+package gov.redhawk.ide.snapshot.tests.internal.writer;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,17 +22,17 @@ import org.junit.Test;
 
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.ide.snapshot.SnapshotActivator;
-import gov.redhawk.ide.snapshot.tests.writer.internal.helpers.BitTestHelper;
-import gov.redhawk.ide.snapshot.tests.writer.internal.helpers.DoubleTestHelper;
-import gov.redhawk.ide.snapshot.tests.writer.internal.helpers.FloatTestHelper;
-import gov.redhawk.ide.snapshot.tests.writer.internal.helpers.ITestHelper;
-import gov.redhawk.ide.snapshot.tests.writer.internal.helpers.LongLongTestHelper;
-import gov.redhawk.ide.snapshot.tests.writer.internal.helpers.LongTestHelper;
-import gov.redhawk.ide.snapshot.tests.writer.internal.helpers.OctetTestHelper;
-import gov.redhawk.ide.snapshot.tests.writer.internal.helpers.ShortTestHelper;
-import gov.redhawk.ide.snapshot.tests.writer.internal.helpers.ULongLongTestHelper;
-import gov.redhawk.ide.snapshot.tests.writer.internal.helpers.ULongTestHelper;
-import gov.redhawk.ide.snapshot.tests.writer.internal.helpers.UShortTestHelper;
+import gov.redhawk.ide.snapshot.tests.internal.writer.helpers.BitTestHelper;
+import gov.redhawk.ide.snapshot.tests.internal.writer.helpers.DoubleTestHelper;
+import gov.redhawk.ide.snapshot.tests.internal.writer.helpers.FloatTestHelper;
+import gov.redhawk.ide.snapshot.tests.internal.writer.helpers.ITestHelper;
+import gov.redhawk.ide.snapshot.tests.internal.writer.helpers.LongLongTestHelper;
+import gov.redhawk.ide.snapshot.tests.internal.writer.helpers.LongTestHelper;
+import gov.redhawk.ide.snapshot.tests.internal.writer.helpers.OctetTestHelper;
+import gov.redhawk.ide.snapshot.tests.internal.writer.helpers.ShortTestHelper;
+import gov.redhawk.ide.snapshot.tests.internal.writer.helpers.ULongLongTestHelper;
+import gov.redhawk.ide.snapshot.tests.internal.writer.helpers.ULongTestHelper;
+import gov.redhawk.ide.snapshot.tests.internal.writer.helpers.UShortTestHelper;
 import gov.redhawk.ide.snapshot.writer.IDataWriter;
 import gov.redhawk.ide.snapshot.writer.IDataWriterDesc;
 import gov.redhawk.ide.snapshot.writer.IDataWriterSettings;

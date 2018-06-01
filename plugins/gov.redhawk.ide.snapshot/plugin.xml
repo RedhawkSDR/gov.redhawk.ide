@@ -5,19 +5,19 @@
    <extension
          point="gov.redhawk.ide.snapshot.writers">
       <writer
-            class="gov.redhawk.ide.snapshot.writer.internal.BinXMLDataWriter"
+            class="gov.redhawk.ide.snapshot.internal.writer.BinXMLDataWriter"
             id="gov.redhawk.ide.snapshot.writer.BinXMLDataWriter"
             name="Binary files (.bin and .xml)"
-            settings="gov.redhawk.ide.snapshot.writer.internal.BinDataWriterSettings">
+            settings="gov.redhawk.ide.snapshot.internal.writer.BinDataWriterSettings">
       </writer>
       <writer
-            class="gov.redhawk.ide.snapshot.writer.internal.BinSriDataWriter"
+            class="gov.redhawk.ide.snapshot.internal.writer.BinSriDataWriter"
             id="gov.redhawk.ide.snapshot.writer.BinSriDataWriter"
             name="Binary files (.bin and .sri)"
-            settings="gov.redhawk.ide.snapshot.writer.internal.BinDataWriterSettings">
+            settings="gov.redhawk.ide.snapshot.internal.writer.BinDataWriterSettings">
       </writer>
       <writer
-            class="gov.redhawk.ide.snapshot.writer.internal.BlueDataWriter"
+            class="gov.redhawk.ide.snapshot.internal.writer.BlueDataWriter"
             id="gov.redhawk.ide.snapshot.writer.BlueDataWriter"
             name="Midas BLUE file (.tmp)">
       </writer>

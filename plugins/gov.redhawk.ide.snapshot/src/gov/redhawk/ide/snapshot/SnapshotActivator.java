@@ -13,8 +13,8 @@ package gov.redhawk.ide.snapshot;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import gov.redhawk.ide.snapshot.internal.writer.DataWriterRegistry;
 import gov.redhawk.ide.snapshot.writer.IDataWriterRegistry;
-import gov.redhawk.ide.snapshot.writer.internal.DataWriterRegistry;
 
 /**
  * @since 1.0

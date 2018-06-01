@@ -8,13 +8,13 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  */
-package gov.redhawk.ide.snapshot.tests.writer.internal;
+package gov.redhawk.ide.snapshot.tests.internal.writer;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import BULKIO.BitSequence;
-import gov.redhawk.ide.snapshot.writer.internal.BitStream;
+import gov.redhawk.ide.snapshot.internal.writer.BitStream;
 
 public class BitStreamTest {
 
