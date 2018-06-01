@@ -5,8 +5,8 @@ Bundle-SymbolicName: gov.redhawk.ide.snapshot.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: REDHAWK
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Fragment-Host: gov.redhawk.ide.snapshot;bundle-version="1.0.0"
 Require-Bundle: org.eclipse.core.runtime,
- gov.redhawk.ide.snapshot;bundle-version="1.0.0",
  org.junit,
  gov.redhawk.bulkio.util,
  nxm.sys

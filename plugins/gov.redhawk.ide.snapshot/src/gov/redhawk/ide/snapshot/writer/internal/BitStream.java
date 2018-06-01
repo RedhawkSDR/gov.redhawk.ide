@@ -47,17 +47,26 @@ public class BitStream {
 			newBufferBitLen = data.bits;
 			newBuffer = data.data;
 		} else {
+			// Create a new buffer which can hold the left over bits plus the new ones
 			newBufferBitLen = data.bits + leftoverBitLen;
 			newBuffer = new byte[newBufferBitLen / 8 + 1];
 			newBuffer[0] = leftoverBits;
+
+			// upperBitsMask is used to take bits from the upper portion (MSB -> x) of a byte in data. These get shifted
+			// right (down) and put in newBuffer.
 			int upperBitsMask = (1 << (8 - leftoverBitLen)) - 1;
+
+			// lowerBitsShift is used to take bits from the lower portion (x -> LSB) of a byte in data, shift them left
+			// (up) and put them in newBuffer.
 			int lowerBitsShift = 8 - leftoverBitLen;
+
+			// Shift bits
 			for (int i = 0; i < newBuffer.length - 1; i++) {
 				newBuffer[i] |= data.data[i] >> leftoverBitLen & upperBitsMask;
 				newBuffer[i + 1] = (byte) (data.data[i] << lowerBitsShift & 0xFF);
 			}
 			if (newBufferBitLen % 8 != 0) {
-				newBuffer[newBuffer.length - 1] |= data.data[newBuffer.length - 1] >> leftoverBitLen & upperBitsMask;
+				newBuffer[newBuffer.length - 1] |= data.data[data.data.length - 1] >> leftoverBitLen & upperBitsMask;
 			}
 		}
 
