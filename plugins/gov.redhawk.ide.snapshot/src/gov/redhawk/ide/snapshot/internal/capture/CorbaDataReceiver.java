@@ -221,7 +221,7 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IScaPor
 		}
 		BitSequence dataToProcess = getSamplesToProcess(data, BitSequence.class, data.bits, time);
 		try {
-			writer.pushPacket(data, time, eos, streamID);
+			writer.pushPacket(dataToProcess, time, eos, streamID);
 		} catch (IOException e) {
 			setException(e);
 		}
