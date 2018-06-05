@@ -10,25 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import gov.redhawk.core.resourcefactory.AbstractResourceFactoryProvider;
-import gov.redhawk.core.resourcefactory.ComponentDesc;
-import gov.redhawk.core.resourcefactory.ResourceDesc;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.debug.SpdResourceFactory;
-import gov.redhawk.ide.natures.ScaProjectNature;
-import gov.redhawk.model.sca.ScaModelPlugin;
-import gov.redhawk.sca.util.Debug;
-import gov.redhawk.sca.util.MutexRule;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.SpdPackage;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -48,6 +36,20 @@ import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import CF.ResourceFactoryOperations;
+import gov.redhawk.core.resourcefactory.AbstractResourceFactoryProvider;
+import gov.redhawk.core.resourcefactory.ComponentDesc;
+import gov.redhawk.core.resourcefactory.ResourceDesc;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.SpdResourceFactory;
+import gov.redhawk.ide.natures.ScaProjectNature;
+import gov.redhawk.model.sca.ScaModelPlugin;
+import gov.redhawk.sca.util.Debug;
+import gov.redhawk.sca.util.MutexRule;
+import mil.jpeojtrs.sca.prf.PrfPackage;
+import mil.jpeojtrs.sca.scd.ScdPackage;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 /**
  * Provides descriptions of resources in the workspace which can be launched in the sandbox.
@@ -68,31 +70,56 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 
 			switch (event.getType()) {
 			case IResourceChangeEvent.POST_CHANGE:
+				Set<IFile> spdsToAdd = new HashSet<>();
+				Set<IFile> spdsToRemove = new HashSet<>();
 				try {
 					event.getDelta().accept(delta -> {
 						IResource resource = delta.getResource();
 						if (resource instanceof IWorkspaceRoot) {
 							return true;
 						} else if (resource instanceof IProject) {
+							// Check project natures before exploring
 							return WorkspaceResourceFactoryProvider.shouldVisit((IProject) resource);
-						} else if (resource instanceof IFile && resource.getName().endsWith(SpdPackage.FILE_EXTENSION)
-							&& resource.getParent() instanceof IProject) {
-							switch (delta.getKind()) {
-							case IResourceDelta.ADDED:
-							case IResourceDelta.CHANGED:
-								addSpd((IFile) resource);
-								break;
-							case IResourceDelta.REMOVED:
-								removeSpd((IFile) resource);
-								break;
-							default:
-								break;
+						} else if (resource instanceof IFile && resource.getParent() instanceof IProject) {
+							// We only check XML files at the root of the project
+							if (resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
+								// SPD file change
+								switch (delta.getKind()) {
+								case IResourceDelta.ADDED:
+								case IResourceDelta.CHANGED:
+									spdsToAdd.add((IFile) resource);
+									break;
+								case IResourceDelta.REMOVED:
+									spdsToRemove.remove((IFile) resource);
+									break;
+								default:
+									break;
+								}
+							} else if (resource.getName().endsWith(PrfPackage.FILE_EXTENSION) || resource.getName().endsWith(ScdPackage.FILE_EXTENSION)) {
+								// PRF or SCD file change. Rather than trying to determine which SPD(s) this affects,
+								// we'll use a heuristic. All SPDs in the same directory will be assumed to be changed.
+								for (IResource sibling : resource.getParent().members()) {
+									if (sibling instanceof IFile && sibling.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
+										spdsToAdd.add((IFile) sibling);
+									}
+								}
 							}
 						}
 						return false;
 					});
 				} catch (CoreException e) {
 					ScaDebugPlugin.logWarning("Exception while handling changed resources", e);
+				}
+
+				// If a PRF/SCD was touced in any way, and the SPD was deleted, the SPD file could end up in both lists.
+				spdsToAdd.removeAll(spdsToRemove);
+
+				// Update the descriptors
+				for (IFile spdFile : spdsToRemove) {
+					removeSpd(spdFile);
+				}
+				for (IFile spdFile : spdsToAdd) {
+					addSpd(spdFile);
 				}
 				break;
 			case IResourceChangeEvent.PRE_CLOSE:
