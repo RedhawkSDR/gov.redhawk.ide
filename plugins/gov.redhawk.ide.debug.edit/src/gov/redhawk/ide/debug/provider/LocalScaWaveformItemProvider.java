@@ -11,7 +11,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.provider;
 
-import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.model.sca.provider.ScaWaveformItemProvider;
 import java.util.Collection;
@@ -22,7 +21,6 @@ import org.eclipse.emf.common.util.ResourceLocator;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
-import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
  * This is the item provider adapter for a {@link gov.redhawk.ide.debug.LocalScaWaveform} object.
@@ -119,12 +117,6 @@ public class LocalScaWaveformItemProvider extends ScaWaveformItemProvider {
 	@Override
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
-
-		switch (notification.getFeatureID(LocalScaWaveform.class)) {
-		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__MODE:
-			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-			return;
-		}
 		super.notifyChanged(notification);
 	}
 
