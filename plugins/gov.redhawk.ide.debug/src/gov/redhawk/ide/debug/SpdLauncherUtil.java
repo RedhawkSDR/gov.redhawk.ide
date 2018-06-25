@@ -10,6 +10,53 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.emf.common.util.BasicDiagnostic;
+import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.Diagnostician;
+import org.omg.CORBA.Any;
+import org.omg.CORBA.BAD_OPERATION;
+import org.omg.CORBA.SystemException;
+import org.omg.CosNaming.NamingContextExt;
+import org.omg.CosNaming.NamingContextExtHelper;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
+
+import CF.DataType;
+import CF.PropertyEmitterOperations;
+import CF.Resource;
+import CF.ResourceHelper;
+import CF.ResourceOperations;
+import CF.LifeCyclePackage.InitializeError;
+import CF.PropertyEmitterPackage.AlreadyInitialized;
+import CF.PropertySetPackage.InvalidConfiguration;
+import CF.PropertySetPackage.PartialConfiguration;
+import CF.ResourcePackage.StartError;
 import gov.redhawk.ide.debug.internal.LaunchLogger;
 import gov.redhawk.ide.debug.internal.jobs.TerminateJob;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
@@ -31,20 +78,6 @@ import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.ORBUtil;
 import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SubMonitor;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
@@ -55,40 +88,6 @@ import mil.jpeojtrs.sca.util.CFErrorFormatter;
 import mil.jpeojtrs.sca.util.NamedThreadFactory;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.variables.IStringVariableManager;
-import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.emf.common.util.BasicDiagnostic;
-import org.eclipse.emf.common.util.Diagnostic;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.Diagnostician;
-import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.TCKind;
-import org.omg.CosNaming.NamingContextExt;
-import org.omg.CosNaming.NamingContextExtHelper;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
-
-import CF.DataType;
-import CF.Resource;
-import CF.ResourceHelper;
-import CF.ResourceOperations;
-import CF.LifeCyclePackage.InitializeError;
-import CF.PropertyEmitterPackage.AlreadyInitialized;
-import CF.PropertySetPackage.InvalidConfiguration;
-import CF.PropertySetPackage.PartialConfiguration;
-import CF.ResourcePackage.StartError;
-
 /**
  * A collection of utility methods that help to launch a {@link SoftPkg}.
  *
@@ -97,10 +96,13 @@ import CF.ResourcePackage.StartError;
 public final class SpdLauncherUtil {
 
 	/**
-	 * The status code for indicating errors with XML files related to the SPD (e.g. PRF, SCD, etc) instead of the SPD itself. 
+	 * The status code for indicating errors with XML files related to the SPD (e.g. PRF, SCD, etc) instead of the SPD
+	 * itself.
 	 * @since 8.3
 	 */
 	public static final int ERR_CODE_RELATED_XML = 1;
+
+	private static final int REGISTRATION = 10, FETCH_PROFILE = 10, FETCH_PROPS = 10, INIT_PROPS = 10, INIT = 10, ADD_TO_MODEL = 1;
 
 	private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool(new NamedThreadFactory(SpdLauncherUtil.class.getName()));
 	private static final Debug DEBUG_ARGS = new Debug(ScaDebugPlugin.getInstance(), "LauncherArgs");
@@ -211,12 +213,15 @@ public final class SpdLauncherUtil {
 			for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
 				if (!prop.isDefaultValue() && !prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY)
 					&& PropertiesUtil.canConfigure(prop.getDefinition())) {
-					configureProps.add(new DataType(prop.getId(), prop.toAny()));
+					Any any = prop.toAny();
+					if (any != null) {
+						configureProps.add(new DataType(prop.getId(), any));
+					}
 				}
 			}
 
 			// Configure properties
-			// NOTE:  Devices/services have been configured by the sandbox device manager already
+			// NOTE: Devices/services have been configured by the sandbox device manager already
 			if (type != ComponentType.DEVICE && type != ComponentType.SERVICE) {
 				try {
 					scaComp.configure(configureProps.toArray(new DataType[configureProps.size()]));
@@ -272,10 +277,8 @@ public final class SpdLauncherUtil {
 	 * @throws CoreException
 	 */
 	private static LocalAbstractComponent postLaunchComponent(SoftPkg spd, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
-		final int WORK_WAIT_REGISTRATION = 10;
-		final int WORK_GENERAL = 1, WORK_INITIALIZE_PROPS = 1, WORK_INITIALIZE = 1, WORK_ADD_TO_MODEL = 1;
 		SubMonitor progress = SubMonitor.convert(monitor, "Wait for component to register",
-			WORK_WAIT_REGISTRATION + 2 * WORK_GENERAL + WORK_INITIALIZE_PROPS + WORK_INITIALIZE + WORK_ADD_TO_MODEL);
+			REGISTRATION + FETCH_PROFILE + FETCH_PROPS + INIT_PROPS + INIT + ADD_TO_MODEL);
 
 		final String nameBinding = launch.getAttribute(LaunchVariables.NAME_BINDING);
 		final String namingContextIOR = launch.getAttribute(LaunchVariables.NAMING_CONTEXT_IOR);
@@ -355,7 +358,7 @@ public final class SpdLauncherUtil {
 			} else {
 				resource = future.get(timeout, TimeUnit.SECONDS);
 			}
-			progress.worked(WORK_WAIT_REGISTRATION);
+			progress.worked(REGISTRATION);
 		} catch (final InterruptedException ex) {
 			String msg = String.format("Interrupted waiting for component %s to launch.", nameBinding);
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg, ex));
@@ -377,8 +380,8 @@ public final class SpdLauncherUtil {
 		// Load the properties from the PRF and override with values from the launch configuration
 		final ScaComponent propHolder = ScaFactory.eINSTANCE.createScaComponent();
 		propHolder.setProfileURI(spd.eResource().getURI());
-		propHolder.fetchProfileObject(progress.newChild(WORK_GENERAL));
-		propHolder.fetchProperties(progress.newChild(WORK_GENERAL));
+		propHolder.fetchProfileObject(progress.newChild(FETCH_PROFILE));
+		propHolder.fetchProperties(progress.newChild(FETCH_PROPS));
 		ScaLaunchConfigurationUtil.loadProperties(launch.getLaunchConfiguration(), propHolder);
 
 		// Collect non-null properties of type 'property' (but not type 'execparam')
@@ -386,33 +389,13 @@ public final class SpdLauncherUtil {
 		for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
 			if (PropertiesUtil.canInitialize(prop.getDefinition())) {
 				DataType dt = prop.getProperty();
-				if (dt.value != null && dt.value.type().kind() != TCKind.tk_null) {
+				if (dt != null) {
 					initializeProps.add(dt);
 				}
 			}
 		}
 
-		// Initialize properties
-		try {
-			DataType[] initializePropsArray = initializeProps.toArray(new CF.DataType[initializeProps.size()]);
-			component.initializeProperties(initializePropsArray);
-		} catch (AlreadyInitialized e) {
-			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
-		} catch (InvalidConfiguration e) {
-			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
-		} catch (PartialConfiguration e) {
-			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
-		} catch (BAD_OPERATION e) {
-			String msg;
-			if (initializeProps.size() == 0) {
-				msg = String.format("Could not call initializeProperties on component %s in the sandbox (CORBA BAD_OPERATION). "
-					+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.", nameBinding);
-			} else {
-				msg = "Component has properties of kind 'property', but does not appear to support REDHAWK 2.0 API (CORBA BAD_OPERATION)";
-			}
-			LaunchLogger.INSTANCE.writeToConsole(launch, msg, ConsoleColor.STDERR);
-		}
-		progress.newChild(WORK_INITIALIZE_PROPS);
+		initializeProperties(component, propHolder, launch, "component " + nameBinding, progress.newChild(INIT_PROPS));
 
 		// Initialize
 		try {
@@ -420,7 +403,7 @@ public final class SpdLauncherUtil {
 		} catch (InitializeError e) {
 			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, "component " + nameBinding), ConsoleColor.STDERR);
 		}
-		progress.newChild(WORK_INITIALIZE);
+		progress.newChild(INIT);
 
 		// Add the component to its waveform
 		final String parentWaveformName = launch.getLaunchConfiguration().getAttribute(LaunchVariables.WAVEFORM_NAME, "");
@@ -450,9 +433,56 @@ public final class SpdLauncherUtil {
 				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Unable to find the parent waveform for a launched component"));
 			}
 		}
-		progress.newChild(WORK_ADD_TO_MODEL);
+		progress.newChild(ADD_TO_MODEL);
 
 		return component;
+	}
+
+	/**
+	 * Calls {@link PropertyEmitterOperations#initializeProperties(DataType[])}.
+	 * @param propEmitter The object that will have <code>initializeProperties(properties)</code> called on it
+	 * @param propValues The properties that should be used, with their values
+	 * @param launch The launch for the object
+	 * @param label A user-readable label for the object (e.g. "component foo")
+	 * @param monitor
+	 * @since 9.2
+	 */
+	public static void initializeProperties(PropertyEmitterOperations propEmitter, ScaPropertyContainer< ? , ? > propValues, ILaunch launch, String label,
+		IProgressMonitor monitor) {
+		SubMonitor progress = SubMonitor.convert(monitor, 1);
+
+		// Collect non-null properties of type 'property' (but not type 'execparam')
+		List<DataType> initializeProps = new ArrayList<DataType>();
+		for (final ScaAbstractProperty< ? > prop : propValues.getProperties()) {
+			if (PropertiesUtil.canInitialize(prop.getDefinition())) {
+				DataType dt = prop.getProperty();
+				if (dt != null) {
+					initializeProps.add(dt);
+				}
+			}
+		}
+
+		// Initialize properties
+		try {
+			DataType[] initializePropsArray = initializeProps.toArray(new CF.DataType[initializeProps.size()]);
+			propEmitter.initializeProperties(initializePropsArray);
+		} catch (AlreadyInitialized e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, label), ConsoleColor.STDERR);
+		} catch (InvalidConfiguration e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, label), ConsoleColor.STDERR);
+		} catch (PartialConfiguration e) {
+			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, label), ConsoleColor.STDERR);
+		} catch (BAD_OPERATION e) {
+			String msg;
+			if (initializeProps.size() == 0) {
+				msg = String.format("Could not call initializeProperties on %s in the sandbox (CORBA BAD_OPERATION). "
+					+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.", label);
+			} else {
+				msg = "%s has properties of kind 'property', but does not appear to support REDHAWK 2.0 API (CORBA BAD_OPERATION)";
+			}
+			LaunchLogger.INSTANCE.writeToConsole(launch, msg, ConsoleColor.STDERR);
+		}
+		progress.worked(1);
 	}
 
 	/**

@@ -110,7 +110,8 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 
 		try {
 			final SimpleDateFormat dateFormat = new SimpleDateFormat("DDD_HHmmssSSS");
-			final LocalScaWaveform app = factory.create(sad, configuration.getName() + "_" + dateFormat.format(new Date()), progress.newChild(WORK_CREATE_WAVEFORM));
+			final LocalScaWaveform app = factory.create(sad, configuration.getName() + "_" + dateFormat.format(new Date()),
+				progress.newChild(WORK_CREATE_WAVEFORM));
 
 			boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 			if (start) {
@@ -144,7 +145,9 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		List<DataType> acProps = new ArrayList<DataType>();
 		for (ScaAbstractProperty< ? > prop : assemblyController.getProperties()) {
 			DataType property = scaWaveform.getProperty(prop.getId()).getProperty();
-			acProps.add(property);
+			if (property != null) {
+				acProps.add(property);
+			}
 		}
 		String controllerInstId = sad.getAssemblyController().getComponentInstantiationRef().getInstantiation().getId();
 		componentPropertyMap.put(controllerInstId, acProps);
@@ -176,12 +179,14 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 
 			// Get the updated component property
 			DataType dt = scaWaveform.getProperty(extProp.getExternalPropID()).getProperty();
+			if (dt != null) {
+				// We need the DataType ID to be the PRF_ID, not the ExternalPropID.
+				// This matters when the ApplicationFactory is creating the launch configuration.
+				dt.id = extProp.getPropID();
 
-			// We need the DataType ID to be the PRF_ID, not the ExternalPropID.
-			// This matters when the ApplicationFactory is creating the launch configuration.
-			dt.id = extProp.getPropID();
+				externalProps.add(dt);
+			}
 
-			externalProps.add(dt);
 			componentPropertyMap.put(inst.getId(), externalProps);
 		}
 	}
