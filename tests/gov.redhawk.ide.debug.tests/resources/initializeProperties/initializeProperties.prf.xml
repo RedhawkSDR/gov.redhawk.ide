@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
+<properties>
+  <simple id="simple_no_value" mode="readwrite" name="simple_no_value" type="string">
+    <kind kindtype="property"/>
+    <action type="external"/>
+  </simple>
+  <simple id="simple_with_value" mode="readwrite" name="simple_with_value" type="string">
+    <value>abc</value>
+    <kind kindtype="property"/>
+    <action type="external"/>
+  </simple>
+  <simplesequence id="simpleseq_no_values" mode="readwrite" name="simpleseq_no_values" type="string">
+    <kind kindtype="property"/>
+    <action type="external"/>
+  </simplesequence>
+  <simplesequence id="simpleseq_values" mode="readwrite" name="simpleseq_values" type="string">
+    <values>
+      <value>a</value>
+      <value>b</value>
+      <value>c</value>
+    </values>
+    <kind kindtype="property"/>
+    <action type="external"/>
+  </simplesequence>
+  <struct id="struct_novalue1" mode="readwrite" name="struct_novalue1">
+    <simple id="struct_novalue1::simple" name="simple" type="string"/>
+    <simplesequence id="struct_novalue1::simpleseq" name="simpleseq" type="string"/>
+    <configurationkind kindtype="property"/>
+  </struct>
+  <struct id="struct_novalue2" mode="readwrite" name="struct_novalue2">
+    <simple id="struct_novalue2::simple1" name="simple1" type="string"/>
+    <simple id="struct_novalue2::simple2" name="simple2" type="string"/>
+    <configurationkind kindtype="property"/>
+  </struct>
+  <struct id="struct_partialconfig" mode="readwrite" name="struct_partialconfig">
+    <simple id="struct_partialconfig::simple1" name="simple1" type="string">
+      <value>abc</value>
+    </simple>
+    <simple id="struct_partialconfig::simple2" name="simple2" type="string"/>
+    <configurationkind kindtype="property"/>
+  </struct>
+  <struct id="struct_value1" mode="readwrite" name="struct_value1">
+    <simple id="struct_value1::simple" name="simple" type="string">
+      <value>abc</value>
+    </simple>
+    <simplesequence id="struct_value1::simpleseq" name="simpleseq" type="string"/>
+    <configurationkind kindtype="property"/>
+  </struct>
+  <struct id="struct_value2" mode="readwrite" name="struct_value2">
+    <simple id="struct_value2::simple" name="simple" type="string">
+      <value>abc</value>
+    </simple>
+    <simplesequence id="struct_value2::simpleseq" name="simpleseq" type="string">
+      <values>
+        <value>a</value>
+        <value>b</value>
+        <value>c</value>
+      </values>
+    </simplesequence>
+    <configurationkind kindtype="property"/>
+  </struct>
+  <structsequence id="structseq_no_values" mode="readwrite" name="structseq_no_values">
+    <struct id="structseq_no_values::struct" name="struct">
+      <simple id="structseq_no_values::simple" name="simple" type="string">
+        <value>abc</value>
+      </simple>
+      <simplesequence id="structseq_no_values::simpleseq" name="simpleseq" type="string">
+        <values>
+          <value>a</value>
+          <value>b</value>
+          <value>c</value>
+        </values>
+      </simplesequence>
+    </struct>
+    <configurationkind kindtype="property"/>
+  </structsequence>
+  <structsequence id="structseq_with_values" mode="readwrite" name="structseq_with_values">
+    <struct id="structseq_with_values::struct" name="struct">
+      <simple id="structseq_with_values::simple" name="simple" type="string"/>
+      <simplesequence id="structseq_with_values::simpleseq" name="simpleseq" type="string"/>
+    </struct>
+    <structvalue>
+      <simpleref refid="structseq_with_values::simple" value="abc"/>
+      <simplesequenceref refid="structseq_with_values::simpleseq">
+        <values>
+          <value>a</value>
+          <value>b</value>
+          <value>c</value>
+        </values>
+      </simplesequenceref>
+    </structvalue>
+    <structvalue>
+      <simpleref refid="structseq_with_values::simple" value="def"/>
+      <simplesequenceref refid="structseq_with_values::simpleseq">
+        <values>
+          <value>d</value>
+          <value>e</value>
+          <value>f</value>
+        </values>
+      </simplesequenceref>
+    </structvalue>
+    <configurationkind kindtype="property"/>
+  </structsequence>
+</properties>

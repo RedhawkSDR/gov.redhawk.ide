@@ -40,9 +40,8 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.omg.CORBA.BAD_OPERATION;
+import org.omg.CORBA.Any;
 import org.omg.CORBA.SystemException;
-import org.omg.CORBA.TCKind;
 
 import CF.DataType;
 import CF.Device;
@@ -74,6 +73,7 @@ import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
 import gov.redhawk.ide.debug.LocalAbstractComponent;
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.SpdLauncherUtil;
 import gov.redhawk.ide.debug.internal.LaunchLogger;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.RefreshDepth;
@@ -287,7 +287,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 
 		// If we have properties available, call initializeProperties(...)
 		if (propHolder != null) {
-			initializeProperties(launch, "device " + deviceLabel, propHolder, registeringDevice);
+			SpdLauncherUtil.initializeProperties(registeringDevice, propHolder, launch, "device " + deviceLabel, new NullProgressMonitor());
 		}
 
 		// Initialize
@@ -432,7 +432,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		// If we support PropertEmitter, call initializeProperties(...)
 		if (supportsPropertyEmitter) {
 			PropertyEmitter propertyEmitter = PropertyEmitterHelper.narrow(registeringService);
-			initializeProperties(launch, "service " + name, propHolder, propertyEmitter);
+			SpdLauncherUtil.initializeProperties(propertyEmitter, propHolder, launch, "service " + name, new NullProgressMonitor());
 		}
 
 		// If we support LifeCylce, call initialize()
@@ -477,47 +477,6 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	}
 
 	/**
-	 * Calls {@link PropertyEmitter#initializeProperties(DataType[])}.
-	 * @param launch The device/service being launched
-	 * @param label A UI label for the item (e.g. "device Foo")
-	 * @param propHolder The SCA model object holding the loaded properties
-	 * @param propEmitter The {@link PropertyEmitter} that will get its properties initialized
-	 */
-	private void initializeProperties(ILaunch launch, String label, ScaPropertyContainer< ? , ? > propHolder, PropertyEmitter propEmitter) {
-		// Collect non-null properties of type 'property' (but not type 'execparam')
-		List<DataType> initializeProps = new ArrayList<DataType>();
-		for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
-			if (PropertiesUtil.canInitialize(prop.getDefinition())) {
-				DataType dt = prop.getProperty();
-				if (dt.value != null && dt.value.type().kind() != TCKind.tk_null) {
-					initializeProps.add(dt);
-				}
-			}
-		}
-
-		// Initialize properties
-		DataType[] initializePropsArray = initializeProps.toArray(new CF.DataType[initializeProps.size()]);
-		try {
-			propEmitter.initializeProperties(initializePropsArray);
-		} catch (AlreadyInitialized e) {
-			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, label), ConsoleColor.STDERR);
-		} catch (InvalidConfiguration e) {
-			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, label), ConsoleColor.STDERR);
-		} catch (PartialConfiguration e) {
-			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, label), ConsoleColor.STDERR);
-		} catch (BAD_OPERATION e) {
-			String msg;
-			if (initializeProps.size() == 0) {
-				msg = String.format("Could not call initializeProperties on %s in the sandbox (CORBA BAD_OPERATION). "
-					+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.", label);
-			} else {
-				msg = "There are properties of kind 'property', but %s does not appear to support the REDHAWK 2.0 API (CORBA BAD_OPERATION)";
-			}
-			LaunchLogger.INSTANCE.writeToConsole(launch, msg, ConsoleColor.STDERR);
-		}
-	}
-
-	/**
 	 * Calls {@link PropertySet#configure(DataType[])}.
 	 * @param launch The device/service being launched
 	 * @param label A UI label for the item (e.g. "device Foo")
@@ -530,7 +489,10 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		for (final ScaAbstractProperty< ? > prop : propHolder.getProperties()) {
 			if (!prop.isDefaultValue() && !prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY)
 				&& PropertiesUtil.canConfigure(prop.getDefinition())) {
-				configureProps.add(new DataType(prop.getId(), prop.toAny()));
+				Any any = prop.toAny();
+				if (any != null) {
+					configureProps.add(new DataType(prop.getId(), any));
+				}
 			}
 		}
 
