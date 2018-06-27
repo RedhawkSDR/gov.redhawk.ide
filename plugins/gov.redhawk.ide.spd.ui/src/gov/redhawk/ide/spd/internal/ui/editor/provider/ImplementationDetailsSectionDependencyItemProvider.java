@@ -16,44 +16,34 @@ import mil.jpeojtrs.sca.spd.provider.DependencyItemProvider;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 
-/**
- * The Class ImplementationDetailsSectionOsItemProvider.
- */
 public class ImplementationDetailsSectionDependencyItemProvider extends DependencyItemProvider {
 
-	/**
-	 * The Constructor.
-	 * 
-	 * @param adapterFactory the adapter factory
-	 */
 	public ImplementationDetailsSectionDependencyItemProvider(final AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getText(final Object object) {
 		final Dependency dependency = (Dependency) object;
-		String subLabel = "";
-		if (dependency.getPropertyRef() != null) {
-			final IItemLabelProvider lp = (IItemLabelProvider) getRootAdapterFactory().adapt(dependency.getPropertyRef(), IItemLabelProvider.class);
-			subLabel = lp.getText(dependency.getPropertyRef());
+		if (!dependency.getProperties().isEmpty()) {
+			Object value = dependency.getProperties().getValue(0);
+			final IItemLabelProvider lp = (IItemLabelProvider) getRootAdapterFactory().adapt(value, IItemLabelProvider.class);
+			return dependency.getType() + " " + lp.getText(value);
 		} else if (dependency.getSoftPkgRef() != null) {
 			final IItemLabelProvider lp = (IItemLabelProvider) getRootAdapterFactory().adapt(dependency.getSoftPkgRef(), IItemLabelProvider.class);
-			subLabel = lp.getText(dependency.getSoftPkgRef());
+			return lp.getText(dependency.getSoftPkgRef());
+		} else {
+			return dependency.getType();
 		}
-
-		return dependency.getType() + " " + subLabel;
 	}
 
 	@Override
 	public Object getImage(final Object object) {
 		final Dependency dependency = (Dependency) object;
-		if (dependency.getPropertyRef() != null) {
-			final IItemLabelProvider lp = (IItemLabelProvider) getRootAdapterFactory().adapt(dependency.getPropertyRef(), IItemLabelProvider.class);
-			return lp.getImage(dependency.getPropertyRef());
+		if (!dependency.getProperties().isEmpty()) {
+			Object value = dependency.getProperties().getValue(0);
+			final IItemLabelProvider lp = (IItemLabelProvider) getRootAdapterFactory().adapt(value, IItemLabelProvider.class);
+			return lp.getImage(value);
 		} else if (dependency.getSoftPkgRef() != null) {
 			final IItemLabelProvider lp = (IItemLabelProvider) getRootAdapterFactory().adapt(dependency.getSoftPkgRef(), IItemLabelProvider.class);
 			return lp.getImage(dependency.getSoftPkgRef());
