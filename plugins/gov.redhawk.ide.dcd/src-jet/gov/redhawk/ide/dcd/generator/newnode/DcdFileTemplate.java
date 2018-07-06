@@ -50,16 +50,15 @@ public class DcdFileTemplate
   protected final String TEXT_12 = "\" startorder=\"";
   protected final String TEXT_13 = "\">";
   protected final String TEXT_14 = NL + "\t  <componentinstantiation id=\"";
-  protected final String TEXT_15 = "\">";
-  protected final String TEXT_16 = NL + "        <usagename>";
-  protected final String TEXT_17 = "_";
-  protected final String TEXT_18 = "</usagename>" + NL + "      </componentinstantiation>" + NL + "    </componentplacement>";
-  protected final String TEXT_19 = NL + "  </partitioning>";
-  protected final String TEXT_20 = NL + "  <partitioning/>";
-  protected final String TEXT_21 = NL + "  <domainmanager>" + NL + "    <namingservice name=\"";
-  protected final String TEXT_22 = "/";
-  protected final String TEXT_23 = "\"/>" + NL + "  </domainmanager>" + NL + "</deviceconfiguration>";
-  protected final String TEXT_24 = NL;
+  protected final String TEXT_15 = NL + "        <usagename>";
+  protected final String TEXT_16 = "_";
+  protected final String TEXT_17 = "</usagename>" + NL + "      </componentinstantiation>" + NL + "    </componentplacement>";
+  protected final String TEXT_18 = NL + "  </partitioning>";
+  protected final String TEXT_19 = NL + "  <partitioning/>";
+  protected final String TEXT_20 = NL + "  <domainmanager>" + NL + "    <namingservice name=\"";
+  protected final String TEXT_21 = "/";
+  protected final String TEXT_22 = "\"/>" + NL + "  </domainmanager>" + NL + "</deviceconfiguration>";
+  protected final String TEXT_23 = NL;
 
     /**
      * {@inheritDoc}
@@ -139,32 +138,32 @@ public class DcdFileTemplate
 
     stringBuffer.append(TEXT_14);
     stringBuffer.append(compInstId);
-    stringBuffer.append(TEXT_15);
+    stringBuffer.append(TEXT_13);
     
 			}
 
-    stringBuffer.append(TEXT_16);
+    stringBuffer.append(TEXT_15);
     stringBuffer.append(usageName);
-    stringBuffer.append(TEXT_17);
+    stringBuffer.append(TEXT_16);
     stringBuffer.append(elementNum);
-    stringBuffer.append(TEXT_18);
+    stringBuffer.append(TEXT_17);
     
         }
 
-    stringBuffer.append(TEXT_19);
+    stringBuffer.append(TEXT_18);
     
     } else {
 
-    stringBuffer.append(TEXT_20);
+    stringBuffer.append(TEXT_19);
     
     }
 
+    stringBuffer.append(TEXT_20);
+    stringBuffer.append(args.getDomainManagerName());
     stringBuffer.append(TEXT_21);
     stringBuffer.append(args.getDomainManagerName());
     stringBuffer.append(TEXT_22);
-    stringBuffer.append(args.getDomainManagerName());
     stringBuffer.append(TEXT_23);
-    stringBuffer.append(TEXT_24);
     return stringBuffer.toString();
   }
 }
