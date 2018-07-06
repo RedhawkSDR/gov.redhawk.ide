@@ -10,7 +10,7 @@ org.eclipse.core.runtime.CoreException
 org.eclipse.core.runtime.IStatus
 org.eclipse.core.runtime.Status"
 class="TopLevelDcdRpmSpecTemplate"
-skeleton="../generator.skeleton"
+skeleton="generator.skeleton"
 %>
 <%
     final DcdTemplateParameter params = (DcdTemplateParameter) argument;

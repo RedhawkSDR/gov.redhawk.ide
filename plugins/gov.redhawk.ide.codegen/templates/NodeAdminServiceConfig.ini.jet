@@ -4,7 +4,7 @@ mil.jpeojtrs.sca.partitioning.PartitioningPackage
 mil.jpeojtrs.sca.util.ScaEcoreUtils
 org.eclipse.core.runtime.CoreException"
 class="NodeAdminServiceConfigIni"
-skeleton="../generator.skeleton"
+skeleton="generator.skeleton"
 %>
 <%
     DcdTemplateParameter params = (DcdTemplateParameter) argument;
