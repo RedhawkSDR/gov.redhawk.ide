@@ -56,8 +56,8 @@ public class SpdLauncherUtilTest {
 	public void initializeProperties() {
 		final String[] ALL_PROPS = new String[] { "simple_no_value", "simple_with_value", "simpleseq_no_values", "simpleseq_values", "struct_novalue1",
 			"struct_novalue2", "struct_partialconfig", "struct_value1", "struct_value2", "structseq_no_values", "structseq_with_values" };
-		final String[] INIT_PROPS = new String[] { "simple_with_value", "simpleseq_no_values", "simpleseq_values", "struct_value1", "struct_value2",
-			"structseq_no_values", "structseq_with_values" };
+		final String[] INIT_PROPS = new String[] { "simple_with_value", "simpleseq_values", "struct_value1", "struct_value2",
+			"structseq_with_values" };
 
 		// Load property values for a component
 		final ScaComponent propHolder = ScaFactory.eINSTANCE.createScaComponent();
