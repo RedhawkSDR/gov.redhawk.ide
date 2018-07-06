@@ -56,17 +56,11 @@ public class TopLevelDcdRpmSpecTemplate
   protected final String TEXT_16 = NL + "%__install -m 664 -D ";
   protected final String TEXT_17 = " $RPM_BUILD_ROOT%{_sysconfdir}/redhawk/nodes.d/";
   protected final String TEXT_18 = NL + "%__install -m 644 ";
-  protected final String TEXT_19 = " $RPM_BUILD_ROOT%{_prefix}";
-  protected final String TEXT_20 = "/";
-  protected final String TEXT_21 = NL + NL + "%files";
-  protected final String TEXT_22 = NL + "%defattr(-,root,redhawk)";
-  protected final String TEXT_23 = NL + "%config(noreplace) %{_sysconfdir}/redhawk/nodes.d/";
-  protected final String TEXT_24 = NL + "%defattr(-,redhawk,redhawk)";
-  protected final String TEXT_25 = NL;
-  protected final String TEXT_26 = NL + "%{_prefix}";
-  protected final String TEXT_27 = "/";
-  protected final String TEXT_28 = NL + "%{_prefix}";
-  protected final String TEXT_29 = "/";
+  protected final String TEXT_19 = NL + NL + "%files";
+  protected final String TEXT_20 = NL + "%defattr(-,root,redhawk)";
+  protected final String TEXT_21 = NL + "%config(noreplace) %{_sysconfdir}/redhawk/nodes.d/";
+  protected final String TEXT_22 = NL + "%defattr(-,redhawk,redhawk)";
+  protected final String TEXT_23 = NL + "%{_prefix}";
 
   public String generate(Object argument) throws CoreException
   {
@@ -166,44 +160,44 @@ public class TopLevelDcdRpmSpecTemplate
 
     stringBuffer.append(TEXT_18);
     stringBuffer.append(fileName);
-    stringBuffer.append(TEXT_19);
+    stringBuffer.append(TEXT_14);
     stringBuffer.append(nodeSubDir);
-    stringBuffer.append(TEXT_20);
+    stringBuffer.append(TEXT_15);
     stringBuffer.append(fileName);
     
         }
     }
 
-    stringBuffer.append(TEXT_21);
+    stringBuffer.append(TEXT_19);
     
     if (iniFiles) {
 
-    stringBuffer.append(TEXT_22);
+    stringBuffer.append(TEXT_20);
     
         for (String fileName : params.getFilesToInstall()) {
             if (fileName.endsWith(".ini")) {
 
-    stringBuffer.append(TEXT_23);
+    stringBuffer.append(TEXT_21);
     stringBuffer.append(fileName);
     
             }
         }
     }
 
-    stringBuffer.append(TEXT_24);
-    stringBuffer.append(TEXT_25);
+    stringBuffer.append(TEXT_22);
+    stringBuffer.append(TEXT_11);
     stringBuffer.append(directoryBlock);
-    stringBuffer.append(TEXT_26);
+    stringBuffer.append(TEXT_23);
     stringBuffer.append(nodeSubDir);
-    stringBuffer.append(TEXT_27);
+    stringBuffer.append(TEXT_15);
     stringBuffer.append(dcdFileName);
     
     for (String fileName : params.getFilesToInstall()) {
         if (!fileName.endsWith(".ini")) {
 
-    stringBuffer.append(TEXT_28);
+    stringBuffer.append(TEXT_23);
     stringBuffer.append(nodeSubDir);
-    stringBuffer.append(TEXT_29);
+    stringBuffer.append(TEXT_15);
     stringBuffer.append(fileName);
     
         }

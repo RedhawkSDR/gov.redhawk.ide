@@ -58,18 +58,11 @@ public class TopLevelSadRpmSpecTemplate
   protected final String TEXT_17 = NL + "%__install -m 664 -D ";
   protected final String TEXT_18 = " $RPM_BUILD_ROOT%{_sysconfdir}/redhawk/waveforms.d/";
   protected final String TEXT_19 = NL + "%__install -m 644 ";
-  protected final String TEXT_20 = " $RPM_BUILD_ROOT%{_prefix}";
-  protected final String TEXT_21 = "/";
-  protected final String TEXT_22 = NL + NL + "%files";
-  protected final String TEXT_23 = NL + "%defattr(-,root,redhawk)";
-  protected final String TEXT_24 = NL + "%config(noreplace) %{_sysconfdir}/redhawk/waveforms.d/";
-  protected final String TEXT_25 = NL + "%defattr(-,redhawk,redhawk)";
-  protected final String TEXT_26 = NL;
-  protected final String TEXT_27 = NL + "%{_prefix}";
-  protected final String TEXT_28 = "/";
-  protected final String TEXT_29 = NL + "%{_prefix}";
-  protected final String TEXT_30 = "/";
-  protected final String TEXT_31 = NL;
+  protected final String TEXT_20 = NL + NL + "%files";
+  protected final String TEXT_21 = NL + "%defattr(-,root,redhawk)";
+  protected final String TEXT_22 = NL + "%config(noreplace) %{_sysconfdir}/redhawk/waveforms.d/";
+  protected final String TEXT_23 = NL + "%defattr(-,redhawk,redhawk)";
+  protected final String TEXT_24 = NL + "%{_prefix}";
 
   public String generate(Object argument) throws CoreException
   {
@@ -172,50 +165,50 @@ public class TopLevelSadRpmSpecTemplate
 
     stringBuffer.append(TEXT_19);
     stringBuffer.append(fileName);
-    stringBuffer.append(TEXT_20);
+    stringBuffer.append(TEXT_15);
     stringBuffer.append(waveformSubDir);
-    stringBuffer.append(TEXT_21);
+    stringBuffer.append(TEXT_16);
     stringBuffer.append(fileName);
     
         }
     }
 
-    stringBuffer.append(TEXT_22);
+    stringBuffer.append(TEXT_20);
     
     if (iniFiles) {
 
-    stringBuffer.append(TEXT_23);
+    stringBuffer.append(TEXT_21);
     
         for (String fileName : params.getFilesToInstall()) {
             if (fileName.endsWith(".ini")) {
 
-    stringBuffer.append(TEXT_24);
+    stringBuffer.append(TEXT_22);
     stringBuffer.append(fileName);
     
             }
         }
     }
 
-    stringBuffer.append(TEXT_25);
-    stringBuffer.append(TEXT_26);
+    stringBuffer.append(TEXT_23);
+    stringBuffer.append(TEXT_12);
     stringBuffer.append(directoryBlock);
-    stringBuffer.append(TEXT_27);
+    stringBuffer.append(TEXT_24);
     stringBuffer.append(waveformSubDir);
-    stringBuffer.append(TEXT_28);
+    stringBuffer.append(TEXT_16);
     stringBuffer.append(sadFileName);
     
     for (String fileName : params.getFilesToInstall()) {
         if (!fileName.endsWith(".ini")) {
 
-    stringBuffer.append(TEXT_29);
+    stringBuffer.append(TEXT_24);
     stringBuffer.append(waveformSubDir);
-    stringBuffer.append(TEXT_30);
+    stringBuffer.append(TEXT_16);
     stringBuffer.append(fileName);
     
         }
     }
 
-    stringBuffer.append(TEXT_31);
+    stringBuffer.append(TEXT_12);
     return stringBuffer.toString();
   }
 }
