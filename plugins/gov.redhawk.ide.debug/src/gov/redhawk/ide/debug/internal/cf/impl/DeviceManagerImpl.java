@@ -41,6 +41,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.omg.CORBA.Any;
+import org.omg.CORBA.IntHolder;
 import org.omg.CORBA.SystemException;
 
 import CF.DataType;
@@ -52,12 +53,14 @@ import CF.InvalidIdentifier;
 import CF.InvalidObjectReference;
 import CF.LifeCycle;
 import CF.LifeCycleHelper;
+import CF.LogEvent;
 import CF.PropertiesHolder;
 import CF.PropertyEmitter;
 import CF.PropertyEmitterHelper;
 import CF.PropertySet;
 import CF.PropertySetHelper;
 import CF.Resource;
+import CF.UnknownIdentifier;
 import CF.UnknownProperties;
 import CF.DeviceManagerPackage.ServiceType;
 import CF.ExecutableDevicePackage.ExecuteFail;
@@ -766,4 +769,59 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			}
 		}
 	};
+
+	@Override
+	public LogEvent[] retrieve_records(IntHolder howMany, int startingRecord) {
+		return new LogEvent[0];
+	}
+
+	@Override
+	public LogEvent[] retrieve_records_by_date(IntHolder howMany, long toTimeStamp) {
+		return new LogEvent[0];
+	}
+
+	@Override
+	public LogEvent[] retrieve_records_from_date(IntHolder howMany, long fromTimeStamp) {
+		return new LogEvent[0];
+	}
+
+	@Override
+	public int log_level() {
+		return -1;
+	}
+
+	@Override
+	public void log_level(int newLogLevel) {
+	}
+
+	@Override
+	public int getLogLevel(String loggerId) throws CF.UnknownIdentifier {
+		return -1;
+	}
+
+	@Override
+	public void setLogLevel(String loggerId, int newLevel) throws UnknownIdentifier {
+	}
+
+	@Override
+	public String[] getNamedLoggers() {
+		return new String[0];
+	}
+
+	@Override
+	public void resetLog() {
+	}
+
+	@Override
+	public String getLogConfig() {
+		return "";
+	}
+
+	@Override
+	public void setLogConfig(String configContents) {
+	}
+
+	@Override
+	public void setLogConfigURL(String configUrl) {
+	}
 }

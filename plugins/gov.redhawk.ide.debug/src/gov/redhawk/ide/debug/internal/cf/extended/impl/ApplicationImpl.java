@@ -1764,7 +1764,21 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	@Override
+	public int getLogLevel(String loggerId) throws CF.UnknownIdentifier {
+		return -1;
+	}
+
+	@Override
 	public void setLogLevel(String loggerId, int newLevel) throws UnknownIdentifier {
+	}
+
+	@Override
+	public String[] getNamedLoggers() {
+		return new String[0];
+	}
+
+	@Override
+	public void resetLog() {
 	}
 
 	@Override
