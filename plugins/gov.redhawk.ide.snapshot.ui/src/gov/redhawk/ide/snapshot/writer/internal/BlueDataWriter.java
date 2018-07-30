@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.writer.internal;
 
-import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.ide.snapshot.writer.BaseDataWriter;
 
 import java.io.File;
@@ -32,91 +31,63 @@ public class BlueDataWriter extends BaseDataWriter {
 
 	/** the Object used to write data to a Midas .BLUE file */
 	private DataFile df;
-	/** the format specification of a .BLUE file*/
-	private Data dataFormat;
 
-	private StreamSRI sri;
+	private StreamSRI currentSri;
 
 	/**
-	 * This method maps a BulkIOType to a Data
-	 * @param t : the BulkIOType to map to the DataTypes type
-	 * @return the equivalent Data Type
+	 * This method maps a BulkIO type from SRI to an X-Midas digraph string.
+	 * @param sri
+	 * @return The appropriate X-Midas type to use (includes upcasting for unsigned types)
 	 */
-	private Data getMidasDataType(BulkIOType t) {
-		Data data = new Data();
-		switch (t) {
-		case CHAR:
-			data.setFormatType(Data.INT);  // treat char as 16-bit integer
+	private String getMidasDataType(StreamSRI sri) {
+		char[] format = new char[2];
+		switch (sri.mode) {
+		case 0:
+			format[0] = 'S';
 			break;
-		case DOUBLE:
-			data.setFormatType(Data.DOUBLE);
-			break;
-		case FLOAT:
-			data.setFormatType(Data.FLOAT);
-			break;
-		case LONG:
-			data.setFormatType(Data.LONG);
-			break;
-		case LONG_LONG:
-			data.setFormatType(Data.XLONG);
-			break;
-		case SHORT:
-			data.setFormatType(Data.INT);
-			break;
-		case OCTET:
-			data.setFormatType(Data.INT);   // upcast to next larger signed type (TODO: give option not to upcast?)
-			break;
-		case ULONG:
-			data.setFormatType(Data.XLONG); // upcast to next larger signed type
-			break;
-		case ULONG_LONG:
-			data.setFormatType(Data.XLONG); // CANNOT upcast
-			break;
-		case USHORT:
-			data.setFormatType(Data.LONG);  // upcast to next larger signed type
+		case 1:
+			format[1] = 'C';
 			break;
 		default:
-			throw new IllegalArgumentException("The BulkIOType was not a recognized Type");
+			throw new IllegalArgumentException("Unknown BulkIO SRI mode: " + sri.mode);
 		}
-		return data;
+		format[1] = getSettings().getType().getMidasType();
+		return new String(format);
 	}
 
 	@Override
 	public void open() throws IOException {
 		File file = getFileDestination();
-		BulkIOType type = getSettings().getType();
 
 		Midas m = NeXtMidas.getGlobalInstance().getMidasContext();
 		this.df = new DataFile(m, file.getAbsolutePath());
 		this.df.open(DataFile.OUTPUT);
-		this.dataFormat = this.getMidasDataType(type);
 
-		dataFormat.setFormatMode((sri.mode == 0) ? 'S' : 'C');
-		df.setFormat(dataFormat.getFormat());
-		double xdelta = (sri.xdelta == 0) ? 1.0 : sri.xdelta; // delta should NOT be zero
-		double ydelta = (sri.ydelta == 0) ? 1.0 : sri.ydelta; // delta should NOT be zero
-		df.setXStart(sri.xstart);
+		df.setFormat(getMidasDataType(currentSri));
+		double xdelta = (currentSri.xdelta == 0) ? 1.0 : currentSri.xdelta; // delta should NOT be zero
+		double ydelta = (currentSri.ydelta == 0) ? 1.0 : currentSri.ydelta; // delta should NOT be zero
+		df.setXStart(currentSri.xstart);
 		df.setXDelta(xdelta);
-		df.setXUnits(sri.xunits);
-		df.setYStart(sri.ystart);
+		df.setXUnits(currentSri.xunits);
+		df.setYStart(currentSri.ystart);
 		df.setYDelta(ydelta);
-		df.setYUnits(sri.yunits);
-		df.setFrameSize(sri.subsize);
-		df.getKeywordsObject().put("hversion", sri.hversion + "");
-		df.getKeywordsObject().put("streamID", sri.streamID + "");
-		df.getKeywordsObject().put("blocking", sri.blocking + "");
-		
+		df.setYUnits(currentSri.yunits);
+		df.setFrameSize(currentSri.subsize);
+		df.getKeywordsObject().put("hversion", currentSri.hversion + "");
+		df.getKeywordsObject().put("streamID", currentSri.streamID + "");
+		df.getKeywordsObject().put("blocking", currentSri.blocking + "");
+
 		setOpen(true);
 	}
 
 	@Override
 	public void pushSRI(StreamSRI sri) throws IOException {
-		this.sri = sri;
+		this.currentSri = sri;
 	}
 
 	@Override
 	public void pushPacket(char[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		final byte type = Data.INT; 
+		final byte type = Data.INT;
 		final int bufferSize = length * Data.getBPS(type);
 		byte[] byteBuffer = new byte[bufferSize];
 		Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
@@ -188,7 +159,7 @@ public class BlueDataWriter extends BaseDataWriter {
 			df.write(byteBuffer, 0, bufferSize);
 		}
 	}
-	
+
 	@Override
 	public void pushPacket(byte[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
 		if (isUnsignedData()) {
