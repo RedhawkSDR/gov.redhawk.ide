@@ -41,15 +41,12 @@ public class TopLevelBuildShTemplate
   protected final String TEXT_2 = ".spec ]; then" + NL + "        mydir=`dirname $0`" + NL + "        tmpdir=`mktemp -d`" + NL + "        cp -r ${mydir} ${tmpdir}/";
   protected final String TEXT_3 = "-";
   protected final String TEXT_4 = NL + "        tar czf ${tmpdir}/";
-  protected final String TEXT_5 = "-";
-  protected final String TEXT_6 = ".tar.gz --exclude=\".svn\" -C ${tmpdir} ";
-  protected final String TEXT_7 = "-";
-  protected final String TEXT_8 = NL + "        rpmbuild -ta ${tmpdir}/";
-  protected final String TEXT_9 = "-";
-  protected final String TEXT_10 = ".tar.gz" + NL + "        rm -rf $tmpdir" + NL + "    else" + NL + "        echo \"Missing RPM spec file in\" `pwd`" + NL + "        exit 1" + NL + "    fi" + NL + "else" + NL + "    for impl in";
-  protected final String TEXT_11 = " ";
-  protected final String TEXT_12 = " ; do" + NL + "        cd $impl" + NL + "        if [ -e build.sh ]; then" + NL + "            ./build.sh $*" + NL + "        elif [ -e reconf ]; then" + NL + "            ./reconf && ./configure && make $*" + NL + "        else" + NL + "            echo \"No build.sh found for $impl\"" + NL + "        fi" + NL + "        cd -" + NL + "    done" + NL + "fi";
-  protected final String TEXT_13 = NL;
+  protected final String TEXT_5 = ".tar.gz --exclude=\".svn\" -C ${tmpdir} ";
+  protected final String TEXT_6 = NL + "        rpmbuild -ta ${tmpdir}/";
+  protected final String TEXT_7 = ".tar.gz" + NL + "        rm -rf $tmpdir" + NL + "    else" + NL + "        echo \"Missing RPM spec file in\" `pwd`" + NL + "        exit 1" + NL + "    fi" + NL + "else" + NL + "    for impl in";
+  protected final String TEXT_8 = " ";
+  protected final String TEXT_9 = " ; do" + NL + "        cd $impl" + NL + "        if [ -e build.sh ]; then" + NL + "            ./build.sh $*" + NL + "        elif [ -e reconf ]; then" + NL + "            ./reconf && ./configure && make $*" + NL + "        else" + NL + "            echo \"No build.sh found for $impl\"" + NL + "        fi" + NL + "        cd -" + NL + "    done" + NL + "fi";
+  protected final String TEXT_10 = NL;
 
   public String generate(Object argument) throws CoreException
   {
@@ -78,30 +75,30 @@ public class TopLevelBuildShTemplate
     stringBuffer.append(version);
     stringBuffer.append(TEXT_4);
     stringBuffer.append(name);
+    stringBuffer.append(TEXT_3);
+    stringBuffer.append(version);
     stringBuffer.append(TEXT_5);
+    stringBuffer.append(name);
+    stringBuffer.append(TEXT_3);
     stringBuffer.append(version);
     stringBuffer.append(TEXT_6);
     stringBuffer.append(name);
+    stringBuffer.append(TEXT_3);
+    stringBuffer.append(version);
     stringBuffer.append(TEXT_7);
-    stringBuffer.append(version);
-    stringBuffer.append(TEXT_8);
-    stringBuffer.append(name);
-    stringBuffer.append(TEXT_9);
-    stringBuffer.append(version);
-    stringBuffer.append(TEXT_10);
     
 
     for (final Implementation impl : softPkg.getImplementation()) {
         final ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
         
-    stringBuffer.append(TEXT_11);
+    stringBuffer.append(TEXT_8);
     stringBuffer.append(implSettings.getOutputDir());
     
     }
 
 
-    stringBuffer.append(TEXT_12);
-    stringBuffer.append(TEXT_13);
+    stringBuffer.append(TEXT_9);
+    stringBuffer.append(TEXT_10);
     return stringBuffer.toString();
   }
 }

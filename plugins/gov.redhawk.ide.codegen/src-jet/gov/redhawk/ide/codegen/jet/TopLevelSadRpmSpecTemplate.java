@@ -56,10 +56,7 @@ public class TopLevelSadRpmSpecTemplate
   protected final String TEXT_12 = " $RPM_BUILD_ROOT%{_prefix}";
   protected final String TEXT_13 = "/";
   protected final String TEXT_14 = NL + NL + "%files" + NL + "%defattr(-,redhawk,redhawk)";
-  protected final String TEXT_15 = NL;
-  protected final String TEXT_16 = NL + "%{_prefix}";
-  protected final String TEXT_17 = "/";
-  protected final String TEXT_18 = NL;
+  protected final String TEXT_15 = NL + "%{_prefix}";
 
   public String generate(Object argument) throws CoreException
   {
@@ -136,13 +133,13 @@ public class TopLevelSadRpmSpecTemplate
     stringBuffer.append(TEXT_13);
     stringBuffer.append(ModelUtil.getResource(sad).getName());
     stringBuffer.append(TEXT_14);
-    stringBuffer.append(TEXT_15);
+    stringBuffer.append(TEXT_9);
     stringBuffer.append(directoryBlock);
-    stringBuffer.append(TEXT_16);
+    stringBuffer.append(TEXT_15);
     stringBuffer.append(waveformSubDir);
-    stringBuffer.append(TEXT_17);
+    stringBuffer.append(TEXT_13);
     stringBuffer.append(ModelUtil.getResource(sad).getName());
-    stringBuffer.append(TEXT_18);
+    stringBuffer.append(TEXT_9);
     return stringBuffer.toString();
   }
 }

@@ -52,10 +52,7 @@ public class TopLevelDcdRpmSpecTemplate
   protected final String TEXT_11 = " $RPM_BUILD_ROOT%{_prefix}";
   protected final String TEXT_12 = "/";
   protected final String TEXT_13 = NL + NL + "%files" + NL + "%defattr(-,redhawk,redhawk)";
-  protected final String TEXT_14 = NL;
-  protected final String TEXT_15 = NL + "%{_prefix}";
-  protected final String TEXT_16 = "/";
-  protected final String TEXT_17 = NL;
+  protected final String TEXT_14 = NL + "%{_prefix}";
 
   public String generate(Object argument) throws CoreException
   {
@@ -119,13 +116,13 @@ public class TopLevelDcdRpmSpecTemplate
     stringBuffer.append(TEXT_12);
     stringBuffer.append(ModelUtil.getResource(devCfg).getName());
     stringBuffer.append(TEXT_13);
-    stringBuffer.append(TEXT_14);
+    stringBuffer.append(TEXT_8);
     stringBuffer.append(directoryBlock);
-    stringBuffer.append(TEXT_15);
+    stringBuffer.append(TEXT_14);
     stringBuffer.append(nodeSubDir);
-    stringBuffer.append(TEXT_16);
+    stringBuffer.append(TEXT_12);
     stringBuffer.append(ModelUtil.getResource(devCfg).getName());
-    stringBuffer.append(TEXT_17);
+    stringBuffer.append(TEXT_8);
     return stringBuffer.toString();
   }
 }
