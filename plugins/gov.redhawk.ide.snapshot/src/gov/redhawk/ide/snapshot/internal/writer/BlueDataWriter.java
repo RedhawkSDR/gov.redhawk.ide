@@ -39,32 +39,23 @@ public class BlueDataWriter extends BaseDataWriter {
 	private BitStream bitStream;
 
 	/**
-	 * Returns the Midas format for the data stream (e.g. "SI", "CF", etc)
+	 * This method maps a BulkIO type from SRI to an X-Midas digraph format (e.g. "SI", "CF", etc)
 	 * @param sri The BULKIO SRI (used to determine scalar / complex)
-	 * @return
+	 * @return The appropriate X-Midas type to use (includes upcasting for unsigned types)
 	 */
 	private String getMidasDataType(StreamSRI sri) {
 		char[] format = new char[2];
-
-		format[0] = (sri.mode == 0) ? 'S' : 'C';
-
-		switch (getSettings().getType()) {
-		case OCTET:
-			format[1] = Data.INT; // upcast to next larger signed type (TODO: give option not to upcast?)
-			break;
-		case ULONG:
-			format[1] = Data.XLONG; // upcast to next larger signed type
-			break;
-		case ULONG_LONG:
-			format[1] = Data.XLONG; // CANNOT upcast
-			break;
-		case USHORT:
-			format[1] = Data.LONG; // upcast to next larger signed type
-			break;
-		default:
-			format[1] = getSettings().getType().getMidasType();
-		}
-
+		switch (sri.mode) {
+        case 0:
+                format[0] = 'S';
+                break;
+        case 1:
+                format[1] = 'C';
+                break;
+        default:
+                throw new IllegalArgumentException("Unknown BulkIO SRI mode: " + sri.mode);
+        }
+		format[1] = getSettings().getType().getMidasType();
 		return new String(format);
 	}
 
