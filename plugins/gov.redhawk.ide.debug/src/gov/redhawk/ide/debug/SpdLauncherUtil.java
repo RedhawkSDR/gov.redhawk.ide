@@ -885,6 +885,9 @@ public final class SpdLauncherUtil {
 	 */
 	public static void terminate(final LocalLaunch localLaunch) {
 		ILaunch launch = localLaunch.getLaunch();
+		if (launch == null) {
+			return;
+		}
 		Job job = new TerminateJob(launch, launch.getLaunchConfiguration().getName());
 		job.setUser(true);
 		job.schedule();
