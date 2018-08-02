@@ -15,3 +15,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: gov.redhawk.ide.sad.tests
 Automatic-Module-Name: gov.redhawk.ide.sad.tests
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: gov.redhawk.ide.sad.tests.SadTestActivator
