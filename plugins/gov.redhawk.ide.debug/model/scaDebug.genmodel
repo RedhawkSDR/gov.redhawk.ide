@@ -72,11 +72,11 @@
     <genClasses ecoreClass="scaDebug.ecore#//LocalFileManager"/>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalLaunch">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalLaunch/launch"/>
-      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalLaunch/mode"/>
+      <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalLaunch/mode"/>
     </genClasses>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalAbstractComponent">
-      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/implementationID"/>
-      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/execParam"/>
+      <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/implementationID"/>
+      <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/execParam"/>
     </genClasses>
     <genClasses provider="Stateful" image="false" ecoreClass="scaDebug.ecore#//LocalScaWaveform">
       <genFeatures property="Readonly" notify="false" createChild="false" propertySortChoices="true"
