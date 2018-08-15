@@ -114,10 +114,11 @@ public class LocalScaItemProvider extends CorbaObjWrapperItemProvider {
 	 * children and by creating a viewer notification, which it passes to {@link #fireNotifyChanged}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void notifyChanged(Notification notification) {
+		// END GENERATED CODE
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(LocalSca.class)) {
@@ -126,8 +127,10 @@ public class LocalScaItemProvider extends CorbaObjWrapperItemProvider {
 		case ScaDebugPackage.LOCAL_SCA__FILE_MANAGER:
 			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 			return;
+		default:
+			break;
 		}
-		super.notifyChanged(notification);
+		// BEGIN GENERATED CODE
 	}
 
 	/**
