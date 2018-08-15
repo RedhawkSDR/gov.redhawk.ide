@@ -15,25 +15,24 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Components Container</b></em>'.
+ * A representation of the model object '<em><b>Shared Libraries Container</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.ComponentsContainer#getChildContainers <em>Child Containers</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SharedLibrariesContainer#getChildContainers <em>Child Containers</em>}</li>
  * </ul>
  *
- * @see gov.redhawk.ide.sdr.SdrPackage#getComponentsContainer()
+ * @see gov.redhawk.ide.sdr.SdrPackage#getSharedLibrariesContainer()
  * @model
  * @generated
  */
-public interface ComponentsContainer extends SoftPkgRegistry {
-
+public interface SharedLibrariesContainer extends SoftPkgRegistry {
 	/**
 	 * Returns the value of the '<em><b>Child Containers</b></em>' containment reference list.
-	 * The list contents are of type {@link gov.redhawk.ide.sdr.ComponentsContainer}.
+	 * The list contents are of type {@link gov.redhawk.ide.sdr.SharedLibrariesContainer}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Child Containers</em>' containment reference list isn't clear,
@@ -41,10 +40,10 @@ public interface ComponentsContainer extends SoftPkgRegistry {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Child Containers</em>' containment reference list.
-	 * @see gov.redhawk.ide.sdr.SdrPackage#getComponentsContainer_ChildContainers()
+	 * @see gov.redhawk.ide.sdr.SdrPackage#getSharedLibrariesContainer_ChildContainers()
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<ComponentsContainer> getChildContainers();
+	EList<SharedLibrariesContainer> getChildContainers();
 
-} // ComponentsContainer
+} // SharedLibrariesContainer

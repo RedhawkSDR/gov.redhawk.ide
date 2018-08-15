@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.EFactory;
  * @generated
  */
 public interface SdrFactory extends EFactory {
-
 	/**
 	 * The singleton instance of the factory.
 	 * <!-- begin-user-doc -->
@@ -139,4 +138,4 @@ public interface SdrFactory extends EFactory {
 	 */
 	SdrPackage getSdrPackage();
 
-} //SdrFactory
+} // SdrFactory

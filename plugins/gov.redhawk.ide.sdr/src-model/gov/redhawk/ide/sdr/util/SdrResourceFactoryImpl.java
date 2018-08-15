@@ -14,8 +14,6 @@ package gov.redhawk.ide.sdr.util;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.XMLResource;
-import org.eclipse.emf.ecore.xmi.impl.ElementHandlerImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -37,24 +35,14 @@ public class SdrResourceFactoryImpl extends ResourceFactoryImpl {
 
 	/**
 	 * Creates an instance of the resource.
-	 * <!-- begin-user-doc --> <!--
-	 * end-user-doc -->
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Resource createResourceGen(URI uri) {
+	@Override
+	public Resource createResource(URI uri) {
 		Resource result = new SdrResourceImpl(uri);
 		return result;
 	}
 
-	@Override
-	public Resource createResource(final URI uri) {
-		final XMLResource result = (XMLResource) createResourceGen(uri);
-
-		// Suppress The Document Root
-		result.getDefaultSaveOptions().put(XMLResource.OPTION_ELEMENT_HANDLER, new ElementHandlerImpl(false));
-		result.getDefaultLoadOptions().put(XMLResource.OPTION_SUPPRESS_DOCUMENT_ROOT, Boolean.TRUE);
-
-		return result;
-	}
-
-} //SdrResourceFactoryImpl
+} // SdrResourceFactoryImpl

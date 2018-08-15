@@ -11,13 +11,13 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
-import gov.redhawk.ide.sdr.SdrPackage;
-
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xmi.util.XMLProcessor;
+
+import gov.redhawk.ide.sdr.SdrPackage;
 
 /**
  * This class contains helper methods to serialize and deserialize XML documents
@@ -54,4 +54,4 @@ public class SdrXMLProcessor extends XMLProcessor {
 		return registrations;
 	}
 
-} //SdrXMLProcessor
+} // SdrXMLProcessor

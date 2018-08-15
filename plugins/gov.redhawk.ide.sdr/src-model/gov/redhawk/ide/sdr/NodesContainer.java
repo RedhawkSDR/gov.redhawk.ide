@@ -11,10 +11,10 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr;
 
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
 /**
  * <!-- begin-user-doc -->
@@ -25,9 +25,9 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.NodesContainer#getNodes <em>Nodes</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.NodesContainer#getName <em>Name</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.NodesContainer#getChildContainers <em>Child Containers</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.NodesContainer#getNodes <em>Nodes</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.NodesContainer#getName <em>Name</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.NodesContainer#getChildContainers <em>Child Containers</em>}</li>
  * </ul>
  *
  * @see gov.redhawk.ide.sdr.SdrPackage#getNodesContainer()
@@ -35,7 +35,6 @@ import org.eclipse.emf.ecore.EObject;
  * @generated
  */
 public interface NodesContainer extends EObject {
-
 	/**
 	 * Returns the value of the '<em><b>Nodes</b></em>' reference list.
 	 * The list contents are of type {@link mil.jpeojtrs.sca.dcd.DeviceConfiguration}.

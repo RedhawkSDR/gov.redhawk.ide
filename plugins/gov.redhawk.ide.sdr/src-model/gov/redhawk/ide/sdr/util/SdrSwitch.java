@@ -11,6 +11,10 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.util.Switch;
+
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.NodesContainer;
@@ -20,9 +24,6 @@ import gov.redhawk.ide.sdr.ServicesContainer;
 import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.util.Switch;
 
 /**
  * <!-- begin-user-doc -->
@@ -38,7 +39,6 @@ import org.eclipse.emf.ecore.util.Switch;
  * @generated
  */
 public class SdrSwitch< T > extends Switch<T> {
-
 	/**
 	 * The cached model package
 	 * <!-- begin-user-doc -->
@@ -73,7 +73,8 @@ public class SdrSwitch< T > extends Switch<T> {
 	}
 
 	/**
-	 * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
+	 * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that
+	 * result.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the first non-null result returned by a <code>caseXXX</code> call.
@@ -287,4 +288,4 @@ public class SdrSwitch< T > extends Switch<T> {
 		return null;
 	}
 
-} //SdrSwitch
+} // SdrSwitch

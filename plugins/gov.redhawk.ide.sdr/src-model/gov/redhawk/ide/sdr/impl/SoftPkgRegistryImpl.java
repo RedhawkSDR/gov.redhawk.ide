@@ -37,8 +37,8 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SoftPkgRegistryImpl#getName <em>Name</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SoftPkgRegistryImpl#getComponents <em>Components</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SoftPkgRegistryImpl#getName <em>Name</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SoftPkgRegistryImpl#getComponents <em>Components</em>}</li>
  * </ul>
  *
  * @generated
@@ -53,6 +53,7 @@ public abstract class SoftPkgRegistryImpl extends EObjectImpl implements SoftPkg
 	 * @ordered
 	 */
 	protected static final String NAME_EDEFAULT = null;
+
 	/**
 	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -62,6 +63,7 @@ public abstract class SoftPkgRegistryImpl extends EObjectImpl implements SoftPkg
 	 * @ordered
 	 */
 	protected String name = NAME_EDEFAULT;
+
 	/**
 	 * The cached value of the '{@link #getComponents() <em>Components</em>}' reference list.
 	 * <!-- begin-user-doc -->
@@ -163,12 +165,14 @@ public abstract class SoftPkgRegistryImpl extends EObjectImpl implements SoftPkg
 	 * @generated NOT
 	 */
 	public EList<SoftPkg> getAllComponents() {
+		// END GENERATED CODE
 		EList<SoftPkg> retVal = new BasicEList<>(getComponents());
 		TreeIterator<SoftPkgRegistry> iter = EcoreUtil.getAllContents(this, false);
 		while (iter.hasNext()) {
 			retVal.addAll(iter.next().getComponents());
 		}
 		return retVal;
+		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -251,11 +255,11 @@ public abstract class SoftPkgRegistryImpl extends EObjectImpl implements SoftPkg
 		if (eIsProxy())
 			return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: ");
 		result.append(name);
 		result.append(')');
 		return result.toString();
 	}
 
-} //SoftPkgRegistryImpl
+} // SoftPkgRegistryImpl

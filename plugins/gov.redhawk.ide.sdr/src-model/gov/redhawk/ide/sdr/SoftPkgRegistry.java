@@ -26,8 +26,8 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.SoftPkgRegistry#getName <em>Name</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.SoftPkgRegistry#getComponents <em>Components</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SoftPkgRegistry#getName <em>Name</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SoftPkgRegistry#getComponents <em>Components</em>}</li>
  * </ul>
  *
  * @see gov.redhawk.ide.sdr.SdrPackage#getSoftPkgRegistry()
@@ -35,7 +35,6 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
  * @generated
  */
 public interface SoftPkgRegistry extends EObject {
-
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->

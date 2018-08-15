@@ -36,6 +36,7 @@ public enum LoadState implements Enumerator {
 	 * @ordered
 	 */
 	UNLOADED(0, "UNLOADED", "UNLOADED"),
+
 	/**
 	 * The '<em><b>LOADING</b></em>' literal object.
 	 * <!-- begin-user-doc -->
@@ -45,6 +46,7 @@ public enum LoadState implements Enumerator {
 	 * @ordered
 	 */
 	LOADING(1, "LOADING", "LOADING"),
+
 	/**
 	 * The '<em><b>LOADED</b></em>' literal object.
 	 * <!-- begin-user-doc -->
@@ -69,6 +71,7 @@ public enum LoadState implements Enumerator {
 	 * @ordered
 	 */
 	public static final int UNLOADED_VALUE = 0;
+
 	/**
 	 * The '<em><b>LOADING</b></em>' literal value.
 	 * <!-- begin-user-doc -->
@@ -83,6 +86,7 @@ public enum LoadState implements Enumerator {
 	 * @ordered
 	 */
 	public static final int LOADING_VALUE = 1;
+
 	/**
 	 * The '<em><b>LOADED</b></em>' literal value.
 	 * <!-- begin-user-doc -->
@@ -97,6 +101,7 @@ public enum LoadState implements Enumerator {
 	 * @ordered
 	 */
 	public static final int LOADED_VALUE = 2;
+
 	/**
 	 * An array of all the '<em><b>Load State</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
@@ -104,6 +109,7 @@ public enum LoadState implements Enumerator {
 	 * @generated
 	 */
 	private static final LoadState[] VALUES_ARRAY = new LoadState[] { UNLOADED, LOADING, LOADED, };
+
 	/**
 	 * A public read-only list of all the '<em><b>Load State</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
@@ -174,12 +180,14 @@ public enum LoadState implements Enumerator {
 	 * @generated
 	 */
 	private final int value;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private final String name;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -240,4 +248,4 @@ public enum LoadState implements Enumerator {
 		return literal;
 	}
 
-} //LoadState
+} // LoadState

@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
  * @generated
  */
 public class SdrResourceImpl extends XMLResourceImpl {
-
 	/**
 	 * Creates an instance of the resource.
 	 * <!-- begin-user-doc -->
@@ -34,4 +33,4 @@ public class SdrResourceImpl extends XMLResourceImpl {
 		super(uri);
 	}
 
-} //SdrResourceImpl
+} // SdrResourceImpl

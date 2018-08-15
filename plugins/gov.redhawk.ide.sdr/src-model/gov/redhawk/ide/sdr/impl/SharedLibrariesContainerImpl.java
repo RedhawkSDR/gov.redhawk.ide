@@ -11,9 +11,8 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
-import gov.redhawk.ide.sdr.DevicesContainer;
-import gov.redhawk.ide.sdr.SdrPackage;
 import java.util.Collection;
+
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -21,21 +20,23 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import gov.redhawk.ide.sdr.SdrPackage;
+import gov.redhawk.ide.sdr.SharedLibrariesContainer;
+
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Devices Container</b></em>'.
+ * An implementation of the model object '<em><b>Shared Libraries Container</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.impl.DevicesContainerImpl#getChildContainers <em>Child Containers</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SharedLibrariesContainerImpl#getChildContainers <em>Child Containers</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class DevicesContainerImpl extends SoftPkgRegistryImpl implements DevicesContainer {
-
+public class SharedLibrariesContainerImpl extends SoftPkgRegistryImpl implements SharedLibrariesContainer {
 	/**
 	 * The cached value of the '{@link #getChildContainers() <em>Child Containers</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -44,14 +45,14 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<DevicesContainer> childContainers;
+	protected EList<SharedLibrariesContainer> childContainers;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected DevicesContainerImpl() {
+	protected SharedLibrariesContainerImpl() {
 		super();
 	}
 
@@ -62,7 +63,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return SdrPackage.Literals.DEVICES_CONTAINER;
+		return SdrPackage.Literals.SHARED_LIBRARIES_CONTAINER;
 	}
 
 	/**
@@ -70,9 +71,10 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<DevicesContainer> getChildContainers() {
+	public EList<SharedLibrariesContainer> getChildContainers() {
 		if (childContainers == null) {
-			childContainers = new EObjectContainmentEList<DevicesContainer>(DevicesContainer.class, this, SdrPackage.DEVICES_CONTAINER__CHILD_CONTAINERS);
+			childContainers = new EObjectContainmentEList<SharedLibrariesContainer>(SharedLibrariesContainer.class, this,
+				SdrPackage.SHARED_LIBRARIES_CONTAINER__CHILD_CONTAINERS);
 		}
 		return childContainers;
 	}
@@ -85,7 +87,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-		case SdrPackage.DEVICES_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__CHILD_CONTAINERS:
 			return ((InternalEList< ? >) getChildContainers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -99,7 +101,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-		case SdrPackage.DEVICES_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__CHILD_CONTAINERS:
 			return getChildContainers();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -114,9 +116,9 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-		case SdrPackage.DEVICES_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__CHILD_CONTAINERS:
 			getChildContainers().clear();
-			getChildContainers().addAll((Collection< ? extends DevicesContainer>) newValue);
+			getChildContainers().addAll((Collection< ? extends SharedLibrariesContainer>) newValue);
 			return;
 		}
 		super.eSet(featureID, newValue);
@@ -130,7 +132,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-		case SdrPackage.DEVICES_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__CHILD_CONTAINERS:
 			getChildContainers().clear();
 			return;
 		}
@@ -145,10 +147,10 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-		case SdrPackage.DEVICES_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__CHILD_CONTAINERS:
 			return childContainers != null && !childContainers.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
 
-} //DevicesContainerImpl
+} // SharedLibrariesContainerImpl

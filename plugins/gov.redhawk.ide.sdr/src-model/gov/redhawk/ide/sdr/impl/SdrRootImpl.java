@@ -31,7 +31,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
@@ -74,30 +73,37 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 /**
- * <!-- begin-user-doc --> An implementation of the model object '
- * <em><b>Root</b></em>'. <!-- end-user-doc -->
+ * <!-- begin-user-doc -->
+ * An implementation of the model object '<em><b>Root</b></em>'.
+ * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getLoadStatus <em>Load Status</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getState <em>State</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getComponentsContainer <em>Components Container</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getWaveformsContainer <em>Waveforms Container</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDevicesContainer <em>Devices Container</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getServicesContainer <em>Services Container</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getNodesContainer <em>Nodes Container</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getSharedLibrariesContainer <em>Shared Libraries Container</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDomainConfiguration <em>Domain Configuration</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getIdlLibrary <em>Idl Library</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDevFileSystemRoot <em>Dev File System Root</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDomFileSystemRoot <em>Dom File System Root</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getLoadStatus <em>Load Status</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getState <em>State</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getComponentsContainer <em>Components Container</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getWaveformsContainer <em>Waveforms Container</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDevicesContainer <em>Devices Container</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getServicesContainer <em>Services Container</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getNodesContainer <em>Nodes Container</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getSharedLibrariesContainer <em>Shared Libraries Container</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDomainConfiguration <em>Domain Configuration</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getIdlLibrary <em>Idl Library</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDevFileSystemRoot <em>Dev File System Root</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDomFileSystemRoot <em>Dom File System Root</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class SdrRootImpl extends EObjectImpl implements SdrRoot {
+
+	// END GENERATED CODE
+
 	private static final Debug DEBUG = new Debug(IdeSdrActivator.getDefault(), "gov.redhawk.ide.sdr/debug/invalidDevices");
+
+	// BEGIN GENERATED CODE
+
 	/**
 	 * The default value of the '{@link #getLoadStatus() <em>Load Status</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -118,6 +124,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected IStatus loadStatus = LOAD_STATUS_EDEFAULT;
+
 	/**
 	 * The default value of the '{@link #getState() <em>State</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -127,6 +134,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected static final LoadState STATE_EDEFAULT = LoadState.UNLOADED;
+
 	/**
 	 * The cached value of the '{@link #getState() <em>State</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -136,6 +144,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected LoadState state = STATE_EDEFAULT;
+
 	/**
 	 * The cached value of the '{@link #getComponentsContainer() <em>Components Container</em>}' containment reference.
 	 * <!-- begin-user-doc -->
@@ -145,6 +154,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected ComponentsContainer componentsContainer;
+
 	/**
 	 * The cached value of the '{@link #getWaveformsContainer() <em>Waveforms Container</em>}' containment reference.
 	 * <!-- begin-user-doc -->
@@ -154,6 +164,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected WaveformsContainer waveformsContainer;
+
 	/**
 	 * The cached value of the '{@link #getDevicesContainer() <em>Devices Container</em>}' containment reference.
 	 * <!-- begin-user-doc -->
@@ -163,6 +174,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected DevicesContainer devicesContainer;
+
 	/**
 	 * The cached value of the '{@link #getServicesContainer() <em>Services Container</em>}' containment reference.
 	 * <!-- begin-user-doc -->
@@ -172,6 +184,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected ServicesContainer servicesContainer;
+
 	/**
 	 * The cached value of the '{@link #getNodesContainer() <em>Nodes Container</em>}' containment reference.
 	 * <!-- begin-user-doc -->
@@ -181,8 +194,10 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected NodesContainer nodesContainer;
+
 	/**
-	 * The cached value of the '{@link #getSharedLibrariesContainer() <em>Shared Libraries Container</em>}' containment reference.
+	 * The cached value of the '{@link #getSharedLibrariesContainer() <em>Shared Libraries Container</em>}' containment
+	 * reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getSharedLibrariesContainer()
@@ -190,6 +205,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected SharedLibrariesContainer sharedLibrariesContainer;
+
 	/**
 	 * The cached value of the '{@link #getDomainConfiguration() <em>Domain Configuration</em>}' reference.
 	 * <!-- begin-user-doc -->
@@ -199,6 +215,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected DomainManagerConfiguration domainConfiguration;
+
 	/**
 	 * The cached value of the '{@link #getIdlLibrary() <em>Idl Library</em>}' containment reference.
 	 * <!-- begin-user-doc -->
@@ -208,6 +225,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected IdlLibrary idlLibrary;
+
 	/**
 	 * The default value of the '{@link #getDevFileSystemRoot() <em>Dev File System Root</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -217,6 +235,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected static final URI DEV_FILE_SYSTEM_ROOT_EDEFAULT = null;
+
 	/**
 	 * The cached value of the '{@link #getDevFileSystemRoot() <em>Dev File System Root</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -226,6 +245,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected URI devFileSystemRoot = DEV_FILE_SYSTEM_ROOT_EDEFAULT;
+
 	/**
 	 * The default value of the '{@link #getDomFileSystemRoot() <em>Dom File System Root</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -235,6 +255,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected static final URI DOM_FILE_SYSTEM_ROOT_EDEFAULT = null;
+
 	/**
 	 * The cached value of the '{@link #getDomFileSystemRoot() <em>Dom File System Root</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -244,12 +265,10 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected URI domFileSystemRoot = DOM_FILE_SYSTEM_ROOT_EDEFAULT;
-	private static final EStructuralFeature[] DESC_PATH = new EStructuralFeature[] { SpdPackage.Literals.SOFT_PKG__DESCRIPTOR,
-		SpdPackage.Literals.DESCRIPTOR__COMPONENT };
 
 	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	protected SdrRootImpl() {
@@ -285,14 +304,15 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	}
 
 	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	private void setLoadStatus(IStatus newStatus) {
-		IStatus oldStatus = this.loadStatus;
-		loadStatus = newStatus;
+	private void setLoadStatus(IStatus newLoadStatus) {
+		IStatus oldLoadStatus = loadStatus;
+		loadStatus = newLoadStatus;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__LOAD_STATUS, oldStatus, loadStatus));
+			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__LOAD_STATUS, oldLoadStatus, loadStatus));
 	}
 
 	/**
@@ -653,6 +673,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -746,13 +767,12 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	}
 
 	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @throws CoreException
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	@Override
-	public synchronized void load(final IProgressMonitor monitor) {
+	public synchronized void load(IProgressMonitor monitor) {
 		// END GENERATED CODE
 		if (getState() == LoadState.LOADED) {
 			return;
@@ -795,6 +815,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		}
 		// BEGIN GENERATED CODE
 	}
+
+	// END GENERATED CODE
 
 	/**
 	 * Check through all objects in the Target SDR and ensure that no duplicate ID's are found
@@ -842,7 +864,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	}
 
 	private IStatus loadIdlLibrary(IProgressMonitor monitor) {
-		// END GENERATED CODE
 		try {
 			if ((getIdlLibrary() != null) && (getIdlLibrary().getLoadStatus() == null)) {
 				getIdlLibrary().load(monitor);
@@ -851,11 +872,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		} catch (final CoreException e) {
 			return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to load IDL Library", e);
 		}
-		// BEGIN GENERATED CODE
 	}
 
 	private IStatus loadDevFileSystem(ResourceSet resourceSet, IProgressMonitor monitor) {
-		// END GENERATED CODE
 		SubMonitor progress = SubMonitor.convert(monitor, 20);
 
 		if (getDevFileSystemRoot() == null) {
@@ -874,11 +893,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		}
 
 		return processStore(resourceSet, devRoot, progress.newChild(19));
-		// BEGIN GENERATED CODE
 	}
 
 	private IStatus loadDomFileSystem(ResourceSet resourceSet, IProgressMonitor monitor) {
-		// END GENERATED CODE
 		SubMonitor progress = SubMonitor.convert(monitor, 20);
 
 		if (getDomFileSystemRoot() == null) {
@@ -897,15 +914,15 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		}
 
 		return processStore(resourceSet, domRoot, monitor);
-		// BEGIN GENERATED CODE
 	}
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * @since 8.0
 	 * <!-- end-user-doc -->
 	 * @generated NOT
-	 * 
 	 */
 	@Override
 	public synchronized void unload(IProgressMonitor monitor) {
@@ -1028,14 +1045,16 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		// BEGIN GENERATED CODE
 	}
 
+	// END GENERATED CODE
+
 	private String trimPath(String path) {
-		// END GENERATED CODE
 		if (path != null && path.charAt(0) == '/') {
 			return trimPath(path.substring(1));
 		}
 		return path;
-		// BEGIN GENERATED CODE
 	}
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1260,7 +1279,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (eIsProxy())
 			return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (loadStatus: ");
 		result.append(loadStatus);
 		result.append(", state: ");
@@ -1273,6 +1292,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		return result.toString();
 	}
 
+	// END GENERATED CODE
+
 	/**
 	 * @param resourceSet
 	 * @param parent
@@ -1280,7 +1301,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @throws CoreException
 	 */
 	private IStatus processDirectory(ResourceSet resourceSet, final IFileStore parent, final IProgressMonitor monitor) {
-		// END GENERATED CODE
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Processing directory " + parent.getName(), 100);
 		IFileStore[] childStores;
 		try {
@@ -1295,7 +1315,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			multiStatus.merge(processStore(resourceSet, child, loopProgress.newChild(1)));
 		}
 		return multiStatus;
-		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -1305,7 +1324,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @throws CoreException
 	 */
 	private IStatus processStore(ResourceSet resourceSet, final IFileStore child, final IProgressMonitor monitor) {
-		// END GENERATED CODE
 		if (child.getName().startsWith(".")) {
 			return Status.OK_STATUS;
 		}
@@ -1324,7 +1342,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 				return Status.OK_STATUS;
 			}
 		}
-		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -1333,7 +1350,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param monitor
 	 */
 	private IStatus loadSpd(ResourceSet resourceSet, final IFileStore spdFile, final IProgressMonitor monitor) {
-		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading SPD " + spdFile.getName(), 2); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
 		URI spdFileUri = URI.createURI(spdFile.toURI().toString());
@@ -1353,7 +1369,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		submonitor.worked(1);
 
 		// Determine type of spd to be added
-		final SoftwareComponent component = ScaEcoreUtils.getFeature(softPkg, DESC_PATH);
+		final SoftwareComponent component = ScaEcoreUtils.getFeature(softPkg, SpdPackage.Literals.SOFT_PKG__DESCRIPTOR,
+			SpdPackage.Literals.DESCRIPTOR__COMPONENT);
 		if (component != null) {
 			ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(component);
 			switch (type) {
@@ -1388,7 +1405,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		}
 		submonitor.worked(1);
 		return Status.OK_STATUS;
-		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -1396,10 +1412,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param softPkg
 	 */
 	private void addUnknownComponentType(final SoftwareComponent component, final SoftPkg softPkg) {
-		// END GENERATED CODE
 		IdeSdrActivator.getDefault().logWarning(
 			MessageFormat.format("Component \"{0}\" of type \"{1}\" ignored, unknown type.", softPkg.getName(), component.getComponentType()));
-		// BEGIN GENERATED CODE
 
 	}
 
@@ -1408,7 +1422,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param component
 	 */
 	private void addResource(final SoftPkg softPkg, final SoftwareComponent component) {
-		// END GENERATED CODE
 		if (component != null) {
 			for (final SupportsInterface iface : component.getComponentFeatures().getSupportsInterface()) {
 				if (iface.getRepId().startsWith("IDL:CF/Device") || iface.getRepId().startsWith("IDL:CF/LoadableDevice")
@@ -1478,7 +1491,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 				return;
 			}
 		}
-		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -1486,7 +1498,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param component
 	 */
 	private void addDevice(final SoftPkg softPkg, final SoftwareComponent component) {
-		// END GENERATED CODE
 		ScaModelCommand.execute(getComponentsContainer(), () -> {
 			// Root container
 			DevicesContainer container = getDevicesContainer();
@@ -1511,7 +1522,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 
 			container.getComponents().add(softPkg);
 		});
-		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -1519,7 +1529,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param component
 	 */
 	private void addService(final SoftPkg softPkg, final SoftwareComponent component) {
-		// END GENERATED CODE
 		ScaModelCommand.execute(getComponentsContainer(), () -> {
 			// Root container
 			ServicesContainer container = getServicesContainer();
@@ -1544,7 +1553,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 
 			container.getComponents().add(softPkg);
 		});
-		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -1554,7 +1562,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @return
 	 */
 	private String convertToFilePath(org.eclipse.emf.common.util.URI fileURI) {
-		// END GENERATED CODE
 		final String uriToString = fileURI.toString();
 		if (ScaFileSystemConstants.SCHEME.equals(fileURI.scheme())) {
 			Map<String, String> query = QueryParser.parseQuery(fileURI.query());
@@ -1568,7 +1575,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			return new Path(URI.createURI(fs).toFileString()).append(fileURI.path()).toOSString();
 		}
 		return uriToString;
-		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -1592,7 +1598,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param monitor
 	 */
 	private IStatus loadSad(ResourceSet resourceSet, final IFileStore sadFile, final IProgressMonitor monitor) {
-		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading SAD " + sadFile.getName(), 2); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
 		URI sadFileUri = URI.createURI(sadFile.toURI().toString());
@@ -1642,7 +1647,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		submonitor.worked(1);
 
 		return retVal;
-		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -1651,7 +1655,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param monitor
 	 */
 	private IStatus loadDcd(ResourceSet resourceSet, final IFileStore dcdFile, final IProgressMonitor monitor) {
-		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading DCD " + dcdFile.getName(), 2); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
 		URI dcdFileUri = URI.createURI(dcdFile.toURI().toString());
@@ -1699,7 +1702,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		});
 		submonitor.worked(1);
 		return retVal;
-		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -1709,7 +1711,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 *  reported and that the operation cannot be canceled.
 	 */
 	private IStatus loadDmd(ResourceSet resourceSet, final IFileStore dmdFile, final IProgressMonitor monitor) {
-		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading DMD " + dmdFile.getName(), 1); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
 		URI dmdUri = URI.createURI(dmdFile.toURI().toString());
@@ -1733,7 +1734,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		});
 		submonitor.worked(1);
 		return retVal;
-		// BEGIN GENERATED CODE
 	}
+
+	// BEGIN GENERATED CODE
 
 } // SdrRootImpl

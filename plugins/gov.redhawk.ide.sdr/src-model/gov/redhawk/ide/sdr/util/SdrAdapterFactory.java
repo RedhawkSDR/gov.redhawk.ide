@@ -11,6 +11,11 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+import org.eclipse.emf.ecore.EObject;
+
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.NodesContainer;
@@ -20,10 +25,6 @@ import gov.redhawk.ide.sdr.ServicesContainer;
 import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -34,7 +35,6 @@ import org.eclipse.emf.ecore.EObject;
  * @generated
  */
 public class SdrAdapterFactory extends AdapterFactoryImpl {
-
 	/**
 	 * The cached model package.
 	 * <!-- begin-user-doc -->
@@ -58,7 +58,8 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	/**
 	 * Returns whether this factory is applicable for the type of the object.
 	 * <!-- begin-user-doc -->
-	 * This implementation returns <code>true</code> if the object is either the model's package or is an instance object of the model.
+	 * This implementation returns <code>true</code> if the object is either the model's package or is an instance
+	 * object of the model.
 	 * <!-- end-user-doc -->
 	 * @return whether this factory is applicable for the type of the object.
 	 * @generated
@@ -155,7 +156,8 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.ComponentsContainer <em>Components Container</em>}'.
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.ComponentsContainer <em>Components
+	 * Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
@@ -169,7 +171,8 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.WaveformsContainer <em>Waveforms Container</em>}'.
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.WaveformsContainer <em>Waveforms
+	 * Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
@@ -183,7 +186,8 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.DevicesContainer <em>Devices Container</em>}'.
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.DevicesContainer <em>Devices
+	 * Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
@@ -197,7 +201,8 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.ServicesContainer <em>Services Container</em>}'.
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.ServicesContainer <em>Services
+	 * Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
@@ -211,7 +216,8 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.SharedLibrariesContainer <em>Shared Libraries Container</em>}'.
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.SharedLibrariesContainer <em>Shared
+	 * Libraries Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
@@ -225,7 +231,8 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.NodesContainer <em>Nodes Container</em>}'.
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.NodesContainer <em>Nodes
+	 * Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
@@ -239,7 +246,8 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.SoftPkgRegistry <em>Soft Pkg Registry</em>}'.
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.SoftPkgRegistry <em>Soft Pkg
+	 * Registry</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
@@ -264,4 +272,4 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 		return null;
 	}
 
-} //SdrAdapterFactory
+} // SdrAdapterFactory

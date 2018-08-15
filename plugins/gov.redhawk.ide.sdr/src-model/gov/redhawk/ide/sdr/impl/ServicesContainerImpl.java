@@ -11,9 +11,8 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
-import gov.redhawk.ide.sdr.ComponentsContainer;
-import gov.redhawk.ide.sdr.SdrPackage;
 import java.util.Collection;
+
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -21,21 +20,24 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import gov.redhawk.ide.sdr.SdrPackage;
+import gov.redhawk.ide.sdr.ServicesContainer;
+
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Components Container</b></em>'.
+ * An implementation of the model object '<em><b>Services Container</b></em>'.
+ * @since 6.0
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.impl.ComponentsContainerImpl#getChildContainers <em>Child Containers</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.ServicesContainerImpl#getChildContainers <em>Child Containers</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class ComponentsContainerImpl extends SoftPkgRegistryImpl implements ComponentsContainer {
-
+public class ServicesContainerImpl extends SoftPkgRegistryImpl implements ServicesContainer {
 	/**
 	 * The cached value of the '{@link #getChildContainers() <em>Child Containers</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -44,14 +46,14 @@ public class ComponentsContainerImpl extends SoftPkgRegistryImpl implements Comp
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ComponentsContainer> childContainers;
+	protected EList<ServicesContainer> childContainers;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ComponentsContainerImpl() {
+	protected ServicesContainerImpl() {
 		super();
 	}
 
@@ -62,7 +64,7 @@ public class ComponentsContainerImpl extends SoftPkgRegistryImpl implements Comp
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return SdrPackage.Literals.COMPONENTS_CONTAINER;
+		return SdrPackage.Literals.SERVICES_CONTAINER;
 	}
 
 	/**
@@ -70,10 +72,9 @@ public class ComponentsContainerImpl extends SoftPkgRegistryImpl implements Comp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<ComponentsContainer> getChildContainers() {
+	public EList<ServicesContainer> getChildContainers() {
 		if (childContainers == null) {
-			childContainers = new EObjectContainmentEList<ComponentsContainer>(ComponentsContainer.class, this,
-				SdrPackage.COMPONENTS_CONTAINER__CHILD_CONTAINERS);
+			childContainers = new EObjectContainmentEList<ServicesContainer>(ServicesContainer.class, this, SdrPackage.SERVICES_CONTAINER__CHILD_CONTAINERS);
 		}
 		return childContainers;
 	}
@@ -86,7 +87,7 @@ public class ComponentsContainerImpl extends SoftPkgRegistryImpl implements Comp
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-		case SdrPackage.COMPONENTS_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.SERVICES_CONTAINER__CHILD_CONTAINERS:
 			return ((InternalEList< ? >) getChildContainers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -100,7 +101,7 @@ public class ComponentsContainerImpl extends SoftPkgRegistryImpl implements Comp
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-		case SdrPackage.COMPONENTS_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.SERVICES_CONTAINER__CHILD_CONTAINERS:
 			return getChildContainers();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -115,9 +116,9 @@ public class ComponentsContainerImpl extends SoftPkgRegistryImpl implements Comp
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-		case SdrPackage.COMPONENTS_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.SERVICES_CONTAINER__CHILD_CONTAINERS:
 			getChildContainers().clear();
-			getChildContainers().addAll((Collection< ? extends ComponentsContainer>) newValue);
+			getChildContainers().addAll((Collection< ? extends ServicesContainer>) newValue);
 			return;
 		}
 		super.eSet(featureID, newValue);
@@ -131,7 +132,7 @@ public class ComponentsContainerImpl extends SoftPkgRegistryImpl implements Comp
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-		case SdrPackage.COMPONENTS_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.SERVICES_CONTAINER__CHILD_CONTAINERS:
 			getChildContainers().clear();
 			return;
 		}
@@ -146,10 +147,10 @@ public class ComponentsContainerImpl extends SoftPkgRegistryImpl implements Comp
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-		case SdrPackage.COMPONENTS_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.SERVICES_CONTAINER__CHILD_CONTAINERS:
 			return childContainers != null && !childContainers.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
 
-} //ComponentsContainerImpl
+} // ServicesContainerImpl

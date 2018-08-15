@@ -11,12 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
-import gov.redhawk.ide.sdr.SdrPackage;
-import gov.redhawk.ide.sdr.WaveformsContainer;
-
 import java.util.Collection;
-
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -29,32 +24,35 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import gov.redhawk.ide.sdr.NodesContainer;
+import gov.redhawk.ide.sdr.SdrPackage;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Waveforms Container</b></em>'.
+ * An implementation of the model object '<em><b>Nodes Container</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.impl.WaveformsContainerImpl#getWaveforms <em>Waveforms</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.WaveformsContainerImpl#getName <em>Name</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.WaveformsContainerImpl#getChildContainers <em>Child Containers</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.NodesContainerImpl#getNodes <em>Nodes</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.NodesContainerImpl#getName <em>Name</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.impl.NodesContainerImpl#getChildContainers <em>Child Containers</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class WaveformsContainerImpl extends EObjectImpl implements WaveformsContainer {
-
+public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	/**
-	 * The cached value of the '{@link #getWaveforms() <em>Waveforms</em>}' reference list.
+	 * The cached value of the '{@link #getNodes() <em>Nodes</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getWaveforms()
+	 * @see #getNodes()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<SoftwareAssembly> waveforms;
+	protected EList<DeviceConfiguration> nodes;
 
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -65,6 +63,7 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	 * @ordered
 	 */
 	protected static final String NAME_EDEFAULT = null;
+
 	/**
 	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -74,6 +73,7 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	 * @ordered
 	 */
 	protected String name = NAME_EDEFAULT;
+
 	/**
 	 * The cached value of the '{@link #getChildContainers() <em>Child Containers</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -82,14 +82,14 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<WaveformsContainer> childContainers;
+	protected EList<NodesContainer> childContainers;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected WaveformsContainerImpl() {
+	protected NodesContainerImpl() {
 		super();
 	}
 
@@ -100,7 +100,7 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return SdrPackage.Literals.WAVEFORMS_CONTAINER;
+		return SdrPackage.Literals.NODES_CONTAINER;
 	}
 
 	/**
@@ -109,11 +109,11 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	 * @generated
 	 */
 	@Override
-	public EList<SoftwareAssembly> getWaveforms() {
-		if (waveforms == null) {
-			waveforms = new EObjectResolvingEList<SoftwareAssembly>(SoftwareAssembly.class, this, SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS);
+	public EList<DeviceConfiguration> getNodes() {
+		if (nodes == null) {
+			nodes = new EObjectResolvingEList<DeviceConfiguration>(DeviceConfiguration.class, this, SdrPackage.NODES_CONTAINER__NODES);
 		}
-		return waveforms;
+		return nodes;
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.WAVEFORMS_CONTAINER__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.NODES_CONTAINER__NAME, oldName, name));
 	}
 
 	/**
@@ -142,9 +142,9 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<WaveformsContainer> getChildContainers() {
+	public EList<NodesContainer> getChildContainers() {
 		if (childContainers == null) {
-			childContainers = new EObjectContainmentEList<WaveformsContainer>(WaveformsContainer.class, this, SdrPackage.WAVEFORMS_CONTAINER__CHILD_CONTAINERS);
+			childContainers = new EObjectContainmentEList<NodesContainer>(NodesContainer.class, this, SdrPackage.NODES_CONTAINER__CHILD_CONTAINERS);
 		}
 		return childContainers;
 	}
@@ -157,7 +157,7 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-		case SdrPackage.WAVEFORMS_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.NODES_CONTAINER__CHILD_CONTAINERS:
 			return ((InternalEList< ? >) getChildContainers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -171,11 +171,11 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-		case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
-			return getWaveforms();
-		case SdrPackage.WAVEFORMS_CONTAINER__NAME:
+		case SdrPackage.NODES_CONTAINER__NODES:
+			return getNodes();
+		case SdrPackage.NODES_CONTAINER__NAME:
 			return getName();
-		case SdrPackage.WAVEFORMS_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.NODES_CONTAINER__CHILD_CONTAINERS:
 			return getChildContainers();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -190,16 +190,16 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-		case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
-			getWaveforms().clear();
-			getWaveforms().addAll((Collection< ? extends SoftwareAssembly>) newValue);
+		case SdrPackage.NODES_CONTAINER__NODES:
+			getNodes().clear();
+			getNodes().addAll((Collection< ? extends DeviceConfiguration>) newValue);
 			return;
-		case SdrPackage.WAVEFORMS_CONTAINER__NAME:
+		case SdrPackage.NODES_CONTAINER__NAME:
 			setName((String) newValue);
 			return;
-		case SdrPackage.WAVEFORMS_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.NODES_CONTAINER__CHILD_CONTAINERS:
 			getChildContainers().clear();
-			getChildContainers().addAll((Collection< ? extends WaveformsContainer>) newValue);
+			getChildContainers().addAll((Collection< ? extends NodesContainer>) newValue);
 			return;
 		}
 		super.eSet(featureID, newValue);
@@ -213,13 +213,13 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-		case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
-			getWaveforms().clear();
+		case SdrPackage.NODES_CONTAINER__NODES:
+			getNodes().clear();
 			return;
-		case SdrPackage.WAVEFORMS_CONTAINER__NAME:
+		case SdrPackage.NODES_CONTAINER__NAME:
 			setName(NAME_EDEFAULT);
 			return;
-		case SdrPackage.WAVEFORMS_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.NODES_CONTAINER__CHILD_CONTAINERS:
 			getChildContainers().clear();
 			return;
 		}
@@ -234,11 +234,11 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-		case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
-			return waveforms != null && !waveforms.isEmpty();
-		case SdrPackage.WAVEFORMS_CONTAINER__NAME:
+		case SdrPackage.NODES_CONTAINER__NODES:
+			return nodes != null && !nodes.isEmpty();
+		case SdrPackage.NODES_CONTAINER__NAME:
 			return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-		case SdrPackage.WAVEFORMS_CONTAINER__CHILD_CONTAINERS:
+		case SdrPackage.NODES_CONTAINER__CHILD_CONTAINERS:
 			return childContainers != null && !childContainers.isEmpty();
 		}
 		return super.eIsSet(featureID);
@@ -254,11 +254,11 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 		if (eIsProxy())
 			return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: ");
 		result.append(name);
 		result.append(')');
 		return result.toString();
 	}
 
-} //WaveformsContainerImpl
+} // NodesContainerImpl

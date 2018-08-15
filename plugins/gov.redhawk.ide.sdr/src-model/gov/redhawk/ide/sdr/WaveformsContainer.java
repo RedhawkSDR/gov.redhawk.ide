@@ -11,10 +11,10 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr;
 
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 /**
  * <!-- begin-user-doc -->
@@ -25,9 +25,9 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.WaveformsContainer#getWaveforms <em>Waveforms</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.WaveformsContainer#getName <em>Name</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.WaveformsContainer#getChildContainers <em>Child Containers</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.WaveformsContainer#getWaveforms <em>Waveforms</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.WaveformsContainer#getName <em>Name</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.WaveformsContainer#getChildContainers <em>Child Containers</em>}</li>
  * </ul>
  *
  * @see gov.redhawk.ide.sdr.SdrPackage#getWaveformsContainer()
@@ -35,7 +35,6 @@ import org.eclipse.emf.ecore.EObject;
  * @generated
  */
 public interface WaveformsContainer extends EObject {
-
 	/**
 	 * Returns the value of the '<em><b>Waveforms</b></em>' reference list.
 	 * The list contents are of type {@link mil.jpeojtrs.sca.sad.SoftwareAssembly}.

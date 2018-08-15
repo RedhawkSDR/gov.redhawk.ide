@@ -11,14 +11,14 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr;
 
-import gov.redhawk.eclipsecorba.library.IdlLibrary;
-import mil.jpeojtrs.sca.dmd.DomainManagerConfiguration;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+
+import gov.redhawk.eclipsecorba.library.IdlLibrary;
+import mil.jpeojtrs.sca.dmd.DomainManagerConfiguration;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,18 +29,18 @@ import org.eclipse.emf.ecore.resource.Resource;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getLoadStatus <em>Load Status</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getState <em>State</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getComponentsContainer <em>Components Container</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getWaveformsContainer <em>Waveforms Container</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDevicesContainer <em>Devices Container</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getServicesContainer <em>Services Container</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getNodesContainer <em>Nodes Container</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getSharedLibrariesContainer <em>Shared Libraries Container</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDomainConfiguration <em>Domain Configuration</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getIdlLibrary <em>Idl Library</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDevFileSystemRoot <em>Dev File System Root</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDomFileSystemRoot <em>Dom File System Root</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SdrRoot#getLoadStatus <em>Load Status</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SdrRoot#getState <em>State</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SdrRoot#getComponentsContainer <em>Components Container</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SdrRoot#getWaveformsContainer <em>Waveforms Container</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDevicesContainer <em>Devices Container</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SdrRoot#getServicesContainer <em>Services Container</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SdrRoot#getNodesContainer <em>Nodes Container</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SdrRoot#getSharedLibrariesContainer <em>Shared Libraries Container</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDomainConfiguration <em>Domain Configuration</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SdrRoot#getIdlLibrary <em>Idl Library</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDevFileSystemRoot <em>Dev File System Root</em>}</li>
+ * <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDomFileSystemRoot <em>Dom File System Root</em>}</li>
  * </ul>
  *
  * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot()
@@ -48,7 +48,6 @@ import org.eclipse.emf.ecore.resource.Resource;
  * @generated
  */
 public interface SdrRoot extends EObject {
-
 	/**
 	 * Returns the value of the '<em><b>Load Status</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -59,7 +58,8 @@ public interface SdrRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Load Status</em>' attribute.
 	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_LoadStatus()
-	 * @model dataType="gov.redhawk.eclipsecorba.library.IStatus" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model dataType="gov.redhawk.eclipsecorba.library.IStatus" transient="true" derived="true"
+	 * suppressedSetVisibility="true" suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	IStatus getLoadStatus();
@@ -92,7 +92,8 @@ public interface SdrRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Components Container</em>' containment reference.
 	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_ComponentsContainer()
-	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true"
+	 * suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	ComponentsContainer getComponentsContainer();
@@ -122,7 +123,8 @@ public interface SdrRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Devices Container</em>' containment reference.
 	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_DevicesContainer()
-	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true"
+	 * suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	DevicesContainer getDevicesContainer();
@@ -137,7 +139,8 @@ public interface SdrRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Services Container</em>' containment reference.
 	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_ServicesContainer()
-	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true"
+	 * suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	ServicesContainer getServicesContainer();
@@ -152,7 +155,8 @@ public interface SdrRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Nodes Container</em>' containment reference.
 	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_NodesContainer()
-	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true"
+	 * suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	NodesContainer getNodesContainer();
@@ -167,7 +171,8 @@ public interface SdrRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Shared Libraries Container</em>' containment reference.
 	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_SharedLibrariesContainer()
-	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" transient="true" derived="true" suppressedSetVisibility="true"
+	 * suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	SharedLibrariesContainer getSharedLibrariesContainer();
@@ -190,9 +195,9 @@ public interface SdrRoot extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Idl Library</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * @since 3.0
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Idl Library</em>' containment reference.
 	 * @see #setIdlLibrary(IdlLibrary)
@@ -203,7 +208,8 @@ public interface SdrRoot extends EObject {
 	IdlLibrary getIdlLibrary();
 
 	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.sdr.SdrRoot#getIdlLibrary <em>Idl Library</em>}' containment reference.
+	 * Sets the value of the '{@link gov.redhawk.ide.sdr.SdrRoot#getIdlLibrary <em>Idl Library</em>}' containment
+	 * reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Idl Library</em>' containment reference.
@@ -229,7 +235,8 @@ public interface SdrRoot extends EObject {
 	URI getDevFileSystemRoot();
 
 	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.sdr.SdrRoot#getDevFileSystemRoot <em>Dev File System Root</em>}' attribute.
+	 * Sets the value of the '{@link gov.redhawk.ide.sdr.SdrRoot#getDevFileSystemRoot <em>Dev File System Root</em>}'
+	 * attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Dev File System Root</em>' attribute.
@@ -255,7 +262,8 @@ public interface SdrRoot extends EObject {
 	URI getDomFileSystemRoot();
 
 	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.sdr.SdrRoot#getDomFileSystemRoot <em>Dom File System Root</em>}' attribute.
+	 * Sets the value of the '{@link gov.redhawk.ide.sdr.SdrRoot#getDomFileSystemRoot <em>Dom File System Root</em>}'
+	 * attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Dom File System Root</em>' attribute.
@@ -274,6 +282,7 @@ public interface SdrRoot extends EObject {
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 8.0
 	 * <!-- end-user-doc -->
 	 * @model monitorDataType="gov.redhawk.eclipsecorba.library.IProgressMonitor"
 	 * @generated
@@ -282,6 +291,7 @@ public interface SdrRoot extends EObject {
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 8.0
 	 * <!-- end-user-doc -->
 	 * @model monitorDataType="gov.redhawk.eclipsecorba.library.IProgressMonitor"
 	 * @generated
@@ -290,6 +300,7 @@ public interface SdrRoot extends EObject {
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 8.0
 	 * <!-- end-user-doc -->
 	 * @model sdrRootDataType="gov.redhawk.eclipsecorba.library.URI"
 	 * @generated
@@ -298,6 +309,7 @@ public interface SdrRoot extends EObject {
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 8.0
 	 * <!-- end-user-doc -->
 	 * @model
 	 * @generated
@@ -306,6 +318,7 @@ public interface SdrRoot extends EObject {
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 8.0
 	 * <!-- end-user-doc -->
 	 * @model
 	 * @generated

@@ -11,6 +11,18 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.impl.EPackageImpl;
+import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
+
 import gov.redhawk.eclipsecorba.idl.IdlPackage;
 import gov.redhawk.eclipsecorba.idl.expressions.ExpressionsPackage;
 import gov.redhawk.eclipsecorba.library.LibraryPackage;
@@ -34,18 +46,6 @@ import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EOperation;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.emf.ecore.impl.EPackageImpl;
-import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
-
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model <b>Package</b>.
@@ -53,61 +53,69 @@ import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
  * @generated
  */
 public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EClass sdrRootEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EClass componentsContainerEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EClass waveformsContainerEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EClass devicesContainerEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EClass servicesContainerEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EClass sharedLibrariesContainerEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EClass nodesContainerEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EClass softPkgRegistryEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EEnum loadStateEEnum = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -119,7 +127,8 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * Creates an instance of the model <b>Package</b>, registered with
 	 * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
 	 * package URI value.
-	 * <p>Note: the correct way to create the package is via the static
+	 * <p>
+	 * Note: the correct way to create the package is via the static
 	 * factory method {@link #init init()}, which also performs
 	 * initialization of the package, or returns the registered package,
 	 * if one already exists.
@@ -143,8 +152,9 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 * 
-	 * <p>This method is used to initialize {@link SdrPackage#eINSTANCE} when that field is accessed.
+	 *
+	 * <p>
+	 * This method is used to initialize {@link SdrPackage#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -158,9 +168,8 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 			return (SdrPackage) EPackage.Registry.INSTANCE.getEPackage(SdrPackage.eNS_URI);
 
 		// Obtain or create and register package
-		SdrPackageImpl theSdrPackage = (SdrPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof SdrPackageImpl
-			? EPackage.Registry.INSTANCE.get(eNS_URI)
-			: new SdrPackageImpl());
+		Object registeredSdrPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		SdrPackageImpl theSdrPackage = registeredSdrPackage instanceof SdrPackageImpl ? (SdrPackageImpl) registeredSdrPackage : new SdrPackageImpl();
 
 		isInited = true;
 
@@ -540,7 +549,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	private boolean isCreated = false;
 
 	/**
-	 * Creates the meta-model objects for the package.  This method is
+	 * Creates the meta-model objects for the package. This method is
 	 * guarded to have no affect on any invocation but its first.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -607,7 +616,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	private boolean isInitialized = false;
 
 	/**
-	 * Complete the initialization of the package and its meta-model.  This
+	 * Complete the initialization of the package and its meta-model. This
 	 * method is guarded to have no affect on any invocation but its first.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -748,4 +757,4 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 		createResource(eNS_URI);
 	}
 
-} //SdrPackageImpl
+} // SdrPackageImpl

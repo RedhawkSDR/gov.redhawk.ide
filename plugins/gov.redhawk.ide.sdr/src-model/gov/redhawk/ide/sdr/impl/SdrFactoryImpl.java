@@ -36,7 +36,6 @@ import gov.redhawk.ide.sdr.WaveformsContainer;
  * @generated
  */
 public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
-
 	/**
 	 * Creates the default factory implementation.
 	 * <!-- begin-user-doc -->
@@ -306,4 +305,4 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 		return SdrPackage.eINSTANCE;
 	}
 
-} //SdrFactoryImpl
+} // SdrFactoryImpl
