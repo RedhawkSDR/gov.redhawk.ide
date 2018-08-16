@@ -12,12 +12,13 @@ package gov.redhawk.ide.sdr.ui;
 
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.eclipsecorba.library.LibraryFactory;
+import gov.redhawk.ide.sdr.IdeSdrActivator;
 import gov.redhawk.ide.sdr.SdrFactory;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.commands.SetSdrRootCommand;
 import gov.redhawk.ide.sdr.internal.ui.commands.InitIdlLibraryCommand;
-import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferenceConstants;
 import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
 
 import java.net.URISyntaxException;
@@ -28,6 +29,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -37,6 +39,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -76,9 +79,9 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	private final IPropertyChangeListener sdrRootPrefListener = new IPropertyChangeListener() {
 		@Override
 		public void propertyChange(final PropertyChangeEvent event) {
-			if (event.getProperty().equals(SdrUiPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE)
-			        || event.getProperty().equals(SdrUiPreferenceConstants.TARGET_SDR_DEV_PATH)
-			        || event.getProperty().equals(SdrUiPreferenceConstants.TARGET_SDR_DOM_PATH)) {
+			if (event.getProperty().equals(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE)
+			        || event.getProperty().equals(IdeSdrPreferenceConstants.TARGET_SDR_DEV_PATH)
+			        || event.getProperty().equals(IdeSdrPreferenceConstants.TARGET_SDR_DOM_PATH)) {
 				setSdrRootPaths();
 				SdrUiPlugin.this.reloadSdrJob.schedule();
 			}
@@ -86,6 +89,8 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	};
 
 	private TransactionalEditingDomain editingDomain;
+
+	private ScopedPreferenceStore sdrPrefs;
 
 	/**
 	 * The constructor
@@ -127,7 +132,8 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 		SdrUiPlugin.plugin = this;
 
 		initSdr();
-		getPreferenceStore().addPropertyChangeListener(this.sdrRootPrefListener);
+		sdrPrefs = new ScopedPreferenceStore(InstanceScope.INSTANCE, IdeSdrActivator.PLUGIN_ID);
+		sdrPrefs.addPropertyChangeListener(this.sdrRootPrefListener);
 	}
 
 	/*
@@ -141,7 +147,8 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	public void stop(final BundleContext context) throws Exception {
 		SdrUiPlugin.plugin = null;
 
-		getPreferenceStore().removePropertyChangeListener(this.sdrRootPrefListener);
+		sdrPrefs.removePropertyChangeListener(this.sdrRootPrefListener);
+		sdrPrefs = null;
 		this.reloadSdrJob.cancel();
 		this.targetSdrRoot = null;
 
@@ -211,7 +218,7 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
 	public String getDomPath() {
-		String retVal = getPreferenceStore().getString(SdrUiPreferenceConstants.TARGET_SDR_DOM_PATH).trim();
+		String retVal = sdrPrefs.getString(IdeSdrPreferenceConstants.TARGET_SDR_DOM_PATH).trim();
 		if (retVal == null) {
 			retVal = "dom";
 		}
@@ -222,7 +229,7 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
 	public String getDevPath() {
-		String retVal = getPreferenceStore().getString(SdrUiPreferenceConstants.TARGET_SDR_DEV_PATH).trim();
+		String retVal = sdrPrefs.getString(IdeSdrPreferenceConstants.TARGET_SDR_DEV_PATH).trim();
 		if (retVal == null) {
 			retVal = "dev";
 		}
@@ -253,7 +260,7 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
 	public IPath getTargetSdrPath() {
-		String runtimePath = getPreferenceStore().getString(SdrUiPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE).trim();
+		String runtimePath = sdrPrefs.getString(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE).trim();
 		if (runtimePath.isEmpty()) {
 			return null;
 		}

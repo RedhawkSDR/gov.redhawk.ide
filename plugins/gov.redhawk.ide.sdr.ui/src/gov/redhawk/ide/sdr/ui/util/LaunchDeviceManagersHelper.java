@@ -10,9 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.util;
 
+import gov.redhawk.ide.sdr.IdeSdrActivator;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferenceConstants;
 import gov.redhawk.ide.sdr.ui.NodeBooterLauncherUtil;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
 
 import java.util.List;
 
@@ -26,8 +27,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 /**
  * @since 1.3
@@ -107,6 +110,6 @@ public class LaunchDeviceManagersHelper {
 	}
 
 	private static String getLauncherName(final DeviceConfiguration devConfig) {
-		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DEVICE_MANAGER_NAME) + " " + devConfig.getName();
+		return new ScopedPreferenceStore(InstanceScope.INSTANCE, IdeSdrActivator.PLUGIN_ID).getString(IdeSdrPreferenceConstants.PREF_DEFAULT_DEVICE_MANAGER_NAME) + " " + devConfig.getName();
 	}
 }

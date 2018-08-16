@@ -10,10 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui.handlers;
 
+import gov.redhawk.ide.sdr.IdeSdrActivator;
 import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLaunchConfiguration;
 import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLauncherUtil;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferenceConstants;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDomainManager;
 
@@ -30,10 +30,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 public class LaunchDeviceManager extends AbstractHandler implements IHandler {
 
@@ -108,6 +110,7 @@ public class LaunchDeviceManager extends AbstractHandler implements IHandler {
 
 	private static String getDevMgrLaunchConfigName(final DeviceConfiguration dcd) {
 		String name = (dcd.getName() != null) ? dcd.getName() : dcd.getId();
-		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DEVICE_MANAGER_NAME) + " " + name;
+		String defaultDevMgrName = new ScopedPreferenceStore(InstanceScope.INSTANCE, IdeSdrActivator.PLUGIN_ID).getString(IdeSdrPreferenceConstants.PREF_DEFAULT_DEVICE_MANAGER_NAME);
+		return defaultDevMgrName + " " + name;
 	}
 }

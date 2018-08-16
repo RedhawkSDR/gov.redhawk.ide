@@ -10,13 +10,14 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.internal.handlers;
 
+import gov.redhawk.ide.sdr.IdeSdrActivator;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLaunchConfiguration;
 import gov.redhawk.ide.sdr.nodebooter.DeviceManagerLauncherUtil;
 import gov.redhawk.ide.sdr.nodebooter.DomainManagerLauncherUtil;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferenceConstants;
 import gov.redhawk.ide.sdr.nodebooter.DomainManagerLaunchConfiguration;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
 import gov.redhawk.model.sca.DomainConnectionState;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDomainManager;
@@ -47,12 +48,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 public class LaunchDomainManagerWithOptions extends AbstractHandler implements IHandler {
@@ -250,19 +253,19 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 	}
 
 	private static long getConnectionAttemptInterval() {
-		return SdrUiPlugin.getDefault().getPreferenceStore().getLong(SdrUiPreferenceConstants.PREF_AUTO_CONNECT_ATTEMPT_RETRY_INTERVAL_MSEC);
+		return new ScopedPreferenceStore(InstanceScope.INSTANCE, IdeSdrActivator.PLUGIN_ID).getLong(IdeSdrPreferenceConstants.PREF_AUTO_CONNECT_ATTEMPT_RETRY_INTERVAL_MSEC);
 	}
 
 	private static int getMaxConnectionAttempts() {
-		return SdrUiPlugin.getDefault().getPreferenceStore().getInt(SdrUiPreferenceConstants.PREF_AUTO_CONNECT_MAX_CONNECTION_ATTEMPTS);
+		return new ScopedPreferenceStore(InstanceScope.INSTANCE, IdeSdrActivator.PLUGIN_ID).getInt(IdeSdrPreferenceConstants.PREF_AUTO_CONNECT_MAX_CONNECTION_ATTEMPTS);
 	}
 
 	private static String getDomMgrLaunchConfigName(final String domainName) {
-		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DOMAIN_MANAGER_NAME) + " " + domainName;
+		return new ScopedPreferenceStore(InstanceScope.INSTANCE, IdeSdrActivator.PLUGIN_ID).getString(IdeSdrPreferenceConstants.PREF_DEFAULT_DOMAIN_MANAGER_NAME) + " " + domainName;
 	}
 
 	private static String getDevMgrLaunchConfigName(final DeviceConfiguration dcd) {
 		String name = (dcd.getName() != null) ? dcd.getName() : dcd.getId();
-		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DEVICE_MANAGER_NAME) + " " + name;
+		return new ScopedPreferenceStore(InstanceScope.INSTANCE, IdeSdrActivator.PLUGIN_ID).getString(IdeSdrPreferenceConstants.PREF_DEFAULT_DEVICE_MANAGER_NAME) + " " + name;
 	}
 }

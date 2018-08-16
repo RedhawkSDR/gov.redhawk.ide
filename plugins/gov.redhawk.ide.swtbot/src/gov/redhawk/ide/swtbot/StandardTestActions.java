@@ -87,9 +87,10 @@ import org.osgi.framework.Bundle;
 import org.python.pydev.ui.pythonpathconf.AutoConfigMaker;
 import org.python.pydev.ui.pythonpathconf.IInterpreterProviderFactory.InterpreterType;
 
+import gov.redhawk.ide.sdr.IdeSdrActivator;
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferenceConstants;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
 import gov.redhawk.ide.swtbot.condition.ConditionSequence;
 import gov.redhawk.ide.swtbot.condition.JobConditions;
 import gov.redhawk.ide.swtbot.condition.NotCondition;
@@ -286,8 +287,7 @@ public final class StandardTestActions {
 		final SdrRoot root = SdrUiPlugin.getDefault().getTargetSdrRoot();
 		root.load(null);
 		final URL fileURL = FileLocator.toFileURL(url);
-		SdrUiPlugin.getDefault().getPreferenceStore().setValue(SdrUiPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE,
-			new File(fileURL.toURI()).getAbsolutePath());
+		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).put(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE, new File(fileURL.toURI()).getAbsolutePath());
 		root.reload(null);
 		Assert.assertTrue("SDR failed to load: " + root.getLoadStatus(), root.getLoadStatus().isOK());
 	}
