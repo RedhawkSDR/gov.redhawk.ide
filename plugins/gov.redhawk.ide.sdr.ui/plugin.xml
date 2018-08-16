@@ -489,7 +489,7 @@
         point="org.eclipse.ui.preferencePages">
      <page
            category="gov.redhawk.ui.preferences"
-           class="gov.redhawk.ide.sdr.ui.preferences.SdrPreferencePage"
+           class="gov.redhawk.ide.sdr.internal.ui.preferences.SdrPreferencePage"
            id="gov.redhawk.ide.sdr.ui.preferences.SdrPreferencePage"
            name="%page.name">
      </page>
