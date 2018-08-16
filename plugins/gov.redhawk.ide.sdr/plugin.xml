@@ -30,5 +30,14 @@
             class="gov.redhawk.ide.internal.sdr.preferences.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            description="%sdrroot.variable.description"
+            name="SdrRoot"
+            resolver="gov.redhawk.ide.sdr.variables.SdrRootResolver"
+            supportsArgument="false">
+      </variable>
+   </extension>
 
 </plugin>
