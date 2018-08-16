@@ -19,6 +19,7 @@ import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.commands.SetSdrRootCommand;
 import gov.redhawk.ide.sdr.internal.ui.commands.InitIdlLibraryCommand;
 import gov.redhawk.ide.sdr.preferences.IdeSdrPreferenceConstants;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
 import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
 
 import java.net.URISyntaxException;
@@ -26,7 +27,6 @@ import java.net.URISyntaxException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -215,64 +215,48 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	}
 
 	/**
+	 * @deprecated Use {@link IdeSdrPreferences#getDomPath()}
 	 * @since 3.1
 	 */
+	@Deprecated
 	public String getDomPath() {
-		String retVal = sdrPrefs.getString(IdeSdrPreferenceConstants.TARGET_SDR_DOM_PATH).trim();
-		if (retVal == null) {
-			retVal = "dom";
-		}
-		return retVal;
+		return IdeSdrPreferences.getDomPath();
 	}
 
 	/**
+	 * @deprecated Use {@link IdeSdrPreferences#getDevPath()}
 	 * @since 3.1
 	 */
+	@Deprecated
 	public String getDevPath() {
-		String retVal = sdrPrefs.getString(IdeSdrPreferenceConstants.TARGET_SDR_DEV_PATH).trim();
-		if (retVal == null) {
-			retVal = "dev";
-		}
-		return retVal;
+		return IdeSdrPreferences.getDevPath();
 	}
 
 	/**
+	 * @deprecated Use {@link IdeSdrPreferences#getTargetSdrDomPath()}
 	 * @since 3.1
 	 */
+	@Deprecated
 	public IPath getTargetSdrDomPath() {
-		if (getTargetSdrPath() == null) {
-			return null;
-		}
-		return getTargetSdrPath().append(getDomPath());
+		return IdeSdrPreferences.getTargetSdrDomPath();
 	}
 
 	/**
+	 * @deprecated Use {@link IdeSdrPreferences#getTargetSdrDevPath()}
 	 * @since 3.1
 	 */
+	@Deprecated
 	public IPath getTargetSdrDevPath() {
-		if (getTargetSdrPath() == null) {
-			return null;
-		}
-		return getTargetSdrPath().append(getDevPath());
+		return IdeSdrPreferences.getTargetSdrDevPath();
 	}
 
 	/**
+	 * @deprecated Use {@link IdeSdrPreferences#getTargetSdrPath()}
 	 * @since 3.1
 	 */
+	@Deprecated
 	public IPath getTargetSdrPath() {
-		String runtimePath = sdrPrefs.getString(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE).trim();
-		if (runtimePath.isEmpty()) {
-			return null;
-		}
-
-		if (runtimePath.startsWith("${") && runtimePath.endsWith("}")) {
-			final String envName = runtimePath.substring(2, runtimePath.length() - 1);
-			runtimePath = System.getenv(envName);
-			if (runtimePath == null) {
-				return null;
-			}
-		}
-		return new Path(runtimePath);
+		return IdeSdrPreferences.getTargetSdrPath();
 	}
 
 	/**
