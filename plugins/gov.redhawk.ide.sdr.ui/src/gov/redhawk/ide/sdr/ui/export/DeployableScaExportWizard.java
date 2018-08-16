@@ -14,6 +14,7 @@ import gov.redhawk.ide.natures.ScaComponentProjectNature;
 import gov.redhawk.ide.natures.ScaNodeProjectNature;
 import gov.redhawk.ide.natures.ScaProjectNature;
 import gov.redhawk.ide.natures.ScaWaveformProjectNature;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 
@@ -160,7 +161,7 @@ public class DeployableScaExportWizard extends Wizard implements IExportWizard {
 
 					try {
 						DeployableScaExportWizard.this.exporter.finished();
-						if (DeployableScaExportWizard.this.exporter.getExportLocation().equals(SdrUiPlugin.getDefault().getTargetSdrPath())) {
+						if (DeployableScaExportWizard.this.exporter.getExportLocation().equals(IdeSdrPreferences.getTargetSdrPath())) {
 							SdrUiPlugin.getDefault().getTargetSdrRoot().reload(subMonitor.newChild(1));
 						}
 
@@ -211,7 +212,7 @@ public class DeployableScaExportWizard extends Wizard implements IExportWizard {
 	@Override
 	public void init(final IWorkbench workbench, final IStructuredSelection initialSelection) {
 		this.model = new DeployableScaExportWizardModel();
-		this.model.directoryDestination.setValue(SdrUiPlugin.getDefault().getTargetSdrPath().toOSString());
+		this.model.directoryDestination.setValue(IdeSdrPreferences.getTargetSdrPath().toOSString());
 		this.model.directoryExport.setValue(Boolean.TRUE);
 
 		if (initialSelection != null) {

@@ -12,7 +12,7 @@ package gov.redhawk.ide.debug.ui.tabs;
 
 import org.eclipse.core.runtime.IPath;
 
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
 import mil.jpeojtrs.sca.sad.SadPackage;
 
 /**
@@ -27,7 +27,7 @@ public class LocalWaveformMainTab extends AbstractMainTab {
 
 	@Override
 	protected IPath getSdrDirectory() {
-		IPath domPath = SdrUiPlugin.getDefault().getTargetSdrDomPath();
+		IPath domPath = IdeSdrPreferences.getTargetSdrDomPath();
 		return (domPath == null) ? null : domPath.append("waveforms");
 	}
 

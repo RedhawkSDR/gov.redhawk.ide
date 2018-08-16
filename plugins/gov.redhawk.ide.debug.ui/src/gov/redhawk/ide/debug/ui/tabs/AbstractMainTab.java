@@ -50,7 +50,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 import gov.redhawk.sca.launch.ui.ScaUIImages;
 
@@ -390,7 +390,7 @@ public abstract class AbstractMainTab extends ExternalToolsMainTab implements IL
 	 * @since 3.1
 	 */
 	protected IPath getSdrDirectory() {
-		return SdrUiPlugin.getDefault().getTargetSdrPath();
+		return IdeSdrPreferences.getTargetSdrPath();
 	}
 
 }

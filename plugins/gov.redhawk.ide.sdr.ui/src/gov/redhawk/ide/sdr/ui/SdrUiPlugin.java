@@ -99,13 +99,13 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	}
 
 	private void setSdrRootPaths() {
-		final IPath targetSdrPath = getTargetSdrPath();
+		final IPath targetSdrPath = IdeSdrPreferences.getTargetSdrPath();
 		URI sdrRoot = null;
 		if (targetSdrPath != null) {
 			sdrRoot = URI.createURI(targetSdrPath.toFile().toURI().toString());
 		}
-		final String domPath = getDomPath();
-		final String devPath = getDevPath();
+		final String domPath = IdeSdrPreferences.getDomPath();
+		final String devPath = IdeSdrPreferences.getDevPath();
 
 		this.editingDomain.getCommandStack().execute(new SetSdrRootCommand(this.targetSdrRoot, sdrRoot, domPath, devPath));
 	}

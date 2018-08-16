@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.varables;
 
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IDynamicVariable;
@@ -25,7 +25,7 @@ public class SdrRootResolver implements IDynamicVariableResolver {
 
 	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
-		return SdrUiPlugin.getDefault().getTargetSdrPath().toOSString();
+		return IdeSdrPreferences.getTargetSdrPath().toOSString();
 	}
 
 }

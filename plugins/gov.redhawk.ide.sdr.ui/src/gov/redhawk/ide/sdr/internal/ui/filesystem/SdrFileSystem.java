@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.internal.ui.filesystem;
 
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
 import gov.redhawk.sca.ui.ScaUiPlugin;
 
 import java.net.URI;
@@ -28,23 +28,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
-/**
- * 
- */
 public class SdrFileSystem extends FileSystem implements IExecutableExtension {
 
 	private IFileStore rootStore;
 
-	/**
-	 * 
-	 */
 	public SdrFileSystem() {
-		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public IFileStore getStore(final URI uri) {
 		return new SdrWrappedFileStore(uri, this.rootStore.getFileStore(new Path(uri.getPath())));
@@ -55,11 +45,11 @@ public class SdrFileSystem extends FileSystem implements IExecutableExtension {
 		final String scheme = config.getAttribute("scheme");
 		IPath path = null;
 		if (ScaFileSystemConstants.SCHEME_TARGET_SDR_DEV.equalsIgnoreCase(scheme)) {
-			path = SdrUiPlugin.getDefault().getTargetSdrDevPath();
+			path = IdeSdrPreferences.getTargetSdrDevPath();
 		} else if (ScaFileSystemConstants.SCHEME_TARGET_SDR_DOM.equalsIgnoreCase(scheme)) {
-			path = SdrUiPlugin.getDefault().getTargetSdrDomPath();
+			path = IdeSdrPreferences.getTargetSdrDomPath();
 		} else if (ScaFileSystemConstants.SCHEME_TARGET_SDR.equalsIgnoreCase(scheme)) {
-			path = SdrUiPlugin.getDefault().getTargetSdrPath();
+			path = IdeSdrPreferences.getTargetSdrPath();
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR, ScaUiPlugin.PLUGIN_ID, "Invalid SDR Filesystem scheme: " + scheme, null));
 		}

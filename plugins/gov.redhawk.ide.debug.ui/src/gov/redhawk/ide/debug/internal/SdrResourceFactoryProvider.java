@@ -51,6 +51,7 @@ import gov.redhawk.ide.debug.SpdResourceFactory;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.MutexRule;
@@ -131,13 +132,12 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		String debugOption = Platform.getDebugOption(ScaDebugUiPlugin.PLUGIN_ID + "/debug/" + this.getClass().getSimpleName());
 		debug = "true".equalsIgnoreCase(debugOption);
 
-		SdrUiPlugin plugin = SdrUiPlugin.getDefault();
-		this.root = plugin.getTargetSdrRoot();
+		this.root = SdrUiPlugin.getDefault().getTargetSdrRoot();
 		if (this.root == null) {
 			return;
 		}
 
-		IPath domPath = plugin.getTargetSdrDomPath();
+		IPath domPath = IdeSdrPreferences.getTargetSdrDomPath();
 		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
 			@Override
 			public boolean accept(Path entry) {
