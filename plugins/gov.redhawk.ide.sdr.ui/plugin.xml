@@ -630,10 +630,4 @@
          </run>
       </filesystem>
    </extension>
-   <extension
-         point="org.eclipse.emf.transaction.editingDomains">
-      <editingDomain
-            id="gov.redhawk.ide.sdr.ui.editingDomain">
-      </editingDomain>
-   </extension>
 </plugin>

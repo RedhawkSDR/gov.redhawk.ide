@@ -21,7 +21,9 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @since 3.1
+ * @deprecated No replacement (see non-public gov.redhawk.ide.sdr.jobs.RefreshSdrJob)
  */
+@Deprecated
 public class RefreshSdrJob extends Job {
 
 	private SdrRoot sdrRoot;

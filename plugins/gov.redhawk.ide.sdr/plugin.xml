@@ -39,5 +39,11 @@
             supportsArgument="false">
       </variable>
    </extension>
+   <extension
+         point="org.eclipse.emf.transaction.editingDomains">
+      <editingDomain
+            id="gov.redhawk.ide.sdr.editingDomain">
+      </editingDomain>
+   </extension>
 
 </plugin>
