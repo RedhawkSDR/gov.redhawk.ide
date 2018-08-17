@@ -20,9 +20,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-/**
- * 
- */
 public class CategoryAdapterFactory implements IAdapterFactory {
 
 	private static final Class< ? >[] LIST = new Class< ? >[] { IWorkbenchAdapter.class };
@@ -74,24 +71,14 @@ public class CategoryAdapterFactory implements IAdapterFactory {
 		}
 	};
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
 	@Override
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (adaptableObject instanceof ComponentCategory) {
-			return CategoryAdapterFactory.ADAPTER;
-		} else if (adaptableObject instanceof SpdCategory) {
-			return CategoryAdapterFactory.ADAPTER;
-		} else if (adaptableObject instanceof SdrPropertiesProvider) {
-			return CategoryAdapterFactory.ADAPTER;
+	public < T > T getAdapter(Object adaptableObject, Class<T> adapterType) {
+		if (adaptableObject instanceof ComponentCategory || adaptableObject instanceof SpdCategory || adaptableObject instanceof SdrPropertiesProvider) {
+			return adapterType.cast(CategoryAdapterFactory.ADAPTER);
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
 	@Override
 	public Class< ? >[] getAdapterList() {
 		return CategoryAdapterFactory.LIST;
