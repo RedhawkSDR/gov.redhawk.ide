@@ -26,8 +26,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.export.FileStoreExporter;
 import gov.redhawk.ide.sdr.ui.export.IScaExporter;
 import gov.redhawk.ide.sdr.ui.util.ExportToSdrRootJob;
@@ -57,7 +57,7 @@ public class ExportToSDRHandler extends AbstractHandler implements IHandler {
 			exportJob.addJobChangeListener(new JobChangeAdapter() {
 				@Override
 				public void done(IJobChangeEvent event) {
-					SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
+					TargetSdrRoot.scheduleRefresh();
 				}
 			});
 			exportJob.schedule();

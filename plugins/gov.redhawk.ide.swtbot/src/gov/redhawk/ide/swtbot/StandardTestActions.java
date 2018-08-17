@@ -89,6 +89,7 @@ import org.python.pydev.ui.pythonpathconf.IInterpreterProviderFactory.Interprete
 
 import gov.redhawk.ide.sdr.IdeSdrActivator;
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.preferences.IdeSdrPreferenceConstants;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.swtbot.condition.ConditionSequence;
@@ -284,7 +285,7 @@ public final class StandardTestActions {
 	 */
 	public static void setTargetSdr(String pluginId, String path) throws IOException, URISyntaxException {
 		final URL url = FileLocator.find(Platform.getBundle(pluginId), new Path(path), null);
-		final SdrRoot root = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		final SdrRoot root = TargetSdrRoot.getSdrRoot();
 		root.load(null);
 		final URL fileURL = FileLocator.toFileURL(url);
 		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).put(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE, new File(fileURL.toURI()).getAbsolutePath());

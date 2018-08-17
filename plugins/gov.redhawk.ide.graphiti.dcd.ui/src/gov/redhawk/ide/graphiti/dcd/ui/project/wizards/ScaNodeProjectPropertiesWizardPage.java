@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.project.wizards;
 
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.ui.wizard.ScaProjectPropertiesWizardPage;
 import gov.redhawk.model.sca.ScaDomainManager;
 import gov.redhawk.model.sca.util.ModelUtil;
@@ -109,7 +109,7 @@ public class ScaNodeProjectPropertiesWizardPage extends ScaProjectPropertiesWiza
 		final List<String> domainNames = new ArrayList<String>();
 
 		// Get the domain name from the target
-		final DomainManagerConfiguration dmd = SdrUiPlugin.getDefault().getTargetSdrRoot().getDomainConfiguration();
+		final DomainManagerConfiguration dmd = TargetSdrRoot.getSdrRoot().getDomainConfiguration();
 		if (dmd != null) {
 			domainNames.add(dmd.getName());
 		}

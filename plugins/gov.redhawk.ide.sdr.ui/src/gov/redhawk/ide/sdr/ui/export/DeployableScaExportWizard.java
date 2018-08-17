@@ -14,8 +14,8 @@ import gov.redhawk.ide.natures.ScaComponentProjectNature;
 import gov.redhawk.ide.natures.ScaNodeProjectNature;
 import gov.redhawk.ide.natures.ScaProjectNature;
 import gov.redhawk.ide.natures.ScaWaveformProjectNature;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 
 import java.io.IOException;
@@ -162,7 +162,7 @@ public class DeployableScaExportWizard extends Wizard implements IExportWizard {
 					try {
 						DeployableScaExportWizard.this.exporter.finished();
 						if (DeployableScaExportWizard.this.exporter.getExportLocation().equals(IdeSdrPreferences.getTargetSdrPath())) {
-							SdrUiPlugin.getDefault().getTargetSdrRoot().reload(subMonitor.newChild(1));
+							TargetSdrRoot.getSdrRoot().reload(subMonitor.newChild(1));
 						}
 
 					} catch (final IOException e) {

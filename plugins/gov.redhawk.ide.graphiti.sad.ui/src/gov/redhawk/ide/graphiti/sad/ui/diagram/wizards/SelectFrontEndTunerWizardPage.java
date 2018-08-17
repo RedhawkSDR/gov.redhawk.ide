@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.wizards;
 
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +57,7 @@ public class SelectFrontEndTunerWizardPage extends WizardPage {
 		super("SelectFrontEndTunerWizardPage", "Select Target Device", TITLE_IMAGE);
 		this.setDescription("Select a FrontEnd tuner installed on your system.\nThis will pre-populate many of the fields in the following wizard pages.");
 
-		SoftPkg[] targetSDRDevices = SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer().getComponents().toArray(new SoftPkg[0]);
+		SoftPkg[] targetSDRDevices = TargetSdrRoot.getSdrRoot().getDevicesContainer().getComponents().toArray(new SoftPkg[0]);
 		targetSDRFrontEndDevices = getFrontEndDevices(targetSDRDevices).toArray(new SoftPkg[0]);
 		
 	}

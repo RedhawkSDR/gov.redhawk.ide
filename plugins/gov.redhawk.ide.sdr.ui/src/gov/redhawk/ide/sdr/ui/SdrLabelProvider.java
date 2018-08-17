@@ -15,6 +15,7 @@ import gov.redhawk.eclipsecorba.idl.operations.provider.OperationsItemProviderAd
 import gov.redhawk.eclipsecorba.idl.provider.IdlItemProviderAdapterFactory;
 import gov.redhawk.eclipsecorba.idl.types.provider.TypesItemProviderAdapterFactory;
 import gov.redhawk.eclipsecorba.library.provider.RepositoryItemProviderAdapterFactory;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.provider.SdrItemProviderAdapterFactory;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
@@ -30,7 +31,7 @@ import org.eclipse.emf.transaction.ui.provider.TransactionalAdapterFactoryLabelP
 public class SdrLabelProvider extends TransactionalAdapterFactoryLabelProvider {
 
 	public SdrLabelProvider() {
-		super(TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(SdrUiPlugin.EDITING_DOMAIN_ID), SdrLabelProvider.createAdapterFactory());
+		super(TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(TargetSdrRoot.EDITING_DOMAIN_ID), SdrLabelProvider.createAdapterFactory());
 	}
 
 	/**

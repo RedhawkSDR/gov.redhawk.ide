@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.PageBook;
 
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter;
@@ -329,7 +329,7 @@ public class DependencyWizardPage extends WizardPage {
 		this.softPkgRefViewer.setContentProvider(new SdrNavigatorContentProvider());
 		this.softPkgRefViewer.setLabelProvider(new SdrNavigatorLabelProvider());
 		this.softPkgRefViewer.setComparator(new SdrViewerSorter());
-		this.softPkgRefViewer.setInput(SdrUiPlugin.getDefault().getTargetSdrRoot().getSharedLibrariesContainer());
+		this.softPkgRefViewer.setInput(TargetSdrRoot.getSdrRoot().getSharedLibrariesContainer());
 	}
 
 	private void createPropertyRefGroup(final Composite parent) {

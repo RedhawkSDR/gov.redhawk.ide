@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
 import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrViewerSorter;
@@ -90,7 +90,7 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 		final WorkspaceJob job = new WorkspaceJob("Load SdrRoot") {
 			@Override
 			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
-				final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
+				final SdrRoot sdrRoot = TargetSdrRoot.getSdrRoot();
 				sdrRoot.load(null);
 				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 					@Override

@@ -35,6 +35,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.NodesSubContainer;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.WaveformsSubContainer;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -135,7 +136,7 @@ public class DeleteHandler extends AbstractHandler {
 				} catch (final CoreException e) {
 					return new Status(e.getStatus().getSeverity(), SdrUiPlugin.PLUGIN_ID, "Failed to delete " + deleteMessageString, e);
 				}
-				SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
+				TargetSdrRoot.scheduleRefresh();
 				return Status.OK_STATUS;
 			}
 		};

@@ -32,6 +32,7 @@ import gov.redhawk.ide.natures.ScaComponentProjectNature;
 import gov.redhawk.ide.natures.ScaNodeProjectNature;
 import gov.redhawk.ide.natures.ScaWaveformProjectNature;
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.export.FileStoreExporter;
@@ -106,7 +107,7 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 		exportJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {
-				SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
+				TargetSdrRoot.scheduleRefresh();
 			}
 		});
 		exportJob.setUser(true);

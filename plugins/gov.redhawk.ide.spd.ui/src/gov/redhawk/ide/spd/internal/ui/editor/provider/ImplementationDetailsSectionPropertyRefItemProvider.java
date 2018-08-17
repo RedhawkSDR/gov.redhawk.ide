@@ -13,7 +13,7 @@ package gov.redhawk.ide.spd.internal.ui.editor.provider;
 import gov.redhawk.ide.sdr.LoadState;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.spd.PropertyRef;
 import mil.jpeojtrs.sca.spd.provider.PropertyRefItemProvider;
@@ -51,7 +51,7 @@ public class ImplementationDetailsSectionPropertyRefItemProvider extends Propert
 	@Override
 	public void dispose() {
 		if (this.added) {
-			SdrUiPlugin.getDefault().getTargetSdrRoot().eAdapters().remove(this.loadStateListener);
+			TargetSdrRoot.getSdrRoot().eAdapters().remove(this.loadStateListener);
 			this.added = false;
 		}
 		super.dispose();
@@ -61,10 +61,10 @@ public class ImplementationDetailsSectionPropertyRefItemProvider extends Propert
 		if (propRef == null) {
 			return null;
 		}
-		if (SdrUiPlugin.getDefault().getTargetSdrRoot().getState() == LoadState.LOADED) {
-			return SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer().getProperties().get(propRef.getRefId());
+		if (TargetSdrRoot.getSdrRoot().getState() == LoadState.LOADED) {
+			return TargetSdrRoot.getSdrRoot().getDevicesContainer().getProperties().get(propRef.getRefId());
 		} else if (!this.added) {
-			SdrUiPlugin.getDefault().getTargetSdrRoot().eAdapters().add(this.loadStateListener);
+			TargetSdrRoot.getSdrRoot().eAdapters().add(this.loadStateListener);
 			this.added = true;
 		}
 		return null;

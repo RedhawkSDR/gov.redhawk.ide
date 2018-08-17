@@ -11,6 +11,7 @@
 package gov.redhawk.ide.sdr.ui.util;
 
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,7 +43,7 @@ public class RefreshSdrJob extends Job {
 	 */
 	@Deprecated
 	public RefreshSdrJob() {
-		this(SdrUiPlugin.getDefault().getTargetSdrRoot());
+		this(TargetSdrRoot.getSdrRoot());
 	}
 
 	@Override
@@ -55,6 +56,6 @@ public class RefreshSdrJob extends Job {
 
 	@Override
 	public boolean belongsTo(Object family) {
-		return SdrUiPlugin.FAMILY_REFRESH_SDR == family;
+		return TargetSdrRoot.FAMILY_REFRESH_SDR == family;
 	}
 }

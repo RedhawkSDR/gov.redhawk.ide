@@ -51,8 +51,8 @@ import gov.redhawk.ide.debug.SpdResourceFactory;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.MutexRule;
 import gov.redhawk.sca.util.OrbSession;
@@ -132,7 +132,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		String debugOption = Platform.getDebugOption(ScaDebugUiPlugin.PLUGIN_ID + "/debug/" + this.getClass().getSimpleName());
 		debug = "true".equalsIgnoreCase(debugOption);
 
-		this.root = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		this.root = TargetSdrRoot.getSdrRoot();
 		if (this.root == null) {
 			return;
 		}

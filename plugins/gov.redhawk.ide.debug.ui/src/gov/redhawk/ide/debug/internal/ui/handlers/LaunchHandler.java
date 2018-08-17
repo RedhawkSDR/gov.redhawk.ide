@@ -17,9 +17,9 @@ import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.WaveformsContainer;
 import gov.redhawk.ide.sdr.impl.ServicesContainerImpl;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.Implementation;
@@ -147,7 +147,7 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 				wizard.setSpdContainer(root.getComponentsContainer());
 			}
 		} else if (element instanceof LocalSca) {
-			SdrRoot root = SdrUiPlugin.getDefault().getTargetSdrRoot();
+			SdrRoot root = TargetSdrRoot.getSdrRoot();
 			if ("device".equalsIgnoreCase(type)) {
 				wizard.setWindowTitle("Launch Device");
 				wizard.setSpdContainer(root.getDevicesContainer());
@@ -183,7 +183,7 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 				SdrRoot root = (SdrRoot) element;
 				wizard.setWaveformsContainer(root.getWaveformsContainer());
 			} else if (element instanceof LocalSca) {
-				SdrRoot root = SdrUiPlugin.getDefault().getTargetSdrRoot();
+				SdrRoot root = TargetSdrRoot.getSdrRoot();
 				wizard.setWaveformsContainer(root.getWaveformsContainer());
 			}
 			WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard);

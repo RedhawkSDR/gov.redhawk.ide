@@ -15,7 +15,7 @@ import gov.redhawk.eclipsecorba.idl.expressions.util.ExpressionsAdapterFactory;
 import gov.redhawk.eclipsecorba.idl.operations.provider.OperationsItemProviderAdapterFactory;
 import gov.redhawk.eclipsecorba.idl.provider.IdlItemProviderAdapterFactory;
 import gov.redhawk.eclipsecorba.idl.types.provider.TypesItemProviderAdapterFactory;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +117,7 @@ public class PortInterfacePropertiesSection extends GFPropertySection implements
 			}
 			if (repId != null) {
 				this.label.setText(repId);
-				Identifiable item = SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary().find(repId);
+				Identifiable item = TargetSdrRoot.getSdrRoot().getIdlLibrary().find(repId);
 				ArrayList<Identifiable> list = new ArrayList<Identifiable>();
 				list.add(item);
 				newInput = list;

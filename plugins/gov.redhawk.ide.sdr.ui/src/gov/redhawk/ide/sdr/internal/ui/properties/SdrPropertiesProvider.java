@@ -11,7 +11,7 @@
 package gov.redhawk.ide.sdr.internal.ui.properties;
 
 import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.sca.properties.Category;
 import gov.redhawk.sca.properties.IPropertiesProvider;
 
@@ -26,16 +26,12 @@ import mil.jpeojtrs.sca.scd.ComponentType;
 public class SdrPropertiesProvider implements IPropertiesProvider {
 
 	public SdrPropertiesProvider() {
-		//Default Constructor
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<Category> getCategories() {
 		final List<Category> myList = new ArrayList<Category>();
-		final SdrRoot targetSdr = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		final SdrRoot targetSdr = TargetSdrRoot.getSdrRoot();
 		targetSdr.load(null);
 		myList.add(new ComponentCategory(targetSdr.getComponentsContainer().getComponents(), "Components", ComponentType.RESOURCE));
 		myList.add(new ComponentCategory(targetSdr.getDevicesContainer().getComponents(), "Devices", ComponentType.DEVICE));
