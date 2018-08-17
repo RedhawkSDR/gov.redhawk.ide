@@ -45,5 +45,32 @@
             id="gov.redhawk.ide.sdr.editingDomain">
       </editingDomain>
    </extension>
+   <extension
+         point="org.eclipse.core.filesystem.filesystems">
+      <filesystem
+            scheme="sdrDev">
+         <run
+               class="gov.redhawk.ide.internal.sdr.filesystem.SdrFileSystem">
+         </run>
+      </filesystem>
+   </extension>
+   <extension
+         point="org.eclipse.core.filesystem.filesystems">
+      <filesystem
+            scheme="sdrDom">
+         <run
+               class="gov.redhawk.ide.internal.sdr.filesystem.SdrFileSystem">
+         </run>
+      </filesystem>
+   </extension>
+   <extension
+         point="org.eclipse.core.filesystem.filesystems">
+      <filesystem
+            scheme="sdr">
+         <run
+               class="gov.redhawk.ide.internal.sdr.filesystem.SdrFileSystem">
+         </run>
+      </filesystem>
+   </extension>
 
 </plugin>

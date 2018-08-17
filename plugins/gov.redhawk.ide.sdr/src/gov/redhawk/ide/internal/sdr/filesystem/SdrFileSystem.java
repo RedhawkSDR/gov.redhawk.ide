@@ -1,21 +1,16 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
+/**
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-package gov.redhawk.ide.sdr.internal.ui.filesystem;
-
-import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
-import gov.redhawk.sca.ui.ScaUiPlugin;
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ */
+package gov.redhawk.ide.internal.sdr.filesystem;
 
 import java.net.URI;
-
-import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -27,6 +22,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+
+import gov.redhawk.ide.sdr.IdeSdrActivator;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
+import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 public class SdrFileSystem extends FileSystem implements IExecutableExtension {
 
@@ -51,7 +50,7 @@ public class SdrFileSystem extends FileSystem implements IExecutableExtension {
 		} else if (ScaFileSystemConstants.SCHEME_TARGET_SDR.equalsIgnoreCase(scheme)) {
 			path = IdeSdrPreferences.getTargetSdrPath();
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, ScaUiPlugin.PLUGIN_ID, "Invalid SDR Filesystem scheme: " + scheme, null));
+			throw new CoreException(new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, "Invalid SDR Filesystem scheme: " + scheme, null));
 		}
 		if (path != null) {
 			this.rootStore = EFS.getStore(path.toFile().toURI());

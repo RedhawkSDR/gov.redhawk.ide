@@ -34,7 +34,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Localization: plugin
 Bundle-Vendor: %Bundle-Provider.0
 Export-Package: gov.redhawk.ide.sdr.internal.ui;x-internal:=true,
- gov.redhawk.ide.sdr.internal.ui.filesystem;x-internal:=true,
  gov.redhawk.ide.sdr.internal.ui.preferences;x-internal:=true,
  gov.redhawk.ide.sdr.ui,
  gov.redhawk.ide.sdr.ui.export,

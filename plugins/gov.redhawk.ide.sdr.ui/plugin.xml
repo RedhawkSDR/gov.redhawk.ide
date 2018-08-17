@@ -585,49 +585,4 @@
             name="Target SDR Properties">
       </provider>
    </extension>
-   <extension
-         point="org.eclipse.core.filesystem.filesystems">
-      <filesystem
-            scheme="sdrDev">
-         <run
-               class="gov.redhawk.ide.sdr.internal.ui.filesystem.SdrFileSystem">
-         </run>
-      </filesystem>
-   </extension>
-   <extension
-         point="org.eclipse.core.filesystem.filesystems">
-      <filesystem
-            scheme="sdrDom">
-         <run
-               class="gov.redhawk.ide.sdr.internal.ui.filesystem.SdrFileSystem">
-         </run>
-      </filesystem>
-   </extension>
-      <extension
-         point="org.eclipse.core.filesystem.filesystems">
-      <filesystem
-            scheme="sdrdev">
-         <run
-               class="gov.redhawk.ide.sdr.internal.ui.filesystem.SdrFileSystem">
-         </run>
-      </filesystem>
-   </extension>
-   <extension
-         point="org.eclipse.core.filesystem.filesystems">
-      <filesystem
-            scheme="sdrdom">
-         <run
-               class="gov.redhawk.ide.sdr.internal.ui.filesystem.SdrFileSystem">
-         </run>
-      </filesystem>
-   </extension>
-      <extension
-         point="org.eclipse.core.filesystem.filesystems">
-      <filesystem
-            scheme="sdr">
-         <run
-               class="gov.redhawk.ide.sdr.internal.ui.filesystem.SdrFileSystem">
-         </run>
-      </filesystem>
-   </extension>
 </plugin>
