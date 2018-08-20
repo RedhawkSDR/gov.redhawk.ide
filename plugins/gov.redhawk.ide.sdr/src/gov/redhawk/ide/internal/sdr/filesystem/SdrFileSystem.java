@@ -29,6 +29,9 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 public class SdrFileSystem extends FileSystem implements IExecutableExtension {
 
+	private static final String OLD_SCHEME_TARGET_SDR_DEV = "sdrDev"; //$NON-NLS-1$
+	private static final String OLD_SCHEME_TARGET_SDR_DOM = "sdrDom"; //$NON-NLS-1$
+
 	private IFileStore rootStore;
 
 	public SdrFileSystem() {
@@ -41,21 +44,36 @@ public class SdrFileSystem extends FileSystem implements IExecutableExtension {
 
 	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
-		final String scheme = config.getAttribute("scheme");
+		final String scheme = config.getAttribute("scheme"); //$NON-NLS-1$
 		IPath path = null;
-		if (ScaFileSystemConstants.SCHEME_TARGET_SDR_DEV.equalsIgnoreCase(scheme)) {
+		switch (scheme) {
+		case OLD_SCHEME_TARGET_SDR_DEV:
+			IdeSdrActivator.getDefault().logWarning(
+				Messages.bind(Messages.SdrFileSystem_WarnDeprecatedScheme, OLD_SCHEME_TARGET_SDR_DEV, ScaFileSystemConstants.SCHEME_TARGET_SDR_DEV));
 			path = IdeSdrPreferences.getTargetSdrDevPath();
-		} else if (ScaFileSystemConstants.SCHEME_TARGET_SDR_DOM.equalsIgnoreCase(scheme)) {
+			break;
+		case ScaFileSystemConstants.SCHEME_TARGET_SDR_DEV:
+			path = IdeSdrPreferences.getTargetSdrDevPath();
+			break;
+		case OLD_SCHEME_TARGET_SDR_DOM:
+			IdeSdrActivator.getDefault().logWarning(
+				Messages.bind(Messages.SdrFileSystem_WarnDeprecatedScheme, OLD_SCHEME_TARGET_SDR_DOM, ScaFileSystemConstants.SCHEME_TARGET_SDR_DOM));
 			path = IdeSdrPreferences.getTargetSdrDomPath();
-		} else if (ScaFileSystemConstants.SCHEME_TARGET_SDR.equalsIgnoreCase(scheme)) {
+			break;
+		case ScaFileSystemConstants.SCHEME_TARGET_SDR_DOM:
+			path = IdeSdrPreferences.getTargetSdrDomPath();
+			break;
+		case ScaFileSystemConstants.SCHEME_TARGET_SDR:
 			path = IdeSdrPreferences.getTargetSdrPath();
-		} else {
-			throw new CoreException(new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, "Invalid SDR Filesystem scheme: " + scheme, null));
+			break;
+		default:
+			throw new CoreException(new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, Messages.bind(Messages.SdrFileSystem_ErrorInvalidScheme, scheme), null));
 		}
+
 		if (path != null) {
 			this.rootStore = EFS.getStore(path.toFile().toURI());
 		} else {
-			this.rootStore = EFS.getNullFileSystem().getStore(new Path(""));
+			this.rootStore = EFS.getNullFileSystem().getStore(new Path("")); //$NON-NLS-1$
 		}
 	}
 

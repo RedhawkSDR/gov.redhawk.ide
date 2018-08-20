@@ -48,7 +48,25 @@
    <extension
          point="org.eclipse.core.filesystem.filesystems">
       <filesystem
+            scheme="sdrdev">
+         <run
+               class="gov.redhawk.ide.internal.sdr.filesystem.SdrFileSystem">
+         </run>
+      </filesystem>
+   </extension>
+   <extension
+         point="org.eclipse.core.filesystem.filesystems">
+      <filesystem
             scheme="sdrDev">
+         <run
+               class="gov.redhawk.ide.internal.sdr.filesystem.SdrFileSystem">
+         </run>
+      </filesystem>
+   </extension>
+   <extension
+         point="org.eclipse.core.filesystem.filesystems">
+      <filesystem
+            scheme="sdrdom">
          <run
                class="gov.redhawk.ide.internal.sdr.filesystem.SdrFileSystem">
          </run>
