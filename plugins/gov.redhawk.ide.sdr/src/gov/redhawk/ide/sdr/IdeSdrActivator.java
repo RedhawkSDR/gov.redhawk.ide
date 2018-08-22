@@ -39,8 +39,6 @@ public class IdeSdrActivator extends Plugin {
 
 		envMapServices = new ServiceTracker<IEnvMap, IEnvMap>(context, IEnvMap.class, null);
 		envMapServices.open(true);
-
-		TargetSdrRoot.init();
 	}
 
 	@Override

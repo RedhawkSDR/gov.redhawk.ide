@@ -47,9 +47,9 @@ public class TargetSdrRoot {
 	}
 
 	/**
-	 * Should only be called by the plug-in's start activator
+	 * Lazy initialization of the SDR root model
 	 */
-	static void init() {
+	static {
 		// Create the root model object
 		sdrRoot = SdrFactory.eINSTANCE.createSdrRoot();
 
