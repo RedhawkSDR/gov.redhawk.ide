@@ -16,7 +16,6 @@ import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import gov.redhawk.ide.sdr.IdeSdrActivator;
@@ -24,16 +23,10 @@ import gov.redhawk.ide.sdr.preferences.IdeSdrPreferenceConstants;
 
 public class SdrRootResolverTest {
 
-	private IDynamicVariable variable;
-
-	@Before
-	public void before() throws Exception {
-		variable = VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable("SdrRoot");
-	}
-
 	@Test
 	public void resolve() throws CoreException {
 		// If we set the preference value, we should get that value back from the variable resolver
+		IDynamicVariable variable = VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable("SdrRoot");
 		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).put(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE, "/foo");
 		Assert.assertEquals("/foo", variable.getValue(null));
 	}
