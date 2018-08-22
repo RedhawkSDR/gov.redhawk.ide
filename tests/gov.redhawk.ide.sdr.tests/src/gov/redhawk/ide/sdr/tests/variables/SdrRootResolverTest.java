@@ -33,6 +33,7 @@ public class SdrRootResolverTest {
 
 	@Test
 	public void resolve() throws CoreException {
+		// If we set the preference value, we should get that value back from the variable resolver
 		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).put(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE, "/foo");
 		Assert.assertEquals("/foo", variable.getValue(null));
 	}
