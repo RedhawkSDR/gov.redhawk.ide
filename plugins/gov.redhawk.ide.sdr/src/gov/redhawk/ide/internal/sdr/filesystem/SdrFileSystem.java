@@ -34,9 +34,6 @@ public class SdrFileSystem extends FileSystem implements IExecutableExtension {
 
 	private IFileStore rootStore;
 
-	public SdrFileSystem() {
-	}
-
 	@Override
 	public IFileStore getStore(final URI uri) {
 		return new SdrWrappedFileStore(uri, this.rootStore.getFileStore(new Path(uri.getPath())));
