@@ -20,7 +20,10 @@ import org.eclipse.core.runtime.MultiStatus;
 public class CustomMultiStatus extends MultiStatus {
 
 	public CustomMultiStatus(String pluginId, int code, IStatus[] newChildren, String message, Throwable exception) {
-		super(pluginId, code, newChildren, message, exception);
+		super(pluginId, code, message, exception);
+		for (IStatus newChild : newChildren) {
+			add(newChild);
+		}
 	}
 
 	public CustomMultiStatus(String pluginId, int code, String message, Throwable exception) {
