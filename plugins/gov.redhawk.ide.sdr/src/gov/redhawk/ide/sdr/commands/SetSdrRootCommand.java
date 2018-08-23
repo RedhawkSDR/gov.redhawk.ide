@@ -10,10 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.commands;
 
-import gov.redhawk.ide.sdr.SdrRoot;
-
 import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.emf.common.util.URI;
+
+import gov.redhawk.ide.sdr.SdrRoot;
 
 /**
  * @since 8.0
@@ -45,20 +45,13 @@ public class SetSdrRootCommand extends AbstractCommand {
 	    return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void execute() {
 		this.sdrRoot.setSdrRoot(uriRoot, domPath, devPath);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void redo() {
-		// TODO Auto-generated method stub
-
+		// PASS
 	}
 }
