@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -53,10 +54,11 @@ public class TargetSDRRootTest {
 
 		// Wait for the SDR root to be done with its initial load
 		long startTime = System.currentTimeMillis();
-		while (sdrRoot.getState() == LoadState.LOADING && System.currentTimeMillis() < startTime + 5000) {
+		while ((sdrRoot.getState() != LoadState.LOADED || Job.getJobManager().find(TargetSdrRoot.FAMILY_REFRESH_SDR).length > 0)
+			&& System.currentTimeMillis() < startTime + 5000) {
 			Thread.sleep(250);
 		}
-		Assert.assertFalse(sdrRoot.getState() == LoadState.LOADING);
+		Assert.assertTrue(sdrRoot.getState() == LoadState.LOADED);
 
 		// Listen to state changes
 		final BlockingQueue<LoadState> loadStates = new LinkedBlockingQueue<>();
