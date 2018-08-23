@@ -30,6 +30,7 @@ import gov.redhawk.eclipsecorba.library.provider.RepositoryItemProviderAdapterFa
 import gov.redhawk.ide.sdr.NodesContainer;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.WaveformsContainer;
 import gov.redhawk.ide.sdr.provider.SdrItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -47,7 +48,7 @@ public class SdrContentProvider extends TransactionalAdapterFactoryContentProvid
 	private Object input;
 
 	public SdrContentProvider() {
-		super(TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(SdrUiPlugin.EDITING_DOMAIN_ID), SdrContentProvider.createAdapterFactory());
+		super(TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(TargetSdrRoot.EDITING_DOMAIN_ID), SdrContentProvider.createAdapterFactory());
 	}
 
 	/**

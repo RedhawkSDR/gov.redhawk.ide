@@ -11,7 +11,7 @@
 package gov.redhawk.ide.spd.internal.ui.parts;
 
 import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 
 import java.util.ArrayList;
 
@@ -60,7 +60,7 @@ public class PropertyElementSelectorDialog extends ElementListSelectionDialog {
 	 */
 	private Object[] initElements() {
 		// Load all devices from the local SDR root
-		final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		final SdrRoot sdrRoot = TargetSdrRoot.getSdrRoot();
 
 		final ArrayList<ElementHolder> elements = new ArrayList<ElementHolder>();
 		for (final SoftPkg deviceSpd : sdrRoot.getDevicesContainer().getComponents()) {

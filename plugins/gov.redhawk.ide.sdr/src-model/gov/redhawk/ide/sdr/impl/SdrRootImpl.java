@@ -1024,7 +1024,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			setDomFileSystemRoot(null);
 			setDevFileSystemRoot(null);
 		}
-		unload(null);
 		// BEGIN GENERATED CODE
 	}
 

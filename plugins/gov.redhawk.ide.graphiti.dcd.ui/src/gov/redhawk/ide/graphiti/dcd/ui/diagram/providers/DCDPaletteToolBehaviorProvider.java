@@ -23,7 +23,7 @@ import gov.redhawk.core.graphiti.dcd.ui.diagram.providers.DeviceManagerImageProv
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractPaletteToolBehaviorProvider;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.ServicesContainer;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 public abstract class DCDPaletteToolBehaviorProvider extends AbstractPaletteToolBehaviorProvider {
@@ -66,10 +66,10 @@ public abstract class DCDPaletteToolBehaviorProvider extends AbstractPaletteTool
 	}
 
 	private DevicesContainer getDevicesContainer() {
-		return SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer();
+		return TargetSdrRoot.getSdrRoot().getDevicesContainer();
 	}
 
 	private ServicesContainer getServicesContainer() {
-		return SdrUiPlugin.getDefault().getTargetSdrRoot().getServicesContainer();
+		return TargetSdrRoot.getSdrRoot().getServicesContainer();
 	}
 }

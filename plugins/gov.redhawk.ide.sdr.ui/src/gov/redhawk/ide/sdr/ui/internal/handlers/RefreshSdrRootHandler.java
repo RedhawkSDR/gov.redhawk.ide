@@ -15,7 +15,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 
 /**
  * The Class InitHandler.
@@ -24,7 +24,7 @@ public class RefreshSdrRootHandler extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
+		TargetSdrRoot.scheduleRefresh();
 		return null;
 	}
 

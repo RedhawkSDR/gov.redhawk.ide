@@ -10,34 +10,15 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui;
 
-import gov.redhawk.eclipsecorba.library.IdlLibrary;
-import gov.redhawk.eclipsecorba.library.LibraryFactory;
-import gov.redhawk.ide.sdr.SdrFactory;
-import gov.redhawk.ide.sdr.SdrPackage;
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.commands.SetSdrRootCommand;
-import gov.redhawk.ide.sdr.internal.ui.commands.InitIdlLibraryCommand;
-import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
-import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
-
-import java.net.URISyntaxException;
-
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.SetCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -50,9 +31,11 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "gov.redhawk.ide.sdr.ui";
 
 	/**
+	 * @deprecated Use TargetSdrRoot#EDITING_DOMAIN_ID
 	 * @since 3.1
 	 */
-	public static final String EDITING_DOMAIN_ID = SdrUiPlugin.PLUGIN_ID + ".editingDomain";
+	@Deprecated
+	public static final String EDITING_DOMAIN_ID = TargetSdrRoot.EDITING_DOMAIN_ID;
 
 	/**
 	 * The job group for a job that exports project(s) to the SDR root.
@@ -61,141 +44,46 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	public static final Object FAMILY_EXPORT_TO_SDR = new Object();
 
 	/**
-	 * The job group for a job that refreshes the SDR root model.
+	 * @deprecated Use {@link TargetSdrRoot#FAMILY_REFRESH_SDR}
 	 * @since 5.0
 	 */
-	public static final Object FAMILY_REFRESH_SDR = new Object();
+	@Deprecated
+	public static final Object FAMILY_REFRESH_SDR = TargetSdrRoot.FAMILY_REFRESH_SDR;
 
 	// The shared instance
 	private static SdrUiPlugin plugin;
 
-	private SdrRoot targetSdrRoot;
-
-	private RefreshSdrJob reloadSdrJob;
-
-	private final IPropertyChangeListener sdrRootPrefListener = new IPropertyChangeListener() {
-		@Override
-		public void propertyChange(final PropertyChangeEvent event) {
-			if (event.getProperty().equals(SdrUiPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE)
-			        || event.getProperty().equals(SdrUiPreferenceConstants.TARGET_SDR_DEV_PATH)
-			        || event.getProperty().equals(SdrUiPreferenceConstants.TARGET_SDR_DOM_PATH)) {
-				setSdrRootPaths();
-				SdrUiPlugin.this.reloadSdrJob.schedule();
-			}
-		}
-	};
-
-	private TransactionalEditingDomain editingDomain;
-
-	/**
-	 * The constructor
-	 */
 	public SdrUiPlugin() {
 	}
 
-	private void setSdrRootPaths() {
-		final IPath targetSdrPath = getTargetSdrPath();
-		URI sdrRoot = null;
-		if (targetSdrPath != null) {
-			sdrRoot = URI.createURI(targetSdrPath.toFile().toURI().toString());
-		}
-		final String domPath = getDomPath();
-		final String devPath = getDevPath();
-
-		this.editingDomain.getCommandStack().execute(new SetSdrRootCommand(this.targetSdrRoot, sdrRoot, domPath, devPath));
-	}
-
-	private void loadIdlPath() {
-		final IdlLibrary library = LibraryFactory.eINSTANCE.createIdlLibrary();
-		this.editingDomain.getCommandStack().execute(SetCommand.create(this.editingDomain,
-		        this.targetSdrRoot,
-		        SdrPackage.Literals.SDR_ROOT__IDL_LIBRARY,
-		        library));
-		this.editingDomain.getCommandStack().execute(new InitIdlLibraryCommand(library));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-	 * )
-	 */
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		SdrUiPlugin.plugin = this;
-
-		initSdr();
-		getPreferenceStore().addPropertyChangeListener(this.sdrRootPrefListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-	 * )
-	 */
 	@Override
 	public void stop(final BundleContext context) throws Exception {
 		SdrUiPlugin.plugin = null;
-
-		getPreferenceStore().removePropertyChangeListener(this.sdrRootPrefListener);
-		this.reloadSdrJob.cancel();
-		this.targetSdrRoot = null;
-
 		super.stop(context);
 	}
 
-	private void initSdr() throws URISyntaxException {
-		// Create the root model object
-		this.targetSdrRoot = SdrFactory.eINSTANCE.createSdrRoot();
-
-		// Create the job to refresh the SDR root
-		this.reloadSdrJob = new RefreshSdrJob(this.targetSdrRoot);
-		this.reloadSdrJob.setSystem(true);
-		this.reloadSdrJob.setUser(false);
-
-		// Create the EditingDomain and a Resource, and place the root model object in the Resource
-		this.editingDomain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(SdrUiPlugin.EDITING_DOMAIN_ID);
-		final ResourceSet resourceSet = SdrUiPlugin.this.editingDomain.getResourceSet();
-		final Resource sdrResource = resourceSet.createResource(URI.createURI("virtual://sdr.sdr"));
-		SdrUiPlugin.this.editingDomain.getCommandStack().execute(new AddCommand(SdrUiPlugin.this.editingDomain,
-			sdrResource.getContents(), SdrUiPlugin.this.targetSdrRoot));
-
-		// Add the IDL model object and our IDL paths
-		loadIdlPath();
-
-		// Schedule the initial load of the SDR root
-		final Job job = new Job("Startup Job") {
-
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				setSdrRootPaths();
-				SdrUiPlugin.this.reloadSdrJob.schedule();
-				return Status.OK_STATUS;
-			}
-
-		};
-		job.setUser(false);
-		job.setSystem(true);
-		job.schedule();
-	}
-
 	/**
-	 * @returns the target SDR root. In general, you should not assume that the root has been fully loaded.
+	 * @deprecated Use {@link TargetSdrRoot#getSdrRoot()}
 	 * @since 3.1
 	 */
+	@Deprecated
 	public SdrRoot getTargetSdrRoot() {
-		return this.targetSdrRoot;
+		return TargetSdrRoot.getSdrRoot();
 	}
 
 	/**
+	 * @deprecated Use {@link TargetSdrRoot#scheduleRefresh()}
 	 * @since 4.1
 	 */
+	@Deprecated
 	public void scheduleSdrRootRefresh() {
-		SdrUiPlugin.this.reloadSdrJob.schedule();
+		TargetSdrRoot.scheduleRefresh();
 	}
 
 	/**
@@ -208,64 +96,48 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	}
 
 	/**
+	 * @deprecated Use {@link IdeSdrPreferences#getDomPath()}
 	 * @since 3.1
 	 */
+	@Deprecated
 	public String getDomPath() {
-		String retVal = getPreferenceStore().getString(SdrUiPreferenceConstants.TARGET_SDR_DOM_PATH).trim();
-		if (retVal == null) {
-			retVal = "dom";
-		}
-		return retVal;
+		return IdeSdrPreferences.getDomPath();
 	}
 
 	/**
+	 * @deprecated Use {@link IdeSdrPreferences#getDevPath()}
 	 * @since 3.1
 	 */
+	@Deprecated
 	public String getDevPath() {
-		String retVal = getPreferenceStore().getString(SdrUiPreferenceConstants.TARGET_SDR_DEV_PATH).trim();
-		if (retVal == null) {
-			retVal = "dev";
-		}
-		return retVal;
+		return IdeSdrPreferences.getDevPath();
 	}
 
 	/**
+	 * @deprecated Use {@link IdeSdrPreferences#getTargetSdrDomPath()}
 	 * @since 3.1
 	 */
+	@Deprecated
 	public IPath getTargetSdrDomPath() {
-		if (getTargetSdrPath() == null) {
-			return null;
-		}
-		return getTargetSdrPath().append(getDomPath());
+		return IdeSdrPreferences.getTargetSdrDomPath();
 	}
 
 	/**
+	 * @deprecated Use {@link IdeSdrPreferences#getTargetSdrDevPath()}
 	 * @since 3.1
 	 */
+	@Deprecated
 	public IPath getTargetSdrDevPath() {
-		if (getTargetSdrPath() == null) {
-			return null;
-		}
-		return getTargetSdrPath().append(getDevPath());
+		return IdeSdrPreferences.getTargetSdrDevPath();
 	}
 
 	/**
+	 * @deprecated Use {@link IdeSdrPreferences#getTargetSdrPath()}
 	 * @since 3.1
 	 */
+	@Deprecated
 	public IPath getTargetSdrPath() {
-		String runtimePath = getPreferenceStore().getString(SdrUiPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE).trim();
-		if (runtimePath.isEmpty()) {
-			return null;
-		}
-
-		if (runtimePath.startsWith("${") && runtimePath.endsWith("}")) {
-			final String envName = runtimePath.substring(2, runtimePath.length() - 1);
-			runtimePath = System.getenv(envName);
-			if (runtimePath == null) {
-				return null;
-			}
-		}
-		return new Path(runtimePath);
+		return IdeSdrPreferences.getTargetSdrPath();
 	}
 
 	/**

@@ -490,7 +490,7 @@
         point="org.eclipse.ui.preferencePages">
      <page
            category="gov.redhawk.ui.preferences"
-           class="gov.redhawk.ide.sdr.ui.preferences.SdrPreferencePage"
+           class="gov.redhawk.ide.sdr.internal.ui.preferences.SdrPreferencePage"
            id="gov.redhawk.ide.sdr.ui.preferences.SdrPreferencePage"
            name="%page.name">
      </page>
@@ -580,66 +580,6 @@
             id="gov.redhawk.ide.sdr.ui.workspacePropertiesProvider"
             name="Workspace Properties">
       </provider>
-   </extension>
-   <extension
-         point="org.eclipse.core.filesystem.filesystems">
-      <filesystem
-            scheme="sdrDev">
-         <run
-               class="gov.redhawk.ide.sdr.internal.ui.filesystem.SdrFileSystem">
-         </run>
-      </filesystem>
-   </extension>
-   <extension
-         point="org.eclipse.core.filesystem.filesystems">
-      <filesystem
-            scheme="sdrDom">
-         <run
-               class="gov.redhawk.ide.sdr.internal.ui.filesystem.SdrFileSystem">
-         </run>
-      </filesystem>
-   </extension>
-      <extension
-         point="org.eclipse.core.filesystem.filesystems">
-      <filesystem
-            scheme="sdrdev">
-         <run
-               class="gov.redhawk.ide.sdr.internal.ui.filesystem.SdrFileSystem">
-         </run>
-      </filesystem>
-   </extension>
-   <extension
-         point="org.eclipse.core.filesystem.filesystems">
-      <filesystem
-            scheme="sdrdom">
-         <run
-               class="gov.redhawk.ide.sdr.internal.ui.filesystem.SdrFileSystem">
-         </run>
-      </filesystem>
-   </extension>
-      <extension
-         point="org.eclipse.core.filesystem.filesystems">
-      <filesystem
-            scheme="sdr">
-         <run
-               class="gov.redhawk.ide.sdr.internal.ui.filesystem.SdrFileSystem">
-         </run>
-      </filesystem>
-   </extension>
-   <extension
-         point="org.eclipse.emf.transaction.editingDomains">
-      <editingDomain
-            id="gov.redhawk.ide.sdr.ui.editingDomain">
-      </editingDomain>
-   </extension>
-   <extension
-         point="org.eclipse.core.variables.dynamicVariables">
-      <variable
-            description="%variable.description"
-            name="SdrRoot"
-            resolver="gov.redhawk.ide.sdr.ui.varables.SdrRootResolver"
-            supportsArgument="false">
-      </variable>
    </extension>
    <extension
          point="gov.redhawk.ide.sdr.ui.wellKnownProperties">

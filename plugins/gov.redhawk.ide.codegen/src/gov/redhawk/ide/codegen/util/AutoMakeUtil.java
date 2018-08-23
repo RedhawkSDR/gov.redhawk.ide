@@ -12,9 +12,10 @@ package gov.redhawk.ide.codegen.util;
 
 /**
  * A class with helper functions for Automake.
- * 
+ * @deprecated This class is unused and there is no planned replacement
  * @since 8.0
  */
+@Deprecated
 public class AutoMakeUtil {
 
 	private AutoMakeUtil() {

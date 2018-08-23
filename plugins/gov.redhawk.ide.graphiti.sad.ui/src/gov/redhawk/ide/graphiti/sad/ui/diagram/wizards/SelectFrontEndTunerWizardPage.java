@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Label;
 import ExtendedCF.WKP.DEVICEKIND;
 import FRONTEND.FE_TUNER_DEVICE_KIND;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorLabelProvider;
 import gov.redhawk.sca.util.PropertyChangeSupport;
@@ -150,7 +150,7 @@ public class SelectFrontEndTunerWizardPage extends WizardPage {
 
 		databind();
 
-		treeViewer.setInput(SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer());
+		treeViewer.setInput(TargetSdrRoot.getSdrRoot().getDevicesContainer());
 		treeViewer.setSelection(new StructuredSelection(genericFeiDevice));
 	}
 

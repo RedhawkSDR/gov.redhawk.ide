@@ -11,27 +11,17 @@
 package gov.redhawk.ide.sdr.internal.ui;
 
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ui.editor.IIdlLibraryService;
 
-/**
- * 
- */
 public class IdlLibraryServiceImpl implements IIdlLibraryService {
 
-	/**
-	 * 
-	 */
 	public IdlLibraryServiceImpl() {
-		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see gov.redhawk.ui.editor.IIdlLibraryService#getLibrary()
-	 */
 	@Override
 	public IdlLibrary getLibrary() {
-		return SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
+		return TargetSdrRoot.getSdrRoot().getIdlLibrary();
 	}
 
 }

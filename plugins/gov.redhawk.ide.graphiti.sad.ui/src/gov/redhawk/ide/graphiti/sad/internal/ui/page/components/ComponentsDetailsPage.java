@@ -50,7 +50,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaDetails;
 import gov.redhawk.ui.parts.FormEntryBindingFactory;
@@ -319,7 +319,7 @@ public class ComponentsDetailsPage extends ScaDetails {
 				String scheme = uri.scheme();
 				final List<String> protocols = Arrays.asList(new String[] { "file", ScaFileSystemConstants.SCHEME });
 				if (scheme != null || protocols.contains(scheme)) {
-					IPath path = SdrUiPlugin.getDefault().getTargetSdrDomPath();
+					IPath path = IdeSdrPreferences.getTargetSdrDomPath();
 					if (scheme.equals(ScaFileSystemConstants.SCHEME)) {
 						String query = QueryParser.createQuery(Collections.singletonMap(ScaFileSystemConstants.QUERY_PARAM_FS, "file://" + path.toString()));
 						uri = URI.createURI(uri + "?" + query);

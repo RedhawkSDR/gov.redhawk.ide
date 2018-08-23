@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: gov.redhawk.ide.sdr.ui;singleton:=true
-Bundle-Version: 5.0.0.qualifier
+Bundle-Version: 6.0.0.qualifier
 Bundle-Activator: gov.redhawk.ide.sdr.ui.SdrUiPlugin
 Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.core.runtime;bundle-version="3.6.0",
@@ -26,7 +26,6 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.emf.transaction.ui;bundle-version="1.4.0",
  gov.redhawk.sca.model;bundle-version="12.0.0",
  org.eclipse.core.databinding.beans;bundle-version="1.2.100",
- org.eclipse.core.variables;bundle-version="3.2.400",
  org.eclipse.core.externaltools,
  org.eclipse.jdt.annotation;bundle-version="[1.1.0,2.0.0)";resolution:=optional,
  gov.redhawk.ide.codegen;bundle-version="10.1.0",
@@ -37,8 +36,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Localization: plugin
 Bundle-Vendor: %Bundle-Provider.0
 Export-Package: gov.redhawk.ide.sdr.internal.ui;x-internal:=true,
- gov.redhawk.ide.sdr.internal.ui.commands;x-internal:=true,
- gov.redhawk.ide.sdr.internal.ui.filesystem;x-internal:=true,
  gov.redhawk.ide.sdr.internal.ui.preferences;x-internal:=true,
  gov.redhawk.ide.sdr.ui,
  gov.redhawk.ide.sdr.ui.export,

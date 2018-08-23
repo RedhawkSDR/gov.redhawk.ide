@@ -75,6 +75,7 @@ import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.natures.ScaComponentProjectNature;
 import gov.redhawk.ide.natures.ScaNodeProjectNature;
 import gov.redhawk.ide.natures.ScaWaveformProjectNature;
+import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.util.ModelUtil;
 import mil.jpeojtrs.sca.dcd.DcdPackage;
@@ -348,7 +349,7 @@ public class ExportUtils {
 	public static Map<String, String> getEnv() {
 		Map<String, String> env = new HashMap<String, String>(System.getenv());
 
-		IPath targetSDRPath = SdrUiPlugin.getDefault().getTargetSdrPath();
+		IPath targetSDRPath = IdeSdrPreferences.getTargetSdrPath();
 		env.put("SDRROOT", targetSDRPath.toOSString());
 		IPath ossiehome = RedhawkIdeActivator.getDefault().getRuntimePath();
 		env.put("OSSIEHOME", ossiehome.toOSString());

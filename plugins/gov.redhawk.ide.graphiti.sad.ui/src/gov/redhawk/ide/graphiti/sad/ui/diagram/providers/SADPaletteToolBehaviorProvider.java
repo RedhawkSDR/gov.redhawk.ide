@@ -21,7 +21,7 @@ import gov.redhawk.core.graphiti.sad.ui.diagram.feature.ComponentCreateFeature;
 import gov.redhawk.core.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractPaletteToolBehaviorProvider;
 import gov.redhawk.ide.sdr.ComponentsContainer;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 public abstract class SADPaletteToolBehaviorProvider extends AbstractPaletteToolBehaviorProvider {
@@ -53,6 +53,6 @@ public abstract class SADPaletteToolBehaviorProvider extends AbstractPaletteTool
 	}
 
 	private ComponentsContainer getComponentsContainer() {
-		return SdrUiPlugin.getDefault().getTargetSdrRoot().getComponentsContainer();
+		return TargetSdrRoot.getSdrRoot().getComponentsContainer();
 	}
 }
