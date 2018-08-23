@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="gov.redhawk.ide.sdr" version="2">
+    <resource path="src-model/gov/redhawk/ide/sdr/util/SdrResourceFactoryImpl.java" type="gov.redhawk.ide.sdr.util.SdrResourceFactoryImpl">
+        <filter comment="Unnecessary method" id="338792546">
+            <message_arguments>
+                <message_argument value="gov.redhawk.ide.sdr.util.SdrResourceFactoryImpl"/>
+                <message_argument value="createResourceGen(URI)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

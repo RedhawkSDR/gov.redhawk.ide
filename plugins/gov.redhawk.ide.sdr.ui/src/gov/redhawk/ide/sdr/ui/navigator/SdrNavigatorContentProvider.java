@@ -15,8 +15,9 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrContentProvider;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -29,14 +30,13 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 
 	@Override
 	public Object[] getElements(final Object inputElement) {
-		final SdrUiPlugin activator = SdrUiPlugin.getDefault();
-		if (activator == null) {
+		SdrRoot sdrRoot = TargetSdrRoot.getSdrRoot();
+		if (sdrRoot == null) {
 			return SdrNavigatorContentProvider.EMPTY_OBJECTS;
-		}
-		if (inputElement instanceof IWorkspaceRoot) {
-			return new Object[] { activator.getTargetSdrRoot() };
+		} else if (inputElement instanceof IWorkspaceRoot) {
+			return new Object[] { sdrRoot };
 		} else if (inputElement instanceof ScaDomainManagerRegistry) {
-			return new Object[] { activator.getTargetSdrRoot() };
+			return new Object[] { sdrRoot };
 		} else {
 			return this.getChildren(inputElement);
 		}

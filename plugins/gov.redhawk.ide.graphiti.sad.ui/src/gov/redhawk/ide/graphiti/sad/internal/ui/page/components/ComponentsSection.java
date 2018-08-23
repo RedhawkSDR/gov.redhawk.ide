@@ -71,7 +71,7 @@ import gov.redhawk.core.graphiti.sad.ui.utils.SADUtils;
 import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiSADEditor;
 import gov.redhawk.ide.sdr.LoadState;
 import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.ui.parts.FormFilteredTree;
 import gov.redhawk.ui.editor.TreeSection;
@@ -209,7 +209,7 @@ public class ComponentsSection extends TreeSection implements IPropertyChangeLis
 
 	private void handleAdd() {
 		// Make sure Target SDR has finished loading
-		final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		final SdrRoot sdrRoot = TargetSdrRoot.getSdrRoot();
 		if (sdrRoot.getState() != LoadState.LOADED) {
 			final IRunnableWithProgress waitForLoad = new IRunnableWithProgress() {
 

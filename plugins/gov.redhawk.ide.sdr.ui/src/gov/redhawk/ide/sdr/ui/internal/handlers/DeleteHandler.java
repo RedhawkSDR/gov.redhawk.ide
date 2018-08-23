@@ -34,6 +34,7 @@ import gov.redhawk.ide.sdr.NodesContainer;
 import gov.redhawk.ide.sdr.ServicesContainer;
 import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.WaveformsContainer;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -144,7 +145,7 @@ public class DeleteHandler extends AbstractHandler {
 			} catch (final CoreException e) {
 				return new Status(e.getStatus().getSeverity(), SdrUiPlugin.PLUGIN_ID, "Failed to delete: " + deleteDescription, e);
 			}
-			SdrUiPlugin.getDefault().scheduleSdrRootRefresh();
+			TargetSdrRoot.scheduleRefresh();
 			return Status.OK_STATUS;
 		});
 		job.setUser(false);

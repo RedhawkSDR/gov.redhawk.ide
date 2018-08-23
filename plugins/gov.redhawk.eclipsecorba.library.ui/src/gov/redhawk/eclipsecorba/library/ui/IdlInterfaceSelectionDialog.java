@@ -28,7 +28,7 @@ import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 
 /**
  * A selection dialog that allows the user to select an IDL interface.
@@ -148,7 +148,7 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 	@Deprecated
 	public static IdlInterfaceDcl create(Shell parent) {
 		// No library was supplied, using the IDL Library from the SDR Root.
-		IdlLibrary library = SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
+		IdlLibrary library = TargetSdrRoot.getSdrRoot().getIdlLibrary();
 		return open(parent, library, IdlFilter.ALL);
 	}
 
@@ -168,7 +168,7 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 	 * @since 1.2
 	 */
 	public static IdlInterfaceDcl open(Shell parent, IdlFilter filter) {
-		IdlLibrary library = SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
+		IdlLibrary library = TargetSdrRoot.getSdrRoot().getIdlLibrary();
 		return open(parent, library, filter);
 	}
 

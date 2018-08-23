@@ -10,12 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.internal.ui.properties;
 
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.provider.SdrItemProviderAdapterFactory;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.sca.properties.Category;
-import gov.redhawk.sca.properties.IPropertiesProvider;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,13 +17,18 @@ import java.util.List;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
+import gov.redhawk.ide.sdr.provider.SdrItemProviderAdapterFactory;
+import gov.redhawk.sca.properties.Category;
+import gov.redhawk.sca.properties.IPropertiesProvider;
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
 public class SdrPropertiesProvider implements IPropertiesProvider {
 
 	public SdrPropertiesProvider() {
-		SdrRoot targetSdr = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		SdrRoot targetSdr = TargetSdrRoot.getSdrRoot();
 		targetSdr.load(null);
 	}
 
@@ -55,7 +54,7 @@ public class SdrPropertiesProvider implements IPropertiesProvider {
 
 	@Override
 	public List<Category> getCategories() {
-		SdrRoot targetSdr = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		SdrRoot targetSdr = TargetSdrRoot.getSdrRoot();
 		ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(Arrays.asList(new SdrItemProviderAdapterFactory(), new SpdItemProviderAdapterFactory()));
 		AdapterFactoryLabelProvider labelProvider = new AdapterFactoryLabelProvider(adapterFactory);
 

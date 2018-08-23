@@ -10,11 +10,12 @@
     http://www.eclipse.org/legal/epl-v10.html.
 -->
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
-    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/gov.redhawk.ide.sdr/src" editorDirectory="" modelPluginID="gov.redhawk.ide.sdr"
-    templateDirectory="/gov.redhawk.ide.sdr/templates" dynamicTemplates="true" forceOverwrite="true"
-    modelName="Sdr" codeFormatting="true" testSuiteClass="" importerID="org.eclipse.emf.importer.ecore"
-    complianceLevel="8.0" copyrightFields="false" runtimeVersion="2.11" usedGenPackages="../../mil.jpeojtrs.sca.dcd/model/dcd.genmodel#//dcd ../../mil.jpeojtrs.sca.dmd/model/dmd.genmodel#//dmd platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore ../../gov.redhawk.eclipsecorba.idl/model/idl.genmodel#//idl ../../gov.redhawk.eclipsecorba.idl/model/idl.genmodel#//expressions ../../gov.redhawk.eclipsecorba.library/model/library.genmodel#//library ../../mil.jpeojtrs.sca.prf/model/prf.genmodel#//prf ../../mil.jpeojtrs.sca.sad/model/sad.genmodel#//sad platform:/plugin/mil.jpeojtrs.sca.scd/model/scd.genmodel#//scd platform:/plugin/mil.jpeojtrs.sca.spd/model/spd.genmodel#//spd platform:/plugin/mil.jpeojtrs.sca.partitioning/model/partitioning.genmodel#//partitioning ../../mil.jpeojtrs.sca.dpd/model/dpd.genmodel#//dpd"
-    importOrganizing="true">
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/gov.redhawk.ide.sdr/src-model" editorDirectory=""
+    modelPluginID="gov.redhawk.ide.sdr" templateDirectory="/gov.redhawk.ide.sdr/templates"
+    dynamicTemplates="true" forceOverwrite="true" modelName="Sdr" codeFormatting="true"
+    commentFormatting="true" testSuiteClass="" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="8.0" copyrightFields="false" runtimeVersion="2.13" usedGenPackages="../../mil.jpeojtrs.sca.dcd/model/dcd.genmodel#//dcd ../../mil.jpeojtrs.sca.dmd/model/dmd.genmodel#//dmd platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore ../../gov.redhawk.eclipsecorba.idl/model/idl.genmodel#//idl ../../gov.redhawk.eclipsecorba.idl/model/idl.genmodel#//expressions ../../gov.redhawk.eclipsecorba.library/model/library.genmodel#//library ../../mil.jpeojtrs.sca.prf/model/prf.genmodel#//prf ../../mil.jpeojtrs.sca.sad/model/sad.genmodel#//sad platform:/plugin/mil.jpeojtrs.sca.scd/model/scd.genmodel#//scd platform:/plugin/mil.jpeojtrs.sca.spd/model/spd.genmodel#//spd platform:/plugin/mil.jpeojtrs.sca.partitioning/model/partitioning.genmodel#//partitioning ../../mil.jpeojtrs.sca.dpd/model/dpd.genmodel#//dpd"
+    importOrganizing="true" eclipsePlatformVersion="Oxygen">
   <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel/exporter/org.eclipse.xsd.ecore.exporter">
     <genAnnotations source="selectedPackages">
       <details key="http://www.redhawk.gov/model/ide/sdr" value="sdr.xsd"/>

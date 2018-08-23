@@ -11,7 +11,7 @@
 package gov.redhawk.ide.internal.ui.templates;
 
 import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -303,7 +303,7 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 		addOption("propertyStubs", "Generate Property Stubs", true, 0);
 		addOption("viewer", "Generate Sample Viewer", false, 0);
 
-		final SdrRoot sdr = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		final SdrRoot sdr = TargetSdrRoot.getSdrRoot();
 		sdr.load(null);
 
 		sdrOption = new SdrResourceOption(this, SCA_RESOURCE, "Resource", sdr);

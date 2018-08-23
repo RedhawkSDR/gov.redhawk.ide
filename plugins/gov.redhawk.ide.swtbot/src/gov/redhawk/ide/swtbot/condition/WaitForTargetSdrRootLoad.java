@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 
 import gov.redhawk.ide.sdr.LoadState;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 
 public class WaitForTargetSdrRootLoad extends DefaultCondition {
 
@@ -29,10 +29,10 @@ public class WaitForTargetSdrRootLoad extends DefaultCondition {
 
 	@Override
 	public boolean test() throws Exception {
-		lastObservedState = SdrUiPlugin.getDefault().getTargetSdrRoot().getState();
+		lastObservedState = TargetSdrRoot.getSdrRoot().getState();
 
 		// Ensure the refresh job isn't queued / running
-		Job[] jobs = Job.getJobManager().find(SdrUiPlugin.FAMILY_REFRESH_SDR);
+		Job[] jobs = Job.getJobManager().find(TargetSdrRoot.FAMILY_REFRESH_SDR);
 		if (jobs.length != 0) {
 			jobRunning = true;
 			return false;

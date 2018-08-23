@@ -74,7 +74,7 @@ import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.DcdComponentContentProvid
 import gov.redhawk.ide.graphiti.dcd.ui.project.wizards.ScaNodeProjectDevicesWizardPage;
 import gov.redhawk.ide.sdr.LoadState;
 import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.ui.parts.FormFilteredTree;
 import gov.redhawk.ui.editor.TreeSection;
@@ -292,7 +292,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 
 	private void handleAdd() {
 		// Make sure Target SDR has finished loading
-		final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		final SdrRoot sdrRoot = TargetSdrRoot.getSdrRoot();
 		if (sdrRoot.getState() != LoadState.LOADED) {
 			final IRunnableWithProgress waitForLoad = new IRunnableWithProgress() {
 
