@@ -51,20 +51,16 @@ public class IdeSdrPreferences {
 	 * @return The absolute path to $SDRROOT/dom
 	 */
 	public static IPath getTargetSdrDomPath() {
-		if (getTargetSdrPath() == null) {
-			return null;
-		}
-		return getTargetSdrPath().append(getDomPath());
+		IPath targetSdrPath = getTargetSdrPath();
+		return (targetSdrPath == null) ? null : targetSdrPath.append(getDomPath());
 	}
 
 	/**
 	 * @return The absolute path to $SDRROOT/dev
 	 */
 	public static IPath getTargetSdrDevPath() {
-		if (getTargetSdrPath() == null) {
-			return null;
-		}
-		return getTargetSdrPath().append(getDevPath());
+		IPath targetSdrPath = getTargetSdrPath();
+		return (getTargetSdrPath() == null) ? null : targetSdrPath.append(getDevPath());
 	}
 
 	/**
