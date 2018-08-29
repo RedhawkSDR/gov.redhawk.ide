@@ -61,7 +61,7 @@ public class SadLoggingComposite extends Composite implements IScaComposite {
 		label = toolkit.createLabel(this, Messages.SadLoggingComposite_LogLevel);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		this.levelViewer = new ComboViewer(this, SWT.DROP_DOWN | SWT.READ_ONLY);
-		toolkit.adapt(this.levelViewer.getCombo());
+		toolkit.adapt(this.levelViewer.getCombo(), true, false);
 		this.levelViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 		this.levelViewer.setContentProvider(new ArrayContentProvider());
 		this.levelViewer.setLabelProvider(new LabelProvider());
