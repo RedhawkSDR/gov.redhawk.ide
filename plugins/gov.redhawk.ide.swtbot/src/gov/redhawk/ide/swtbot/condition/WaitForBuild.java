@@ -28,7 +28,7 @@ public class WaitForBuild extends DefaultCondition {
 	/**
 	 * The recommended timeout when using this condition
 	 */
-	public static final long TIMEOUT = 60000;
+	public static final long TIMEOUT = 90000;
 
 	private long startingWaitTime = 0;
 
