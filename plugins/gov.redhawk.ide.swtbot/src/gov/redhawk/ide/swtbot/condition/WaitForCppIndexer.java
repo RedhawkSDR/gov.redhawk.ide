@@ -24,7 +24,7 @@ import gov.redhawk.ide.swtbot.SwtBotActivator;
  */
 public class WaitForCppIndexer extends DefaultCondition {
 
-	public static final long TIMEOUT = 60000;
+	public static final long TIMEOUT = 90000;
 
 	private long startingWaitTime;
 	private boolean firstTime;
