@@ -40,6 +40,7 @@ public class InitIdlLibraryCommand extends AbstractCommand {
 
 	@Override
 	public void redo() {
+		// PASS - No undo
 	}
 
 }

@@ -1406,7 +1406,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(component);
 			switch (type) {
 			case DEVICE:
-				addDevice(domain, softPkg, component);
+				addDevice(domain, softPkg);
 				break;
 			case OTHER:
 			case FILE_MANAGER:
@@ -1419,7 +1419,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 				break;
 			case EVENT_SERVICE:
 			case SERVICE:
-				addService(domain, softPkg, component);
+				addService(domain, softPkg);
 				break;
 			case DEVICE_MANAGER:
 			case DOMAIN_MANAGER:
@@ -1459,7 +1459,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 					if (DEBUG.enabled) {
 						DEBUG.message(Messages.SdrRootImpl_ResourceIsDeviceBasedOnInterfaces, softPkg.getName());
 					}
-					addDevice(domain, softPkg, component);
+					addDevice(domain, softPkg);
 					return;
 				}
 			}
@@ -1480,7 +1480,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param softPkg
 	 * @param component
 	 */
-	private void addDevice(EditingDomain domain, final SoftPkg softPkg, final SoftwareComponent component) {
+	private void addDevice(EditingDomain domain, final SoftPkg softPkg) {
 		domain.getCommandStack().execute(new AddCommand(domain, getDevicesContainer().getComponents(), softPkg));
 	}
 
@@ -1488,7 +1488,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param softPkg
 	 * @param component
 	 */
-	private void addService(EditingDomain domain, final SoftPkg softPkg, final SoftwareComponent component) {
+	private void addService(EditingDomain domain, final SoftPkg softPkg) {
 		domain.getCommandStack().execute(new AddCommand(domain, getServicesContainer().getComponents(), softPkg));
 	}
 

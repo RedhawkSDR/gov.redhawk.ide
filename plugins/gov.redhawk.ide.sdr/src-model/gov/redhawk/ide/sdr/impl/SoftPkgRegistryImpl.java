@@ -61,10 +61,13 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	protected SoftPkgRegistryImpl() {
+		// END GENERATED CODE
 		super();
+		eAdapters().add(mapAdapter);
+		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -140,37 +143,34 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 				break;
 			}
 		}
+
+		private void addSpd(SoftPkg spd) {
+			FeatureMap properties = ScaEcoreUtils.getFeature(spd, PATH_SPD_TO_PROPERTIES_MAP);
+			if (properties == null) {
+				return;
+			}
+			for (AbstractProperty prop : new FeatureMapList<AbstractProperty>(properties, AbstractProperty.class)) {
+				if (DceUuidUtil.isValid(prop.getId())) {
+					getProperties().put(prop.getId(), prop);
+				}
+			}
+		}
+
+		private void removeSpd(SoftPkg spd) {
+			FeatureMap properties = ScaEcoreUtils.getFeature(spd, PATH_SPD_TO_PROPERTIES_MAP);
+			if (properties == null) {
+				return;
+			}
+			for (AbstractProperty prop : new FeatureMapList<AbstractProperty>(properties, AbstractProperty.class)) {
+				if (DceUuidUtil.isValid(prop.getId())) {
+					getProperties().removeKey(prop.getId());
+				}
+			}
+		}
 	};
-	{
-		eAdapters().add(mapAdapter);
-	}
 
 	private static final EStructuralFeature[] PATH_SPD_TO_PROPERTIES_MAP = { SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
 		SpdPackage.Literals.PROPERTY_FILE__PROPERTIES, PrfPackage.Literals.PROPERTIES__PROPERTIES };
-
-	private void addSpd(SoftPkg spd) {
-		FeatureMap properties = ScaEcoreUtils.getFeature(spd, PATH_SPD_TO_PROPERTIES_MAP);
-		if (properties == null) {
-			return;
-		}
-		for (AbstractProperty prop : new FeatureMapList<AbstractProperty>(properties, AbstractProperty.class)) {
-			if (DceUuidUtil.isValid(prop.getId())) {
-				getProperties().put(prop.getId(), prop);
-			}
-		}
-	}
-
-	private void removeSpd(SoftPkg spd) {
-		FeatureMap properties = ScaEcoreUtils.getFeature(spd, PATH_SPD_TO_PROPERTIES_MAP);
-		if (properties == null) {
-			return;
-		}
-		for (AbstractProperty prop : new FeatureMapList<AbstractProperty>(properties, AbstractProperty.class)) {
-			if (DceUuidUtil.isValid(prop.getId())) {
-				getProperties().remove(prop.getId());
-			}
-		}
-	}
 
 	// BEGIN GENERATED CODE
 

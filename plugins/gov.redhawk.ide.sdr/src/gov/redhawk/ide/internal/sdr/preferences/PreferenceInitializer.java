@@ -19,9 +19,6 @@ import gov.redhawk.ide.sdr.preferences.IdeSdrPreferenceConstants;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	public PreferenceInitializer() {
-	}
-
 	@Override
 	public void initializeDefaultPreferences() {
 		Preferences ideSdrPrefs = DefaultScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID);
