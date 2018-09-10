@@ -32,6 +32,7 @@ public class SdrFileSystem extends FileSystem implements IExecutableExtension {
 	private static final String OLD_SCHEME_TARGET_SDR_DEV = "sdrDev"; //$NON-NLS-1$
 	private static final String OLD_SCHEME_TARGET_SDR_DOM = "sdrDom"; //$NON-NLS-1$
 
+	// TODO: This should be updated if there is a preference change
 	private IFileStore rootStore;
 
 	@Override
