@@ -60,7 +60,7 @@ public class IdeSdrPreferences {
 	 */
 	public static IPath getTargetSdrDevPath() {
 		IPath targetSdrPath = getTargetSdrPath();
-		return (getTargetSdrPath() == null) ? null : targetSdrPath.append(getDevPath());
+		return (targetSdrPath == null) ? null : targetSdrPath.append(getDevPath());
 	}
 
 	/**
