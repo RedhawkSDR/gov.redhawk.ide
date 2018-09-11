@@ -310,11 +310,7 @@ public final class SpdLauncherUtil {
 							// PASS
 						}
 						if (namingContext == null) {
-							try {
-								Thread.sleep(100);
-							} catch (final InterruptedException e1) {
-								throw e1;
-							}
+							Thread.sleep(100);
 						}
 					}
 
@@ -326,11 +322,7 @@ public final class SpdLauncherUtil {
 						try {
 							return ResourceHelper.narrow(namingContext.resolve_str(nameBinding));
 						} catch (NotFound e) {
-							try {
-								Thread.sleep(100);
-							} catch (final InterruptedException e1) {
-								throw e1;
-							}
+							Thread.sleep(100);
 						}
 					}
 
@@ -351,9 +343,8 @@ public final class SpdLauncherUtil {
 			// Invoke the Future to get the parent waveform and the Resource object
 			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
 				ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
+			// In debug-mode wait they may have placed a break-point that is delaying registration so wait forever
 			if (timeout < 0 || ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
-				// In debug-mode wait they may have placed a break-point
-				// that is delaying registration so wait forever
 				resource = future.get();
 			} else {
 				resource = future.get(timeout, TimeUnit.SECONDS);
@@ -474,7 +465,7 @@ public final class SpdLauncherUtil {
 			LaunchLogger.INSTANCE.writeToConsole(launch, CFErrorFormatter.format(e, label), ConsoleColor.STDERR);
 		} catch (BAD_OPERATION e) {
 			String msg;
-			if (initializeProps.size() == 0) {
+			if (initializeProps.isEmpty()) {
 				msg = String.format("Could not call initializeProperties on %s in the sandbox (CORBA BAD_OPERATION). "
 					+ "If the installed version of REDHAWK is pre-2.0, this is expected and can be ignored.", label);
 			} else {
@@ -516,11 +507,7 @@ public final class SpdLauncherUtil {
 						}
 					}
 					if (retVal == null) {
-						try {
-							Thread.sleep(500);
-						} catch (final InterruptedException e) {
-							throw e;
-						}
+						Thread.sleep(500);
 					}
 				}
 				return retVal;
@@ -531,14 +518,11 @@ public final class SpdLauncherUtil {
 		try {
 			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
 				ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
+			// In debug-mode wait they may have placed a break-point that is delaying registration so wait forever
 			if (timeout < 0 || ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
-				// In debug-mode wait they may have placed a break-point
-				// that is delaying registration so wait forever
-				final LocalAbstractComponent newComponent = future.get();
-				return newComponent;
+				return future.get();
 			} else {
-				final LocalAbstractComponent newComponent = future.get(timeout, TimeUnit.SECONDS);
-				return newComponent;
+				return future.get(timeout, TimeUnit.SECONDS);
 			}
 		} catch (final InterruptedException e1) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Interrupted waiting for service to start. " + name, e1));
@@ -584,11 +568,7 @@ public final class SpdLauncherUtil {
 						}
 					}
 					if (retVal == null) {
-						try {
-							Thread.sleep(100);
-						} catch (final InterruptedException e) {
-							throw e;
-						}
+						Thread.sleep(100);
 					}
 				}
 				return retVal;
@@ -599,8 +579,8 @@ public final class SpdLauncherUtil {
 		try {
 			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
 				ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
+			// In debug-mode wait they may have placed a break-point that is delaying registration, so wait forever
 			if (timeout < 0 || ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
-				// In debug-mode wait they may have placed a break-point that is delaying registration, so wait forever
 				return future.get();
 			} else {
 				return future.get(timeout, TimeUnit.SECONDS);

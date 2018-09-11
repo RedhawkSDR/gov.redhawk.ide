@@ -91,6 +91,8 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 @SuppressWarnings("restriction")
 public class ExportUtils {
 
+	private static final String BUILD_SCOPE_NONE = "${none}"; //$NON-NLS-1$
+
 	private ExportUtils() {
 	}
 
@@ -299,46 +301,21 @@ public class ExportUtils {
 		IPath ossiehome = RedhawkIdeActivator.getDefault().getRuntimePath();
 		env.put("OSSIEHOME", ossiehome.toOSString());
 
-		if (env.containsKey("CLASSPATH")) {
-			env.put("CLASSPATH", ossiehome.toOSString() + "/lib/*:" + env.get("CLASSPATH"));
+		prependPathToEnv(env, "CLASSPATH", ossiehome.toOSString() + "/lib/*");
+		prependPathToEnv(env, "PATH", ossiehome.toOSString() + "/bin/");
+		if (Platform.ARCH_X86_64.equals(Platform.getOSArch())) {
+			prependPathToEnv(env, "PYTHONPATH", ossiehome.toOSString() + "/lib64/python:" + ossiehome.toOSString() + "/lib/python");
+			prependPathToEnv(env, "LD_LIBRARY_PATH", ossiehome.toOSString() + "/lib64:" + ossiehome.toOSString() + "/lib");
 		} else {
-			env.put("CLASSPATH", ossiehome.toOSString() + "/lib/*");
-		}
-
-		if (env.containsKey("PYTHONPATH")) {
-			if (Platform.ARCH_X86_64.equals(Platform.getOSArch())) {
-				env.put("PYTHONPATH", ossiehome.toOSString() + "/lib64/python:" + ossiehome.toOSString() + "/lib/python:" + env.get("PYTHONPATH"));
-			} else {
-				env.put("PYTHONPATH", ossiehome.toOSString() + "/lib/python:" + env.get("PYTHONPATH"));
-			}
-		} else {
-			if (Platform.ARCH_X86_64.equals(Platform.getOSArch())) {
-				env.put("PYTHONPATH", ossiehome.toOSString() + "/lib64/python:" + ossiehome.toOSString() + "/lib/python");
-			} else {
-				env.put("PYTHONPATH", ossiehome.toOSString() + "/lib/python");
-			}
-		}
-
-		if (env.containsKey("LD_LIBRARY_PATH")) {
-			if (Platform.ARCH_X86_64.equals(Platform.getOSArch())) {
-				env.put("LD_LIBRARY_PATH", ossiehome.toOSString() + "/lib64:" + ossiehome.toOSString() + "/lib:" + env.get("LD_LIBRARY_PATH"));
-			} else {
-				env.put("LD_LIBRARY_PATH", ossiehome.toOSString() + "/lib:" + env.get("LD_LIBRARY_PATH"));
-			}
-		} else {
-			if (Platform.ARCH_X86_64.equals(Platform.getOSArch())) {
-				env.put("LD_LIBRARY_PATH", ossiehome.toOSString() + "/lib64:" + ossiehome.toOSString() + "/lib");
-			} else {
-				env.put("LD_LIBRARY_PATH", ossiehome.toOSString() + "/lib");
-			}
-		}
-
-		if (env.containsKey("PATH")) {
-			env.put("PATH", ossiehome.toOSString() + "/bin/:" + env.get("PATH"));
-		} else {
-			env.put("PATH", ossiehome.toOSString() + "/bin/");
+			prependPathToEnv(env, "PYTHONPATH", ossiehome.toOSString() + "/lib/python");
+			prependPathToEnv(env, "LD_LIBRARY_PATH", ossiehome.toOSString() + "/lib");
 		}
 		return env;
+	}
+
+	private static void prependPathToEnv(Map<String, String> env, String envKey, String prependPath) {
+		String suffix = (env.containsKey(envKey)) ? ':' + env.get(envKey) : "";
+		env.put(envKey, prependPath + suffix);
 	}
 
 	/**
@@ -511,14 +488,10 @@ public class ExportUtils {
 		}
 		final IResource srcPath = ExportUtils.getWorkspaceResource(spdRootPath.append(codeLocalFile));
 
-		IPath outputPath;
-		if (includeCode) {
-
-			// Check if the path exists, there may be multiple implementations in this, only one needs to be built
-			if ((srcPath != null) && srcPath.exists()) {
-				outputPath = outputFolder.append(codeLocalFile);
-				exporter.write(srcPath, outputPath, progress.newChild(1));
-			}
+		// Check if the path exists, there may be multiple implementations in this, only one needs to be built
+		if (includeCode && (srcPath != null) && srcPath.exists()) {
+			IPath outputPath = outputFolder.append(codeLocalFile);
+			exporter.write(srcPath, outputPath, progress.newChild(1));
 		}
 
 		if (impl.getPropertyFile() != null) {
@@ -530,7 +503,7 @@ public class ExportUtils {
 			if (srcPrfPath == null) {
 				throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Expected file " + prfPath + " does not exist"));
 			}
-			outputPath = outputFolder.append(prfPath);
+			IPath outputPath = outputFolder.append(prfPath);
 			exporter.write(srcPrfPath, outputPath, progress.newChild(1));
 		}
 
@@ -547,8 +520,8 @@ public class ExportUtils {
 		retVal.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		retVal.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, ExportUtils.getEnv());
 		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, false);
-		retVal.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, "${none}");
-		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, "${none}");
+		retVal.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, BUILD_SCOPE_NONE);
+		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, BUILD_SCOPE_NONE);
 		retVal.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, true);
 
 		URL fileUrl = FileLocator.toFileURL(FileLocator.find(SdrUiPlugin.getDefault().getBundle(), new Path("resources/installImpl.sh"), null));
@@ -568,11 +541,13 @@ public class ExportUtils {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				// PASS
+				Thread.currentThread().interrupt();
+				launch.terminate();
+				return;
 			}
 			if (monitor.isCanceled()) {
 				launch.terminate();
-				break;
+				return;
 			}
 		}
 		if (launch.getProcesses()[0].getExitValue() != 0) {
@@ -622,7 +597,7 @@ public class ExportUtils {
 	 * @throws IOException
 	 * @throws DebugException
 	 */
-	private static void buildSH(final IProgressMonitor monitor, IProject project) throws CoreException, IOException, DebugException {
+	private static void buildSH(final IProgressMonitor monitor, IProject project) throws CoreException, IOException {
 		SubMonitor progress = SubMonitor.convert(monitor, 10);
 
 		String configTypeId = IExternalToolConstants.ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE;
@@ -634,8 +609,8 @@ public class ExportUtils {
 		retVal.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		retVal.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, ExportUtils.getEnv());
 		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, false);
-		retVal.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, "${none}");
-		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, "${none}");
+		retVal.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, BUILD_SCOPE_NONE);
+		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, BUILD_SCOPE_NONE);
 		retVal.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, true);
 
 		URL fileUrl = FileLocator.toFileURL(FileLocator.find(SdrUiPlugin.getDefault().getBundle(), new Path("resources/install.sh"), null));
@@ -655,11 +630,13 @@ public class ExportUtils {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				// PASS
+				Thread.currentThread().interrupt();
+				launch.terminate();
+				return;
 			}
 			if (progress.isCanceled()) {
 				launch.terminate();
-				break;
+				return;
 			}
 		}
 		progress.newChild(9);
@@ -684,7 +661,7 @@ public class ExportUtils {
 	private static boolean checkProjectImplsForExport(SoftPkg softPkg, IPath spdRootPath) throws CoreException {
 
 		final String projectName = ModelUtil.getProject(softPkg).getProject().getName();
-		if (softPkg.getImplementation() != null && softPkg.getImplementation().size() != 0) {
+		if (softPkg.getImplementation() != null && !softPkg.getImplementation().isEmpty()) {
 			for (final Implementation impl : softPkg.getImplementation()) {
 				final String localFileName = impl.getCode().getLocalFile().getName();
 				final IPath codeLocalFile;
