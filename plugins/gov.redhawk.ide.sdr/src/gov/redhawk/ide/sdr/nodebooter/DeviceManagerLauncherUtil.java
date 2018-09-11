@@ -24,6 +24,8 @@ import gov.redhawk.ide.sdr.IdeSdrActivator;
 
 public class DeviceManagerLauncherUtil {
 
+	private static final int LAUNCH_WAIT_TIME = 1000;
+
 	private DeviceManagerLauncherUtil() {
 	}
 
@@ -57,7 +59,7 @@ public class DeviceManagerLauncherUtil {
 	 * @return
 	 */
 	public static IStatus launchDeviceManager(DeviceManagerLaunchConfiguration devMgr, IProgressMonitor monitor) {
-		SubMonitor progress = SubMonitor.convert(monitor, "Launching device manager", 1);
+		SubMonitor progress = SubMonitor.convert(monitor, "Launching device manager", 2);
 		try {
 			final StringBuilder arguments = new StringBuilder();
 			arguments.append("-d ");
@@ -81,11 +83,7 @@ public class DeviceManagerLauncherUtil {
 			final ILaunch launch = launcher.launch(devMgr.getLaunchConfigName(), arguments.toString(), progress.newChild(1));
 
 			// Give things a second to ensure they started correctly
-			try {
-				Thread.sleep(1000); // SUPPRESS CHECKSTYLE MagicNumber
-			} catch (final InterruptedException e) {
-				// PASS
-			}
+			Thread.sleep(LAUNCH_WAIT_TIME);
 			progress.worked(1);
 
 			if (launch.isTerminated()) {
@@ -99,6 +97,9 @@ public class DeviceManagerLauncherUtil {
 			return Status.OK_STATUS;
 		} catch (final CoreException e) {
 			return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, e.getLocalizedMessage(), e);
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return Status.CANCEL_STATUS;
 		} finally {
 			progress.done();
 		}
