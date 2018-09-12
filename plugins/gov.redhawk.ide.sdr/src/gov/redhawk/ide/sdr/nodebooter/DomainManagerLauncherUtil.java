@@ -57,11 +57,7 @@ public class DomainManagerLauncherUtil {
 			final ILaunch launch = launcher.launch(domMgr.getLaunchConfigName(), arguments.toString(), progress.newChild(1));
 
 			// Give things a second to ensure they started correctly
-			try {
-				Thread.sleep(LAUNCH_WAIT_TIME);
-			} catch (final InterruptedException e) {
-				// PASS
-			}
+			Thread.sleep(LAUNCH_WAIT_TIME);
 			progress.worked(1);
 
 			if (launch.isTerminated()) {
@@ -74,6 +70,9 @@ public class DomainManagerLauncherUtil {
 			return Status.OK_STATUS;
 		} catch (final CoreException e) {
 			return new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, e.getStatus().getMessage(), e);
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return Status.CANCEL_STATUS;
 		} finally {
 			progress.done();
 		}

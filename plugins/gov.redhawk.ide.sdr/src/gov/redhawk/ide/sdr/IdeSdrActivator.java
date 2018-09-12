@@ -29,9 +29,6 @@ public class IdeSdrActivator extends Plugin {
 
 	private ServiceTracker<IEnvMap, IEnvMap> envMapServices;
 
-	public IdeSdrActivator() {
-	}
-
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
