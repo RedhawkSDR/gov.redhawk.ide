@@ -266,7 +266,7 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 			this.templateViewer.getCombo().setToolTipText("");
 		}
 
-		if ((this.implSettings.getProperties().size() == 0) && (this.selectedTemplate != null)) {
+		if ((this.implSettings.getProperties().isEmpty()) && (this.selectedTemplate != null)) {
 			for (final IPropertyDescriptor prop : this.selectedTemplate.getPropertyDescriptors()) {
 				if (prop.isRequired() && !prop.isDeprecated()) {
 					final Property p = CodegenFactory.eINSTANCE.createProperty();
@@ -345,7 +345,7 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 
 						// Remove the old templates properties
 						final EList<Property> properties = DefaultGeneratorPropertiesWizardPage.this.implSettings.getProperties();
-						if (properties.size() != 0) {
+						if (!properties.isEmpty()) {
 							properties.clear();
 						}
 
@@ -414,17 +414,15 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 			@Override
 			public String getText(final Object element) {
 				String text = "";
-				if (element instanceof Property) {
-					if (((Property) element).getId().length() != 0) {
-						final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(
-							DefaultGeneratorPropertiesWizardPage.this.implSettings.getGeneratorId());
-						final ITemplateDesc template = getTemplateDesc(generator);
+				if ((element instanceof Property) && ((Property) element).getId().length() != 0) {
+					final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(
+						DefaultGeneratorPropertiesWizardPage.this.implSettings.getGeneratorId());
+					final ITemplateDesc template = getTemplateDesc(generator);
 
-						for (final IPropertyDescriptor propDesc : template.getPropertyDescriptors()) {
-							if (propDesc.getKey().equals(((Property) element).getId())) {
-								text = propDesc.getName();
-								break;
-							}
+					for (final IPropertyDescriptor propDesc : template.getPropertyDescriptors()) {
+						if (propDesc.getKey().equals(((Property) element).getId())) {
+							text = propDesc.getName();
+							break;
 						}
 					}
 				}
@@ -434,17 +432,15 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 			@Override
 			public String getToolTipText(final Object element) {
 				String text = "No description available for this property";
-				if (element instanceof Property) {
-					if (((Property) element).getId().length() != 0) {
-						final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(
-							DefaultGeneratorPropertiesWizardPage.this.implSettings.getGeneratorId());
-						final ITemplateDesc template = getTemplateDesc(generator);
+				if ((element instanceof Property) && ((Property) element).getId().length() != 0) {
+					final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(
+						DefaultGeneratorPropertiesWizardPage.this.implSettings.getGeneratorId());
+					final ITemplateDesc template = getTemplateDesc(generator);
 
-						for (final IPropertyDescriptor propDesc : template.getPropertyDescriptors()) {
-							if (propDesc.getKey().equals(((Property) element).getId())) {
-								text = propDesc.getDescription();
-								break;
-							}
+					for (final IPropertyDescriptor propDesc : template.getPropertyDescriptors()) {
+						if (propDesc.getKey().equals(((Property) element).getId())) {
+							text = propDesc.getDescription();
+							break;
 						}
 					}
 				}

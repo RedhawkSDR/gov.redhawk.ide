@@ -68,7 +68,7 @@ public class PropertyKindUtil {
 	 * @throws OperationCanceledException
 	 */
 	public static void checkProperties(Shell shell, IProject parentProject, List<Implementation> impls) throws CoreException, OperationCanceledException {
-		if (impls == null || impls.size() == 0) {
+		if (impls == null || impls.isEmpty()) {
 			return;
 		}
 
@@ -80,31 +80,28 @@ public class PropertyKindUtil {
 		final Properties prf = spd.getPropertyFile().getProperties();
 
 		// Find if there are configure, execparam and property kinds in the properties file
-		final Set<PropertyConfigurationType> kindTypes = new HashSet<PropertyConfigurationType>();
-		try {
-			ScaModelCommandWithResult.runExclusive(prf, new RunnableWithResult.Impl<Object>() {
-				@Override
-				public void run() {
-					FeatureMap props = prf.getProperties();
-					for (FeatureMap.Entry propEntry : props) {
-						Object propObj = propEntry.getValue();
-						if (propObj instanceof Simple) {
-							Simple prop = (Simple) propObj;
-							findKinds(prop.getKind(), kindTypes);
-						} else if (propObj instanceof SimpleSequence) {
-							SimpleSequence prop = (SimpleSequence) propObj;
-							findKinds(prop.getKind(), kindTypes);
-						} else if (propObj instanceof Struct) {
-							Struct prop = (Struct) propObj;
-							findConfigurationKinds(prop.getConfigurationKind(), kindTypes);
-						} else if (propObj instanceof StructSequence) {
-							StructSequence prop = (StructSequence) propObj;
-							findConfigurationKinds(prop.getConfigurationKind(), kindTypes);
-						}
-					}
+		final Set<PropertyConfigurationType> kindTypes = ScaModelCommandWithResult.runExclusive(prf, () -> {
+			Set<PropertyConfigurationType> retVal = new HashSet<PropertyConfigurationType>();
+			FeatureMap props = prf.getProperties();
+			for (FeatureMap.Entry propEntry : props) {
+				Object propObj = propEntry.getValue();
+				if (propObj instanceof Simple) {
+					Simple prop = (Simple) propObj;
+					findKinds(prop.getKind(), retVal);
+				} else if (propObj instanceof SimpleSequence) {
+					SimpleSequence prop = (SimpleSequence) propObj;
+					findKinds(prop.getKind(), retVal);
+				} else if (propObj instanceof Struct) {
+					Struct prop = (Struct) propObj;
+					findConfigurationKinds(prop.getConfigurationKind(), retVal);
+				} else if (propObj instanceof StructSequence) {
+					StructSequence prop = (StructSequence) propObj;
+					findConfigurationKinds(prop.getConfigurationKind(), retVal);
 				}
-			});
-		} catch (InterruptedException e) {
+			}
+			return retVal;
+		});
+		if (kindTypes == null) {
 			throw new OperationCanceledException();
 		}
 

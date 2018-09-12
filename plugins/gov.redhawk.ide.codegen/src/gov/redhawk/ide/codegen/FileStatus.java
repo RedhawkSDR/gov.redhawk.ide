@@ -16,18 +16,18 @@ package gov.redhawk.ide.codegen;
  * @since 10.0
  */
 public class FileStatus {
-	public static enum Action {
+	public enum Action {
 		ADDING,
 		REMOVING,
 		REGEN
 	}
 
-	public static enum State {
+	public enum State {
 		MODIFIED,
 		MATCHES
 	}
 
-	public static enum Type {
+	public enum Type {
 		SYSTEM,
 		USER
 	}
@@ -49,34 +49,10 @@ public class FileStatus {
 			this.doIt = true;
 			break;
 		case REMOVING:
-			if (state == State.MODIFIED) {
-				if (type == Type.USER) {
-					this.doIt = false;
-				} else {
-					this.doIt = false;
-				}
-			} else {
-				if (type == Type.USER) {
-					this.doIt = true;
-				} else {
-					this.doIt = true;
-				}
-			}
+			this.doIt = (state != State.MODIFIED);
 			break;
 		case REGEN:
-			if (state == State.MODIFIED) {
-				if (type == Type.USER) {
-					this.doIt = false;
-				} else {
-					this.doIt = false;
-				}
-			} else {
-				if (type == Type.USER) {
-					this.doIt = true;
-				} else {
-					this.doIt = true;
-				}
-			}
+			this.doIt = (state != State.MODIFIED);
 			break;
 		default:
 			break;
