@@ -153,10 +153,7 @@ public class TargetSDRRootTest {
 		if (altDom) {
 			assertNames(sdrRoot.getComponentsContainer(), Collections.emptyList(), Arrays.asList("altComp"));
 			assertNames(sdrRoot.getSharedLibrariesContainer(), Collections.emptyList(), Collections.emptyList());
-			assertNames(sdrRoot.getDevicesContainer(), Collections.emptyList(), Arrays.asList("altDev"));
-			assertNames(sdrRoot.getServicesContainer(), Collections.emptyList(), Collections.emptyList());
 			assertNames(sdrRoot.getWaveformsContainer(), Collections.emptyList(), Collections.emptyList());
-			assertNames(sdrRoot.getNodesContainer(), Collections.emptyList(), Collections.emptyList());
 		} else {
 			assertNames(sdrRoot.getComponentsContainer(), Collections.emptyList(),
 				Arrays.asList("CppComponentWithDeps", "CppComponentWithDeps2", "FrequencyShift", "Reader", "Writer"));
@@ -164,12 +161,18 @@ public class TargetSDRRootTest {
 			assertNames(sdrRoot.getSharedLibrariesContainer(), Collections.emptyList(),
 				Arrays.asList("CppDepA", "CppDepAB", "CppDepAC", "CppDepD", "CppDepDE"));
 			assertNames(sdrRoot.getSharedLibrariesContainer(), Arrays.asList("rh"), Arrays.asList("rh.dsp"));
+			assertNames(sdrRoot.getWaveformsContainer(), Collections.emptyList(), Arrays.asList("test"));
+			assertNames(sdrRoot.getWaveformsContainer(), Arrays.asList("demo"), Arrays.asList("demo.genwave"));
+		}
+		if (altDev) {
+			assertNames(sdrRoot.getDevicesContainer(), Collections.emptyList(), Arrays.asList("altDev"));
+			assertNames(sdrRoot.getServicesContainer(), Collections.emptyList(), Collections.emptyList());
+			assertNames(sdrRoot.getNodesContainer(), Collections.emptyList(), Collections.emptyList());
+		} else {
 			assertNames(sdrRoot.getDevicesContainer(), Collections.emptyList(), Arrays.asList("BasicTestDevice"));
 			assertNames(sdrRoot.getDevicesContainer(), Arrays.asList("rh"), Arrays.asList("rh.FmRdsSimulator"));
 			assertNames(sdrRoot.getServicesContainer(), Collections.emptyList(), Arrays.asList("exampleService1"));
 			assertNames(sdrRoot.getServicesContainer(), Arrays.asList("name", "space"), Arrays.asList("name.space.exampleService2"));
-			assertNames(sdrRoot.getWaveformsContainer(), Collections.emptyList(), Arrays.asList("test"));
-			assertNames(sdrRoot.getWaveformsContainer(), Arrays.asList("demo"), Arrays.asList("demo.genwave"));
 			assertNames(sdrRoot.getNodesContainer(), Collections.emptyList(), Arrays.asList("DeviceManager"));
 			assertNames(sdrRoot.getNodesContainer(), Arrays.asList("demo"), Arrays.asList("demo.node"));
 		}
