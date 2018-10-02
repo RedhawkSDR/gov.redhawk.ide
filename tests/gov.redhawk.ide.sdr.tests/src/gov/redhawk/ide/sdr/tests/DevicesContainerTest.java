@@ -85,7 +85,7 @@ public class DevicesContainerTest extends SoftPkgRegistryTest {
 
 	public void testDevicesContainer() {
 		final EList<SoftPkg> devices = getFixture().getComponents();
-		Assert.assertEquals(1, devices.size());
+		Assert.assertEquals(2, devices.size());
 		for (final SoftPkg softPkg : devices) {
 			Assert.assertNotNull(softPkg);
 		}

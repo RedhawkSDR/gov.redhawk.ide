@@ -175,7 +175,7 @@ public class TargetSDRRootTest {
 		if (altDev) {
 			assertNames(names, Arrays.asList("altDev"));
 		} else {
-			assertNames(names, Arrays.asList("BasicTestDevice"));
+			assertNames(names, Arrays.asList("BasicTestDevice", "CppDeviceWithDeps"));
 		}
 		names = sdrRoot.getServicesContainer().getComponents().stream() //
 				.map(service -> service.getName()) //
