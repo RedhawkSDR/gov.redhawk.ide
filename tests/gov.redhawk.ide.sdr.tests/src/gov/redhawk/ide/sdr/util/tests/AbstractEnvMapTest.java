@@ -43,6 +43,17 @@ public class AbstractEnvMapTest extends AbstractEnvMap {
 		for (int i = 0; i < expectedSpds.length; i++) {
 			Assert.assertEquals(expectedSpds[i], impls.get(i).getSoftPkg().getName());
 		}
+
+		// Repeat test, but with a device. This also ensures we can find softpkg deps for devices (since they're in
+		// a different file system)
+		spd = sdr.getDevicesContainer().getSoftPkg("DCE:740af569-abb7-4d6b-b4d3-c243ba063f1c");
+		Assert.assertEquals("CppDeviceWithDeps", spd.getName());
+
+		impls = getDependencyImplementations(spd.getImplementation("cpp"));
+		Assert.assertEquals(expectedSpds.length, impls.size());
+		for (int i = 0; i < expectedSpds.length; i++) {
+			Assert.assertEquals(expectedSpds[i], impls.get(i).getSoftPkg().getName());
+		}
 	}
 
 	/**

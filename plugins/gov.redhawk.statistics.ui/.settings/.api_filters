@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="gov.redhawk.statistics.ui" version="2">
+    <resource path="src/gov/redhawk/statistics/ui/views/StatisticsView.java" type="gov.redhawk.statistics.ui.views.StatisticsView">
+        <filter comment="Not intended to be public" id="388018290">
+            <message_arguments>
+                <message_argument value="gov.redhawk.statistics.ui.views.StatisticsView"/>
+                <message_argument value="STAT_PROPS"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

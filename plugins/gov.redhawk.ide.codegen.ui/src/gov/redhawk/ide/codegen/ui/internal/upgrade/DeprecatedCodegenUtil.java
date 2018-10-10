@@ -39,9 +39,9 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
  * Utility methods for upgrading deprecated code generators.
  */
 public class DeprecatedCodegenUtil {
-	private static final List<String> DEPRECATED_TEMPLATES = Arrays.asList(new String[] { "gov.redhawk.ide.codegen.jet.python.pattern.ManualTemplate",
+	private static final List<String> DEPRECATED_TEMPLATES = Arrays.asList("gov.redhawk.ide.codegen.jet.python.pattern.ManualTemplate",
 		"gov.redhawk.ide.codegen.jet.python.pattern.MinimalTemplate", "gov.redhawk.ide.codegen.jet.python.pattern.MinimalServiceTemplate",
-		"gov.redhawk.ide.codegen.jet.java.pattern.ManualTemplate", "gov.redhawk.ide.codegen.jet.cplusplus.ManualTemplate" });
+		"gov.redhawk.ide.codegen.jet.java.pattern.ManualTemplate", "gov.redhawk.ide.codegen.jet.cplusplus.ManualTemplate");
 
 	private DeprecatedCodegenUtil() {
 	}
@@ -71,7 +71,8 @@ public class DeprecatedCodegenUtil {
 			}
 		}
 
-		if (hasDeprecated && shouldUpgrade(shell, softPkg.getName())) {
+		if (hasDeprecated) {
+			shouldUpgrade(shell, softPkg.getName());
 			upgrade(shell, softPkg, waveDev);
 		}
 	}
@@ -94,19 +95,19 @@ public class DeprecatedCodegenUtil {
 		}
 	}
 
-	private static boolean shouldUpgrade(Shell parent, String name) throws CoreException, OperationCanceledException {
+	private static void shouldUpgrade(Shell parent, String name) {
 		String message = name + " uses deprecated code generators.\n\n" + "Would you like to upgrade this project?";
 		MessageDialog dialog = new MessageDialog(parent, "Deprecated Generator", null, message, MessageDialog.WARNING, new String[] { "Upgrade", "Cancel" }, 1);
 		switch (dialog.open()) {
 		case 0: // Upgrade
-			return true;
+			return;
 		case 1:// Cancel
 		default:
 			throw new OperationCanceledException();
 		}
 	}
 
-	private static void upgrade(Shell parent, final SoftPkg spd, final WaveDevSettings implSettings) throws CoreException, OperationCanceledException {
+	private static void upgrade(Shell parent, final SoftPkg spd, final WaveDevSettings implSettings) throws CoreException {
 		ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(parent);
 		try {
 			progressDialog.run(true, true, new IRunnableWithProgress() {
@@ -128,8 +129,7 @@ public class DeprecatedCodegenUtil {
 			});
 		} catch (InvocationTargetException e1) {
 			if (e1.getCause() instanceof CoreException) {
-				CoreException core = (CoreException) e1.getCause();
-				throw core;
+				throw (CoreException) e1.getCause();
 			} else if (e1.getCause() instanceof OperationCanceledException) {
 				throw new OperationCanceledException();
 			} else {

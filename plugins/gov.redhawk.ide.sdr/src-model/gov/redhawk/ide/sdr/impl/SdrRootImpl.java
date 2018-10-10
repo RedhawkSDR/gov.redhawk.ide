@@ -1004,10 +1004,12 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		// END GENERATED CODE
 		if (sdrRoot != null) {
 			final URI domUri;
+			String domFS = null;
 			if (domPath != null) {
 				String[] path = domPath.split(PATH_SEPARATOR);
-				domUri = URI.createHierarchicalURI(ScaFileSystemConstants.SCHEME, null, null, null,
-					QueryParser.createQuery(Collections.singletonMap(ScaFileSystemConstants.QUERY_PARAM_FS, sdrRoot.appendSegments(path).toString())), null);
+				domFS = sdrRoot.appendSegments(path).toString();
+				Map<String, String> query = Collections.singletonMap(ScaFileSystemConstants.QUERY_PARAM_FS, domFS);
+				domUri = URI.createHierarchicalURI(ScaFileSystemConstants.SCHEME, null, null, null, QueryParser.createQuery(query), null);
 			} else {
 				domUri = null;
 			}
@@ -1015,9 +1017,17 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 
 			final URI devUri;
 			if (devPath != null) {
+				Map<String, String> query = new HashMap<>();
+
+				// Set the dom FS if available from the code above
+				if (domFS != null) {
+					query.put(ScaFileSystemConstants.QUERY_PARAM_DOM_FS, domFS);
+				}
+
+				// Set the dev FS
 				String[] path = devPath.split(PATH_SEPARATOR);
-				devUri = URI.createHierarchicalURI(ScaFileSystemConstants.SCHEME, null, null, null,
-					QueryParser.createQuery(Collections.singletonMap(ScaFileSystemConstants.QUERY_PARAM_FS, sdrRoot.appendSegments(path).toString())), null);
+				query.put(ScaFileSystemConstants.QUERY_PARAM_FS, sdrRoot.appendSegments(path).toString());
+				devUri = URI.createHierarchicalURI(ScaFileSystemConstants.SCHEME, null, null, null, QueryParser.createQuery(query), null);
 			} else {
 				devUri = null;
 			}

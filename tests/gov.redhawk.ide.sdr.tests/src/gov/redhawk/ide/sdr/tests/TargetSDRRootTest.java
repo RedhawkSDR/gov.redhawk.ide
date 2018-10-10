@@ -169,7 +169,7 @@ public class TargetSDRRootTest {
 			assertNames(sdrRoot.getServicesContainer(), Collections.emptyList(), Collections.emptyList());
 			assertNames(sdrRoot.getNodesContainer(), Collections.emptyList(), Collections.emptyList());
 		} else {
-			assertNames(sdrRoot.getDevicesContainer(), Collections.emptyList(), Arrays.asList("BasicTestDevice"));
+			assertNames(sdrRoot.getDevicesContainer(), Collections.emptyList(), Arrays.asList("BasicTestDevice", "CppDeviceWithDeps"));
 			assertNames(sdrRoot.getDevicesContainer(), Arrays.asList("rh"), Arrays.asList("rh.FmRdsSimulator"));
 			assertNames(sdrRoot.getServicesContainer(), Collections.emptyList(), Arrays.asList("exampleService1"));
 			assertNames(sdrRoot.getServicesContainer(), Arrays.asList("name", "space"), Arrays.asList("name.space.exampleService2"));
