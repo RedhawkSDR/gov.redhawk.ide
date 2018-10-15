@@ -31,9 +31,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.command.SetCommand;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 
@@ -67,6 +66,7 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
+import mil.jpeojtrs.sca.util.ScaUriHelpers;
 
 /**
  * <!-- begin-user-doc -->
@@ -788,8 +788,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.SdrRootImpl_ProgressLoading, 3);
 
 		try {
-			overallLoadStatus.merge(loadDomFileSystem(editingDomain, subMonitor.newChild(1)));
-			overallLoadStatus.merge(loadDevFileSystem(editingDomain, subMonitor.newChild(1)));
+			overallLoadStatus.merge(loadDomFileSystem(eResource().getResourceSet(), subMonitor.newChild(1)));
+			overallLoadStatus.merge(loadDevFileSystem(eResource().getResourceSet(), subMonitor.newChild(1)));
 			overallLoadStatus.merge(loadIdlLibrary(subMonitor.newChild(1)));
 			overallLoadStatus.merge(checkForDuplicates());
 
@@ -867,7 +867,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		}
 	}
 
-	private IStatus loadDevFileSystem(TransactionalEditingDomain editingDomain, IProgressMonitor monitor) {
+	private IStatus loadDevFileSystem(ResourceSet resourceSet, IProgressMonitor monitor) {
 		if (getDevFileSystemRoot() != null) {
 			IFileStore devRoot;
 			try {
@@ -880,14 +880,14 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 				// This isn't necessarily an error, since the SDR doesn't have to contain a dev file system
 				return new Status(IStatus.WARNING, IdeSdrActivator.PLUGIN_ID, Messages.SdrRootImpl_SdrRootDevDoesNotExist, null);
 			} else {
-				return processStore(editingDomain, devRoot, monitor);
+				return processStore(resourceSet, devRoot, monitor);
 			}
 		} else {
 			return new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, Messages.SdrRootImpl_SdrRootDevIsNull, null);
 		}
 	}
 
-	private IStatus loadDomFileSystem(TransactionalEditingDomain editingDomain, IProgressMonitor monitor) {
+	private IStatus loadDomFileSystem(ResourceSet resourceSet, IProgressMonitor monitor) {
 		if (getDomFileSystemRoot() != null) {
 			try {
 				IFileStore domRoot = EFS.getStore(java.net.URI.create(getDomFileSystemRoot().toString()));
@@ -895,7 +895,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 					// This isn't necessarily an error, since the SDR doesn't have to contain a dom file system
 					return new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, Messages.SdrRootImpl_SdrRootDomDoesNotExist, null);
 				} else {
-					return processStore(editingDomain, domRoot, monitor);
+					return processStore(resourceSet, domRoot, monitor);
 				}
 			} catch (CoreException e) {
 				String msg = Messages.bind(Messages.SdrRootImpl_CannotAccessSdrRootDom, getDomFileSystemRoot());
@@ -1328,13 +1328,12 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	// END GENERATED CODE
 
 	/**
+	 * @param resourceSet
 	 * @param parent
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * @param monitor
 	 * @throws CoreException
 	 */
-	private IStatus processDirectory(EditingDomain domain, final IFileStore parent, final IProgressMonitor monitor) {
+	private IStatus processDirectory(ResourceSet resourceSet, final IFileStore parent, final IProgressMonitor monitor) {
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.bind(Messages.SdrRootImpl_ProgressProcessingDirectory, parent.getName()), 100);
 		IFileStore[] childStores;
 		try {
@@ -1348,34 +1347,33 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		CustomMultiStatus multiStatus = new CustomMultiStatus(IdeSdrActivator.PLUGIN_ID, Status.OK,
 			Messages.bind(Messages.SdrRootImpl_FailedToProcessChildren, parent), null);
 		for (final IFileStore child : childStores) {
-			multiStatus.merge(processStore(domain, child, loopProgress.newChild(1)));
+			multiStatus.merge(processStore(resourceSet, child, loopProgress.newChild(1)));
 		}
 		return multiStatus;
 	}
 
 	/**
+	 * @param resourceSet
 	 * @param child
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * @param monitor
 	 * @throws CoreException
 	 */
-	private IStatus processStore(EditingDomain domain, final IFileStore child, final IProgressMonitor monitor) {
+	private IStatus processStore(ResourceSet resourceSet, final IFileStore child, final IProgressMonitor monitor) {
 		final SubMonitor submonitor = SubMonitor.convert(monitor, 1);
 		if (child.getName().startsWith(HIDDEN_DIR_PREFIX)) {
 			return Status.OK_STATUS;
 		}
 		if (child.fetchInfo().isDirectory()) {
-			return processDirectory(domain, child, submonitor.newChild(1));
+			return processDirectory(resourceSet, child, submonitor.newChild(1));
 		} else {
 			if (child.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-				return loadSpd(domain, child, submonitor.newChild(1));
+				return loadSpd(resourceSet, child, submonitor.newChild(1));
 			} else if (child.getName().endsWith(SadPackage.FILE_EXTENSION)) {
-				return loadSad(domain, child, submonitor.newChild(1));
+				return loadSad(resourceSet, child, submonitor.newChild(1));
 			} else if (child.getName().endsWith(DcdPackage.FILE_EXTENSION)) {
-				return loadDcd(domain, child, submonitor.newChild(1));
+				return loadDcd(resourceSet, child, submonitor.newChild(1));
 			} else if (child.getName().endsWith(DmdPackage.FILE_EXTENSION)) {
-				return loadDmd(domain, child, submonitor.newChild(1));
+				return loadDmd(resourceSet, child, submonitor.newChild(1));
 			} else {
 				return Status.OK_STATUS;
 			}
@@ -1383,20 +1381,18 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	}
 
 	/**
-	 * 
+	 * @param resourceSet
 	 * @param spdFile
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * @param monitor
 	 */
-	private IStatus loadSpd(EditingDomain domain, final IFileStore spdFile, final IProgressMonitor monitor) {
+	private IStatus loadSpd(ResourceSet resourceSet, final IFileStore spdFile, final IProgressMonitor monitor) {
 		SubMonitor submonitor = SubMonitor.convert(monitor, Messages.bind(Messages.SdrRootImpl_ProgressLoadingFile, spdFile.getName()), 2);
 
-		final org.eclipse.emf.common.util.URI spdFileUri = org.eclipse.emf.common.util.URI.createURI(spdFile.toURI().toString()).appendFragment(
-			SoftPkg.EOBJECT_PATH);
+		final org.eclipse.emf.common.util.URI spdFileUri = org.eclipse.emf.common.util.URI.createURI(spdFile.toURI().toString());
 		SoftPkg softPkg;
 		try {
-			softPkg = (SoftPkg) domain.getResourceSet().getEObject(spdFileUri, true);
+			Resource resource = ScaUriHelpers.loadResource(resourceSet, spdFileUri);
+			softPkg = SoftPkg.Util.getSoftPkg(resource);
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			String msg = Messages.bind(Messages.SdrRootImpl_FailedToLoadFile, convertFileURI(spdFileUri));
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, msg, e);
@@ -1416,7 +1412,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(component);
 			switch (type) {
 			case DEVICE:
-				addDevice(domain, softPkg);
+				addDevice(softPkg);
 				break;
 			case OTHER:
 			case FILE_MANAGER:
@@ -1425,11 +1421,11 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			case NAMING_SERVICE:
 			case RESOURCE_FACTORY:
 			case RESOURCE:
-				addResource(domain, softPkg, component);
+				addResource(softPkg, component);
 				break;
 			case EVENT_SERVICE:
 			case SERVICE:
-				addService(domain, softPkg);
+				addService(softPkg);
 				break;
 			case DEVICE_MANAGER:
 			case DOMAIN_MANAGER:
@@ -1442,7 +1438,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		} else {
 			// Treat it as a resource because all other types *must* have an
 			// scd file
-			addResource(domain, softPkg, null);
+			addResource(softPkg, null);
 		}
 		submonitor.worked(1);
 		return Status.OK_STATUS;
@@ -1461,7 +1457,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @param softPkg
 	 * @param component
 	 */
-	private void addResource(EditingDomain domain, final SoftPkg softPkg, final SoftwareComponent component) {
+	private void addResource(final SoftPkg softPkg, final SoftwareComponent component) {
 		if (component != null) {
 			for (final SupportsInterface iface : component.getComponentFeatures().getSupportsInterface()) {
 				if (iface.getRepId().startsWith("IDL:CF/Device") || iface.getRepId().startsWith("IDL:CF/LoadableDevice") //$NON-NLS-1$ //$NON-NLS-2$
@@ -1469,7 +1465,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 					if (DEBUG.enabled) {
 						DEBUG.message(Messages.SdrRootImpl_ResourceIsDeviceBasedOnInterfaces, softPkg.getName());
 					}
-					addDevice(domain, softPkg);
+					addDevice(softPkg);
 					return;
 				}
 			}
@@ -1477,10 +1473,14 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 
 		for (Implementation impl : softPkg.getImplementation()) {
 			if (impl.isExecutable()) {
-				domain.getCommandStack().execute(new AddCommand(domain, getComponentsContainer().getComponents(), softPkg));
+				ScaModelCommand.execute(getComponentsContainer(), () -> {
+					getComponentsContainer().getComponents().add(softPkg);
+				});
 				return;
 			} else if (impl.isSharedLibrary()) {
-				domain.getCommandStack().execute(new AddCommand(domain, getSharedLibrariesContainer().getComponents(), softPkg));
+				ScaModelCommand.execute(getSharedLibrariesContainer(), () -> {
+					getSharedLibrariesContainer().getComponents().add(softPkg);
+				});
 				return;
 			}
 		}
@@ -1488,18 +1488,21 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 
 	/**
 	 * @param softPkg
-	 * @param component
 	 */
-	private void addDevice(EditingDomain domain, final SoftPkg softPkg) {
-		domain.getCommandStack().execute(new AddCommand(domain, getDevicesContainer().getComponents(), softPkg));
+	private void addDevice(final SoftPkg softPkg) {
+		ScaModelCommand.execute(getDevicesContainer(), () -> {
+			getDevicesContainer().getComponents().add(softPkg);
+		});
 	}
 
 	/**
 	 * @param softPkg
 	 * @param component
 	 */
-	private void addService(EditingDomain domain, final SoftPkg softPkg) {
-		domain.getCommandStack().execute(new AddCommand(domain, getServicesContainer().getComponents(), softPkg));
+	private void addService(final SoftPkg softPkg) {
+		ScaModelCommand.execute(getServicesContainer(), () -> {
+			getServicesContainer().getComponents().add(softPkg);
+		});
 	}
 
 	private String convertFileURI(org.eclipse.emf.common.util.URI fileURI) {
@@ -1516,19 +1519,18 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	}
 
 	/**
+	 * @param resourceSet
 	 * @param sadFile
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * @param monitor
 	 */
-	private IStatus loadSad(EditingDomain domain, final IFileStore sadFile, final IProgressMonitor monitor) {
+	private IStatus loadSad(ResourceSet resourceSet, final IFileStore sadFile, final IProgressMonitor monitor) {
 		SubMonitor submonitor = SubMonitor.convert(monitor, Messages.bind(Messages.SdrRootImpl_ProgressLoadingFile, sadFile.getName()), 2);
 
-		final org.eclipse.emf.common.util.URI sadFileUri = org.eclipse.emf.common.util.URI.createURI(sadFile.toURI().toString()).appendFragment(
-			SoftwareAssembly.EOBJECT_PATH);
+		final org.eclipse.emf.common.util.URI sadFileUri = org.eclipse.emf.common.util.URI.createURI(sadFile.toURI().toString());
 		SoftwareAssembly sad;
 		try {
-			sad = (SoftwareAssembly) eResource().getResourceSet().getEObject(sadFileUri, true);
+			Resource resource = ScaUriHelpers.loadResource(resourceSet, sadFileUri);
+			sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, Messages.bind(Messages.SdrRootImpl_FailedToLoadFile, convertFileURI(sadFileUri)), e);
 		}
@@ -1543,29 +1545,31 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			}
 		}
 
-		domain.getCommandStack().execute(new AddCommand(domain, getWaveformsContainer().getWaveforms(), sad));
+		ScaModelCommand.execute(getWaveformsContainer(), () -> {
+			getWaveformsContainer().getWaveforms().add(sad);
+		});
 		submonitor.worked(1);
 
 		return retVal;
 	}
 
 	/**
+	 * @param resourceSet
 	 * @param dcdFile
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * @param monitor
 	 */
-	private IStatus loadDcd(EditingDomain domain, final IFileStore dcdFile, final IProgressMonitor monitor) {
+	private IStatus loadDcd(ResourceSet resourceSet, final IFileStore dcdFile, final IProgressMonitor monitor) {
 		SubMonitor submonitor = SubMonitor.convert(monitor, Messages.bind(Messages.SdrRootImpl_ProgressLoadingFile, dcdFile.getName()), 2);
 
-		final org.eclipse.emf.common.util.URI dcdFileURI = org.eclipse.emf.common.util.URI.createURI(dcdFile.toURI().toString()).appendFragment(
-			DeviceConfiguration.EOBJECT_PATH);
+		final org.eclipse.emf.common.util.URI dcdFileURI = org.eclipse.emf.common.util.URI.createURI(dcdFile.toURI().toString());
 		DeviceConfiguration dcd;
 		try {
-			dcd = (DeviceConfiguration) eResource().getResourceSet().getEObject(dcdFileURI, true);
+			Resource resource = ScaUriHelpers.loadResource(resourceSet, dcdFileURI);
+			dcd = DeviceConfiguration.Util.getDeviceConfiguration(resource);
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, Messages.bind(Messages.SdrRootImpl_FailedToLoadFile, convertFileURI(dcdFileURI)), e);
 		}
+		submonitor.worked(1);
 
 		IStatus retVal = Status.OK_STATUS;
 		for (DeviceConfiguration current : getNodesContainer().getNodes()) {
@@ -1576,29 +1580,30 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			}
 		}
 
-		domain.getCommandStack().execute(new AddCommand(domain, getNodesContainer().getNodes(), dcd));
+		ScaModelCommand.execute(getNodesContainer(), () -> {
+			getNodesContainer().getNodes().add(dcd);
+		});
 		submonitor.worked(1);
 		return retVal;
 	}
 
 	/**
+	 * @param resourceSet
 	 * @param dmdFile
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * @param monitor
 	 */
-	private IStatus loadDmd(EditingDomain domain, final IFileStore dmdFile, final IProgressMonitor monitor) {
+	private IStatus loadDmd(ResourceSet resourceSet, final IFileStore dmdFile, final IProgressMonitor monitor) {
 		SubMonitor submonitor = SubMonitor.convert(monitor, Messages.bind(Messages.SdrRootImpl_ProgressLoadingFile, dmdFile.getName()), 1);
 
-		final org.eclipse.emf.common.util.URI dmdURI = org.eclipse.emf.common.util.URI.createURI(dmdFile.toURI().toString()).appendFragment(
-			DomainManagerConfiguration.EOBJECT_PATH);
+		final org.eclipse.emf.common.util.URI dmdURI = org.eclipse.emf.common.util.URI.createURI(dmdFile.toURI().toString());
 		DomainManagerConfiguration dmd;
 		try {
-			dmd = (DomainManagerConfiguration) eResource().getResourceSet().getEObject(dmdURI, true);
-			submonitor.worked(1);
+			Resource resource = ScaUriHelpers.loadResource(resourceSet, dmdURI);
+			dmd = DomainManagerConfiguration.Util.getDomainManagerConfiguration(resource);
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, Messages.bind(Messages.SdrRootImpl_FailedToLoadFile, convertFileURI(dmdURI)), e);
 		}
+		submonitor.worked(1);
 
 		IStatus retVal = Status.OK_STATUS;
 		if (getDomainConfiguration() != null) {
@@ -1606,7 +1611,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			return new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, msg);
 		}
 
-		domain.getCommandStack().execute(SetCommand.create(domain, this, SdrPackage.Literals.SDR_ROOT__DOMAIN_CONFIGURATION, dmd));
+		ScaModelCommand.execute(this, () -> {
+			setDomainConfiguration(dmd);
+		});
 		submonitor.worked(1);
 		return retVal;
 	}
