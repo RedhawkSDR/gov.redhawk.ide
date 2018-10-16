@@ -70,6 +70,7 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
+import mil.jpeojtrs.sca.util.ScaUriHelpers;
 
 /**
  * <!-- begin-user-doc -->
@@ -1368,7 +1369,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		URI spdFileUri = URI.createURI(spdFile.toURI().toString());
 		SoftPkg softPkg;
 		try {
-			softPkg = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdFileUri, true));
+			Resource resource = ScaUriHelpers.loadResource(resourceSet, spdFileUri);
+			softPkg = SoftPkg.Util.getSoftPkg(resource);
 		} catch (WrappedException e) {
 			return statusForWrappedException(e, spdFileUri);
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Exception is returned in status
@@ -1614,7 +1616,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		URI sadFileUri = URI.createURI(sadFile.toURI().toString());
 		SoftwareAssembly sad;
 		try {
-			sad = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(sadFileUri, true));
+			Resource resource = ScaUriHelpers.loadResource(resourceSet, sadFileUri);
+			sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
 		} catch (WrappedException e) {
 			return statusForWrappedException(e, sadFileUri);
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Exception is returned in status
@@ -1671,12 +1674,14 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		URI dcdFileUri = URI.createURI(dcdFile.toURI().toString());
 		DeviceConfiguration dcd;
 		try {
-			dcd = DeviceConfiguration.Util.getDeviceConfiguration(resourceSet.getResource(dcdFileUri, true));
+			Resource resource = ScaUriHelpers.loadResource(resourceSet, dcdFileUri);
+			dcd = DeviceConfiguration.Util.getDeviceConfiguration(resource);
 		} catch (WrappedException e) {
 			return statusForWrappedException(e, dcdFileUri);
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Exception is returned in status
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, Messages.bind(Messages.SdrRootImpl_FailedToLoadFile, convertToFilePath(dcdFileUri)), e);
 		}
+		submonitor.worked(1);
 
 		IStatus retVal = Status.OK_STATUS;
 		for (DeviceConfiguration current : getNodesContainer().getNodes()) {
@@ -1716,10 +1721,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	}
 
 	/**
+	 * @param resourceSet
 	 * @param dmdFile
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * @param monitor
 	 */
 	private IStatus loadDmd(ResourceSet resourceSet, final IFileStore dmdFile, final IProgressMonitor monitor) {
 		SubMonitor submonitor = SubMonitor.convert(monitor, Messages.bind(Messages.SdrRootImpl_ProgressLoadingFile, dmdFile.getName()), 1);
@@ -1727,13 +1731,14 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		URI dmdUri = URI.createURI(dmdFile.toURI().toString());
 		DomainManagerConfiguration dmd;
 		try {
-			dmd = DomainManagerConfiguration.Util.getDomainManagerConfiguration(resourceSet.getResource(dmdUri, true));
-			submonitor.worked(1);
+			Resource resource = ScaUriHelpers.loadResource(resourceSet, dmdUri);
+			dmd = DomainManagerConfiguration.Util.getDomainManagerConfiguration(resource);
 		} catch (WrappedException e) {
 			return statusForWrappedException(e, dmdUri);
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Exception is returned in status
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, Messages.bind(Messages.SdrRootImpl_FailedToLoadFile, convertToFilePath(dmdUri)), e);
 		}
+		submonitor.worked(1);
 
 		IStatus retVal = Status.OK_STATUS;
 		if (getDomainConfiguration() != null) {

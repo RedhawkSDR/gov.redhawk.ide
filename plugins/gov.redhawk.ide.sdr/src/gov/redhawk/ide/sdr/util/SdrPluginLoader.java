@@ -13,6 +13,7 @@ package gov.redhawk.ide.sdr.util;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
@@ -28,6 +29,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import gov.redhawk.ide.sdr.SdrFactory;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.commands.SetSdrRootCommand;
+import mil.jpeojtrs.sca.util.ScaUriHelpers;
 
 /**
  * This class is used primarily by tests to load an {@link SdrRoot} model object for an SDRROOT located within a bundle.
@@ -57,6 +59,7 @@ public class SdrPluginLoader {
 		Assert.isNotNull(sdrRootPath);
 		final TransactionalEditingDomain editingDomain = TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain();
 		final ResourceSet resourceSet = editingDomain.getResourceSet();
+		resourceSet.getLoadOptions().put(ScaUriHelpers.RESOURCE_SET_LOCK, new ReentrantReadWriteLock());
 		final Resource sdrResource = resourceSet.createResource(URI.createURI("virtual://sdr.sdr"));
 		final SdrRoot sdrRoot = SdrFactory.eINSTANCE.createSdrRoot();
 		editingDomain.getCommandStack().execute(new AddCommand(editingDomain, sdrResource.getContents(), sdrRoot));

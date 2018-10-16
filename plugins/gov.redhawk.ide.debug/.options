@@ -2,4 +2,5 @@ gov.redhawk.ide.debug/debug=false
 gov.redhawk.ide.debug/debug/context=false
 gov.redhawk.ide.debug/debug/localSca=false
 gov.redhawk.ide.debug/debug/LauncherArgs=false
+gov.redhawk.ide.debug/debug/SdrResourceFactoryProvider=false
 gov.redhawk.ide.debug/debug/WorkspaceResourceFactoryProvider=false

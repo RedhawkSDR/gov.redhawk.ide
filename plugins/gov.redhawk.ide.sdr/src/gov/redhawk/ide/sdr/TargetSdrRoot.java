@@ -10,6 +10,8 @@
  */
 package gov.redhawk.ide.sdr;
 
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -28,6 +30,7 @@ import gov.redhawk.ide.sdr.commands.SetSdrRootCommand;
 import gov.redhawk.ide.sdr.jobs.RefreshSdrJob;
 import gov.redhawk.ide.sdr.preferences.IdeSdrPreferenceConstants;
 import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
+import mil.jpeojtrs.sca.util.ScaUriHelpers;
 
 public class TargetSdrRoot {
 
@@ -60,6 +63,7 @@ public class TargetSdrRoot {
 
 		// Create the EditingDomain and a Resource, and place the root model object in the Resource
 		editingDomain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(EDITING_DOMAIN_ID);
+		editingDomain.getResourceSet().getLoadOptions().put(ScaUriHelpers.RESOURCE_SET_LOCK, new ReentrantReadWriteLock());
 		final Resource sdrResource = editingDomain.getResourceSet().createResource(URI.createURI("virtual://sdr.sdr"));
 		editingDomain.getCommandStack().execute(new AddCommand(editingDomain, sdrResource.getContents(), sdrRoot));
 
