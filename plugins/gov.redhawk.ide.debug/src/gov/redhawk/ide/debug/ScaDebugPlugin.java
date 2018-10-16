@@ -163,7 +163,7 @@ public class ScaDebugPlugin extends Plugin {
 	}
 
 	/**
-	 * @since 9.2
+	 * @since 10.1
 	 */
 	public static void log(Status status) {
 		ScaDebugPlugin.instance.getLog().log(status);
