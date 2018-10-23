@@ -75,6 +75,7 @@ import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.SpdLauncherUtil;
 import gov.redhawk.ide.debug.internal.LaunchLogger;
+import gov.redhawk.ide.debug.internal.jobs.TerminateJob;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaAbstractProperty;
@@ -117,7 +118,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * This map enables us to take an {@link ILaunch} and find the {@link Device} in the {@link #devices} member.
 	 * <p/>
-	 * All access should be synchronized on the object.
+	 * All access should be synchronized on {@link #devices}.
 	 */
 	private Map<ILaunch, String> launchToDeviceIor = new HashMap<>();
 
@@ -132,7 +133,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * This map enables us to take an {@link ILaunch} and find the {@link Serivce} in the {@link #services} member.
 	 * <p/>
-	 * All access should be synchronized on the object.
+	 * All access should be synchronized on {@link #services}.
 	 */
 	private Map<ILaunch, String> launchToServiceName = new HashMap<>();
 
@@ -263,9 +264,14 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 				continue;
 			}
 			launch = candidateLaunch;
-			ILaunchConfiguration launchConfig = candidateLaunch.getLaunchConfiguration();
+
+			// Hold on to the launch -> IOR mapping
+			synchronized (devices) {
+				launchToDeviceIor.put(launch, ior);
+			}
 
 			// Load the properties from the PRF and override with values from the launch configuration
+			ILaunchConfiguration launchConfig = candidateLaunch.getLaunchConfiguration();
 			try {
 				propHolder = ScaFactory.eINSTANCE.createScaDevice();
 				propHolder.setProfileURI(ScaLaunchConfigurationUtil.getProfileURI(launchConfig));
@@ -275,11 +281,6 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			} catch (CoreException e) {
 				propHolder = null;
 				ScaDebugPlugin.logError("Unable to retrieve properties for a device launch", e);
-			}
-
-			// Hold on to the launch -> IOR mapping
-			synchronized (launchToDeviceIor) {
-				launchToDeviceIor.put(launch, ior);
 			}
 
 			break;
@@ -331,7 +332,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	public void shutdown() {
 		// Kill all services
 		Set<ILaunch> launches;
-		synchronized (launchToServiceName) {
+		synchronized (services) {
 			launches = new HashSet<>(launchToServiceName.keySet());
 		}
 		for (ILaunch launch : launches) {
@@ -354,7 +355,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		}
 
 		// Kill all devices
-		synchronized (launchToDeviceIor) {
+		synchronized (devices) {
 			launches = new HashSet<>(launchToDeviceIor.keySet());
 		}
 		for (ILaunch launch : launches) {
@@ -368,7 +369,9 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 
 	@Override
 	public void registerService(final org.omg.CORBA.Object registeringService, final String name) throws InvalidObjectReference {
-		ServiceType type = new ServiceType(registeringService, name);
+		if (registeringService == null) {
+			throw new InvalidObjectReference("Cannot register a null service reference");
+		}
 
 		// Iterate all launches until we find this service's ILaunch, then determine its capabilities and load
 		ILaunch launch = null;
@@ -381,9 +384,9 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 				continue;
 			}
 			launch = candidateLaunch;
-			ILaunchConfiguration launchConfig = candidateLaunch.getLaunchConfiguration();
 
 			// Load the profile
+			ILaunchConfiguration launchConfig = candidateLaunch.getLaunchConfiguration();
 			try {
 				propHolder = ScaFactory.eINSTANCE.createScaService();
 				propHolder.setProfileURI(ScaLaunchConfigurationUtil.getProfileURI(launchConfig));
@@ -420,11 +423,6 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 				}
 			}
 
-			// Hold on to the launch -> name mapping
-			synchronized (launchToServiceName) {
-				launchToServiceName.put(launch, name);
-			}
-
 			break;
 		}
 
@@ -451,10 +449,25 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			configure(launch, "service " + name, propHolder, propertySet);
 		}
 
-		// Register the service and refresh the model so it notices it
 		synchronized (services) {
-			services.put(name, type);
+			// If a service is already registered under the same name
+			if (services.containsKey(name)) {
+				if (launch != null) {
+					Job job = new TerminateJob(launch, launch.getLaunchConfiguration().getName());
+					job.setSystem(true);
+					job.schedule();
+				}
+				throw new InvalidObjectReference("Cannot register multiple services with the same name");
+			}
+
+			// Hold on to the launch -> name mapping; register the service
+			if (launch != null) {
+				launchToServiceName.put(launch, name);
+			}
+			services.put(name, new ServiceType(registeringService, name));
 		}
+
+		// Refresh the model so it notices it
 		refreshChildrenJob.schedule();
 	}
 
@@ -735,27 +748,23 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 				String key;
 
 				// Attempt to find and remove a matching device
-				synchronized (launchToDeviceIor) {
+				synchronized (devices) {
 					key = launchToDeviceIor.remove(launch);
-				}
-				if (key != null) {
-					synchronized (devices) {
+					if (key != null) {
 						Device device = devices.remove(key);
 						refresh |= (device != null);
+						continue;
 					}
-					continue;
 				}
 
 				// Attempt to find and remove a matching service
-				synchronized (launchToServiceName) {
+				synchronized (services) {
 					key = launchToServiceName.remove(launch);
-				}
-				if (key != null) {
-					synchronized (services) {
+					if (key != null) {
 						ServiceType terminatedService = services.remove(key);
 						refresh |= (terminatedService != null);
+						continue;
 					}
-					continue;
 				}
 			}
 
