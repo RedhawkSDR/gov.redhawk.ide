@@ -1494,7 +1494,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	@NonNull
 	public LocalScaComponent launch(final String usageName, String compId, final DataType[] initConfiguration, @NonNull final URI spdURI, final String implId,
 		final String mode) throws CoreException {
-		return launch(usageName, null, initConfiguration, spdURI, implId, mode, null);
+		return launch(usageName, compId, initConfiguration, spdURI, implId, mode, null);
 	}
 
 	public LocalScaComponent launch(final String usageName, String compId, final DataType[] initConfiguration, @NonNull final URI spdURI, final String implId,
