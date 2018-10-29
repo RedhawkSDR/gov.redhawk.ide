@@ -234,7 +234,7 @@ public class LocalApplicationFactory {
 					componentProps = new ArrayList<DataType>();
 				}
 				LocalScaComponent localComp = app.launch(comp.getUsageName(), comp.getId(), componentProps.toArray(new DataType[0]), spdUri, getImplId(comp),
-					this.mode);
+					this.mode, progress.newChild(1));
 				if (localComp != null) {
 					TransactionalEditingDomain localEditingDomain = TransactionUtil.getEditingDomain(localComp);
 					if (localEditingDomain != null) {
@@ -247,7 +247,6 @@ public class LocalApplicationFactory {
 				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
 			}
 			app.getStreams().getOutStream().println("\n");
-			progress.worked(1);
 		}
 	}
 

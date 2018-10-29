@@ -11,8 +11,8 @@
 package gov.redhawk.ide.sdr.tests;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
@@ -30,6 +30,7 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.FrameworkUtil;
 
@@ -50,9 +51,10 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 public class TargetSDRRootTest {
 
 	private Adapter adapter;
+	private BlockingQueue<LoadState> loadStates;
 
-	@Test
-	public void test() throws InterruptedException, URISyntaxException, IOException {
+	@Before
+	public void before() throws InterruptedException {
 		// We should be able to access the SDR root
 		SdrRoot sdrRoot = TargetSdrRoot.getSdrRoot();
 		Assert.assertNotNull(sdrRoot);
@@ -66,7 +68,7 @@ public class TargetSDRRootTest {
 		Assert.assertTrue(sdrRoot.getState() == LoadState.LOADED);
 
 		// Listen to state changes
-		final BlockingQueue<LoadState> loadStates = new LinkedBlockingQueue<>();
+		loadStates = new LinkedBlockingQueue<>();
 		adapter = new AdapterImpl() {
 			public void notifyChanged(Notification msg) {
 				if (msg.getFeatureID(SdrRoot.class) == SdrPackage.SDR_ROOT__STATE) {
@@ -77,43 +79,112 @@ public class TargetSDRRootTest {
 		ScaModelCommand.execute(sdrRoot, () -> {
 			sdrRoot.eAdapters().add(adapter);
 		});
-
-		// Change the SDR root path preference
-		String path = FileLocator.getBundleFile(FrameworkUtil.getBundle(getClass())).toPath().resolve("testFiles/sdr").toString();
-		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).put(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE, path);
-
-		// SDR root should re-load and have the appropriate contents
-		verifyLoadAndContents(loadStates, sdrRoot);
-
-		// Refresh the SDR root; it should again re-load and have the appropriate contents
-		loadStates.clear();
-		TargetSdrRoot.scheduleRefresh();
-		verifyLoadAndContents(loadStates, sdrRoot);
 	}
 
-	private void verifyLoadAndContents(BlockingQueue<LoadState> loadStates, SdrRoot sdrRoot) throws InterruptedException {
+	/**
+	 * Change the SDR root path preference. Verify appropriate re-load.
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	@Test
+	public void sdrPathPrefTriggersUpdate() throws InterruptedException, IOException {
+		String path = FileLocator.getBundleFile(FrameworkUtil.getBundle(getClass())).toPath().resolve("testFiles/sdr").toString();
+		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).put(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE, path);
+		verifyLoadAndContents(loadStates, TargetSdrRoot.getSdrRoot(), false, false);
+	}
+
+	/**
+	 * Change the SDROOT/dom path preference. Verify appropriate re-load.
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	@Test
+	public void sdrDomPathPrefTriggersUpdate() throws InterruptedException, IOException {
+		String path = FileLocator.getBundleFile(FrameworkUtil.getBundle(getClass())).toPath().resolve("testFiles/sdr").toString();
+		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).put(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE, path);
+		verifyLoad();
+
+		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).put(IdeSdrPreferenceConstants.TARGET_SDR_DOM_PATH, "altDom");
+		verifyLoadAndContents(loadStates, TargetSdrRoot.getSdrRoot(), true, false);
+	}
+
+	/**
+	 * Change the SDRROOT/dev path preference. Verify appropriate re-load.
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	@Test
+	public void sdrDevPathPrefTriggersUpdate() throws InterruptedException, IOException {
+		String path = FileLocator.getBundleFile(FrameworkUtil.getBundle(getClass())).toPath().resolve("testFiles/sdr").toString();
+		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).put(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE, path);
+		verifyLoad();
+
+		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).put(IdeSdrPreferenceConstants.TARGET_SDR_DEV_PATH, "altDev");
+		verifyLoadAndContents(loadStates, TargetSdrRoot.getSdrRoot(), false, true);
+	}
+
+	/**
+	 * Refresh the SDR root. Verify appropriate re-load.
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	@Test
+	public void refreshSdrTriggersUpdate() throws InterruptedException, IOException {
+		String path = FileLocator.getBundleFile(FrameworkUtil.getBundle(getClass())).toPath().resolve("testFiles/sdr").toString();
+		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).put(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE, path);
+		verifyLoad();
+
+		TargetSdrRoot.scheduleRefresh();
+		verifyLoadAndContents(loadStates, TargetSdrRoot.getSdrRoot(), false, false);
+	}
+
+	/**
+	 * @param loadStates
+	 * @param sdrRoot
+	 * @param altDom
+	 * @param altDev
+	 * @throws InterruptedException
+	 */
+	private void verifyLoadAndContents(BlockingQueue<LoadState> loadStates, SdrRoot sdrRoot, boolean altDom, boolean altDev) throws InterruptedException {
 		// Wait for the appropriate state changes
+		verifyLoad();
+
+		// Verify the appropriate components, devices, etc are present
+		if (altDom) {
+			assertNames(sdrRoot.getComponentsContainer(), Collections.emptyList(), Arrays.asList("altComp"));
+			assertNames(sdrRoot.getSharedLibrariesContainer(), Collections.emptyList(), Collections.emptyList());
+			assertNames(sdrRoot.getWaveformsContainer(), Collections.emptyList(), Collections.emptyList());
+		} else {
+			assertNames(sdrRoot.getComponentsContainer(), Collections.emptyList(),
+				Arrays.asList("CppComponentWithDeps", "CppComponentWithDeps2", "FrequencyShift", "Reader", "Writer"));
+			assertNames(sdrRoot.getComponentsContainer(), Arrays.asList("rh"), Arrays.asList("rh.SigGen"));
+			assertNames(sdrRoot.getSharedLibrariesContainer(), Collections.emptyList(),
+				Arrays.asList("CppDepA", "CppDepAB", "CppDepAC", "CppDepD", "CppDepDE"));
+			assertNames(sdrRoot.getSharedLibrariesContainer(), Arrays.asList("rh"), Arrays.asList("rh.dsp"));
+			assertNames(sdrRoot.getWaveformsContainer(), Collections.emptyList(), Arrays.asList("test"));
+			assertNames(sdrRoot.getWaveformsContainer(), Arrays.asList("demo"), Arrays.asList("demo.genwave"));
+		}
+		if (altDev) {
+			assertNames(sdrRoot.getDevicesContainer(), Collections.emptyList(), Arrays.asList("altDev"));
+			assertNames(sdrRoot.getServicesContainer(), Collections.emptyList(), Collections.emptyList());
+			assertNames(sdrRoot.getNodesContainer(), Collections.emptyList(), Collections.emptyList());
+		} else {
+			assertNames(sdrRoot.getDevicesContainer(), Collections.emptyList(), Arrays.asList("BasicTestDevice", "CppDeviceWithDeps"));
+			assertNames(sdrRoot.getDevicesContainer(), Arrays.asList("rh"), Arrays.asList("rh.FmRdsSimulator"));
+			assertNames(sdrRoot.getServicesContainer(), Collections.emptyList(), Arrays.asList("exampleService1"));
+			assertNames(sdrRoot.getServicesContainer(), Arrays.asList("name", "space"), Arrays.asList("name.space.exampleService2"));
+			assertNames(sdrRoot.getNodesContainer(), Collections.emptyList(), Arrays.asList("DeviceManager"));
+			assertNames(sdrRoot.getNodesContainer(), Arrays.asList("demo"), Arrays.asList("demo.node"));
+		}
+	}
+
+	private void verifyLoad() throws InterruptedException {
 		Assert.assertEquals(LoadState.UNLOADED, loadStates.poll(5, TimeUnit.SECONDS));
 		Assert.assertEquals(LoadState.LOADING, loadStates.poll(5, TimeUnit.SECONDS));
 		Assert.assertEquals(LoadState.LOADED, loadStates.poll(10, TimeUnit.SECONDS));
-
-		// Verify the appropriate components, devices, etc are present
-		assertNames(sdrRoot.getComponentsContainer(), new String[0],
-			Arrays.asList("CppComponentWithDeps", "CppComponentWithDeps2", "FrequencyShift", "Reader", "Writer"));
-		assertNames(sdrRoot.getComponentsContainer(), new String[] { "rh" }, Arrays.asList("rh.SigGen"));
-		assertNames(sdrRoot.getSharedLibrariesContainer(), new String[0], Arrays.asList("CppDepA", "CppDepAB", "CppDepAC", "CppDepD", "CppDepDE"));
-		assertNames(sdrRoot.getSharedLibrariesContainer(), new String[] { "rh" }, Arrays.asList("rh.dsp"));
-		assertNames(sdrRoot.getDevicesContainer(), new String[0], Arrays.asList("BasicTestDevice"));
-		assertNames(sdrRoot.getDevicesContainer(), new String[] { "rh" }, Arrays.asList("rh.FmRdsSimulator"));
-		assertNames(sdrRoot.getServicesContainer(), new String[0], Arrays.asList("exampleService1"));
-		assertNames(sdrRoot.getServicesContainer(), new String[] { "name", "space" }, Arrays.asList("name.space.exampleService2"));
-		assertNames(sdrRoot.getWaveformsContainer(), new String[0], Arrays.asList("test"));
-		assertNames(sdrRoot.getWaveformsContainer(), new String[] { "demo" }, Arrays.asList("demo.genwave"));
-		assertNames(sdrRoot.getNodesContainer(), new String[0], Arrays.asList("DeviceManager"));
-		assertNames(sdrRoot.getNodesContainer(), new String[] { "demo" }, Arrays.asList("demo.node"));
 	}
 
-	private void assertNames(EObject container, String[] path, List<String> requiredNames) {
+	private void assertNames(EObject container, List<String> path, List<String> requiredNames) {
 		for (String pathElement : path) {
 			Optional< ? extends EObject> childContainer;
 			switch (container.eClass().getClassifierID()) {
@@ -214,7 +285,9 @@ public class TargetSDRRootTest {
 			adapter = null;
 		}
 
-		// Remove our preference change
+		// Remove our preference changes
 		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).remove(IdeSdrPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE);
+		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).remove(IdeSdrPreferenceConstants.TARGET_SDR_DOM_PATH);
+		InstanceScope.INSTANCE.getNode(IdeSdrActivator.PLUGIN_ID).remove(IdeSdrPreferenceConstants.TARGET_SDR_DEV_PATH);
 	}
 }

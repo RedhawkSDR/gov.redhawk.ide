@@ -21,7 +21,6 @@ import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.sca.util.StringUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,18 +45,14 @@ import org.eclipse.emf.common.util.URI;
  */
 public class CodegenFileHelper {
 
-	private static IFileStore sourceDir;
-	private static IFileStore destDir;
-
 	private CodegenFileHelper() {
-
 	}
 
 	/**
 	 * @since 7.0
 	 */
 	public static HashMap<String, Boolean> settingsHasSourceCode(final WaveDevSettings waveSettings, final URI fileURI) {
-		final String workingPath = fileURI.path().substring(0, fileURI.path().lastIndexOf("/"));
+		final String workingPath = fileURI.path().substring(0, fileURI.path().lastIndexOf('/'));
 		final HashMap<String, Boolean> settingsMap = new HashMap<String, Boolean>();
 
 		if (waveSettings != null) {
@@ -68,7 +63,7 @@ public class CodegenFileHelper {
 				        java.net.URI.create((workingPath + IPath.SEPARATOR + implSettings.getOutputDir())));
 
 				try {
-					if (Arrays.asList(outputDir.childInfos(0, new NullProgressMonitor())).size() > 0) {
+					if (outputDir.childInfos(0, new NullProgressMonitor()).length > 0) {
 						settingsMap.put(implSettings.getId(), true);
 					}
 				} catch (final CoreException e) {
@@ -81,7 +76,7 @@ public class CodegenFileHelper {
 	}
 
 	public static boolean copySourceFiles(final IPath sourceSpdPath, final IProject project, final String settingsId, final IProgressMonitor monitor) {
-		final String workingPath = sourceSpdPath.toString().substring(0, sourceSpdPath.toString().lastIndexOf("/"));
+		final String workingPath = sourceSpdPath.toString().substring(0, sourceSpdPath.toString().lastIndexOf('/'));
 		final WaveDevSettings waveSettings = CodegenUtil.getWaveDevSettings(CodegenUtil.getWaveDevSettingsURI(URI.createFileURI(sourceSpdPath.toString())));
 		final ImplementationSettings implSettings = waveSettings.getImplSettings().get(settingsId);
 		final IFolder outputDir = project.getFolder(implSettings.getOutputDir());
@@ -92,11 +87,11 @@ public class CodegenFileHelper {
 			RedhawkCodegenActivator.logError("Unable to create new destination directory.", null);
 		}
 
-		CodegenFileHelper.sourceDir = EFS.getLocalFileSystem().getStore(java.net.URI.create((workingPath + IPath.SEPARATOR + implSettings.getOutputDir())));
-		CodegenFileHelper.destDir = EFS.getLocalFileSystem().getStore(java.net.URI.create(outputDir.getLocation().toString()));
+		IFileStore sourceDir = EFS.getLocalFileSystem().getStore(java.net.URI.create((workingPath + IPath.SEPARATOR + implSettings.getOutputDir())));
+		IFileStore destDir = EFS.getLocalFileSystem().getStore(java.net.URI.create(outputDir.getLocation().toString()));
 
 		try {
-			CodegenFileHelper.sourceDir.copy(CodegenFileHelper.destDir, EFS.OVERWRITE, monitor);
+			sourceDir.copy(destDir, EFS.OVERWRITE, monitor);
 		} catch (final CoreException e) {
 			RedhawkCodegenActivator.logError("Unable to copy contents of source directory.", null);
 		}

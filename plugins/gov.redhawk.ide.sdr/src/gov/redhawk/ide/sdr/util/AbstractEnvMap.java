@@ -150,7 +150,7 @@ public abstract class AbstractEnvMap implements IEnvMap {
 		// Work off dependencies in pre-order, depth-first
 		Set<SoftPkg> visitedSpds = new HashSet<SoftPkg>();
 		List<Implementation> depImpls = new ArrayList<Implementation>();
-		while (depQueue.size() > 0) {
+		while (!depQueue.isEmpty()) {
 			SoftPkg currentSpd = depQueue.pop();
 
 			// Prevent circular recursion

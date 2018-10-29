@@ -10,7 +10,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: gov.redhawk.ide.sdr.tests
 Eclipse-BundleShape: dir
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
- gov.redhawk.ide.sdr;bundle-version="8.0.0";visibility:=reexport,
+ gov.redhawk.ide.sdr;bundle-version="11.1.0";visibility:=reexport,
  mil.jpeojtrs.sca.dcd;bundle-version="2.2.2";visibility:=reexport,
  mil.jpeojtrs.sca.dmd;bundle-version="2.2.2";visibility:=reexport,
  org.eclipse.emf.ecore;bundle-version="2.6.1";visibility:=reexport,

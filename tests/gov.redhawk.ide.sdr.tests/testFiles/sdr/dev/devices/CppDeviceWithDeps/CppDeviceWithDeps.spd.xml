@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
+<softpkg id="DCE:740af569-abb7-4d6b-b4d3-c243ba063f1c" name="CppDeviceWithDeps" type="sca_compliant">
+  <title></title>
+  <author>
+    <name>null</name>
+  </author>
+  <propertyfile type="PRF">
+    <localfile name="CppDeviceWithDeps.prf.xml"/>
+  </propertyfile>
+  <descriptor>
+    <localfile name="CppDeviceWithDeps.scd.xml"/>
+  </descriptor>
+  <implementation id="cpp">
+    <description>The implementation contains descriptive information about the template for a software resource.</description>
+    <code type="Executable">
+      <localfile name="cpp/CppDeviceWithDeps"/>
+      <entrypoint>cpp/CppDeviceWithDeps</entrypoint>
+    </code>
+    <compiler name="/usr/bin/gcc" version="4.4.7"/>
+    <programminglanguage name="C++"/>
+    <humanlanguage name="EN"/>
+    <os name="Linux"/>
+    <processor name="x86"/>
+    <processor name="x86_64"/>
+    <dependency type="other">
+      <softpkgref>
+        <localfile name="/deps/CppDepA/CppDepA.spd.xml"/>
+      </softpkgref>
+    </dependency>
+    <dependency type="other">
+      <softpkgref>
+        <localfile name="/deps/CppDepD/CppDepD.spd.xml"/>
+      </softpkgref>
+    </dependency>
+  </implementation>
+</softpkg>

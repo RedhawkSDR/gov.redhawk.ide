@@ -70,7 +70,11 @@ public class UsesDeviceTestUtils {
 	}
 
 	private static void completeTunerAllocationPage(SWTBot shellBot, FETunerControl feTunerControl) {
-		shellBot.textWithLabel("New Allocation ID").typeText(feTunerControl.getNewAllocationID());
+		if (feTunerControl.getNewAllocationID() != null) {
+			SWTBotText allocationIdText = shellBot.textWithLabel("New Allocation ID");
+			allocationIdText.setText("");
+			allocationIdText.typeText(feTunerControl.getNewAllocationID());
+		}
 		shellBot.comboBoxWithLabel("Tuner Type").setSelection(feTunerControl.getTunerType());
 		shellBot.textWithLabel("Center Frequency (MHz)").typeText(feTunerControl.getCenterFrequency());
 		if (feTunerControl.getBandwidth() == null) {

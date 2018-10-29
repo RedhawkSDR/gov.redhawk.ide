@@ -57,7 +57,7 @@ public class StatisticsView extends ViewPart {
 
 	public static final String ID = "gov.redhawk.statistics.ui.views.StatisticsView";
 
-	public static final String[] STAT_PROPS = { Stats.MINIMUM, Stats.MAXIMUM, Stats.MEDIAN, Stats.MEAN, Stats.STD_DEV, Stats.NUM };
+	private static final String[] STAT_PROPS = { Stats.MINIMUM, Stats.MAXIMUM, Stats.MEDIAN, Stats.MEAN, Stats.STD_DEV, Stats.NUM };
 
 	private Label[] labels = new Label[STAT_PROPS.length];
 

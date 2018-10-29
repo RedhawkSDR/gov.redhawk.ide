@@ -99,12 +99,12 @@ public class DevicesContainerTest extends SoftPkgRegistryTest {
 
 	@Override
 	public void testGetAllComponents() {
-		Assert.assertEquals(2, getFixture().getAllComponents().size());
+		Assert.assertEquals(3, getFixture().getAllComponents().size());
 	}
 
 	public void testDevicesContainer() {
 		Assert.assertNull(getFixture().getName());
-		Assert.assertEquals(1, getFixture().getComponents().size());
+		Assert.assertEquals(2, getFixture().getComponents().size());
 		Assert.assertEquals(1, getFixture().getChildContainers().size());
 
 		DevicesContainer childContainer = getFixture().getChildContainers().get(0);

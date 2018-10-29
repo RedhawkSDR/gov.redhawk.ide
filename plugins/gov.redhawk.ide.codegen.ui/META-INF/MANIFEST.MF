@@ -21,7 +21,6 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  gov.redhawk.ide.codegen.edit;bundle-version="2.0.0",
  org.eclipse.core.expressions;bundle-version="3.4.200",
  gov.redhawk.codegen.validation;bundle-version="1.2.0",
- gov.redhawk.ide.sdr.ui;bundle-version="3.0.0",
  gov.redhawk.ide.debug.ui;bundle-version="1.0.0",
  org.eclipse.core.databinding.property;bundle-version="1.5.0"
 Bundle-ActivationPolicy: lazy

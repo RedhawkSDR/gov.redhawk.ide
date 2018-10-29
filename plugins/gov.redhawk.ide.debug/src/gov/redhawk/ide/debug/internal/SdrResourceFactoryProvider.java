@@ -17,7 +17,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,21 +43,19 @@ import CF.FileSystem;
 import CF.FileSystemHelper;
 import CF.FileSystemPOA;
 import CF.FileSystemPOATie;
-import CF.ResourceFactoryOperations;
 import gov.redhawk.core.filemanager.filesystem.JavaFileSystem;
 import gov.redhawk.core.resourcefactory.AbstractResourceFactoryProvider;
 import gov.redhawk.core.resourcefactory.ComponentDesc;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.SpdResourceFactory;
-import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.preferences.IdeSdrPreferences;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
-import gov.redhawk.sca.util.MutexRule;
 import gov.redhawk.sca.util.OrbSession;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -64,11 +64,32 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
  */
 public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider {
 
-	private static final MutexRule RULE = new MutexRule(SdrResourceFactoryProvider.class);
 	private static final String SDR_CATEGORY = "SDR";
-	private boolean debug;
 
-	private class SPDListener extends EContentAdapter {
+	/**
+	 * Represents changes to the SPDs available in the target SDR root.
+	 */
+	private class SpdChanges {
+
+		/**
+		 * Either {@link Notification#ADD} or {@link Notification#REMOVE}
+		 */
+		private int action;
+
+		private List<SoftPkg> spds;
+
+		public SpdChanges(int action, Collection<SoftPkg> spds) {
+			// Copy the list so we don't have to worry about it being changed
+			this.action = action;
+			this.spds = new ArrayList<>(spds);
+		}
+	}
+
+	/**
+	 * Adapts {@link SoftPkgRegistry} to find {@link SoftPkg}. Changes are passed to a job which will add or remove
+	 * corresponding {@link SpdResourceFactory}.
+	 */
+	private EContentAdapter targetSdrRootAdapter = new EContentAdapter() {
 
 		@Override
 		protected void addAdapter(Notifier notifier) {
@@ -86,6 +107,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			super.removeAdapter(notifier);
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void notifyChanged(final org.eclipse.emf.common.notify.Notification msg) {
 			if (disposed) {
@@ -98,16 +120,16 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			if (msg.getFeature() == SdrPackage.Literals.SOFT_PKG_REGISTRY__COMPONENTS) {
 				switch (msg.getEventType()) {
 				case Notification.ADD:
-					addSoftPkgs(Collections.singletonList(msg.getNewValue()));
+					addSoftPkgs(Collections.singletonList((SoftPkg) msg.getNewValue()));
 					break;
 				case Notification.ADD_MANY:
-					addSoftPkgs((Collection< ? >) msg.getNewValue());
+					addSoftPkgs((Collection<SoftPkg>) msg.getNewValue());
 					break;
 				case Notification.REMOVE:
-					removeSoftPkgs(Collections.singletonList(msg.getOldValue()));
+					removeSoftPkgs(Collections.singletonList((SoftPkg) msg.getOldValue()));
 					break;
 				case Notification.REMOVE_MANY:
-					removeSoftPkgs((Collection< ? >) msg.getOldValue());
+					removeSoftPkgs((Collection<SoftPkg>) msg.getOldValue());
 					break;
 				default:
 					break;
@@ -117,45 +139,81 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			super.notifyChanged(msg);
 		}
 
-		private void addSoftPkgs(Collection< ? > newSoftPkgs) {
-			MultiStatus status = new MultiStatus(ScaDebugUiPlugin.PLUGIN_ID, 0, "Invalid SPD file(s) were not added to the sandbox", null);
-			for (final Object obj : newSoftPkgs) {
-				SoftPkg spd = (SoftPkg) obj;
-				try {
-					SpdResourceFactory resFactory = SpdResourceFactory.createResourceFactory(spd);
-					addResource(spd, resFactory);
-				} catch (IllegalArgumentException e) {
-					status.add(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, e.toString(), e));
-				}
-			}
-			if (debug && !status.isOK()) {
-				ScaDebugUiPlugin.log(status);
+		private void addSoftPkgs(Collection<SoftPkg> newSoftPkgs) {
+			synchronized (pendingChanges) {
+				pendingChanges.push(new SpdChanges(Notification.ADD, newSoftPkgs));
+				updateFactoriesJob.schedule();
 			}
 		}
 
-		private void removeSoftPkgs(Collection< ? > oldSoftPkgs) {
-			for (final Object obj : oldSoftPkgs) {
-				removeResource((SoftPkg) obj);
+		private void removeSoftPkgs(Collection<SoftPkg> oldSoftPkgs) {
+			synchronized (pendingChanges) {
+				pendingChanges.push(new SpdChanges(Notification.REMOVE, oldSoftPkgs));
+				updateFactoriesJob.schedule();
 			}
 		}
 	};
 
+	private boolean debug;
+	private volatile boolean disposed = false;
+	private Deque<SpdChanges> pendingChanges = new LinkedList<>();
+	private Job updateFactoriesJob = Job.create("Update SDR resource factories", monitor -> {
+		if (disposed) {
+			return Status.CANCEL_STATUS;
+		}
+
+		// Process changes until cancelled
+		while (!monitor.isCanceled()) {
+			// We're done if there are no more pending changes
+			SpdChanges changes;
+			synchronized (pendingChanges) {
+				changes = pendingChanges.pollLast();
+			}
+			if (changes == null) {
+				return Status.OK_STATUS;
+			}
+
+			// Add or remove resource factories for each SPD
+			switch (changes.action) {
+			case Notification.ADD:
+				MultiStatus status = new MultiStatus(ScaDebugPlugin.ID, 0, "Invalid SPD file(s) were not added to the sandbox", null);
+				for (final SoftPkg spd : changes.spds) {
+					try {
+						SpdResourceFactory factory = SpdResourceFactory.createResourceFactory(spd);
+						ComponentDesc desc = new ComponentDesc(spd, factory);
+						desc.setCategory(SDR_CATEGORY);
+						SdrResourceFactoryProvider.this.resourceMap.put(spd, desc);
+						addResourceDesc(desc);
+					} catch (IllegalArgumentException e) {
+						status.add(new Status(IStatus.WARNING, ScaDebugPlugin.ID, e.toString(), e));
+					}
+				}
+				if (debug && !status.isOK()) {
+					ScaDebugPlugin.log(status);
+				}
+				break;
+			case Notification.REMOVE:
+				for (final SoftPkg spd : changes.spds) {
+					final ResourceDesc desc = this.resourceMap.remove(spd);
+					if (desc != null) {
+						removeResourceDesc(desc);
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		return Status.CANCEL_STATUS;
+	});
+
 	private OrbSession session;
 	private final Map<EObject, ResourceDesc> resourceMap = Collections.synchronizedMap(new HashMap<EObject, ResourceDesc>());
 	private SdrRoot root;
-	private SPDListener componentsListener;
-	private SPDListener devicesListener;
-	private SPDListener serviceListener;
-	private boolean disposed;
 
 	public SdrResourceFactoryProvider() {
-		String debugOption = Platform.getDebugOption(ScaDebugUiPlugin.PLUGIN_ID + "/debug/" + this.getClass().getSimpleName());
+		String debugOption = Platform.getDebugOption(ScaDebugPlugin.ID + "/debug/" + this.getClass().getSimpleName());
 		debug = "true".equalsIgnoreCase(debugOption);
-
-		this.root = TargetSdrRoot.getSdrRoot();
-		if (this.root == null) {
-			return;
-		}
 
 		IPath domPath = IdeSdrPreferences.getTargetSdrDomPath();
 		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
@@ -173,36 +231,20 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 					}
 				}
 			} catch (IOException e) {
-				ScaDebugUiPlugin.log(
-					new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Error while mounting SDRROOT/dom directories into sandbox file manager", e));
+				ScaDebugPlugin.log(
+					new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Error while mounting SDRROOT/dom directories into sandbox file manager", e));
 			}
 		}
 
-		this.componentsListener = new SPDListener();
-		this.devicesListener = new SPDListener();
-		this.serviceListener = new SPDListener();
+		// Listen to the target SDR root for changes (also finds and adds existing SPDs)
+		this.root = TargetSdrRoot.getSdrRoot();
 		ScaModelCommand.execute(this.root, new ScaModelCommand() {
 
 			@Override
 			public void execute() {
-				MultiStatus status = new MultiStatus(ScaDebugUiPlugin.PLUGIN_ID, 0, "Invalid SPD file(s) were not added to the sandbox", null);
-				List<SoftPkg> spds = new ArrayList<>(SdrResourceFactoryProvider.this.root.getComponentsContainer().getAllComponents());
-				spds.addAll(SdrResourceFactoryProvider.this.root.getDevicesContainer().getAllComponents());
-				spds.addAll(SdrResourceFactoryProvider.this.root.getServicesContainer().getAllComponents());
-				for (final SoftPkg spd : spds) {
-					try {
-						SpdResourceFactory resFactory = SpdResourceFactory.createResourceFactory(spd);
-						addResource(spd, resFactory);
-					} catch (IllegalArgumentException e) {
-						status.add(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, e.toString(), e));
-					}
-				}
-				SdrResourceFactoryProvider.this.root.getComponentsContainer().eAdapters().add(SdrResourceFactoryProvider.this.componentsListener);
-				SdrResourceFactoryProvider.this.root.getDevicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.devicesListener);
-				SdrResourceFactoryProvider.this.root.getServicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.serviceListener);
-				if (debug && !status.isOK()) {
-					ScaDebugUiPlugin.log(status);
-				}
+				SdrResourceFactoryProvider.this.root.getComponentsContainer().eAdapters().add(SdrResourceFactoryProvider.this.targetSdrRootAdapter);
+				SdrResourceFactoryProvider.this.root.getDevicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.targetSdrRootAdapter);
+				SdrResourceFactoryProvider.this.root.getServicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.targetSdrRootAdapter);
 			}
 		});
 	}
@@ -222,7 +264,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		try {
 			poa = session.getPOA();
 		} catch (CoreException e) {
-			ScaDebugUiPlugin.log(e);
+			ScaDebugPlugin.log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Unable to get POA", e));
 			return;
 		}
 		FileSystemPOA fsPoa = new FileSystemPOATie(new JavaFileSystem(orb, poa, dir.toFile()));
@@ -230,48 +272,36 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			FileSystem domDepsFs = FileSystemHelper.narrow(poa.servant_to_reference(fsPoa));
 			addFileSystemMount(domDepsFs, mountPoint);
 		} catch (ServantNotActive | WrongPolicy e) {
-			ScaDebugUiPlugin.log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Unable to create virtual mount " + mountPoint, e));
-		}
-	}
-
-	private void addResource(final SoftPkg spd, final ResourceFactoryOperations factory) {
-		ComponentDesc desc = new ComponentDesc(spd, factory);
-		desc.setCategory(SDR_CATEGORY);
-		SdrResourceFactoryProvider.this.resourceMap.put(spd, desc);
-		addResourceDesc(desc);
-	}
-
-	private void removeResource(final EObject resource) {
-		final ResourceDesc desc = this.resourceMap.get(resource);
-		if (desc != null) {
-			removeResourceDesc(desc);
+			ScaDebugPlugin.log(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Unable to create virtual mount " + mountPoint, e));
 		}
 	}
 
 	@Override
 	public void dispose() {
-		Job.getJobManager().beginRule(RULE, null);
-		try {
-			if (disposed) {
-				return;
-			}
-			disposed = true;
-		} finally {
-			Job.getJobManager().endRule(RULE);
+		if (this.disposed) {
+			return;
 		}
+		this.disposed = true;
 
-		// Stop listening for changes
-		ScaModelCommand.execute(this.root, new ScaModelCommand() {
-			@Override
-			public void execute() {
-				root.getComponentsContainer().eAdapters().remove(componentsListener);
-				root.getDevicesContainer().eAdapters().remove(devicesListener);
-				root.getServicesContainer().eAdapters().remove(serviceListener);
-			}
+		// Stop listening for changes to the target SDR root
+		ScaModelCommand.execute(this.root, () -> {
+			this.root.getComponentsContainer().eAdapters().remove(this.targetSdrRootAdapter);
+			this.root.getDevicesContainer().eAdapters().remove(this.targetSdrRootAdapter);
+			this.root.getServicesContainer().eAdapters().remove(this.targetSdrRootAdapter);
 		});
 		this.root = null;
+		this.targetSdrRootAdapter = null;
 
-		// Remove resource descriptions
+		// Stop the job that is updating resource factories
+		this.updateFactoriesJob.cancel();
+		try {
+			this.updateFactoriesJob.join();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		this.updateFactoriesJob = null;
+
+		// Remove resource factories
 		synchronized (this.resourceMap) {
 			for (final ResourceDesc desc : this.resourceMap.values()) {
 				removeResourceDesc(desc);
@@ -285,9 +315,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		}
 
 		// Dispose session
-		if (session != null) {
-			session.dispose();
-			session = null;
-		}
+		this.session.dispose();
+		this.session = null;
 	}
 }

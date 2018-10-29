@@ -158,6 +158,10 @@
             class="gov.redhawk.ide.debug.internal.BundleResourceFactoryProvider"
             id="gov.redhawk.ide.debug.bundleFactoryProvider">
       </factoryProvider>
+      <factoryProvider
+            class="gov.redhawk.ide.debug.internal.SdrResourceFactoryProvider"
+            id="gov.redhawk.ide.debug.ui.sdrFactoryProvider">
+      </factoryProvider>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchDelegates">

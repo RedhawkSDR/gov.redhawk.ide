@@ -161,4 +161,11 @@ public class ScaDebugPlugin extends Plugin {
 	public static void logError(final String msg, final Throwable e) {
 		ScaDebugPlugin.instance.getLog().log(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg, e));
 	}
+
+	/**
+	 * @since 10.1
+	 */
+	public static void log(Status status) {
+		ScaDebugPlugin.instance.getLog().log(status);
+	}
 }
