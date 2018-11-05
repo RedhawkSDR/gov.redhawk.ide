@@ -47,8 +47,6 @@ public class DomainManagerLauncherUtil {
 				arguments.append(" -debug ").append(domMgr.getDebugLevel().getNodeBooterString());
 			}
 
-			arguments.append(" --nopersist");
-
 			if (domMgr.getArguments() != null && !domMgr.getArguments().trim().isEmpty()) {
 				arguments.append(" ").append(domMgr.getArguments().trim());
 			}
