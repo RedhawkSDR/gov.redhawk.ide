@@ -1373,7 +1373,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			softPkg = SoftPkg.Util.getSoftPkg(resource);
 		} catch (WrappedException e) {
 			return statusForWrappedException(e, spdFileUri);
-		} catch (Exception e) { // SUPPRESS CHECKSTYLE Exception is returned in status
+		} catch (RuntimeException e) { // SUPPRESS CHECKSTYLE Exception is returned in status
 			String msg = Messages.bind(Messages.SdrRootImpl_FailedToLoadFile, convertToFilePath(spdFileUri));
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, msg, e);
 		}
@@ -1620,7 +1620,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
 		} catch (WrappedException e) {
 			return statusForWrappedException(e, sadFileUri);
-		} catch (Exception e) { // SUPPRESS CHECKSTYLE Exception is returned in status
+		} catch (RuntimeException e) { // SUPPRESS CHECKSTYLE Exception is returned in status
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, Messages.bind(Messages.SdrRootImpl_FailedToLoadFile, convertToFilePath(sadFileUri)), e);
 		}
 		submonitor.worked(1);
@@ -1678,7 +1678,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			dcd = DeviceConfiguration.Util.getDeviceConfiguration(resource);
 		} catch (WrappedException e) {
 			return statusForWrappedException(e, dcdFileUri);
-		} catch (Exception e) { // SUPPRESS CHECKSTYLE Exception is returned in status
+		} catch (RuntimeException e) { // SUPPRESS CHECKSTYLE Exception is returned in status
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, Messages.bind(Messages.SdrRootImpl_FailedToLoadFile, convertToFilePath(dcdFileUri)), e);
 		}
 		submonitor.worked(1);
@@ -1735,7 +1735,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			dmd = DomainManagerConfiguration.Util.getDomainManagerConfiguration(resource);
 		} catch (WrappedException e) {
 			return statusForWrappedException(e, dmdUri);
-		} catch (Exception e) { // SUPPRESS CHECKSTYLE Exception is returned in status
+		} catch (RuntimeException e) { // SUPPRESS CHECKSTYLE Exception is returned in status
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, Messages.bind(Messages.SdrRootImpl_FailedToLoadFile, convertToFilePath(dmdUri)), e);
 		}
 		submonitor.worked(1);
