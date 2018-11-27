@@ -14,6 +14,9 @@ package gov.redhawk.ide.sdr.tests;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.runtime.CoreException;
@@ -404,4 +407,39 @@ public class SdrRootTest extends TestCase {
 		}
 	}
 
+	/**
+	 * We should be able to load an SDRROOT with bad XML files in it. Good files should still be loaded, and errors
+	 * should be reported for files that couldn't be loaded.
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
+	public void testLoadBadXML() throws URISyntaxException, IOException {
+		SdrRoot sdrRoot = SdrPluginLoader.getSdrRoot(SdrTestsUtil.PLUGIN_ID, "testFiles/sdr_badXmls");
+
+		// Good files
+		Assert.assertEquals("goodcomponent", sdrRoot.getComponentsContainer().getComponents().get(0).getName());
+		Assert.assertEquals("gooddep", sdrRoot.getSharedLibrariesContainer().getComponents().get(0).getName());
+		Assert.assertEquals("goodwave", sdrRoot.getWaveformsContainer().getWaveforms().get(0).getName());
+		Assert.assertEquals("gooddevice", sdrRoot.getDevicesContainer().getComponents().get(0).getName());
+		Assert.assertEquals("goodservice", sdrRoot.getServicesContainer().getComponents().get(0).getName());
+		Assert.assertEquals("goodnode", sdrRoot.getNodesContainer().getNodes().get(0).getName());
+
+		// Status for bad files
+		List<String> badFiles = new ArrayList<>();
+		Collections.addAll(badFiles, "badcomponent", "baddep", "badwave", "baddevice", "badservice", "badnode");
+		IStatus loadStatus = sdrRoot.getLoadStatus();
+		Assert.assertTrue(loadStatus.getSeverity() == Status.ERROR);
+		nextChild: for (IStatus child : loadStatus.getChildren()) {
+			for (String badFile : badFiles) {
+				String message = child.getMessage();
+				if (message.contains(badFile)) {
+					Assert.assertTrue("Incorrect error message: " + message, message.contains("Failed to parse"));
+					badFiles.remove(badFile);
+					continue nextChild;
+				}
+			}
+			Assert.fail("Unexpected status: " + child.toString());
+		}
+		Assert.assertFalse("Didn't find status message(s) for file(s): " + badFiles, !badFiles.isEmpty());
+	}
 } // SdrRootTest

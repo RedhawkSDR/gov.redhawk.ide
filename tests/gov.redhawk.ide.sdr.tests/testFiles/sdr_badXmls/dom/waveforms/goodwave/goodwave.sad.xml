@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softwareassembly PUBLIC "-//JTRS//DTD SCA V2.2.2 SAD//EN" "softwareassembly.dtd">
+<softwareassembly id="DCE:d0d9bb8c-b1ec-4a69-b14c-5e849f73fe3c" name="goodwave">
+  <componentfiles>
+    <componentfile id="goodcomponent_b842cdc2-6f30-4524-868e-d67e6f073ee5" type="SPD">
+      <localfile name="/components/goodcomponent/goodcomponent.spd.xml"/>
+    </componentfile>
+  </componentfiles>
+  <partitioning>
+    <componentplacement>
+      <componentfileref refid="goodcomponent_b842cdc2-6f30-4524-868e-d67e6f073ee5"/>
+      <componentinstantiation id="goodcomponent_1" startorder="0">
+        <usagename>goodcomponent_1</usagename>
+        <findcomponent>
+          <namingservice name="goodcomponent_1"/>
+        </findcomponent>
+      </componentinstantiation>
+    </componentplacement>
+  </partitioning>
+  <assemblycontroller>
+    <componentinstantiationref refid="goodcomponent_1"/>
+  </assemblycontroller>
+</softwareassembly>
