@@ -62,6 +62,7 @@ public class LaunchDeviceManagerDialog extends ListDialog {
 		super.setInput(input);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		Label label = new Label(parent, SWT.NULL);

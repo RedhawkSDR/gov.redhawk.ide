@@ -63,9 +63,9 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 			aggregateButton = new Button(deviceGroup, SWT.CHECK);
 			aggregateButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 			aggregateButton.setText(RedhawkIdePreferenceConstants.AGGREGATE_DEVICE + " device");
-			
-			context.bindValue(WidgetProperties.text().observe(deviceTypeCombo), PojoProperties.value("deviceType").observe(this.deviceProjSettings));
-			context.bindValue(WidgetProperties.selection().observe(aggregateButton), PojoProperties.value("aggregate").observe(this.deviceProjSettings));
+
+			bind();
+
 			deviceTypeCombo.addDisposeListener(new DisposeListener() {
 				
 				@Override
@@ -77,6 +77,12 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 				}
 			});
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void bind() {
+		context.bindValue(WidgetProperties.text().observe(deviceTypeCombo), PojoProperties.value("deviceType").observe(this.deviceProjSettings));
+		context.bindValue(WidgetProperties.selection().observe(aggregateButton), PojoProperties.value("aggregate").observe(this.deviceProjSettings));
 	}
 
 	@Override
