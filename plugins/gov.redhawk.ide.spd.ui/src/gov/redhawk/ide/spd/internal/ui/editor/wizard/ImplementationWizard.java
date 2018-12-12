@@ -53,9 +53,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-/**
- * The Class ImplementationWizard.
- */
 public class ImplementationWizard extends Wizard implements ScaImplementationWizard2 {
 
 	private final ImplementationWizardPage implPage;
@@ -64,9 +61,6 @@ public class ImplementationWizard extends Wizard implements ScaImplementationWiz
 	private final EditingDomain editingDomain;
 	private List<IWizardPage> wizPages;
 
-	/**
-	 * Instantiates a new implementation wizard.
-	 */
 	public ImplementationWizard(final EditingDomain editingDomain, final String name, final SoftPkg softPkg) {
 		this.setWindowTitle("New Implementation");
 		Implementation impl = SpdFactory.eINSTANCE.createImplementation();
@@ -94,9 +88,7 @@ public class ImplementationWizard extends Wizard implements ScaImplementationWiz
 		this.editingDomain = editingDomain;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void addPages() {
 		try {
@@ -124,9 +116,6 @@ public class ImplementationWizard extends Wizard implements ScaImplementationWiz
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean performFinish() {
 		

@@ -116,7 +116,8 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 				validate();
 			}
 		});
-		context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.serviceIdlText), PojoProperties.value(this.model.getClass(), "repID").observe(this.model));
+
+		bind();
 
 		final Button idlBrowseButton = new Button(serviceGroup, SWT.NONE);
 		idlBrowseButton.setText("Browse...");
@@ -131,6 +132,11 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 			}
 
 		});
+	}
+
+	@SuppressWarnings("unchecked")
+	private void bind() {
+		context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.serviceIdlText), PojoProperties.value(this.model.getClass(), "repID").observe(this.model));
 	}
 
 	public String getRepId() {
