@@ -385,7 +385,7 @@ public class ImplementationWizardPage extends WizardPage {
 		boolean notFiltered = true;
 
 		for (ViewerFilter filter : viewer.getFilters()) {
-			notFiltered = notFiltered & filter.select(viewer, null, desc);
+			notFiltered = notFiltered && filter.select(viewer, null, desc);
 		}
 
 		return !notFiltered;
