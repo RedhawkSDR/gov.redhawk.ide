@@ -47,7 +47,7 @@ public class AbstractPropertiesSection extends GFPropertySection {
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
 
-		if (!(selection instanceof IStructuredSelection) || selection.equals(getInput())) {
+		if (!(selection instanceof IStructuredSelection)) {
 			return;
 		}
 
