@@ -237,7 +237,7 @@ public final class StandardTestActions {
 			bot.waitUntil(Conditions.shellCloses(fileShell));
 		});
 		seq.addOptionalCondition(new NotCondition(JobConditions.generateCode()), () -> {
-			bot.waitUntil(JobConditions.generateCode(), 10000);
+			bot.waitUntil(JobConditions.generateCode(), 15000);
 		});
 		seq.addOptionalCondition(waitForShell(withText("File Changed")), () -> {
 			SWTBotShell fileChangedShell = bot.shell("File Changed");
