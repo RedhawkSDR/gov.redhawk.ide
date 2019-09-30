@@ -27,7 +27,7 @@ public class JobConditions {
 	 * @return
 	 */
 	public static ICondition generateCode() {
-		return waitForJobs(GenerateCode.FAMILY_GENERATE_CODE, "Geneate code");
+		return waitForJobs(GenerateCode.FAMILY_GENERATE_CODE, "Generate code");
 	}
 
 	/**
