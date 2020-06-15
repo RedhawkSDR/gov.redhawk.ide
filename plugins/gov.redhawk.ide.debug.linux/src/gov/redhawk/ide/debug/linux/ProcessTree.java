@@ -235,7 +235,7 @@ public class ProcessTree implements IProcessTree {
 
 			// Sleep for a moment
 			try {
-				Thread.sleep(250);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// PASS
 			}
