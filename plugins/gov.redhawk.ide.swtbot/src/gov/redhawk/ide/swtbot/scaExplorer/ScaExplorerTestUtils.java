@@ -174,6 +174,12 @@ public class ScaExplorerTestUtils {
 					} else {
 						return internalGetTreeItem(parentItem.getNode(node), path.subList(1, path.size()));
 					}
+				} else if ("Loading...".equals(node)) {
+					SWTBotTreeItem result = parentItem.getNode(node);
+					if (!result.isExpanded()) {
+						result.expand();
+					}
+					throw new WidgetNotFoundException("Unable to find node " + path.get(0));
 				}
 			}
 			throw new WidgetNotFoundException("Unable to find node " + path.get(0));
