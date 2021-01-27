@@ -163,13 +163,10 @@ public class ExternalPortsComposite extends Composite implements IScaComposite {
 	}
 
 	public Button getRemoveButton() {
-		System.out.println("***************** ExternalPortsComp - line 166 - getRemoveButton()");
 		return this.removeButton;
 	}
 
 	public void setEditable(boolean canEdit) {
-		System.out.println("***************** ExternalPortsComp - line 170");
-		System.out.println("***************** canEdit: " + canEdit);
 		addButton.setEnabled(canEdit);
 		removeButton.setEnabled(canEdit);
 	}
