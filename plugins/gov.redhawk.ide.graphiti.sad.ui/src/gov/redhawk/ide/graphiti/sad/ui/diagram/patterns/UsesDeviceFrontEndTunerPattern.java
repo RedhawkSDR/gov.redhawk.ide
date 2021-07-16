@@ -21,7 +21,7 @@ import org.eclipse.graphiti.features.context.ICreateContext;
 
 import ExtendedCF.WKP.DEVICEKIND;
 import ExtendedCF.WKP.DEVICEMODEL;
-import FRONTEND.FE_TUNER_DEVICE_KIND;
+import FRONTEND.FE_DEVICE_KIND;
 import gov.redhawk.core.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.core.graphiti.ui.ext.RHContainerShape;
 import gov.redhawk.frontend.util.TunerProperties.ListenerAllocationProperty;
@@ -136,7 +136,7 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 
 				PropertyRef deviceKindPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
 				deviceKindPropertyRef.setRefId(DEVICEKIND.value);
-				deviceKindPropertyRef.setValue(FE_TUNER_DEVICE_KIND.value);
+				deviceKindPropertyRef.setValue(FE_DEVICE_KIND.value);
 				usesDevice.getPropertyRef().add(deviceKindPropertyRef);
 
 				if (deviceModel != null && !deviceModel.isEmpty()) {

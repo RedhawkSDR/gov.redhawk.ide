@@ -60,7 +60,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
 
 import ExtendedCF.WKP.DEVICEKIND;
-import FRONTEND.FE_TUNER_DEVICE_KIND;
+import FRONTEND.FE_DEVICE_KIND;
 
 public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPattern implements IDialogEditingPattern {
 
@@ -501,7 +501,8 @@ public abstract class AbstractUsesDevicePattern extends AbstractPortSupplierPatt
 	public static boolean isFrontEndDevice(UsesDevice usesDevice) {
 		
 		for (PropertyRef refs: usesDevice.getPropertyRef()) {
-			if (DEVICEKIND.value.equals(refs.getRefId()) && FE_TUNER_DEVICE_KIND.value.equals(refs.getValue())) {
+			String kind = refs.getValue();
+			if (DEVICEKIND.value.equals(refs.getRefId()) && kind.contains(FE_DEVICE_KIND.value)) {
 				return true;
 			}
 		}

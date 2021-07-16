@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import ExtendedCF.WKP.DEVICEKIND;
-import FRONTEND.FE_TUNER_DEVICE_KIND;
+import FRONTEND.FE_DEVICE_KIND;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.TargetSdrRoot;
 import gov.redhawk.ide.sdr.ui.navigator.SdrNavigatorContentProvider;
@@ -121,7 +121,8 @@ public class SelectFrontEndTunerWizardPage extends WizardPage {
 					return false;
 				}
 				AbstractProperty property = device.getPropertyFile().getProperties().getProperty(DEVICEKIND.value);
-				return property instanceof Simple && FE_TUNER_DEVICE_KIND.value.equals(((Simple) property).getValue());
+				String kind = ((Simple) property).getValue();
+				return property instanceof Simple && kind.contains(FE_DEVICE_KIND.value);
 			}
 		});
 		treeViewer.setComparator(new ViewerComparator() {
