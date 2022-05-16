@@ -15,10 +15,10 @@
   <parent>
     <groupId>gov.redhawk.ide</groupId>
     <artifactId>gov.redhawk.ide.parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <artifactId>gov.redhawk.datalist.ui</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.1-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
