@@ -30,6 +30,7 @@
     <gov.redhawk.core>http://download.redhawksdr.org/gov.redhawk.core/releases/2.2</gov.redhawk.core>
     <swt-bot>http://download.eclipse.org/technology/swtbot/snapshots/</swt-bot>
     <pydev>https://dl.bintray.com/fabioz/pydev/6.4.3/</pydev>
+    <reload4j>http://download.redhawksdr.org/reload4j/1.2.19</reload4j>
     <!-- Sonar -->
     <sonar.language>java</sonar.language>
     <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -41,6 +42,12 @@
   </properties>
 
   <repositories>
+
+    <repository>
+      <id>reload4j</id>
+      <layout>p2</layout>
+      <url>${reload4j}</url>
+    </repository>
 
     <repository>
       <id>eclipse</id>
